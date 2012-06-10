@@ -17,6 +17,8 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class StorageDomainDAOTest extends BaseDAOTestCase {
+    private static final int NUMBER_OF_STORAGE_DOMAINS_FOR_PRIVELEGED_USER = 1;
+
     private static final String EXISTING_DOMAIN_ID = "72e3a666-89e1-4005-a7ca-f7548004a9ab";
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
     private static final String EXISTING_CONNECTION = "10.35.64.25";
@@ -167,8 +169,41 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testGetAll() {
         List<storage_domains> result = dao.getAll();
 
+        assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that retrieving storage domains works as expected for a privileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsPrivilegedUser() {
+        List<storage_domains> result = dao.getAll(PRIVILEGED_USER_ID, true);
+
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        assertEquals(NUMBER_OF_STORAGE_DOMAINS_FOR_PRIVELEGED_USER, result.size());
+        assertEquals(result.iterator().next(), existingDomain);
+    }
+
+    /**
+     * Ensures that retrieving storage domains works as expected with filtering disabled for an unprivileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsDisabledUnprivilegedUser() {
+        List<storage_domains> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+
+        assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that no storage domains retrieved for an unprivileged user with filtering enabled.
+     */
+    @Test
+    public void testGetAllWithPermissionsUnprivilegedUser() {
+        List<storage_domains> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /**
@@ -357,4 +392,13 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         assertEquals(result.getId(), existingDomain.getId());
     }
 
+    /**
+     * Asserts the result from {@link StorageDomainDAO#getAll()} is correct without filtering
+     *
+     * @param result A list of storage domains to assert
+     */
+    private static void assertCorrectGetAllResult(List<storage_domains> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
 }

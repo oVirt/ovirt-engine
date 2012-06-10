@@ -92,9 +92,14 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
 
     @Override
     public List<storage_domains> getAll() {
+        return getAll(null, false);
+    }
+
+    @Override
+    public List<storage_domains> getAll(Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllFromstorage_domains",
                 StorageDomainRowMapper.instance,
-                getCustomMapSqlParameterSource());
+                getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override

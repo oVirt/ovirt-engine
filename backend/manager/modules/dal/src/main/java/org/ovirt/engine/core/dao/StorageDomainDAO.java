@@ -112,6 +112,18 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
     List<storage_domains> getAll();
 
     /**
+     * Retrieves all storage domains with optional permission filtering.
+     *
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     *
+     * @return the list of storage domains
+     */
+    List<storage_domains> getAll(Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all domain which contains image id
      *
      * @param imageId

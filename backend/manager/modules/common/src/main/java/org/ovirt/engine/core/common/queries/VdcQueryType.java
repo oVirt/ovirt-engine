@@ -221,6 +221,7 @@ public enum VdcQueryType implements Serializable {
     GetTemplatesFromExportDomain,
     GetVmTemplatesFromStorageDomain(VdcQueryAuthType.User),
     GetAllIdsFromExportDomain,
+    GetAllStorageDomains(VdcQueryAuthType.User),
     GetExistingStorageDomainList,
     GetStorageDomainByIdAndStoragePoolId,
     GetStoragePoolsByStorageDomainId,

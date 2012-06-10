@@ -463,11 +463,14 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllFromstorage_domains() RETURNS SETOF storage_domains
+Create or replace FUNCTION GetAllFromstorage_domains(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_domains
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM storage_domains;
+   FROM storage_domains
+   WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM user_storage_domain_permissions_view
+                                       WHERE user_id = v_user_id AND entity_id = id));
 END; $procedure$
 LANGUAGE plpgsql;
 

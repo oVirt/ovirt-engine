@@ -140,6 +140,11 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     }
 
     @Override
+    public List<storage_domains> getAll(Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public List<storage_domains> getAllStorageDomainsByImageId(Guid imageId) {
         throw new NotImplementedException();
     }
