@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.vdsbroker;
+package org.ovirt.engine.core.vdsbroker;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -38,9 +38,6 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.vdsbroker.AuditLogDaoMocker;
-import org.ovirt.engine.core.vdsbroker.MonitoringStrategy;
-import org.ovirt.engine.core.vdsbroker.VdsUpdateRunTimeInfo;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VdsUpdateRunTimeInfoTest {
