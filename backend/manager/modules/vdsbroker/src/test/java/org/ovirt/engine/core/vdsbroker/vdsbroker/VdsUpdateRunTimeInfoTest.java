@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -12,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.transaction.TransactionManager;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -86,8 +85,7 @@ public class VdsUpdateRunTimeInfoTest {
         for (VdsNetworkInterface iface : getInterfaces()) {
             updater.logMTUDifferences(getClustersMap(), iface);
         }
-        System.out.println(mockAuditLogDao.getAll().get(0).getmessage());
-        Assert.assertTrue(mockAuditLogDao.getAll().size() == 1);
+        assertEquals(1, mockAuditLogDao.getAll().size());
     }
 
     private static List<VdsNetworkInterface> getInterfaces() {
