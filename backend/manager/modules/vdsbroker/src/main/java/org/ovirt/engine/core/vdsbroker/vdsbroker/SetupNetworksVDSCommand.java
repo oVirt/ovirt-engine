@@ -38,10 +38,13 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             Map<String, String> opts = new HashMap<String, String>();
             VdsNetworkInterface i = findNetworkInterface(net.getname(), getParameters().getInterfaces(),
                     getParameters().getBonds());
-            String type = (i.getBonded() != null && i.getBonded()) ? "bonding" : "nic";
 
+            Boolean bonded = isVlan(net)
+                    ? findInterfaceByName(NetworkUtils.StripVlan(i.getName())).getBonded()
+                    : i.getBonded();
+            String type = (bonded != null && bonded) ? "bonding" : "nic";
             opts.put(type, NetworkUtils.StripVlan(i.getName()));
-            if (net.getvlan_id() != null) {
+            if (isVlan(net)) {
                 opts.put("vlan", net.getvlan_id().toString());
             }
             // TODO: add bootproto to network object
@@ -69,6 +72,10 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         }
 
         return networks;
+    }
+
+    private boolean isVlan(network net) {
+        return net.getvlan_id() != null;
     }
 
     private XmlRpcStruct generateBonds() {
@@ -137,4 +144,13 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         return null;
     }
 
+    private VdsNetworkInterface findInterfaceByName(String name) {
+        for (VdsNetworkInterface iface : getParameters().getInterfaces()) {
+            if (name.equals(iface.getName())) {
+                return iface;
+            }
+        }
+
+        return null;
+    }
 }
