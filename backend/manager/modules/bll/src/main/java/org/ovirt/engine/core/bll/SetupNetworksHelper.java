@@ -25,7 +25,6 @@ public class SetupNetworksHelper {
     private Map<String, network> existingClusterNetworks;
 
     private List<network> modifiedNetworks = new ArrayList<network>();
-    private List<String> unmanagedNetworks = new ArrayList<String>();
     private List<String> removedNetworks = new ArrayList<String>();
     private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
     private List<VdsNetworkInterface> removedBonds = new ArrayList<VdsNetworkInterface>();
@@ -173,13 +172,25 @@ public class SetupNetworksHelper {
                     modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
                 }
 
-                // Interface must exist, it was checked before and we can't reach here if it does'nt exist already.
-            } else if (networkName.equals(getExistingIfaces().get(iface.getName()).getNetworkName())) {
-                unmanagedNetworks.add(networkName);
-            } else {
+            } else if (unmanagedNetworkChanged(iface)) {
                 violations.add(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
             }
         }
+    }
+
+    /**
+     * Checks if an unmanaged network changed.<br>
+     * This can be either if there is no existing interface for this network, i.e. it is a unmanaged VLAN which was
+     * moved to a different interface, or if the network name on the existing interface is not the same as it was
+     * before.
+     *
+     * @param iface
+     *            The interface on which the unmanaged network is now defined.
+     * @return <code>true</code> if the network changed, or <code>false</code> otherwise.
+     */
+    private boolean unmanagedNetworkChanged(VdsNetworkInterface iface) {
+        VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
+        return existingIface == null || !iface.getNetworkName().equals(existingIface.getNetworkName());
     }
 
     /**

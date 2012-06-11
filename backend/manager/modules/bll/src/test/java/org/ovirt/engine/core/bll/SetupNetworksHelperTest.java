@@ -316,6 +316,16 @@ public class SetupNetworksHelperTest {
         validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
     }
 
+    @Test
+    public void unmanagedVlanAddedToNic() {
+        VdsNetworkInterface nic = createNic("nic0", null);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic, createVlan(nic.getName(), 100, "net")));
+
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+    }
+
     /* --- Helper methods for tests --- */
 
     private void validateAndExpectNoViolations(SetupNetworksHelper helper) {
