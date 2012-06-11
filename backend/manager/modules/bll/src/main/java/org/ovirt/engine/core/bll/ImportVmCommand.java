@@ -359,6 +359,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             retVal = VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
         }
 
+        if (retVal) {
+            retVal = validateMacAddress(getVm().getInterfaces());
+        }
+
         if (!retVal) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
@@ -815,6 +819,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             if (iface.getId() == null) {
                 iface.setId(Guid.NewGuid());
             }
+            fillMacAddressIfMissing(iface);
             iface.setVmTemplateId(null);
             iface.setVmId(getVmId());
             iface.setVmName(getVm().getvm_name());

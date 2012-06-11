@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -26,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -46,6 +50,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     private List<DiskImage> _templateDisks;
     private storage_domains sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
+    private final static Pattern VALIDATE_MAC_ADDRESS = Pattern.compile(VmNetworkInterface.VALID_MAC_ADDRESS_FORMAT);
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -319,5 +324,34 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
         }
         return permissionCheckSubject;
+    }
+
+    protected void fillMacAddressIfMissing(VmNetworkInterface iface) {
+        if (StringUtils.isEmpty(iface.getMacAddress())
+                && (MacPoolManager.getInstance().getavailableMacsCount() >= 1)) {
+            iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
+        }
+    }
+
+    protected boolean validateMacAddress(List<VmNetworkInterface> ifaces) {
+        int freeMacs = 0;
+        for (VmNetworkInterface iface : ifaces) {
+            if (!StringUtils.isEmpty(iface.getMacAddress())) {
+                if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
+                    addCanDoActionMessage("$IfaceName " + iface.getName());
+                    addCanDoActionMessage("$MacAddress " + iface.getMacAddress());
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID);
+                    return false;
+                }
+            }
+            else {
+                freeMacs++;
+            }
+        }
+        if (freeMacs > 0 && !(MacPoolManager.getInstance().getavailableMacsCount() >= freeMacs)) {
+            addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+            return false;
+        }
+        return true;
     }
 }

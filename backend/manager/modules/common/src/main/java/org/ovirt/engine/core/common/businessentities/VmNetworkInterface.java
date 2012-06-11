@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.NGuid;
  *
  */
 public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
-    private static final String VALID_MAC_ADDRESS_FORMAT = "(\\p{XDigit}{2}:){5}\\p{XDigit}{2}";
+    public static final String VALID_MAC_ADDRESS_FORMAT = "(\\p{XDigit}{2}:){5}\\p{XDigit}{2}";
 
     private static final long serialVersionUID = 7428150502868988886L;
 

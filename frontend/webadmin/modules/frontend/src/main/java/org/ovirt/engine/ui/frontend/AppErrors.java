@@ -1965,4 +1965,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. No server found in Up state.")
     String ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The Network Interface ${IfaceName} has an invalid MAC address ${MacAddress}. MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
+    String ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID();
 }

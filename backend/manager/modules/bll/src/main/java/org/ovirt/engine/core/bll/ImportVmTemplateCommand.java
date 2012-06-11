@@ -180,6 +180,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 }
             }
         }
+        if (retVal) {
+            retVal = validateMacAddress( getVmTemplate().getInterfaces());
+        }
         if (!retVal) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
@@ -248,6 +251,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Override
     protected void executeCommand() {
+        boolean success = true;
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -261,7 +265,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         });
         MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
         VmDeviceUtils.addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
-        setSucceeded(true);
+        setSucceeded(success);
     }
 
     @Override
@@ -367,6 +371,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
             iDynamic.setSpeed(iface.getSpeed());
             iDynamic.setType(iface.getType());
+
+            fillMacAddressIfMissing(iface);
 
             DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iDynamic);
             getCompensationContext().snapshotNewEntity(iDynamic);
