@@ -236,6 +236,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         model.setTitle(ConstantsManager.getInstance().getConstants().removeVolumesTitle());
         model.setHashName("remove_volume"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().removeVolumesMessage());
+        model.setNote(ConstantsManager.getInstance().getConstants().removeVolumesWarning());
 
         if (getSelectedItems() == null) {
             return;
@@ -401,6 +402,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         model.setTitle(ConstantsManager.getInstance().getConstants().confirmStopVolume());
         model.setHashName("volume_stop"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().stopVolumeMessage());
+        model.setNote(ConstantsManager.getInstance().getConstants().stopVolumeWarning());
 
         if (getSelectedItems() == null) {
             return;

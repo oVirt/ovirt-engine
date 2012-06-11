@@ -1275,11 +1275,17 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure want to stop the following Volume(s)?")
     String stopVolumeMessage();
 
+    @DefaultStringValue("NOTE:\n -Stopping volume will make its data inaccessible.")
+    String stopVolumeWarning();
+
 	@DefaultStringValue("Remove Volume")
     String removeVolumesTitle();
 
-    @DefaultStringValue("Are you sure want to remove the following Volume(s)?")
+    @DefaultStringValue("Volume(s)?")
     String removeVolumesMessage();
+
+    @DefaultStringValue("NOTE:\n -Removing volume will erase all information about the volume.")
+    String removeVolumesWarning();
 
     @DefaultStringValue("Remove Bricks")
     String removeBricksTitle();

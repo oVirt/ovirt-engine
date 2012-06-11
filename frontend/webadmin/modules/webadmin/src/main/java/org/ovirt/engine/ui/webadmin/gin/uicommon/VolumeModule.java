@@ -57,7 +57,8 @@ public class VolumeModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VolumeListModel source,
                     UICommand lastExecutedCommand) {
-                if (lastExecutedCommand.equals(getModel().getCancelCommand())) {
+                if (lastExecutedCommand == getModel().getStopCommand()
+                        || lastExecutedCommand == getModel().getRemoveVolumeCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
