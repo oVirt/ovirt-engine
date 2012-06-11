@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -257,8 +256,6 @@ public class VdsSelector {
      *         otherwise, <c>false</c>.
      */
     private static boolean IsVMSwapValueLegal(VDS vds) {
-        Version version = vds.getvds_group_compatibility_version();
-
         if (!Config.<Boolean> GetValue(ConfigValues.EnableSwapCheck)) {
             return true;
         }
