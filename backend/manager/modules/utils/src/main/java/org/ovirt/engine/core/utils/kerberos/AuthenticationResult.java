@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils.kerberos;
 
+import org.ovirt.engine.core.common.AuditLogType;
+
 public enum AuthenticationResult {
     OK("", "", 0),
     INVALID_CREDENTIALS(
@@ -22,7 +24,7 @@ public enum AuthenticationResult {
     USER_ACCOUNT_DISABLED_OR_LOCKED(
             "Authentication failed. The user is either locked or disabled",
             "USER_FAILED_TO_AUTHENTICATE_ACCOUNT_IS_LOCKED_OR_DISABLED",
-            16),
+            16, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED),
     DNS_COMMUNICATION_ERROR(
             "Authentication Failed. Cannot lookup DNS for SRV records. Please check your DNS configuration",
             "USER_FAILED_TO_AUTHENTICATE_DNS_ERROR",
@@ -51,20 +53,30 @@ public enum AuthenticationResult {
     PASSWORD_EXPIRED(
             "Authentication Failed. The password has expired. Please change your password and login again.",
             "USER_PASSWORD_EXPIRED",
-            23);
+            23, AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED);
 
     private String vdcBllMessage;
     private String detailedMessage;
     private final int exitCode;
+    private AuditLogType auditLogType;
 
     private AuthenticationResult(String detailedMsg, String vdcBllMessage, int exitCode) {
+        this(detailedMsg, vdcBllMessage, exitCode, null);
+    }
+
+    private AuthenticationResult(String detailedMsg, String vdcBllMessage, int exitCode, AuditLogType auditLogType) {
         this.detailedMessage = detailedMsg;
         this.vdcBllMessage = vdcBllMessage;
         this.exitCode = exitCode;
+        this.auditLogType = auditLogType;
     }
 
     public String getDetailedMessage() {
         return detailedMessage;
+    }
+
+    public AuditLogType getAuditLogType() {
+        return auditLogType;
     }
 
     public String getVdcBllMessage() {

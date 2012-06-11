@@ -51,6 +51,7 @@ public final class AuditLogDirector {
         initGlusterVolumeSeverities();
         initDwhSeverities();
         initConfigSeverities();
+        initUserAccountSeverities();
         checkSeverities();
     }
 
@@ -630,6 +631,11 @@ public final class AuditLogDirector {
     private static void initConfigSeverities() {
         mSeverities.put(AuditLogType. RELOAD_CONFIGURATIONS_SUCCESS, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType. RELOAD_CONFIGURATIONS_FAILURE, AuditLogSeverity.ERROR);
+    }
+
+    private static void initUserAccountSeverities() {
+        mSeverities.put(AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED, AuditLogSeverity.ERROR);
     }
 
     private static void initDwhSeverities() {
