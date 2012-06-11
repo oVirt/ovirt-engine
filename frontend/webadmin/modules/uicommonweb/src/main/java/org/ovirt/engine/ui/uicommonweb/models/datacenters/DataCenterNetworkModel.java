@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
-
-import java.util.ArrayList;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 @SuppressWarnings("unused")
 public class DataCenterNetworkModel extends NetworkModel
@@ -36,51 +36,29 @@ public class DataCenterNetworkModel extends NetworkModel
         privatenewClusters = value;
     }
 
-    private UICommand privateDetachAllCommand;
+    private UICommand privateApplyCommand;
 
-    public UICommand getDetachAllCommand()
+    public UICommand getApplyCommand()
     {
-        return privateDetachAllCommand;
+        return privateApplyCommand;
     }
 
-    public void setDetachAllCommand(UICommand value)
+    public void setApplyCommand(UICommand value)
     {
-        privateDetachAllCommand = value;
+        privateApplyCommand = value;
     }
 
-    private EntityModel privateDetachAllAvailable;
+    private ListModel privateNetworkClusterList;
 
-    public EntityModel getDetachAllAvailable()
+    public ListModel getNetworkClusterList()
     {
-        return privateDetachAllAvailable;
+        return privateNetworkClusterList;
     }
 
-    public void setDetachAllAvailable(EntityModel value)
+    public void setNetworkClusterList(ListModel value)
     {
-        privateDetachAllAvailable = value;
-    }
-
-    private ArrayList<SelectionTreeNodeModel> privateclusterTreeNodes;
-
-    public ArrayList<SelectionTreeNodeModel> getclusterTreeNodes()
-    {
-        return privateclusterTreeNodes;
-    }
-
-    public void setclusterTreeNodes(ArrayList<SelectionTreeNodeModel> value)
-    {
-        privateclusterTreeNodes = value;
-    }
-
-    public ArrayList<SelectionTreeNodeModel> getClusterTreeNodes()
-    {
-        return getclusterTreeNodes();
-    }
-
-    public void setClusterTreeNodes(ArrayList<SelectionTreeNodeModel> value)
-    {
-        setclusterTreeNodes(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("ClusterTreeNodes")); //$NON-NLS-1$
+        privateNetworkClusterList = value;
+        OnPropertyChanged(new PropertyChangedEventArgs("NetworkClusterList")); //$NON-NLS-1$
     }
 
     private ArrayList<VDSGroup> privateOriginalClusters;
@@ -109,12 +87,10 @@ public class DataCenterNetworkModel extends NetworkModel
 
     public DataCenterNetworkModel()
     {
-        setClusterTreeNodes(new ArrayList<SelectionTreeNodeModel>());
+        setNetworkClusterList(new ListModel());
         setOriginalClusters(new ArrayList<VDSGroup>());
         setIsEnabled(new EntityModel());
         getIsEnabled().setEntity(true);
-        setDetachAllAvailable(new EntityModel());
-        getDetachAllAvailable().setEntity(false);
     }
 
 }

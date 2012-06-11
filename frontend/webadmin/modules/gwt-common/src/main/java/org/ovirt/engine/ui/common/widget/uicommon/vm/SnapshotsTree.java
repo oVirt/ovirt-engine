@@ -277,7 +277,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getDiskAlias(); //$NON-NLS-1$
+                return object.getDiskAlias();
             }
         };
         table.addColumn(nameColumn, constants.nameDisk());

@@ -17,94 +17,142 @@ import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
- * A CellTable of a {@link ListModel} of {@link EntityModel}s
+ * A CellTable of a {@link ListModel} of {@link EntityModel}s.
  */
 public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements HasEditorDriver<M> {
 
-    /**
-     * The ListModel
-     */
+    public static enum SelectionMode {
+        NONE,
+        SINGLE,
+        MULTIPLE
+    }
+
     private M listModel;
 
-    /**
-     * Whether to allow multi/single selection
-     */
-    private final boolean multiSelection;
-
     private static final int DEFAULT_PAGESIZE = 1000;
-    private static Resources DEFAULT_RESOURCES = GWT.create(CellTable.Resources.class);
     private static final int CHECK_COLUMN_WIDTH = 27;
 
     /**
-     * Create a new {@link EntityModelCellTable} with Single Selection
+     * Create a new {@link EntityModelCellTable} with single selection mode.
      */
     public EntityModelCellTable() {
-        this(false, (Resources) GWT.create(PopupTableResources.class));
+        this(SelectionMode.SINGLE, (Resources) GWT.create(PopupTableResources.class));
     }
 
     /**
-     * Create a new {@link EntityModelCellTable} with Single Selection
+     * Create a new {@link EntityModelCellTable} with single selection mode.
      *
      * @param resources
-     *            table's resources
+     *            Table resources.
      */
     public EntityModelCellTable(Resources resources) {
-        this(false, resources);
+        this(SelectionMode.SINGLE, resources);
     }
 
     /**
-     * Create a new {@link EntityModelCellTable}
+     * Create a new {@link EntityModelCellTable}.
      *
-     * @param multiSelection
-     *            Whether to allow multi/single selection
+     * @param selectionMode
+     *            Table selection mode.
      */
-    public EntityModelCellTable(boolean multiSelection) {
-        this(multiSelection, (Resources) GWT.create(PopupTableResources.class));
-    }
-
-    public EntityModelCellTable(boolean multiSelection, boolean hideCheckbox) {
-        this(multiSelection, (Resources) GWT.create(PopupTableResources.class), hideCheckbox);
+    public EntityModelCellTable(SelectionMode selectionMode) {
+        this(selectionMode, (Resources) GWT.create(PopupTableResources.class));
     }
 
     /**
-     * Create a new {@link EntityModelCellTable}
+     * Create a new {@link EntityModelCellTable}.
      *
-     * @param multiSelection
-     *            Whether to allow multi/single selection
+     * @param isMultiple
+     *            Whether to allow multiple ({@code true}) or single ({@code false}) selection mode.
+     */
+    public EntityModelCellTable(boolean isMultiple) {
+        this(isMultiple, (Resources) GWT.create(PopupTableResources.class));
+    }
+
+    /**
+     * Create a new {@link EntityModelCellTable}.
      *
+     * @param selectionMode
+     *            Table selection mode.
+     * @param hideCheckbox
+     *            Whether to hide selection column or not.
+     */
+    public EntityModelCellTable(SelectionMode selectionMode, boolean hideCheckbox) {
+        this(selectionMode, (Resources) GWT.create(PopupTableResources.class), hideCheckbox);
+    }
+
+    /**
+     * Create a new {@link EntityModelCellTable}.
+     *
+     * @param isMultiple
+     *            Whether to allow multiple ({@code true}) or single ({@code false}) selection mode.
+     * @param hideCheckbox
+     *            Whether to hide selection column or not.
+     */
+    public EntityModelCellTable(boolean isMultiple, boolean hideCheckbox) {
+        this(isMultiple, (Resources) GWT.create(PopupTableResources.class), hideCheckbox);
+    }
+
+    /**
+     * Create a new {@link EntityModelCellTable}.
+     *
+     * @param selectionMode
+     *            Table selection mode.
      * @param resources
-     *            table's resources
+     *            Table resources.
      */
-    public EntityModelCellTable(boolean multiSelection, Resources resources) {
-        this(multiSelection, resources, false);
+    public EntityModelCellTable(SelectionMode selectionMode, Resources resources) {
+        this(selectionMode, resources, false);
     }
 
-    public EntityModelCellTable(boolean multiSelection, Resources resources, boolean hideCheckbox) {
+    /**
+     * Create a new {@link EntityModelCellTable}.
+     *
+     * @param isMultiple
+     *            Whether to allow multiple ({@code true}) or single ({@code false}) selection mode.
+     * @param resources
+     *            Table resources.
+     */
+    public EntityModelCellTable(boolean isMultiple, Resources resources) {
+        this(isMultiple, resources, false);
+    }
+
+    public EntityModelCellTable(boolean isMultiple, Resources resources, boolean hideCheckbox) {
+        this(isMultiple ? SelectionMode.MULTIPLE : SelectionMode.SINGLE, resources, hideCheckbox);
+    }
+
+    public EntityModelCellTable(SelectionMode selectionMode, Resources resources, boolean hideCheckbox) {
         super(DEFAULT_PAGESIZE, resources);
 
-        this.multiSelection = multiSelection;
-
-        if (!multiSelection) {
-            setSelectionModel(new SingleSelectionModel<EntityModel>());
-        } else {
+        // Configure table selection model
+        switch (selectionMode) {
+        case MULTIPLE:
             setSelectionModel(new MultiSelectionModel<EntityModel>(),
                     DefaultSelectionEventManager.<EntityModel> createCheckboxManager());
+            break;
+        case NONE:
+            setSelectionModel(new NoSelectionModel<EntityModel>());
+            break;
+        case SINGLE:
+        default:
+            setSelectionModel(new SingleSelectionModel<EntityModel>());
+            break;
         }
 
-        // Handle Selection
+        // Handle selection
         getSelectionModel().addSelectionChangeHandler(new Handler() {
             @SuppressWarnings("unchecked")
             @Override
@@ -131,24 +179,15 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         entity.setIsSelected(true);
                         selectedItems.add(entity);
                     }
-
                     EntityModelCellTable.this.listModel.setSelectedItems(selectedItems);
                 }
             }
         });
 
         if (!hideCheckbox) {
-            // add selection columns
-            final Column<EntityModel, Boolean> checkColumn;
-            if (multiSelection) {
-                checkColumn = new Column<EntityModel, Boolean>(
-                        new CheckboxCell(true, false)) {
-                    @Override
-                    public Boolean getValue(EntityModel object) {
-                        return getSelectionModel().isSelected(object);
-                    }
-                };
-            } else {
+            // Add selection column
+            Column<EntityModel, Boolean> checkColumn = null;
+            if (getSelectionModel() instanceof SingleSelectionModel) {
                 checkColumn = new Column<EntityModel, Boolean>(
                         new RadioboxCell(true, false)) {
                     @Override
@@ -156,31 +195,38 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         return getSelectionModel().isSelected(object);
                     }
                 };
+            } else if (getSelectionModel() instanceof MultiSelectionModel) {
+                checkColumn = new Column<EntityModel, Boolean>(
+                        new CheckboxCell(true, false)) {
+                    @Override
+                    public Boolean getValue(EntityModel object) {
+                        return getSelectionModel().isSelected(object);
+                    }
+                };
             }
-            addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$
-            setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
+
+            if (checkColumn != null) {
+                addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$
+                setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
+            }
 
             addCellPreviewHandler(new CellPreviewEvent.Handler<EntityModel>() {
                 @Override
                 public void onCellPreview(CellPreviewEvent<EntityModel> event) {
-                    if ("click".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
-                        // let the checkbox/radio button deal with this
+                    if ("click".equals(event.getNativeEvent().getType()) //$NON-NLS-1$
+                            && !(getSelectionModel() instanceof NoSelectionModel)) {
+                        // Let the selection column deal with this
                         if (event.getColumn() == 0) {
                             return;
                         }
-                        getSelectionModel().setSelected(event.getValue(), !getSelectionModel().isSelected(event.getValue()));
+                        getSelectionModel().setSelected(event.getValue(),
+                                !getSelectionModel().isSelected(event.getValue()));
                     }
                 }
             });
         }
     }
 
-    /**
-     * Ad an EntityModelColumn to the Grid
-     *
-     * @param column
-     * @param headerString
-     */
     public void addEntityModelColumn(Column<EntityModel, ?> column, String headerString) {
         super.addColumn(column, headerString);
     }
@@ -227,9 +273,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     @Override
     public void edit(M object) {
         this.listModel = object;
-        // get items
-        List<EntityModel> items = (List<EntityModel>) listModel.getItems();
-        setRowData(items == null ? new ArrayList<EntityModel>() : items);
 
         // Add ItemsChangedEvent Listener
         object.getItemsChangedEvent().addListener(new IEventListener() {
@@ -261,6 +304,10 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                 }
             }
         });
+
+        // Get items from ListModel and update table data
+        List<EntityModel> items = (List<EntityModel>) listModel.getItems();
+        setRowData(items == null ? new ArrayList<EntityModel>() : items);
     }
 
     @Override

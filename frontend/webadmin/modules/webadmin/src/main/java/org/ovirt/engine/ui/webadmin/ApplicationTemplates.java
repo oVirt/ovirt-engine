@@ -69,9 +69,12 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<span style='position: relative; white-space: nowrap;'><span>{0}</span>{1} Alerts</span>")
     SafeHtml alertFooterHeader(SafeHtml imageHtml, int alertCount);
 
-    @Template("<table cellspacing='0' cellpadding='0'><tr>" +
-            "<td><div style='background: url({2}); width: 4px; height: 20px; float:left;'></div>" +
-            "<div class='{5}' style='background: url({3}) repeat-x; white-space: nowrap; height: 20px; line-height: 20px; padding-right: 4px;'>" +
+    @Template("<table cellspacing='0' cellpadding='0'><tr>"
+            +
+            "<td><div style='background: url({2}); width: 4px; height: 20px; float:left;'></div>"
+            +
+            "<div class='{5}' style='background: url({3}) repeat-x; white-space: nowrap; height: 20px; line-height: 20px; padding-right: 4px;'>"
+            +
             "<span style='vertical-align: middle; margin-right: 3px; line-height: 20px;'>{0}</span>{1}</div></td>" +
             "<td><div style='background: url({4}); width: 4px; height: 20px; float: right;'></div></td>" +
             "</tr></table>")
@@ -91,6 +94,12 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<button type='button' tabindex='-1' style='background: url({0}) no-repeat; white-space: nowrap; height: 20px; width: 20px; line-height: 20px; float: right;'></button>")
     SafeHtml actionButtonImage(String image);
+
+    @Template("<span style=\"top: -3px; position: relative;\">{0}</span>")
+    SafeHtml textForCheckBoxHeader(String text);
+
+    @Template("<span style=\"top: -2px; position: relative;\">{0}</span>")
+    SafeHtml textForCheckBox(String text);
 
     @Template("{0} <span style='font-weight:bold; color: red;'>{1}</span>")
     SafeHtml blackRedBold(String black, String redBold);

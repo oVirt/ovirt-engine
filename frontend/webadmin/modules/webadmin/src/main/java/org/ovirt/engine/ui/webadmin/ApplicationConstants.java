@@ -136,8 +136,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("MTU")
     String clusterNewNetworkPopupMtuLabel();
 
-    @DefaultStringValue("Networks")
+    @DefaultStringValue("Select boxes to attach networks")
     String clusterManageNetworkPopupLabel();
+
+    @DefaultStringValue("Assign All")
+    String assignAll();
+
+    @DefaultStringValue("Assigned")
+    String assigned();
 
     @DefaultStringValue("Clusters")
     String dataCenterClusterSubTabLabel();
@@ -166,6 +172,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Override MTU")
     String dataCenterPopupEnableMtuLabel();
 
+    @DefaultStringValue("Name")
+    String nameClusterHeader();
+
     @DefaultStringValue("Type")
     String dataCenterPopupStorageTypeLabel();
 
@@ -176,13 +185,22 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String dataCenterPopupQuotaEnforceTypeLabel();
 
     @DefaultStringValue("Edit Network Parameters")
-    String dataCenterNetworkPopupLabel();
+    String dataCenterEditNetworkPopupLabel();
 
-    @DefaultStringValue("(To allow this option, detach all clusters from network)")
+    @DefaultStringValue("Network Parameters")
+    String dataCenterNewNetworkPopupLabel();
+
+    @DefaultStringValue("To allow editing the network parameters, <b>detach all Clusters</b> and <b>click Apply</b>")
     String dataCenterNetworkPopupSubLabel();
 
-    @DefaultStringValue("Assign Networks to Cluster(s)")
+    @DefaultStringValue("Attach/Detach Network to/from Cluster(s)")
     String dataCenterNetworkPopupAssignLabel();
+
+    @DefaultStringValue("Attach All")
+    String attachAll();
+
+    @DefaultStringValue("Attach")
+    String attach();
 
     @DefaultStringValue("Name")
     String storagePopupNameLabel();
@@ -1695,8 +1713,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String lastTaskEventFooter();
 
     // Network popup
-    @DefaultStringValue("Detach ALL Clusters")
-    String detachAllClustersNetworkPopup();
+    @DefaultStringValue("Apply")
+    String applyClustersNetworkPopup();
 
     // Header
     @DefaultStringValue("Logged in user")

@@ -28,10 +28,11 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListM
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditDataCenterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewDataCenterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 
@@ -105,7 +106,8 @@ public class DataCenterModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<network, DataCenterListModel, DataCenterNetworkListModel> getDataCenterNetworkListProvider(ClientGinjector ginjector,
-            final Provider<DataCenterNetworkPopupPresenterWidget> networkPopupProvider,
+            final Provider<NewDataCenterNetworkPopupPresenterWidget> newNetworkPopupProvider,
+            final Provider<EditDataCenterNetworkPopupPresenterWidget> editNetworkPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<network, DataCenterListModel, DataCenterNetworkListModel>(ginjector,
                 DataCenterListModel.class,
@@ -113,10 +115,11 @@ public class DataCenterModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterNetworkListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getEditCommand()
-                        || lastExecutedCommand == getModel().getNewCommand()) {
-                    return networkPopupProvider.get();
-                } else {
+                if (lastExecutedCommand == getModel().getNewCommand()) {
+                    return newNetworkPopupProvider.get();
+                }else if (lastExecutedCommand == getModel().getEditCommand()) {
+                    return editNetworkPopupProvider.get();
+                }else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
@@ -125,7 +128,7 @@ public class DataCenterModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DataCenterNetworkListModel source,
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()
-                        || lastExecutedCommand.getName().equals("DetachClusters")) { //$NON-NLS-1$
+                        || lastExecutedCommand.getName().equals("Apply")) { //$NON-NLS-1$
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);

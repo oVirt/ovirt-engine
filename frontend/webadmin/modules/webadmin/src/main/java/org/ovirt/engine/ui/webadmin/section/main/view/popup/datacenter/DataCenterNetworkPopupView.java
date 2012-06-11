@@ -4,27 +4,38 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
-import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CheckboxHeader;
+import org.ovirt.engine.ui.webadmin.widget.table.column.EntityModelCheckboxColumn;
 
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<DataCenterNetworkModel> implements DataCenterNetworkPopupPresenterWidget.ViewDef {
+public abstract class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<DataCenterNetworkModel> implements DataCenterNetworkPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<DataCenterNetworkModel, DataCenterNetworkPopupView> {
         Driver driver = GWT.create(Driver.class);
@@ -37,10 +48,6 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
     @UiField
     @Ignore
     Label mainLabel;
-
-    @UiField
-    @Ignore
-    Label subLabel;
 
     @UiField
     @Ignore
@@ -64,7 +71,7 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
 
     @UiField
     @Path(value = "vLanTag.entity")
-    EntityModelTextBoxEditor vlanTag;
+    EntityModelTextBoxOnlyEditor vlanTag;
 
     @UiField(provided = true)
     @Path(value = "hasMtu.entity")
@@ -72,41 +79,58 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
 
     @UiField
     @Path(value = "mtu.entity")
-    EntityModelTextBoxEditor mtuEditor;
+    EntityModelTextBoxOnlyEditor mtuEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    EntityModelCellTable<ListModel> clustersTable;
 
     @UiField
     @Ignore
-    EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> tree;
+    HTML messageLabel;
 
     @UiField
     @Ignore
-    Label messageLabel;
+    SimpleDialogButton apply;
 
     @UiField
-    @Ignore
-    SimpleDialogButton detachAll;
+    WidgetStyle style;
 
     @Inject
-    public DataCenterNetworkPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public DataCenterNetworkPopupView(EventBus eventBus, ApplicationResources resources,
+            ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        this.clustersTable = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        initEntityModelCellTable(constants, templates);
+        updateVisibility();
         localize(constants);
-        // detachAll.setVisible(false);
+        addStyles();
         Driver.driver.initialize(this);
     }
 
     void localize(ApplicationConstants constants) {
-        mainLabel.setText(constants.dataCenterNetworkPopupLabel());
-        subLabel.setText(constants.dataCenterNetworkPopupSubLabel());
         assignLabel.setText(constants.dataCenterNetworkPopupAssignLabel());
         nameEditor.setLabel(constants.dataCenterPopupNameLabel());
         descriptionEditor.setLabel(constants.dataCenterPopupDescriptionLabel());
         isVmNetworkEditor.setLabel(constants.dataCenterPopupVmNetworkLabel());
         vlanTagging.setLabel(constants.dataCenterPopupEnableVlanTagLabel());
         hasMtuEditor.setLabel(constants.dataCenterPopupEnableMtuLabel());
+    }
+
+    void addStyles() {
+        vlanTag.addContentWidgetStyleName(style.vlanEditor());
+        mtuEditor.addContentWidgetStyleName(style.mtuEditor());
+        isVmNetworkEditor.addContentWidgetStyleName(style.checkBox());
+        isVmNetworkEditor.asCheckBox().addStyleName(style.checkBox());
+        vlanTagging.addContentWidgetStyleName(style.checkBox());
+        vlanTagging.asCheckBox().addStyleName(style.checkBox());
+        hasMtuEditor.addContentWidgetStyleName(style.checkBox());
+        hasMtuEditor.asCheckBox().addStyleName(style.checkBox());
+        apply.setCustomContentStyle(style.applyEnabled());
     }
 
     @Override
@@ -135,14 +159,8 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> getTreeViewModel() {
-        return (ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>) tree.getTreeViewModel();
-    }
-
-    @Override
     public void setMessageLabel(String label) {
-        messageLabel.setText(label);
+        messageLabel.setHTML(label);
     }
 
     @Override
@@ -154,16 +172,115 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
         vlanTag.setEnabled(enabled);
         hasMtuEditor.setEnabled(enabled);
         mtuEditor.setEnabled(enabled);
+        messageLabel.setVisible(!enabled);
     }
 
     @Override
-    public void setDetachAllVisible(boolean visible) {
-        detachAll.setVisible(visible);
+    public HasClickHandlers getApply() {
+        return apply;
+    }
+
+    void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
+        CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.attachAll())) {
+            @Override
+            protected void selectionChanged(Boolean value) {
+                ListModel tableModel = clustersTable.flush();
+                for (Object model : tableModel.getItems()) {
+                    NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
+                    if (networkClusterModel.getIsChangable()) {
+                        networkClusterModel.setAttached(value);
+                    }
+                }
+                clustersTable.edit(tableModel);
+            }
+
+            @Override
+            public Boolean getValue() {
+                for (Object model : clustersTable.flush().getItems()) {
+                    NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
+                    if (networkClusterModel.getIsChangable()) {
+                        if (!networkClusterModel.isAttached()) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public boolean isEnabled() {
+                for (Object model : clustersTable.flush().getItems()) {
+                    NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
+                    if (networkClusterModel.getIsChangable()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+
+        clustersTable.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
+            @Override
+            public String getValue(EntityModel model) {
+                return ((NetworkClusterModel) model).getName();
+            }
+        }, constants.nameClusterHeader());
+
+        clustersTable.addColumn(new EntityModelCheckboxColumn(new FieldUpdater<EntityModel, Boolean>() {
+            @Override
+            public void update(int index, EntityModel model, Boolean value) {
+                NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
+                networkClusterModel.setAttached(value);
+                clustersTable.edit(clustersTable.flush());
+            }
+        }) {
+            @Override
+            public Boolean getValue(EntityModel model) {
+                return ((NetworkClusterModel) model).isAttached();
+            }
+
+            @Override
+            protected boolean canEdit(EntityModel model) {
+                return model.getIsChangable();
+            }
+
+            @Override
+            public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
+                super.render(context, object, sb);
+                sb.append(templates.textForCheckBox(constants.attach()));
+            }
+
+        }, assignAllHeader, "80px"); //$NON-NLS-1$
     }
 
     @Override
-    public HasClickHandlers getDetachAll() {
-        return detachAll;
+    public void setNetworkClusterList(ListModel networkClusterList) {
+        clustersTable.edit(networkClusterList);
+    }
+
+    public void updateVisibility() {
+    }
+
+    @Override
+    public void setApplyEnabled(boolean enabled) {
+        apply.setEnabled(enabled);
+        if (enabled) {
+            apply.setCustomContentStyle(style.applyEnabled());
+        } else {
+            apply.setCustomContentStyle(style.applyDisabled());
+        }
+    }
+
+    interface WidgetStyle extends CssResource {
+        String mtuEditor();
+
+        String vlanEditor();
+
+        String checkBox();
+
+        String applyEnabled();
+
+        String applyDisabled();
     }
 
 }

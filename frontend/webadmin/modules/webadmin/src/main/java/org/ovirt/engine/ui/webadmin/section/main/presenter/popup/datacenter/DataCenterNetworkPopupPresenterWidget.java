@@ -1,39 +1,33 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
 public class DataCenterNetworkPopupPresenterWidget extends AbstractNetworkPopupPresenterWidget<DataCenterNetworkModel, DataCenterNetworkPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractNetworkPopupPresenterWidget.ViewDef<DataCenterNetworkModel> {
 
-        ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> getTreeViewModel();
+        void setNetworkClusterList(ListModel networkClusterList);
 
         void setMessageLabel(String label);
 
         void setInputFieldsEnabled(boolean enabled);
 
-        void setDetachAllVisible(boolean visible);
+        HasClickHandlers getApply();
 
-        HasClickHandlers getDetachAll();
+        void setApplyEnabled(boolean enabled);
 
     }
 
@@ -54,20 +48,23 @@ public class DataCenterNetworkPopupPresenterWidget extends AbstractNetworkPopupP
                 DataCenterNetworkModel model = (DataCenterNetworkModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
 
-                if ("ClusterTreeNodes".equals(propertyName)) { //$NON-NLS-1$
-                    // update tree data
-                    ArrayList<SelectionTreeNodeModel> clusterTreeNodes = model.getClusterTreeNodes();
-                    ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> modelListTreeViewModel =
-                            getView().getTreeViewModel();
-                    List<SimpleSelectionTreeNodeModel> rootNodes =
-                            SimpleSelectionTreeNodeModel.fromList(clusterTreeNodes);
-                    modelListTreeViewModel.setRoot(rootNodes);
-                    AsyncDataProvider<SimpleSelectionTreeNodeModel> asyncTreeDataProvider =
-                            modelListTreeViewModel.getAsyncTreeDataProvider();
-                    asyncTreeDataProvider.updateRowCount(rootNodes.size(), true);
-                    asyncTreeDataProvider.updateRowData(0, rootNodes);
-                } else if ("Message".equals(propertyName)) { //$NON-NLS-1$
+                if ("NetworkClusterList".equals(propertyName)) { //$NON-NLS-1$
+                    // update the view
+                    getView().setNetworkClusterList(model.getNetworkClusterList());
+                }else if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     getView().setMessageLabel(model.getMessage());
+                }
+            }
+        });
+
+        model.getApplyCommand().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+
+                if ("IsExecutionAllowed".equals(propertyName)) { //$NON-NLS-1$
+                    // update the view
+                   getView().setApplyEnabled(model.getApplyCommand().getIsExecutionAllowed());
                 }
             }
         });
@@ -82,19 +79,10 @@ public class DataCenterNetworkPopupPresenterWidget extends AbstractNetworkPopupP
             }
         });
 
-        // Listen to "DetachAllAvailable" property
-        model.getDetachAllAvailable().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                EntityModel entity = (EntityModel) sender;
-                getView().setDetachAllVisible((Boolean) entity.getEntity());
-            }
-        });
-
-        registerHandler(getView().getDetachAll().addClickHandler(new ClickHandler() {
+        registerHandler(getView().getApply().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                model.getDetachAllCommand().Execute();
+                model.getApplyCommand().Execute();
             }
         }));
     }
