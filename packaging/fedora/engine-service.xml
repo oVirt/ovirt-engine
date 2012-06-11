@@ -256,7 +256,7 @@
         </process-id>
       </core-environment>
       <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
-      <coordinator-environment default-timeout="300"/>
+      <coordinator-environment default-timeout="600"/>
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:threads:1.1"/>
