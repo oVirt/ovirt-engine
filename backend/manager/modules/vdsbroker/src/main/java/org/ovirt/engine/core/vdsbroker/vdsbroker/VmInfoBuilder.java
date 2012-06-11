@@ -604,6 +604,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         XmlRpcStruct struct = new XmlRpcStruct();
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
+        Map<String, Object> specParams = vmDevice.getSpecParams();
+        // validate & set spec params for balloon device
+        if (specParams == null) {
+            vmDevice.setSpecParams(new HashMap<String, Object>());
+        }
+        specParams.put(VdsProperties.Model, VdsProperties.Virtio);
         addDevice(struct, vmDevice, null);
     }
 

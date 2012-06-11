@@ -154,6 +154,9 @@ public class VmDeviceUtils {
                     continue;
                 }
             }
+            else if (VmDeviceType.BALLOON.getName().equals(device.getType())){
+                specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+            }
             device.setId(new VmDeviceId(id, dstId));
             device.setSpecParams(specParams);
             dao.save(device);
