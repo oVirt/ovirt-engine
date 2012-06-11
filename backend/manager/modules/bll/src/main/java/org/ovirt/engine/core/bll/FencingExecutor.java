@@ -85,11 +85,11 @@ public class FencingExecutor {
                 }
             }
         }
-        if (_vdsToRunId == NO_VDS) {
+        if (NO_VDS.equals(_vdsToRunId)) {
             log.errorFormat("Failed to run Power Management command on Host {0}, no running proxy Host was found.",
                     _vds.getvds_name());
         }
-        return (_vdsToRunId != NO_VDS);
+        return !NO_VDS.equals(_vdsToRunId);
     }
 
     public VDSReturnValue Fence() {
