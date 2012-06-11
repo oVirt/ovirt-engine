@@ -128,42 +128,19 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
-        ParameterizedRowMapper<VdsNetworkInterface> mapper = new ParameterizedRowMapper<VdsNetworkInterface>() {
-            @Override
-            public VdsNetworkInterface mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VdsNetworkInterface entity = new VdsNetworkInterface();
-                entity.getStatistics().setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
-                entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
-                entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
-                entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
-                entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
-                entity.getStatistics().setVdsId(Guid.createGuidFromString(rs.getString("vds_id")));
-                entity.setType((Integer) rs.getObject("type"));
-                entity.setGateway(rs.getString("gateway"));
-                entity.setSubnet(rs.getString("subnet"));
-                entity.setAddress(rs.getString("addr"));
-                entity.setSpeed((Integer) rs.getObject("speed"));
-                entity.setVlanId((Integer) rs.getObject("vlan_id"));
-                entity.setBondType((Integer) rs.getObject("bond_type"));
-                entity.setBondName(rs.getString("bond_name"));
-                entity.setBonded((Boolean) rs.getObject("is_bond"));
-                entity.setBondOptions(rs.getString("bond_opts"));
-                entity.setMacAddress(rs.getString("mac_addr"));
-                entity.setNetworkName(rs.getString("network_name"));
-                entity.setName(rs.getString("name"));
-                entity.setVdsId(NGuid.createGuidFromString(rs.getString("vds_id")));
-                entity.setVdsName(rs.getString("vds_name"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
-                entity.setMtu(rs.getInt("mtu"));
-                entity.setBridged(rs.getBoolean("bridged"));
-                return entity;
-            }
-        };
+        return getCallsHandler().executeReadList("Getinterface_viewByvds_id",
+                vdsNetworkInterfaceRowMapper,
+                parameterSource);
+    }
 
-        return getCallsHandler().executeReadList("Getinterface_viewByvds_id", mapper, parameterSource);
+    @Override
+    public VdsNetworkInterface getManagedInterfaceForVds(Guid id, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+
+        return getCallsHandler().executeRead("GetVdsManagedInterfaceByVdsId",
+                vdsNetworkInterfaceRowMapper,
+                parameterSource);
     }
 
     @Override
@@ -181,4 +158,40 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
 
         getCallsHandler().executeModification("Deletevds_interface", parameterSource);
     }
+
+    private static final ParameterizedRowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
+            new ParameterizedRowMapper<VdsNetworkInterface>() {
+                @Override
+                public VdsNetworkInterface mapRow(ResultSet rs, int rowNum)
+                        throws SQLException {
+                    VdsNetworkInterface entity = new VdsNetworkInterface();
+                    entity.getStatistics().setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
+                    entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
+                    entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
+                    entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
+                    entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
+                    entity.getStatistics().setVdsId(Guid.createGuidFromString(rs.getString("vds_id")));
+                    entity.setType((Integer) rs.getObject("type"));
+                    entity.setGateway(rs.getString("gateway"));
+                    entity.setSubnet(rs.getString("subnet"));
+                    entity.setAddress(rs.getString("addr"));
+                    entity.setSpeed((Integer) rs.getObject("speed"));
+                    entity.setVlanId((Integer) rs.getObject("vlan_id"));
+                    entity.setBondType((Integer) rs.getObject("bond_type"));
+                    entity.setBondName(rs.getString("bond_name"));
+                    entity.setBonded((Boolean) rs.getObject("is_bond"));
+                    entity.setBondOptions(rs.getString("bond_opts"));
+                    entity.setMacAddress(rs.getString("mac_addr"));
+                    entity.setNetworkName(rs.getString("network_name"));
+                    entity.setName(rs.getString("name"));
+                    entity.setVdsId(NGuid.createGuidFromString(rs.getString("vds_id")));
+                    entity.setVdsName(rs.getString("vds_name"));
+                    entity.setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
+                    entity.setMtu(rs.getInt("mtu"));
+                    entity.setBridged(rs.getBoolean("bridged"));
+                    return entity;
+                }
+            };
 }

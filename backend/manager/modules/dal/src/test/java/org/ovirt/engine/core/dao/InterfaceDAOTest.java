@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -248,5 +249,37 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
         for (VdsNetworkInterface iface : result) {
             assertEquals(VDS_ID, iface.getVdsId());
         }
+    }
+
+    /**
+     * Asserts that a null result is returned for a non privileged user with filtering enabled
+     */
+    @Test
+    public void testGetManagedInterfaceForVdsFilteredForUnpriviligedUser() {
+        VdsNetworkInterface result = dao.getManagedInterfaceForVds(VDS_ID, UNPRIVILEGED_USER_ID, true);
+        assertNull(result);
+    }
+
+    /**
+     * Asserts that the management network interface of a VDS is returned for a privileged user with filtering enabled
+     */
+    @Test
+    public void testGetManagedInterfaceForVdsFilteredForPriviligedUser() {
+        VdsNetworkInterface result = dao.getManagedInterfaceForVds(VDS_ID, PRIVILEGED_USER_ID, true);
+        assertCorrectGetManagedInterfaceForVdsResult(result);
+    }
+
+    /**
+     * Asserts that the management network interface of a VDS is returned for a non privileged user with filtering disabled
+     */
+    @Test
+    public void testGetManagedInterfaceForVdsFilteringDisabledForUnpriviligedUser() {
+        VdsNetworkInterface result = dao.getManagedInterfaceForVds(VDS_ID, UNPRIVILEGED_USER_ID, false);
+        assertCorrectGetManagedInterfaceForVdsResult(result);
+    }
+
+    static private void assertCorrectGetManagedInterfaceForVdsResult(VdsNetworkInterface result) {
+        assertNotNull(result);
+        assertTrue(result.getIsManagement());
     }
 }

@@ -312,6 +312,24 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVdsManagedInterfaceByVdsId(v_vds_id UUID, v_user_id UUID, v_is_filtered boolean)
+RETURNS SETOF vds_interface_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vds_interface_view
+   -- Checking if the 2nd bit in the type column is set, meaning that the interface is managed
+   WHERE vds_id = v_vds_id AND (type & 2) = 2
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                     FROM   user_vds_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = v_vds_id));
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 ----------------------------------------------------------------
 -- [vm_interface] Table
 --
