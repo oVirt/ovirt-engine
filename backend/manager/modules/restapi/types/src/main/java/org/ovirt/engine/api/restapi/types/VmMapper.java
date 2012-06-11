@@ -314,7 +314,7 @@ public class VmMapper {
             model.setHost(new Host());
             model.getHost().setId(entity.getrun_on_vds().toString());
         }
-        if (entity.getdisplay_type() != null) {
+        if (entity.getdefault_display_type() != null) {
             model.setDisplay(new Display());
             model.getDisplay().setType(map(entity.getdefault_display_type(), null));
             model.getDisplay().setAddress(entity.getdisplay_ip());
