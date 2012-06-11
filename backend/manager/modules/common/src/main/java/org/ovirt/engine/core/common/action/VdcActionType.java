@@ -134,7 +134,7 @@ public enum VdcActionType {
     AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS),
     // UserAndGroupsCommands
     SetUserRole(405),
-    LoginUser(406, false),
+    LoginUser(406, ActionGroup.LOGIN, false),
     AutoLogin(407, false),
     LogoutUser(408, false),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false),
@@ -146,7 +146,7 @@ public enum VdcActionType {
     RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS, false),
     ChangeUserPassword(416),
     CreateComputerAccount(417),
-    LoginAdminUser(418, false),
+    LoginAdminUser(418, ActionGroup.LOGIN, false),
     AddUser(419, ActionGroup.MANIPULATE_USERS, false),
     // Tags
     AddTag(501),

@@ -148,6 +148,8 @@ public class PermitMapper {
             return PermitType.DELETE_DISK;
         case PORT_MIRRORING:
             return PermitType.PORT_MIRRORING;
+        case LOGIN:
+            return PermitType.LOGIN;
         default:
             return null;
         }

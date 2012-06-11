@@ -422,6 +422,26 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- gets entity permissions given the user id, groups, action group id and the object type and object id
+Create or replace FUNCTION get_entity_permissions_for_user_and_groups(v_user_id UUID,v_group_ids text,v_action_group_id INTEGER,v_object_id UUID,v_object_type_id INTEGER,
+OUT v_permission_id UUID)
+	-- Add the parameters for the stored procedure here
+   AS $procedure$
+   DECLARE
+   v_everyone_object_id  UUID;
+BEGIN
+   v_everyone_object_id := getGlobalIds('everyone'); -- hardcoded also in MLA Handler
+   select   id INTO v_permission_id from permissions where
+		-- get all roles of action
+   role_id in(select role_id from roles_groups where action_group_id = v_action_group_id)
+		-- get allparents of object
+   and (object_id in(select id from  fn_get_entity_parents(v_object_id,v_object_type_id)))
+		-- get user and his groups
+   and (ad_element_id = v_everyone_object_id or
+   ad_element_id = v_user_id or ad_element_id in(select ID from fnsplitteruuid(v_group_ids)))   LIMIT 1;
+END; $procedure$
+LANGUAGE plpgsql;
+
 ----------------------------------------------------------------
 -- [roles_groups] Table
 --

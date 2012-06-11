@@ -20,14 +20,16 @@ RETURNS UUID
 BEGIN
    if (v_name = 'system') then
       v_id := 'AAA00000-0000-0000-0000-123456789AAA';
-   else
-      if (v_name = 'everyone') then
-         v_id := 'EEE00000-0000-0000-0000-123456789EEE';
-      end if;
+   elsif (v_name = 'everyone') then
+      v_id := 'EEE00000-0000-0000-0000-123456789EEE';
+   -- bottom is an object which all the objects in the system are its parents
+   -- useful to denote we want all objects when checking for permissions
+   elsif (v_name = 'bottom') then
+      v_id := 'BBB00000-0000-0000-0000-123456789BBB';
    end if;
    return  v_id;
 END; $function$
-LANGUAGE plpgsql;
+LANGUAGE plpgsql IMMUTABLE;
 
 
 
@@ -138,6 +140,7 @@ $function$
 	Object Types (compatible with VdcObjectType, XXX entries are unused currently)
 		Unknown XXX,
 		System XXX,
+        Bottom = 0,
 		VM = 2,
 		VDS = 3,
 		VmTemplate = 4,
@@ -173,6 +176,10 @@ BEGIN
 
 	system_root_id := ( SELECT getGlobalIds('system') ); -- hardcoded also in MLA Handler
 	CASE
+	WHEN v_entity_type = 0 THEN -- Bottom
+		RETURN QUERY
+			SELECT object_id
+			FROM permissions;
 	WHEN v_entity_type = 2 THEN -- VM
         -- get cluster id
 		cluster_id := ( SELECT vds_group_id FROM vm_static WHERE vm_guid = v_entity_id );

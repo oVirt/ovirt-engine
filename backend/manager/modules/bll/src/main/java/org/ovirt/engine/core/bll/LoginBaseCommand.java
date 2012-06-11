@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
@@ -190,6 +191,16 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             addCanDoActionMessage(VdcBllMessages.USER_IS_ALREADY_LOGGED_IN);
         }
         if (authenticated) {
+            /*
+             * Check login permissions
+             * We do it here and not via the getPermissionCheckSubjects mechanism, because we need the user to be logged in to
+             * the system in order to perform this check. The user is indeed logged in when running every command
+             * except the login command
+             */
+            if (!checkUserAndGroupsAuthorization(_adUser.getUserId(), _adUser.getGroupIds(), getActionType().getActionGroup(), MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID, VdcObjectType.Bottom)) {
+                addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
 
             // Retrieve the MLA admin status of the user.
             // This may be redundant in some use-cases, but looking forward to Single Sign On,

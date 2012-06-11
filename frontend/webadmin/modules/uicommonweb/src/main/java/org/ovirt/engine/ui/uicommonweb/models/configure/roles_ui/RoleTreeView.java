@@ -104,6 +104,7 @@ public class RoleTreeView
         array.add(ActionGroup.DELETE_DISK);
         array.add(ActionGroup.CONFIGURE_DISK_STORAGE);
         array.add(ActionGroup.EDIT_DISK_PROPERTIES);
+        array.add(ActionGroup.LOGIN);
         return array;
 
     }
@@ -130,6 +131,10 @@ public class RoleTreeView
                                                                 ConstantsManager.getInstance()
                                                                         .getConstants()
                                                                         .allowToDefineConfigureRolesInTheSystemRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.LOGIN,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToLoginToTheSystemRoleTreeTooltip()),
                                                         new RoleNode(ActionGroup.CONFIGURE_ENGINE,
                                                                 ConstantsManager.getInstance()
                                                                         .getConstants()

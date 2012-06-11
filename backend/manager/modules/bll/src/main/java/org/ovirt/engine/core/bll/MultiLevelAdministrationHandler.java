@@ -6,6 +6,8 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -23,6 +25,12 @@ public class MultiLevelAdministrationHandler {
 
     public static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     public static final Guid EVERYONE_OBJECT_ID = new Guid("EEE00000-0000-0000-0000-123456789EEE");
+    /*
+     *  bottom is an object which all the objects in the system are its parents
+     *  useful to denote we want all objects when checking for permissions
+     */
+    public static final Guid BOTTOM_OBJECT_ID = new Guid("BBB00000-0000-0000-0000-123456789BBB");
+
     private static Log log = LogFactory.getLog(MultiLevelAdministrationHandler.class);
 
     public static PermissionDAO getPermissionDAO() {
@@ -123,5 +131,9 @@ public class MultiLevelAdministrationHandler {
             }
         }
         return retValue;
+    }
+
+    public static boolean isMultilevelAdministrationOn() {
+        return Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn);
     }
 }

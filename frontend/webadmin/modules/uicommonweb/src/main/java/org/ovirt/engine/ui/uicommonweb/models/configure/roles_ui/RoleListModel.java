@@ -346,7 +346,9 @@ public class RoleListModel extends ListWithDetailsModel
         if (getWindow() != null
                 && sender == ((RoleModel) getWindow()).getIsAdminRole()) {
             if (commandType == CommandType.New) {
-                setAttachedActionGroups(new ArrayList<ActionGroup>());
+                List<ActionGroup> selectedActionGroups = new ArrayList<ActionGroup>();
+                selectedActionGroups.add(ActionGroup.LOGIN);
+                setAttachedActionGroups(selectedActionGroups);
             } else {
 
                 AsyncQuery _asyncQuery = new AsyncQuery();
@@ -370,7 +372,7 @@ public class RoleListModel extends ListWithDetailsModel
         }
     }
 
-    void setAttachedActionGroups(ArrayList<ActionGroup> attachedActions) {
+    void setAttachedActionGroups(List<ActionGroup> attachedActions) {
         roles role = (roles) getSelectedItem();
         RoleModel model = (RoleModel) getWindow();
         ArrayList<SelectionTreeNodeModel> selectionTree =

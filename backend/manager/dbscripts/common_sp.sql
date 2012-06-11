@@ -319,4 +319,20 @@ begin
     end if;
 END; $BODY$
 
-LANGUAGE plpgsql
+LANGUAGE plpgsql;
+
+-- Function: fn_db_grant_action_group_to_all_roles(integer)
+-- This function adds the input v_action_group_id to all the existing roles (both pre-defined and custom), besides the
+-- input roles to filter.
+CREATE OR REPLACE FUNCTION fn_db_grant_action_group_to_all_roles_filter(v_action_group_id integer, uuid[])
+  RETURNS void AS
+$BODY$
+declare
+v_role_id_to_filter alias for $2;
+begin
+    insert into roles_groups (role_id, action_group_id)
+    select distinct role_id, v_action_group_id
+    from roles_groups rg
+    where not ARRAY [role_id] <@ v_role_id_to_filter and not exists (select 1 from roles_groups where role_id = rg.role_id and action_group_id = v_action_group_id);
+END; $BODY$
+LANGUAGE plpgsql;

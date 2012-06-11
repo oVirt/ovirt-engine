@@ -39,8 +39,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
@@ -571,10 +569,51 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            the type of the object to check
      * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
      */
-    private boolean checkUserAuthorization(final ActionGroup actionGroup, final Guid object, final VdcObjectType type) {
+    protected boolean checkUserAuthorization(Guid userId, final ActionGroup actionGroup, final Guid object, final VdcObjectType type) {
         // Grant if there is matching permission in the database:
         final NGuid permId =
-                DbFacade.getInstance().getEntityPermissions(getCurrentUser().getUserId(), actionGroup, object, type);
+                getDbFacade().getEntityPermissions(userId, actionGroup, object, type);
+        if (permId != null) {
+            if (log.isDebugEnabled()) {
+                log.debugFormat("Found permission {0} for user when running {1}, on {2} with id {3}",
+                        permId,
+                        getActionType(),
+                        type.getVdcObjectTranslation(),
+                        object);
+            }
+            return true;
+        }
+
+        // Deny otherwise:
+        if (log.isDebugEnabled()) {
+            log.debugFormat("No permission found for user when running action {0}, on object {1} for action group {2} with id {3}.",
+                    getActionType(),
+                    type.getVdcObjectTranslation(),
+                    actionGroup,
+                    object);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the input user and groups is authorized to run the given action on the given object.
+     *
+     * @param userId
+     *            the user to check
+     * @param groupIds
+     *            the groups to check
+     * @param actionGroup
+     *            the action group to check
+     * @param object
+     *            the object to check
+     * @param type
+     *            the type of the object to check
+     * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
+     */
+    protected boolean checkUserAndGroupsAuthorization(Guid userId, String groupIds, final ActionGroup actionGroup, final Guid object, final VdcObjectType type) {
+        // Grant if there is matching permission in the database:
+        final NGuid permId =
+                getDbFacade().getEntityPermissionsForUserAndGroups(userId, groupIds, actionGroup, object, type);
         if (permId != null) {
             if (log.isDebugEnabled()) {
                 log.debugFormat("Found permission {0} for user when running {1}, on {2} with id {3}",
@@ -614,7 +653,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
 
         // Skip check if multilevel administration is disabled:
-        if (!Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn)) {
+        if (!MultiLevelAdministrationHandler.isMultilevelAdministrationOn()) {
             if (log.isDebugEnabled()) {
                 log.debugFormat("Permission check for action {0} skipped because multilevel administration is disabled.",
                         getActionType());
@@ -661,7 +700,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
 
             // Check the authorization:
-            if (!checkUserAuthorization(objectActionGroup, objectId, objectType)) {
+            if (!checkUserAuthorization(getCurrentUser().getUserId(), objectActionGroup, objectId, objectType)) {
                 addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
                 return false;
             }

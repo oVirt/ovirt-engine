@@ -110,6 +110,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String ActionGroup___MANIPULATE_PERMISSIONS();
 
+	String ActionGroup___LOGIN();
+
 	String ActionGroup___MANIPULATE_ROLES();
 
 	String ActionGroup___CONFIGURE_STORAGE_POOL_NETWORK();

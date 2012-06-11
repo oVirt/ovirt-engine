@@ -16,8 +16,6 @@
 
 package org.ovirt.engine.api.model;
 
-
-
 public enum PermitType {
     CREATE_VM(1, RoleType.USER),
     DELETE_VM(2, RoleType.USER),
@@ -89,7 +87,10 @@ public enum PermitType {
     DELETE_DISK(1104, RoleType.USER),
 
     // Vm Interface action groups
-    PORT_MIRRORING(1104, RoleType.ADMIN);
+    PORT_MIRRORING(1104, RoleType.ADMIN),
+
+    // Login action group
+    LOGIN(1300, RoleType.USER);
 
     private int id;
     private RoleType role;

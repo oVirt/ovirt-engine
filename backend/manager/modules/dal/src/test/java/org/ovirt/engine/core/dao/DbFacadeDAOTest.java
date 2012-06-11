@@ -80,7 +80,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     private static final Guid STORAGE_POOL_WITH_MASTER_DOWN = new Guid("72B9E200-F48B-4687-83F2-62828F249A47");
     private static final Guid VM_STATIC_GUID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final boolean INITIALIZED = true;
-    private static final Guid USER_ID_WITH_BASIC_PERMISSIONS = new Guid("88D4301A-17AF-496C-A793-584640853D4B");
+    private static final Guid DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS = new Guid("88D4301A-17AF-496C-A793-584640853D4B");
     private static final Guid VMT_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     @Before
@@ -526,11 +526,23 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetEntityPermissions(){
             // Should not return null since the user has the relevant permission
-            assertNotNull(dbFacade.getEntityPermissions(USER_ID_WITH_BASIC_PERMISSIONS, ActionGroup.VM_BASIC_OPERATIONS,
+            assertNotNull(dbFacade.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS, ActionGroup.VM_BASIC_OPERATIONS,
                     VMT_ID, VdcObjectType.VM));
 
             // Should return null since the user does not has the relevant permission
-            assertNull(dbFacade.getEntityPermissions(USER_ID_WITH_BASIC_PERMISSIONS, ActionGroup.CREATE_TEMPLATE,
+            assertNull(dbFacade.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS, ActionGroup.CREATE_TEMPLATE,
                     VMT_ID, VdcObjectType.VM));
     }
+
+    @Test
+    public void testGetEntityPermissionsByUserAndGroups(){
+            // Should not return null since the user has the relevant permission
+            assertNotNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.NewGuid(), DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(), ActionGroup.VM_BASIC_OPERATIONS,
+                    VMT_ID, VdcObjectType.VM));
+
+            // Should return null since the user does not has the relevant permission
+            assertNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.NewGuid(), DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(), ActionGroup.CREATE_TEMPLATE,
+                    VMT_ID, VdcObjectType.VM));
+    }
+
 }

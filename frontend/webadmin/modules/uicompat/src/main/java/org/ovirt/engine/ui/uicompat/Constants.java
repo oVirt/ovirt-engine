@@ -901,6 +901,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Allow to add/remove permissions for Users on objects in the system")
 	String allowToAddRemovePermissionsForUsersOnObjectsInTheSystemRoleTreeTooltip();
 
+    @DefaultStringValue("Allow to login to the system")
+    String allowToLoginToTheSystemRoleTreeTooltip();
+
 	@DefaultStringValue("Allow to define/configure roles in the System")
 	String allowToDefineConfigureRolesInTheSystemRoleTreeTooltip();
 

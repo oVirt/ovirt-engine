@@ -5,6 +5,9 @@ import java.util.Map;
 
 public enum VdcObjectType {
     Unknown(-1, "Unknown"),
+    // bottom is an object which all the objects in the system are its parents
+    // useful to denote we want all objects when checking for permissions
+    Bottom(0, "Bottom"),
     System(1, "System"),
     VM(2, "VM"),
     VDS(3, "Host"),

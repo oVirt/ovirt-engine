@@ -237,6 +237,21 @@ public class DbFacade {
         return dbResults.get(resultKey) != null ? new NGuid(dbResults.get(resultKey).toString()) : null;
     }
 
+    public NGuid getEntityPermissionsForUserAndGroups(Guid userId, String groupIds, ActionGroup actionGroup, Guid objectId,
+            VdcObjectType vdcObjectType) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("user_id", userId)
+                .addValue("group_ids", groupIds).addValue("action_group_id", actionGroup.getId()).addValue("object_id", objectId).addValue(
+                        "object_type_id", vdcObjectType.getValue());
+
+        String resultKey = "permission_id";
+        Map<String, Object> dbResults =
+                new SimpleJdbcCall(jdbcTemplate).withProcedureName("get_entity_permissions_for_user_and_groups")
+                        .declareParameters(new SqlOutParameter(resultKey, Types.VARCHAR))
+                        .execute(parameterSource);
+
+        return dbResults.get(resultKey) != null ? new NGuid(dbResults.get(resultKey).toString()) : null;
+    }
+
     public String getEntityNameByIdAndType(Guid objectId, VdcObjectType vdcObjectType) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("entity_id", objectId)
                 .addValue("object_type", vdcObjectType.getValue());
