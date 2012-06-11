@@ -12,10 +12,14 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -31,6 +35,7 @@ import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -38,6 +43,7 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.springframework.util.Assert;
 
 public class ImportVmTemplateCommandTest {
 
@@ -224,5 +230,75 @@ public class ImportVmTemplateCommandTest {
         final ImprotVmTemplateParameters p =
                 new ImprotVmTemplateParameters(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), t);
         return p;
+    }
+
+    private final String string100 = "0987654321" +
+            "0987654321" +
+            "0987654321" +
+            "0987654321" +
+            "0987654321" +
+            "0987654321" +
+            "0987654321" +
+            "0987654321" +
+            "0987654321" +
+            "0987654321";
+
+    @Test
+    public void testValidateNameSizeImportAsCloned() {
+        checkTemplateName(true, string100);
+    }
+
+    @Test
+    public void testDoNotValidateNameSizeImport() {
+        checkTemplateName(false, string100);
+    }
+
+    @Test
+    public void testValidateNameSpecialCharImportAsCloned() {
+        checkTemplateName(true, "vm_$%$#%#$");
+    }
+
+    @Test
+    public void testDoNotValidateNameSpecialCharImport() {
+        checkTemplateName(false, "vm_$%$#%#$");
+    }
+
+    private void checkTemplateName(boolean isImportAsNewEntity, String name) {
+        ImprotVmTemplateParameters parameters = createParameters();
+        parameters.getVmTemplate().setname(name);
+        parameters.setImportAsNewEntity(isImportAsNewEntity);
+        ImportVmTemplateCommand command =
+                spy(new ImportVmTemplateCommand(parameters));
+        Set<ConstraintViolation<ImprotVmTemplateParameters>> validate =
+                ValidationUtils.getValidator().validate(parameters,
+                        command.getValidationGroups().toArray(new Class<?>[0]));
+        Assert.isTrue(validate.isEmpty() == !isImportAsNewEntity);
+    }
+
+    /**
+     * Checking that other fields in VmTemplate aren't get validated in Import or
+     * import as cloned.
+     * testing that 100 char String is set in domain field
+     */
+    @Test
+    public void testOtherFieldsNotValidatedInImport() {
+        ImprotVmTemplateParameters parameters = createParameters();
+
+        assertFalse(BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE > string100.length());
+        parameters.getVmTemplate().setdomain(string100);
+        parameters.setImportAsNewEntity(true);
+        ImportVmTemplateCommand command =
+                spy(new ImportVmTemplateCommand(parameters));
+        Set<ConstraintViolation<ImprotVmTemplateParameters>> validate =
+                ValidationUtils.getValidator().validate(parameters,
+                        command.getValidationGroups().toArray(new Class<?>[0]));
+        Assert.isTrue(validate.isEmpty());
+        parameters.getVmTemplate().setdomain(string100);
+        parameters.setImportAsNewEntity(false);
+        command = spy(new ImportVmTemplateCommand(parameters));
+        validate =
+                ValidationUtils.getValidator().validate(parameters,
+                        command.getValidationGroups().toArray(new Class<?>[0]));
+        Assert.isTrue(validate.isEmpty());
     }
 }

@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
@@ -40,6 +42,7 @@ public class ImprotVmTemplateParameters extends MoveOrCopyParameters implements 
         privateDestDomainId = value;
     }
 
+    @Valid
     private VmTemplate privateVmTemplate;
 
     public VmTemplate getVmTemplate() {

@@ -49,6 +49,8 @@ import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQuery
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
+import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -924,4 +926,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private static Log log = LogFactory.getLog(ImportVmCommand.class);
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        if (getParameters().isImportAsNewEntity()) {
+            return addValidationGroup(ImportClonedEntity.class);
+        }
+        return addValidationGroup(ImportEntity.class);
+    }
 }

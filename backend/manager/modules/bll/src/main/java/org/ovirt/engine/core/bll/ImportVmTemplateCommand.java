@@ -38,6 +38,8 @@ import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
+import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -446,5 +448,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         } else {
             return super.getVmTemplate();
         }
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        if(getParameters().isImportAsNewEntity()){
+            return addValidationGroup(ImportClonedEntity.class);
+        }
+        return addValidationGroup(ImportEntity.class);
     }
 }

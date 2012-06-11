@@ -2,12 +2,15 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
+import javax.validation.Valid;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImportVmParameters extends MoveVmParameters implements Serializable {
     private static final long serialVersionUID = -6514416097090370831L;
 
+    @Valid
     private VM _vm;
     private Guid _sourceDomainId = Guid.Empty;
     private Guid _destDomainId = Guid.Empty;

@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -50,9 +52,9 @@ public class VmTemplate extends VmBase {
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
             message = "VALIDATION.VM_TEMPLATE.NAME.MAX",
-            groups = { CreateEntity.class, UpdateEntity.class })
+            groups = { Default.class, ImportClonedEntity.class })
     @ValidName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
-            UpdateEntity.class })
+            UpdateEntity.class, ImportClonedEntity.class })
     @Column(name = "name", length = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE, nullable = false)
     private String name;
 
