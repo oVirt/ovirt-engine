@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -43,40 +44,70 @@ public class SetupNetworksVDSCommandTest {
     private ArgumentCaptor<XmlRpcStruct> networksCaptor;
 
     @Test
-    public void networkWithDhcp() {
-        List<network> networks = new ArrayList<network>();
-        network net = new network("",
-                        "",
-                        Guid.NewGuid(),
-                        RandomUtils.instance().nextString(10),
-                        "",
-                        "",
-                        0,
-                        null,
-                        false,
-                        0,
-                        true);
-        networks.add(net);
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
-        VdsNetworkInterface nic =
-                createVdsInterface("eth0", false, null, null, NetworkBootProtocol.Dhcp, net.getName());
-        ifaces.add(nic);
+    public void vlanOverNic() {
+        network net = createNetwork(RandomUtils.instance().nextInt(0, 4000));
+        VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.Dhcp, null);
+        VdsNetworkInterface vlan = createVlan(nic, net);
 
         SetupNetworksVdsCommandParameters parameters =
                 new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
-                        networks,
+                        Collections.singletonList(net),
                         Collections.<String> emptyList(),
+                        Collections.singletonList(nic),
                         Collections.<VdsNetworkInterface> emptyList(),
+                        Arrays.asList(nic, vlan));
+
+        createCommand(parameters).Execute();
+        verifyMethodPassedToHost();
+
+        Map<String, String> networkStruct = assertNeworkWasSent(net);
+        assertEquals(nic.getName(), networkStruct.get("nic"));
+    }
+
+    @Test
+    public void vlanOverBond() {
+        VdsNetworkInterface bond = createBond();
+        List<VdsNetworkInterface> slaves = createSlaves(bond);
+        network net = createNetwork(RandomUtils.instance().nextInt(0, 4000));
+        VdsNetworkInterface vlan = createVlan(bond, net);
+
+        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(slaves);
+        ifaces.add(bond);
+        ifaces.add(vlan);
+
+        SetupNetworksVdsCommandParameters parameters =
+                new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
+                        Collections.singletonList(net),
+                        Collections.<String> emptyList(),
+                        Collections.singletonList(bond),
                         Collections.<VdsNetworkInterface> emptyList(),
                         ifaces);
 
         createCommand(parameters).Execute();
+        verifyMethodPassedToHost();
 
-        verify(server).setupNetworks(networksCaptor.capture(), any(XmlRpcStruct.class), any(XmlRpcStruct.class));
-        XmlRpcStruct networksStruct = networksCaptor.getValue();
-        Map<String, String> networkStruct = (Map<String, String>) networksStruct.getItem(net.getName());
-        assertNotNull("Network " + net.getName() + " should've been sent but wasn't.", networkStruct);
+        assertBondWasSent(bond, slaves);
+        Map<String, String> networkStruct = assertNeworkWasSent(net);
+        assertEquals(bond.getName(), networkStruct.get("bonding"));
+    }
 
+    @Test
+    public void networkWithDhcp() {
+        network net = createNetwork(null);
+        VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.Dhcp, net.getName());
+
+        SetupNetworksVdsCommandParameters parameters =
+                new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
+                        Collections.singletonList(net),
+                        Collections.<String> emptyList(),
+                        Collections.<VdsNetworkInterface> emptyList(),
+                        Collections.<VdsNetworkInterface> emptyList(),
+                        Arrays.asList(nic));
+
+        createCommand(parameters).Execute();
+        verifyMethodPassedToHost();
+
+        Map<String, String> networkStruct = assertNeworkWasSent(net);
         assertEquals(nic.getName(), networkStruct.get("nic"));
         assertEquals(SetupNetworksVDSCommand.DHCP_BOOT_PROTOCOL,
                 networkStruct.get(SetupNetworksVDSCommand.BOOT_PROTOCOL));
@@ -84,42 +115,78 @@ public class SetupNetworksVDSCommandTest {
 
     @Test
     public void bondModified() {
-        List<VdsNetworkInterface> bonds = new ArrayList<VdsNetworkInterface>();
-        VdsNetworkInterface bond = createVdsInterface("bond0", true, null, RandomUtils.instance().nextString(100), null, null);
-        bonds.add(bond);
-
-        int slaveCount = RandomUtils.instance().nextInt(2, 100);
-        List<VdsNetworkInterface> slaves = new ArrayList<VdsNetworkInterface>(slaveCount);
-        for (int i = 0; i < slaveCount; i++) {
-            slaves.add(createVdsInterface("eth" + i, false, bond.getName(), null, null, null));
-        }
-
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(slaveCount + 1);
+        VdsNetworkInterface bond = createBond();
+        List<VdsNetworkInterface> slaves = createSlaves(bond);
+        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(slaves);
         ifaces.add(bond);
-        ifaces.addAll(slaves);
 
         SetupNetworksVdsCommandParameters parameters =
                 new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
                         Collections.<network> emptyList(),
                         Collections.<String> emptyList(),
-                        bonds,
+                        Collections.singletonList(bond),
                         Collections.<VdsNetworkInterface> emptyList(),
                         ifaces);
 
         createCommand(parameters).Execute();
+        verifyMethodPassedToHost();
 
-        verify(server).setupNetworks(any(XmlRpcStruct.class), bondingCaptor.capture(), any(XmlRpcStruct.class));
+        Map<String, Object> bondMap = assertBondWasSent(bond, slaves);
+        assertEquals(bond.getBondOptions(), bondMap.get(SetupNetworksVDSCommand.BONDING_OPTIONS));
+    }
+
+    /**
+     * Verify that the method on the host was called, capturing the sent arguments for tests done later.
+     */
+    private void verifyMethodPassedToHost() {
+        verify(server).setupNetworks(networksCaptor.capture(), bondingCaptor.capture(), any(XmlRpcStruct.class));
+    }
+
+    /**
+     * Make sure that the given bond (together with slaves) was sent to the Host.
+     *
+     * @param bond
+     *            The bond expected to be sent.
+     * @param slaves
+     *            The slaves that are expected to be in the bond.
+     * @return The bond's Map (which is what we send to Host) for further testing.
+     */
+    private Map<String, Object> assertBondWasSent(VdsNetworkInterface bond, List<VdsNetworkInterface> slaves) {
         XmlRpcStruct bondingStruct = bondingCaptor.getValue();
-        Map<String, Object> bondStruct = (Map<String, Object>) bondingStruct.getItem(bond.getName());
-        assertNotNull("Bond " + bond.getName() + " should've been sent but wasn't.", bondStruct);
+        Map<String, Object> bondMap = (Map<String, Object>) bondingStruct.getItem(bond.getName());
+        assertNotNull("Bond " + bond.getName() + " should've been sent but wasn't.", bondMap);
 
-        List<String> nicsInStruct = (List<String>) bondStruct.get(SetupNetworksVDSCommand.SLAVES);
+        List<String> nicsInStruct = (List<String>) bondMap.get(SetupNetworksVDSCommand.SLAVES);
         for (VdsNetworkInterface slave : slaves) {
             assertTrue("Slave " + slave.getName() + " should've been sent but wasn't.",
                     nicsInStruct.contains(slave.getName()));
         }
 
-        assertEquals(bond.getBondOptions(), bondStruct.get(SetupNetworksVDSCommand.BONDING_OPTIONS));
+        return bondMap;
+    }
+
+    /**
+     * Make sure that the given network was sent to the host in the networks list.
+     *
+     * @param net
+     *            The network expected to be sent.
+     * @return The network's XML/RPC struct for further testing.
+     */
+    private Map<String, String> assertNeworkWasSent(network net) {
+        XmlRpcStruct networksStruct = networksCaptor.getValue();
+        Map<String, String> networkStruct = (Map<String, String>) networksStruct.getItem(net.getName());
+        assertNotNull("Network " + net.getName() + " should've been sent but wasn't.", networkStruct);
+        return networkStruct;
+    }
+
+    private List<VdsNetworkInterface> createSlaves(VdsNetworkInterface bond) {
+        int slaveCount = RandomUtils.instance().nextInt(2, 100);
+        List<VdsNetworkInterface> slaves = new ArrayList<VdsNetworkInterface>(slaveCount);
+        for (int i = 0; i < slaveCount; i++) {
+            slaves.add(createNic("eth" + i, bond.getName(), null, null));
+        }
+
+        return slaves;
     }
 
     private SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters> createCommand(
@@ -149,7 +216,8 @@ public class SetupNetworksVDSCommandTest {
             String bondName,
             String bondOptions,
             NetworkBootProtocol bootProtocol,
-            String networkName) {
+            String networkName,
+            Integer vlanId) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setId(Guid.NewGuid());
         iface.setName(name);
@@ -158,6 +226,42 @@ public class SetupNetworksVDSCommandTest {
         iface.setBondOptions(bondOptions);
         iface.setBootProtocol(bootProtocol);
         iface.setNetworkName(networkName);
+        iface.setVlanId(vlanId);
         return iface;
+    }
+
+    private VdsNetworkInterface createBond() {
+        return createVdsInterface("bond0", true, null, RandomUtils.instance().nextString(100), null, null, null);
+    }
+
+    private VdsNetworkInterface createNic(String name,
+            String bondName,
+            NetworkBootProtocol bootProtocol,
+            String network) {
+        return createVdsInterface(name, false, bondName, null, bootProtocol, network, null);
+    }
+
+    private VdsNetworkInterface createVlan(VdsNetworkInterface iface, network net) {
+        return createVdsInterface(iface.getName() + "." + net.getvlan_id(),
+                false,
+                null,
+                null,
+                NetworkBootProtocol.None,
+                net.getName(),
+                net.getvlan_id());
+    }
+
+    private network createNetwork(Integer vlanId) {
+        return new network("",
+                "",
+                Guid.NewGuid(),
+                RandomUtils.instance().nextString(10),
+                "",
+                "",
+                0,
+                vlanId,
+                false,
+                0,
+                true);
     }
 }
