@@ -35,6 +35,7 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
                 getCustomMapSqlParameterSource().addValue("id", oldBrick.getId())
                         .addValue("new_id", newBrick.getId())
                         .addValue("new_server_id", newBrick.getServerId())
+                        .addValue("new_brick_dir", newBrick.getBrickDirectory())
                         .addValue("new_status", EnumUtils.nameOrNull(newBrick.getStatus())));
     }
 
