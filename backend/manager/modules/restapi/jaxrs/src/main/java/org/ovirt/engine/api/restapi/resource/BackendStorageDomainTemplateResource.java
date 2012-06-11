@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
-import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -32,7 +32,7 @@ public class BackendStorageDomainTemplateResource
 
         Guid destStorageDomainId = getDestStorageDomainId(action);
 
-        ImprotVmTemplateParameters params = new ImprotVmTemplateParameters(parent.getDataCenterId(destStorageDomainId),
+        ImportVmTemplateParameters params = new ImportVmTemplateParameters(parent.getDataCenterId(destStorageDomainId),
                                                                            parent.getStorageDomainId(),
                                                                            destStorageDomainId,
                                                                            getClusterId(action),

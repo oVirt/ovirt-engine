@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -48,12 +48,12 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmTemplateParameters> {
+public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmTemplateParameters> {
 
     private List<Guid> diskGuidList = new ArrayList<Guid>();
     private List<Guid> imageGuidList = new ArrayList<Guid>();
 
-    public ImportVmTemplateCommand(ImprotVmTemplateParameters parameters) {
+    public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
         parameters.setEntityId(getVmTemplate().getId());

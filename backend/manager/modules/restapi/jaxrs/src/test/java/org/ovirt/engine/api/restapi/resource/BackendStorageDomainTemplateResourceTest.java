@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -178,7 +178,7 @@ public class BackendStorageDomainTemplateResourceTest
     public void doTestImport(StorageDomain storageDomain, Cluster cluster, boolean importAsNewEntity) throws Exception {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
         setUriInfo(setUpActionExpectations(VdcActionType.ImportVmTemplate,
-                                           ImprotVmTemplateParameters.class,
+                                           ImportVmTemplateParameters.class,
                                            new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId", "ImportAsNewEntity" },
                                            new Object[] { TEMPLATE_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], importAsNewEntity }));
 
@@ -211,7 +211,7 @@ public class BackendStorageDomainTemplateResourceTest
 
         setUriInfo(setUpActionExpectations(
                 VdcActionType.ImportVmTemplate,
-                ImprotVmTemplateParameters.class,
+                ImportVmTemplateParameters.class,
                 new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId" },
                 new Object[] { TEMPLATE_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1] },
                 asList(GUIDS[1]),

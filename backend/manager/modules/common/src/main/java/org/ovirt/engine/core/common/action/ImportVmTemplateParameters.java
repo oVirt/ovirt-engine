@@ -7,10 +7,10 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
-public class ImprotVmTemplateParameters extends MoveOrCopyParameters implements java.io.Serializable {
+public class ImportVmTemplateParameters extends MoveOrCopyParameters implements java.io.Serializable {
     private static final long serialVersionUID = -6796905699865416157L;
 
-    public ImprotVmTemplateParameters(Guid storagePoolId, Guid sourceDomainId, Guid destDomainId, Guid vdsGroupId,
+    public ImportVmTemplateParameters(Guid storagePoolId, Guid sourceDomainId, Guid destDomainId, Guid vdsGroupId,
             VmTemplate template) {
         super(template.getId(), destDomainId);
         this.setVmTemplate(template);
@@ -73,6 +73,6 @@ public class ImprotVmTemplateParameters extends MoveOrCopyParameters implements 
         privateVdsGroupId = value;
     }
 
-    public ImprotVmTemplateParameters() {
+    public ImportVmTemplateParameters() {
     }
 }

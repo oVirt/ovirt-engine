@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -250,8 +250,8 @@ public class TemplateBackupModel extends ManageBackupModel
             Guid destinationStorageId = destinationStorage != null && isSingleDestStorage ?
                     destinationStorage.getId() : Guid.Empty;
 
-            ImprotVmTemplateParameters improtVmTemplateParameters =
-                    new ImprotVmTemplateParameters(model.getStoragePool().getId(),
+            ImportVmTemplateParameters improtVmTemplateParameters =
+                    new ImportVmTemplateParameters(model.getStoragePool().getId(),
                             model.getSourceStorage().getId(), destinationStorageId,
                             ((VDSGroup) model.getCluster().getSelectedItem()).getId(),
                             template);

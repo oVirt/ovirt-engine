@@ -18,7 +18,7 @@ import javax.validation.ConstraintViolation;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -156,7 +156,7 @@ public class ImportVmTemplateCommandTest {
     }
 
     private static void mockStorageDomains(ImportVmTemplateCommand command) {
-        final ImprotVmTemplateParameters parameters = command.getParameters();
+        final ImportVmTemplateParameters parameters = command.getParameters();
         final StorageDomainDAO dao = mock(StorageDomainDAO.class);
 
         final storage_domains srcDomain = new storage_domains();
@@ -224,11 +224,11 @@ public class ImportVmTemplateCommandTest {
         return new TestHelperImportVmTemplateCommand(createParameters());
     }
 
-    protected ImprotVmTemplateParameters createParameters() {
+    protected ImportVmTemplateParameters createParameters() {
         VmTemplate t = new VmTemplate();
         t.setname("testTemplate");
-        final ImprotVmTemplateParameters p =
-                new ImprotVmTemplateParameters(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), t);
+        final ImportVmTemplateParameters p =
+                new ImportVmTemplateParameters(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), t);
         return p;
     }
 
@@ -264,12 +264,12 @@ public class ImportVmTemplateCommandTest {
     }
 
     private void checkTemplateName(boolean isImportAsNewEntity, String name) {
-        ImprotVmTemplateParameters parameters = createParameters();
+        ImportVmTemplateParameters parameters = createParameters();
         parameters.getVmTemplate().setname(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
         ImportVmTemplateCommand command =
                 spy(new ImportVmTemplateCommand(parameters));
-        Set<ConstraintViolation<ImprotVmTemplateParameters>> validate =
+        Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         Assert.isTrue(validate.isEmpty() == !isImportAsNewEntity);
@@ -282,14 +282,14 @@ public class ImportVmTemplateCommandTest {
      */
     @Test
     public void testOtherFieldsNotValidatedInImport() {
-        ImprotVmTemplateParameters parameters = createParameters();
+        ImportVmTemplateParameters parameters = createParameters();
 
         assertFalse(BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE > string100.length());
         parameters.getVmTemplate().setdomain(string100);
         parameters.setImportAsNewEntity(true);
         ImportVmTemplateCommand command =
                 spy(new ImportVmTemplateCommand(parameters));
-        Set<ConstraintViolation<ImprotVmTemplateParameters>> validate =
+        Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         Assert.isTrue(validate.isEmpty());

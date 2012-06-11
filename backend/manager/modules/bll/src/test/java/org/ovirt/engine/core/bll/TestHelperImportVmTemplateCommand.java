@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -32,7 +32,7 @@ import org.ovirt.engine.core.dao.VmTemplateDAO;
 public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     private static final long serialVersionUID = 1L;
 
-    public TestHelperImportVmTemplateCommand(final ImprotVmTemplateParameters p) {
+    public TestHelperImportVmTemplateCommand(final ImportVmTemplateParameters p) {
         super(p);
     }
 
