@@ -72,4 +72,21 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+           <!--
+                since powermock produces memory leaks in tests, the tests can not pass without
+                forking them always (for each test)
+                this setting should be removed as soon as powermock is fixed completely
+                or powermock dependency is removed.
+           -->
+          <forkMode>always</forkMode>
+        </configuration>
+       </plugin>
+     </plugins>
+  </build>
+
 </project>
