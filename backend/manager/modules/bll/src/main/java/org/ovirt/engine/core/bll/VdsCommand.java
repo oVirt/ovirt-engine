@@ -113,6 +113,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      *            The VDS static.
      */
     protected void AlertIfPowerManagementNotConfigured(VdsStatic vdsStatic) {
+        if (getVdsGroup() != null && !getVdsGroup().supportsVirtService()) {
+            return;
+        }
+
         if (!vdsStatic.getpm_enabled() || StringHelper.isNullOrEmpty(vdsStatic.getpm_type())) {
             Alert(AuditLogType.VDS_ALERT_FENCING_IS_NOT_CONFIGURED);
             // remove any test failure alerts

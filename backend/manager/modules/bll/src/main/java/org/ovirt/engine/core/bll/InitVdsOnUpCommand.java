@@ -141,6 +141,11 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
     @Override
     public AuditLogType getAuditLogTypeValue() {
         AuditLogType type = AuditLogType.UNASSIGNED;
+
+        if(!getVdsGroup().supportsVirtService()) {
+            return type;
+        }
+
         if (!_connectStorageSucceeded) {
             type = AuditLogType.CONNECT_STORAGE_SERVERS_FAILED;
         } else if (!_connectPoolSucceeded) {
