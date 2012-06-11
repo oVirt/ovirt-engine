@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -19,14 +21,10 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsSelector {
-    private java.util.ArrayList<Guid> privateRunVdssList;
+    private final List<Guid> privateRunVdssList = new ArrayList<Guid>();
 
-    public java.util.ArrayList<Guid> getRunVdssList() {
+    public List<Guid> getRunVdssList() {
         return privateRunVdssList;
-    }
-
-    public void setRunVdssList(java.util.ArrayList<Guid> value) {
-        privateRunVdssList = value;
     }
 
     private boolean privateCheckDestinationFirst;
@@ -63,7 +61,6 @@ public class VdsSelector {
         setVm(vm);
         setDestinationVdsId(destinationVdsId);
         setCheckDestinationFirst(dedicatedFirst);
-        setRunVdssList(new java.util.ArrayList<Guid>());
     }
 
     public Guid GetVdsToRunOn() {
@@ -87,7 +84,7 @@ public class VdsSelector {
         return result;
     }
 
-    public boolean CanFindVdsToRunOn(java.util.ArrayList<String> messages, boolean isMigrate) {
+    public boolean CanFindVdsToRunOn(List<String> messages, boolean isMigrate) {
         boolean returnValue = false;
         if (getDestinationVdsId() != null) {
             returnValue = CanRunOnDestinationVds(messages, isMigrate);
@@ -122,7 +119,7 @@ public class VdsSelector {
                         "VdcBLL.RunVmCommandBase.getVdsToRunOn - VM {0} has no tools - skipping power client check",
                         getVm().getId());
             } else {
-                result = getVdsToRunOn(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { target_vds })));
+                result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })));
             }
         }
         return result;
@@ -134,7 +131,7 @@ public class VdsSelector {
                 .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
 
-    private boolean CanRunOnDestinationVds(java.util.ArrayList<String> messages, boolean isMigrate) {
+    private boolean CanRunOnDestinationVds(List<String> messages, boolean isMigrate) {
         boolean returnValue = false;
         if (getDestinationVdsId() != null) {
             VDS target_vds = DbFacade.getInstance().getVdsDAO().get(getDestinationVdsId());
@@ -146,7 +143,7 @@ public class VdsSelector {
         return returnValue;
     }
 
-    private boolean CanFindAnyVds(java.util.ArrayList<String> messages, boolean isMigrate) {
+    private boolean CanFindAnyVds(List<String> messages, boolean isMigrate) {
         return CanFindVdsToRun(messages, isMigrate,
                 DbFacade.getInstance().getVdsDAO().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
@@ -159,7 +156,7 @@ public class VdsSelector {
      * any vds, avalable too run vm - returning reason with highest value.
      * Reasons sorted in VdcBllMessages by their priorities
      */
-    private boolean CanFindVdsToRun(java.util.ArrayList<String> messages, boolean isMigrate, Iterable<VDS> vdss) {
+    private boolean CanFindVdsToRun(List<String> messages, boolean isMigrate, Iterable<VDS> vdss) {
         VdcBllMessages messageToReturn = VdcBllMessages.Unassigned;
 
         /**
@@ -310,7 +307,7 @@ public class VdsSelector {
         return readyToRun.isEmpty() ? Guid.Empty : getBestVdsToRun(readyToRun);
     }
 
-    private Guid getBestVdsToRun(java.util.ArrayList<VDS> list) {
+    private Guid getBestVdsToRun(List<VDS> list) {
         VdsComparer comparer = VdsComparer.CreateComparer(list.get(0).getselection_algorithm());
         VDS bestVDS = list.get(0);
         for (int i = 1; i < list.size(); i++) {

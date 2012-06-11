@@ -77,7 +77,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     /**
      * List on all vdss, vm run on. In the case of problem to run vm will be more then one
      */
-    private ArrayList<Guid> getRunVdssList() {
+    private List<Guid> getRunVdssList() {
         return getVdsSelector().getRunVdssList();
     }
 
