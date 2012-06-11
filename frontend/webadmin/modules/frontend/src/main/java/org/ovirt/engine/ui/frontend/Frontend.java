@@ -25,9 +25,6 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
-import org.ovirt.engine.ui.genericapi.parameters.UIQueryParametersBase;
-import org.ovirt.engine.ui.genericapi.returnvalues.UIQueryReturnValue;
-import org.ovirt.engine.ui.genericapi.uiqueries.UIQueryType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -742,13 +739,6 @@ public class Frontend {
         sb.append("Params: " + parameters); //$NON-NLS-1$
 
         logger.info(sb.toString());
-    }
-
-    public static UIQueryReturnValue RunUIQuery(
-            UIQueryType getuseractiongroups,
-            UIQueryParametersBase uiQueryParametersBase) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     private static void handleActionResult(VdcActionType actionType,

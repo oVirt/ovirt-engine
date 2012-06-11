@@ -107,9 +107,6 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.genericapi.parameters.UIQueryParametersBase;
-import org.ovirt.engine.ui.genericapi.returnvalues.UIQueryReturnValue;
-import org.ovirt.engine.ui.genericapi.uiqueries.UIQueryType;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
@@ -2556,7 +2553,6 @@ public final class DataProvider
             CachedConfigValues.clear();
         }
 
-        userActionGroups = null;
         //        cacheCustomProperties = null;
         windowsOsTypes = null;
         linuxOsTypes = null;
@@ -2652,24 +2648,6 @@ public final class DataProvider
             return ((GlusterVolumeEntity) entity).getId();
         }
         return new Guid();
-    }
-
-    private static ArrayList<ActionGroup> userActionGroups = null;
-
-    public static ArrayList<ActionGroup> GetUserActionGroups()
-    {
-        if (userActionGroups != null)
-        {
-            return userActionGroups;
-        }
-        UIQueryReturnValue ret = Frontend.RunUIQuery(UIQueryType.GetUserActionGroups, new UIQueryParametersBase());
-        if (ret.getSucceeded() && ret.getReturnValue() != null)
-        {
-            userActionGroups = (ArrayList<ActionGroup>) ret.getReturnValue();
-            return userActionGroups;
-        }
-
-        return new ArrayList<ActionGroup>();
     }
 
     //    private static HashMap<String, String> cacheCustomProperties;
