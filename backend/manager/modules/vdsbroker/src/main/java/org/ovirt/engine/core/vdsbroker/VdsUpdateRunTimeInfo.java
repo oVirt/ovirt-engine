@@ -581,17 +581,18 @@ public class VdsUpdateRunTimeInfo {
                 if (!hostDownTimes.containsKey(_vds.getId())) {
                     hostDownTimes.put(_vds.getId(), System.currentTimeMillis());
                     return;
-                } else {
-                    int delay = Config.<Integer> GetValue(ConfigValues.NicDHCPDelayGraceInMS) * 1000;
-
-                    if (System.currentTimeMillis() < hostDownTimes.get(_vds.getId()) + delay) {
-                        // if less then 1 minutes, still waiting for DHCP
-                        return;
-                    } else {
-                        // else remove from map (for future checks) and set the host to non-operational
-                        hostDownTimes.remove(_vds.getId());
-                    }
                 }
+
+                // if less then 1 minutes, still waiting for DHCP
+                int delay = Config.<Integer> GetValue(ConfigValues.NicDHCPDelayGraceInMS) * 1000;
+                if (System.currentTimeMillis() < hostDownTimes.get(_vds.getId()) + delay) {
+                    return;
+                }
+
+                // if we could retreive it within the timeout, remove from map (for future checks) and set the host to
+                // non-operational
+                hostDownTimes.remove(_vds.getId());
+
                 try {
                     StringBuilder sNics = new StringBuilder();
                     StringBuilder sNetworks = new StringBuilder();
