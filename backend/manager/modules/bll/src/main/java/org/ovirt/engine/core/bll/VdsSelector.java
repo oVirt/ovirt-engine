@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -161,7 +161,6 @@ public class VdsSelector {
      * Reasons sorted in VdcBllMessages by their priorities
      */
     private boolean CanFindVdsToRun(java.util.ArrayList<String> messages, boolean isMigrate, Iterable<VDS> vdss) {
-        VdcBllMessages message = VdcBllMessages.Unassigned;
         VdcBllMessages messageToReturn = VdcBllMessages.Unassigned;
 
         /**
@@ -176,17 +175,12 @@ public class VdsSelector {
 
             noVDSs = false;
 
-            RefObject<VdcBllMessages> tempRefObject = new RefObject<VdcBllMessages>(message);
-            boolean tempVar = isReadyToRun(curVds, tempRefObject);
-            message = tempRefObject.argvalue;
-            if (tempVar) {
+            ValidationResult result = validateHostIsReadyToRun(curVds);
+            if (result.isValid()) {
                 return true;
             } else {
-                if (messageToReturn.getValue() < message.getValue()) // messageToReturn
-                                                                     // <
-                                                                     // message)
-                {
-                    messageToReturn = message;
+                if (messageToReturn.getValue() < result.getMessage().getValue()) {
+                    messageToReturn = result.getMessage();
                     /**
                      * save version of current vds for later use
                      */
@@ -217,36 +211,26 @@ public class VdsSelector {
         return false;
     }
 
-    private boolean isReadyToRun(VDS vds, RefObject<VdcBllMessages> message) {
-        boolean returnValue = true;
+    private ValidationResult validateHostIsReadyToRun(final VDS vds) {
         if ((!vds.getvds_group_id().equals(getVm().getvds_group_id())) || (vds.getstatus() != VDSStatus.Up)
                 || isVdsFailedToRunVm(vds.getId())) {
-            returnValue = false;
-            message.argvalue = VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER);
         }
         // If Vm in Paused mode - no additional memory allocation needed
         else if (getVm().getstatus() != VMStatus.Paused && !RunVmCommandBase.hasMemoryToRunVM(vds, getVm())) {
             // not enough memory
             // In case we are using this function in migration we make sure we
             // don't allocate the same VDS
-            returnValue = false;
-            message.argvalue = VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY;
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY);
         }
         // if vm has more vCpus then vds physical cpus - dont allow to run
         else if (vds.getcpu_cores() != null && getVm().getnum_of_cpus() > vds.getcpu_cores()) {
-            returnValue = false;
-            message.argvalue = VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS);
         }
-        // else if (RunVmCommandBase.isVdsVersionOld(vds, Vm))
-        // {
-        // returnValue = false;
-        // message = VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_VERSION;
-        // }
         else if (!IsVMSwapValueLegal(vds)) {
-            returnValue = false;
-            message.argvalue = VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP;
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP);
         }
-        return returnValue;
+        return new ValidationResult();
     }
 
     /**
