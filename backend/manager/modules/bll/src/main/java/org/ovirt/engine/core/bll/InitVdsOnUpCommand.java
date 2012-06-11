@@ -21,8 +21,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Initialize Vds on its loading. For storages: First connect all storage
@@ -30,6 +28,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  *
  * After server initialized - its will be moved to Up status.
  */
+@NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
     private boolean _fencingSucceeded = true;
     private boolean _vdsProxyFound;
@@ -168,6 +167,4 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         }
         return type;
     }
-
-    private static Log log = LogFactory.getLog(InitVdsOnUpCommand.class);
 }
