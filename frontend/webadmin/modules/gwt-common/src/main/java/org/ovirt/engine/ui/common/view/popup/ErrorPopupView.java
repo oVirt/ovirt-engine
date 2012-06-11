@@ -46,7 +46,7 @@ public class ErrorPopupView extends AbstractPopupView<DialogBox> implements Erro
 
     @Override
     public void setErrorMessage(String errorMessage) {
-        messageLabel.setHTML(errorMessage);
+        messageLabel.setHTML(errorMessage.replace("\n", "<br/>"));//$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
