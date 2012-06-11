@@ -147,12 +147,14 @@ public class HostMapper {
         }
         model.setPowerManagement(map(entity, (PowerManagement)null));
         CPU cpu = new CPU();
-        if (entity.getcpu_cores()!=null) {
-            CpuTopology cpuTopology = new CpuTopology();
-            cpuTopology.setCores(entity.getcpu_cores());
+        CpuTopology cpuTopology = new CpuTopology();
+        if (entity.getcpu_sockets() != null) {
             cpuTopology.setSockets(entity.getcpu_sockets());
-            cpu.setTopology(cpuTopology);
+            if (entity.getcpu_cores()!=null) {
+                cpuTopology.setCores(entity.getcpu_cores()/entity.getcpu_sockets());
+            }
         }
+        cpu.setTopology(cpuTopology);
         cpu.setName(entity.getcpu_model());
         if (entity.getcpu_speed_mh()!=null) {
             cpu.setSpeed(new BigDecimal(entity.getcpu_speed_mh()));

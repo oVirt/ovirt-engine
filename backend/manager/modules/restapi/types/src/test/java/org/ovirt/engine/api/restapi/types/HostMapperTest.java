@@ -53,7 +53,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     public void testCpuMapping() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
-        vds.setcpu_cores(2);
+        vds.setcpu_cores(6);
         vds.setcpu_sockets(3);
         vds.setcpu_model("some cpu model");
         vds.setcpu_speed_mh(5.5);
