@@ -70,9 +70,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     private Set<AccessProtocol> accessProtocols = new LinkedHashSet<AccessProtocol>(Arrays.asList(new AccessProtocol[] {
             AccessProtocol.GLUSTER, AccessProtocol.NFS }));
 
-    // Transport type TCP is enabled by default
-    private Set<TransportType> transportTypes = new LinkedHashSet<TransportType>(Arrays.asList(new TransportType[] {
-            TransportType.TCP }));
+    private Set<TransportType> transportTypes = new LinkedHashSet<TransportType>();
 
     public GlusterVolumeEntity() {
     }
