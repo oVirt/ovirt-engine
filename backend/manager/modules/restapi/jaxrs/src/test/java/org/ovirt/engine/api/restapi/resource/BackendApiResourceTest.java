@@ -231,6 +231,7 @@ public class BackendApiResourceTest extends Assert {
 
     protected void verifyApi(API api) {
         assertNotNull(api);
+        assertNotNull(api.getTime());
         assertNotNull(api.getLinks());
 
         assertEquals(relationships.length, api.getLinks().size());

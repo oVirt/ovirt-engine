@@ -73,6 +73,7 @@
           <xs:element ref="special_objects"/>
           <xs:element ref="product_info"/>
           <xs:element ref="summary"/>
+          <xs:element name="time" type="xs:dateTime" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

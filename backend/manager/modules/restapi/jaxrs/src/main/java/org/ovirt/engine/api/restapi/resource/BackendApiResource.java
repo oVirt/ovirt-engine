@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,6 +55,7 @@ import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ApiResource;
 import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
 import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
+import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -123,6 +125,7 @@ public class BackendApiResource
 
     private API getApi() {
         API api = new API();
+        api.setTime(DateMapper.map(new Date(), null));
         for (DetailedLink detailedLink : getLinks()) {
             //add thin link
             api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel()));
