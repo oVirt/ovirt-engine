@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -34,10 +35,13 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VdsUpdateRunTimeInfoTest {
@@ -50,6 +54,7 @@ public class VdsUpdateRunTimeInfoTest {
             );
 
     private VDS vds;
+    XmlRpcStruct[] vmInfo;
 
     VdsUpdateRunTimeInfo updater;
 
@@ -70,6 +75,9 @@ public class VdsUpdateRunTimeInfoTest {
 
     @Mock
     VDSGroup cluster;
+
+    @Mock
+    VmDeviceDAO vmDeviceDAO;
 
     AuditLogDAO mockAuditLogDao = new AuditLogDaoMocker();
 
@@ -101,6 +109,12 @@ public class VdsUpdateRunTimeInfoTest {
                 al.setlog_type(logType);
                 mockAuditLogDao.save(al);
             }
+
+            @Override
+            protected XmlRpcStruct[] getVmInfo(List<String> vmsToUpdate) {
+                return vmInfo;
+            }
+
         };
     }
 
@@ -110,6 +124,38 @@ public class VdsUpdateRunTimeInfoTest {
             updater.logMTUDifferences(getClustersMap(), iface);
         }
         assertEquals(1, mockAuditLogDao.getAll().size());
+    }
+
+    @Test
+    public void updateVmDevicesNull() {
+        updater.updateVmDevices(Collections.singletonList(""));
+
+        assertEquals("wrong number of new devices", 0, updater.getNewVmDevices().size());
+        assertEquals("wrong number of removed devices", 0, updater.getRemovedVmDevices().size());
+    }
+
+    @Test
+    public void updateVmDevicesNotNull() {
+        Guid vmGuid = Guid.NewGuid();
+        when(vmDeviceDAO.getVmDeviceByVmId(vmGuid)).thenReturn(Collections.<VmDevice> emptyList());
+
+        XmlRpcStruct vm = new XmlRpcStruct();
+        vm.add(VdsProperties.vm_guid, vmGuid.toString());
+
+        Map<String, Object> deviceProperties = new HashMap<String, Object>();
+        Guid deviceID = Guid.NewGuid();
+        deviceProperties.put(VdsProperties.DeviceId, deviceID.toString());
+        deviceProperties.put(VdsProperties.Address, Collections.emptyMap());
+        deviceProperties.put(VdsProperties.Device, "aDevice");
+        deviceProperties.put(VdsProperties.Type, "aType");
+
+        vm.add(VdsProperties.Devices, new XmlRpcStruct[] { new XmlRpcStruct(deviceProperties) });
+        vmInfo = new XmlRpcStruct[] { vm };
+
+        updater.updateVmDevices(Collections.singletonList(vmGuid.toString()));
+
+        assertEquals("wrong number of new devices", 1, updater.getNewVmDevices().size());
+        assertEquals("wrong number of removed devices", 0, updater.getRemovedVmDevices().size());
     }
 
     private static List<VdsNetworkInterface> getInterfaces() {
@@ -134,6 +180,7 @@ public class VdsUpdateRunTimeInfoTest {
         when(dbFacade.getVdsGroupDAO()).thenReturn(groupDAO);
         when(dbFacade.getVmDAO()).thenReturn(vmDAO);
         when(dbFacade.getAuditLogDAO()).thenReturn(mockAuditLogDao);
+        when(dbFacade.getVmDeviceDAO()).thenReturn(vmDeviceDAO);
         when(groupDAO.get((Guid) any())).thenReturn(cluster);
         Map<Guid, VM> emptyMap = Collections.emptyMap();
         when(vmDAO.getAllRunningByVds(vds.getId())).thenReturn(emptyMap);

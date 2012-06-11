@@ -6,6 +6,7 @@ import static org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLog
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -889,7 +890,8 @@ public class VdsUpdateRunTimeInfo {
      * Handle changes in all VM devices
      */
     private void handleVmDeviceChange() {
-        List<String> vmsToUpdate = new ArrayList<String>();
+        // Go over all the vms and detemine which ones require updating
+        List<String> vmsToUpdateFromVds = new ArrayList<String>();
         for (Entry<VmDynamic, VmStatistics> vmHelper : _runningVms.values()) {
             VmDynamic vmDynamic = vmHelper.getKey();
             if (vmDynamic != null) {
@@ -898,7 +900,7 @@ public class VdsUpdateRunTimeInfo {
                     String dbHash = vm.getHash();
                     if ((dbHash == null && vmDynamic.getHash() != null) || (dbHash != null)
                             && !dbHash.equals(vmDynamic.getHash())) {
-                        vmsToUpdate.add(vmDynamic.getId().toString());
+                        vmsToUpdateFromVds.add(vmDynamic.getId().toString());
                         // update new hash value
                         if (_vmDynamicToSave.containsKey(vm.getId())) {
                             _vmDynamicToSave.get(vm.getId()).setHash(vmDynamic.getHash());
@@ -909,8 +911,11 @@ public class VdsUpdateRunTimeInfo {
                 }
             }
         }
-        if (vmsToUpdate.size() > 0) {
-            updateVmDevices(vmsToUpdate);
+
+        if (vmsToUpdateFromVds.size() > 0) {
+            // If there are vms that require updating,
+            // get the new info from VDSM in one call, and then update them all
+            updateVmDevices(vmsToUpdateFromVds);
         }
     }
 
@@ -919,9 +924,13 @@ public class VdsUpdateRunTimeInfo {
      *
      * @param vmsToUpdate
      */
-    private void updateVmDevices(List<String> vmsToUpdate) {
+    protected void updateVmDevices(List<String> vmsToUpdate) {
         XmlRpcStruct[] vms = getVmInfo(vmsToUpdate);
-        updateVmDevices(vms);
+        if (vms != null) {
+            for (XmlRpcStruct vm : vms) {
+                processVmDevices(vm);
+            }
+        }
     }
 
     /**
@@ -929,19 +938,9 @@ public class VdsUpdateRunTimeInfo {
      * @param vmIds
      * @return
      */
-    private XmlRpcStruct[] getVmInfo(List<String> vmsToUpdate) {
+    protected XmlRpcStruct[] getVmInfo(List<String> vmsToUpdate) {
         return (XmlRpcStruct[]) (new FullListVdsCommand<FullListVDSCommandParameters>(
                 new FullListVDSCommandParameters(_vds.getId(), vmsToUpdate)).ExecuteWithReturnValue());
-    }
-
-    /**
-     * Update VMs devices
-     * @param vms
-     */
-    private void updateVmDevices(XmlRpcStruct[] vms) {
-        for (XmlRpcStruct vm : vms) {
-            processVmDevices(vm);
-        }
     }
 
     /**
@@ -1685,6 +1684,22 @@ public class VdsUpdateRunTimeInfo {
                 _vmsMovedToDown.add(vm.getId());
             }
         }
+    }
+
+    /**
+     * An access method for test usages
+     * @return The devices to be added to the database
+     */
+    protected List<VmDevice> getNewVmDevices() {
+        return Collections.unmodifiableList(newVmDevices);
+    }
+
+    /**
+     * An access method for test usages
+     * @return The devices to be removed from the database
+     */
+    protected List<VmDeviceId> getRemovedVmDevices() {
+        return Collections.unmodifiableList(removedDeviceIds);
     }
 
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
