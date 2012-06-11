@@ -564,31 +564,28 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 		model.getIsPm().setIsChangable(false);
 	}
 
-	public void Edit()
-	{
-		if (getWindow() != null)
-		{
-			return;
-		}
+    public void Edit()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-		VDS host = (VDS)getSelectedItem();
-		HostModel model = null;
-		RefObject<HostModel> tempRef_model = new RefObject<HostModel>(model);
-		PrepareModelForApproveEdit(host, tempRef_model);
-		model = tempRef_model.argvalue;
-		setWindow(model);
-		model.setTitle("Edit Host");
-		model.setHashName("edit_host");
+        VDS host = (VDS) getSelectedItem();
+        HostModel model = PrepareModelForApproveEdit(host);
+        setWindow(model);
+        model.setTitle("Edit Host");
+        model.setHashName("edit_host");
 
-		UICommand tempVar = new UICommand("OnSaveFalse", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+        UICommand tempVar = new UICommand("OnSaveFalse", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
 	public void OnSaveFalse()
 	{
@@ -932,104 +929,109 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 		}, model);
 	}
 
-	public void Approve()
-	{
-		VDS host = (VDS)getSelectedItem();
-		HostModel model = null;
-		RefObject<HostModel> tempRef_model = new RefObject<HostModel>(model);
-		PrepareModelForApproveEdit(host, tempRef_model);
-		model = tempRef_model.argvalue;
-		setWindow(model);
-		model.setTitle("Edit and Approve Host");
-		model.setHashName("edit_and_approve_host");
+    public void Approve()
+    {
+        VDS host = (VDS) getSelectedItem();
+        HostModel model = PrepareModelForApproveEdit(host);
+        setWindow(model);
+        model.setTitle("Edit and Approve Host");
+        model.setHashName("edit_and_approve_host");
 
+        UICommand tempVar = new UICommand("OnApprove", this);
+        tempVar.setTitle("OK");
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this);
+        tempVar2.setTitle("Cancel");
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
 
-		UICommand tempVar = new UICommand("OnApprove", this);
-		tempVar.setTitle("OK");
-		tempVar.setIsDefault(true);
-		model.getCommands().add(tempVar);
-		UICommand tempVar2 = new UICommand("Cancel", this);
-		tempVar2.setTitle("Cancel");
-		tempVar2.setIsCancel(true);
-		model.getCommands().add(tempVar2);
-	}
+	private HostModel PrepareModelForApproveEdit(VDS vds)
+    {
+        HostModel returnVal = new HostModel();
+        returnVal.setHostId(vds.getId());
+        returnVal.getRootPassword().setIsAvailable(false);
+        returnVal.getOverrideIpTables().setIsAvailable(false);
+        returnVal.setOriginalName(vds.getvds_name());
+        returnVal.getName().setEntity(vds.getvds_name());
+        returnVal.getHost().setEntity(vds.gethost_name());
+        returnVal.getPort().setEntity(vds.getport());
+        returnVal.getIsPm().setEntity(vds.getpm_enabled());
+        returnVal.getManagementIp().setEntity(vds.getManagmentIp());
+        returnVal.getPmType().setSelectedItem(vds.getpm_type());
+        returnVal.getPmUserName().setEntity(vds.getpm_user());
+        returnVal.getPmPassword().setEntity(vds.getpm_password());
+        /*
+         * --- JUICOMMENT_BEGIN // * TODO: Need to find a solution for casting ValueObjectMap to Dictionary<string,
+         * string> // in Java, and conform the C# code to do that when a solution is found
+         * returnVal.setPmOptionsMap(vds.getPmOptionsMap()); JUICOMMENT_END ---
+         */
+        java.util.ArrayList<storage_pool> dataCenters = DataProvider.GetDataCenterList();
+        returnVal.getDataCenter().setItems(dataCenters);
+        returnVal.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
+                new Linq.DataCenterPredicate(vds.getstorage_pool_id())));
+        if (returnVal.getDataCenter().getSelectedItem() == null)
+        {
+            Linq.FirstOrDefault(dataCenters);
+        }
 
-	private void PrepareModelForApproveEdit(VDS vds, RefObject<HostModel> model)
-	{
-		model.argvalue = new HostModel();
-		model.argvalue.setHostId(vds.getId());
-		model.argvalue.getRootPassword().setIsAvailable(false);
-		model.argvalue.getOverrideIpTables().setIsAvailable(false);
-		model.argvalue.setOriginalName(vds.getvds_name());
-		model.argvalue.getName().setEntity(vds.getvds_name());
-		model.argvalue.getHost().setEntity(vds.gethost_name());
-		model.argvalue.getPort().setEntity(vds.getport());
-		model.argvalue.getIsPm().setEntity(vds.getpm_enabled());
-		model.argvalue.getManagementIp().setEntity(vds.getManagmentIp());
-		model.argvalue.getPmType().setSelectedItem(vds.getpm_type());
-		model.argvalue.getPmUserName().setEntity(vds.getpm_user());
-		model.argvalue.getPmPassword().setEntity(vds.getpm_password());
-		/* --- JUICOMMENT_BEGIN
-		// * TODO: Need to find a solution for casting ValueObjectMap to Dictionary<string, string>
-		// in Java, and conform the C# code to do that when a solution is found
-		model.argvalue.setPmOptionsMap(vds.getPmOptionsMap());
-		JUICOMMENT_END --- */
-		java.util.ArrayList<storage_pool> dataCenters = DataProvider.GetDataCenterList();
-		model.argvalue.getDataCenter().setItems(dataCenters);
-		model.argvalue.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters, new Linq.DataCenterPredicate(vds.getstorage_pool_id())));
-		if (model.argvalue.getDataCenter().getSelectedItem() == null)
-		{
-			Linq.FirstOrDefault(dataCenters);
-		}
-
-		java.util.ArrayList<VDSGroup> clusters;
-		if (model.argvalue.getCluster().getItems() == null)
-		{
-			VDSGroup tempVar = new VDSGroup();
-			tempVar.setname(vds.getvds_group_name());
+        java.util.ArrayList<VDSGroup> clusters;
+        if (returnVal.getCluster().getItems() == null)
+        {
+            VDSGroup tempVar = new VDSGroup();
+            tempVar.setname(vds.getvds_group_name());
             tempVar.setId(vds.getvds_group_id());
-			tempVar.setcompatibility_version(vds.getvds_group_compatibility_version());
-			model.argvalue.getCluster().setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { tempVar })));
-		}
-		clusters = (java.util.ArrayList<VDSGroup>) model.argvalue.getCluster().getItems();
-		model.argvalue.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vds.getvds_group_id())));
-		if (model.argvalue.getCluster().getSelectedItem() == null)
-		{
-			Linq.FirstOrDefault(clusters);
-		}
+            tempVar.setcompatibility_version(vds.getvds_group_compatibility_version());
+            returnVal.getCluster()
+                    .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { tempVar })));
+        }
+        clusters = (java.util.ArrayList<VDSGroup>) returnVal.getCluster().getItems();
+        returnVal.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters,
+                new Linq.ClusterPredicate(vds.getvds_group_id())));
+        if (returnVal.getCluster().getSelectedItem() == null)
+        {
+            Linq.FirstOrDefault(clusters);
+        }
 
-		if (vds.getstatus() != VDSStatus.Maintenance && vds.getstatus() != VDSStatus.PendingApproval)
-		{
-			model.argvalue.getDataCenter().setIsChangable(false);
-			model.argvalue.getDataCenter().getChangeProhibitionReasons().add("Data Center can be changed only when the Host is in Maintenance mode.");
-			model.argvalue.getCluster().setIsChangable(false);
-			model.argvalue.getCluster().getChangeProhibitionReasons().add("Cluster can be changed only when the Host is in Maintenance mode.");
-		}
-		else if (getSystemTreeSelectedItem() != null)
-		{
-			switch (getSystemTreeSelectedItem().getType())
-			{
-				case Host:
-					model.argvalue.getName().setIsChangable(false);
-					model.argvalue.getName().setInfo("Cannot edit Host's Name in this tree context");
-					break;
-				case Hosts:
-				case Cluster:
-					model.argvalue.getCluster().setIsChangable(false);
-					model.argvalue.getCluster().setInfo("Cannot change Host's Cluster in tree context");
-					model.argvalue.getDataCenter().setIsChangable(false);
-					break;
-				case DataCenter:
-					storage_pool selectDataCenter = (storage_pool)getSystemTreeSelectedItem().getEntity();
-					model.argvalue.getDataCenter().setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
-					model.argvalue.getDataCenter().setSelectedItem(selectDataCenter);
-					model.argvalue.getDataCenter().setIsChangable(false);
-					break;
-				default:
-					break;
-			}
-		}
-	}
+        if (vds.getstatus() != VDSStatus.Maintenance && vds.getstatus() != VDSStatus.PendingApproval)
+        {
+            returnVal.getDataCenter().setIsChangable(false);
+            returnVal.getDataCenter()
+                    .getChangeProhibitionReasons()
+                    .add("Data Center can be changed only when the Host is in Maintenance mode.");
+            returnVal.getCluster().setIsChangable(false);
+            returnVal.getCluster()
+                    .getChangeProhibitionReasons()
+                    .add("Cluster can be changed only when the Host is in Maintenance mode.");
+        }
+        else if (getSystemTreeSelectedItem() != null)
+        {
+            switch (getSystemTreeSelectedItem().getType())
+            {
+            case Host:
+                returnVal.getName().setIsChangable(false);
+                returnVal.getName().setInfo("Cannot edit Host's Name in this tree context");
+                break;
+            case Hosts:
+            case Cluster:
+                returnVal.getCluster().setIsChangable(false);
+                returnVal.getCluster().setInfo("Cannot change Host's Cluster in tree context");
+                returnVal.getDataCenter().setIsChangable(false);
+                break;
+            case DataCenter:
+                storage_pool selectDataCenter = (storage_pool) getSystemTreeSelectedItem().getEntity();
+                returnVal.getDataCenter()
+                        .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
+                returnVal.getDataCenter().setSelectedItem(selectDataCenter);
+                returnVal.getDataCenter().setIsChangable(false);
+                break;
+            default:
+                break;
+            }
+        }
+        return returnVal;
+    }
 
 	public void OnApprove()
 	{
