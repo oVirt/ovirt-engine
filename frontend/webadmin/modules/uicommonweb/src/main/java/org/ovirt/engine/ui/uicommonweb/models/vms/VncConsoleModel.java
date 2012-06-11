@@ -1,16 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.Iterator;
-
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -71,29 +68,12 @@ public class VncConsoleModel extends ConsoleModel
                                 public void OnSuccess(Object model, Object ReturnValue)
                                 {
                                     VncConsoleModel consoleModel = (VncConsoleModel) model;
-                                    Iterable networkInterfaces =
-                                            (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                                    Iterator networkInterfacesIterator = networkInterfaces.iterator();
-                                    while (networkInterfacesIterator.hasNext())
-                                    {
-                                        VdsNetworkInterface currentNetworkInterface =
-                                                (VdsNetworkInterface) networkInterfacesIterator.next();
-                                        if (currentNetworkInterface == null)
-                                        {
-                                            continue;
-                                        }
-                                        if (currentNetworkInterface.getIsManagement())
-                                        {
-                                            consoleModel.postGetHost(currentNetworkInterface.getAddress());
-                                            return;
-                                        }
-                                    }
+                                    consoleModel.postGetHost((String) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                                 }
                             };
 
-                            Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-                                    new GetVdsByVdsIdParameters(getEntity().getrun_on_vds().getValue()),
-                                    _asyncQuery);
+                            Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVdsId,
+                                    new VdsIdParametersBase(getEntity().getrun_on_vds().getValue()), _asyncQuery);
                         }
                         else {
                             postGetHost(getEntity().getdisplay_ip());

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
@@ -21,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
@@ -30,6 +28,7 @@ import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
@@ -526,48 +525,37 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (StringHelper.isNullOrEmpty(getEntity().getdisplay_ip())
                 || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0")) //$NON-NLS-1$
         {
-            VDS host = (VDS) returnValues.get(0).getReturnValue();
-            if (host == null)
-            {
-                return;
-            }
-
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void OnSuccess(Object model, Object ReturnValue)
-                {
-                    SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) model;
-                    Iterable networkInterfaces = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                    Iterator networkInterfacesIterator = networkInterfaces.iterator();
-                    while (networkInterfacesIterator.hasNext())
-                    {
-                        VdsNetworkInterface currentNetworkInterface =
-                                (VdsNetworkInterface) networkInterfacesIterator.next();
-                        if (currentNetworkInterface == null)
-                        {
-                            continue;
-                        }
-                        if (currentNetworkInterface.getIsManagement())
-                        {
-                            spiceConsoleModel.getspice().setHost(currentNetworkInterface.getAddress());
-                            spiceConsoleModel.SpiceConnect();
-                            return;
-                        }
-                    }
-                }
-            };
-
-            Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-                    new GetVdsByVdsIdParameters(host.getId()),
-                    _asyncQuery);
+            determineIpAndConnect((VDS) returnValues.get(0).getReturnValue());
         }
         else
         {
             // Try to connect.
             SpiceConnect();
         }
+    }
+
+    private void determineIpAndConnect(VDS host) {
+        if (host == null) {
+            return;
+        }
+
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) model;
+                String address =
+                        (String) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                spiceConsoleModel.getspice().setHost(address);
+                spiceConsoleModel.SpiceConnect();
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVdsId,
+                new VdsIdParametersBase(host.getId()),
+                _asyncQuery);
     }
 
     private void SendVmTicket()
