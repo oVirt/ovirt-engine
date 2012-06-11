@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.Iterator;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -10,6 +12,8 @@ import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Translator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -24,6 +28,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
     interface ViewIdHandler extends ElementIdHandler<MainTabVolumeView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    Translator transportTypeTranslator = EnumTranslator.Create(TransportType.class);
 
     @Inject
     public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider, ApplicationConstants constants) {
@@ -63,16 +69,33 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         getTable().addColumn(numOfBricksColumn, constants.numberOfBricksVolume());
 
         TextColumnWithTooltip<GlusterVolumeEntity> transportColumn =
-                new EnumColumn<GlusterVolumeEntity, TransportType>() {
-
+                new TextColumnWithTooltip<GlusterVolumeEntity>() {
                     @Override
-                    protected TransportType getRawValue(GlusterVolumeEntity object) {
-                        // TODO: Display list of all transport types of the volume in this column.
-                        return TransportType.TCP;
+                    public String getValue(GlusterVolumeEntity object) {
+                        String transportTypes = "";//$NON-NLS-1$
+                        Iterator<TransportType> iterator = object.getTransportTypes().iterator();
+                        while (iterator.hasNext())
+                        {
+                            TransportType transportType = iterator.next();
+                            if (transportTypeTranslator.containsKey(transportType))
+                            {
+                                transportTypes += transportTypeTranslator.get(transportType);
+                            }
+                            else
+                            {
+                                transportTypes += transportType.toString();
+                            }
+
+                            if (iterator.hasNext())
+                            {
+                                transportTypes += ", ";//$NON-NLS-1$
+                            }
+                        }
+                        return transportTypes;
                     }
 
                 };
-        getTable().addColumn(transportColumn, constants.transportTypeVolume());
+        getTable().addColumn(transportColumn, constants.transportTypesVolume());
 
         TextColumnWithTooltip<GlusterVolumeEntity> statusColumn =
                 new EnumColumn<GlusterVolumeEntity, GlusterVolumeStatus>() {

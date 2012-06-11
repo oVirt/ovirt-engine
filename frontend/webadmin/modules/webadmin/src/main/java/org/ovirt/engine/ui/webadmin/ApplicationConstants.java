@@ -1913,8 +1913,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Replica Count")
     String replicaCountVolume();
 
-    @DefaultStringValue("Transport Type")
-    String transportTypeVolume();
+    @DefaultStringValue("Transport Types")
+    String transportTypesVolume();
 
     @DefaultStringValue("Status")
     String statusVolume();
