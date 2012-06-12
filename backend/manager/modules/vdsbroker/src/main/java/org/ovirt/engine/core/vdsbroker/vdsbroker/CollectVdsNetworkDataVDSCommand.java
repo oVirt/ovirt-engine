@@ -7,16 +7,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.vdscommands.UpdateVdsDynamicDataVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase>
@@ -29,11 +35,31 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
     protected void ExecuteVdsBrokerCommand() {
         // call getVdsCapabilities verb
         super.ExecuteVdsBrokerCommand();
+        updateNetConfigDirtyFlag();
 
         // update to db
         persistAndEnforceNetworkCompliance(getVds());
 
         ProceedProxyReturnValue();
+    }
+
+    /**
+     * Update the {@link VdsDynamic#getnet_config_dirty()} field in the DB.<br>
+     * The update is done in a new transaction since we don't care if afterwards something goes wrong, but we would like
+     * to minimize races with other command that update the {@link VdsDynamic} entity in the DB.
+     */
+    private void updateNetConfigDirtyFlag() {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDAO().get(getVds().getId());
+                vdsDynamic.setnet_config_dirty(getVds().getnet_config_dirty());
+                ResourceManager.getInstance().runVdsCommand(VDSCommandType.UpdateVdsDynamicData,
+                        new UpdateVdsDynamicDataVDSCommandParameters(vdsDynamic));
+                return null;
+            }
+        });
     }
 
     /**

@@ -1027,6 +1027,11 @@ public class VdsBrokerObjectsBuilder {
 
         // set bonding options
         setBondingOptions(vds, oldInterfaces);
+
+        // This information was added in 3.1, so don't use it if it's not there.
+        if (xmlRpcStruct.containsKey(VdsProperties.netConfigDirty)) {
+            vds.setnet_config_dirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
+        }
     }
 
     /**
