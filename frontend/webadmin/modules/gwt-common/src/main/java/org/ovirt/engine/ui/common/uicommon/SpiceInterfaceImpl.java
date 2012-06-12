@@ -66,6 +66,10 @@ public class SpiceInterfaceImpl implements ISpice {
         wanDisableEffects = new ArrayList<WANDisableEffects>();
         wanOptionsEnabled = false;
         wanColorDepth = WanColorDepth.depth16;
+
+        // send the ctrl + alt + delete by default
+        sendCtrlAltDelete = true;
+        noTaskMgrExecution = true;
     }
 
     @Override

@@ -109,6 +109,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Open in Full Screen")
     String openInFullScreen();
 
+    @DefaultStringValue("Not supported for this client OS")
+    String ctrlAltDeletIsNotSupportedOnWindows();
+
     @DefaultStringValue("Enable WAN Options")
     String enableWanOptions();
 

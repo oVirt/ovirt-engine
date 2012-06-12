@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.inject.Inject;
 
 public class ConsoleUtils {
@@ -33,20 +35,26 @@ public class ConsoleUtils {
         if (spiceAvailable == null) {
             spiceAvailable =
                     clientAgentType.getBrowser().toLowerCase().contains("firefox") //$NON-NLS-1$
-                            && clientAgentType.getOS().toLowerCase().contains("linux") || //$NON-NLS-1$
+                            && isLinuxClient() ||
                             clientAgentType.getBrowser().toLowerCase().contains("explorer") //$NON-NLS-1$
-                            && clientAgentType.getOS().toLowerCase().contains("windows"); //$NON-NLS-1$
+                            && isWindowsClient();
             GWT.log("Determining if Spice console is available on current platform, result:" + spiceAvailable); //$NON-NLS-1$
         }
         return spiceAvailable;
     }
 
+    private boolean isLinuxClient() {
+        return clientAgentType.getOS().toLowerCase().contains("linux"); //$NON-NLS-1$
+    }
+
+    private boolean isWindowsClient() {
+        return clientAgentType.getOS().toLowerCase().contains("windows"); //$NON-NLS-1$
+    }
+
     public boolean isRDPAvailable() {
         if (rdpAvailable == null) {
             rdpAvailable =
-                    (clientAgentType.getBrowser().toLowerCase().contains("explorer") && clientAgentType.getOS() //$NON-NLS-1$
-                            .toLowerCase()
-                            .contains("windows")); //$NON-NLS-1$
+                    (clientAgentType.getBrowser().toLowerCase().contains("explorer") && isWindowsClient()); //$NON-NLS-1$
             GWT.log("Determining if RDP console is available on current platform, result:" + rdpAvailable); //$NON-NLS-1$
         }
         return rdpAvailable;
@@ -130,4 +138,41 @@ public class ConsoleUtils {
         return isSpiceAvailable || isRdpAvailable || isVncAvailable;
     }
 
+    /**
+     * The ctrl+alt+del is enabled for all OS except windows newer than 7
+     * @return false if and only if the client OS type is Windows 7 or newer otherwise returns true
+     */
+    public boolean isCtrlAltDelEnabled() {
+        if (!isWindowsClient()) {
+            return true;
+        }
+
+        float ntVersion = extractNtVersion(getUserAgentString());
+
+        // For Windows 7 and Windows Server 2008 R2 it is NT 6.1
+        // For Windows 8 and Windows Server 2012 it is NT 6.2
+        // The passing of ctrl+alt+del is enabled only on windows older
+        // than Windows 7, so NT less than 6.1
+        if (ntVersion >= 6.1f) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private float extractNtVersion(String userAgentType) {
+        RegExp pattern = RegExp.compile(".*windows nt (\\d+\\.\\d+).*"); //$NON-NLS-1$
+        MatchResult matcher = pattern.exec(userAgentType.toLowerCase());
+        boolean matchFound = (matcher != null);
+        if (matchFound) {
+            return Float.parseFloat(matcher.getGroup(1));
+        }
+
+        return -1;
+    }
+
+    public native String getUserAgentString() /*-{
+        var userAgent = navigator.userAgent;
+        return userAgent;
+    }-*/;
 }

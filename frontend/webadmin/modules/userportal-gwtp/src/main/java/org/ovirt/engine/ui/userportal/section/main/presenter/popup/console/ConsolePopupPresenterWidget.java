@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -52,6 +53,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setWanOptionsVisible(boolean visible);
 
+        void setCtrlAltDelEnabled(boolean enabled, String reason);
+
         void setVmName(String name);
 
         void flushToPrivateModel();
@@ -62,12 +65,15 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     private IEventListener viewUpdatingListener;
     private boolean wanOptionsAvailable = false;
     private UserPortalConsolePopupModel model;
+    private final ApplicationConstants constants;
 
     @Inject
     public ConsolePopupPresenterWidget(EventBus eventBus, ViewDef view,
-            ConsoleUtils consoleUtils) {
+            ConsoleUtils consoleUtils,
+            ApplicationConstants constants) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
+        this.constants = constants;
     }
 
     @Override
@@ -160,6 +166,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         getView().setAdditionalConsoleAvailable(rdpAvailable);
         getView().setSpiceConsoleAvailable(currentItem.getDefaultConsole() instanceof SpiceConsoleModel);
+
+        boolean ctrlAltDelEnabled = consoleUtils.isCtrlAltDelEnabled();
+        getView().setCtrlAltDelEnabled(ctrlAltDelEnabled, constants.ctrlAltDeletIsNotSupportedOnWindows());
     }
 
     @Override

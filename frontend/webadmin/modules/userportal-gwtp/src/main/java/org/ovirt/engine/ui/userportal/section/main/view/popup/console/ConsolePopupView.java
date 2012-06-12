@@ -322,4 +322,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
         consoleTitle.setText(messages.selectConsoleFor(vmName));
     }
 
+    @Override
+    public void setCtrlAltDelEnabled(boolean enabled, String reason) {
+        ctrlAltDel.setEnabled(enabled);
+        if (!enabled) {
+            ctrlAltDel.setTitle(reason);
+        }
+    }
 }
