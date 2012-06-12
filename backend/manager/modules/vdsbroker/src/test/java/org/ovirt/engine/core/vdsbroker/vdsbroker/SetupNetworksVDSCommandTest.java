@@ -54,7 +54,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.singletonList(nic),
-                        Collections.<VdsNetworkInterface> emptyList(),
+                        Collections.<String> emptySet(),
                         Arrays.asList(nic, vlan));
 
         createCommand(parameters).Execute();
@@ -80,7 +80,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.singletonList(bond),
-                        Collections.<VdsNetworkInterface> emptyList(),
+                        Collections.<String> emptySet(),
                         ifaces);
 
         createCommand(parameters).Execute();
@@ -101,7 +101,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.<VdsNetworkInterface> emptyList(),
-                        Collections.<VdsNetworkInterface> emptyList(),
+                        Collections.<String> emptySet(),
                         Arrays.asList(nic));
 
         createCommand(parameters).Execute();
@@ -125,7 +125,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.<network> emptyList(),
                         Collections.<String> emptyList(),
                         Collections.singletonList(bond),
-                        Collections.<VdsNetworkInterface> emptyList(),
+                        Collections.<String> emptySet(),
                         ifaces);
 
         createCommand(parameters).Execute();

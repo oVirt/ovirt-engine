@@ -240,7 +240,7 @@ public class SetupNetworksHelperTest {
         assertNoBondsModified(helper);
         assertNoNetworksModified(helper);
         assertNetworkRemoved(helper, bond.getNetworkName());
-        assertBondRemoved(helper, bond);
+        assertBondRemoved(helper, bond.getName());
     }
 
     @Test
@@ -339,10 +339,10 @@ public class SetupNetworksHelperTest {
                 violations.contains(violation));
     }
 
-    private void assertBondRemoved(SetupNetworksHelper helper, VdsNetworkInterface expectedBond) {
+    private void assertBondRemoved(SetupNetworksHelper helper, String expectedBondName) {
         assertTrue(MessageFormat.format("Expected bond ''{0}'' to be removed but it wasn''t. Removed bonds: {1}",
-                expectedBond, helper.getRemovedBonds()),
-                helper.getRemovedBonds().contains(expectedBond));
+                expectedBondName, helper.getRemovedBonds()),
+                helper.getRemovedBonds().contains(expectedBondName));
     }
 
     private void assertNetworkRemoved(SetupNetworksHelper helper, String expectedNetworkName) {

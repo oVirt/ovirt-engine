@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -11,7 +13,7 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
     private List<network> networks;
     private List<String> removedNetworks;
     private List<VdsNetworkInterface> bonds;
-    private List<VdsNetworkInterface> removedBonds;
+    private Set<String> removedBonds;
     private List<VdsNetworkInterface> interfaces;
 
     private boolean force;
@@ -34,13 +36,13 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
             List<network> networks,
             List<String> removedNetworks,
             List<VdsNetworkInterface> bonds,
-            List<VdsNetworkInterface> removedBonds,
+            Set<String> removedBonds,
             List<VdsNetworkInterface> interfaces) {
         super(vdsId);
         this.networks = (networks == null) ? new ArrayList<network>() : networks;
         this.removedNetworks = (removedNetworks == null) ? new ArrayList<String>() : removedNetworks;
         this.bonds = (bonds == null) ? new ArrayList<VdsNetworkInterface>() : bonds;
-        this.removedBonds = (removedBonds == null) ? new ArrayList<VdsNetworkInterface>() : removedBonds;
+        this.removedBonds = (removedBonds == null) ? new HashSet<String>() : removedBonds;
         this.interfaces = (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
     }
 
@@ -100,11 +102,11 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
         this.removedNetworks = removedNetworks;
     }
 
-    public List<VdsNetworkInterface> getRemovedBonds() {
+    public Set<String> getRemovedBonds() {
         return removedBonds;
     }
 
-    public void setRemovedBonds(List<VdsNetworkInterface> removedBonds) {
+    public void setRemovedBonds(Set<String> removedBonds) {
         this.removedBonds = removedBonds;
     }
 }

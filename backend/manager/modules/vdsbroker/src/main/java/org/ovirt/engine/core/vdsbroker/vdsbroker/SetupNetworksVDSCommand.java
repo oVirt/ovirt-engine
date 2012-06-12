@@ -91,8 +91,8 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             bonds.add(bond.getName(), opts);
         }
 
-        for (VdsNetworkInterface bond : getParameters().getRemovedBonds()) {
-            bonds.add(bond.getName(), REMOVE_OBJ);
+        for (String bond : getParameters().getRemovedBonds()) {
+            bonds.add(bond, REMOVE_OBJ);
         }
 
         return bonds;

@@ -27,7 +27,7 @@ public class SetupNetworksHelper {
     private List<network> modifiedNetworks = new ArrayList<network>();
     private List<String> removedNetworks = new ArrayList<String>();
     private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
-    private List<VdsNetworkInterface> removedBonds = new ArrayList<VdsNetworkInterface>();
+    private Set<String> removedBonds = new HashSet<String>();
 
     /** All interface`s names that were processed by the helper. */
     private Set<String> ifaceNames = new HashSet<String>();
@@ -252,7 +252,7 @@ public class SetupNetworksHelper {
         for (VdsNetworkInterface iface : getExistingIfaces().values()) {
             String bondName = iface.getBondName();
             if (StringUtils.isNotBlank(bondName) && !bonds.containsKey(bondName)) {
-                removedBonds.add(getExistingIfaces().get(bondName));
+                removedBonds.add(bondName);
             }
         }
     }
@@ -294,7 +294,7 @@ public class SetupNetworksHelper {
         return new ArrayList<VdsNetworkInterface>(modifiedBonds.values());
     }
 
-    public List<VdsNetworkInterface> getRemovedBonds() {
+    public Set<String> getRemovedBonds() {
         return removedBonds;
     }
 }

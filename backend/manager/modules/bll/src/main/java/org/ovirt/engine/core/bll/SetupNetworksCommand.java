@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -109,7 +110,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         return getParameters().getInterfaces();
     }
 
-    private List<VdsNetworkInterface> getRemovedBonds() {
+    private Set<String> getRemovedBonds() {
         return helper.getRemovedBonds();
     }
 
