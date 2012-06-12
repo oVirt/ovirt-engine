@@ -22,7 +22,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -235,18 +234,40 @@ public class RsdlBuilder {
         //SortedSet<Link> results = new TreeSet<Link>();
         List<DetailedLink> results = new ArrayList<DetailedLink>();
         if (resource!=null) {
-            Map<String, Method> handledMethods = new HashMap<String, Method>();
             for (Method m : resource.getMethods()) {
-                if (handledMethods.containsKey(m.getName()) && !m.getName().equals("remove")) {
-                    //ignore
-                } else {
+                if (isConcreteReturnType(m, resource)) {
                     handleMethod(prefix, results, m, resource, parametersMap);
-                    handledMethods.put(m.getName(), m);
                 }
             }
         }
         return results;
     }
+
+    private boolean isConcreteReturnType(Method method, Class<?> resource) {
+        for (Method m : resource.getMethods()) {
+            if (!m.equals(method)
+                    && m.getName().equals(method.getName())
+                    && parameterTypesEqual(m.getParameterTypes(), method.getParameterTypes())
+                    && method.getReturnType().isAssignableFrom(m.getReturnType())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean parameterTypesEqual(Class<?>[] types1, Class<?>[] types2) {
+        if (types1.length!=types2.length) {
+            return false;
+        } else {
+            for (int i=0; i<types1.length; i++) {
+                if (!(types1[i].isAssignableFrom(types2[i]) || types2[i].isAssignableFrom(types1[i]))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
     private void addToGenericParamsMap (Class<?> resource, Type[] paramTypes, Type[] genericParamTypes, Map<String, Type> parametersMap) {
         for (int i=0; i<genericParamTypes.length; i++) {
             if (paramTypes[i].toString().length() == 1) {
@@ -451,14 +472,14 @@ public class RsdlBuilder {
             if (superInterface instanceof ParameterizedType) {
                 ParameterizedType p = (ParameterizedType)superInterface;
                 Class<?> clazz = Class.forName(p.getRawType().toString().substring(p.getRawType().toString().lastIndexOf(' ')+1));
-                Map<TypeVariable<?>, Type> map = new HashMap<TypeVariable<?>, Type>();
+                Map<String, Type> map = new HashMap<String, Type>();
                 for (int i=0; i<p.getActualTypeArguments().length; i++) {
                     if (!map.containsKey(clazz.getTypeParameters()[i])) {
-                        map.put(clazz.getTypeParameters()[i], p.getActualTypeArguments()[i]);
+                        map.put(clazz.getTypeParameters()[i].toString(), p.getActualTypeArguments()[i]);
                     }
                 }
-                if (map.containsKey(m.getGenericReturnType())) {
-                    String type = map.get(m.getGenericReturnType()).toString();
+                if (map.containsKey(m.getGenericReturnType().toString())) {
+                    String type = map.get(m.getGenericReturnType().toString()).toString();
                     try {
                         Class<?> returnClass = Class.forName(type.substring(type.lastIndexOf(' ')+1));
                         return returnClass;
