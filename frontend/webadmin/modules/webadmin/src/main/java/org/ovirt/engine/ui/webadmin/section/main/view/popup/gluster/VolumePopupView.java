@@ -78,6 +78,10 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @WithElementId
     EntityModelLabelEditor stripeCountEditor;
 
+    @UiField
+    @Ignore
+    Label transportTypesLabel;
+
     @UiField(provided = true)
     @Path(value = "tcpTransportType.entity")
     @WithElementId
@@ -89,6 +93,10 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     EntityModelCheckBoxEditor rdmaTransportTypeEditor;
 
     @UiField
+    @Ignore
+    Label bricksLabel;
+
+    @UiField
     @WithElementId
     UiCommandButton addBricksButton;
 
@@ -96,6 +104,10 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @Ignore
     @WithElementId
     Label bricksCountEditor;
+
+    @UiField
+    @Ignore
+    Label accessProtocolsLabel;
 
     @UiField
     @Path(value = "gluster_accecssProtocol.entity")
@@ -111,6 +123,10 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @Path(value = "allowAccess.entity")
     @WithElementId
     EntityModelTextBoxEditor allowAccessEditor;
+
+    @UiField
+    @Ignore
+    Label allowAccessLabel;
 
     @UiField
     @Ignore
@@ -173,13 +189,16 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         typeListEditor.setLabel(constants.typeVolume());
         replicaCountEditor.setLabel(constants.replicaCountVolume());
         stripeCountEditor.setLabel(constants.stripeCountVolume());
+        transportTypesLabel.setText(constants.transportTypeVolume());
         tcpTransportTypeEditor.setLabel(constants.tcpVolume());
         rdmaTransportTypeEditor.setLabel(constants.rdmaVolume());
+        bricksLabel.setText(constants.bricksVolume());
         addBricksButton.setLabel(constants.addBricksVolume());
+        accessProtocolsLabel.setText(constants.accessProtocolsVolume());
         gluster_accecssProtocolEditor.setLabel(constants.glusterVolume());
         nfs_accecssProtocolEditor.setLabel(constants.nfsVolume());
         allowAccessEditor.setLabel(constants.allowAccessFromVolume());
-
+        allowAccessLabel.setText(constants.allowAccessFromLabelVolume());
     }
 
     @Override

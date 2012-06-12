@@ -72,21 +72,21 @@
 				<e:EntityModelLabelEditor ui:field="stripeCountEditor" />
 				
 				<g:HorizontalPanel>
-					<g:Label addStyleNames="{style.transTypeLabel}">Transport Types</g:Label>
+					<g:Label ui:field="transportTypesLabel" addStyleNames="{style.transTypeLabel}"></g:Label>
 					<e:EntityModelCheckBoxEditor ui:field="tcpTransportTypeEditor" width="50px"/>
 					<e:EntityModelCheckBoxEditor ui:field="rdmaTransportTypeEditor" width="50px"/>
 				</g:HorizontalPanel>
 				
 				<g:HorizontalPanel>
-					<g:Label addStyleNames="{style.bricksLabel}">Bricks</g:Label>
+					<g:Label ui:field="bricksLabel" addStyleNames="{style.bricksLabel}"></g:Label>
 					<w:UiCommandButton ui:field="addBricksButton"/>
 					<g:Label ui:field="bricksCountEditor" addStyleNames="{style.bricksCountLabel}"/>
 				</g:HorizontalPanel>
-				<g:Label addStyleNames="{style.sectionLabel}">Access Protocols</g:Label>
+				<g:Label ui:field="accessProtocolsLabel" addStyleNames="{style.sectionLabel}"></g:Label>
 				<e:EntityModelCheckBoxEditor ui:field="gluster_accecssProtocolEditor"/>
 				<e:EntityModelCheckBoxEditor ui:field="nfs_accecssProtocolEditor"/>
 				<e:EntityModelTextBoxEditor ui:field="allowAccessEditor" />
-				<g:Label>(Comma separated list of IP addresses/hostnames)</g:Label>
+				<g:Label ui:field="allowAccessLabel"></g:Label>
 
 				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
 			</g:VerticalPanel>

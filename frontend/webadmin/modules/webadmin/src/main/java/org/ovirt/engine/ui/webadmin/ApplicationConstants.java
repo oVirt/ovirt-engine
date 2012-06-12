@@ -1877,6 +1877,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Stripe Count")
     String stripeCountVolume();
 
+    @DefaultStringValue("Transport Type")
+    String transportTypeVolume();
+
     @DefaultStringValue("TCP")
     String tcpVolume();
 
@@ -1892,6 +1895,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Bricks")
     String bricksVolume();
 
+    @DefaultStringValue("Access Protocols")
+    String accessProtocolsVolume();
+
     @DefaultStringValue("Gluster")
     String glusterVolume();
 
@@ -1900,6 +1906,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Allow Access From")
     String allowAccessFromVolume();
+
+    @DefaultStringValue("(Comma separated list of IP addresses/hostnames)")
+    String allowAccessFromLabelVolume();
 
     @DefaultStringValue("Name")
     String NameVolume();

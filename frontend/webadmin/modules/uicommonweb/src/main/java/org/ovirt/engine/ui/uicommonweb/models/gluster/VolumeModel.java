@@ -109,9 +109,11 @@ public class VolumeModel extends Model {
 
         setTcpTransportType(new EntityModel());
         getTcpTransportType().setEntity(true);
+        getTcpTransportType().setIsChangable(false);
 
         setRdmaTransportType(new EntityModel());
         getRdmaTransportType().setEntity(false);
+        getRdmaTransportType().setIsAvailable(false);
 
         getTypeList().setSelectedItem(GlusterVolumeType.DISTRIBUTE);
         getReplicaCount().setIsAvailable(false);
