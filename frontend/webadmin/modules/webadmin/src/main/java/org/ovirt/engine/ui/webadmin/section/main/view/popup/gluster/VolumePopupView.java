@@ -200,7 +200,9 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
                 if ("Bricks".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     bricksCountEditor.setText(ConstantsManager.getInstance()
                             .getMessages()
-                            .noOfBricksSelected(model.getBricks().getSelectedItems().size()));
+                            .noOfBricksSelected(model.getBricks().getSelectedItems() == null ? 0 : model.getBricks()
+                                    .getSelectedItems()
+                                    .size()));
                 }
             }
         });

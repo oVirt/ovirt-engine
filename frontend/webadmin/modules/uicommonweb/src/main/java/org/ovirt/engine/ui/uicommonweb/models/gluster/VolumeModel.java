@@ -85,7 +85,7 @@ public class VolumeModel extends Model {
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
         setCluster(new ListModel());
-        getCluster().getSelectedItemsChangedEvent().addListener(new IEventListener() {
+        getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -415,6 +415,7 @@ public class VolumeModel extends Model {
         {
             getAddBricksCommand().setIsExecutionAllowed(false);
         }
+        setBricks(new ListModel());
     }
 
     private void dataCenter_SelectedItemChanged()
