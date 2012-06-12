@@ -108,7 +108,7 @@ public class AddDiskToVmCommandTest {
                 anyBoolean(), anyBoolean(), any(ArrayList.class))).thenReturn(true);
         mockStatic(StorageDomainSpaceChecker.class);
         when(StorageDomainSpaceChecker.isBelowThresholds(any(storage_domains.class))).thenReturn(true);
-        when(Config.GetValue(ConfigValues.MaxDiskSize)).thenReturn(Integer.MAX_VALUE);
+        when(Config.GetValue(ConfigValues.MaxBlockDiskSize)).thenReturn(Integer.MAX_VALUE);
         when(AsyncTaskManager.getInstance()).thenReturn(asyncTaskManager);
         when(asyncTaskManager.EntityHasTasks(any(Guid.class))).thenReturn(false);
         final int defaultFreeSpaceLow = 10;

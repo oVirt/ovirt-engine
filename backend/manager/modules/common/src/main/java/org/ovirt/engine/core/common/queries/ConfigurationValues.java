@@ -46,7 +46,7 @@ public enum ConfigurationValues {
     VcpuConsumptionPercentage(ConfigAuthType.User),
     CertificateFingerPrint,
     SearchResultsLimit(ConfigAuthType.User),
-    MaxDiskSize(ConfigAuthType.User),
+    MaxBlockDiskSize(ConfigAuthType.User),
     RedirectServletReportsPage(ConfigAuthType.User),
     RedirectServletReportsPageError(ConfigAuthType.User),
     EnableSpiceRootCertificateValidation(ConfigAuthType.User),

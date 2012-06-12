@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -150,11 +151,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
         }
-        if (returnValue && getRequestDiskSpace() > Config
-                .<Integer> GetValue(ConfigValues.MaxDiskSize)) {
+        if (returnValue && isExceedMaxBlockDiskSize()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
             getReturnValue().getCanDoActionMessages().add(
-                    String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxDiskSize)));
+                    String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize)));
             returnValue = false;
         }
         return returnValue;
@@ -186,6 +186,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         } else {
             return StorageDomainSpaceChecker.isBelowThresholds(storageDomain);
         }
+    }
+
+    private boolean isExceedMaxBlockDiskSize() {
+        StorageType storageType = getStorageDomain().getstorage_type();
+        boolean isBlockStorageDomain = storageType == StorageType.ISCSI || storageType == StorageType.FCP;
+        boolean isRequestedLargerThanMaxSize = getRequestDiskSpace() > Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize);
+
+        return isBlockStorageDomain && isRequestedLargerThanMaxSize;
     }
 
     /**

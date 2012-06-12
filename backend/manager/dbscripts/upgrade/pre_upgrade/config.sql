@@ -205,7 +205,7 @@ select fn_db_add_config_value('MacPoolRanges','00:1A:4A:16:01:51-00:1A:4A:16:01:
 select fn_db_add_config_value('ManagedDevicesWhiteList','','general');
 select fn_db_add_config_value('ManagementNetwork','ovirtmgmt','general');
 select fn_db_add_config_value('MaxAuditLogMessageLength','10000','general');
-select fn_db_add_config_value('MaxDiskSize','16384','general');
+select fn_db_add_config_value('MaxBlockDiskSize','8192','general');
 select fn_db_add_config_value('MaxLDAPQueryPartsNumber','100','general');
 select fn_db_add_config_value('MaxMacsCountInPool','100000','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');

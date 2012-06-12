@@ -375,8 +375,8 @@ public enum ConfigValues {
     @DefaultValueAttribute("3")
     VdsRecoveryTimeoutInMintues(128),
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("2047")
-    MaxDiskSize(129),
+    @DefaultValueAttribute("8192")
+    MaxBlockDiskSize(129),
     // the order is- {level}:{name}:{flags}:{vdsm};
     // {level}:{name}:{flags}:{vdsm};1:cpu_name:cpu_flags,..,:vdsm_exec,+..,-..;..
     @TypeConverterAttribute(String.class)
