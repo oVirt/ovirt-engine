@@ -230,7 +230,7 @@ public class VdsSelector {
         else if (!IsVMSwapValueLegal(vds)) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP);
         }
-        return new ValidationResult();
+        return ValidationResult.VALID;
     }
 
     /**

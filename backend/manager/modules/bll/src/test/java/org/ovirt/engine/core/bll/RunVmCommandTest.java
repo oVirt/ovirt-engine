@@ -563,7 +563,7 @@ public class RunVmCommandTest {
 
     private static SnapshotsValidator mockSuccessfulSnapshotValidator() {
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
-        when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(new ValidationResult());
+        when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
         return snapshotsValidator;
     }
 }

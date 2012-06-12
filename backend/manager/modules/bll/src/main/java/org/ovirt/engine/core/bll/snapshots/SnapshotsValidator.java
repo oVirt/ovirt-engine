@@ -25,7 +25,7 @@ public class SnapshotsValidator {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
         }
 
-        return new ValidationResult();
+        return ValidationResult.VALID;
     }
 
     /**
@@ -37,7 +37,7 @@ public class SnapshotsValidator {
      */
     public ValidationResult snapshotNotBroken(Snapshot snapshot) {
         return SnapshotStatus.BROKEN == snapshot.getStatus() ?
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_IS_BROKEN) : new ValidationResult();
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_IS_BROKEN) : ValidationResult.VALID;
     }
 
     /**
@@ -73,7 +73,7 @@ public class SnapshotsValidator {
      */
     private ValidationResult createSnapshotExistsResult(boolean snapshotExists) {
         return snapshotExists
-                ? new ValidationResult()
+                ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 

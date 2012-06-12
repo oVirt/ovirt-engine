@@ -280,7 +280,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
         }
 
-        return new ValidationResult();
+        return ValidationResult.VALID;
     }
 
     private ValidationResult vmNotRunningStateless() {
@@ -290,7 +290,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             return new ValidationResult(message);
         }
 
-        return new ValidationResult();
+        return ValidationResult.VALID;
     }
 
     @Override

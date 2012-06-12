@@ -10,12 +10,18 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 public final class ValidationResult {
 
     /**
+     * A single instance for cases in which the outcome of the validation is ok.
+     */
+    public final static ValidationResult VALID = new ValidationResult();
+
+    /**
      * In case the validation succeeded it is <code>null</code>, otherwise it contains the validation failure message.
      */
     private final VdcBllMessages message;
 
     /**
      * Default validation result is success with no message.
+     * This constructor is private, it is only used to create a 'valid' result. Please use {@link ValidationResult#VALID}
      */
     public ValidationResult() {
         message = null;
