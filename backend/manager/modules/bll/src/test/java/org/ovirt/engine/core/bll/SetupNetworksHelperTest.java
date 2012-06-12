@@ -154,6 +154,45 @@ public class SetupNetworksHelperTest {
     }
 
     @Test
+    public void bondGrew() {
+        VdsNetworkInterface bond = createBond(BOND_NAME, "net");
+        List<VdsNetworkInterface> slaves = createNics(bond.getName(), RandomUtils.instance().nextInt(3, 100));
+        slaves.get(0).setBondName(null);
+
+        mockExistingIfacesWithBond(bond, slaves);
+        slaves.get(0).setBondName(bond.getName());
+        SetupNetworksParameters parameters = createParametersForBond(bond, slaves);
+
+        SetupNetworksHelper helper = createHelper(parameters);
+
+        validateAndExpectNoViolations(helper);
+        assertBondModified(helper, bond);
+        assertNoNetworksModified(helper);
+        assertNoNetworksRemoved(helper);
+        assertNoBondsRemoved(helper);
+    }
+
+    @Test
+    public void bondShrank() {
+        VdsNetworkInterface bond = createBond(BOND_NAME, "net");
+        List<VdsNetworkInterface> slaves = createNics(bond.getName(), RandomUtils.instance().nextInt(3, 100));
+
+        mockExistingIfacesWithBond(bond, slaves);
+        slaves.get(0).setBondName(null);
+        SetupNetworksParameters parameters = new SetupNetworksParameters();
+        parameters.setInterfaces(slaves);
+        parameters.getInterfaces().add(bond);
+
+        SetupNetworksHelper helper = createHelper(parameters);
+
+        validateAndExpectNoViolations(helper);
+        assertBondModified(helper, bond);
+        assertNoNetworksModified(helper);
+        assertNoNetworksRemoved(helper);
+        assertNoBondsRemoved(helper);
+    }
+
+    @Test
     public void bondWithNetworkDidntChange() {
         VdsNetworkInterface bond = createBond(BOND_NAME, "net");
         List<VdsNetworkInterface> ifaces = createNics(bond.getName());

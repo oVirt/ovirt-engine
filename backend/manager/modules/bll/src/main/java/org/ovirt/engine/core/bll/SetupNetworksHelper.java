@@ -82,9 +82,9 @@ public class SetupNetworksHelper {
         }
 
         validateBondSlavesCount();
-        detectSlaveChanges();
         extractRemovedNetworks();
         extractRemovedBonds();
+        detectSlaveChanges();
 
         return violations;
     }
@@ -112,15 +112,23 @@ public class SetupNetworksHelper {
     }
 
     /**
-     * Detect a bond that it's slaves have changed, to add to the modified bonds list.
+     * Detect a bond that it's slaves have changed, to add to the modified bonds list.<br>
+     * Make sure not to add bond that was removed entirely.
      */
     private void detectSlaveChanges() {
-        for (Map.Entry<String, List<VdsNetworkInterface>> bondEntry : bonds.entrySet()) {
-            String bondName = bondEntry.getKey();
-            if (!modifiedBonds.containsKey(bondName)) {
-                for (VdsNetworkInterface bondSlave : bondEntry.getValue()) {
-                    if (interfaceWasModified(bondSlave)) {
-                        modifiedBonds.put(bondName, getExistingIfaces().get(bondName));
+        for (VdsNetworkInterface newIface : params.getInterfaces()) {
+            if (!isBond(newIface) && newIface.getVlanId() == null) {
+                String bondNameInNewIface = newIface.getBondName();
+                String bondNameInOldIface = getExistingIfaces().get(newIface.getName()).getBondName();
+
+                if (!StringUtils.equals(bondNameInNewIface, bondNameInOldIface)) {
+                    if (bondNameInNewIface != null && !modifiedBonds.containsKey(bondNameInNewIface)) {
+                        modifiedBonds.put(bondNameInNewIface, getExistingIfaces().get(bondNameInNewIface));
+                    }
+
+                    if (bondNameInOldIface != null && !modifiedBonds.containsKey(bondNameInNewIface)
+                            && !removedBonds.contains(bondNameInOldIface)) {
+                        modifiedBonds.put(bondNameInOldIface, getExistingIfaces().get(bondNameInOldIface));
                     }
                 }
             }
