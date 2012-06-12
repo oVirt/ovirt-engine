@@ -397,29 +397,25 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getVersion().setIsChangable(false);
         model.getRetransmissions().setIsChangable(false);
         model.getTimeout().setIsChangable(false);
-        model.getMountOptions().setIsChangable(false);
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
 
                 storage_server_connections connection = (storage_server_connections) returnValue;
+                model.getPath().setEntity(connection.getconnection());
                 model.getRetransmissions().setEntity(connection.getNfsRetrans());
                 model.getTimeout().setEntity(connection.getNfsTimeo());
-                model.getMountOptions().setEntity(connection.getMountOptions());
 
                 for (Object item : model.getVersion().getItems()) {
 
                     EntityModel itemModel = (EntityModel) item;
-                    if (itemModel.getEntity().equals(connection.getNfsVersion())) {
+                    if ((itemModel.getEntity() == null && connection.getNfsVersion() == null) || (itemModel.getEntity().equals(connection.getNfsVersion()))) {
 
                         model.getVersion().setSelectedItem(item);
-                        model.getVersion().setEntity(itemModel.getTitle());
                         break;
                     }
                 }
-
-                model.getPath().setEntity(connection.getconnection());
 
             }
         }), storage.getstorage(), true);
@@ -1229,7 +1225,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         tempVar.setNfsVersion(((EntityModel) nfsModel.getVersion().getSelectedItem()).AsConvertible().nullableShort());
         tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
         tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
-        tempVar.setMountOptions((String) nfsModel.getMountOptions().getEntity());
         connection = tempVar;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();

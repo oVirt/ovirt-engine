@@ -20,14 +20,34 @@
         }
 
         .pathHintLabel {
-            margin: -10px 0px 0px 5px;
-            width: 350px;
+            margin: -8px 0px 0px 5px;
+            font-size: 8pt;
+            width: 450px;
         }
 
         .errorLabel {
             color: #CD2127;
             margin-top: 20px;
             margin-left: 5px;
+        }
+
+        .warningLabel {
+            color: Red;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .expanderContent {
+            margin-left: 15px;
+            display: none;
+        }
+
+        .expander {
+            background: Transparent;
+            border: none;
+            padding: 0px;
+            margin: 5px;
+            float: left;
         }
 
     </ui:style>
@@ -50,38 +70,42 @@
                     </td>
                 </tr>
                 <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="versionLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <e:ListModelListBoxOnlyEditor ui:field="versionEditor"/>
-                        <e:EntityModelTextBoxOnlyEditor ui:field="versionEditorLabel" visible="false"/>
+                    <td colspan="2">
+                        <g:ToggleButton ui:field="expander" addStyleNames="{style.expander}"/>
                     </td>
                 </tr>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="retransmissionsLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <e:EntityModelTextBoxOnlyEditor ui:field="retransmissionsEditor"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="timeoutLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <e:EntityModelTextBoxOnlyEditor ui:field="timeoutEditor"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td nowrap="nowrap">
-                        <g:Label ui:field="mountOptionsLabel" addStyleNames="{style.label}"/>
-                    </td>
-                    <td>
-                        <e:EntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor"/>
-                    </td>
-                </tr>
+                <table ui:field="expanderContent">
+                    <tr>
+                        <td colspan="2">
+                            <g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td nowrap="nowrap">
+                            <g:Label ui:field="versionLabel" addStyleNames="{style.label}"/>
+                        </td>
+                        <td>
+                            <e:ListModelListBoxOnlyEditor ui:field="versionEditor"/>
+                            <e:EntityModelTextBoxOnlyEditor ui:field="versionReadOnlyEditor"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td nowrap="nowrap">
+                            <g:Label ui:field="retransmissionsLabel" addStyleNames="{style.label}"/>
+                        </td>
+                        <td>
+                            <e:EntityModelTextBoxOnlyEditor ui:field="retransmissionsEditor"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td nowrap="nowrap">
+                            <g:Label ui:field="timeoutLabel" addStyleNames="{style.label}"/>
+                        </td>
+                        <td>
+                            <e:EntityModelTextBoxOnlyEditor ui:field="timeoutEditor"/>
+                        </td>
+                    </tr>
+                </table>
             </table>
         </g:HTMLPanel>
         <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>

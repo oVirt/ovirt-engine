@@ -917,4 +917,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("LUN is already in use - attaching it could cause data corruption.")
     String lunAlreadyUsedWarning();
 
+    @DefaultStringValue("Advanced Parameters")
+    String advancedParameters();
 }

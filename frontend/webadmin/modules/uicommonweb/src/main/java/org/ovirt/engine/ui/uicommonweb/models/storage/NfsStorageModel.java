@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -23,6 +20,9 @@ import org.ovirt.engine.ui.uicommonweb.validation.NonUtfValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class NfsStorageModel extends Model implements IStorageModel {
@@ -116,16 +116,6 @@ public class NfsStorageModel extends Model implements IStorageModel {
         timeout = value;
     }
 
-    private EntityModel mountOptions;
-
-    public EntityModel getMountOptions() {
-        return mountOptions;
-    }
-
-    private void setMountOptions(EntityModel value) {
-        mountOptions = value;
-    }
-
 
     static {
 
@@ -154,7 +144,6 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
         setRetransmissions(new EntityModel());
         setTimeout(new EntityModel());
-        setMountOptions(new EntityModel());
     }
 
     @Override
@@ -225,6 +214,5 @@ public class NfsStorageModel extends Model implements IStorageModel {
         getVersion().setIsAvailable(available);
         getRetransmissions().setIsAvailable(available);
         getTimeout().setIsAvailable(available);
-        getMountOptions().setIsAvailable(available);
     }
 }

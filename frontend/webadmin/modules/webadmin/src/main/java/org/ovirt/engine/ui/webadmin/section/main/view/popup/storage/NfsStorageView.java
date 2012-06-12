@@ -2,16 +2,26 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
@@ -47,13 +57,25 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @Ignore
     Label pathHintLabel;
 
+    @UiField
+    @Ignore
+    ToggleButton expander;
+
+    @UiField
+    @Ignore
+    Label warningLabel;
+
+    @UiField
+    @Ignore
+    TableElement expanderContent;
+
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
     ListModelListBoxOnlyEditor<Object> versionEditor;
 
     @UiField
-    @Path(value = "version.entity")
-    EntityModelTextBoxOnlyEditor versionEditorLabel;
+    @Ignore
+    EntityModelTextBoxOnlyEditor versionReadOnlyEditor;
 
     @UiField
     @Ignore
@@ -76,15 +98,11 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     Label timeoutLabel;
 
     @UiField
-    @Path(value = "mountOptions.entity")
-    EntityModelTextBoxOnlyEditor mountOptionsEditor;
-
-    @UiField
-    @Ignore
-    Label mountOptionsLabel;
-
-    @UiField
     Label message;
+
+    protected static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    protected static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    protected static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
 
     @Inject
     public NfsStorageView() {
@@ -92,11 +110,32 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
         addStyles();
+        wireEvents();
         Driver.driver.initialize(this);
     }
 
     void addStyles() {
         pathEditor.addContentWidgetStyleName(style.pathEditorContent());
+
+        expanderContent.setClassName(style.expanderContent());
+
+
+        SafeHtml expandImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.expanderImage()).getHTML());
+        expander.getUpFace().setHTML(templates.imageTextButton(expandImage, constants.advancedParameters()));
+
+        SafeHtml collapseImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.expanderDownImage()).getHTML());
+        expander.getDownFace().setHTML(templates.imageTextButton(collapseImage, constants.advancedParameters()));
+    }
+
+    void wireEvents() {
+
+        expander.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+
+                expanderContent.getStyle().setDisplay(expander.isDown() ? Style.Display.BLOCK : Style.Display.NONE);
+            }
+        });
     }
 
     void initEditors() {
@@ -115,30 +154,39 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
         pathLabel.setText(constants.storagePopupNfsPathLabel());
         pathHintLabel.setText(constants.storagePopupNfsPathHintLabel());
+        warningLabel.setText(constants.storagePopupNfsAdvancedOptionsLabel());
         versionLabel.setText(constants.storagePopupNfsVersionLabel());
         retransmissionsLabel.setText(constants.storagePopupNfsRetransmissionsLabel());
         timeoutLabel.setText(constants.storagePopupNfsTimeoutLabel());
-        mountOptionsLabel.setText(constants.storagePopupNfsMountOptionsLabel());
     }
 
     @Override
     public void edit(NfsStorageModel object) {
         Driver.driver.edit(object);
 
+        EntityModel version = (EntityModel) object.getVersion().getSelectedItem();
+        versionReadOnlyEditor.asValueBox().setValue(version != null ? version.getTitle() : null);
+
         pathHintLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
 
-        styleTextBoxEditor(pathEditor, object.getPath());
-        styleTextBoxEditor(timeoutEditor, object.getTimeout());
-        styleTextBoxEditor(mountOptionsEditor, object.getMountOptions());
-        styleTextBoxEditor(retransmissionsEditor, object.getRetransmissions());
-        styleTextBoxEditor(versionEditorLabel, object.getVersion());
+        styleTextBoxEditor(pathEditor, object.getPath().getIsChangable());
+        styleTextBoxEditor(timeoutEditor, object.getTimeout().getIsChangable());
+        styleTextBoxEditor(retransmissionsEditor, object.getRetransmissions().getIsChangable());
+        styleTextBoxEditor(versionReadOnlyEditor, object.getVersion().getIsChangable());
 
-        versionEditorLabel.setVisible(!object.getVersion().getIsChangable() && object.getVersion().getIsAvailable());
         setElementVisibility(versionEditor, object.getVersion().getIsChangable() && object.getVersion().getIsAvailable());
+        setElementVisibility(versionReadOnlyEditor, !object.getVersion().getIsChangable() || !object.getVersion().getIsAvailable());
         setElementVisibility(versionLabel, object.getVersion().getIsAvailable());
         setElementVisibility(retransmissionsLabel, object.getRetransmissions().getIsAvailable());
         setElementVisibility(timeoutLabel, object.getTimeout().getIsAvailable());
-        setElementVisibility(mountOptionsLabel, object.getMountOptions().getIsAvailable());
+
+
+        // When all advanced fields are unavailable - hide the expander.
+        boolean anyField = object.getVersion().getIsAvailable()
+            || object.getRetransmissions().getIsAvailable()
+            || object.getTimeout().getIsAvailable();
+
+        expander.getElement().getStyle().setVisibility(anyField ? Style.Visibility.VISIBLE : Style.Visibility.HIDDEN);
     }
 
     @Override
@@ -149,6 +197,8 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     interface WidgetStyle extends CssResource {
 
         String pathEditorContent();
+
+        String expanderContent();
     }
 
     @Override
@@ -159,9 +209,9 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     /*
      * Makes a provided editor look like label (enabled, read-only textbox).
      */
-    private void styleTextBoxEditor(EntityModelTextBoxOnlyEditor editor, EntityModel model) {
+    private void styleTextBoxEditor(EntityModelTextBoxOnlyEditor editor, boolean enabled) {
 
-        if (!model.getIsChangable()) {
+        if (!enabled) {
 
             editor.setEnabled(true);
 
@@ -173,6 +223,6 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     private void setElementVisibility(UIObject object, boolean value) {
 
-        object.getElement().getStyle().setVisibility(value ? Style.Visibility.VISIBLE : Style.Visibility.HIDDEN);
+        object.getElement().getStyle().setDisplay(value ? Style.Display.BLOCK : Style.Display.NONE);
     }
 }

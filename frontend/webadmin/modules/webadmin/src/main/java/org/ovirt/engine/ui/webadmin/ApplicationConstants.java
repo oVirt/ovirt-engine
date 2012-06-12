@@ -229,14 +229,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("NFS Version")
     String storagePopupNfsVersionLabel();
 
-    @DefaultStringValue("Retransmissions")
+    @DefaultStringValue("Retransmissions (#)")
     String storagePopupNfsRetransmissionsLabel();
 
-    @DefaultStringValue("Timeout (seconds)")
+    @DefaultStringValue("Timeout (deciseconds)")
     String storagePopupNfsTimeoutLabel();
-
-    @DefaultStringValue("Mount Options")
-    String storagePopupNfsMountOptionsLabel();
 
     @DefaultStringValue("Path")
     String storagePopupPosixPathLabel();
@@ -250,8 +247,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Path")
     String storagePopupLocalPathLabel();
 
-    @DefaultStringValue("Please use 'FQDN:/path' or 'IP:/path' Example 'server.example.com:/export/VMs'")
+    @DefaultStringValue("Remote path to NFS export, takes either the form: FQDN:/path or IP:/path e.g. server.example.com:/export/VMs")
     String storagePopupNfsPathHintLabel();
+
+    @DefaultStringValue("* It is recommended to keep the default values in the fields below unchanged.")
+    String storagePopupNfsAdvancedOptionsLabel();
 
     @DefaultStringValue("Path to device to mount / remote export")
     String storagePopupPosixPathHintLabel();
