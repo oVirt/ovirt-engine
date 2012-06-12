@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.dataprovider;
 
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1734,12 +1733,12 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? ((Integer) source).intValue() : 2047;
+                return source != null ? ((Integer) source).intValue() : 0;
             }
         };
 
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxDiskSize),
+                new GetConfigurationValueParameters(ConfigurationValues.MaxBlockDiskSize),
                 aQuery);
     }
 

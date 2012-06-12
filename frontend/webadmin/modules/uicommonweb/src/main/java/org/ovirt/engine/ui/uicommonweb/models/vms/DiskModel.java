@@ -46,8 +46,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class DiskModel extends Model
 {
-    static int maxDiskSize = 2047;
-    static boolean maxDiskSizeInited = false;
+    private static int maxDiskSize;
 
     private boolean privateIsNew;
 
@@ -514,10 +513,7 @@ public class DiskModel extends Model
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
-                        if (!DiskModel.maxDiskSizeInited) {
-                            DiskModel.maxDiskSizeInited = true;
-                            DiskModel.maxDiskSize = ((Integer) returnValue);
-                        }
+                        maxDiskSize = ((Integer) returnValue);
                     }
                 }));
     }
@@ -858,11 +854,15 @@ public class DiskModel extends Model
             return true;
         }
 
-        IntegerValidation tempVar = new IntegerValidation();
-        tempVar.setMinimum(1);
-        tempVar.setMaximum(maxDiskSize);
-        IntegerValidation intValidation = tempVar;
-        getSize().ValidateEntity(new IValidation[] { new NotEmptyValidation(), intValidation });
+        StorageType storageType = getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
+                : ((storage_domains) getStorageDomain().getSelectedItem()).getstorage_type();
+
+        IntegerValidation sizeValidation = new IntegerValidation();
+        sizeValidation.setMinimum(1);
+        if (storageType == StorageType.ISCSI || storageType == StorageType.FCP) {
+            sizeValidation.setMaximum(maxDiskSize);
+        }
+        getSize().ValidateEntity(new IValidation[] { new NotEmptyValidation(), sizeValidation });
 
         getStorageDomain().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getAlias().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });

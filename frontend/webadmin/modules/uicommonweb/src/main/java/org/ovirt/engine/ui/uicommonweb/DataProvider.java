@@ -2356,7 +2356,7 @@ public final class DataProvider
     public static int GetDiskMaxSize()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxDiskSize));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxBlockDiskSize));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
