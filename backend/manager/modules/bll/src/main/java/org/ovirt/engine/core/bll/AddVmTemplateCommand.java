@@ -458,15 +458,20 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void addPermission() {
+        addPermissionForTempalte(getCurrentUser().getUserId(), PredefinedRoles.TEMPLATE_OWNER);
         // if the template is for public use, set EVERYONE as a TEMPLATE_USER.
         if (getParameters().isPublicUse()) {
-            permissions perms = new permissions();
-            perms.setad_element_id(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID);
-            perms.setObjectType(VdcObjectType.VmTemplate);
-            perms.setObjectId(getParameters().getVmTemplateId());
-            perms.setrole_id(PredefinedRoles.TEMPLATE_USER.getId());
-            MultiLevelAdministrationHandler.addPermission(perms);
+            addPermissionForTempalte(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
         }
+    }
+
+    private void addPermissionForTempalte(Guid userId, PredefinedRoles role) {
+        permissions perms = new permissions();
+        perms.setad_element_id(userId);
+        perms.setObjectType(VdcObjectType.VmTemplate);
+        perms.setObjectId(getParameters().getVmTemplateId());
+        perms.setrole_id(role.getId());
+        MultiLevelAdministrationHandler.addPermission(perms);
     }
 
     @Override
