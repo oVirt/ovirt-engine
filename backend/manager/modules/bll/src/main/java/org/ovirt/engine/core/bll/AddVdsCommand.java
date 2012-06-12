@@ -62,6 +62,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         initializer.AddParameter(VdsStatic.class, "mVds");
     }
 
+    private VDS upServer;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -168,7 +170,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 VDSReturnValue returnValue =
                         runVdsCommand(
                                 VDSCommandType.GlusterHostAdd,
-                                new GlusterHostAddVDSParameters(getUpServer().getId(),
+                                new GlusterHostAddVDSParameters(upServer.getId(),
                                         hostName));
                 setSucceeded(returnValue.getSucceeded());
                 if (!getSucceeded()) {
@@ -316,9 +318,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
         if (getVdsGroup().supportsGlusterService()) {
-            if (getAllVds(getVdsGroupId()).size() > 0 && getUpServer() == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
-                returnValue = false;
+            if (clusterHasServers()) {
+                upServer = ClusterUtils.getInstance().getUpServer(getVdsGroupId());
+                if (upServer == null) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
+                    returnValue = false;
+                }
             }
         }
 
@@ -327,6 +332,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         }
         return returnValue;
+    }
+
+    private boolean clusterHasServers() {
+        return ClusterUtils.getInstance().hasServers(getVdsGroupId());
     }
 
     public VdsInstallHelper getVdsInstallHelper() {
@@ -476,14 +485,5 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      */
     private List<VDS> getAllVds(Guid clusterId) {
         return getVdsDAO().getAllForVdsGroup(clusterId);
-    }
-
-    /**
-     * This server is chosen randomly from all the Up servers.
-     *
-     * @return One of the servers in up status
-     */
-    protected VDS getUpServer() {
-        return ClusterUtils.getInstance().getUpServer(getVdsGroupId());
     }
 }

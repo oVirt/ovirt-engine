@@ -54,7 +54,7 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterVolumeCommandBase
         VDSReturnValue returnValue =
                                 runVdsCommand(
                                         VDSCommandType.StartRebalanceGlusterVolume,
-                                        new GlusterVolumeRebalanceVDSParameters(getUpServer().getId(),
+                                        new GlusterVolumeRebalanceVDSParameters(upServer.getId(),
                                                 getGlusterVolumeName(), getParameters().isFixLayoutOnly(), getParameters().isForceAction()));
         if (getSucceeded()) {
             setSucceeded(returnValue.getSucceeded());

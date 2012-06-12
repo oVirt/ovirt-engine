@@ -45,7 +45,7 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
         VDSReturnValue returnValue =
                 runVdsCommand(
                         VDSCommandType.DeleteGlusterVolume,
-                        new GlusterVolumeVDSParameters(getUpServer().getId(),
+                        new GlusterVolumeVDSParameters(upServer.getId(),
                                 getGlusterVolumeName()));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {

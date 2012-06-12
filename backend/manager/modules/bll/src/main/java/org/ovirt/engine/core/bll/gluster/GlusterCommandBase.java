@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
@@ -28,6 +27,7 @@ import org.ovirt.engine.core.dao.VdsStaticDAO;
 public abstract class GlusterCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
     private static final long serialVersionUID = -7394070330293300587L;
     protected AuditLogType errorType;
+    protected VDS upServer;
 
     public GlusterCommandBase(T params) {
         super(params);
@@ -53,7 +53,11 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
      * @return One of the servers in up status
      */
     protected VDS getUpServer() {
-        return ClusterUtils.getInstance().getUpServer(getVdsGroupId());
+        return getClusterUtils().getUpServer(getVdsGroupId());
+    }
+
+    private ClusterUtils getClusterUtils() {
+        return ClusterUtils.getInstance();
     }
 
     @Override
@@ -61,13 +65,13 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         if (!super.canDoAction()) {
             return false;
         }
-        try {
-            getUpServer();
-            return true;
-        } catch (VdcBLLException e) {
+
+        upServer = getUpServer();
+        if (upServer == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }
+        return true;
     }
 
     /**

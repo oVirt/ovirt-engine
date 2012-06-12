@@ -97,6 +97,7 @@ public class GlusterVolumeRemoveBricksCommandTest {
         GlusterVolumeEntity volume = getGlusterVolume(volumeId);
         volume.setStatus(GlusterVolumeStatus.UP);
         volume.setBricks(getBricks(volumeId, 1));
+        volume.setClusterId(CLUSTER_ID);
         return volume;
     }
 
@@ -104,6 +105,7 @@ public class GlusterVolumeRemoveBricksCommandTest {
         GlusterVolumeEntity volume = getGlusterVolume(volumeId);
         volume.setStatus(GlusterVolumeStatus.UP);
         volume.setBricks(getBricks(volumeId, 2));
+        volume.setClusterId(CLUSTER_ID);
         return volume;
     }
 

@@ -76,7 +76,7 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         VDSReturnValue returnValue =
                 runVdsCommand(
                         VDSCommandType.GlusterVolumeRemoveBricks,
-                        new GlusterVolumeRemoveBricksVDSParameters(getUpServer().getId(),
+                        new GlusterVolumeRemoveBricksVDSParameters(upServer.getId(),
                                 getGlusterVolumeName(), bricks, replicaCount));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {

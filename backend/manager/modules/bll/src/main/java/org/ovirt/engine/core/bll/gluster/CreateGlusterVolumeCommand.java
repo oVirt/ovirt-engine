@@ -115,7 +115,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
         VDSReturnValue returnValue = runVdsCommand(
                 VDSCommandType.CreateGlusterVolume,
-                new CreateGlusterVolumeVDSParameters(getUpServer().getId(), volume));
+                new CreateGlusterVolumeVDSParameters(upServer.getId(), volume));
         setSucceeded(returnValue.getSucceeded());
 
         if(!getSucceeded()) {

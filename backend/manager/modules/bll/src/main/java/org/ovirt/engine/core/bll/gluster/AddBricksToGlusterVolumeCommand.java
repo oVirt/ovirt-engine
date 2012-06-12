@@ -67,7 +67,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.AddBricksToGlusterVolume,
-                                new GlusterVolumeBricksActionVDSParameters(getUpServer().getId(),
+                                new GlusterVolumeBricksActionVDSParameters(upServer.getId(),
                                         getGlusterVolumeName(),
                                         getParameters().getBricks(),
                                         getParameters().getReplicaCount(),

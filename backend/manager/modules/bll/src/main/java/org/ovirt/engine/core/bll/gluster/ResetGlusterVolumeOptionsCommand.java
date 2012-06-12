@@ -30,7 +30,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
     @Override
     protected void executeCommand() {
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.ResetGlusterVolumeOptions,
-                new ResetGlusterVolumeOptionsVDSParameters(getUpServer().getId(),
+                new ResetGlusterVolumeOptionsVDSParameters(upServer.getId(),
                         getGlusterVolumeName(), getParameters().getVolumeOption(), getParameters().isForceAction()));
         setSucceeded(returnValue.getSucceeded());
 

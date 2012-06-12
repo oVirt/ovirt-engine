@@ -636,6 +636,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action set")
     String VAR__ACTION__SET();
 
+    @DefaultStringValue("$action reset")
+    String VAR__ACTION__RESET();
+
     @DefaultStringValue("$action edit")
     String VAR__ACTION__UPDATE();
 

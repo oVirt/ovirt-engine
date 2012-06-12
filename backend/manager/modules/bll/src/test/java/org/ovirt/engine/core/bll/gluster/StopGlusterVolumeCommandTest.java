@@ -74,12 +74,14 @@ public class StopGlusterVolumeCommandTest {
     private GlusterVolumeEntity getStartedVolume(Guid volumeId) {
         GlusterVolumeEntity volume = getGlusterVolume(volumeId);
         volume.setStatus(GlusterVolumeStatus.UP);
+        volume.setClusterId(CLUSTER_ID);
         return volume;
     }
 
     private GlusterVolumeEntity getStoppedVolume(Guid volumeId) {
         GlusterVolumeEntity volume = getGlusterVolume(volumeId);
         volume.setStatus(GlusterVolumeStatus.DOWN);
+        volume.setClusterId(CLUSTER_ID);
         return volume;
     }
 

@@ -82,6 +82,7 @@ public class StartRebalanceGlusterVolumeCommandTest {
         volume.setStatus((volumeId == volumeId1) ? GlusterVolumeStatus.UP : GlusterVolumeStatus.DOWN);
         volume.setBricks(getBricks(volumeId, 2));
         volume.setVolumeType(GlusterVolumeType.DISTRIBUTE);
+        volume.setClusterId(CLUSTER_ID);
         return volume;
     }
 
@@ -91,6 +92,7 @@ public class StartRebalanceGlusterVolumeCommandTest {
         volume.setBricks(getBricks(volumeId, brickCount));
         volume.setVolumeType(GlusterVolumeType.REPLICATE);
         volume.setReplicaCount(brickCount);
+        volume.setClusterId(CLUSTER_ID);
         return volume;
     }
 

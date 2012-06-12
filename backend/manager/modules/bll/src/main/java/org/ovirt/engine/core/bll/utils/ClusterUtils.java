@@ -6,8 +6,6 @@ import javax.ejb.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -37,9 +35,21 @@ public class ClusterUtils {
                 .getAllForVdsGroupWithStatus(clusterId, VDSStatus.Up);
 
         if (servers == null || servers.isEmpty()) {
-            throw new VdcBLLException(VdcBllErrors.NO_UP_SERVER_FOUND);
+            return null;
         }
         return RandomUtils.instance().pickRandom(servers);
+    }
+
+    public boolean hasMultipleServers(Guid clusterId) {
+        return getServerCount(clusterId) > 1;
+    }
+
+    public boolean hasServers(Guid clusterId) {
+        return getServerCount(clusterId) > 0;
+    }
+
+    private int getServerCount(Guid clusterId) {
+        return getVdsDao().getAllForVdsGroup(clusterId).size();
     }
 
     public VdsDAO getVdsDao() {

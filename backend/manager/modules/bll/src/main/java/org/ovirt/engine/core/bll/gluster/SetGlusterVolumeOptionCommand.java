@@ -34,7 +34,7 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
     @Override
     protected void executeCommand() {
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.SetGlusterVolumeOption,
-                new GlusterVolumeOptionVDSParameters(getUpServer().getId(),
+                new GlusterVolumeOptionVDSParameters(upServer.getId(),
                         getGlusterVolumeName(), getParameters().getVolumeOption()));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {

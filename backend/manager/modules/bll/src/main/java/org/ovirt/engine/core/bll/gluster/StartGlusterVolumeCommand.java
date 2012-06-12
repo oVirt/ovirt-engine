@@ -47,7 +47,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
         VDSReturnValue returnValue =
                                 runVdsCommand(
                                         VDSCommandType.StartGlusterVolume,
-                                        new GlusterVolumeActionVDSParameters(getUpServer().getId(),
+                                        new GlusterVolumeActionVDSParameters(upServer.getId(),
                                                 getGlusterVolumeName(), getParameters().isForceAction()));
         setSucceeded(returnValue.getSucceeded());
         if(getSucceeded()) {
