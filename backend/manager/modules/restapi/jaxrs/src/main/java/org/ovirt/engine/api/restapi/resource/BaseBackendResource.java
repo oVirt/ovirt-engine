@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -14,20 +14,20 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.invocation.Current;
-import org.ovirt.engine.api.model.Fault;
-import org.ovirt.engine.api.common.util.EnumValidator;
 import org.ovirt.engine.api.common.util.CompletenessAssertor;
+import org.ovirt.engine.api.common.util.EnumValidator;
+import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.restapi.logging.MessageBundle;
+import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.api.restapi.logging.MessageBundle;
-import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class BaseBackendResource {
 
@@ -292,6 +292,16 @@ public class BaseBackendResource {
         String reason = localize(Messages.INVALID_ENUM_REASON);
         String detail = localize(Messages.INVALID_ENUM_DETAIL);
         return EnumValidator.validateEnum(reason, detail, clz, name);
+    }
+
+    public <E extends Enum<E>> List<E> validateEnums(Class<E> clz, List<String> names) {
+        ArrayList<E> enumList = new ArrayList<E>();
+
+        for (String name : names)
+        {
+            enumList.add(validateEnum(clz, name));
+        }
+        return enumList;
     }
 
     protected String combine(String head, String tail) {

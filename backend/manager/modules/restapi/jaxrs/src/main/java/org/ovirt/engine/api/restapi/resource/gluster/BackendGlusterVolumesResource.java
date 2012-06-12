@@ -6,10 +6,10 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumes;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
@@ -17,8 +17,11 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
+import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.IdQueryParameters;
@@ -76,6 +79,8 @@ public class BackendGlusterVolumesResource
     public Response add(GlusterVolume volume) {
         validateParameters(volume, "name", "volumeType", "bricks");
 
+        validateEnumParameters(volume);
+
         GlusterVolumeEntity volumeEntity = getMapper(GlusterVolume.class, GlusterVolumeEntity.class).map(volume, null);
         volumeEntity.setClusterId(asGuid(parent.get().getId()));
         mapBricks(volume, volumeEntity);
@@ -84,6 +89,20 @@ public class BackendGlusterVolumesResource
                 new CreateGlusterVolumeParameters(volumeEntity),
                 new QueryIdResolver(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class),
                 true);
+    }
+
+    private void validateEnumParameters(GlusterVolume volume) {
+        validateEnum(GlusterVolumeType.class, volume.getVolumeType());
+
+        if (volume.isSetTransportTypes())
+        {
+            validateEnums(TransportType.class, volume.getTransportTypes().getTransportTypes());
+        }
+
+        if (volume.isSetAccessProtocols())
+        {
+            validateEnums(AccessProtocol.class, volume.getAccessProtocols().getAccessProtocols());
+        }
     }
 
     private void mapBricks(GlusterVolume volume, GlusterVolumeEntity volumeEntity) {
