@@ -2092,7 +2092,8 @@ def configJbossSSL(xmlObj):
     xmlObj.registerNs('web', xmlObj.getNs('urn:jboss:domain:web'))
     sslConnectorStr='''
     <connector name="https" protocol="HTTP/1.1" socket-binding="https" scheme="https" enable-lookups="false" secure="true">
-        <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/.keystore" protocol="TLSv1" verify-client="false"/>
+        <ssl name="ssl" password="mypass"
+certificate-key-file="/etc/pki/ovirt-engine/.keystore" key-alias="engine" protocol="TLSv1" verify-client="false"/>
     </connector>
 '''
     xmlObj.removeNodes("//web:subsystem/web:connector[@name='https']")
