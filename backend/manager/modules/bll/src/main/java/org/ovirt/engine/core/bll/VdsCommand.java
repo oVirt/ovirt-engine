@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -187,5 +188,11 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getVdsId(), VdcObjectType.VDS,
                 getActionType().getActionGroup()));
+    }
+
+    public void handleVdsError(VDSReturnValue returnValue) {
+        getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
+        getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
+        getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
     }
 }

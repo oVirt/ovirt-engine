@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -16,6 +18,10 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostRemoveVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -28,6 +34,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> extends VdsCommand<T> {
 
     private storage_pool targetStoragePool;
+
+    private VDSGroup targetCluster;
+
+    private AuditLogType errorType = AuditLogType.USER_FAILED_UPDATE_VDS;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -52,13 +62,13 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
-        VDSGroup targetCluster = DbFacade.getInstance().getVdsGroupDAO().get(getParameters().getClusterId());
-        if (targetCluster == null) {
+
+        if (getTargetCluster() == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
-        targetStoragePool = DbFacade.getInstance().getStoragePoolDAO().getForVdsGroup(targetCluster.getId());
+        targetStoragePool = DbFacade.getInstance().getStoragePoolDAO().getForVdsGroup(getTargetCluster().getId());
         if (targetStoragePool != null && targetStoragePool.getstorage_pool_type() == StorageType.LOCALFS) {
             if (!DbFacade.getInstance().getVdsStaticDAO().getAllForVdsGroup(getParameters().getClusterId()).isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
@@ -66,15 +76,38 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
+        if (getVdsGroup().supportsGlusterService()) {
+            if (getGlusterUtils().hasBricks(getSourceCluster().getId())) {
+                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                return false;
+            }
+
+            if (!hasUpServer(getSourceCluster())) {
+                return false;
+            }
+        }
+
+        if (getTargetCluster().supportsGlusterService() && !hasUpServer(getTargetCluster())) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean hasUpServer(VDSGroup cluster) {
+        if (getClusterUtils().hasMultipleServers(cluster.getId())
+                && getClusterUtils().getUpServer(cluster.getId()) == null) {
+            addCanDoActionMessage(String.format("$clusterName %1$s", cluster.getname()));
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+            return false;
+        }
         return true;
     }
 
     @Override
     protected void executeCommand() {
-        VDSGroup sourceCluster = getVdsGroup();
 
         final Guid targetClusterId = getParameters().getClusterId();
-        if (sourceCluster.getId().equals(targetClusterId)) {
+        if (getSourceCluster().getId().equals(targetClusterId)) {
             setSucceeded(true);
             return;
         }
@@ -91,10 +124,23 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         });
 
+        if (getSourceCluster().supportsGlusterService() && getClusterUtils().hasServers(getSourceCluster().getId())) {
+            if (!glusterHostRemove(getSourceCluster().getId())) {
+                return;
+            }
+        }
+
+        if (getTargetCluster().supportsGlusterService()
+                && getClusterUtils().hasMultipleServers(getTargetCluster().getId())) {
+            if (!glusterHostAdd(getTargetCluster().getId())) {
+                return;
+            }
+        }
+
         // handle spm
         getParameters().setCompensationEnabled(true);
         getParameters().setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-        if (sourceCluster.getstorage_pool_id() != null) {
+        if (getSourceCluster().getstorage_pool_id() != null) {
             VdcReturnValueBase removeVdsSpmIdReturn =
                     Backend.getInstance().runInternalAction(VdcActionType.RemoveVdsSpmId,
                             getParameters(),
@@ -117,13 +163,12 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 return;
             }
         }
-
         setSucceeded(true);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_UPDATE_VDS : AuditLogType.USER_FAILED_UPDATE_VDS;
+        return getSucceeded() ? AuditLogType.USER_UPDATE_VDS : errorType;
     }
 
     @Override
@@ -140,4 +185,60 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
     }
+
+    private boolean glusterHostRemove(Guid sourceClusterId) {
+        String hostName =
+                (getVds().gethost_name().isEmpty()) ? getVds().getManagmentIp()
+                        : getVds().gethost_name();
+        VDSReturnValue returnValue =
+                runVdsCommand(
+                        VDSCommandType.GlusterHostRemove,
+                        new GlusterHostRemoveVDSParameters((getClusterUtils().getUpServer(sourceClusterId)).getId(),
+                                hostName,
+                                false));
+
+        if (!returnValue.getSucceeded()) {
+            handleVdsError(returnValue);
+            errorType = AuditLogType.GLUSTER_HOST_REMOVE_FAILED;
+            return false;
+        }
+        return true;
+    }
+
+    private boolean glusterHostAdd(Guid targetClusterId) {
+        String hostName =
+                (getVds().gethost_name().isEmpty()) ? getVds().getManagmentIp()
+                        : getVds().gethost_name();
+        VDSReturnValue returnValue =
+                runVdsCommand(
+                        VDSCommandType.GlusterHostAdd,
+                        new GlusterHostAddVDSParameters(getClusterUtils().getUpServer(targetClusterId).getId(),
+                                hostName));
+        if (!returnValue.getSucceeded()) {
+            handleVdsError(returnValue);
+            errorType = AuditLogType.GLUSTER_HOST_ADD_FAILED;
+            return false;
+        }
+        return true;
+    }
+
+    private ClusterUtils getClusterUtils() {
+        return ClusterUtils.getInstance();
+    }
+
+    private GlusterUtils getGlusterUtils() {
+        return GlusterUtils.getInstance();
+    }
+
+    private VDSGroup getSourceCluster() {
+        return getVdsGroup();
+    }
+
+    private VDSGroup getTargetCluster() {
+        if (targetCluster == null) {
+            targetCluster = DbFacade.getInstance().getVdsGroupDAO().get(getParameters().getClusterId());
+        }
+        return targetCluster;
+    }
+
 }

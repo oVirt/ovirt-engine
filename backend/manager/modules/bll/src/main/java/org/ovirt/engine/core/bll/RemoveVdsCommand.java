@@ -77,6 +77,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
             if (clusterHasMultipleHosts()) {
                 upServer = getClusterUtils().getUpServer(getVdsGroupId());
                 if (upServer == null) {
+                    addCanDoActionMessage(String.format("$clusterName %1$s", getVdsGroup().getname()));
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
                     returnValue = false;
                 }

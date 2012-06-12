@@ -67,6 +67,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
         upServer = getUpServer();
         if (upServer == null) {
+            addCanDoActionMessage(String.format("$clusterName %1$s", getVdsGroup().getname()));
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }

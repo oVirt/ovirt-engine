@@ -63,6 +63,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     private VDS upServer;
 
+    private AuditLogType errorType = AuditLogType.USER_FAILED_ADD_VDS;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -175,6 +177,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 if (!getSucceeded()) {
                     getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
                     getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
+                    errorType = AuditLogType.GLUSTER_HOST_ADD_FAILED;
                     return;
                 }
             }
@@ -232,7 +235,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_ADD_VDS : AuditLogType.USER_FAILED_ADD_VDS;
+        return getSucceeded() ? AuditLogType.USER_ADD_VDS : errorType;
     }
 
     private void AddVdsStaticToDb() {
