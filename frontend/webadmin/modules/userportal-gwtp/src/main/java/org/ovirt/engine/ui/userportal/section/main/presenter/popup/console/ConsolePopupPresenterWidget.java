@@ -23,13 +23,8 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
 
 public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<IUserPortalListModel, ConsolePopupPresenterWidget.ViewDef> {
 
-    private final ConsoleUtils consoleUtils;
-    private final ApplicationConstants constants;
-    private IEventListener viewUpdatingListener;
-    private boolean wanOptionsAvailable = false;
-
     @GenEvent
-    class ConsoleModelChanged {
+    public class ConsoleModelChanged {
         UserPortalItemModel itemModel;
     }
 
@@ -58,7 +53,15 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         void selectWanOptionsEnabled(boolean selected);
 
         void setWanOptionsVisible(boolean visible);
+
+        void setVmName(String name);
+
     }
+
+    private final ConsoleUtils consoleUtils;
+    private final ApplicationConstants constants;
+    private IEventListener viewUpdatingListener;
+    private boolean wanOptionsAvailable = false;
 
     @Inject
     public ConsolePopupPresenterWidget(EventBus eventBus, ViewDef view,
@@ -70,7 +73,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     @Override
     public void init(final IUserPortalListModel model) {
-
         // it is needed to define this buttons by hand as the model does not contain the specific commands
         // TODO implement the enter/escape binding
         getView().removeButtons();
@@ -97,12 +99,15 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         });
 
-        getView().setTitle(constants.consoleOptions());
-
         initView(model);
         initListeners(model);
 
+        String vmName = ((UserPortalItemModel) model.getSelectedItem()).getName();
+        getView().setVmName(vmName);
+
         super.init(model);
+
+        getView().setTitle(constants.consoleOptions());
     }
 
     private void initListeners(final IUserPortalListModel model) {

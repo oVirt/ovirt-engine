@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.userportal.widget.popup.console.EntityModelValueCheck
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -27,6 +28,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalListModel> implements ConsolePopupPresenterWidget.ViewDef {
+
+    interface Style extends CssResource {
+
+        String ctrlAltDelContentWidget();
+
+    }
+
+    @UiField
+    Style style;
 
     @UiField
     Label consoleTitle;
@@ -63,6 +73,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
 
     private IUserPortalListModel model;
 
+    private final ApplicationMessages messages;
+
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ConsolePopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -73,6 +85,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
             ApplicationConstants constants,
             ApplicationMessages messages) {
         super(eventBus, resources);
+        this.messages = messages;
 
         spiceRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         spiceRadioButton.setLabel(constants.spice());
@@ -166,11 +179,10 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        consoleTitle.setText(messages.selectConsoleFor("asd")); //$NON-NLS-1$
-
         spicePanel.setVisible(false);
         rdpPanel.setVisible(false);
 
+        ctrlAltDel.getContentWidgetContainer().addStyleName(style.ctrlAltDelContentWidget());
     }
 
     @SuppressWarnings("unchecked")
@@ -300,6 +312,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
     @Override
     public void setWanOptionsVisible(boolean visible) {
         wanOptionsPanel.setVisible(visible);
+    }
+
+    @Override
+    public void setVmName(String vmName) {
+        consoleTitle.setText(messages.selectConsoleFor(vmName));
     }
 
 }
