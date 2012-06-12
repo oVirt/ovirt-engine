@@ -669,7 +669,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     public void OnSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
                         VmGuideModel model = (VmGuideModel) vmListModel.getWindow();
-                        model.setEntity((VM) returnValue);
+                        model.setEntity(returnValue);
 
                         UICommand tempVar = new UICommand("Cancel", vmListModel); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
@@ -2459,15 +2459,15 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
                                 storage_domains storageDomain =
                                         Linq.getStorageById(
-                                                imageToDestinationDomainMap.get(templateDisk.getImageId())
+                                                imageToDestinationDomainMap.get(templateDisk.getId())
                                                         .getstorage_ids()
                                                         .get(0), activeStorageDomains);
 
                                 if (disk != null) {
-                                    dict.get(templateDisk.getImageId())
+                                    dict.get(templateDisk.getId())
                                             .setvolume_type((VolumeType) disk.getVolumeType()
                                                     .getSelectedItem());
-                                    dict.get(templateDisk.getImageId())
+                                    dict.get(templateDisk.getId())
                                             .setvolume_format(DataProvider.GetDiskVolumeFormat(
                                                     (VolumeType) disk.getVolumeType().getSelectedItem(),
                                                     storageDomain.getstorage_type()));
