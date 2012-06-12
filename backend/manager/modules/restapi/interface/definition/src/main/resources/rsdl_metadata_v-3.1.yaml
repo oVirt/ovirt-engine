@@ -511,7 +511,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams: 
+      search: {context: query, type: 'xs:string', value: query, required: false}
     headers: {}
 - name: /api/disks/{disk:id}|rel=get
   request:

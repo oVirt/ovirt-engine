@@ -11,8 +11,8 @@ import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -35,7 +35,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
 
     @Override
     public Disks list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllDisks, new VdcQueryParametersBase()));
+        return mapCollection(getBackendCollection(SearchType.Disk));
     }
 
     @Override
