@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.genericapi;
 
 import java.util.ArrayList;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -21,11 +18,9 @@ import org.ovirt.engine.ui.genericapi.returnvalues.UIQueryReturnValue;
 import org.ovirt.engine.ui.genericapi.uiqueries.UIQueryBase;
 import org.ovirt.engine.ui.genericapi.uiqueries.UIQueryType;
 
-@Stateless
 public class GenericApiService {
 
-    @EJB(name = "Backend")
-    private static BackendLocal backend;
+    private BackendLocal backend;
 
     public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         VdcReturnValueBase returnValue = backend.EndAction(actionType, parameters);
