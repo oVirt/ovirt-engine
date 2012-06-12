@@ -18,7 +18,7 @@ public final class ValidationResult {
      * Default validation result is success with no message.
      */
     public ValidationResult() {
-        this(null);
+        message = null;
     }
 
     /**
