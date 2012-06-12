@@ -20,7 +20,7 @@ public class XmlTextWriter {
     public XmlTextWriter(String name, Encoding utf8) {
         try {
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
-            writer = factory.createXMLStreamWriter(new FileOutputStream(name));
+            writer = factory.createXMLStreamWriter(new FileOutputStream(name), "UTF-8");
             writer.writeStartDocument("UTF-8", "1.0");
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize xml writer: " + name, e);
