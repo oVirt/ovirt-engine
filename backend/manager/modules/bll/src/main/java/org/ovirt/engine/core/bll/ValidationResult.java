@@ -7,23 +7,18 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  * validation succeeded, or that it failed with a specific message.<br>
  * This result can then be parsed by "Can Do Action" to decide if it should proceed or not.
  */
-public class ValidationResult {
-
-    /**
-     * Indicates if the validation succeeded or failed.
-     */
-    private boolean valid;
+public final class ValidationResult {
 
     /**
      * In case the validation succeeded it is <code>null</code>, otherwise it contains the validation failure message.
      */
-    private VdcBllMessages message;
+    private final VdcBllMessages message;
 
     /**
      * Default validation result is success with no message.
      */
     public ValidationResult() {
-        valid = true;
+        this(null);
     }
 
     /**
@@ -33,6 +28,9 @@ public class ValidationResult {
      *            The validation failure message.
      */
     public ValidationResult(VdcBllMessages message) {
+        if(message == null) {
+            throw new IllegalArgumentException("message must not be null");
+        }
         this.message = message;
     }
 
@@ -40,7 +38,7 @@ public class ValidationResult {
      * @return Did the validation succeed or not?
      */
     public boolean isValid() {
-        return valid;
+        return message == null;
     }
 
     /**
