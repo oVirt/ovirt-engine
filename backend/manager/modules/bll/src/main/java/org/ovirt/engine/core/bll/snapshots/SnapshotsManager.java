@@ -299,8 +299,10 @@ public class SnapshotsManager {
 
         vmInterfaceManager.removeAll(true, vmId);
         for (VmNetworkInterface vmInterface : nics) {
-            // These fields are not saved in the OVF, so fill them with reasonable values.
-            vmInterface.setId(Guid.NewGuid());
+            // These fields might not be saved in the OVF, so fill them with reasonable values.
+            if (vmInterface.getId() == null) {
+                vmInterface.setId(Guid.NewGuid());
+            }
             vmInterface.setVmId(vmId);
 
             vmInterfaceManager.add(vmInterface, compensationContext);
