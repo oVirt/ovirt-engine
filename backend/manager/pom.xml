@@ -11,6 +11,7 @@
   <name>oVirt Manager</name>
   <description>parent POM for all oVirt Manager</description>
   <modules>
+    <module>dbscripts</module>
     <module>modules</module>
     <module>tools</module>
   </modules>
