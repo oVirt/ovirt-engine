@@ -13,13 +13,12 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
+import org.ovirt.engine.core.common.validation.annotation.MTU;
 
-public class MTUValidatorTest extends ValidationUtilsTest {
+public class MTUValidatorTest {
 
     private static final int TEST_MAX_MTU = 9000;
     private static final String TEST_MANAGEMENT_NETWORK = "ovirtmgmt";
@@ -42,31 +41,36 @@ public class MTUValidatorTest extends ValidationUtilsTest {
 
     @Test
     public void invalidLowMTU() {
-        VdsNetworkInterface nic = new VdsNetworkInterface();
-        nic.setMtu(30);
-        Set<ConstraintViolation<VdsNetworkInterface>> validate = validate(nic);
+        Set<ConstraintViolation<MtuContainer>> validate = validate(new MtuContainer(30));
         Assert.assertTrue(validate.size() > 0);
 
     }
 
     @Test
     public void invalidHighMTU() {
-        VdsNetworkInterface nic = new VdsNetworkInterface();
-        nic.setMtu(15000);
-        Set<ConstraintViolation<VdsNetworkInterface>> validate = validate(nic);
+        Set<ConstraintViolation<MtuContainer>> validate = validate(new MtuContainer(TEST_MAX_MTU + 1));
         Assert.assertTrue(validate.size() > 0);
 
     }
 
     @Test
     public void useDefaultMTU() {
-        network net = new network();
-        net.setMtu(0);
-        Set<ConstraintViolation<network>> validate = validate(net);
+        Set<ConstraintViolation<MtuContainer>> validate = validate(new MtuContainer(0));
         Assert.assertTrue(validate.size() == 0);
     }
 
     private <T extends Object> Set<ConstraintViolation<T>> validate(T object) {
         return validator.validate(object);
+    }
+
+    private class MtuContainer {
+        @MTU
+        @SuppressWarnings("unused")
+        private int mtu;
+
+        public MtuContainer(int mtu) {
+            super();
+            this.mtu = mtu;
+        }
     }
 }
