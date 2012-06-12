@@ -16,14 +16,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.SysprepHandler;
 
 public class GetTimeZonesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     private static Map<String, String> timezones;
-    private static final Object LOCK = new Object();
 
-    public GetTimeZonesQuery(P parameters) {
-        super(parameters);
-    }
-
-    @Override
-    protected void executeQueryCommand() {
+    static {
         // get all time zones that is supported by sysprep
 
         // This is a bit of a hack since Java doesn't use the same timezone
@@ -33,7 +27,6 @@ public class GetTimeZonesQuery<P extends VdcQueryParametersBase> extends Queries
         // Since this is only used to present to user the list windows timezones
         // We can safely return the list of timezones that are supported by
         // sysprep handler and be done with it
-        synchronized (LOCK) {
             if (timezones == null) {
                 timezones = new HashMap<String, String>();
                 for (String value : SysprepHandler.timeZoneIndex.keySet()) {
@@ -45,7 +38,15 @@ public class GetTimeZonesQuery<P extends VdcQueryParametersBase> extends Queries
                 }
                 timezones = sortMapByValue(timezones);
             }
-        }
+
+    }
+
+    public GetTimeZonesQuery(P parameters) {
+        super(parameters);
+    }
+
+    @Override
+    protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(timezones);
     }
 
