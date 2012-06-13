@@ -396,7 +396,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___AddDisk();
 
-	String VdcActionType___RemoveDiskFromVm();
+	String VdcActionType___RemoveDisk();
 
 	String VdcActionType___UpdateVmDisk();
 
@@ -433,8 +433,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 	String VdcActionType___Monitor();
 
 	String VdcActionType___ForceRemoveStorageDomain();
-
-	String VdcActionType___RemoveDisksFromVm();
 
 	String VdcActionType___ActivateStorageDomain();
 
