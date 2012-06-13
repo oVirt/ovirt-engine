@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -37,7 +37,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         }
 
         // we return ok only if the network not exists
-        List<network> all;
+        List<Network> all;
         if (getParameters().getNetwork().getstorage_pool_id() != null
                 && !getParameters().getNetwork().getstorage_pool_id().getValue().equals(Guid.Empty)) {
             all = DbFacade.getInstance().getNetworkDAO().getAllForDataCenter(
@@ -45,9 +45,9 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         } else {
             all = DbFacade.getInstance().getNetworkDAO().getAll();
         }
-        boolean exists = null != LinqUtils.firstOrNull(all, new Predicate<network>() {
+        boolean exists = null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
             @Override
-            public boolean eval(network net) {
+            public boolean eval(Network net) {
                 return net.getname().equals(getParameters().getNetwork().getname());
             }
         });
@@ -62,9 +62,9 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
                 addCanDoActionMessage(VdcBllMessages.NETWROK_VLAN_OUT_OF_RANGE);
                 return false;
             }
-            else if (null != LinqUtils.firstOrNull(all, new Predicate<network>() {
+            else if (null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
                 @Override
-                public boolean eval(network n) {
+                public boolean eval(Network n) {
                     if (n.getvlan_id() != null) {
                         return n.getvlan_id().equals(getParameters().getNetwork().getvlan_id())
                                 && n.getstorage_pool_id().equals(getParameters().getNetwork().getstorage_pool_id());

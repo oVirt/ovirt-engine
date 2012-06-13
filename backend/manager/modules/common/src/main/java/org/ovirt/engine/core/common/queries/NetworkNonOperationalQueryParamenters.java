@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.*;
 public class NetworkNonOperationalQueryParamenters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -5386574130657761284L;
 
-    public NetworkNonOperationalQueryParamenters(Guid vdsgroupid, network net) {
+    public NetworkNonOperationalQueryParamenters(Guid vdsgroupid, Network net) {
         _vdsgroupid = vdsgroupid;
         _network = net;
     }
@@ -17,9 +17,9 @@ public class NetworkNonOperationalQueryParamenters extends VdcQueryParametersBas
         return _vdsgroupid;
     }
 
-    private network _network;
+    private Network _network;
 
-    public network getNetwork() {
+    public Network getNetwork() {
         return _network;
     }
 

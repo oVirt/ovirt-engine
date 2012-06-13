@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -40,7 +39,7 @@ public class BackendNetworkResourceTest
                                      GetAllNetworkQueryParamenters.class,
                                      new String[] { "StoragePoolId" },
                                      new Object[] { Guid.Empty },
-                                     new ArrayList<network>());
+                                     new ArrayList<org.ovirt.engine.core.common.businessentities.Network>());
         control.replay();
         try {
             resource.get();
@@ -66,7 +65,7 @@ public class BackendNetworkResourceTest
                                      GetAllNetworkQueryParamenters.class,
                                      new String[] { "StoragePoolId" },
                                      new Object[] { Guid.Empty },
-                                     new ArrayList<network>());
+                                     new ArrayList<org.ovirt.engine.core.common.businessentities.Network>());
         control.replay();
         try {
             resource.update(getModel(0));

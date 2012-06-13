@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -79,23 +79,23 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
         // when changing data center we check that default networks exists in
         // cluster
-        List<network> networks = getNetworkDAO()
+        List<Network> networks = getNetworkDAO()
                 .getAllForCluster(getVdsGroup().getId());
         boolean exists = false;
         String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
-        for (network net : networks) {
+        for (Network net : networks) {
             if (StringHelper.EqOp(net.getname(), managementNetwork)) {
                 exists = true;
             }
         }
         if (!exists) {
             if (getVdsGroup().getstorage_pool_id() != null) {
-                List<network> storagePoolNets =
+                List<Network> storagePoolNets =
                         getNetworkDAO()
                                 .getAllForDataCenter(
                                         getVdsGroup().getstorage_pool_id()
                                                 .getValue());
-                for (network net : storagePoolNets) {
+                for (Network net : storagePoolNets) {
                     if (StringHelper.EqOp(net.getname(), managementNetwork)) {
                         getNetworkClusterDAO().save(new network_cluster(getVdsGroup().getId(), net.getId(),
                                 NetworkStatus.Operational.getValue(), true, true));

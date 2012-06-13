@@ -19,7 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -33,7 +33,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 public class AttachNetworkToVdsGroupCommandTest {
 
     private VDSGroup existingGroup = new VDSGroup();
-    private network network = createNetwork();
+    private Network network = createNetwork();
     private AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter> command;
 
     @Mock
@@ -79,8 +79,8 @@ public class AttachNetworkToVdsGroupCommandTest {
         assertExecuteActionFailure();
     }
 
-    private network createNetwork() {
-        network = new network();
+    private Network createNetwork() {
+        network = new Network();
         network.setname("test network");
         return network;
     }
@@ -141,7 +141,7 @@ public class AttachNetworkToVdsGroupCommandTest {
     }
 
     private void dbFacadeReturnEmptyNetworkList() {
-        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(new ArrayList<network>());
+        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(new ArrayList<Network>());
     }
 
     private void dbFacadeReturnVdsGroup() {
@@ -153,7 +153,7 @@ public class AttachNetworkToVdsGroupCommandTest {
                 .save(Matchers.<network_cluster> any(network_cluster.class));
     }
 
-    private network getNetwork() {
+    private Network getNetwork() {
         return network;
     }
 
@@ -161,8 +161,8 @@ public class AttachNetworkToVdsGroupCommandTest {
         return existingGroup;
     }
 
-    private List<network> getNetworkList() {
-        ArrayList<network> list = new ArrayList<network>();
+    private List<Network> getNetworkList() {
+        ArrayList<Network> list = new ArrayList<Network>();
         list.add(network);
         return list;
     }

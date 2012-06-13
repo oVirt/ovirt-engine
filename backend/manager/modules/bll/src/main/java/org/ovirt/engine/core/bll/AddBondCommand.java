@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -142,10 +142,10 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         // check that the network exists in current cluster
-        List<network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getVds().getvds_group_id());
-        if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
+        List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getVds().getvds_group_id());
+        if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
-            public boolean eval(network network) {
+            public boolean eval(Network network) {
                 return network.getname().equals(getParameters().getNetwork().getname());
             }
         })) {

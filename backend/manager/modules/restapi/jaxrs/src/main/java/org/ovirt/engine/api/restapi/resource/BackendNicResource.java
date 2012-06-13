@@ -8,7 +8,7 @@ import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -45,7 +45,7 @@ public class BackendNicResource extends BackendDeviceResource<NIC, Nics, VmNetwo
     @Override
     public NIC update(NIC resource) {
         validateParameters(resource, requiredUpdateFields);
-        network network = findNetwork(resource);
+        Network network = findNetwork(resource);
         if (network!=null) {
             resource.getNetwork().setName(network.getname());
             resource.getNetwork().setId(null);
@@ -53,11 +53,11 @@ public class BackendNicResource extends BackendDeviceResource<NIC, Nics, VmNetwo
         return performUpdate(resource, entityResolver, updateType, updateParametersProvider);
     }
 
-    protected network findNetwork(NIC resource) {
+    protected Network findNetwork(NIC resource) {
         if (resource.isSetNetwork()) {
             BackendNicsResource parent = (BackendNicsResource)collection;
             Guid clusterId = parent.getClusterId();
-            network network = parent.lookupClusterNetwork(clusterId, resource.getNetwork().isSetId() ? asGuid(resource.getNetwork().getId()) : null, resource.getNetwork().getName());
+            Network network = parent.lookupClusterNetwork(clusterId, resource.getNetwork().isSetId() ? asGuid(resource.getNetwork().getId()) : null, resource.getNetwork().getName());
             return network;
         } else {
             return null;

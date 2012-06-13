@@ -17,7 +17,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     private VdsDynamic mVdsDynamic;
     private VdsStatistics mVdsStatistics;
     private ArrayList<VdsNetworkInterface> mInterfaceList;
-    private java.util.ArrayList<network> mNetworkList;
+    private java.util.ArrayList<Network> mNetworkList;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
@@ -29,7 +29,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsDynamic = new VdsDynamic();
         mVdsStatistics = new VdsStatistics();
         mInterfaceList = new java.util.ArrayList<VdsNetworkInterface>();
-        mNetworkList = new java.util.ArrayList<network>();
+        mNetworkList = new java.util.ArrayList<Network>();
     }
 
     @Override
@@ -175,7 +175,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsDynamic = new VdsDynamic();
         mVdsStatistics = new VdsStatistics();
         mInterfaceList = new java.util.ArrayList<VdsNetworkInterface>();
-        mNetworkList = new java.util.ArrayList<network>();
+        mNetworkList = new java.util.ArrayList<Network>();
         this.setvds_group_id(vds_group_id);
         this.vds_group_nameField = vds_group_name;
         this.vds_group_descriptionField = vds_group_description;
@@ -1081,7 +1081,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
     }
 
-    public java.util.ArrayList<network> getNetworks() {
+    public java.util.ArrayList<Network> getNetworks() {
         return this.mNetworkList;
     }
 

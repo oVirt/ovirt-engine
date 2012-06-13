@@ -4,14 +4,14 @@ import org.ovirt.engine.core.common.businessentities.*;
 
 public class AttachNetworkToVdsGroupParameter extends VdsGroupOperationParameters {
     private static final long serialVersionUID = -2874549285727269806L;
-    private network _network;
+    private Network _network;
 
-    public AttachNetworkToVdsGroupParameter(VDSGroup group, network net) {
+    public AttachNetworkToVdsGroupParameter(VDSGroup group, Network net) {
         super(group);
         _network = net;
     }
 
-    public network getNetwork() {
+    public Network getNetwork() {
         return _network;
     }
 

@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 
@@ -23,7 +23,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         super(setupModel);
     }
 
-    public LogicalNetworkModel(network network, HostSetupNetworksModel setupModel) {
+    public LogicalNetworkModel(Network network, HostSetupNetworksModel setupModel) {
         this(setupModel);
         setEntity(network);
         if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getname())) {
@@ -102,8 +102,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     }
 
     @Override
-    public network getEntity() {
-        return (network) super.getEntity();
+    public Network getEntity() {
+        return (Network) super.getEntity();
     }
 
     @Override

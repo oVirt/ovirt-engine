@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -765,13 +765,13 @@ public class HostInterfaceListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
-                ArrayList<network> networksByCluster = (ArrayList<network>) ReturnValue;
+                ArrayList<Network> networksByCluster = (ArrayList<Network>) ReturnValue;
                 VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
-                ArrayList<network> networksToAdd = new ArrayList<network>();
-                network selectedNetwork = null;
+                ArrayList<Network> networksToAdd = new ArrayList<Network>();
+                Network selectedNetwork = null;
                 if (item.getVlanId() != null)
                 {
-                    for (network network : networksByCluster)
+                    for (Network network : networksByCluster)
                     {
                         if (StringHelper.stringsEqual(network.getname(), item.getNetworkName()))
                         {
@@ -786,13 +786,13 @@ public class HostInterfaceListModel extends SearchableListModel
                 else
                 {
                     // creating dictionary of networks by name
-                    HashMap<String, network> networkDictionary = new HashMap<String, network>();
-                    for (network network : networksByCluster)
+                    HashMap<String, Network> networkDictionary = new HashMap<String, Network>();
+                    for (Network network : networksByCluster)
                     {
                         networkDictionary.put(network.getname(), network);
                     }
                     // creating list of attached networks.
-                    ArrayList<network> attachedNetworks = new ArrayList<network>();
+                    ArrayList<Network> attachedNetworks = new ArrayList<Network>();
                     for (VdsNetworkInterface nic : hostInterfaceListModel.getAllItems())
                     {
                         if (nic.getNetworkName() != null && networkDictionary.containsKey(nic.getNetworkName()))
@@ -801,7 +801,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         }
                     }
 
-                    ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
+                    ArrayList<Network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
 
                     // adding selected network names to list.
                     boolean isVlanSelected = false;
@@ -830,7 +830,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     {
                         if (networkDictionary.containsKey(selectedNetworkName))
                         {
-                            network network = networkDictionary.get(selectedNetworkName);
+                            Network network = networkDictionary.get(selectedNetworkName);
                             networksToAdd.add(network);
                             attachedNetworks.remove(network);
 
@@ -843,7 +843,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                     if (!isManagementSelected || isVlanSelected)
                     {
-                        for (network unAttachedNetwork : unAttachedNetworks)
+                        for (Network unAttachedNetwork : unAttachedNetworks)
                         {
                             if (isVlanSelected)
                             {
@@ -863,7 +863,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 // Add a 'none' option to networks.
                 if (!StringHelper.isNullOrEmpty(item.getNetworkName()))
                 {
-                    network tempVar = new network(null);
+                    Network tempVar = new Network(null);
                     tempVar.setId(NGuid.Empty);
                     tempVar.setname("None"); //$NON-NLS-1$
                     networksToAdd.add(0, tempVar);
@@ -987,11 +987,11 @@ public class HostInterfaceListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
-                ArrayList<network> clusterNetworks = (ArrayList<network>) ReturnValue;
+                ArrayList<Network> clusterNetworks = (ArrayList<Network>) ReturnValue;
                 VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
                 HostManagementNetworkModel managementModel =
                         (HostManagementNetworkModel) hostInterfaceListModel.getWindow();
-                network networkToEdit = Linq.FindNetworkByName(clusterNetworks, item.getNetworkName());
+                Network networkToEdit = Linq.FindNetworkByName(clusterNetworks, item.getNetworkName());
 
                 managementModel.setEntity(networkToEdit);
 
@@ -1160,7 +1160,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
 
         VdsNetworkInterface nic = (VdsNetworkInterface) model.getInterface().getSelectedItem();
-        network network = model.getEntity();
+        Network network = model.getEntity();
 
         VdcActionType actionType = VdcActionType.UpdateNetworkToVdsInterface;
         UpdateNetworkToVdsParameters parameters =
@@ -1244,20 +1244,20 @@ public class HostInterfaceListModel extends SearchableListModel
         CancelConfirm();
     }
 
-    private ArrayList<network> GetNetworksList(RefObject<network> selectedNetwork)
+    private ArrayList<Network> GetNetworksList(RefObject<Network> selectedNetwork)
     {
         selectedNetwork.argvalue = null;
-        ArrayList<network> networksByCluster =
+        ArrayList<Network> networksByCluster =
                 DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
-        ArrayList<network> networksToAdd = new ArrayList<network>();
+        ArrayList<Network> networksToAdd = new ArrayList<Network>();
         // creating dictionary of networks by name
-        HashMap<String, network> networkDictionary = new HashMap<String, network>();
-        for (network network : networksByCluster)
+        HashMap<String, Network> networkDictionary = new HashMap<String, Network>();
+        for (Network network : networksByCluster)
         {
             networkDictionary.put(network.getname(), network);
         }
         // creating list of attached networks.
-        ArrayList<network> attachedNetworks = new ArrayList<network>();
+        ArrayList<Network> attachedNetworks = new ArrayList<Network>();
         for (VdsNetworkInterface nic : getAllItems())
         {
             if (nic.getNetworkName() != null && networkDictionary.containsKey(nic.getNetworkName()))
@@ -1266,7 +1266,7 @@ public class HostInterfaceListModel extends SearchableListModel
             }
         }
 
-        ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
+        ArrayList<Network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
 
         // adding selected network names to list.
         boolean isVlanSelected = false;
@@ -1282,7 +1282,7 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             if (networkDictionary.containsKey(selectedNetworkName))
             {
-                network network = networkDictionary.get(selectedNetworkName);
+                Network network = networkDictionary.get(selectedNetworkName);
                 networksToAdd.add(network);
                 attachedNetworks.remove(network);
 
@@ -1295,7 +1295,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         if (!isManagement)
         {
-            for (network unAttachedNetwork : unAttachedNetworks)
+            for (Network unAttachedNetwork : unAttachedNetworks)
             {
                 if (isVlanSelected)
                 {
@@ -1332,10 +1332,10 @@ public class HostInterfaceListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
-                ArrayList<network> networksByCluster = (ArrayList<network>) ReturnValue;
+                ArrayList<Network> networksByCluster = (ArrayList<Network>) ReturnValue;
                 VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
                 HostBondInterfaceModel innerBondModel = (HostBondInterfaceModel) hostInterfaceListModel.getWindow();
-                network selectedNetwork = null;
+                Network selectedNetwork = null;
 
                 VDS host = hostInterfaceListModel.getEntity();
                 // Allow change gateway if there one of the selected interfaces connected to engine network.
@@ -1349,15 +1349,15 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                 }
 
-                ArrayList<network> networksToAdd = new ArrayList<network>();
+                ArrayList<Network> networksToAdd = new ArrayList<Network>();
                 // creating dictionary of networks by name
-                HashMap<String, network> networkDictionary = new HashMap<String, network>();
-                for (network network : networksByCluster)
+                HashMap<String, Network> networkDictionary = new HashMap<String, Network>();
+                for (Network network : networksByCluster)
                 {
                     networkDictionary.put(network.getname(), network);
                 }
                 // creating list of attached networks.
-                ArrayList<network> attachedNetworks = new ArrayList<network>();
+                ArrayList<Network> attachedNetworks = new ArrayList<Network>();
                 for (VdsNetworkInterface nic : hostInterfaceListModel.getAllItems())
                 {
                     if (nic.getNetworkName() != null && networkDictionary.containsKey(nic.getNetworkName()))
@@ -1366,7 +1366,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                 }
 
-                ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
+                ArrayList<Network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
 
                 // adding selected network names to list.
                 boolean isVlanSelected = false;
@@ -1382,7 +1382,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 {
                     if (networkDictionary.containsKey(selectedNetworkName))
                     {
-                        network network = networkDictionary.get(selectedNetworkName);
+                        Network network = networkDictionary.get(selectedNetworkName);
                         networksToAdd.add(network);
                         attachedNetworks.remove(network);
 
@@ -1395,7 +1395,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 if (!isManagement)
                 {
-                    for (network unAttachedNetwork : unAttachedNetworks)
+                    for (Network unAttachedNetwork : unAttachedNetworks)
                     {
                         if (isVlanSelected)
                         {
@@ -1413,7 +1413,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 }
                 else
                 {
-                    innerBondModel.getNetwork().setItems(new ArrayList<network>(Arrays.asList(selectedNetwork)));
+                    innerBondModel.getNetwork().setItems(new ArrayList<Network>(Arrays.asList(selectedNetwork)));
                 }
 
                 if (selectedNetwork == null && networksToAdd.size() > 0)
@@ -1465,9 +1465,9 @@ public class HostInterfaceListModel extends SearchableListModel
                             }
                             innerHostInterfaceListModel.PostBond(innerHostInterfaceListModel,
                                     bModel,
-                                    bModel.getNetwork().getItems() != null ? (ArrayList<network>) bModel.getNetwork()
+                                    bModel.getNetwork().getItems() != null ? (ArrayList<Network>) bModel.getNetwork()
                                             .getItems()
-                                            : new ArrayList<network>(),
+                                            : new ArrayList<Network>(),
                                     hasManagement);
 
                         }
@@ -1483,7 +1483,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
     public void PostBond(HostInterfaceListModel hostInterfaceListModel,
             HostBondInterfaceModel innerBondModel,
-            ArrayList<network> networksToAdd,
+            ArrayList<Network> networksToAdd,
             boolean isAnyManagement)
     {
         ArrayList<NetworkInterface> baseSelectedItems =
@@ -1580,7 +1580,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         VDS host = getEntity();
         ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
-        network net = (network) model.getNetwork().getSelectedItem();
+        Network net = (Network) model.getNetwork().getSelectedItem();
 
         // Interface interfaceWithNetwork = items.FirstOrDefault(a => !string.IsNullOrEmpty(a.network_name));
         VdsNetworkInterface interfaceWithNetwork =
@@ -1795,12 +1795,12 @@ public class HostInterfaceListModel extends SearchableListModel
         }
 
         VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
-        ArrayList<network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
+        ArrayList<Network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
 
-        network defaultNetwork = new network(null);
+        Network defaultNetwork = new Network(null);
         defaultNetwork.setname(nic.getNetworkName());
-        network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
-        network net = (tempVar != null) ? tempVar : defaultNetwork;
+        Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
+        Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
         model.StartProgress(null);
         setcurrentModel(model);
@@ -1859,7 +1859,7 @@ public class HostInterfaceListModel extends SearchableListModel
             return;
         }
 
-        network network = (network) model.getNetwork().getSelectedItem();
+        Network network = (Network) model.getNetwork().getSelectedItem();
 
         // Save changes.
         if (network.getId().equals(NGuid.Empty))
@@ -1894,12 +1894,12 @@ public class HostInterfaceListModel extends SearchableListModel
                     return;
                 }
 
-                ArrayList<network> networks =
+                ArrayList<Network> networks =
                         DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
-                network defaultNetwork = new network(null);
+                Network defaultNetwork = new Network(null);
                 defaultNetwork.setname(nic.getNetworkName());
-                network tempVar3 = Linq.FindNetworkByName(networks, nic.getNetworkName());
-                network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
+                Network tempVar3 = Linq.FindNetworkByName(networks, nic.getNetworkName());
+                Network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
 
                 model.StartProgress(null);
                 setcurrentModel(model);
@@ -2105,12 +2105,12 @@ public class HostInterfaceListModel extends SearchableListModel
         VdsNetworkInterface nic =
                 (VdsNetworkInterface) Linq.FindInterfaceByName(Linq.<NetworkInterface> Cast(getInterfaceItems()),
                         nicName);
-        ArrayList<network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
+        ArrayList<Network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
 
-        network defaultNetwork = new network(null);
+        Network defaultNetwork = new Network(null);
         defaultNetwork.setname(nic.getNetworkName());
-        network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
-        network net = (tempVar != null) ? tempVar : defaultNetwork;
+        Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
+        Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
         model.StartProgress(null);
         setcurrentModel(model);

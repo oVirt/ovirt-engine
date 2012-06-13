@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UpdateNetworkToVdsParameters extends AttachNetworkToVdsParameters {
@@ -15,7 +15,7 @@ public class UpdateNetworkToVdsParameters extends AttachNetworkToVdsParameters {
     public UpdateNetworkToVdsParameters() {
     }
 
-    public UpdateNetworkToVdsParameters(Guid vdsId, network net, ArrayList<VdsNetworkInterface> interfaces) {
+    public UpdateNetworkToVdsParameters(Guid vdsId, Network net, ArrayList<VdsNetworkInterface> interfaces) {
         super(vdsId, net, null);
         setInterfaces(interfaces);
     }

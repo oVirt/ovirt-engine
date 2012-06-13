@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -17,7 +17,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     private NetworkDAO dao;
     private Guid cluster;
     private Guid datacenter;
-    private network new_net;
+    private Network new_net;
     private String existing_net_name;
 
     @Override
@@ -30,7 +30,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
         datacenter = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
         existing_net_name = "engine";
-        new_net = new network();
+        new_net = new Network();
         new_net.setname("newnet1");
         new_net.setdescription("New network");
         new_net.setstorage_pool_id(datacenter);
@@ -41,7 +41,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByNameWithInvalidName() {
-        network result = dao.getByName("farkle");
+        Network result = dao.getByName("farkle");
 
         assertNull(result);
     }
@@ -51,7 +51,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        network result = dao.getByName("engine");
+        Network result = dao.getByName("engine");
 
         assertNotNull(result);
         assertEquals("engine", result.getname());
@@ -62,7 +62,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<network> result = dao.getAll();
+        List<Network> result = dao.getAll();
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -73,7 +73,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForClusterWithInvalidCluster() {
-        List<network> result = dao.getAllForCluster(Guid.NewGuid());
+        List<Network> result = dao.getAllForCluster(Guid.NewGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -84,7 +84,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForCluster() {
-        List<network> result = dao.getAllForCluster(cluster);
+        List<Network> result = dao.getAllForCluster(cluster);
 
         assertGetAllForClusterResult(result);
     }
@@ -96,7 +96,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForClusterFilteredWithPermissions() {
         // A use with permissions
-        List<network> result = dao.getAllForCluster(cluster, PRIVILEGED_USER_ID, true);
+        List<Network> result = dao.getAllForCluster(cluster, PRIVILEGED_USER_ID, true);
 
         assertGetAllForClusterResult(result);
     }
@@ -108,7 +108,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForClusterFilteredWithPermissionsNoPermissions() {
         // A use with permissions
-        List<network> result = dao.getAllForCluster(cluster, UNPRIVILEGED_USER_ID, true);
+        List<Network> result = dao.getAllForCluster(cluster, UNPRIVILEGED_USER_ID, true);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -121,7 +121,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForClusterFilteredWithPermissionsNoPermissionsAndNoFilter() {
         // A use with permissions
-        List<network> result = dao.getAllForCluster(cluster, UNPRIVILEGED_USER_ID, false);
+        List<Network> result = dao.getAllForCluster(cluster, UNPRIVILEGED_USER_ID, false);
 
         assertGetAllForClusterResult(result);
     }
@@ -130,7 +130,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      * Asserts the result of {@link NetworkDAO#getAllForCluster(Guid)} contains all the required networks
      * @param result
      */
-    private static void assertGetAllForClusterResult(List<network> result) {
+    private static void assertGetAllForClusterResult(List<Network> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }
@@ -140,7 +140,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForDataCenterWithInvalidDataCenter() {
-        List<network> result = dao.getAllForDataCenter(Guid.NewGuid());
+        List<Network> result = dao.getAllForDataCenter(Guid.NewGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -151,10 +151,10 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForDataCenter() {
-        List<network> result = dao.getAllForDataCenter(datacenter);
+        List<Network> result = dao.getAllForDataCenter(datacenter);
 
         assertGetAllForClusterResult(result);
-        for (network net : result) {
+        for (Network net : result) {
             assertEquals(datacenter, net.getstorage_pool_id());
         }
     }
@@ -171,7 +171,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
         new_net.setId(Guid.NewGuid());
         dao.save(new_net);
 
-        network result = dao.getByName(new_net.getname());
+        Network result = dao.getByName(new_net.getname());
 
         assertNotNull(result);
         assertEquals(new_net, result);
@@ -182,13 +182,13 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        network before = dao.getByName(existing_net_name);
+        Network before = dao.getByName(existing_net_name);
 
         before.setdescription("This is a completely changed description");
 
         dao.update(before);
 
-        network after = dao.getByName(existing_net_name);
+        Network after = dao.getByName(existing_net_name);
 
         assertNotNull(after);
         assertEquals(before, after);
@@ -199,7 +199,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        network result = dao.getByName(existing_net_name);
+        Network result = dao.getByName(existing_net_name);
 
         assertNotNull(result);
 

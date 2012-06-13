@@ -4,12 +4,11 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
 
-import org.ovirt.engine.core.common.businessentities.network;
 
-public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, network, network> {
+public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, org.ovirt.engine.core.common.businessentities.Network, org.ovirt.engine.core.common.businessentities.Network> {
 
     protected NetworkMapperTest() {
-        super(Network.class, network.class, network.class);
+        super(Network.class, org.ovirt.engine.core.common.businessentities.Network.class, org.ovirt.engine.core.common.businessentities.Network.class);
     }
 
     @Override

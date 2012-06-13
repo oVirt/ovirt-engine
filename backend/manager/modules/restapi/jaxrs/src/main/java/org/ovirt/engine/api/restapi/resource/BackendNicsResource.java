@@ -13,7 +13,6 @@ import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
@@ -48,11 +47,11 @@ public abstract class BackendNicsResource
         Nics nics = new Nics();
         List<VmNetworkInterface> entities = getBackendCollection(queryType, queryParams);
         Guid clusterId = getClusterId();
-        List<network> networks = getBackendCollection(network.class,
+        List<org.ovirt.engine.core.common.businessentities.Network> networks = getBackendCollection(org.ovirt.engine.core.common.businessentities.Network.class,
              VdcQueryType.GetAllNetworksByClusterId,
              new VdsGroupQueryParamenters(clusterId));
         for (VmNetworkInterface entity : entities) {
-            network network = lookupClusterNetwork(clusterId, null, entity.getNetworkName(), networks);
+            org.ovirt.engine.core.common.businessentities.Network network = lookupClusterNetwork(clusterId, null, entity.getNetworkName(), networks);
             NIC nic = populate(map(entity), entity);
             if (network!=null && network.getId()!=null) {
                 if (entity.isPortMirroring()) {
@@ -96,8 +95,8 @@ public abstract class BackendNicsResource
         return new String[] { "name", "network.name|id" };
     }
 
-    protected network lookupClusterNetwork(Guid clusterId, Guid id, String name, List<network> networks) {
-        for (network network : networks) {
+    protected org.ovirt.engine.core.common.businessentities.Network lookupClusterNetwork(Guid clusterId, Guid id, String name, List<org.ovirt.engine.core.common.businessentities.Network> networks) {
+        for (org.ovirt.engine.core.common.businessentities.Network network : networks) {
             if ((id != null && id.equals(network.getId())) ||
                 (name != null && name.equals(network.getname()))) {
                 return network;
@@ -106,16 +105,16 @@ public abstract class BackendNicsResource
         return null;
     }
 
-    protected network lookupClusterNetwork(Guid clusterId, Guid id, String name) {
-        network net = getClusterNetwork(clusterId, id, name);
+    protected org.ovirt.engine.core.common.businessentities.Network lookupClusterNetwork(Guid clusterId, Guid id, String name) {
+        org.ovirt.engine.core.common.businessentities.Network net = getClusterNetwork(clusterId, id, name);
         if (net != null) {
             return net;
         }
         throw new WebFaultException(null, "Network not found in cluster", Response.Status.BAD_REQUEST);
     }
 
-    protected network getClusterNetwork(Guid clusterId, Guid id, String name) {
-        for (network entity : getBackendCollection(network.class,
+    protected org.ovirt.engine.core.common.businessentities.Network getClusterNetwork(Guid clusterId, Guid id, String name) {
+        for (org.ovirt.engine.core.common.businessentities.Network entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.Network.class,
                                                    VdcQueryType.GetAllNetworksByClusterId,
                                                    new VdsGroupQueryParamenters(clusterId))) {
             if ((id != null && id.equals(entity.getId())) ||
@@ -145,7 +144,7 @@ public abstract class BackendNicsResource
     protected void setNetworkId(NIC nic) {
         if ( (nic.isSetNetwork()) && (!nic.getNetwork().isSetId())) {
             Guid clusterId = getClusterId();
-            network network = lookupClusterNetwork(clusterId, nic.getNetwork().getId()==null ? null : asGuid(nic.getNetwork().getId()), nic.getNetwork().getName());
+            org.ovirt.engine.core.common.businessentities.Network network = lookupClusterNetwork(clusterId, nic.getNetwork().getId()==null ? null : asGuid(nic.getNetwork().getId()), nic.getNetwork().getName());
             if (network!=null) {
                 nic.getNetwork().setName(null);
                 nic.getNetwork().setId(network.getId().toString());

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.AttachNetworkToVdsGroupCommand;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -34,7 +34,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        List<network> networks = DbFacade.getInstance().getNetworkDAO().getAll();
+        List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAll();
 
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
@@ -57,9 +57,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 return false;
             }
 
-            else if (null != LinqUtils.firstOrNull(networks, new Predicate<network>() {
+            else if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
-                public boolean eval(network n) {
+                public boolean eval(Network n) {
                     if (n.getvlan_id() != null) {
                         return n.getvlan_id().equals(getParameters().getNetwork().getvlan_id())
                                 && n.getstorage_pool_id().equals(getParameters().getNetwork().getstorage_pool_id())
@@ -74,9 +74,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         // check that network not exsits
-        network oldNetwork = LinqUtils.firstOrNull(networks, new Predicate<network>() {
+        Network oldNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
-            public boolean eval(network n) {
+            public boolean eval(Network n) {
                 return n.getId().equals(getParameters().getNetwork().getId());
             }
         });
@@ -93,9 +93,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return false;
         }
 
-        network net = LinqUtils.firstOrNull(networks, new Predicate<network>() {
+        Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
-            public boolean eval(network n) {
+            public boolean eval(Network n) {
                 return n.getname().trim().toLowerCase()
                         .equals(getParameters().getNetwork().getname().trim().toLowerCase())
                         && !n.getId().equals(getParameters().getNetwork().getId())

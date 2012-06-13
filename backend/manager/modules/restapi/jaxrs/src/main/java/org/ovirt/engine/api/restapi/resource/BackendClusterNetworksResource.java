@@ -12,7 +12,6 @@ import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
@@ -41,7 +40,7 @@ public class BackendClusterNetworksResource
         if (!network.isSetId()) {
             network.setId(getNetworkId(network.getName(), clusterId));
         }
-        network entity = map(network);
+        org.ovirt.engine.core.common.businessentities.Network entity = map(network);
         return performCreation(addAction,
                                getActionParameters(network, entity),
                                new NetworkIdResolver(network.getName()));
@@ -54,7 +53,7 @@ public class BackendClusterNetworksResource
     }
 
     @Override
-    protected VdcActionParametersBase getActionParameters(Network network, network entity) {
+    protected VdcActionParametersBase getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.Network entity) {
         return new AttachNetworkToVdsGroupParameter(getVDSGroup(), entity);
     }
 
@@ -85,8 +84,8 @@ public class BackendClusterNetworksResource
     private String getNetworkId(String networkName, String clusterId) {
             NGuid dataCenterId = getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(asGuid(clusterId)), null).getstorage_pool_id();
             GetAllNetworkQueryParamenters params = new GetAllNetworkQueryParamenters(asGuid(dataCenterId));
-            List<network> networks = getBackendCollection(VdcQueryType.GetAllNetworks, params);
-            for (network nw: networks) {
+            List<org.ovirt.engine.core.common.businessentities.Network> networks = getBackendCollection(VdcQueryType.GetAllNetworks, params);
+            for (org.ovirt.engine.core.common.businessentities.Network nw: networks) {
                 if (nw.getname().equals(networkName)) {
                     return nw.getId().toString();
                 }

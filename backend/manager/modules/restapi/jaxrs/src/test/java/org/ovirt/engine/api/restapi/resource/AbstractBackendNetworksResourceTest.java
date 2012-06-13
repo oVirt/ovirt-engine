@@ -8,12 +8,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.core.common.businessentities.network;
 
 import static org.easymock.classextension.EasyMock.expect;
 
 public abstract class AbstractBackendNetworksResourceTest
-        extends AbstractBackendCollectionResourceTest<Network, network, AbstractBackendNetworksResource> {
+        extends AbstractBackendCollectionResourceTest<Network, org.ovirt.engine.core.common.businessentities.Network, AbstractBackendNetworksResource> {
 
     public AbstractBackendNetworksResourceTest(AbstractBackendNetworksResource collection) {
         super(collection, null, "");
@@ -53,28 +52,28 @@ public abstract class AbstractBackendNetworksResourceTest
 
     protected abstract void setUpEntityQueryExpectations(int times, Object failure) throws Exception;
 
-    protected List<network> getEntityList() {
-        List<network> entities = new ArrayList<network>();
+    protected List<org.ovirt.engine.core.common.businessentities.Network> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.Network> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Network>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }
         return entities;
     }
 
-    protected network getEntity(int index, boolean isDisplay) {
-        return setUpEntityExpectations(control.createMock(network.class), isDisplay, index);
+    protected org.ovirt.engine.core.common.businessentities.Network getEntity(int index, boolean isDisplay) {
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), isDisplay, index);
     }
 
-    protected network getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(network.class), false, index);
+    protected org.ovirt.engine.core.common.businessentities.Network getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), false, index);
     }
 
-    static network setUpEntityExpectations(network entity, boolean isDisplay, int index) {
+    static org.ovirt.engine.core.common.businessentities.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.Network entity, boolean isDisplay, int index) {
         expect(entity.getis_display()).andReturn(isDisplay).anyTimes();
         return setUpEntityExpectations(entity, index);
      }
 
-    static network setUpEntityExpectations(network entity, int index) {
+    static org.ovirt.engine.core.common.businessentities.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.Network entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();

@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.NGuid;
 @Entity
 @Table(name = "network")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class network extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, Nameable {
+public class Network extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 7357288865938773402L;
 
     @Id
@@ -83,13 +83,13 @@ private network_cluster cluster = new network_cluster();
     @MTU
     private int mtu;
 
-    public network() {
+    public Network() {
     }
     //Because the webadmin uses the same BE as backend, the constructor of these BEs
     //should not contain any logic that refer only to backend side.
-    public network(String dummyVariable){}
+    public Network(String dummyVariable){}
 
-    public network(String addr, String description, Guid id, String name, String subnet, String gateway, Integer type,
+    public Network(String addr, String description, Guid id, String name, String subnet, String gateway, Integer type,
             Integer vlan_id, boolean stp, int mtu, boolean vmNetwork) {
         this.addr = addr;
         this.description = description;
@@ -271,7 +271,7 @@ private network_cluster cluster = new network_cluster();
             return false;
         if (getClass() != obj.getClass())
             return false;
-        network other = (network) obj;
+        Network other = (Network) obj;
         if (addr == null) {
             if (other.addr != null)
                 return false;

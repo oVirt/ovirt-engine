@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
@@ -11,7 +11,7 @@ public class ClusterNetworkManageModel extends EntityModel {
     private boolean required;
     private boolean management;
 
-    public ClusterNetworkManageModel(network network) {
+    public ClusterNetworkManageModel(Network network) {
         setEntity(network);
         if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getname())) {
             setManagement(true);
@@ -19,8 +19,8 @@ public class ClusterNetworkManageModel extends EntityModel {
     }
 
     @Override
-    public network getEntity() {
-        return (network) super.getEntity();
+    public Network getEntity() {
+        return (Network) super.getEntity();
     }
 
     public String getName() {

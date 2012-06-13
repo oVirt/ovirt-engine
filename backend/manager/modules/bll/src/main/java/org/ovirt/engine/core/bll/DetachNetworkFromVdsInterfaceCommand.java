@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -96,9 +96,9 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
         // set the network object if we don't got in the parameters
         if (getParameters().getNetwork() == null) {
-            List<network> networks = DbFacade.getInstance().getNetworkDAO()
+            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                             .getAllForCluster(getVdsGroupId());
-            for (network n : networks) {
+            for (Network n : networks) {
                 if (n.getname().equals(iface.getNetworkName())) {
                     getParameters().setNetwork(n);
                     break;
@@ -124,11 +124,11 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         // check if network in cluster and vds active
         if ((vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing)
                 && getParameters().getNetwork().getStatus() == NetworkStatus.Operational) {
-            List<network> networks = DbFacade.getInstance().getNetworkDAO()
+            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                     .getAllForCluster(vds.getvds_group_id());
-            if (null != LinqUtils.firstOrNull(networks, new Predicate<network>() {
+            if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
-                public boolean eval(network network) {
+                public boolean eval(Network network) {
                     return network.getname().equals(getParameters().getNetwork().getname());
                 }
             })) {

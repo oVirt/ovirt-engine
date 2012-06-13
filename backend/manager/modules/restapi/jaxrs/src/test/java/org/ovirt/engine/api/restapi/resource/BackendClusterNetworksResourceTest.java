@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
@@ -34,7 +33,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                                      VdsGroupQueryParamenters.class,
                                      new String[] { "VdsGroupId" },
                                      new Object[] { CLUSTER_ID },
-                                     new ArrayList<network>());
+                                     new ArrayList<org.ovirt.engine.core.common.businessentities.Network>());
         control.replay();
         try {
             collection.remove(GUIDS[0].toString());

@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -350,8 +349,8 @@ public class BackendHostNicsResourceTest
         return entity;
     }
 
-    public static network getNetwork() {
-        network entity = new network();
+    public static org.ovirt.engine.core.common.businessentities.Network getNetwork() {
+        org.ovirt.engine.core.common.businessentities.Network entity = new org.ovirt.engine.core.common.businessentities.Network();
         entity.setId(NETWORK_GUID);
         entity.setname(NETWORK_NAME);
         return entity;
@@ -454,8 +453,8 @@ public class BackendHostNicsResourceTest
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            ArrayList<network> networks = new ArrayList<network>();
-            network network = new network();
+            ArrayList<org.ovirt.engine.core.common.businessentities.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.Network>();
+            org.ovirt.engine.core.common.businessentities.Network network = new org.ovirt.engine.core.common.businessentities.Network();
             network.setId(GUIDS[0]);
             network.setname("orcus");
             networks.add(network);

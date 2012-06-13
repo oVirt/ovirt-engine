@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
@@ -72,7 +72,7 @@ public class VmGuideModel extends GuideModel
 
     private ArrayList<VmNetworkInterface> nics;
     private ArrayList<Disk> disks;
-    private ArrayList<network> networks;
+    private ArrayList<Network> networks;
     private ArrayList<storage_domains> attachedStorageDomains;
     private storage_domains storage;
     private VDSGroup cluster;
@@ -230,7 +230,7 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        ArrayList<network> networks = (ArrayList<network>) returnValue;
+                        ArrayList<Network> networks = (ArrayList<Network>) returnValue;
                         vmGuideModel.networks = networks;
                         vmGuideModel.AddNetworkPostData();
                     }
@@ -245,8 +245,8 @@ public class VmGuideModel extends GuideModel
         int nicCount = nics.size();
         String newNicName = DataProvider.GetNewNicName(nics);
 
-        ArrayList<network> operationalNetworks = new ArrayList<network>();
-        for (network a : networks)
+        ArrayList<Network> operationalNetworks = new ArrayList<Network>();
+        for (Network a : networks)
         {
             if (a.getStatus() == NetworkStatus.Operational)
             {
@@ -325,7 +325,7 @@ public class VmGuideModel extends GuideModel
 
             VmNetworkInterface vmNetworkInterface = new VmNetworkInterface();
             vmNetworkInterface.setName((String) model.getName().getEntity());
-            vmNetworkInterface.setNetworkName(((network) model.getNetwork().getSelectedItem()).getname());
+            vmNetworkInterface.setNetworkName(((Network) model.getNetwork().getSelectedItem()).getname());
             vmNetworkInterface.setType(_type);
             vmNetworkInterface.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null
                     : ((String) (model.getMAC().getEntity())).toLowerCase())

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -24,7 +24,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
-    private network logicalNetwork;
+    private Network logicalNetwork;
 
     public AttachNetworkToVdsInterfaceCommand(T parameters) {
         super(parameters);
@@ -124,7 +124,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
         // check that the network exists in current cluster
 
-        Map<String, network> networksByName = Entities.entitiesByName(DbFacade.getInstance().getNetworkDAO()
+        Map<String, Network> networksByName = Entities.entitiesByName(DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(getVds().getvds_group_id()));
 
         if (!networksByName.containsKey(params.getNetwork().getName())) {

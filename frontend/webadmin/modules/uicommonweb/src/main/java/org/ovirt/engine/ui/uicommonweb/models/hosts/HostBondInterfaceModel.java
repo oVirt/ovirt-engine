@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -245,7 +245,7 @@ public class HostBondInterfaceModel extends Model
 
     private void UpdateCanSpecify()
     {
-        network network = (network) getNetwork().getSelectedItem();
+        Network network = (Network) getNetwork().getSelectedItem();
         boolean isChangeble = getIsStaticAddress() && network != null && !network.getId().equals(NGuid.Empty);
         getAddress().setIsChangable(isChangeble);
         getSubnet().setIsChangable(isChangeble);

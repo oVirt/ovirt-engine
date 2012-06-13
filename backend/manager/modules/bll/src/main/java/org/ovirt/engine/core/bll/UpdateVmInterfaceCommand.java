@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -136,11 +136,11 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         // check that the exists in current cluster
-        List<network> networks = DbFacade.getInstance().getNetworkDAO()
+        List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(vm.getvds_group_id());
-        if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
+        if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
-            public boolean eval(network n) {
+            public boolean eval(Network n) {
                 return n.getname().equals(getParameters().getInterface().getNetworkName());
             }
         })) {

@@ -10,7 +10,6 @@ import org.ovirt.engine.api.resource.NetworksResource;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
@@ -31,7 +30,7 @@ public class BackendNetworksResource
     @Override
     public Response add(Network network) {
         validateParameters(network, getRequiredAddFields());
-        network entity = map(network);
+        org.ovirt.engine.core.common.businessentities.Network entity = map(network);
         AddNetworkStoragePoolParameters params = getActionParameters(network, entity);
         return performCreation(addAction,
                                params,
@@ -53,7 +52,7 @@ public class BackendNetworksResource
     }
 
     @Override
-    protected AddNetworkStoragePoolParameters getActionParameters(Network network, network entity) {
+    protected AddNetworkStoragePoolParameters getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.Network entity) {
         if (namedDataCenter(network)) {
             entity.setstorage_pool_id(getDataCenterId(network));
         }

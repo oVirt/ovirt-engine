@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class NetworkStatusColumn extends WebAdminImageResourceColumn<network> {
+public class NetworkStatusColumn extends WebAdminImageResourceColumn<Network> {
 
     @Override
-    public ImageResource getValue(network nwk) {
+    public ImageResource getValue(Network nwk) {
         switch (nwk.getStatus()) {
         case Operational:
             return getApplicationResources().upImage();

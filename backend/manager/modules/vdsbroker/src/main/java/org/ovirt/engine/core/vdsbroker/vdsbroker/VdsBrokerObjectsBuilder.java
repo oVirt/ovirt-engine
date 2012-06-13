@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.FormatException;
@@ -986,7 +986,7 @@ public class VdsBrokerObjectsBuilder {
             for (String key : networks.keySet()) {
                 Map<String, Object> network = (Map<String, Object>) networks.get(key);
                 if (network != null) {
-                    network net = new network();
+                    Network net = new Network();
                     net.setname(key);
 
                     net.setaddr((String)network.get("addr"));
@@ -1054,7 +1054,7 @@ public class VdsBrokerObjectsBuilder {
             Map<String, Integer> currVlans,
             Map<String, Integer> networkVlans,
             Map<String, Object> network,
-            network net,
+            Network net,
             String ifaceName) {
         VdsNetworkInterface iface = null;
         for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
@@ -1110,9 +1110,9 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static void checkClusterVlans(VDS vds, Map<String, Integer> hostVlans) {
-        List<network> clusterNetworks = DbFacade.getInstance().getNetworkDAO()
+        List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(vds.getvds_group_id());
-        for (network net : clusterNetworks) {
+        for (Network net : clusterNetworks) {
             if (net.getvlan_id() != null) {
                 if (hostVlans.containsKey(net.getname())) {
                     if (!hostVlans.get(net.getname()).equals(net.getvlan_id())) {

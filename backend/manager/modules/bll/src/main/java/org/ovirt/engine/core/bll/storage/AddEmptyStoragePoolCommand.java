@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -54,7 +54,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     }
 
     private void addDefaultNetworks() {
-        network net = new network();
+        Network net = new Network();
         net.setId(Guid.NewGuid());
         net.setname(Config.<String> GetValue(ConfigValues.ManagementNetwork));
         net.setdescription(AddVdsGroupCommand.DefaultNetworkDescription);

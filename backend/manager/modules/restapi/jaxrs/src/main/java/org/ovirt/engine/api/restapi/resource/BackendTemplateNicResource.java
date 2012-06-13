@@ -5,7 +5,7 @@ import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 
 public class BackendTemplateNicResource extends BackendNicResource implements NicResource {
 
@@ -20,7 +20,7 @@ public class BackendTemplateNicResource extends BackendNicResource implements Ni
 
     @Override
     protected NIC populate(NIC model, VmNetworkInterface entity) {
-        network network = findNetwork(model);
+        Network network = findNetwork(model);
         model.getNetwork().setId(network.getId().toString());
         model.getNetwork().setName(null);
         return model;

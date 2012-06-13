@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -915,7 +915,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new ArrayList<network>();
+                    return new ArrayList<Network>();
                 }
                 return source;
             }
@@ -1343,7 +1343,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<network>) source : new ArrayList<network>();
+                return source != null ? (ArrayList<Network>) source : new ArrayList<Network>();
             }
         };
 

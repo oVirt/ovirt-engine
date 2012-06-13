@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -81,10 +81,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         }
 
         // check that the network exists in current cluster
-        List<network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getVmTemplate().getvds_group_id());
-        if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
+        List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getVmTemplate().getvds_group_id());
+        if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
-            public boolean eval(network network) {
+            public boolean eval(Network network) {
                 return network.getname().equals(getParameters().getInterface().getNetworkName());
             }
         })) {

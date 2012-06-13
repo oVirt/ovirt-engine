@@ -2,14 +2,14 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AttachNetworkToVdsParameters extends VdsActionParameters {
     private static final long serialVersionUID = 5446434263733512827L;
 
     private boolean checkConnectivity;
-    private network network;
+    private Network network;
     private String oldNetworkName;
     private VdsNetworkInterface iface;
     private String address;
@@ -21,7 +21,7 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
     public AttachNetworkToVdsParameters() {
     }
 
-    public AttachNetworkToVdsParameters(Guid vdsId, network net, VdsNetworkInterface iface) {
+    public AttachNetworkToVdsParameters(Guid vdsId, Network net, VdsNetworkInterface iface) {
         super(vdsId);
         setCheckConnectivity(false);
         setNetwork(net);
@@ -36,11 +36,11 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         checkConnectivity = value;
     }
 
-    public network getNetwork() {
+    public Network getNetwork() {
         return network;
     }
 
-    public void setNetwork(network value) {
+    public void setNetwork(Network value) {
         network = value;
     }
 

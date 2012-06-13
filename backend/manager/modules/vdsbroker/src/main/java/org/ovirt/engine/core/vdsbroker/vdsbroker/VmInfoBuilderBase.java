@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -121,10 +121,10 @@ public abstract class VmInfoBuilderBase {
             }
         }
         if (networkCluster != null) {
-            network net = null;
-            List<network> allNetworks = DbFacade.getInstance().getNetworkDAO()
+            Network net = null;
+            List<Network> allNetworks = DbFacade.getInstance().getNetworkDAO()
                     .getAll();
-            for (network tempNetwork : allNetworks) {
+            for (Network tempNetwork : allNetworks) {
                 if (tempNetwork.getId().equals(networkCluster.getnetwork_id())) {
                     net = tempNetwork;
                     break;

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  * <code>NetworkDAODbFacadeImpl</code> provides a concrete implementation of {@link #NetworkDAO} based on code
  * refactored from {@link #DbFacade}.
  */
-public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, Guid> implements NetworkDAO {
+public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, Guid> implements NetworkDAO {
 
     public NetworkDAODbFacadeImpl() {
         super("network");
@@ -26,30 +26,30 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
     }
 
     @Override
-    public network getByName(String name) {
+    public Network getByName(String name) {
         Map<String, Object> dbResults = dialect.createJdbcCallForQuery(jdbcTemplate)
                 .withProcedureName("GetnetworkByName")
                 .returningResultSet("RETURN_VALUE", NetworkRowMapper.instance)
                 .execute(getCustomMapSqlParameterSource()
                         .addValue("networkName", name));
 
-        return (network) DbFacadeUtils.asSingleResult((List<?>) (dbResults
+        return (Network) DbFacadeUtils.asSingleResult((List<?>) (dbResults
                 .get("RETURN_VALUE")));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<network> getAll() {
+    public List<Network> getAll() {
         Map<String, Object> dbResults = dialect.createJdbcCallForQuery(jdbcTemplate)
                 .withProcedureName("GetAllFromnetwork")
                 .returningResultSet("RETURN_VALUE", NetworkRowMapper.instance)
                 .execute(getCustomMapSqlParameterSource());
 
-        return (List<network>) dbResults.get("RETURN_VALUE");
+        return (List<Network>) dbResults.get("RETURN_VALUE");
     }
 
     @Override
-    public List<network> getAllForDataCenter(Guid id) {
+    public List<Network> getAllForDataCenter(Guid id) {
         return getCallsHandler().executeReadList("GetAllNetworkByStoragePoolId",
                 NetworkRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -57,12 +57,12 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
     }
 
     @Override
-    public List<network> getAllForCluster(Guid id) {
+    public List<Network> getAllForCluster(Guid id) {
         return getAllForCluster(id, null, false);
     }
 
     @Override
-    public List<network> getAllForCluster(Guid id, Guid userID, boolean isFiltered) {
+    public List<Network> getAllForCluster(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllNetworkByClusterId",
                 NetworkRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -75,7 +75,7 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
     }
 
     @Override
-    protected MapSqlParameterSource createFullParametersMapper(network network) {
+    protected MapSqlParameterSource createFullParametersMapper(Network network) {
         return getCustomMapSqlParameterSource()
                 .addValue("addr", network.getaddr())
                 .addValue("description", network.getdescription())
@@ -92,16 +92,16 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
     }
 
     @Override
-    protected ParameterizedRowMapper<network> createEntityRowMapper() {
+    protected ParameterizedRowMapper<Network> createEntityRowMapper() {
         return NetworkRowMapper.instance;
     }
 
-    private static final class NetworkRowMapper implements ParameterizedRowMapper<network> {
+    private static final class NetworkRowMapper implements ParameterizedRowMapper<Network> {
         public final static NetworkRowMapper instance = new NetworkRowMapper();
 
         @Override
-        public network mapRow(ResultSet rs, int rowNum) throws SQLException {
-            network entity = new network();
+        public Network mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Network entity = new Network();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setname(rs.getString("name"));
             entity.setdescription(rs.getString("description"));

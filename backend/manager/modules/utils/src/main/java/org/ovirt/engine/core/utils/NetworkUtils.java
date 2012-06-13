@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
@@ -94,10 +94,10 @@ public final class NetworkUtils {
         return false;
     }
 
-    public static Map<String, network> networksByName(List<network> networks) {
+    public static Map<String, Network> networksByName(List<Network> networks) {
         if (!networks.isEmpty()) {
-            Map<String, network> byName = new HashMap<String, network>();
-            for (network net : networks) {
+            Map<String, Network> byName = new HashMap<String, Network>();
+            for (Network net : networks) {
                 byName.put(net.getname(), net);
             }
             return byName;
@@ -114,9 +114,9 @@ public final class NetworkUtils {
      *            target names to match non-VM networks upon
      * @return
      */
-    public static List<String> filterNonVmNetworkNames(List<network> networks, Set<String> networkNames) {
+    public static List<String> filterNonVmNetworkNames(List<Network> networks, Set<String> networkNames) {
         List<String> list = new ArrayList<String>();
-        for (network net : networks) {
+        for (Network net : networks) {
             if (!net.isVmNetwork() && networkNames.contains(net.getName())) {
                 list.add(net.getName());
             }

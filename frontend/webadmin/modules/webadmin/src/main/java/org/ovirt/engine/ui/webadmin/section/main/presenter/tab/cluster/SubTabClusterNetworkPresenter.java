@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -42,7 +42,7 @@ public class SubTabClusterNetworkPresenter extends AbstractSubTabPresenter<VDSGr
     @Inject
     public SubTabClusterNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<network, ClusterListModel, ClusterNetworkListModel> modelProvider) {
+            SearchableDetailModelProvider<Network, ClusterListModel, ClusterNetworkListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

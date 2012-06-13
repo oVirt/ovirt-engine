@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.HotPlugUnplugVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
@@ -34,7 +33,7 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
     protected NIC populate(NIC model, VmNetworkInterface entity) {
         BackendVmNicsResource parent = (BackendVmNicsResource)collection;
         Guid clusterId = parent.getClusterId();
-        network network = parent.getClusterNetwork(clusterId, null, model.getNetwork().getName());
+        org.ovirt.engine.core.common.businessentities.Network network = parent.getClusterNetwork(clusterId, null, model.getNetwork().getName());
         String networkId = network == null ? null : network.getId().toString();
         model.getNetwork().setId(networkId);
         model.getNetwork().setName(null);

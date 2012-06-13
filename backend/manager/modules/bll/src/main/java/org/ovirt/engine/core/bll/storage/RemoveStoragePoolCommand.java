@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -95,9 +95,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
             @Override
             public Void runInTransaction() {
-                final List<network> networks = DbFacade.getInstance().getNetworkDAO()
+                final List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                         .getAllForDataCenter(getStoragePoolId().getValue());
-                for (final network net : networks) {
+                for (final Network net : networks) {
                     getCompensationContext().snapshotEntity(net);
                     DbFacade.getInstance().getNetworkDAO().remove(net.getId());
                 }

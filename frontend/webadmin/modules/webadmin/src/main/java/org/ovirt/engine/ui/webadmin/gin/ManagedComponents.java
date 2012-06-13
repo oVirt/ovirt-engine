@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -306,7 +306,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabDataCenterNetworkPresenter> getSubTabDataCenterNetworkPresenter();
 
-    SearchableDetailModelProvider<network, DataCenterListModel, DataCenterNetworkListModel> getSubTabDataCenterNetworkModelProvider();
+    SearchableDetailModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> getSubTabDataCenterNetworkModelProvider();
 
     AsyncProvider<SubTabDataCenterClusterPresenter> getSubTabDataCenterClusterPresenter();
 
@@ -382,7 +382,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabClusterNetworkPresenter> getSubTabClusterNetworkPresenter();
 
-    SearchableDetailModelProvider<network, ClusterListModel, ClusterNetworkListModel> getSubTabClusterNetworkModelProvider();
+    SearchableDetailModelProvider<Network, ClusterListModel, ClusterNetworkListModel> getSubTabClusterNetworkModelProvider();
 
     AsyncProvider<SubTabClusterPermissionPresenter> getSubTabClusterPermissionPresenter();
 

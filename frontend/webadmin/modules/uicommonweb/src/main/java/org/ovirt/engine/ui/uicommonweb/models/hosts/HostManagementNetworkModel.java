@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -27,12 +27,12 @@ public class HostManagementNetworkModel extends EntityModel
     }
 
     @Override
-    public network getEntity()
+    public Network getEntity()
     {
-        return (network) super.getEntity();
+        return (Network) super.getEntity();
     }
 
-    public void setEntity(network value)
+    public void setEntity(Network value)
     {
         super.setEntity(value);
     }

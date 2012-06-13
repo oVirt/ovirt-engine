@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -34,7 +34,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     private XmlRpcStruct generateNetworks() {
         XmlRpcStruct networks = new XmlRpcStruct();
 
-        for (network net : getParameters().getNetworks()) {
+        for (Network net : getParameters().getNetworks()) {
             Map<String, String> opts = new HashMap<String, String>();
             VdsNetworkInterface i = findNetworkInterface(net.getname(), getParameters().getInterfaces(),
                     getParameters().getBonds());
@@ -74,7 +74,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         return networks;
     }
 
-    private boolean isVlan(network net) {
+    private boolean isVlan(Network net) {
         return net.getvlan_id() != null;
     }
 

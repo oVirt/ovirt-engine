@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.businessentities.event_notification_methods;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
@@ -219,7 +219,7 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(LUN_storage_server_connection_map.class)
                             .addAnnotatedClass(LUNs.class)
                             .addAnnotatedClass(network_cluster.class)
-                            .addAnnotatedClass(network.class)
+                            .addAnnotatedClass(Network.class)
                             .addAnnotatedClass(permissions.class)
                             .addAnnotatedClass(RoleGroupMap.class)
                             .addAnnotatedClass(roles.class)

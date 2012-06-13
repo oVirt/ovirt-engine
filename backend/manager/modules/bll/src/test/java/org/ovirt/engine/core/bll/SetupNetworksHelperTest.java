@@ -20,7 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -69,7 +69,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void managedNetworkAddedToNic() {
-        network net = createNetwork("net");
+        Network net = createNetwork("net");
         VdsNetworkInterface nic = createNic("nic0", null);
 
         mockExistingNetworks(net);
@@ -100,7 +100,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void networkMovedFromNicToNic() {
-        network net = createNetwork("net");
+        Network net = createNetwork("net");
         VdsNetworkInterface nic1 = createNic("nic0", net.getname());
         VdsNetworkInterface nic2 = createNic("nic1", null);
 
@@ -120,8 +120,8 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void networkReplacedOnNic() {
-        network net = createNetwork("net");
-        network newNet = createNetwork("net2");
+        Network net = createNetwork("net");
+        Network newNet = createNetwork("net2");
         mockExistingNetworks(net, newNet);
         VdsNetworkInterface nic = createNic("nic0", net.getName());
         mockExistingIfaces(nic);
@@ -138,7 +138,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void bootProtocolChanged() {
-        network net = createNetwork("net");
+        Network net = createNetwork("net");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNic("nic0", net.getName());
         nic.setBootProtocol(NetworkBootProtocol.None);
@@ -152,7 +152,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void gatewayChanged() {
-        network net = createNetwork("net");
+        Network net = createNetwork("net");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNic("nic0", net.getName());
         nic.setBootProtocol(NetworkBootProtocol.StaticIp);
@@ -167,7 +167,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void subnetChanged() {
-        network net = createNetwork("net");
+        Network net = createNetwork("net");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNic("nic0", net.getName());
         nic.setBootProtocol(NetworkBootProtocol.StaticIp);
@@ -182,7 +182,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void ipChanged() {
-        network net = createNetwork("net");
+        Network net = createNetwork("net");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNic("nic0", net.getName());
         nic.setBootProtocol(NetworkBootProtocol.StaticIp);
@@ -307,7 +307,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void bondWithNetworkAttached() {
-        network network = createNetwork("net");
+        Network network = createNetwork("net");
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
         List<VdsNetworkInterface> ifaces = createNics(null);
 
@@ -385,8 +385,8 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void networkReplacedOnBond() {
-        network net = createNetwork("net");
-        network newNet = createNetwork("net2");
+        Network net = createNetwork("net");
+        Network newNet = createNetwork("net2");
         VdsNetworkInterface bond = createBond(BOND_NAME, net.getName());
         List<VdsNetworkInterface> slaves = createNics(bond.getName());
 
@@ -423,7 +423,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void bootProtocolChangedOverBond() {
-        network net = createNetwork("net");
+        Network net = createNetwork("net");
         mockExistingNetworks(net);
 
         VdsNetworkInterface bond = createBond(BOND_NAME, net.getName());
@@ -441,7 +441,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void vlanOverBond() {
-        network network = createNetwork("net");
+        Network network = createNetwork("net");
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
         List<VdsNetworkInterface> ifacesToBond = createNics(null);
 
@@ -497,7 +497,7 @@ public class SetupNetworksHelperTest {
                 violations.contains(violation));
     }
 
-    private void validateAndAssertNetworkModified(SetupNetworksHelper helper, network net) {
+    private void validateAndAssertNetworkModified(SetupNetworksHelper helper, Network net) {
         validateAndExpectNoViolations(helper);
         assertNoBondsModified(helper);
         assertNetworkModified(helper, net);
@@ -530,7 +530,7 @@ public class SetupNetworksHelperTest {
                 helper.getRemovedBonds().isEmpty());
     }
 
-    private void assertNetworkModified(SetupNetworksHelper helper, network expectedNetwork) {
+    private void assertNetworkModified(SetupNetworksHelper helper, Network expectedNetwork) {
         assertEquals("Expected a modified network.", 1, helper.getNetworks().size());
         assertEquals(MessageFormat.format(
                 "Expected network ''{0}'' to be modified but it wasn''t. Modified networks: {1}",
@@ -566,8 +566,8 @@ public class SetupNetworksHelperTest {
      *            The network's name.
      * @return A network with some defaults and the given name,
      */
-    private network createNetwork(String networkName) {
-        return new network("", "", Guid.NewGuid(), networkName, "", "", 0, 100, false, 0, true);
+    private Network createNetwork(String networkName) {
+        return new Network("", "", Guid.NewGuid(), networkName, "", "", 0, 100, false, 0, true);
     }
 
     /**
@@ -715,7 +715,7 @@ public class SetupNetworksHelperTest {
         return parameters;
     }
 
-    private void mockExistingNetworks(network... networks) {
+    private void mockExistingNetworks(Network... networks) {
         when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(Arrays.asList(networks));
     }
 

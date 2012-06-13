@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -178,10 +178,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         if (_oldVds.getstatus() == VDSStatus.Up) {
             List<network_cluster> networkClusters = DbFacade.getInstance()
             .getNetworkClusterDAO().getAllForCluster(_oldVds.getvds_group_id());
-            List<network> networks = DbFacade.getInstance().getNetworkDAO()
+            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
             .getAllForCluster(_oldVds.getvds_group_id());
             for (network_cluster item : networkClusters) {
-                for (network net : networks) {
+                for (Network net : networks) {
                     if (net.getId().equals(item.getnetwork_id())) {
                         AttachNetworkToVdsGroupCommand.SetNetworkStatus(_oldVds.getvds_group_id(), net);
                     }

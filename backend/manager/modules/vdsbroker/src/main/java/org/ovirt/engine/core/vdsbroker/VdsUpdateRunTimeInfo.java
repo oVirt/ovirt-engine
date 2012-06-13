@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -537,7 +537,7 @@ public class VdsUpdateRunTimeInfo {
             return;
         }
         Map<String, Boolean> activeBonds = new HashMap<String, Boolean>();
-        List<network> clusterNetworks = getDbFacade().getNetworkDAO()
+        List<Network> clusterNetworks = getDbFacade().getNetworkDAO()
                 .getAllForCluster(_vds.getvds_group_id());
         boolean setHostDown = false;
         List<String> networks = new ArrayList<String>();
@@ -545,7 +545,7 @@ public class VdsUpdateRunTimeInfo {
         Map<String, List<String>> bondNics = new HashMap<String, List<String>>();
 
         List<VdsNetworkInterface> interfaces = _vds.getInterfaces();
-        Map<String, network> networksByName = NetworkUtils.networksByName(clusterNetworks);
+        Map<String, Network> networksByName = NetworkUtils.networksByName(clusterNetworks);
 
         try {
             for (VdsNetworkInterface iface : interfaces) {
@@ -640,7 +640,7 @@ public class VdsUpdateRunTimeInfo {
      * @param clusterNetworkByName
      * @param interfaces
      */
-    public void logMTUDifferences(Map<String, network> clusterNetworkByName,
+    public void logMTUDifferences(Map<String, Network> clusterNetworkByName,
             VdsNetworkInterface iface) {
         if (iface.getNetworkName() != null && clusterNetworkByName.containsKey(iface.getNetworkName()) &&
                 clusterNetworkByName.get(iface.getNetworkName()).getMtu() != 0 &&
@@ -655,7 +655,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void poplate(Map<String, Boolean> activeBonds,
-            List<network> clusterNetworks,
+            List<Network> clusterNetworks,
             List<String> networks,
             Map<String, List<String>> bondNics,
             VdsNetworkInterface iface) {
@@ -695,7 +695,7 @@ public class VdsUpdateRunTimeInfo {
      * @param nics
      * @param iface
      */
-    private boolean isRequiredInterfaceDown(Map<String, network> networksByName,
+    private boolean isRequiredInterfaceDown(Map<String, Network> networksByName,
             List<String> networks,
             List<String> nics,
             VdsNetworkInterface iface) {
@@ -705,7 +705,7 @@ public class VdsUpdateRunTimeInfo {
                 && !isBondOrVlanOverBond(iface)
                 && networksByName.containsKey(iface.getNetworkName())) {
 
-            network net = networksByName.get(iface.getNetworkName());
+            Network net = networksByName.get(iface.getNetworkName());
             if (net.getStatus() == NetworkStatus.Operational && net.isRequired()
                     && (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
                 networks.add(iface.getNetworkName());
@@ -719,11 +719,11 @@ public class VdsUpdateRunTimeInfo {
     // method get bond name, list of cluster network - checks if the specified
     // bonds network is in the clusterNetworks,
     // if so return true and networkName of the bonds
-    private Pair<Boolean, String> IsNetworkInCluster(String bondName, List<network> clusterNetworks) {
+    private Pair<Boolean, String> IsNetworkInCluster(String bondName, List<Network> clusterNetworks) {
         Pair<Boolean, String> retVal = new Pair<Boolean, String>();
         for (VdsNetworkInterface iface : _vds.getInterfaces()) {
             if (iface.getName().equals(bondName)) {
-                for (network net : clusterNetworks) {
+                for (Network net : clusterNetworks) {
                     if (net.getname().equals(iface.getNetworkName())
                             || isVlanOverBondNetwork(bondName, net.getname())) {
                         retVal.setFirst(true);

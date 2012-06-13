@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -17,9 +17,9 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
     private static final int NETWORK_CLUSTER_COUNT = 3;
     private NetworkClusterDAO dao;
     private VDSGroup cluster;
-    private network network;
+    private Network network;
     private network_cluster newNetworkCluster;
-    private network networkNoCluster;
+    private Network networkNoCluster;
     private network_cluster existingNetworkCluster;
     private VDSGroup freeCluster;
 

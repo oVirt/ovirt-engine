@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -81,7 +81,7 @@ public class VmInterfaceManager {
      * @return
      */
     public static boolean isValidVmNetwork(VmNetworkInterface iface, Guid clusterId) {
-        Map<String, network> networksByName =
+        Map<String, Network> networksByName =
             Entities.entitiesByName(DbFacade.getInstance()
                     .getNetworkDAO()
                     .getAllForCluster(clusterId));

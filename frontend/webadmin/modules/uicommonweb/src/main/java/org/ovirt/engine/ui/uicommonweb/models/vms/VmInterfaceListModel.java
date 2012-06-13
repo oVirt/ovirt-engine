@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -200,8 +200,8 @@ public class VmInterfaceListModel extends SearchableListModel
                 VmInterfaceListModel vmInterfaceListModel = (VmInterfaceListModel) model1;
                 VmInterfaceModel vmInterfaceModel = (VmInterfaceModel) vmInterfaceListModel.getWindow();
 
-                ArrayList<network> networks = new ArrayList<network>();
-                for (network a : (ArrayList<network>) result1)
+                ArrayList<Network> networks = new ArrayList<Network>();
+                for (Network a : (ArrayList<Network>) result1)
                 {
                     if (a.getStatus() == NetworkStatus.Operational)
                     {
@@ -220,7 +220,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
                     vmInterfaceModel.getNetwork().setItems(networks);
                     vmInterfaceModel.getNetwork().setSelectedItem(null);
-                    for (network a : networks)
+                    for (Network a : networks)
                     {
                         if (StringHelper.stringsEqual(a.getname(), nic.getNetworkName()))
                         {
@@ -279,8 +279,8 @@ public class VmInterfaceListModel extends SearchableListModel
                 VmInterfaceListModel vmInterfaceListModel = (VmInterfaceListModel) model1;
                 VmInterfaceModel vmInterfaceModel = (VmInterfaceModel) vmInterfaceListModel.getWindow();
 
-                ArrayList<network> networks = new ArrayList<network>();
-                for (network a : (ArrayList<network>) result1)
+                ArrayList<Network> networks = new ArrayList<Network>();
+                for (Network a : (ArrayList<Network>) result1)
                 {
                     if (a.getStatus() == NetworkStatus.Operational)
                     {
@@ -298,7 +298,7 @@ public class VmInterfaceListModel extends SearchableListModel
                     VmNetworkInterface nic1 = (VmNetworkInterface) vmInterfaceListModel.getSelectedItem();
 
                     vmInterfaceModel.getNetwork().setItems(networks);
-                    for (network a : networks)
+                    for (Network a : networks)
                     {
                         if (StringHelper.stringsEqual(a.getname(), nic1.getNetworkName()))
                         {
@@ -342,7 +342,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
         // Save changes.
         nic.setName((String) model.getName().getEntity());
-        nic.setNetworkName(((network) model.getNetwork().getSelectedItem()).getname());
+        nic.setNetworkName(((Network) model.getNetwork().getSelectedItem()).getname());
         nic.setPortMirroring((Boolean)model.getPortMirroring().getEntity());
         if (model.getNicType().getSelectedItem() == null)
         {

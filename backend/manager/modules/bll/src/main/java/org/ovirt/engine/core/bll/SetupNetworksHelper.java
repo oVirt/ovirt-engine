@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -24,9 +24,9 @@ public class SetupNetworksHelper {
     private Guid vdsGroupId;
     private List<VdcBllMessages> violations = new ArrayList<VdcBllMessages>();
     private Map<String, VdsNetworkInterface> existingIfaces;
-    private Map<String, network> existingClusterNetworks;
+    private Map<String, Network> existingClusterNetworks;
 
-    private List<network> modifiedNetworks = new ArrayList<network>();
+    private List<Network> modifiedNetworks = new ArrayList<Network>();
     private List<String> removedNetworks = new ArrayList<String>();
     private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
     private Set<String> removedBonds = new HashSet<String>();
@@ -137,7 +137,7 @@ public class SetupNetworksHelper {
         }
     }
 
-    private Map<String, network> getExistingClusterNetworks() {
+    private Map<String, Network> getExistingClusterNetworks() {
         if (existingClusterNetworks == null) {
             existingClusterNetworks = Entities.entitiesByName(
                     getDbFacade().getNetworkDAO().getAllForCluster(vdsGroupId));
@@ -334,7 +334,7 @@ public class SetupNetworksHelper {
         }
     }
 
-    public List<network> getNetworks() {
+    public List<Network> getNetworks() {
         return modifiedNetworks;
     }
 

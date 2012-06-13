@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -167,9 +167,9 @@ public class VdsUpdateRunTimeInfoTest {
         return ifaces;
     }
 
-    private static Map<String, network> getClustersMap() {
-        Map<String, network> map = new HashMap<String, network>();
-        network net = new network();
+    private static Map<String, Network> getClustersMap() {
+        Map<String, Network> map = new HashMap<String, Network>();
+        Network net = new Network();
         net.setname("oz");
         net.setMtu(9000);
         map.put("oz", net);

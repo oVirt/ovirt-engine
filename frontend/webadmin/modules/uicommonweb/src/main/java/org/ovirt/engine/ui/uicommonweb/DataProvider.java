@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -220,30 +220,30 @@ public final class DataProvider
         return (ArrayList<event_subscriber>) returnValue.getReturnValue();
     }
 
-    public static ArrayList<network> GetNetworkList(Guid storagePoolId)
+    public static ArrayList<Network> GetNetworkList(Guid storagePoolId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllNetworks, new GetAllNetworkQueryParamenters(storagePoolId));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (ArrayList<network>) returnValue.getReturnValue();
+            return (ArrayList<Network>) returnValue.getReturnValue();
         }
 
-        return new ArrayList<network>();
+        return new ArrayList<Network>();
     }
 
-    public static ArrayList<network> GetClusterNetworkList(Guid clusterId)
+    public static ArrayList<Network> GetClusterNetworkList(Guid clusterId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, new VdsGroupQueryParamenters(clusterId));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (ArrayList<network>) returnValue.getReturnValue();
+            return (ArrayList<Network>) returnValue.getReturnValue();
         }
 
-        return new ArrayList<network>();
+        return new ArrayList<Network>();
     }
 
     public static ArrayList<roles> GetRoleList()
@@ -2162,7 +2162,7 @@ public final class DataProvider
 
     public static ArrayList<VdsNetworkInterface> GetInterfaceOptionsForEditNetwork(ArrayList<VdsNetworkInterface> interfaceList,
             VdsNetworkInterface originalInterface,
-            network networkToEdit,
+            Network networkToEdit,
             Guid vdsID,
             RefObject<String> defaultInterfaceName)
     {

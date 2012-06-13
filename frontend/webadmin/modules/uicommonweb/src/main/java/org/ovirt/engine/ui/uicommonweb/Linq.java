@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -225,10 +225,10 @@ public final class Linq
         }
     }
 
-    public static class NetworkByNameComparer implements Comparator<network>
+    public static class NetworkByNameComparer implements Comparator<Network>
     {
         @Override
-        public int compare(network x, network y)
+        public int compare(Network x, Network y)
         {
             return x.getname().compareTo(y.getname());
         }
@@ -515,9 +515,9 @@ public final class Linq
         return ret;
     }
 
-    public static network FindNetworkByName(ArrayList<network> items, String name)
+    public static Network FindNetworkByName(ArrayList<Network> items, String name)
     {
-        for (network n : items)
+        for (Network n : items)
         {
             if (StringHelper.stringsEqual(n.getname(), name))
             {

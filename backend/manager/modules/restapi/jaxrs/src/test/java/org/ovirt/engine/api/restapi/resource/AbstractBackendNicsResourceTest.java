@@ -14,7 +14,6 @@ import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
@@ -143,8 +142,8 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
             while (times-- > 0) {
-                ArrayList<network> networks = new ArrayList<network>();
-                network network = new network();
+                ArrayList<org.ovirt.engine.core.common.businessentities.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.Network>();
+                org.ovirt.engine.core.common.businessentities.Network network = new org.ovirt.engine.core.common.businessentities.Network();
                 network.setId(GUIDS[0]);
                 network.setname("orcus");
                 networks.add(network);

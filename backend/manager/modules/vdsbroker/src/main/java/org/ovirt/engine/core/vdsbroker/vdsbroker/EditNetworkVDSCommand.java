@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.compat.StringHelper;
 
@@ -48,7 +48,7 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
         options.put(VdsProperties.stp, (getParameters().getStp()) ? "yes" : "no");
         options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));
 
-        network network = getParameters().getNetwork();
+        Network network = getParameters().getNetwork();
         if (network != null && network.getMtu() != 0) {
             options.put("mtu", String.valueOf(network.getMtu()));
         }

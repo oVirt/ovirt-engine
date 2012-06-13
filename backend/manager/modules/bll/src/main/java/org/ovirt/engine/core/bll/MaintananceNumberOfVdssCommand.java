@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
@@ -89,8 +89,8 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         MigrateAllVdss();
         // set network to operational / non-operational
         for (Guid id : _vdsGroupIds) {
-            List<network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(id);
-            for (network net : networks) {
+            List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(id);
+            for (Network net : networks) {
                 AttachNetworkToVdsGroupCommand.SetNetworkStatus(id, net);
             }
         }

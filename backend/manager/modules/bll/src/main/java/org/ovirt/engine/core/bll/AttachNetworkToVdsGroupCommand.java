@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
@@ -36,7 +36,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         setVdsGroupId(parameters.getVdsGroupId());
     }
 
-    private network getNetwork() {
+    private Network getNetwork() {
         return getParameters().getNetwork();
     }
 
@@ -62,7 +62,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         setSucceeded(true);
     }
 
-    public static void SetNetworkStatus(Guid vdsGroupId, final network net) {
+    public static void SetNetworkStatus(Guid vdsGroupId, final Network net) {
         NetworkStatus status = NetworkStatus.Operational;
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(vdsGroupId);
         // Search all vds in cluster that have the specify network, if not the

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -244,7 +244,7 @@ public class HostInterfaceModel extends EntityModel
     {
         UpdateCanSpecify();
 
-        network network = (network) getNetwork().getSelectedItem();
+        Network network = (Network) getNetwork().getSelectedItem();
         setBootProtocolsAvailable((network != null && StringHelper.stringsEqual(network.getname(), "None")) ? false //$NON-NLS-1$
                 : true);
 
@@ -276,7 +276,7 @@ public class HostInterfaceModel extends EntityModel
 
     private void UpdateCanSpecify()
     {
-        network network = (network) getNetwork().getSelectedItem();
+        Network network = (Network) getNetwork().getSelectedItem();
         boolean isChangable = getIsStaticAddress();
         getAddress().setIsChangable(isChangable);
         getSubnet().setIsChangable(isChangable);
@@ -289,7 +289,7 @@ public class HostInterfaceModel extends EntityModel
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
 
-        network net = (network) getNetwork().getSelectedItem();
+        Network net = (Network) getNetwork().getSelectedItem();
         if (getIsStaticAddress())
         {
             getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddBondParameters extends BondParametersBase {
@@ -9,7 +9,7 @@ public class AddBondParameters extends BondParametersBase {
     private static final long serialVersionUID = 761203751697100144L;
 
     private String[] nics;
-    private network network;
+    private Network network;
     private String address;
     private String subnet;
     private Integer vlanId;
@@ -20,13 +20,13 @@ public class AddBondParameters extends BondParametersBase {
     public AddBondParameters() {
     }
 
-    public AddBondParameters(Guid vdsId, String bondName, network network, String[] nics) {
+    public AddBondParameters(Guid vdsId, String bondName, Network network, String[] nics) {
         super(vdsId, bondName);
         setNics(nics);
         setNetwork(network);
     }
 
-    public AddBondParameters(Guid vdsId, String bondName, network network, String[] nics, int vladId) {
+    public AddBondParameters(Guid vdsId, String bondName, Network network, String[] nics, int vladId) {
         this(vdsId, bondName, network, nics);
         setVlanId(vladId);
     }
@@ -39,11 +39,11 @@ public class AddBondParameters extends BondParametersBase {
         nics = value;
     }
 
-    public network getNetwork() {
+    public Network getNetwork() {
         return network;
     }
 
-    public void setNetwork(network value) {
+    public void setNetwork(Network value) {
         network = value;
     }
 

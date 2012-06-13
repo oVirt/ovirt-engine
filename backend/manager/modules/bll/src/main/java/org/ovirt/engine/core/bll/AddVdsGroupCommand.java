@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
@@ -69,16 +69,16 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         // add default network
         if (getParameters().getVdsGroup().getstorage_pool_id() != null) {
             final String networkName = Config.<String> GetValue(ConfigValues.ManagementNetwork);
-            List<network> networks = DbFacade
+            List<Network> networks = DbFacade
                     .getInstance()
                     .getNetworkDAO()
                     .getAllForDataCenter(
                             getParameters().getVdsGroup().getstorage_pool_id()
                                     .getValue());
 
-            network net = LinqUtils.firstOrNull(networks, new Predicate<network>() {
+            Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
-                public boolean eval(network network) {
+                public boolean eval(Network network) {
                     return network.getname().equals(networkName);
                 }
             });

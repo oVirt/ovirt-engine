@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -34,18 +34,18 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return retVal;
     }
 
-    public static boolean CommonNetworkValidation(final network network, java.util.ArrayList<String> canDoActionMessages) {
+    public static boolean CommonNetworkValidation(final Network network, java.util.ArrayList<String> canDoActionMessages) {
         // check that network is not in use by cluster
         if (network.getstorage_pool_id() != null) {
             List<VDSGroup> groups = DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(
                     network.getstorage_pool_id().getValue());
             for (VDSGroup cluster : groups) {
-                List<network> networks = DbFacade.getInstance().getNetworkDAO()
+                List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                         .getAllForCluster(cluster.getId());
 
-                if (null != LinqUtils.firstOrNull(networks, new Predicate<network>() {
+                if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                     @Override
-                    public boolean eval(network n) {
+                    public boolean eval(Network n) {
                         return n.getname().equals(network.getname());
                     }
                 })) {

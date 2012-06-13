@@ -10,7 +10,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -96,7 +96,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private Map<String, LogicalNetworkModel> networkMap;
 
     private NetworkOperationFactory operationFactory;
-    private List<network> allNetworks;
+    private List<Network> allNetworks;
     private final HostInterfaceListModel hostInterfaceListModel;
     private List<VdsNetworkInterface> allBonds;
     private NetworkOperation currentCandidate;
@@ -415,7 +415,7 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     private LogicalNetworkModel createErrorNetworkModel(String networkName, Integer vlanId) {
-        network errorNetwork = new network();
+        Network errorNetwork = new Network();
         errorNetwork.setname(networkName);
         errorNetwork.setvlan_id(vlanId);
         LogicalNetworkModel networkModel = new LogicalNetworkModel(errorNetwork, this);
@@ -455,7 +455,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private void initNetworkModels() {
         Map<String, LogicalNetworkModel> networkModels = new HashMap<String, LogicalNetworkModel>();
-        for (network network : allNetworks) {
+        for (Network network : allNetworks) {
             networkModels.put(network.getname(), new LogicalNetworkModel(network, this));
         }
         setNetworks(networkModels);
@@ -629,7 +629,7 @@ public class HostSetupNetworksModel extends EntityModel {
             @Override
             public void OnSuccess(Object model, Object returnValue)
             {
-                List<network> networks = (List<network>) returnValue;
+                List<Network> networks = (List<Network>) returnValue;
                 allNetworks = networks;
                 initNetworkModels();
                 // chain the nic query

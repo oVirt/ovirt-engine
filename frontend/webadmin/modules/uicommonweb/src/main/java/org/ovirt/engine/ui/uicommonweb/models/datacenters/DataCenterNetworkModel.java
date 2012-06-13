@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -12,14 +12,14 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 @SuppressWarnings("unused")
 public class DataCenterNetworkModel extends NetworkModel
 {
-    private network privatecurrentNetwork;
+    private Network privatecurrentNetwork;
 
-    public network getcurrentNetwork()
+    public Network getcurrentNetwork()
     {
         return privatecurrentNetwork;
     }
 
-    public void setcurrentNetwork(network value)
+    public void setcurrentNetwork(Network value)
     {
         privatecurrentNetwork = value;
     }

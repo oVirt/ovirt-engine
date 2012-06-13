@@ -12,7 +12,6 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
@@ -36,7 +35,7 @@ public class BackendNetworksResourceTest
                                      GetAllNetworkQueryParamenters.class,
                                      new String[] { "StoragePoolId" },
                                      new Object[] { Guid.Empty },
-                                     new ArrayList<network>());
+                                     new ArrayList<org.ovirt.engine.core.common.businessentities.Network>());
         control.replay();
         try {
             collection.remove(GUIDS[0].toString());
@@ -64,7 +63,7 @@ public class BackendNetworksResourceTest
                 GetAllNetworkQueryParamenters.class,
                 new String[] { "StoragePoolId" },
                 new Object[] { Guid.Empty },
-                new LinkedList<network>(),
+                new LinkedList<org.ovirt.engine.core.common.businessentities.Network>(),
                 null);
         control.replay();
         try {

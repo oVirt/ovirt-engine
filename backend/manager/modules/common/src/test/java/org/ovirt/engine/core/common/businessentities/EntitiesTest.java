@@ -44,10 +44,10 @@ public class EntitiesTest {
 
     @Test
     public void objectNames() {
-        List<network> list = new ArrayList<network>();
-        network n1 = new network();
+        List<Network> list = new ArrayList<Network>();
+        Network n1 = new Network();
         n1.setname("network1");
-        network n2 = new network();
+        Network n2 = new Network();
         n2.setname("network2");
         list.add(n1);
         list.add(n2);
@@ -57,7 +57,7 @@ public class EntitiesTest {
         Assert.assertTrue(names.contains("network2"));
         Assert.assertFalse(names.contains("network3"));
         Assert.assertTrue(Entities.objectNames(null).equals(Collections.emptySet()));
-        Assert.assertTrue(Entities.objectNames(new ArrayList<network>()).equals(Collections.emptySet()));
+        Assert.assertTrue(Entities.objectNames(new ArrayList<Network>()).equals(Collections.emptySet()));
     }
 
 }

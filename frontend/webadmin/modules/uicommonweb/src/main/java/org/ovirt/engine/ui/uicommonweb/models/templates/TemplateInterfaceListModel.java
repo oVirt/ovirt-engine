@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -149,19 +149,19 @@ public class TemplateInterfaceListModel extends SearchableListModel
                     public void OnSuccess(Object target, Object returnValue) {
 
                         TemplateInterfaceListModel vmInterfaceListModel = (TemplateInterfaceListModel) target;
-                        ArrayList<network> network_list =
-                                returnValue != null ? (ArrayList<network>) returnValue
-                                        : new ArrayList<network>();
+                        ArrayList<Network> network_list =
+                                returnValue != null ? (ArrayList<Network>) returnValue
+                                        : new ArrayList<Network>();
                         vmInterfaceListModel.PostGetClusterNetworkList_New(network_list);
 
                     }
                 }), getEntityStronglyTyped().getvds_group_id());
     }
 
-    public void PostGetClusterNetworkList_New(ArrayList<network> network_list)
+    public void PostGetClusterNetworkList_New(ArrayList<Network> network_list)
     {
-        ArrayList<network> networks = new ArrayList<network>();
-        for (network a : network_list)
+        ArrayList<Network> networks = new ArrayList<Network>();
+        for (Network a : network_list)
         {
             if (a.getStatus() == NetworkStatus.Operational)
             {
@@ -209,21 +209,21 @@ public class TemplateInterfaceListModel extends SearchableListModel
                     public void OnSuccess(Object target, Object returnValue) {
 
                         TemplateInterfaceListModel vmInterfaceListModel = (TemplateInterfaceListModel) target;
-                        ArrayList<network> network_list =
-                                returnValue != null ? (ArrayList<network>) returnValue
-                                        : new ArrayList<network>();
+                        ArrayList<Network> network_list =
+                                returnValue != null ? (ArrayList<Network>) returnValue
+                                        : new ArrayList<Network>();
                         vmInterfaceListModel.PostGetClusterNetworkList_Edit(network_list);
 
                     }
                 }), getEntityStronglyTyped().getvds_group_id());
     }
 
-    public void PostGetClusterNetworkList_Edit(ArrayList<network> network_list)
+    public void PostGetClusterNetworkList_Edit(ArrayList<Network> network_list)
     {
         VmNetworkInterface nic = (VmNetworkInterface) getSelectedItem();
         int nicCount = Linq.<VmNetworkInterface> Cast(getItems()).size();
-        ArrayList<network> networks = new ArrayList<network>();
-        for (network a : network_list)
+        ArrayList<Network> networks = new ArrayList<Network>();
+        for (Network a : network_list)
         {
             if (a.getStatus() == NetworkStatus.Operational)
             {
@@ -233,8 +233,8 @@ public class TemplateInterfaceListModel extends SearchableListModel
 
         VmInterfaceModel model = (VmInterfaceModel) getWindow();
         model.getNetwork().setItems(networks);
-        network network = null;
-        for (network a : networks)
+        Network network = null;
+        for (Network a : networks)
         {
             if (StringHelper.stringsEqual(a.getname(), nic.getNetworkName()))
             {
@@ -284,7 +284,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         getWindow().StartProgress(null);
         // Save changes.
         nic.setName((String) model.getName().getEntity());
-        nic.setNetworkName(((network) model.getNetwork().getSelectedItem()).getname());
+        nic.setNetworkName(((Network) model.getNetwork().getSelectedItem()).getname());
         if (model.getNicType().getSelectedItem() == null)
         {
             nic.setType(null);

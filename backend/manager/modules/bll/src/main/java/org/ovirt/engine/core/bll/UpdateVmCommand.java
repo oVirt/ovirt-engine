@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -127,7 +127,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmStatic dbVm = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmStaticData().getId());
         // check if the cluster has changed
         if (!dbVm.getvds_group_id().equals(getParameters().getVmStaticData().getvds_group_id())) {
-            List<network> networks = DbFacade
+            List<Network> networks = DbFacade
                     .getInstance()
                     .getNetworkDAO()
                     .getAllForCluster(
@@ -136,9 +136,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     .getVmNetworkInterfaceDAO()
                     .getAllForVm(getParameters().getVmStaticData().getId());
             for (final VmNetworkInterface iface : interfaces) {
-                network net = LinqUtils.firstOrNull(networks, new Predicate<network>() {
+                Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                     @Override
-                    public boolean eval(network n) {
+                    public boolean eval(Network n) {
                         return iface.getNetworkName().equals(n.getname());
                     }
                 });

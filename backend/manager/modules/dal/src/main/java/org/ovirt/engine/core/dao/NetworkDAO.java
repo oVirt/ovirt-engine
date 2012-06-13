@@ -2,15 +2,15 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>NetworkDAO</code> defines a type for performing CRUD operations on instances of {@link network}.
+ * <code>NetworkDAO</code> defines a type for performing CRUD operations on instances of {@link Network}.
  *
  *
  */
-public interface NetworkDAO extends GenericDao<network, Guid> {
+public interface NetworkDAO extends GenericDao<Network, Guid> {
     /**
      * Retrieves the network with the specified name.
      *
@@ -18,7 +18,7 @@ public interface NetworkDAO extends GenericDao<network, Guid> {
      *            the network name
      * @return the network
      */
-    network getByName(String name);
+    Network getByName(String name);
 
     /**
      * Retrieves all networks for the given data center.
@@ -27,7 +27,7 @@ public interface NetworkDAO extends GenericDao<network, Guid> {
      *            the data center
      * @return the list of networks
      */
-    List<network> getAllForDataCenter(Guid id);
+    List<Network> getAllForDataCenter(Guid id);
 
     /**
      * Retrieves all networks for the given cluster.
@@ -36,7 +36,7 @@ public interface NetworkDAO extends GenericDao<network, Guid> {
      *            the cluster
      * @return the list of networks
      */
-    List<network> getAllForCluster(Guid id);
+    List<Network> getAllForCluster(Guid id);
 
     /**
      * Retrieves all networks for the given cluster with optional permission filtering.
@@ -49,5 +49,5 @@ public interface NetworkDAO extends GenericDao<network, Guid> {
      *            Whether the results should be filtered according to the user's permissions
      * @return the list of networks
      */
-    List<network> getAllForCluster(Guid id, Guid userID, boolean isFiltered);
+    List<Network> getAllForCluster(Guid id, Guid userID, boolean isFiltered);
 }

@@ -8,14 +8,14 @@ import javax.validation.Valid;
 public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
     private static final long serialVersionUID = -7392121807419409051L;
     @Valid
-    private network _network;
+    private Network _network;
 
-    public AddNetworkStoragePoolParameters(Guid storagePoolId, network net) {
+    public AddNetworkStoragePoolParameters(Guid storagePoolId, Network net) {
         super(storagePoolId);
         _network = net;
     }
 
-    public network getNetwork() {
+    public Network getNetwork() {
         return _network;
     }
 

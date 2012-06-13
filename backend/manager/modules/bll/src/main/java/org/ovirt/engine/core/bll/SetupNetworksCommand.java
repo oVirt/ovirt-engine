@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
@@ -124,7 +124,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         return helper.getRemoveNetworks();
     }
 
-    private List<network> getNetworks() {
+    private List<Network> getNetworks() {
         return helper.getNetworks();
     }
 
@@ -159,7 +159,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                                 new VdsIdAndVdsVDSCommandParametersBase(bckndCmdParams.getVdsId()));
 
                 // Update cluster networks (i.e. check if need to activate each new network)
-                for (network net : getNetworks()) {
+                for (Network net : getNetworks()) {
                     AttachNetworkToVdsGroupCommand.SetNetworkStatus(getVdsGroupId(), net);
                 }
                 return Boolean.TRUE;

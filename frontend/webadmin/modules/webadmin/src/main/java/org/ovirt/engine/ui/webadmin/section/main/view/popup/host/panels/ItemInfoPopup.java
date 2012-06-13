@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
@@ -45,7 +45,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private void showNetwork(LogicalNetworkModel networkModel) {
         contents.removeAllRows();
-        network entity = networkModel.getEntity();
+        Network entity = networkModel.getEntity();
         addRow(constants.nameItemInfo(), networkModel.getName());
         addRow(constants.descriptionItemInfo(), entity.getdescription());
         addRow(constants.VLanItemInfo(), networkModel.hasVlan() ? networkModel.getVlanId() + "" : "NA"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -5,7 +5,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 
 
 /**
@@ -23,7 +23,7 @@ public class JsonObjectSerializerTest {
 
     @Test
     public void serializeNetwork() {
-        network net = new network();
+        Network net = new Network();
         JsonObjectSerializer serialezer = new JsonObjectSerializer();
         Assert.assertTrue(serialezer.serialize(net).length() > 0);
     }

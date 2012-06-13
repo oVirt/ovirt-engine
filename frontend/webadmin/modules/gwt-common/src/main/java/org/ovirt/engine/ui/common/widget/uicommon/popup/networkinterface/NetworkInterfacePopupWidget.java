@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface;
 
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -89,7 +89,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((network) object).getname();
+                return ((Network) object).getname();
             }
         });
 

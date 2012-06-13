@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -45,7 +44,7 @@ public class BackendClusterNetworkResourceTest
                                      VdsGroupQueryParamenters.class,
                                      new String[] { "VdsGroupId" },
                                      new Object[] { CLUSTER_ID },
-                                     new ArrayList<network>());
+                                     new ArrayList<org.ovirt.engine.core.common.businessentities.Network>());
         control.replay();
         try {
             resource.get();

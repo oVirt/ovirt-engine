@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -78,13 +78,13 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 }
 
                 // Check the destination cluster have all the networks that the VM use
-                List<network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getParameters().getClusterId());
+                List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getParameters().getClusterId());
                 StringBuilder missingNets = new StringBuilder();
                 for (VmNetworkInterface iface: interfaces) {
                     String netName = iface.getNetworkName();
                     if (isNotEmpty(netName)) {
                         boolean exists = false;
-                        for (network net: networks) {
+                        for (Network net: networks) {
                             if (net.getname().equals(netName)) {
                                 exists = true;
                                 break;
@@ -137,15 +137,15 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
 
         // update vm interfaces
-        List<network> networks = DbFacade.getInstance().getNetworkDAO()
+        List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(getParameters().getClusterId());
         List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
                 .getAllForVm(getParameters().getVmId());
 
         for (final VmNetworkInterface iface : interfaces) {
-            network net = LinqUtils.firstOrNull(networks, new Predicate<network>() {
+            Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
-                public boolean eval(network n) {
+                public boolean eval(Network n) {
                     return iface.getNetworkName().equals(n.getname());
                 }
             });

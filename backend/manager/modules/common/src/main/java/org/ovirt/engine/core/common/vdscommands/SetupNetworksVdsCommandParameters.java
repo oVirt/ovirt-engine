@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParametersBase {
-    private List<network> networks;
+    private List<Network> networks;
     private List<String> removedNetworks;
     private List<VdsNetworkInterface> bonds;
     private Set<String> removedBonds;
@@ -33,24 +33,24 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
      *            Interfaces that are connected to a network or bond
      */
     public SetupNetworksVdsCommandParameters(Guid vdsId,
-            List<network> networks,
+            List<Network> networks,
             List<String> removedNetworks,
             List<VdsNetworkInterface> bonds,
             Set<String> removedBonds,
             List<VdsNetworkInterface> interfaces) {
         super(vdsId);
-        this.networks = (networks == null) ? new ArrayList<network>() : networks;
+        this.networks = (networks == null) ? new ArrayList<Network>() : networks;
         this.removedNetworks = (removedNetworks == null) ? new ArrayList<String>() : removedNetworks;
         this.bonds = (bonds == null) ? new ArrayList<VdsNetworkInterface>() : bonds;
         this.removedBonds = (removedBonds == null) ? new HashSet<String>() : removedBonds;
         this.interfaces = (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
     }
 
-    public List<network> getNetworks() {
+    public List<Network> getNetworks() {
         return networks;
     }
 
-    public void setNetworks(List<network> networks) {
+    public void setNetworks(List<Network> networks) {
         this.networks = networks;
     }
 

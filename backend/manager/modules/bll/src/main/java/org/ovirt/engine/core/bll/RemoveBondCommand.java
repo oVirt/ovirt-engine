@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
@@ -130,11 +130,11 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
         // check if network in cluster and vds active
         if (vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing) {
-            List<network> networks = DbFacade.getInstance().getNetworkDAO()
+            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                     .getAllForCluster(vds.getvds_group_id());
-            if (null != LinqUtils.firstOrNull(networks, new Predicate<network>() {
+            if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
-                public boolean eval(network n) {
+                public boolean eval(Network n) {
                     return n.getname().equals(bond.getName());
                 }
             })) {

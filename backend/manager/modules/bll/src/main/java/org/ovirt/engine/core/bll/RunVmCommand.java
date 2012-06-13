@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -997,7 +997,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     private boolean validateNetworkInterfaces() {
         Map<String,VmNetworkInterface> interfaceNetworkMap = Entities.interfacesByNetworkName(getVm().getInterfaces());
         Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
-        List<network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getvds_group_id());
+        List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getvds_group_id());
         Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
 
         // Checking that the interface are all configured
@@ -1050,7 +1050,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
      *            VM interface network names
      * @return true if all VM network interfaces are attached to VM networks
      */
-    private boolean isVmInterfacesAttachedToVmNetworks(final List<network> clusterNetworks, Set<String> interfaceNetworkNames) {
+    private boolean isVmInterfacesAttachedToVmNetworks(final List<Network> clusterNetworks, Set<String> interfaceNetworkNames) {
         List<String> nonVmNetworkNames =
                 NetworkUtils.filterNonVmNetworkNames(clusterNetworks, interfaceNetworkNames);
 

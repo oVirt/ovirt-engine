@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -76,7 +76,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         privateSetAsDisplayCommand = value;
     }
 
-    private network displayNetwork = null;
+    private Network displayNetwork = null;
 
     private final Comparator<ClusterNetworkManageModel> networkComparator =
             new Comparator<ClusterNetworkManageModel>() {
@@ -143,10 +143,10 @@ public class ClusterNetworkListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                ArrayList<network> newItems = (ArrayList<network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Collections.sort(newItems, new Comparator<network>() {
+                ArrayList<Network> newItems = (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                Collections.sort(newItems, new Comparator<Network>() {
                     @Override
-                    public int compare(network o1, network o2) {
+                    public int compare(Network o1, Network o2) {
                         // management first
                         return HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(o1.getname()) ? -1
                                 : o1.getname().compareTo(o2.getname());
@@ -173,7 +173,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
     public void SetAsDisplay()
     {
-        network network = (network) getSelectedItem();
+        Network network = (Network) getSelectedItem();
 
         Frontend.RunAction(VdcActionType.UpdateDisplayToVdsGroup, new DisplayNetworkToVdsGroupParameters(getEntity(),
                 network,
@@ -197,7 +197,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             public void OnSuccess(Object model, Object result)
             {
                 ClusterNetworkListModel clusterNetworkListModel = (ClusterNetworkListModel) model;
-                ArrayList<network> dcNetworks = (ArrayList<network>) result;
+                ArrayList<Network> dcNetworks = (ArrayList<Network>) result;
                 ListModel networkToManage = createNetworkList(dcNetworks);
                 clusterNetworkListModel.setWindow(networkToManage);
                 networkToManage.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
@@ -208,14 +208,14 @@ public class ClusterNetworkListModel extends SearchableListModel
         AsyncDataProvider.GetNetworkList(_asyncQuery, storagePoolId);
     }
 
-    private ListModel createNetworkList(List<network> dcNetworks) {
+    private ListModel createNetworkList(List<Network> dcNetworks) {
         List<ClusterNetworkManageModel> networkList = new ArrayList<ClusterNetworkManageModel>();
-        java.util.ArrayList<network> clusterNetworks = Linq.<network> Cast(getItems());
-        for (network network : dcNetworks) {
+        java.util.ArrayList<Network> clusterNetworks = Linq.<Network> Cast(getItems());
+        for (Network network : dcNetworks) {
             ClusterNetworkManageModel networkManageModel = new ClusterNetworkManageModel(network);
             int index = clusterNetworks.indexOf(network);
             if (index >= 0) {
-                network clusterNetwork = clusterNetworks.get(index);
+                Network clusterNetwork = clusterNetworks.get(index);
                 networkManageModel.setVmNetwork(clusterNetwork.isVmNetwork());
                 networkManageModel.setRequired(clusterNetwork.isRequired());
                 networkManageModel.setDisplayNetwork(clusterNetwork.getis_display());
@@ -251,12 +251,12 @@ public class ClusterNetworkListModel extends SearchableListModel
         final ListModel windowModel = (ListModel) getWindow();
 
         List<ClusterNetworkManageModel> manageList = Linq.<ClusterNetworkManageModel> Cast(windowModel.getItems());
-        List<network> existingClusterNetworks = Linq.<network> Cast(getItems());
+        List<Network> existingClusterNetworks = Linq.<Network> Cast(getItems());
         final ArrayList<VdcActionParametersBase> toAttach = new ArrayList<VdcActionParametersBase>();
         final ArrayList<VdcActionParametersBase> toDetach = new ArrayList<VdcActionParametersBase>();
 
         for (ClusterNetworkManageModel networkModel : manageList) {
-            network network = networkModel.getEntity();
+            Network network = networkModel.getEntity();
             boolean contains = existingClusterNetworks.contains(network);
 
             boolean needsAttach = networkModel.isAttached() && !contains;
@@ -264,7 +264,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             boolean needsUpdate = false;
 
             if (contains && !needsDetach) {
-                network clusterNetwork = existingClusterNetworks.get(existingClusterNetworks.indexOf(network));
+                Network clusterNetwork = existingClusterNetworks.get(existingClusterNetworks.indexOf(network));
 
                 if ((networkModel.isRequired() != clusterNetwork.isRequired())
                                 || (networkModel.isDisplayNetwork() != clusterNetwork.getis_display())) {
@@ -346,7 +346,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
     private void UpdateActionAvailability()
     {
-        network network = (network) getSelectedItem();
+        Network network = (Network) getSelectedItem();
 
         // CanRemove = SelectedItems != null && SelectedItems.Count > 0;
         getSetAsDisplayCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
@@ -395,7 +395,7 @@ public class ClusterNetworkListModel extends SearchableListModel
     public void OnSave()
     {
         ClusterNetworkModel model = (ClusterNetworkModel) getWindow();
-        network network = new network(null);
+        Network network = new Network(null);
 
         if (getEntity() == null)
         {
@@ -437,9 +437,9 @@ public class ClusterNetworkListModel extends SearchableListModel
                         VdcReturnValueBase retVal = result.getReturnValue();
                         if (retVal != null && retVal.getSucceeded())
                         {
-                            network tempVar = new network(null);
+                            Network tempVar = new Network(null);
                             tempVar.setId((Guid) retVal.getActionReturnValue());
-                            tempVar.setname(((network) data[1]).getname());
+                            tempVar.setname(((Network) data[1]).getname());
                             Frontend.RunAction(VdcActionType.AttachNetworkToVdsGroup,
                                     new AttachNetworkToVdsGroupParameter(networkListModel.getEntity(), tempVar));
                         }

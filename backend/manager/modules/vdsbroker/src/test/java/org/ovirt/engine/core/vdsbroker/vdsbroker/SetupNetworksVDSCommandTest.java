@@ -22,7 +22,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -45,7 +45,7 @@ public class SetupNetworksVDSCommandTest {
 
     @Test
     public void vlanOverNic() {
-        network net = createNetwork(RandomUtils.instance().nextInt(0, 4000));
+        Network net = createNetwork(RandomUtils.instance().nextInt(0, 4000));
         VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.Dhcp, null);
         VdsNetworkInterface vlan = createVlan(nic, net);
 
@@ -68,7 +68,7 @@ public class SetupNetworksVDSCommandTest {
     public void vlanOverBond() {
         VdsNetworkInterface bond = createBond();
         List<VdsNetworkInterface> slaves = createSlaves(bond);
-        network net = createNetwork(RandomUtils.instance().nextInt(0, 4000));
+        Network net = createNetwork(RandomUtils.instance().nextInt(0, 4000));
         VdsNetworkInterface vlan = createVlan(bond, net);
 
         List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(slaves);
@@ -93,7 +93,7 @@ public class SetupNetworksVDSCommandTest {
 
     @Test
     public void networkWithDhcp() {
-        network net = createNetwork(null);
+        Network net = createNetwork(null);
         VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.Dhcp, net.getName());
 
         SetupNetworksVdsCommandParameters parameters =
@@ -122,7 +122,7 @@ public class SetupNetworksVDSCommandTest {
 
         SetupNetworksVdsCommandParameters parameters =
                 new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
-                        Collections.<network> emptyList(),
+                        Collections.<Network> emptyList(),
                         Collections.<String> emptyList(),
                         Collections.singletonList(bond),
                         Collections.<String> emptySet(),
@@ -172,7 +172,7 @@ public class SetupNetworksVDSCommandTest {
      *            The network expected to be sent.
      * @return The network's XML/RPC struct for further testing.
      */
-    private Map<String, String> assertNeworkWasSent(network net) {
+    private Map<String, String> assertNeworkWasSent(Network net) {
         XmlRpcStruct networksStruct = networksCaptor.getValue();
         Map<String, String> networkStruct = (Map<String, String>) networksStruct.getItem(net.getName());
         assertNotNull("Network " + net.getName() + " should've been sent but wasn't.", networkStruct);
@@ -241,7 +241,7 @@ public class SetupNetworksVDSCommandTest {
         return createVdsInterface(name, false, bondName, null, bootProtocol, network, null);
     }
 
-    private VdsNetworkInterface createVlan(VdsNetworkInterface iface, network net) {
+    private VdsNetworkInterface createVlan(VdsNetworkInterface iface, Network net) {
         return createVdsInterface(iface.getName() + "." + net.getvlan_id(),
                 false,
                 null,
@@ -251,8 +251,8 @@ public class SetupNetworksVDSCommandTest {
                 net.getvlan_id());
     }
 
-    private network createNetwork(Integer vlanId) {
-        return new network("",
+    private Network createNetwork(Integer vlanId) {
+        return new Network("",
                 "",
                 Guid.NewGuid(),
                 RandomUtils.instance().nextString(10),

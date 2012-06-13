@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -23,7 +23,7 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
     private String bondingOptions;
     private NetworkBootProtocol bootProtocol = NetworkBootProtocol.None;
     private boolean vmNetwork;
-    private network network;
+    private Network network;
 
     public NetworkVdsmVDSCommandParameters() {
     }
@@ -59,7 +59,7 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
      * @param bootProtocol
      */
     public NetworkVdsmVDSCommandParameters(Guid vdsId,
-            network net,
+            Network net,
             String bondName,
             String[] nics,
             String address,
@@ -197,11 +197,11 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         this.vmNetwork = vmNetwork;
     }
 
-    public network getNetwork() {
+    public Network getNetwork() {
         return network;
     }
 
-    public void setNetwork(network network) {
+    public void setNetwork(Network network) {
         this.network = network;
     }
 

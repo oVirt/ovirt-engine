@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -60,9 +59,9 @@ public class BackendHostNicsResource
     public HostNics list() {
         HostNics ret = new HostNics();
         List<VdsNetworkInterface> ifaces = getCollection();
-        List<network> clusterNetworks = getClusterNetworks();
+        List<org.ovirt.engine.core.common.businessentities.Network> clusterNetworks = getClusterNetworks();
         Map<String, String> networkIds = new HashMap<String, String>();
-        for(network nwk : clusterNetworks) {
+        for(org.ovirt.engine.core.common.businessentities.Network nwk : clusterNetworks) {
             networkIds.put(nwk.getname(), nwk.getId().toString());
         }
         for (VdsNetworkInterface iface : ifaces) {
@@ -106,7 +105,7 @@ public class BackendHostNicsResource
         for (VdsNetworkInterface iface : ifaces) {
             if (iface.getId().toString().equals(id)) {
                 HostNIC hostNic = populate(map(iface, ifaces), iface);
-                for(network nwk : getClusterNetworks()){
+                for(org.ovirt.engine.core.common.businessentities.Network nwk : getClusterNetworks()){
                     if(nwk.getname().equals(iface.getNetworkName())) {
                         hostNic.getNetwork().setId(nwk.getId().toString());
                         hostNic.getNetwork().setName(null);
@@ -179,7 +178,7 @@ public class BackendHostNicsResource
     protected VdsNetworkInterface map(HostNIC entity, VdsNetworkInterface template) {
         VdsNetworkInterface iface = super.map(entity, template);
         if (entity.isSetNetwork()) {
-            network net = lookupNetwork(entity.getNetwork());
+            org.ovirt.engine.core.common.businessentities.Network net = lookupNetwork(entity.getNetwork());
             iface.setNetworkName(net.getname());
         }
         return iface;
@@ -237,11 +236,11 @@ public class BackendHostNicsResource
         return LinkHelper.addLinks(getUriInfo(), master).getHref();
     }
 
-    protected network lookupNetwork(Network network) {
+    protected org.ovirt.engine.core.common.businessentities.Network lookupNetwork(Network network) {
         String id = network.getId();
         String name = network.getName();
 
-        for (network entity : getBackendCollection(network.class,
+        for (org.ovirt.engine.core.common.businessentities.Network entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.Network.class,
                                                    VdcQueryType.GetAllNetworks,
                                                    new GetAllNetworkQueryParamenters(Guid.Empty))) {
             if ((id != null && id.equals(entity.getId().toString())) ||
@@ -305,25 +304,25 @@ public class BackendHostNicsResource
     }
 
     @SuppressWarnings("unchecked")
-    protected List<network> getClusterNetworks(){
+    protected List<org.ovirt.engine.core.common.businessentities.Network> getClusterNetworks(){
         VDS vds = getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new GetVdsByVdsIdParameters(Guid.createGuidFromString(getHostId())), "Host");
         return getEntity(List.class, VdcQueryType.GetAllNetworksByClusterId, new VdsGroupQueryParamenters(vds.getvds_group_id()), "Networks");
     }
 
-    public network lookupClusterNetwork(Network net) {
-        List<network> networks = getClusterNetworks();
+    public org.ovirt.engine.core.common.businessentities.Network lookupClusterNetwork(Network net) {
+        List<org.ovirt.engine.core.common.businessentities.Network> networks = getClusterNetworks();
         if(net.isSetId()){
-            for(network nwk : networks){
+            for(org.ovirt.engine.core.common.businessentities.Network nwk : networks){
                 if (nwk.getId().toString().equals(net.getId()))
                     return nwk;
             }
         }else{
             String networkName = net.getName();
-            for(network nwk : networks){
+            for(org.ovirt.engine.core.common.businessentities.Network nwk : networks){
                 if(nwk.getname().equals(networkName)) return nwk;
             }
         }
-        return notFound(network.class);
+        return notFound(org.ovirt.engine.core.common.businessentities.Network.class);
     }
 
     @Override

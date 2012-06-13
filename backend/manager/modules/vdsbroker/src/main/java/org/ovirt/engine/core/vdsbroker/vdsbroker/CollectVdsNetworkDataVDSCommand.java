@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -78,7 +78,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
 
         if (vds.getstatus() != VDSStatus.Maintenance) {
 
-            List<network> clusterNetworks = DbFacade.getInstance().getNetworkDAO()
+            List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDAO()
                     .getAllForCluster(vds.getvds_group_id());
             Map<String, String> customLogValues;
 
@@ -140,11 +140,11 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         }
     }
 
-    private static String getVmNetworksImplementedAsBridgeless(VDS vds, List<network> clusterNetworks) {
+    private static String getVmNetworksImplementedAsBridgeless(VDS vds, List<Network> clusterNetworks) {
         Map<String, VdsNetworkInterface> interfacesByNetworkName = Entities.interfacesByNetworkName(vds.getInterfaces());
         List<String> networkNames = new ArrayList<String>();
 
-        for (network net : clusterNetworks) {
+        for (Network net : clusterNetworks) {
             if (net.isVmNetwork()
                     && interfacesByNetworkName.containsKey(net.getName())
                     && !interfacesByNetworkName.get(net.getName()).isBridged()) {
@@ -155,11 +155,11 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         return StringUtils.join(networkNames, ",");
     }
 
-    private static String getMissingOperationalClusterNetworks(VDS vds, List<network> clusterNetworks) {
-        Map<String, network> vdsNetworksByName = Entities.entitiesByName(vds.getNetworks());
+    private static String getMissingOperationalClusterNetworks(VDS vds, List<Network> clusterNetworks) {
+        Map<String, Network> vdsNetworksByName = Entities.entitiesByName(vds.getNetworks());
         List<String> networkNames = new ArrayList<String>();
 
-        for (network net : clusterNetworks) {
+        for (Network net : clusterNetworks) {
             if (net.getStatus() == Operational &&
                     net.isRequired() &&
                     !vdsNetworksByName.containsKey(net.getName())) {

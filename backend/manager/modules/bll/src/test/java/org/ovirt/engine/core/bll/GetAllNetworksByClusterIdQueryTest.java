@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -21,7 +21,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Vd
     public void testExecuteQueryCommand() {
         Guid clusterID = Guid.NewGuid();
 
-        network networkMock = mock(network.class);
+        Network networkMock = mock(Network.class);
 
         NetworkDAO networkDAOMock = mock(NetworkDAO.class);
         when(networkDAOMock.getAllForCluster(clusterID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(networkMock));
@@ -33,7 +33,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Vd
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<network> result = (List<network>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Network> result = (List<Network>) getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of networks in result", 1, result.size());
         assertEquals("Wrong network in result", networkMock, result.get(0));
     }
