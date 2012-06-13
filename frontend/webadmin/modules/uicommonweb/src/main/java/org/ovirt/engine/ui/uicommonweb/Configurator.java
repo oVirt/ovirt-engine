@@ -208,16 +208,11 @@ public abstract class Configurator {
     }
 
     public String getDocumentationBaseURL() {
-        return removeModulName(GWT.getModuleBaseURL()) + getDocumentationBasePath()
-                + documentationLangPath;
+        return getRootURL() + getDocumentationBasePath() + documentationLangPath;
     }
 
     public String getDocumentationLibURL() {
         return getDocumentationBaseURL() + DOCUMENTATION_LIB_PATH;
-    }
-
-    protected String removeModulName(String moduleName) {
-        return GWT.getModuleBaseURL().replaceAll(GWT.getModuleName() + "/", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void setUsbFilter(String usbFilter) {
@@ -248,19 +243,21 @@ public abstract class Configurator {
     }
 
     // Fetch file from a specified path
-    public void fetchFile(String filePath, final Event onFetched) {
-
+    public void fetchFile(final String filePath, final Event onFetched) {
         RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, filePath);
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override
                 public void onError(Request request, Throwable exception) {
+                    GWT.log("Error while requesting " + filePath, exception); //$NON-NLS-1$
                 }
 
                 @Override
                 public void onResponseReceived(Request request, Response response) {
-                    String result = response.getText();
-                    onFetched.raise(this, new FileFetchEventArgs(result));
+                    if (response.getStatusCode() == Response.SC_OK) {
+                        String result = response.getText();
+                        onFetched.raise(this, new FileFetchEventArgs(result));
+                    }
                 }
             });
         } catch (RequestException e) {
@@ -284,26 +281,27 @@ public abstract class Configurator {
     }
 
     /**
-     * Calculates the root URL of the server from where the application was downloaded. For example, if the URL is
-     * <code>http://www.example.com:8080/foo/bar</code> it will return <code>http://www.example.com:8080</code>.
-     * @return the root URL of the server
+     * Calculates the root URL of the server from where the application was served.
+     * <p>
+     * For example, if the application was served from <code>http://www.example.com:8080/foo/bar</code>, it will return
+     * <code>http://www.example.com:8080/</code>.
+     *
+     * @return The root URL of the server, including the trailing slash.
      */
     public static String getRootURL() {
         String moduleURL = GWT.getModuleBaseURL();
         String separator = "://"; //$NON-NLS-1$
         int index = moduleURL.indexOf(separator);
-        if (index == -1) {
-            throw new RuntimeException();
-        }
         index = moduleURL.indexOf("/", index + separator.length()); //$NON-NLS-1$
-        if (index == -1) {
-            return moduleURL;
+        String result = (index != -1) ? moduleURL.substring(0, index + 1) : moduleURL;
+        if (!result.endsWith("/")) { //$NON-NLS-1$
+            result += "/"; //$NON-NLS-1$
         }
-        return moduleURL.substring(0, index);
+        return result;
     }
 
     public static String getSpiceBaseURL() {
-        return getRootURL() + "/spice/"; //$NON-NLS-1$
+        return getRootURL() + "spice/"; //$NON-NLS-1$
     }
 
     public void Configure(ISpice spice) {
@@ -388,8 +386,6 @@ public abstract class Configurator {
 
     protected abstract String clientPlatformType();
 
-    protected void onUpdateDocumentationBaseURL() {
-        // no-op. Override if needed
-    }
+    protected abstract void onUpdateDocumentationBaseURL();
 
 }

@@ -8,6 +8,7 @@ import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -31,6 +32,10 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
             new EventDefinition("spiceVersionFileFetched", UserPortalConfigurator.class); //$NON-NLS-1$
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
+    public EventDefinition documentationFileFetchedEvent_Definition =
+        new EventDefinition("documentationFileFetched", UserPortalConfigurator.class); //$NON-NLS-1$
+    public Event documentationFileFetchedEvent = new Event(documentationFileFetchedEvent_Definition);
+
     public EventDefinition usbFilterFileFetchedEvent_Definition =
             new EventDefinition("usbFilterFileFetched", UserPortalConfigurator.class); //$NON-NLS-1$
     public Event usbFilterFileFetchedEvent = new Event(usbFilterFileFetchedEvent_Definition);
@@ -50,6 +55,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);
+        documentationFileFetchedEvent.addListener(this);
         usbFilterFileFetchedEvent.addListener(this);
 
         // Update USB filters
@@ -92,6 +98,9 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         if (ev.equals(spiceVersionFileFetchedEvent_Definition)) {
             Version spiceVersion = parseVersion(((FileFetchEventArgs) args).getFileContent());
             setSpiceVersion(spiceVersion);
+        } else if (ev.equals(documentationFileFetchedEvent_Definition)) {
+            String documentationPathFileContent = ((FileFetchEventArgs) args).getFileContent();
+            DocumentationPathTranslator.init(documentationPathFileContent);
         } else if (ev.equals(usbFilterFileFetchedEvent_Definition)) {
             String usbFilter = ((FileFetchEventArgs) args).getFileContent();
             setUsbFilter(usbFilter);
@@ -129,6 +138,11 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     @Override
     protected String clientPlatformType() {
         return clientAgentType.getPlatform();
+    }
+
+    @Override
+    protected void onUpdateDocumentationBaseURL() {
+        fetchFile(getDocumentationBaseURL() + "UserPortalDocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 
 }

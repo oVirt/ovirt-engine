@@ -26,8 +26,8 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
             new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
-    public EventDefinition documentationFileFetchedEvent_Definition = new EventDefinition("documentationFileFetched", //$NON-NLS-1$
-            WebAdminConfigurator.class);
+    public EventDefinition documentationFileFetchedEvent_Definition =
+        new EventDefinition("documentationFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
     public Event documentationFileFetchedEvent = new Event(documentationFileFetchedEvent_Definition);
 
     private static final ClientAgentType clientAgentType = new ClientAgentType();
@@ -43,10 +43,6 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);
         documentationFileFetchedEvent.addListener(this);
-    }
-
-    public void updateDocumentationPathFile() {
-        fetchFile(getDocumentationBaseURL() + "DocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 
     @Override
@@ -94,9 +90,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     @Override
     protected void onUpdateDocumentationBaseURL() {
-        super.onUpdateDocumentationBaseURL();
-
-        updateDocumentationPathFile();
+        fetchFile(getDocumentationBaseURL() + "DocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 
 }
