@@ -75,101 +75,89 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         addCanDoActionMessage(String.format("$status %1$s", status));
     }
 
+    protected Boolean reconstructMaster() {
+        ProceedStorageDomainTreatmentByDomainType(true);
+
+        // To issue a reconstructMaster you need to set the domain inactive
+        if (getParameters().isInactive()) {
+            SetStorageDomainStatus(StorageDomainStatus.InActive);
+            CalcStoragePoolStatusByDomainsStatus();
+        }
+
+        if (_isLastMaster) {
+            return stopSpm();
+        }
+
+        // Pause the timers for the domain error handling
+        runVdsCommand(VDSCommandType.MarkPoolInReconstructMode,
+            new MarkPoolInReconstructModeVDSCommandParameters(
+                getStoragePoolId().getValue(), ReconstructMarkAction.ClearJobs));
+
+        Boolean commandSucceeded = stopSpm();
+
+        commandSucceeded = commandSucceeded && runVdsCommand(
+                VDSCommandType.DisconnectStoragePool,
+                new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),
+                    getStoragePool().getId(), getVds().getvds_spm_id())
+            ).getSucceeded();
+
+        if (!commandSucceeded) {
+            return false;
+        }
+
+        List<storage_pool_iso_map> domains = getStoragePoolIsoMapDAO()
+                        .getAllForStoragePool(getStoragePool().getId());
+
+        for (storage_pool_iso_map domain : domains) {
+            if (domain.getstatus() == null
+                    || domain.getstatus() == StorageDomainStatus.Unknown) {
+                domain.setstatus(StorageDomainStatus.Active);
+            } else if (domain.getstatus() == StorageDomainStatus.Maintenance) {
+                domain.setstatus(StorageDomainStatus.InActive);
+            } else if (domain.getstatus() == StorageDomainStatus.Locked) {
+                throw new VdcBLLException(
+                    VdcBllErrors.CANT_RECONSTRUCT_WHEN_A_DOMAIN_IN_POOL_IS_LOCKED,
+                    "Cannot reconstruct master domain when a domain in the " +
+                    "pool is locked.");
+            }
+        }
+
+        return runVdsCommand(VDSCommandType.ReconstructMaster,
+            new ReconstructMasterVDSCommandParameters(getVds().getId(),
+                getStoragePool().getId(), getStoragePool().getname(),
+                _newMasterStorageDomainId, domains,
+                getStoragePool().getmaster_domain_version())
+            ).getSucceeded();
+    }
+
     @Override
     protected void executeCommand() {
         try {
-            boolean commandSucceeded = (Boolean) TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
-                    new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            boolean commandSucceeded = false;
-
-                            ProceedStorageDomainTreatmentByDomainType(true);
-                            // set status to inactive in order to send it on
-                            // reconstruct or if its last master
-                            if (getParameters().getDeactivate()) {
-                                SetStorageDomainStatus(StorageDomainStatus.InActive);
-                                CalcStoragePoolStatusByDomainsStatus();
-                            }
-
-                            commandSucceeded = true;
-                            if (!_isLastMaster) {
-                                // pause the timers for the domain error handling.
-                                Backend.getInstance()
-                                        .getResourceManager()
-                                        .RunVdsCommand(
-                                                VDSCommandType.MarkPoolInReconstructMode,
-                                                new MarkPoolInReconstructModeVDSCommandParameters(getStoragePoolId()
-                                                        .getValue(), ReconstructMarkAction.ClearJobs));
-                                // if we have spm, stop spm and reset cache (resetIrs)
-                                commandSucceeded = stopSpm();
-                                commandSucceeded =
-                                        commandSucceeded
-                                                && Backend
-                                                        .getInstance()
-                                                        .getResourceManager()
-                                                        .RunVdsCommand(
-                                                                VDSCommandType.DisconnectStoragePool,
-                                                                new DisconnectStoragePoolVDSCommandParameters(getVds()
-                                                                        .getId(),
-                                                                        getStoragePool().getId(),
-                                                                        getVds().getvds_spm_id()))
-                                                        .getSucceeded();
-                                if (commandSucceeded) {
-                                    List<storage_pool_iso_map> domains = DbFacade.getInstance()
-                                                    .getStoragePoolIsoMapDAO()
-                                                    .getAllForStoragePool(getStoragePool().getId());
-                                    for (storage_pool_iso_map domain : domains) {
-                                        if (domain.getstatus() == null
-                                                || domain.getstatus() == StorageDomainStatus.Unknown) {
-                                            domain.setstatus(StorageDomainStatus.Active);
-                                        } else if (domain.getstatus() == StorageDomainStatus.Maintenance) {
-                                            domain.setstatus(StorageDomainStatus.InActive);
-                                        } else if (domain.getstatus() == StorageDomainStatus.Locked) {
-                                            throw new VdcBLLException(
-                                                    VdcBllErrors.CANT_RECONSTRUCT_WHEN_A_DOMAIN_IN_POOL_IS_LOCKED,
-                                                    "Cannot reconstruct master domain when a domain in the pool is " +
-                                                            "locked.");
-                                        }
-                                    }
-                                    commandSucceeded = Backend
-                                            .getInstance()
-                                            .getResourceManager()
-                                            .RunVdsCommand(
-                                                    VDSCommandType.ReconstructMaster,
-                                                    new ReconstructMasterVDSCommandParameters(getVds().getId(),
-                                                            getStoragePool().getId(), getStoragePool().getname(),
-                                                            _newMasterStorageDomainId, domains, getStoragePool()
-                                                                    .getmaster_domain_version())).getSucceeded();
-                                }
-                            } else {
-                                stopSpm();
-                            }
-                            return commandSucceeded;
-                        }
-                    });
-
+            Boolean commandSucceeded = reconstructMaster();
             connectAndRefreshAllUpHosts(commandSucceeded);
 
             if (!_isLastMaster && commandSucceeded) {
-                SearchParameters p =
-                        new SearchParameters(MessageFormat.format(DesktopsInStoragePoolQuery, getStoragePool()
-                                .getname()), SearchType.VM);
+                SearchParameters p = new SearchParameters(
+                    MessageFormat.format(DesktopsInStoragePoolQuery,
+                        getStoragePool().getname()), SearchType.VM);
+
                 p.setMaxCount(Integer.MAX_VALUE);
+
                 @SuppressWarnings("unchecked")
-                List<VM> vmsInPool = (List<VM>) Backend.getInstance().runInternalQuery(VdcQueryType.Search, p)
-                        .getReturnValue();
+                List<VM> vmsInPool = (List<VM>) Backend.getInstance()
+                     .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
+
                 VmCommand.UpdateVmInSpm(getStoragePool().getId(), vmsInPool);
             }
+
             setSucceeded(commandSucceeded);
         } finally {
-            // reset cache and mark reconstruct for pool as finished
-            Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.MarkPoolInReconstructMode,
-                                new MarkPoolInReconstructModeVDSCommandParameters(getStoragePoolId()
-                                        .getValue(), ReconstructMarkAction.ClearCache));
+            // Reset cache and mark reconstruct for pool as finished
+            Backend.getInstance().getResourceManager().RunVdsCommand(
+                VDSCommandType.MarkPoolInReconstructMode,
+                new MarkPoolInReconstructModeVDSCommandParameters(
+                    getStoragePoolId().getValue(), ReconstructMarkAction.ClearCache)
+            );
         }
     }
 
@@ -236,7 +224,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                         }
                                     }
                                     // only if we deactivate the storage domain we want to disconnect from it.
-                                    if (getParameters().getDeactivate()) {
+                                    if (getParameters().isInactive()) {
                                         StorageHelperDirector.getInstance()
                                                 .getItem(getStorageDomain().getstorage_type())
                                                 .DisconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());

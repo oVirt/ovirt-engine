@@ -217,7 +217,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 @Override
                 public Object runInTransaction() {
                     getCompensationContext().snapshotEntityStatus(map, map.getstatus());
-                    if (getParameters().getDeactivate()) {
+                    if (getParameters().isInactive()) {
                         map.setstatus(StorageDomainStatus.InActive);
                     } else {
                         map.setstatus(StorageDomainStatus.Maintenance);

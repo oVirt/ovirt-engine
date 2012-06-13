@@ -6,14 +6,14 @@ public class StorageDomainPoolParametersBase extends StorageDomainParametersBase
     private static final long serialVersionUID = 6248101174739394633L;
 
     private boolean runSilent;
-    private boolean deactivate;
+    private boolean inactive;
 
-    public boolean getDeactivate() {
-        return deactivate;
+    public boolean isInactive() {
+        return inactive;
     }
 
-    public void setDeactivate(boolean value) {
-        deactivate = value;
+    public void setInactive(boolean value) {
+        inactive = value;
     }
 
     public StorageDomainPoolParametersBase(Guid storageId, Guid storagePoolId) {

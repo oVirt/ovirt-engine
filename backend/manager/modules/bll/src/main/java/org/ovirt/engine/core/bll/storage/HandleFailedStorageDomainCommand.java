@@ -45,7 +45,7 @@ public class HandleFailedStorageDomainCommand<T extends StorageDomainPoolParamet
             setSucceeded(true);
         } else {
             localParameters.setIsInternal(true);
-            localParameters.setDeactivate(true);
+            localParameters.setInactive(true);
             setSucceeded(Backend.getInstance()
                     .runInternalAction(VdcActionType.DeactivateStorageDomain, localParameters).getSucceeded());
         }
