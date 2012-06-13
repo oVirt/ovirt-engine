@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -67,6 +69,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
@@ -203,6 +206,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 setSucceeded(result.getSucceeded());
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
             } finally {
+                freeLock();
                 DecrementVdsPendingVmsCount();
             }
         } else {
@@ -222,6 +226,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 }
             } finally {
+                freeLock();
                 DecrementVdsPendingVmsCount();
             }
             setActionReturnValue(status);
@@ -1055,6 +1060,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId(), LockingGroup.VM.name());
     }
 
     private static Log log = LogFactory.getLog(RunVmCommand.class);
