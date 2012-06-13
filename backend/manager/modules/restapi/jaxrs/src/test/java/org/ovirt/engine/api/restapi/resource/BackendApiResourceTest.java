@@ -121,6 +121,7 @@ public class BackendApiResourceTest extends Assert {
         "vms",
         "vms/search",
         "disks",
+        "disks/search"
     };
 
     private static final String[] hrefs = {
@@ -150,6 +151,7 @@ public class BackendApiResourceTest extends Assert {
         BASE_PATH + "/vms",
         BASE_PATH + "/vms?search={query}",
         BASE_PATH + "/disks",
+        BASE_PATH + "/disks?search={query}",
     };
 
     public BackendApiResourceTest() {
