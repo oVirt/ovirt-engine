@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -104,7 +104,7 @@ public class BackendStorageDomainTemplatesResourceTest
             break;
         case ImportExport:
             setUpEntityQueryExpectations(VdcQueryType.GetTemplatesFromExportDomain,
-                                         GetAllFromExportDomainQueryParamenters.class,
+                                         GetAllFromExportDomainQueryParameters.class,
                                          new String[] { "StoragePoolId", "StorageDomainId", "GetAll" },
                                          new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID, Boolean.TRUE },
                                          setUpExportTemplates(),

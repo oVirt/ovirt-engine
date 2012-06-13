@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -334,8 +334,8 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         String existingTemplates = ""; //$NON-NLS-1$
         if (storagePool != null)
         {
-            GetAllFromExportDomainQueryParamenters tempVar =
-                    new GetAllFromExportDomainQueryParamenters(storagePool.getId(), storageDomainId);
+            GetAllFromExportDomainQueryParameters tempVar =
+                    new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
             tempVar.setGetAll(true);
             VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar);
 

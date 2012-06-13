@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiskImageList;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -279,7 +279,7 @@ public class BackendStorageDomainTemplateResourceTest
                                          new Object[] { getStoragePoolsByStorageDomainId },
                                          setUpStoragePool());
             setUpEntityQueryExpectations(VdcQueryType.GetTemplatesFromExportDomain,
-                                         GetAllFromExportDomainQueryParamenters.class,
+                                         GetAllFromExportDomainQueryParameters.class,
                                          new String[] { "StoragePoolId", "StorageDomainId" },
                                          new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID },
                                          setUpTemplates(notFound));

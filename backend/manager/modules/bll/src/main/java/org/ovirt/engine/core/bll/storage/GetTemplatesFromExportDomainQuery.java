@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.queries.DiskImageList;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -19,7 +19,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
-public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQueryParamenters>
+public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQueryParameters>
         extends GetVmsFromExportDomainQuery<P> {
     public GetTemplatesFromExportDomainQuery(P parameters) {
         super(parameters);

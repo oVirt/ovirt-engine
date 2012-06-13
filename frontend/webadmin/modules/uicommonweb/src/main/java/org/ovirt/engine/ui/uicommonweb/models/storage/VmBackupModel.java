@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
@@ -411,7 +411,7 @@ public class VmBackupModel extends ManageBackupModel {
                                                 .getReturnValue());
                             }
                         };
-                        GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(
+                        GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
                                 dataCenter.getId(), backupModel.getEntity()
                                         .getId());
                         tempVar.setGetAll(true);

@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 
-public class GetAllIdsFromExportDomainQuery<P extends GetAllFromExportDomainQueryParamenters>
+public class GetAllIdsFromExportDomainQuery<P extends GetAllFromExportDomainQueryParameters>
         extends QueriesCommandBase<P> {
     public GetAllIdsFromExportDomainQuery(P parameters) {
         super(parameters);

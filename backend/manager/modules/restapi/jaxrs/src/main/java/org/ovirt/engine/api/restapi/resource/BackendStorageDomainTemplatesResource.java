@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.DiskImageList;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,8 +49,8 @@ public class BackendStorageDomainTemplatesResource
     @SuppressWarnings("unchecked")
     @Override
     protected Collection<VmTemplate> getEntitiesFromExportDomain() {
-        GetAllFromExportDomainQueryParamenters params =
-            new GetAllFromExportDomainQueryParamenters(getDataCenterId(storageDomainId), storageDomainId);
+        GetAllFromExportDomainQueryParameters params =
+            new GetAllFromExportDomainQueryParameters(getDataCenterId(storageDomainId), storageDomainId);
         params.setGetAll(true);
 
         Map<VmTemplate, DiskImageList> ret = getEntity(HashMap.class,

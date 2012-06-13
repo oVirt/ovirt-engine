@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -171,7 +171,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         if (retVal) {
             // Load images from Import/Export domain
-            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
+            GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getSourceDomainId());
             tempVar.setGetAll(true);
             VdcQueryReturnValue qretVal = getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain,
@@ -364,7 +364,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private boolean TemplateExistsOnExportDomain() {
         boolean retVal = false;
         if (!VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVm().getvmt_guid())) {
-            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
+            GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getSourceDomainId());
             tempVar.setGetAll(true);
             VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(

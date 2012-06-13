@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -107,7 +107,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     @Override
     public VM getVm() {
         if (exportVm == null) {
-            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(
+            GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
                     getParameters().getStoragePoolId(), getParameters().getStorageDomainId());
             tempVar.setGetAll(true);
             tempVar.setIds(new ArrayList<Guid>(Collections.singletonList(getVmId())));

@@ -47,7 +47,7 @@ import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
@@ -1668,8 +1668,8 @@ public final class AsyncDataProvider {
                 return source != null ? source : new HashMap<VmTemplate, ArrayList<DiskImage>>();
             }
         };
-        GetAllFromExportDomainQueryParamenters getAllFromExportDomainQueryParamenters =
-                new GetAllFromExportDomainQueryParamenters(storagePoolId, storageDomainId);
+        GetAllFromExportDomainQueryParameters getAllFromExportDomainQueryParamenters =
+                new GetAllFromExportDomainQueryParameters(storagePoolId, storageDomainId);
         getAllFromExportDomainQueryParamenters.setGetAll(true);
         Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, getAllFromExportDomainQueryParamenters, aQuery);
     }

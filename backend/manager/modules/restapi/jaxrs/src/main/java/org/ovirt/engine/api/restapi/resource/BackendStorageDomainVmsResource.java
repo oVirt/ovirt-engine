@@ -10,7 +10,7 @@ import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryTopSizeVmsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,8 +44,8 @@ public class BackendStorageDomainVmsResource
 
     @Override
     protected Collection<org.ovirt.engine.core.common.businessentities.VM> getEntitiesFromExportDomain() {
-        GetAllFromExportDomainQueryParamenters params =
-            new GetAllFromExportDomainQueryParamenters(getDataCenterId(storageDomainId), storageDomainId);
+        GetAllFromExportDomainQueryParameters params =
+            new GetAllFromExportDomainQueryParameters(getDataCenterId(storageDomainId), storageDomainId);
         params.setGetAll(true);
 
         return getBackendCollection(VdcQueryType.GetVmsFromExportDomain, params);

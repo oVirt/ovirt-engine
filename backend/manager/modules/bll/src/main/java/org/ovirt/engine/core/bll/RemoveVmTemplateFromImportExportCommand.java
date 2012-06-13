@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.queries.DiskImageList;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
@@ -160,7 +160,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     @SuppressWarnings("unchecked")
     public VmTemplate getVmTemplate() {
         if (exportTemplate == null) {
-            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
+            GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getStorageDomainId());
             tempVar.setGetAll(true);
             VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(

@@ -48,7 +48,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -1134,8 +1134,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             };
 
             Guid storageDomainId = ((storage_domains) exportModel.getStorage().getSelectedItem()).getId();
-            GetAllFromExportDomainQueryParamenters tempVar =
-                    new GetAllFromExportDomainQueryParamenters(storagePool.getId(), storageDomainId);
+            GetAllFromExportDomainQueryParameters tempVar =
+                    new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
             tempVar.setGetAll(true);
             Frontend.RunQuery(VdcQueryType.GetVmsFromExportDomain, tempVar, _asyncQuery);
         }

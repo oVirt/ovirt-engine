@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -297,7 +297,7 @@ public class BackendStorageDomainVmResourceTest
                                          new Object[] { getStoragePoolsByStorageDomainId },
                                          setUpStoragePool());
             setUpEntityQueryExpectations(VdcQueryType.GetVmsFromExportDomain,
-                                         GetAllFromExportDomainQueryParamenters.class,
+                                         GetAllFromExportDomainQueryParameters.class,
                                          new String[] { "StoragePoolId", "StorageDomainId" },
                                          new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID },
                                          setUpVms(notFound));
