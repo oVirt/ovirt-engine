@@ -39,7 +39,7 @@ public class GetDeviceListVDSCommandTest {
      * @param mockDevtype
      *            The value that the XML RPC will hold.
      */
-    private void testParseLunFromXmlRpcForDevtypeField(StorageType expectedStorageType, String mockDevtype) {
+    private static void testParseLunFromXmlRpcForDevtypeField(StorageType expectedStorageType, String mockDevtype) {
         XmlRpcStruct xlun = mock(XmlRpcStruct.class);
         when(xlun.contains(GetDeviceListVDSCommand.DEVTYPE_FIELD)).thenReturn(true);
         when(xlun.getItem(GetDeviceListVDSCommand.DEVTYPE_FIELD)).thenReturn(mockDevtype);
