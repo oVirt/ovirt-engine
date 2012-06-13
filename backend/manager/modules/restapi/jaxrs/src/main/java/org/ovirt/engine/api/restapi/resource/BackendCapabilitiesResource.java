@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.AccessProtocol;
 import org.ovirt.engine.api.model.AccessProtocols;
 import org.ovirt.engine.api.model.BootDevice;
@@ -79,6 +80,7 @@ import org.ovirt.engine.api.model.VmTypes;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmDeviceTypes;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
+import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.FencingOptionsParser;
@@ -90,6 +92,7 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.NGuid;
 
 public class BackendCapabilitiesResource extends BackendResource implements CapabilitiesResource {
 
@@ -104,77 +107,88 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     private static Version currentVersion = null;
 
     @Override
-    public Capabilities get() {
+    public Capabilities list() {
     Capabilities caps = new Capabilities();
-        VersionCaps current = null;
-
         for (Version v : getSupportedClusterLevels()) {
-            VersionCaps version = new VersionCaps();
-
-            version.setMajor(v.getMajor());
-            version.setMinor(v.getMinor());
-
-            version.setCPUs(new CPUs());
-
-            for (ServerCpu sc : getServerCpuList(v)) {
-                CPU cpu = new CPU();
-                cpu.setId(sc.getCpuName());
-                cpu.setLevel(sc.getLevel());
-                version.getCPUs().getCPUs().add(cpu);
-            }
-
-            addPowerManagers(version, getPowerManagers(v));
-            addVmTypes(version, VmType.values());
-            addStorageTypes(version, getStorageTypes(v));
-            addStorageDomainTypes(version, StorageDomainType.values());
-            addFenceTypes(version, FenceType.values());
-            addBootDevices(version, BootDevice.values());
-            addDisplayTypes(version, DisplayType.values());
-            addNicInterfaces(version, NicInterface.values());
-            addDiskFormats(version, DiskFormat.values());
-            addDiskInterfaces(version, DiskInterface.values());
-            addCustomProperties(version, getVmHooksEnvs(v));
-            addVmAffinities(version, VmAffinity.values());
-            addVmDeviceType(version, VmDeviceType.values());
-            addnetworkBootProtocols(version, BootProtocol.values());
-            addMigrateOnErrorOptions(version, MigrateOnError.values());
-            addStorageFormatOptions(version, StorageFormat.values());
-            addOsTypes(version, OsType.values());
-
-            addGlusterTypesAndStates(version);
-
-            //Add States. User can't update States, but he still needs to know which exist.
-            addCreationStates(version, CreationStatus.values());
-            addStorageDomaintStates(version, StorageDomainStatus.values());
-            addPowerManagementStateses(version, PowerManagementStatus.values());
-            addHostStates(version, HostStatus.values());
-            addHostNonOperationalDetails(version, NonOperationalReason.values());
-            addNetworkStates(version, NetworkStatus.values());
-            addTemplateStates(version, TemplateStatus.values());
-            addVmStates(version, VmStatus.values());
-            addVmPauseDetails(version, VmPauseStatus.values());
-            addDiskStates(version, DiskStatus.values());
-            addHostNICStates(version, NicStatus.values());
-            addDataCenterStates(version, DataCenterStatus.values());
-            addPermits(version, PermitType.values());
-            addSchedulingPolicies(version, SchedulingPolicyType.values());
-
-            version.setFeatures(getFeatures(v));
-
-            caps.getVersions().add(version);
-
-            if (current == null && VersionHelper.equals(v, getCurrentVersion())) {
-                current = version;
-                current.setCurrent(true);
-            } else {
-                version.setCurrent(false);
-            }
+            caps.getVersions().add(generateVersionCaps(v));
         }
 
         caps.setPermits(getPermits());
         caps.setSchedulingPolicies(getSchedulingPolicies());
 
-        return caps;
+        return  caps;
+    }
+
+    public VersionCaps generateVersionCaps(Version v) {
+        VersionCaps current = null;
+        VersionCaps version = new VersionCaps();
+
+        version.setMajor(v.getMajor());
+        version.setMinor(v.getMinor());
+        version.setId(generateId(v));
+
+        version.setCpus(new CPUs());
+
+        for (ServerCpu sc : getServerCpuList(v)) {
+            CPU cpu = new CPU();
+            cpu.setId(sc.getCpuName());
+            cpu.setLevel(sc.getLevel());
+            version.getCpus().getCPUs().add(cpu);
+        }
+
+        addPowerManagers(version, getPowerManagers(v));
+        addVmTypes(version, VmType.values());
+        addStorageTypes(version, getStorageTypes(v));
+        addStorageDomainTypes(version, StorageDomainType.values());
+        addFenceTypes(version, FenceType.values());
+        addBootDevices(version, BootDevice.values());
+        addDisplayTypes(version, DisplayType.values());
+        addNicInterfaces(version, NicInterface.values());
+        addDiskFormats(version, DiskFormat.values());
+        addDiskInterfaces(version, DiskInterface.values());
+        addCustomProperties(version, getVmHooksEnvs(v));
+        addVmAffinities(version, VmAffinity.values());
+        addVmDeviceType(version, VmDeviceType.values());
+        addnetworkBootProtocols(version, BootProtocol.values());
+        addMigrateOnErrorOptions(version, MigrateOnError.values());
+        addStorageFormatOptions(version, StorageFormat.values());
+        addOsTypes(version, OsType.values());
+
+        addGlusterTypesAndStates(version);
+
+        //Add States. User can't update States, but he still needs to know which exist.
+        addCreationStates(version, CreationStatus.values());
+        addStorageDomaintStates(version, StorageDomainStatus.values());
+        addPowerManagementStateses(version, PowerManagementStatus.values());
+        addHostStates(version, HostStatus.values());
+        addHostNonOperationalDetails(version, NonOperationalReason.values());
+        addNetworkStates(version, NetworkStatus.values());
+        addTemplateStates(version, TemplateStatus.values());
+        addVmStates(version, VmStatus.values());
+        addVmPauseDetails(version, VmPauseStatus.values());
+        addDiskStates(version, DiskStatus.values());
+        addHostNICStates(version, NicStatus.values());
+        addDataCenterStates(version, DataCenterStatus.values());
+        addPermits(version, PermitType.values());
+        addSchedulingPolicies(version, SchedulingPolicyType.values());
+
+        version.setFeatures(getFeatures(v));
+
+        if (current == null && VersionHelper.equals(v, getCurrentVersion())) {
+            current = version;
+            current.setCurrent(true);
+        } else {
+            version.setCurrent(false);
+        }
+
+        LinkHelper.<VersionCaps>addLinks(getUriInfo(), version);
+
+        return version;
+    }
+
+    public String generateId(Version v) {
+        NGuid guid = new NGuid((v.getMajor()+"."+v.getMinor()).getBytes(),true);
+        return guid!=null ? guid.toString():null;
     }
 
     private void addSchedulingPolicies(VersionCaps version, SchedulingPolicyType[] values) {
@@ -355,7 +369,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         return ServerCpuParser.parseCpus(getConfigurationValue(String.class, ConfigurationValues.ServerCPUList, version));
     }
 
-    private List<Version> getSupportedClusterLevels() {
+    public List<Version> getSupportedClusterLevels() {
         List<Version> versions = new ArrayList<Version>();
         for (org.ovirt.engine.core.compat.Version v :
                     (Set<org.ovirt.engine.core.compat.Version>)getConfigurationValue(Set.class, ConfigurationValues.SupportedClusterLevels, null)){
@@ -523,5 +537,10 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         for(GlusterState type : states) {
             version.getBrickStates().getGlusterStates().add(type.value());
         }
+    }
+
+    @Override
+    public CapabiliyResource getCapabilitiesSubResource(String id) {
+        return new BackendCapabilityResource(id, this);
     }
 }

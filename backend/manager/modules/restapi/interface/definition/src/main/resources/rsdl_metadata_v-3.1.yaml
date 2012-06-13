@@ -582,6 +582,13 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /api/capabilities/{version:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /api/storagedomains|rel=get
   request:
     body:

@@ -425,6 +425,8 @@
     <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>
 
+  <xs:element name="cpus" type="CPUs"/>
+
   <xs:complexType name="CPUs">
     <xs:sequence>
       <xs:annotation>
@@ -438,45 +440,48 @@
 
   <!-- Version numbers -->
 
-  <xs:element name="version" type="Version"/>
+  <xs:element name="system_version" type="Version"/>
 
   <xs:complexType name="Version">
-    <xs:sequence/>
-    <xs:attribute name="major" type="xs:unsignedShort">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="minor" type="xs:unsignedShort">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="build" type="xs:unsignedShort">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="revision" type="xs:unsignedShort">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="full_version" type="xs:string">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+	    <xs:attribute name="major" type="xs:unsignedShort">
+	        <xs:annotation>
+	          <xs:appinfo>
+	            <jaxb:property generateIsSetMethod="false"/>
+	          </xs:appinfo>
+	        </xs:annotation>
+	    </xs:attribute>
+	    <xs:attribute name="minor" type="xs:unsignedShort">
+	        <xs:annotation>
+	          <xs:appinfo>
+	            <jaxb:property generateIsSetMethod="false"/>
+	          </xs:appinfo>
+	        </xs:annotation>
+	    </xs:attribute>
+	    <xs:attribute name="build" type="xs:unsignedShort">
+	        <xs:annotation>
+	          <xs:appinfo>
+	            <jaxb:property generateIsSetMethod="false"/>
+	          </xs:appinfo>
+	        </xs:annotation>
+	    </xs:attribute>
+	    <xs:attribute name="revision" type="xs:unsignedShort">
+	        <xs:annotation>
+	          <xs:appinfo>
+	            <jaxb:property generateIsSetMethod="false"/>
+	          </xs:appinfo>
+	        </xs:annotation>
+	    </xs:attribute>
+	    <xs:attribute name="full_version" type="xs:string">
+	        <xs:annotation>
+	          <xs:appinfo>
+	            <jaxb:property generateIsSetMethod="false"/>
+	          </xs:appinfo>
+	        </xs:annotation>
+	    </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="product_info" type="ProductInfo"/>
@@ -486,7 +491,7 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element name="vendor" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="version" minOccurs="0" maxOccurs="1"/>
+          <xs:element type="Version" name="version" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -520,19 +525,15 @@
 
   <xs:element name="capabilities" type="Capabilities"/>
 
+  <xs:element name="version" type="VersionCaps"/>
+
   <xs:complexType name="VersionCaps">
     <xs:complexContent>
       <xs:extension base="Version">
         <xs:sequence>
           <xs:element name="current" type="xs:boolean" minOccurs="0"/>
           <xs:element name="features" type="Features" minOccurs="0"/>
-          <xs:element name="cpus" type="CPUs" minOccurs="0">
-            <xs:annotation>
-              <xs:appinfo>
-                <jaxb:property name="CPUs"/>
-              </xs:appinfo>
-            </xs:annotation>
-          </xs:element>
+          <xs:element ref="cpus" minOccurs="0"/>
           <xs:element ref="power_managers" minOccurs="0"/>
           <xs:element ref="fence_types" minOccurs="0"/>
           <xs:element ref="storage_types" minOccurs="0"/>
@@ -545,7 +546,7 @@
           <xs:element ref="disk_formats" minOccurs="0"/>
           <xs:element ref="disk_interfaces" minOccurs="0"/>          
           <xs:element ref="vm_affinities" minOccurs="0"/>
-          <xs:element name="custom_properties" type="CustomProperties" minOccurs="0"/>
+          <xs:element ref="custom_properties" minOccurs="0"/>
           <xs:element ref="boot_protocols" minOccurs="0"/>
           <xs:element ref="error_handling" minOccurs="0"/>
           <xs:element ref="storage_formats" minOccurs="0"/>
@@ -585,6 +586,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
+      <!-- TODO: (deprecated) remove these elements post 4.0 -->
       <xs:element name="permits" type="Permits" minOccurs="0"/>
       <xs:element name="scheduling_policies" type="SchedulingPolicies" minOccurs="0"/>
     </xs:sequence>
@@ -1788,6 +1790,8 @@
     <xs:attribute name="regexp" type="xs:string"/>
   </xs:complexType>
 
+  <xs:element name="custom_properties" type="CustomProperties"/>
+
   <xs:complexType name="CustomProperties">
     <xs:sequence>
       <xs:element name="custom_property" type="CustomProperty" minOccurs="0" maxOccurs="unbounded"/>
@@ -2549,7 +2553,7 @@
   <xs:complexType name="RSDL">
      <xs:sequence>
        <xs:element name="description" type="xs:string" minOccurs="0"/>
-       <xs:element ref="version" minOccurs="0" maxOccurs="1" />     
+       <xs:element type="Version" name="version" minOccurs="0" maxOccurs="1" />
        <xs:element ref="schema" minOccurs="0" maxOccurs="1" />
        <xs:element type="DetailedLinks" name="links" minOccurs="0"/>
      </xs:sequence>
