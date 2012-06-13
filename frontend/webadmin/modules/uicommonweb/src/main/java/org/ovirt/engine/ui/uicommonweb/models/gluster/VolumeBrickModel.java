@@ -278,8 +278,23 @@ public class VolumeBrickModel extends Model {
     {
         VDS server = (VDS) servers.getSelectedItem();
 
-        if(server == null || brickDirectory.getEntity() == null || ((String)brickDirectory.getEntity()).trim().length() == 0)
+        if (server == null)
         {
+            setMessage(ConstantsManager.getInstance().getConstants().emptyServerBrickMsg());
+            return;
+        }
+
+        if (brickDirectory.getEntity() == null || ((String) brickDirectory.getEntity()).trim().length() == 0)
+        {
+            setMessage(ConstantsManager.getInstance().getConstants().emptyBrickDirectoryMsg());
+            return;
+        }
+
+        brickDirectory.setEntity(((String)brickDirectory.getEntity()).trim());
+
+        if (!validateBrickDirectory((String) brickDirectory.getEntity()))
+        {
+            setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryMsg());
             return;
         }
 
@@ -313,6 +328,18 @@ public class VolumeBrickModel extends Model {
         bricks.setItems(items);
 
         clearBrickDetails();
+    }
+
+    private boolean validateBrickDirectory(String brickDir) {
+        boolean valid = true;
+
+        if (brickDir.length() < 2 ||
+                !brickDir.startsWith("/") || brickDir.charAt(1) == '/' || brickDir.contains(" ")) //$NON-NLS-1$ //$NON-NLS-2$
+        {
+            valid = false;
+        }
+
+        return valid;
     }
 
     private void clearBrickDetails()

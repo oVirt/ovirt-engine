@@ -1299,6 +1299,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Brick with the same details already exist")
     String duplicateBrickMsg();
 
+    @DefaultStringValue("Invalid Brick Directory")
+    String invalidBrickDirectoryMsg();
+
+    @DefaultStringValue("Brick Directory field is mandatory")
+    String emptyBrickDirectoryMsg();
+
+    @DefaultStringValue("Server field is mandatory")
+    String emptyServerBrickMsg();
+
     @DefaultStringValue("At least 1 brick should be present")
     String distriputedVolumeAddBricksMsg();
 
