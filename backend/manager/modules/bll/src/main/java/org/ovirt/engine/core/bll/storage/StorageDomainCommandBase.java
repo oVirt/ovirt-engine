@@ -181,8 +181,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         if (getStorageDomain() != null && getStorageDomain().getstatus() != null) {
             returnValue = (getStorageDomain().getstatus() != status);
             if (!returnValue) {
-                getReturnValue().getCanDoActionMessages().add(
-                        VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
+                addCanDoActionMessage(String.format("$status %1$s", getStorageDomain().getstatus()));
             }
         }
         return returnValue;

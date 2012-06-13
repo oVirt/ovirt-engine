@@ -62,12 +62,17 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 .getStoragePoolIsoMapDAO().getAllForStoragePool(getStoragePool().getId());
         for (storage_pool_iso_map poolDomain : poolDomains) {
             if (poolDomain.getstatus() == StorageDomainStatus.Locked) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+                addInvalidSDStatusMessage(poolDomain.getstatus());
                 return false;
             }
         }
 
         return InitializeVds();
+    }
+
+    protected void addInvalidSDStatusMessage(StorageDomainStatus status) {
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
+        addCanDoActionMessage(String.format("$status %1$s", status));
     }
 
     @Override

@@ -59,8 +59,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                 return false;
             } else if (getStorageDomain() != null && getStorageDomain().getstatus() != null
                     && getStorageDomain().getstatus() == StorageDomainStatus.Active) {
-                getReturnValue().getCanDoActionMessages().add(
-                        VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
+                addInvalidSDStatusMessage(getStorageDomain().getstatus());
                 returnValue = false;
             } else if (electNewMaster() != null) {
                 getReturnValue().getCanDoActionMessages().add(

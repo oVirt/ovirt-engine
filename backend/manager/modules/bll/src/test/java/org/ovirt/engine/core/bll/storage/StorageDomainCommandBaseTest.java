@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,21 +28,21 @@ public class StorageDomainCommandBaseTest {
 
     @Test
     public void statusMatches() {
-        storageDomainIsInactive();
+        setStorageDomainStatus(StorageDomainStatus.InActive);
         assertTrue(cmd.checkStorageDomainStatus(StorageDomainStatus.InActive));
         assertFalse(commandHasInvalidStatusMessage());
     }
 
     @Test
     public void statusNotMatch() {
-        storageDomainIsInactive();
+        setStorageDomainStatus(StorageDomainStatus.InActive);
         assertFalse(cmd.checkStorageDomainStatus(StorageDomainStatus.Active));
         assertTrue(commandHasInvalidStatusMessage());
     }
 
     @Test
     public void statusInList() {
-        storageDomainIsInactive();
+        setStorageDomainStatus(StorageDomainStatus.InActive);
         assertTrue(cmd.checkStorageDomainStatus(StorageDomainStatus.Locked, StorageDomainStatus.InActive,
                 StorageDomainStatus.Unknown));
         assertFalse(commandHasInvalidStatusMessage());
@@ -47,7 +50,7 @@ public class StorageDomainCommandBaseTest {
 
     @Test
     public void statusNotInList() {
-        storageDomainIsInactive();
+        setStorageDomainStatus(StorageDomainStatus.InActive);
         assertFalse(cmd.checkStorageDomainStatus(StorageDomainStatus.Locked, StorageDomainStatus.Active,
                 StorageDomainStatus.Unknown));
         assertTrue(commandHasInvalidStatusMessage());
@@ -55,7 +58,7 @@ public class StorageDomainCommandBaseTest {
 
     @Test
     public void canDetachInactiveDomain() {
-        storageDomainIsInactive();
+        setStorageDomainStatus(StorageDomainStatus.InActive);
         storagePoolExists();
         masterDomainIsUp();
         isNotLocalData();
@@ -65,12 +68,28 @@ public class StorageDomainCommandBaseTest {
 
     @Test
     public void canDetachMaintenanceDomain() {
-        storageDomainIsMaintenance();
+        setStorageDomainStatus(StorageDomainStatus.InActive);
         storagePoolExists();
         masterDomainIsUp();
         isNotLocalData();
         canDetachDomain();
         assertTrue(cmd.canDetachDomain(false, false, false));
+    }
+
+    @Test
+    public void checkStorageDomainNotEqualWithStatusActive() {
+        setStorageDomainStatus(StorageDomainStatus.Active);
+        assertFalse(cmd.CheckStorageDomainStatusNotEqual(StorageDomainStatus.Active));
+        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        assertEquals(messages.size(), 2);
+        assertEquals(messages.get(0), VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
+        assertEquals(messages.get(1), String.format("$status %1$s", StorageDomainStatus.Active));
+    }
+
+    @Test
+    public void checkStorageDomainNotEqualWithNonActiveStatus() {
+        setStorageDomainStatus(StorageDomainStatus.Maintenance);
+        assertTrue(cmd.CheckStorageDomainStatusNotEqual(StorageDomainStatus.Active));
     }
 
     private void storagePoolExists() {
@@ -94,15 +113,9 @@ public class StorageDomainCommandBaseTest {
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
     }
 
-    private void storageDomainIsInactive() {
+    private void setStorageDomainStatus(StorageDomainStatus status) {
         storage_domains domain = new storage_domains();
-        domain.setstatus(StorageDomainStatus.InActive);
-        when(cmd.getStorageDomain()).thenReturn(domain);
-    }
-
-    private void storageDomainIsMaintenance() {
-        storage_domains domain = new storage_domains();
-        domain.setstatus(StorageDomainStatus.Maintenance);
+        domain.setstatus(status);
         when(cmd.getStorageDomain()).thenReturn(domain);
     }
 

@@ -867,7 +867,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The relevant Storage Domain is inaccessible.\n-Please handle Storage Domain issues and retry the operation.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Storage status is unknown.\n-Please check Storage Domain and retry the operation.")
+    @DefaultStringValue("Cannot ${action} ${type}. Storage status is ${status}.\n-Please check Storage Domain and retry the operation.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2();
 
     @DefaultStringValue("Cannot ${action} ${type}.\nThe ${action} action can be performed on a Data Center that has only one Storage Domain in Active/Unknown state.")
