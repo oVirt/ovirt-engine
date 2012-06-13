@@ -1077,6 +1077,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getHost().setEntity(vds.gethost_name());
         model.getPort().setEntity(vds.getport());
 
+        if (vds.getstatus() != VDSStatus.InstallFailed)
+        {
+            model.getHost().setIsChangable(false);
+        }
+
         if (isEditWithPMemphasis) {
             model.setIsPowerManagementTabSelected(true);
             model.getIsPm().setEntity(true);
