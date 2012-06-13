@@ -474,7 +474,7 @@ public class RsdlBuilder {
                 Class<?> clazz = Class.forName(p.getRawType().toString().substring(p.getRawType().toString().lastIndexOf(' ')+1));
                 Map<String, Type> map = new HashMap<String, Type>();
                 for (int i=0; i<p.getActualTypeArguments().length; i++) {
-                    if (!map.containsKey(clazz.getTypeParameters()[i])) {
+                    if (!map.containsKey(clazz.getTypeParameters()[i].toString())) {
                         map.put(clazz.getTypeParameters()[i].toString(), p.getActualTypeArguments()[i]);
                     }
                 }
