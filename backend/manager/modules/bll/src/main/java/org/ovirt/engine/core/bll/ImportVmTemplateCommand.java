@@ -260,7 +260,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         });
         MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
-        VmDeviceUtils.addImportedDevices(getVmTemplate());
+        VmDeviceUtils.addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
         setSucceeded(true);
     }
 

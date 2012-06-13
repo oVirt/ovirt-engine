@@ -223,7 +223,7 @@ public class SnapshotsManager {
                 }
             }
 
-            VmDeviceUtils.addImportedDevices(vm.getStaticData());
+            VmDeviceUtils.addImportedDevices(vm.getStaticData(), false);
         }
     }
 

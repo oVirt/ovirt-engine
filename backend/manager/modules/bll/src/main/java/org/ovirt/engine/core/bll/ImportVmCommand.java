@@ -102,6 +102,23 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     @Override
+    public Guid getVmId() {
+        if (getParameters().isImportAsNewEntity()) {
+            return getParameters().getVm().getId();
+        } else {
+            return super.getVmId();
+        }
+    }
+    @Override
+    public VM getVm() {
+        if (getParameters().isImportAsNewEntity()) {
+            return getParameters().getVm();
+        } else {
+            return super.getVm();
+        }
+    }
+
+    @Override
     protected boolean canDoAction() {
         boolean retVal = true;
         List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
@@ -484,7 +501,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 addVmImagesAndSnapshots();
                 updateSnapshotsFromExport();
                 MoveOrCopyAllImageGroups();
-                VmDeviceUtils.addImportedDevices(getVm().getStaticData());
+                VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
                 VmHandler.LockVm(getVm().getId());
                 if (getParameters().isImportAsNewEntity()) {
                     getParameters().setVm(getVm());
@@ -792,14 +809,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 iface.setId(Guid.NewGuid());
             }
             iface.setVmTemplateId(null);
-            iface.setVmId(getVm().getStaticData().getId());
+            iface.setVmId(getVmId());
             iface.setVmName(getVm().getvm_name());
 
-            if (getParameters().isImportAsNewEntity()) {
-                macAdded = true;
-            } else {
-                macAdded = vmInterfaceManager.add(iface, getCompensationContext());
-            }
+            macAdded = vmInterfaceManager.add(iface, getCompensationContext());
         }
     }
 

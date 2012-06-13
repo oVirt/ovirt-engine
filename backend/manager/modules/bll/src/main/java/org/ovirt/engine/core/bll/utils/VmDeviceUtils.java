@@ -246,7 +246,10 @@ public class VmDeviceUtils {
      * adds imported VM or Template devices
      * @param entity
      */
-    public static <T extends VmBase> void addImportedDevices(T entity) {
+    public static <T extends VmBase> void addImportedDevices(T entity, boolean isImportAsNewEntity) {
+        if (isImportAsNewEntity) {
+            setNewIdInImportedCollections(entity);
+        }
         List<VmDevice> vmDeviceToAdd = new ArrayList<VmDevice>();
         List<VmDevice> vmDeviceToUpdate = new ArrayList<VmDevice>();
         VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
@@ -488,9 +491,7 @@ public class VmDeviceUtils {
     private static <T extends VmBase> void addOtherDevices(T entity, List<VmDevice> vmDeviceToAdd) {
         boolean hasCD = false;
         for (VmDevice vmDevice : entity.getManagedVmDeviceMap().values()) {
-            if ((vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) && vmDevice.getType().equals(VmDeviceType.DISK.getName())) ||
-                    (vmDevice.getDevice().equals(VmDeviceType.BRIDGE.getName())
-                    && vmDevice.getType().equals(VmDeviceType.INTERFACE.getName()))) {
+            if (isDiskOrInterface(vmDevice)) {
                 continue; // skip disks/interfaces that were added separately.
             }
             vmDevice.setIsManaged(true);
@@ -644,6 +645,23 @@ public class VmDeviceUtils {
                 removeNumberOfDevices(list,1);
             }
         }
+    }
+
+    private static void setNewIdInImportedCollections(VmBase entity) {
+        for (VmDevice managedDevice : entity.getManagedVmDeviceMap().values()){
+            if (!isDiskOrInterface(managedDevice)) {
+                managedDevice.setId(new VmDeviceId(Guid.NewGuid(), entity.getId()));
+            }
+        }
+        for (VmDevice unMnagedDevice : entity.getUnmanagedDeviceList()) {
+            unMnagedDevice.setId(new VmDeviceId(Guid.NewGuid(), entity.getId()));
+        }
+    }
+
+    private static boolean isDiskOrInterface(VmDevice vmDevice) {
+        return(vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) && vmDevice.getType().equals(VmDeviceType.DISK.getName())) ||
+        (vmDevice.getDevice().equals(VmDeviceType.BRIDGE.getName())
+        && vmDevice.getType().equals(VmDeviceType.INTERFACE.getName()));
     }
 }
 
