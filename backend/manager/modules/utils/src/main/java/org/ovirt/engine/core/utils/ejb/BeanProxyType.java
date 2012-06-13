@@ -6,9 +6,7 @@ package org.ovirt.engine.core.utils.ejb;
  *
  */
 public enum BeanProxyType {
-    LOCAL("/local") // Local proxy
-    ,
-    REMOTE("/remote"); // Remote proxy
+    LOCAL("/local"); // Local proxy
 
     private String _value;
 

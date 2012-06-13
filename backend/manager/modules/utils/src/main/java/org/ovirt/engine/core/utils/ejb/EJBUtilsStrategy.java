@@ -96,13 +96,7 @@ public abstract class EJBUtilsStrategy {
 
             if (proxyType == BeanProxyType.LOCAL) {
                 context = new InitialContext();
-            } else if (proxyType == BeanProxyType.REMOTE) {
-                // Context for remote lookup might be created differently (for
-                // example,
-                // provider URL should be specified
-                context = createRemoteContext();
             }
-
 
             // appends "local" or "remote" to the jndi name, depends on the
             // proxy type
@@ -122,10 +116,6 @@ public abstract class EJBUtilsStrategy {
             log.error(errorMsgSb.toString(), e);
             return null;
         }
-    }
-
-    protected Context createRemoteContext() throws NamingException {
-        return new InitialContext();
     }
 
     protected void addResourceJNDIName(ContainerManagedResourceType aResourceEnumValue, String aJNDIName) {

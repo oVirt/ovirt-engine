@@ -78,7 +78,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 @Startup
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-public class Backend implements BackendInternal, BackendRemote {
+public class Backend implements BackendInternal {
 
     @SuppressWarnings("unused")
     @EJB
