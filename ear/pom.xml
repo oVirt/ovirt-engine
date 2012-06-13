@@ -85,13 +85,6 @@
       <type>war</type>
     </dependency>
 
-    <!--<dependency>
-      <groupId>org.ovirt.engine.ui</groupId>
-      <artifactId>userportal-legacy</artifactId>
-      <version>${engine.version}</version>
-      <type>war</type>
-    </dependency>-->
-
     <dependency>
       <groupId>org.ovirt.engine.ui</groupId>
       <artifactId>userportal</artifactId>
@@ -257,13 +250,6 @@
               <bundleFileName>restapi.war</bundleFileName>
               <contextRoot>/api</contextRoot>
             </webModule>
-
-            <!--<webModule>
-              <groupId>org.ovirt.engine.ui</groupId>
-              <artifactId>userportal-legacy</artifactId>
-              <bundleFileName>userportal-legacy.war</bundleFileName>
-              <contextRoot>/UserPortalLegacy</contextRoot>
-            </webModule>-->
 
             <webModule>
               <groupId>org.ovirt.engine.ui</groupId>

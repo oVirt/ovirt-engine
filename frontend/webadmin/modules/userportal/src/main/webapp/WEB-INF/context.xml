@@ -1,3 +1,0 @@
-<Context>
-	<Valve className="org.apache.catalina.authenticator.NonLoginAuthenticator" disableProxyCaching="false" />
-</Context>

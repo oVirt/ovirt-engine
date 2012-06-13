@@ -1,4 +1,0 @@
-<module>
-	<inherits name='com.google.gwt.core.Core' />
-    <script src="skins/UserPortal/load_skin.js"/>
-</module>
