@@ -152,11 +152,13 @@ public class SnapshotsManager {
         }
 
         VmDeviceUtils.setVmDevices(vm.getStaticData());
-        return new OvfManager().ExportVm(
-                vm,
+        ArrayList<DiskImage> images =
                 new ArrayList<DiskImage>(ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()),
-                        false,
-                        true)));
+                        false, true));
+        for (DiskImage image : images) {
+            image.setstorage_ids(null);
+        }
+        return new OvfManager().ExportVm(vm, images);
     }
 
     /**
@@ -257,6 +259,12 @@ public class SnapshotsManager {
             ArrayList<DiskImage> images = new ArrayList<DiskImage>();
             ArrayList<VmNetworkInterface> interfaces = new ArrayList<VmNetworkInterface>();
             new OvfManager().ImportVm(configuration, tempVM, images, interfaces);
+            for (DiskImage diskImage : images) {
+                DiskImage dbImage = getDiskImageDao().getSnapshotById(diskImage.getImageId());
+                if (dbImage != null) {
+                    diskImage.setstorage_ids(dbImage.getstorage_ids());
+                }
+            }
             new VMStaticOvfLogHandler(tempVM.getStaticData()).resetDefaults(oldVmStatic);
 
             vm.setStaticData(tempVM.getStaticData());
@@ -346,8 +354,8 @@ public class SnapshotsManager {
                     diskImage.setimageStatus(ImageStatus.ILLEGAL);
                     diskImage.setvm_snapshot_id(activeSnapshotId);
 
-                    ImagesHandler.addImage(diskImage, true, new image_storage_domain_map(diskImage.getImageId(),
-                            diskImage.getstorage_ids().get(0)));
+                    ImagesHandler.addImage(diskImage, true, (diskImage.getstorage_ids() == null) ? null :
+                            new image_storage_domain_map(diskImage.getImageId(), diskImage.getstorage_ids().get(0)));
                 }
                 ImagesHandler.addDiskToVm(diskImage, vmId);
             }
