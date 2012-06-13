@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListMode
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
@@ -21,14 +20,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabBasicDetailsPresenterWidget.ViewDef> {
 
-    private final Provider<ConsolePopupPresenterWidget> consolePopup;
     private final ConsoleUtils consoleUtils;
 
     public interface ViewDef extends View, HasEditorDriver<UserPortalBasicListModel> {
@@ -48,11 +44,9 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     public MainTabBasicDetailsPresenterWidget(EventBus eventBus,
             ViewDef view,
             final UserPortalBasicListProvider modelProvider,
-            final ConsoleUtils consoleUtils,
-            Provider<ConsolePopupPresenterWidget> consolePopup) {
+            final ConsoleUtils consoleUtils) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
-        this.consolePopup = consolePopup;
 
         listenOnSelectedItemEvent(modelProvider);
 
@@ -105,8 +99,6 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private void listenOnSelectedItemEvent(final UserPortalBasicListProvider modelProvider) {
-
-        // TODO check if this works on logout/login
         modelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -129,9 +121,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
                 if (!isEditConsoleEnabled(modelProvider.getModel().getSelectedItem())) {
                     return;
                 }
-                ConsolePopupPresenterWidget consolePopupPresenterWidget = consolePopup.get();
-                consolePopupPresenterWidget.init(modelProvider.getModel());
-                RevealRootPopupContentEvent.fire(getEventBus(), consolePopupPresenterWidget);
+                modelProvider.getModel().getEditConsoleCommand().Execute();
             }
         }));
     }

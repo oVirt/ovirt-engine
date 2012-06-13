@@ -506,10 +506,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         {
             NewTemplate();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
-        {
-            Cancel();
-        }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
@@ -567,7 +563,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -668,7 +664,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
                         stopProgress(result.getState());
-                        Cancel();
+                        cancel();
                     }
                 }, this);
     }
@@ -866,7 +862,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null || selectedItem.getEntity() == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -932,7 +928,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
                         stopProgress(result.getState());
-                        Cancel();
+                        cancel();
                     }
                 }, this);
 
@@ -1094,7 +1090,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         ConfirmationModel model =
                                 (ConfirmationModel) ((UserPortalListModel) result.getState()).getConfirmWindow();
                         model.StopProgress();
-                        Cancel();
+                        cancel();
                     }
                 },
                 this);
@@ -1160,7 +1156,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null || selectedItem.getEntity() == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -1176,7 +1172,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
                         stopProgress(result.getState());
-                        Cancel();
+                        cancel();
                     }
                 }, this);
     }
@@ -1188,7 +1184,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (!model.getIsNew() && selectedItem.getEntity() == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -1383,7 +1379,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                         }
                                     }, this);
 
-                            userPortalListModel1.Cancel();
+                            userPortalListModel1.cancel();
 
                         }
                     };
@@ -1442,15 +1438,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         if (cancel)
         {
-            Cancel();
+            cancel();
         }
-    }
-
-    private void Cancel()
-    {
-        Frontend.Unsubscribe();
-        setWindow(null);
-        setConfirmWindow(null);
     }
 
     private void VmModel_DataCenter_ItemsChanged()

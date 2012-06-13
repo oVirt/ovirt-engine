@@ -71,6 +71,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     private final ModelBoundPopupHandler<T> popupHandler;
 
+    private T model;
+
     public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view) {
         super(eventBus, view);
         this.popupHandler = new ModelBoundPopupHandler<T>(this, eventBus);
@@ -130,6 +132,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
      * Initialize the view from the given model.
      */
     public void init(final T model) {
+        this.model = model;
         // Set common popup properties
         updateTitle(model);
         updateMessage(model);
@@ -205,11 +208,19 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         getView().edit(model);
     }
 
+    /**
+     * Callback right before any command is executed on the popup.
+     */
+    protected void beforeCommandExecuted(UICommand command) {
+    }
+
     protected void handleEnterKey(DeferredModelCommandInvoker commandInvoker) {
+        beforeCommandExecuted(model.getDefaultCommand());
         commandInvoker.invokeDefaultCommand();
     }
 
     protected void handleEscapeKey(DeferredModelCommandInvoker commandInvoker) {
+        beforeCommandExecuted(model.getCancelCommand());
         commandInvoker.invokeCancelCommand();
     }
 
@@ -264,8 +275,10 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                 @Override
                 public void onClick(ClickEvent event) {
                     getView().flush();
+                    beforeCommandExecuted(button.getCommand());
                     button.getCommand().Execute();
                 }
+
             }));
 
         }

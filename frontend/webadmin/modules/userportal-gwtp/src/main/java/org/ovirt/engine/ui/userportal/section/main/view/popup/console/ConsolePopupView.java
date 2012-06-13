@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalListModel> implements ConsolePopupPresenterWidget.ViewDef {
+public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalConsolePopupModel> implements ConsolePopupPresenterWidget.ViewDef {
 
     interface Style extends CssResource {
 
@@ -70,8 +70,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
 
     @UiField(provided = true)
     EntityModelValueCheckBoxEditor<ConsoleModel> wanEnabled;
-
-    private IUserPortalListModel model;
 
     private final ApplicationMessages messages;
 
@@ -187,9 +185,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
 
     @SuppressWarnings("unchecked")
     @Override
-    public void edit(IUserPortalListModel model) {
-        this.model = model;
-
+    public void edit(UserPortalConsolePopupModel model) {
         editCheckBoxes(model,
                 ctrlAltDel,
                 enableUsbAutoshare,
@@ -198,10 +194,16 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
                 wanEnabled);
     }
 
+    @Override
+    public UserPortalConsolePopupModel flush() {
+        // do nothing, it will be flushed only when the presenter widget
+        // decides to
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
-    public IUserPortalListModel flush() {
-
+    public void flushToPrivateModel() {
         flushCheckBoxes(
                 ctrlAltDel,
                 enableUsbAutoshare,
@@ -209,7 +211,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
                 useLocalDrives,
                 wanEnabled);
 
-        return model;
     }
 
     private void flushCheckBoxes(EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {
@@ -218,11 +219,13 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
         }
     }
 
-    private void editCheckBoxes(IUserPortalListModel model, EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {
+    private void editCheckBoxes(UserPortalConsolePopupModel model,
+            EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {
         for (EntityModelValueCheckBoxEditor<ConsoleModel> checkBox : checkBoxes) {
-            checkBox.asEditor()
-                    .getSubEditor()
-                    .setValue(((UserPortalItemModel) model.getSelectedItem()).getDefaultConsole());
+            ConsoleModel defaultConsole =
+                    ((UserPortalItemModel) model.getModel().getSelectedItem()).getDefaultConsole();
+
+            checkBox.asEditor().getSubEditor().setValue(defaultConsole);
         }
     }
 

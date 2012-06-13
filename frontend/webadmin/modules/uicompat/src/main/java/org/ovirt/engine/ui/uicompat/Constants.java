@@ -1430,4 +1430,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Stripe count can be increased by only one")
     String addBricksStripeCountIncreaseValidationMsg();
+
+    @DefaultStringValue("Console Options")
+    String consoleOptions();
 }

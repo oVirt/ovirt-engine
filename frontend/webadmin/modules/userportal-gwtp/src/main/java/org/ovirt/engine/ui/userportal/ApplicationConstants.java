@@ -126,9 +126,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("SPICE Options")
     String spiceOptions();
 
-    @DefaultStringValue("Console Options")
-    String consoleOptions();
-
     // VM Monitor sub tab
 
     @DefaultStringValue("CPU Usage")

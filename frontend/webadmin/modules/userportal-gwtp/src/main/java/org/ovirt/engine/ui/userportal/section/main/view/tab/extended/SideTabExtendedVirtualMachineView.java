@@ -42,7 +42,6 @@ import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -50,7 +49,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetailsView<UserPortalItemModel, UserPortalListModel>
         implements SideTabExtendedVirtualMachinePresenter.ViewDef {
@@ -62,8 +60,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
     private final ApplicationResources applicationResources;
     private final ConsoleManager consoleManager;
     private final ErrorPopupManager errorPopupManager;
-    private final Provider<ConsolePopupPresenterWidget> consolePopup;
-    private final EventBus eventBus;
 
     private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
     private final MainTabBasicListItemMessagesTranslator statusTranslator;
@@ -77,15 +73,12 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             ConsoleManager consoleManager,
             ErrorPopupManager errorPopupManager,
             Provider<ConsolePopupPresenterWidget> consolePopup,
-            EventBus eventBus,
             MainTabBasicListItemMessagesTranslator translator,
             ApplicationConstants constants) {
         super(modelProvider, applicationResources);
         this.applicationResources = applicationResources;
         this.consoleManager = consoleManager;
         this.errorPopupManager = errorPopupManager;
-        this.consolePopup = consolePopup;
-        this.eventBus = eventBus;
         this.statusTranslator = translator;
         this.constants = constants;
         applicationResources.sideTabExtendedVmStyle().ensureInjected();
@@ -204,9 +197,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
                     @Override
                     public void execute(UserPortalItemModel model) {
-                        ConsolePopupPresenterWidget consolePopupPresenterWidget = consolePopup.get();
-                        consolePopupPresenterWidget.init(getModel());
-                        RevealRootPopupContentEvent.fire(eventBus, consolePopupPresenterWidget);
+                        getModel().getEditConsoleCommand().Execute();
                     }
                 });
 
