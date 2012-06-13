@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -16,6 +18,13 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     protected static final String DEVTYPE_FIELD = "devtype";
     protected static final String PARTITIONED = "partitioned";
 
+    /* Paths */
+    protected static final String PATHSTATUS = "pathstatus";
+    protected static final String LUN_FIELD = "lun";
+    protected static final String DEVICE_ACTIVE_VALUE = "active";
+    protected static final String DEVICE_STATE_FIELD = "state";
+    protected static final String PHYSICAL_DEVICE_FIELD = "physdev";
+
     private LUNListReturnForXmlRpc _result;
 
     public GetDeviceListVDSCommand(P parameters) {
@@ -29,21 +38,22 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         XmlRpcStruct options = new XmlRpcStruct();
         options.add(VdsProperties.includePartitioned, Boolean.toString(filteringLUNsEnabled));
 
-        int storageType = (int) getParameters().getStorageType().getValue();
+        int storageType = getParameters().getStorageType().getValue();
         _result = getBroker().getDeviceList(storageType, options);
 
         ProceedProxyReturnValue();
         setReturnValue(ParseLUNList(_result.lunList));
     }
 
-    public static java.util.ArrayList<LUNs> ParseLUNList(XmlRpcStruct[] lunList) {
-        java.util.ArrayList<LUNs> result = new java.util.ArrayList<LUNs>(lunList.length);
-        for (XmlRpcStruct xlun : (XmlRpcStruct[]) lunList) {
+    public static ArrayList<LUNs> ParseLUNList(XmlRpcStruct[] lunList) {
+        ArrayList<LUNs> result = new ArrayList<LUNs>(lunList.length);
+        for (XmlRpcStruct xlun : lunList) {
             result.add(ParseLunFromXmlRpc(xlun));
         }
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public static LUNs ParseLunFromXmlRpc(XmlRpcStruct xlun) {
         LUNs lun = new LUNs();
         if (xlun.contains("GUID")) {
@@ -60,17 +70,27 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         if (xlun.contains("serial")) {
             lun.setSerial(xlun.getItem("serial").toString());
         }
-        if (xlun.contains("pathstatus")) {
-            Object[] temp = (Object[]) xlun.getItem("pathstatus");
+        if (xlun.contains(PATHSTATUS)) {
+            Object[] temp = (Object[]) xlun.getItem(PATHSTATUS);
             XmlRpcStruct[] pathStatus = null;
             if (temp != null) {
+                lun.setPathsDictionary(new HashMap<String, Boolean>());
                 pathStatus = new XmlRpcStruct[temp.length];
                 for (int i = 0; i < temp.length; i++) {
                     pathStatus[i] = new XmlRpcStruct((Map<String, Object>) temp[i]);
                 }
+
                 for (XmlRpcStruct xcon : pathStatus) {
-                    if (xcon.contains("lun")) {
-                        lun.setLunMapping(Integer.parseInt(xcon.getItem("lun").toString()));
+                    if (xcon.contains(LUN_FIELD)) {
+                        lun.setLunMapping(Integer.parseInt(xcon.getItem(LUN_FIELD).toString()));
+                    }
+
+                    if (xcon.contains(PHYSICAL_DEVICE_FIELD) && xcon.contains(DEVICE_STATE_FIELD)) {
+                        // set name and state - if active true, otherwise false
+                        lun.getPathsDictionary()
+                                .put(xcon.getItem(PHYSICAL_DEVICE_FIELD).toString(),
+                                        StringHelper.EqOp(
+                                                xcon.getItem(DEVICE_STATE_FIELD).toString(), DEVICE_ACTIVE_VALUE));
                     }
                 }
             }
@@ -81,7 +101,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         if (xlun.contains("productID")) {
             lun.setProductId(xlun.getItem("productID").toString());
         }
-        lun.setLunConnections(new java.util.ArrayList<storage_server_connections>());
+        lun.setLunConnections(new ArrayList<storage_server_connections>());
         if (xlun.contains("pathlist")) {
             Object[] temp = (Object[]) xlun.getItem("pathlist");
             XmlRpcStruct[] pathList = null;
@@ -105,24 +125,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         if (xlun.contains("vendorID")) {
             lun.setVendorName(xlun.getItem("vendorID").toString());
         }
-        if (xlun.contains("pathstatus")) {
-            lun.setPathsDictionary(new java.util.HashMap<String, Boolean>());
-            Object[] temp = (Object[]) xlun.getItem("pathstatus");
-            XmlRpcStruct[] pathStatus = null;
-            if (temp != null) {
-                pathStatus = new XmlRpcStruct[temp.length];
-                for (int i = 0; i < temp.length; i++) {
-                    pathStatus[i] = new XmlRpcStruct((Map<String, Object>) temp[i]);
-                }
-                for (XmlRpcStruct xpath : pathStatus) {
-                    if (xpath.contains("physdev") && xpath.contains("state")) {
-                        // set name and state - if active true, otherwise false
-                        lun.getPathsDictionary().put(xpath.getItem("physdev").toString(),
-                                StringHelper.EqOp(xpath.getItem("state").toString(), "active") ? true : false);
-                    }
-                }
-            }
-        }
+
         if (xlun.contains(DEVTYPE_FIELD)) {
             String devtype = xlun.getItem(DEVTYPE_FIELD).toString();
             if (!DEVTYPE_VALUE_FCP.equalsIgnoreCase(devtype)) {
