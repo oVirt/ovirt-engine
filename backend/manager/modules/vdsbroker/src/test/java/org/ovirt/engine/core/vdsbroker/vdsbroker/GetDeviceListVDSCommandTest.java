@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -21,16 +19,6 @@ public class GetDeviceListVDSCommandTest {
         testParseLunFromXmlRpcForDevtypeField(StorageType.UNKNOWN, GetDeviceListVDSCommand.DEVTYPE_VALUE_FCP);
     }
 
-    @Test
-    public void parseLunFromXmlRpcReturnsUnknownForNoField() throws Exception {
-        XmlRpcStruct xlun = mock(XmlRpcStruct.class);
-        when(xlun.contains(GetDeviceListVDSCommand.DEVTYPE_FIELD)).thenReturn(false);
-
-        LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);
-
-        assertEquals(StorageType.UNKNOWN, lun.getLunType());
-    }
-
     /**
      * Test that ParseLunFromXmlRpc parses the {@link GetDeviceListVDSCommand#DEVTYPE_FIELD} correctly.
      *
@@ -40,12 +28,19 @@ public class GetDeviceListVDSCommandTest {
      *            The value that the XML RPC will hold.
      */
     private static void testParseLunFromXmlRpcForDevtypeField(StorageType expectedStorageType, String mockDevtype) {
-        XmlRpcStruct xlun = mock(XmlRpcStruct.class);
-        when(xlun.contains(GetDeviceListVDSCommand.DEVTYPE_FIELD)).thenReturn(true);
-        when(xlun.getItem(GetDeviceListVDSCommand.DEVTYPE_FIELD)).thenReturn(mockDevtype);
+        XmlRpcStruct xlun = new XmlRpcStruct();
+        xlun.add(GetDeviceListVDSCommand.DEVTYPE_FIELD, mockDevtype);
 
         LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);
 
         assertEquals(expectedStorageType, lun.getLunType());
+    }
+
+    @Test
+    public void parseLunFromXmlRpcReturnsUnknownForNoField() throws Exception {
+        XmlRpcStruct xlun = new XmlRpcStruct();
+        LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);
+
+        assertEquals(StorageType.UNKNOWN, lun.getLunType());
     }
 }
