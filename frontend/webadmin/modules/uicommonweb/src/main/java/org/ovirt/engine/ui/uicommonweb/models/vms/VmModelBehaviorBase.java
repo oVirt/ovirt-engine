@@ -692,6 +692,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateQuotaByCluster(final Guid defaultQuota) {
         if (getModel().getQuota().getIsAvailable()) {
             VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+            if (cluster == null) {
+                return;
+            }
             Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new GetAllRelevantQuotasForVdsGroupParameters(cluster.getId()), new AsyncQuery(getModel(),
                             new INewAsyncCallback() {
