@@ -596,14 +596,14 @@ actions:
       signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {}
+    headers: {filter: true|false}
 - name: /api/storagedomains/{storagedomain:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {}
+    headers: {filter: true|false}
 - name: /api/storagedomains/{storagedomain:id}|rel=delete
   request:
     body:

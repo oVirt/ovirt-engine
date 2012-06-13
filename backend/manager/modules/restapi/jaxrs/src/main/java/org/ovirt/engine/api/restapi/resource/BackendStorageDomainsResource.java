@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParamete
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
@@ -60,7 +61,11 @@ public class BackendStorageDomainsResource
 
     @Override
     public StorageDomains list() {
-        return mapCollection(getBackendCollection(SearchType.StorageDomain));
+        if (isFiltered())
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllStorageDomains,
+                    new VdcQueryParametersBase()));
+        else
+            return mapCollection(getBackendCollection(SearchType.StorageDomain));
     }
 
     @Override
