@@ -562,6 +562,8 @@
           <xs:element ref="host_nic_states" minOccurs="0"/>
           <xs:element ref="data_center_states" minOccurs="0"/>
           <xs:element ref="vm_device_types" minOccurs="0"/>
+          <xs:element ref="permits" minOccurs="0"/>
+          <xs:element ref="scheduling_policies" minOccurs="0"/>
 
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>

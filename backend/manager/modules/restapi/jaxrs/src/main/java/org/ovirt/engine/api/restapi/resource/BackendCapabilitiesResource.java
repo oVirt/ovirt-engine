@@ -156,6 +156,8 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             addDiskStates(version, DiskStatus.values());
             addHostNICStates(version, NicStatus.values());
             addDataCenterStates(version, DataCenterStatus.values());
+            addPermits(version, PermitType.values());
+            addSchedulingPolicies(version, SchedulingPolicyType.values());
 
             version.setFeatures(getFeatures(v));
 
@@ -173,6 +175,20 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         caps.setSchedulingPolicies(getSchedulingPolicies());
 
         return caps;
+    }
+
+    private void addSchedulingPolicies(VersionCaps version, SchedulingPolicyType[] values) {
+        version.setSchedulingPolicies(new SchedulingPolicies());
+        for (SchedulingPolicyType policy : values) {
+            version.getSchedulingPolicies().getPolicy().add(policy.value());
+        }
+    }
+
+    private void addPermits(VersionCaps version, PermitType[] values) {
+        version.setPermits(new Permits());
+        for (PermitType permit : values) {
+            version.getPermits().getPermits().add(map(permit));
+        }
     }
 
     private void addGlusterTypesAndStates(VersionCaps version) {
