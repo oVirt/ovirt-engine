@@ -139,12 +139,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Select boxes to attach networks")
     String clusterManageNetworkPopupLabel();
 
-    @DefaultStringValue("Assign All")
-    String assignAll();
-
-    @DefaultStringValue("Assigned")
-    String assigned();
-
     @DefaultStringValue("Clusters")
     String dataCenterClusterSubTabLabel();
 
@@ -201,6 +195,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Attach")
     String attach();
+
+    @DefaultStringValue("Assign All")
+    String assignAll();
+
+    @DefaultStringValue("Assign")
+    String assign();
+
+    @DefaultStringValue("Required All")
+    String requiredAll();
+
+    @DefaultStringValue("Required")
+    String required();
 
     @DefaultStringValue("Name")
     String storagePopupNameLabel();
@@ -1443,13 +1449,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Required")
     String requiredNetwork();
 
-    @DefaultStringValue("VM")
+    @DefaultStringValue("VM Network")
     String vmNetwork();
 
     @DefaultStringValue("Status")
     String statusNetwork();
 
-    @DefaultStringValue("Display")
+    @DefaultStringValue("Display Network")
     String displayNetwork();
 
     @DefaultStringValue("Role")
@@ -1461,7 +1467,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Add Network")
     String addNetworkNetwork();
 
-    @DefaultStringValue("Assign/Detach Networks")
+    @DefaultStringValue("Assign/UnAssign Networks")
     String assignDetatchNetworksNework();
 
     @DefaultStringValue("Set as Display")

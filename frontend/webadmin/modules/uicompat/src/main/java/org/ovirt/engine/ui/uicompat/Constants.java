@@ -22,7 +22,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Setup Host Networks")
 	String setupHostNetworksTitle();
 
-	@DefaultStringValue("Assign/Detach Networks")
+	@DefaultStringValue("Assign/UnAssign Networks")
 	String assignDetachNetworksTitle();
 
 	@DefaultStringValue("Clusters")
@@ -119,8 +119,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("New Logical Network")
 	String newLogicalNetworkTitle();
 
-	@DefaultStringValue("Detach Network from ALL Clusters")
-	String detachNetworkFromAllClustersTitle();
+	@DefaultStringValue("Attach/Detach Network to/from Clusters")
+	String attachDetachNetworkToFromClustersTitle();
 
 	@DefaultStringValue("Storage")
 	String storageTitle();
@@ -567,11 +567,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Logical Network(s)")
 	String logicalNetworksMsg();
 
-	@DefaultStringValue("Cannot detach Management Network from Clusters")
+	@DefaultStringValue("Cannot edit Management Network")
 	String cannotDetachManagementNetworkFromClustersMsg();
 
-	@DefaultStringValue("You are about to detach the Network from all of the Clusters to which it is currently attached.\nAs a result, the Clusters' Hosts might become unreachable.\n\nAre you sure you want to continue?")
-	String youAreAboutToDetachNetworkFromAllClustersToWhichCurrentlyAttachedMsg();
+	@DefaultStringValue("You are about to attach the network to all the selected clusters and to detach the network from all the unselected clusters.\n\nAre you sure you want to continue?")
+	String youAreAboutToAttachDetachNetworkToFromTheClustersMsg();
 
 	@DefaultStringValue("Are you sure you want to Detach the following storage(s)?")
 	String areYouSureYouWantDetachFollowingStoragesMsg();

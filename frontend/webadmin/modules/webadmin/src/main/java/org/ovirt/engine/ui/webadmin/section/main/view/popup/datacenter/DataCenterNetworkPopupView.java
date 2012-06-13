@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
@@ -180,23 +182,32 @@ public abstract class DataCenterNetworkPopupView extends AbstractModelBoundPopup
         return apply;
     }
 
+    @SuppressWarnings("unchecked")
+    Iterable<EntityModel> getClustersTableItems() {
+        ListModel tableModel = clustersTable.flush();
+        return tableModel != null ? tableModel.getItems() : new ArrayList<EntityModel>();
+    }
+
+    void refreshClustersTable() {
+        clustersTable.edit(clustersTable.flush());
+    }
+
     void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
         CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.attachAll())) {
             @Override
             protected void selectionChanged(Boolean value) {
-                ListModel tableModel = clustersTable.flush();
-                for (Object model : tableModel.getItems()) {
+                for (EntityModel model : getClustersTableItems()) {
                     NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
                     if (networkClusterModel.getIsChangable()) {
                         networkClusterModel.setAttached(value);
                     }
                 }
-                clustersTable.edit(tableModel);
+                refreshClustersTable();
             }
 
             @Override
             public Boolean getValue() {
-                for (Object model : clustersTable.flush().getItems()) {
+                for (EntityModel model : getClustersTableItems()) {
                     NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
                     if (networkClusterModel.getIsChangable()) {
                         if (!networkClusterModel.isAttached()) {
@@ -209,7 +220,7 @@ public abstract class DataCenterNetworkPopupView extends AbstractModelBoundPopup
 
             @Override
             public boolean isEnabled() {
-                for (Object model : clustersTable.flush().getItems()) {
+                for (EntityModel model : getClustersTableItems()) {
                     NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
                     if (networkClusterModel.getIsChangable()) {
                         return true;
@@ -231,7 +242,7 @@ public abstract class DataCenterNetworkPopupView extends AbstractModelBoundPopup
             public void update(int index, EntityModel model, Boolean value) {
                 NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
                 networkClusterModel.setAttached(value);
-                clustersTable.edit(clustersTable.flush());
+                refreshClustersTable();
             }
         }) {
             @Override
