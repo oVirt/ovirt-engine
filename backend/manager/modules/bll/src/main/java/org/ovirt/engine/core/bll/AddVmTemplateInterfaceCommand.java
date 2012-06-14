@@ -43,7 +43,6 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                         getParameters().getInterface().getType()).getSpeed());
 
         getVmNetworkInterfaceDao().save(getParameters().getInterface());
-
         VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()),
                 getParameters().getInterface().isActive());

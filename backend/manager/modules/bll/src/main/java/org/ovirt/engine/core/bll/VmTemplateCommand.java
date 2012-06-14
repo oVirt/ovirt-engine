@@ -246,7 +246,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         for (VmNetworkInterface iface : list) {
             DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(iface.getId(), getVmTemplateId()));
             DbFacade.getInstance().getVmNetworkInterfaceDao().remove(iface.getId());
-            // \\DbFacade.Instance.RemoveInterfaceStatistics(iface.id);
         }
     }
 

@@ -221,7 +221,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmDrives() {
-        // \\int ideCount = 0, pciCount = 0;
         List<Disk> disks = getSortedDisks();
         for (Disk disk : disks) {
             XmlRpcStruct struct = new XmlRpcStruct();
@@ -240,13 +239,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 switch (disk.getDiskInterface()) {
                 case IDE:
                     struct.add(VdsProperties.Iface, "ide");
-                    // \\struct.add(VdsProperties.Index, String.valueOf(ideIndexSlots[ideCount]));
-                    // \\ideCount++;
                     break;
                 case VirtIO:
                     struct.add(VdsProperties.Iface, VdsProperties.Virtio);
-                    // struct.add(VdsProperties.Index, String.valueOf(pciCount));
-                    // \\pciCount++;
                     break;
                 default:
                     // ISCI not supported
