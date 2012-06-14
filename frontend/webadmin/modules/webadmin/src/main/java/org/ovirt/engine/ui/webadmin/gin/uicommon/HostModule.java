@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -40,6 +41,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureL
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
@@ -139,6 +141,7 @@ public class HostModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> getHostInterfaceListProvider(ClientGinjector ginjector,
             final Provider<DetachConfirmationPopupPresenterWidget> detachConfirmPopupProvider,
+            final Provider<HostManagementConfirmationPopupPresenterWidget> hostManagementConfirmationdetachConfirmPopupProvider,
             final Provider<HostInterfacePopupPresenterWidget> hostInterfacePopupProvider,
             final Provider<HostManagementPopupPresenterWidget> hostManagementPopupProvider,
             final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
@@ -146,6 +149,14 @@ public class HostModule extends AbstractGinModule {
         return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(ginjector,
                 HostListModel.class,
                 HostInterfaceListModel.class) {
+           @Override
+                public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostInterfaceListModel source,
+                        UICommand lastExecutedCommand) {
+                   if (StringHelper.stringsEqual(lastExecutedCommand.getName(), "OnEditManagementNetworkConfirmation")) { //$NON-NLS-1$
+                       return hostManagementConfirmationdetachConfirmPopupProvider.get();
+                   }
+                   return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostInterfaceListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {

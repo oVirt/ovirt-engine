@@ -1113,6 +1113,8 @@ public class HostInterfaceListModel extends SearchableListModel
         setConfirmWindow(confirmModel);
         confirmModel.setTitle(ConstantsManager.getInstance().getConstants().confirmTitle());
         confirmModel.getLatch().setEntity(true);
+        confirmModel.getLatch().setIsAvailable(true);
+        confirmModel.getLatch().setIsChangable(true);
 
         if (!isBond)
         {

@@ -1770,6 +1770,25 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Interface")
     String intefaceHostPopup();
 
+    // Host management confirmation popup
+    @DefaultStringValue("Check Connectivity")
+    String checkConnectivityManageConfirmPopup();
+
+    @DefaultStringValue("You are about to change Management Network Configuration.")
+    String youAreAboutManageConfirmPopup();
+
+    @DefaultStringValue("This might cause the Host to lose connectivity.")
+    String thisMightCauseManageConfirmPopup();
+
+    @DefaultStringValue("It is")
+    String itIsManageConfirmPopup();
+
+    @DefaultStringValue("Highly recommended")
+    String highlyRecommendedManageConfirmPopup();
+
+    @DefaultStringValue("to proceeed with connectivity check.")
+    String toProceeedWithConnectivityCheckManageConfirmPopup();
+
     // Tag
     @DefaultStringValue("New")
     String newTag();

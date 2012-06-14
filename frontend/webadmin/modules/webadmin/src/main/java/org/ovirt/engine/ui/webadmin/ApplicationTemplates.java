@@ -92,4 +92,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<button type='button' tabindex='-1' style='background: url({0}) no-repeat; white-space: nowrap; height: 20px; width: 20px; line-height: 20px; float: right;'></button>")
     SafeHtml actionButtonImage(String image);
 
+    @Template("{0} <span style='font-weight:bold; color: red;'>{1}</span>")
+    SafeHtml blackRedBold(String black, String redBold);
+
+    @Template("{0} <span style='font-weight:bold;'>{1}</span> {2}")
+    SafeHtml middleBold(String start, String middle, String end);
+
 }

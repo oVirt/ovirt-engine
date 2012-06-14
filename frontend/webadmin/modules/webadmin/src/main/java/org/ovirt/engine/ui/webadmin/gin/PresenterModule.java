@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureL
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
@@ -192,6 +193,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupVi
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostConfigureLocalStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetworksPopupView;
@@ -818,6 +820,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ConfigureLocalStoragePopupPresenterWidget.class,
                 ConfigureLocalStoragePopupPresenterWidget.ViewDef.class,
                 HostConfigureLocalStoragePopupView.class);
+        bindPresenterWidget(HostManagementConfirmationPopupPresenterWidget.class,
+                HostManagementConfirmationPopupPresenterWidget.ViewDef.class,
+                HostManagementConfirmationPopupView.class);
 
         // Storage
         bindPresenterWidget(StoragePopupPresenterWidget.class,
