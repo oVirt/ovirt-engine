@@ -1,14 +1,17 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.List;
-
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
+import java.util.Locale;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -20,29 +23,24 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.API;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.SpecialObjects;
+import org.ovirt.engine.api.restapi.logging.MessageBundle;
+import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.logging.MessageBundle;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
-
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Config.class })
@@ -124,6 +122,24 @@ public class BackendApiResourceTest extends Assert {
         "disks/search"
     };
 
+    private static final String[] relationshipsGlusterOnly = {
+            "capabilities",
+            "clusters",
+            "clusters/search",
+            "events",
+            "events/search",
+            "hosts",
+            "hosts/search",
+            "networks",
+            "roles",
+            "tags",
+            "users",
+            "users/search",
+            "groups",
+            "groups/search",
+            "domains",
+    };
+
     private static final String[] hrefs = {
         BASE_PATH + "/capabilities",
         BASE_PATH + "/clusters",
@@ -154,14 +170,30 @@ public class BackendApiResourceTest extends Assert {
         BASE_PATH + "/disks?search={query}",
     };
 
+    private static final String[] hrefsGlusterOnly = {
+            BASE_PATH + "/capabilities",
+            BASE_PATH + "/clusters",
+            BASE_PATH + "/clusters?search={query}",
+            BASE_PATH + "/events",
+            BASE_PATH + "/events;from={event_id}?search={query}",
+            BASE_PATH + "/hosts",
+            BASE_PATH + "/hosts?search={query}",
+            BASE_PATH + "/networks",
+            BASE_PATH + "/roles",
+            BASE_PATH + "/tags",
+            BASE_PATH + "/users",
+            BASE_PATH + "/users?search={query}",
+            BASE_PATH + "/groups",
+            BASE_PATH + "/groups?search={query}",
+            BASE_PATH + "/domains",
+    };
+
     public BackendApiResourceTest() {
         resource = new BackendApiResource();
     }
 
     @Before
     public void setUp() {
-        resource.setUriInfo(setUpUriInfo(URI_BASE + "/"));
-
         current = createMock(Current.class);
         principal = new Principal(USER, SECRET, DOMAIN);
         expect(current.get(Principal.class)).andReturn(principal).anyTimes();
@@ -195,19 +227,44 @@ public class BackendApiResourceTest extends Assert {
 
     @Test
     public void testGet() {
-        doTestGet(URI_BASE);
+        doTestGet(ApplicationMode.AllModes, URI_BASE);
+    }
+
+    @Test
+    public void testGetVirtOnly() {
+        doTestGet(ApplicationMode.VirtOnly, URI_BASE);
     }
 
     @Test
     public void testGetWithTrailingSlash() {
-        doTestGet(URI_BASE + "/");
+        doTestGet(ApplicationMode.AllModes, URI_BASE + "/");
     }
 
-    protected void doTestGet(String base) {
+    @Test
+    public void testGetWithTrailingSlashVirtOnly() {
+        doTestGet(ApplicationMode.VirtOnly, URI_BASE + "/");
+    }
+
+    @Test
+    public void testGetGlusterOnly() {
+        doTestGlusterOnlyGet(URI_BASE);
+    }
+
+    protected void doTestGet(ApplicationMode appMode, String base) {
+        setupExpectations(appMode, relationships);
+        verifyResponse(resource.get());
+    }
+
+    private void setupExpectations(ApplicationMode appMode, String[] relationships) {
+        expect(current.get(ApplicationMode.class)).andReturn(appMode).anyTimes();
+        resource.setUriInfo(setUpUriInfo(URI_BASE + "/", relationships));
         setUpGetSystemVersionExpectations();
         setUpGetSystemStatisticsExpectations();
+    }
 
-        verifyResponse(resource.get());
+    protected void doTestGlusterOnlyGet(String base) {
+        setupExpectations(ApplicationMode.GlusterOnly, relationshipsGlusterOnly);
+        verifyResponseGlusterOnly(resource.get());
     }
 
     protected HashMap<String, Integer> setUpStats() {
@@ -229,6 +286,12 @@ public class BackendApiResourceTest extends Assert {
         assertEquals(200, response.getStatus());
         assertTrue(response.getEntity() instanceof API);
         verifyApi((API)response.getEntity());
+    }
+
+    protected void verifyResponseGlusterOnly(Response response) {
+        assertEquals(200, response.getStatus());
+        assertTrue(response.getEntity() instanceof API);
+        verifyApiGlusterOnly((API) response.getEntity());
     }
 
     protected void verifyApi(API api) {
@@ -265,6 +328,37 @@ public class BackendApiResourceTest extends Assert {
         assertEquals(ACTIVE_STORAGE_DOMAINS, api.getSummary().getStorageDomains().getActive());
     }
 
+    protected void verifyApiGlusterOnly(API api) {
+        assertNotNull(api);
+        assertNotNull(api.getTime());
+        assertNotNull(api.getLinks());
+
+        assertEquals(relationshipsGlusterOnly.length, api.getLinks().size());
+        for (int i = 0; i < relationshipsGlusterOnly.length; i++) {
+            Link l = api.getLinks().get(i);
+            assertNotNull(l);
+            assertEquals(relationshipsGlusterOnly[i], l.getRel());
+            assertEquals(hrefsGlusterOnly[i], l.getHref());
+        }
+
+        assertNotNull(api.getSpecialObjects());
+        assertContainsRootTag(api.getSpecialObjects());
+        assertNotNull(api.getProductInfo());
+        assertNotNull(api.getProductInfo().getVersion());
+        assertEquals(MAJOR, api.getProductInfo().getVersion().getMajor().intValue());
+        assertEquals(MINOR, api.getProductInfo().getVersion().getMinor().intValue());
+        assertEquals(BUILD, api.getProductInfo().getVersion().getBuild().intValue());
+        assertEquals(REVISION, api.getProductInfo().getVersion().getRevision().intValue());
+
+        assertNotNull(api.getSummary());
+        assertEquals(TOTAL_HOSTS, api.getSummary().getHosts().getTotal());
+        assertEquals(ACTIVE_HOSTS, api.getSummary().getHosts().getActive());
+        assertEquals(TOTAL_USERS, api.getSummary().getUsers().getTotal());
+        assertEquals(ACTIVE_USERS, api.getSummary().getUsers().getActive());
+    }
+
+
+
     private void assertContainsBlankTemplate(SpecialObjects objs) {
         for (Link link : objs.getLinks()) {
             if (link.getHref().equals(BLANK_TEMPLATE_HREF) && link.getRel().equals(BLANK_TEMPLATE_REL)) {
@@ -272,6 +366,14 @@ public class BackendApiResourceTest extends Assert {
             }
         }
         fail();
+    }
+
+    private void assertNotContainsBlankTemplate(SpecialObjects objs) {
+        for (Link link : objs.getLinks()) {
+            if (link.getHref().equals(BLANK_TEMPLATE_HREF) && link.getRel().equals(BLANK_TEMPLATE_REL)) {
+                fail();
+            }
+        }
     }
 
     private void assertContainsRootTag(SpecialObjects objs) {
@@ -287,7 +389,7 @@ public class BackendApiResourceTest extends Assert {
         assertEquals(expected, actual.longValue());
     }
 
-    protected UriInfo setUpUriInfo(String base) {
+    protected UriInfo setUpUriInfo(String base, String[] relationships) {
         UriBuilder uriBuilder = createMock(UriBuilder.class);
         expect(uriBuilder.clone()).andReturn(uriBuilder).anyTimes();
 
@@ -304,7 +406,7 @@ public class BackendApiResourceTest extends Assert {
         UriInfo uriInfo = createMock(UriInfo.class);
         expect(uriInfo.getBaseUri()).andReturn(URI.create(base)).anyTimes();
         expect(uriInfo.getBaseUriBuilder()).andReturn(uriBuilder);
-        for (int i=0; i<2; i++) {
+        for (int i = 0; i < 2; i++) {
             expect(uriInfo.getQueryParameters()).andReturn(null);
         }
 

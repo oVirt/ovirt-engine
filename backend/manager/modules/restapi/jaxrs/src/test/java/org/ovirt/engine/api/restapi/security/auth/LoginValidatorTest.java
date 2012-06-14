@@ -1,5 +1,12 @@
 package org.ovirt.engine.api.restapi.security.auth;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,28 +17,22 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.common.invocation.MetaData;
 import org.ovirt.engine.api.common.security.auth.Principal;
+import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
-import static org.easymock.classextension.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.eq;
 
 public class LoginValidatorTest extends Assert {
 
@@ -129,9 +130,16 @@ public class LoginValidatorTest extends Assert {
                     new Object[] { USER, SECRET, DOMAIN, VdcActionType.LoginUser, session.getSessionId() }))).andReturn(result);
         expect(result.getCanDoAction()).andReturn(canDo);
         expect(result.getSucceeded()).andReturn(success).anyTimes();
+
         VdcUser user = control.createMock(VdcUser.class);
         if (canDo && success) {
             expect(result.getActionReturnValue()).andReturn(user);
+            VdcQueryReturnValue appModeResult = new VdcQueryReturnValue();
+            appModeResult.setReturnValue(255);
+            appModeResult.setSucceeded(true);
+            expect(backend.RunPublicQuery(eq(VdcQueryType.GetConfigurationValue),
+                    eqQueryParams(GetConfigurationValueParameters.class, new String[] { "ConfigValue" },
+                            new Object[] { ConfigurationValues.ApplicationMode }))).andReturn(appModeResult);
             current.set(user);
             EasyMock.expectLastCall();
         }

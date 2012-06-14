@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -30,6 +31,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         HostsResource {
 
     static final String[] SUB_COLLECTIONS = { "storage", "nics", "tags", "permissions", "statistics" };
+    static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
     public BackendHostsResource() {
         super(Host.class, VDS.class, SUB_COLLECTIONS);
@@ -37,11 +39,39 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     public Hosts list() {
-        if (isFiltered())
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllHosts,
-                            new VdcQueryParametersBase()));
+        ApplicationMode appMode = getCurrent().get(ApplicationMode.class);
+        if (appMode == ApplicationMode.GlusterOnly)
+        {
+            return listGlusterOnly();
+        }
         else
+        {
+            return listAll();
+        }
+    }
+
+    private Hosts listGlusterOnly() {
+        if (isFiltered())
+        {
+            return mapGlusterOnlyCollection(getBackendCollection(VdcQueryType.GetAllHosts,
+                    new VdcQueryParametersBase()));
+        }
+        else
+        {
+            return mapGlusterOnlyCollection(getBackendCollection(SearchType.VDS));
+        }
+    }
+
+    private Hosts listAll() {
+        if (isFiltered())
+        {
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllHosts,
+                    new VdcQueryParametersBase()));
+        }
+        else
+        {
             return mapCollection(getBackendCollection(SearchType.VDS));
+        }
     }
 
     @Override
@@ -94,6 +124,14 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         Hosts collection = new Hosts();
         for (VDS entity : entities) {
             collection.getHosts().add(addLinks(populate(map(entity), entity)));
+        }
+        return collection;
+    }
+
+    private Hosts mapGlusterOnlyCollection(List<VDS> entities) {
+        Hosts collection = new Hosts();
+        for (VDS entity : entities) {
+            collection.getHosts().add(addLinks(populate(map(entity), entity), GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE));
         }
         return collection;
     }

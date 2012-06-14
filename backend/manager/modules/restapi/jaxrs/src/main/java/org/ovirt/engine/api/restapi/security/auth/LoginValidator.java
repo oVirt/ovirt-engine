@@ -9,20 +9,20 @@ import org.jboss.resteasy.annotations.interception.Precedence;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
-
-import org.ovirt.engine.api.common.security.auth.SessionUtils;
-import org.ovirt.engine.api.common.security.auth.Validator;
-import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.common.invocation.MetaData;
-
+import org.ovirt.engine.api.common.security.auth.Principal;
+import org.ovirt.engine.api.common.security.auth.SessionUtils;
+import org.ovirt.engine.api.common.security.auth.Validator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
-
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -108,7 +108,23 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         // cache VdcUser in Current so that it will be available
         // for logoff action on postProcess() traversal
         current.set(ret.getActionReturnValue());
+        current.set(getApplicationMode());
         return true;
+    }
+
+    private ApplicationMode getApplicationMode() {
+        VdcQueryReturnValue result = backend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
+                new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode));
+        ApplicationMode appMode = null;
+        if (result.getSucceeded())
+        {
+            appMode = ApplicationMode.from((Integer) result.getReturnValue());
+        }
+        else
+        {
+            appMode = ApplicationMode.AllModes;
+        }
+        return appMode;
     }
 
     private void validateSessionSucceeded(VdcQueryReturnValue ret) {

@@ -59,6 +59,7 @@ import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -83,6 +84,7 @@ public class BackendApiResource
     private static RSDL rsdl = null;
     private static final String QUERY_PARAMETER = "?";
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
+    ApplicationMode appMode = ApplicationMode.AllModes;
 
     public BackendApiResource() {
         super(Guid.Empty.toString(), API.class, Object.class);
@@ -106,6 +108,21 @@ public class BackendApiResource
         links.add(createLink("vmpools", LinkFlags.SEARCHABLE));
         links.add(createLink("vms", LinkFlags.SEARCHABLE));
         links.add(createLink("disks", LinkFlags.SEARCHABLE));
+        return links;
+    }
+
+    private Collection<DetailedLink> getGlusterLinks() {
+        Collection<DetailedLink> links = new LinkedList<DetailedLink>();
+        links.add(createLink("capabilities"));
+        links.add(createLink("clusters", LinkFlags.SEARCHABLE));
+        links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams()));
+        links.add(createLink("hosts", LinkFlags.SEARCHABLE));
+        links.add(createLink("networks"));
+        links.add(createLink("roles"));
+        links.add(createLink("tags"));
+        links.add(createLink("users", LinkFlags.SEARCHABLE));
+        links.add(createLink("groups", LinkFlags.SEARCHABLE));
+        links.add(createLink("domains"));
         return links;
     }
 
@@ -136,6 +153,26 @@ public class BackendApiResource
             //add special links
             api.setSpecialObjects(new SpecialObjects());
             api.getSpecialObjects().getLinks().add(createBlankTemplateLink());
+            api.getSpecialObjects().getLinks().add(createRootTagLink());
+        }
+        return api;
+    }
+
+    private API getGlusterApi() {
+        API api = new API();
+        api.setTime(DateMapper.map(new Date(), null));
+        for (DetailedLink detailedLink : getGlusterLinks()) {
+            // add thin link
+            api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(), detailedLink.getRel()));
+            // when required - add extra link for search
+            if (detailedLink.isSetLinkCapabilities() && detailedLink.getLinkCapabilities().isSetSearchable()
+                    && detailedLink.getLinkCapabilities().isSearchable()) {
+                api.getLinks().add(LinkHelper.createLink(detailedLink.getHref(),
+                        detailedLink.getRel(),
+                        detailedLink.getRequest().getUrl().getParametersSets()));
+            }
+            // add special links
+            api.setSpecialObjects(new SpecialObjects());
             api.getSpecialObjects().getLinks().add(createRootTagLink());
         }
         return api;
@@ -231,19 +268,35 @@ public class BackendApiResource
 
     @Override
     public Response head() {
-        API api = getApi();
+        appMode = getCurrent().get(ApplicationMode.class);
+        API api = null;
+        if(appMode == ApplicationMode.GlusterOnly)
+        {
+            api = getGlusterApi();
+        }
+        else
+        {
+            api = getApi();
+        }
         return getResponseBuilder(api).build();
     }
 
     @Override
     public Response get() {
+        appMode = getCurrent().get(ApplicationMode.class);
         if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
             RSDL rsdl = addSystemVersion(getRSDL());
             return Response.ok().entity(rsdl).build();
         } else if (QueryHelper.hasConstraint(getUriInfo(), SCHEMA_CONSTRAINT_PARAMETER)) {
             return getSchema();
         } else {
-            BaseResource response = addSummary(addSystemVersion(getApi()));
+            BaseResource response = null;
+            if (appMode == ApplicationMode.GlusterOnly) {
+                response = addGlusterSummary(addSystemVersion(getGlusterApi()));
+            }
+            else {
+                response = addSummary(addSystemVersion(getApi()));
+            }
             return getResponseBuilder(response).entity(response).build();
         }
     }
@@ -347,6 +400,24 @@ public class BackendApiResource
         summary.setStorageDomains(new StorageDomains());
         summary.getStorageDomains().setTotal(get(stats, "total_storage_domains"));
         summary.getStorageDomains().setActive(get(stats, "active_storage_domains"));
+
+        api.setSummary(summary);
+
+        return api;
+    }
+
+    private API addGlusterSummary(API api) {
+        HashMap<String, Integer> stats = getSystemStatistics();
+
+        ApiSummary summary = new ApiSummary();
+
+        summary.setHosts(new Hosts());
+        summary.getHosts().setTotal(get(stats, "total_vds"));
+        summary.getHosts().setActive(get(stats, "active_vds"));
+
+        summary.setUsers(new Users());
+        summary.getUsers().setTotal(get(stats, "total_users"));
+        summary.getUsers().setActive(get(stats, "active_users"));
 
         api.setSummary(summary);
 

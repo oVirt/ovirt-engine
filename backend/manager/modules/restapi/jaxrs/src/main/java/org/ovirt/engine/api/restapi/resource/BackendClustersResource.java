@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -24,18 +25,47 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         implements ClustersResource {
 
     static final String[] SUB_COLLECTIONS = { "networks", "permissions", "glustervolumes" };
-
+    static final String VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE = "glustervolumes";
     public BackendClustersResource() {
         super(Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
     }
 
     @Override
     public Clusters list() {
+        ApplicationMode appMode = getCurrent().get(ApplicationMode.class);
+
+        if (appMode == ApplicationMode.VirtOnly)
+        {
+            return listVirtOnly();
+        }
+        else
+        {
+            return listAll();
+        }
+    }
+
+    private Clusters listVirtOnly() {
         if (isFiltered())
+        {
+            return mapVirtOnlyCollection(getBackendCollection(VdcQueryType.GetAllVdsGroups,
+                    new VdcQueryParametersBase()));
+        }
+        else
+        {
+            return mapVirtOnlyCollection(getBackendCollection(SearchType.Cluster));
+        }
+    }
+
+    private Clusters listAll() {
+        if (isFiltered())
+        {
             return mapCollection(getBackendCollection(VdcQueryType.GetAllVdsGroups,
                     new VdcQueryParametersBase()));
+        }
         else
+        {
             return mapCollection(getBackendCollection(SearchType.Cluster));
+        }
     }
 
     @Override
@@ -63,6 +93,14 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         Clusters collection = new Clusters();
         for (org.ovirt.engine.core.common.businessentities.VDSGroup entity : entities) {
             collection.getClusters().add(addLinks(map(entity)));
+        }
+        return collection;
+    }
+
+    private Clusters mapVirtOnlyCollection(List<VDSGroup> entities) {
+        Clusters collection = new Clusters();
+        for (org.ovirt.engine.core.common.businessentities.VDSGroup entity : entities) {
+            collection.getClusters().add(addLinks(map(entity), VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE));
         }
         return collection;
     }
