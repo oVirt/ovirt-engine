@@ -85,8 +85,11 @@ public class OvfVmReader extends OvfReader {
                     image.setit_guid(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText));
                 }
                 image.setappList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText)) {
-                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText))));
+
+                XmlNode storageNode = node.SelectSingleNode("rasd:StorageId", _xmlNS);
+                if (storageNode != null &&
+                        !StringHelper.isNullOrEmpty(storageNode.InnerText)) {
+                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(storageNode.InnerText))));
                 }
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
                     image.setstorage_pool_id(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
