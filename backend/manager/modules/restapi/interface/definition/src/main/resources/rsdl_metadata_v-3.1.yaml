@@ -725,7 +725,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
+        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.template.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/storagedomains/{storagedomain:id}/vms|rel=get
@@ -749,7 +749,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
+        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/clusters|rel=get
