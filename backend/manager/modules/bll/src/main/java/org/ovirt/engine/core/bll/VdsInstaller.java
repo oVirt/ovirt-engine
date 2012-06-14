@@ -222,7 +222,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
                 break;
             } else if (_currentInstallStage == _prevInstallStage) {
                 _executionSucceded = false;
-                log.errorFormat("Installation of {0}. No meaningful response recieved from Host. (Stage: {1})",
+                log.errorFormat("Installation of {0}. No meaningful response received from Host. (Stage: {1})",
                         _serverName, getCurrentInstallStage());
                 _currentInstallStage = VdsInstallStages.Error;
                 break;
@@ -359,20 +359,20 @@ public class VdsInstaller implements IVdsInstallCallBack {
         if (message.toUpperCase().indexOf("<BSTRAP COMPONENT='RHEV_INSTALL' STATUS='OK'/>") != -1
                 && (_currentInstallStage == VdsInstallStages.RunScript || _currentInstallStage == VdsInstallStages.FinishCommand)) {
             _executionSucceded = true;
-            log.infoFormat("Installation of {0}. Recieved message: {1}. Stage completed. (Stage: {2})", _serverName,
+            log.infoFormat("Installation of {0}. Received message: {1}. Stage completed. (Stage: {2})", _serverName,
                     message, getCurrentInstallStage());
             _messages.AddMessage(message);
             _currentInstallStage = VdsInstallStages.forValue(_currentInstallStage.getValue() + 1);
         } else if (message.toUpperCase().indexOf("<BSTRAP COMPONENT='RHEV_INSTALL' STATUS='FAIL'/>") != -1
                 && (_currentInstallStage == VdsInstallStages.RunScript || _currentInstallStage == VdsInstallStages.FinishCommand)) {
             _executionSucceded = false;
-            log.errorFormat("Installation of {0}. Recieved message: {1}. Error occured. (Stage: {2})", _serverName,
+            log.errorFormat("Installation of {0}. Received message: {1}. Error occured. (Stage: {2})", _serverName,
                     message, getCurrentInstallStage());
             _messages.AddMessage(message);
         } else if (message.toUpperCase()
                 .indexOf("<BSTRAP COMPONENT='RHEV_INSTALL' STATUS='OK' MESSAGE='RHEV-H ACCESSIBLE'/>") != -1
                 && _currentInstallStage == VdsInstallStages.RunScript) {
-            log.infoFormat("Installation of {0}. Recieved message: {1}. Stage completed. (Stage: {2})", _serverName,
+            log.infoFormat("Installation of {0}. Received message: {1}. Stage completed. (Stage: {2})", _serverName,
                     message, getCurrentInstallStage());
             // in case and RHEV-H installation was detected - update VDS entity
             updateOvirtHostEntity();
@@ -381,7 +381,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
             _currentInstallStage = VdsInstallStages.End;
             _executionSucceded = true;
         } else {
-            log.infoFormat("Installation of {0}. Recieved message: {1}. FYI. (Stage: {2})", _serverName, message,
+            log.infoFormat("Installation of {0}. Received message: {1}. FYI. (Stage: {2})", _serverName, message,
                     getCurrentInstallStage());
             // if its CheckUniqueVds stage assuming the message received is the unique id
             _executionSucceded = true;
