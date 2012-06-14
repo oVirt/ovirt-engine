@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1248,7 +1250,26 @@ public class UnitVmModel extends Model {
 
     private void InitOSType()
     {
-        getOSType().setItems(DataProvider.GetOSList());
+        List<VmOsType> osList = Arrays.asList(VmOsType.values());
+        Collections.sort(osList, new Comparator<VmOsType>() {
+
+            @Override
+            public int compare(VmOsType o1, VmOsType o2) {
+                // moving Unassigned to the head of the list
+                if (o1.name().equals(VmOsType.Unassigned.name())) {
+                    return -1;
+                }
+
+                if (o2.name().equals(VmOsType.Unassigned.name())) {
+                    return 1;
+                }
+
+                return o1.name().compareTo(o2.name());
+            }
+        });
+
+
+        getOSType().setItems(osList);
         getOSType().setSelectedItem(VmOsType.Unassigned);
     }
 

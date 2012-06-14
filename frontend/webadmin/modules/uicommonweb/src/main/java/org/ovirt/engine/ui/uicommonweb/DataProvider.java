@@ -1065,15 +1065,6 @@ public final class DataProvider
         return new ArrayList<storage_pool>();
     }
 
-    public static ArrayList<VmOsType> GetOSList()
-    {
-        return new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {VmOsType.Unassigned,
-            VmOsType.RHEL6, VmOsType.RHEL6x64, VmOsType.RHEL5, VmOsType.RHEL5x64, VmOsType.RHEL4,
-            VmOsType.RHEL4x64, VmOsType.RHEL3, VmOsType.RHEL3x64, VmOsType.OtherLinux, VmOsType.WindowsXP,
-            VmOsType.Windows2003, VmOsType.Windows2003x64, VmOsType.Windows7, VmOsType.Windows7x64,
-            VmOsType.Windows2008, VmOsType.Windows2008x64, VmOsType.Windows2008R2x64, VmOsType.Other}));
-    }
-
     public static Iterable GetUsbPolicyList()
     {
         return EnumCompat.GetValues(UsbPolicy.class);
