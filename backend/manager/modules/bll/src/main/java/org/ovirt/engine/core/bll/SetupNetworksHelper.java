@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
@@ -176,7 +178,7 @@ public class SetupNetworksHelper {
 
             // check if network exists on cluster
             if (getExistingClusterNetworks().containsKey(networkName)) {
-                if (interfaceWasModified(iface)) {
+                if (networkWasModified(iface)) {
                     modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
                 }
 
@@ -202,15 +204,38 @@ public class SetupNetworksHelper {
     }
 
     /**
-     * Check if the given interface was modified (or added).
+     * Check if the network parameters on the given interface were modified (or network was added).
      *
      * @param iface
      *            The interface to check.
-     * @return <code>true</code> if the interface was changed, or is a new one. <code>false</code> if it existed and
-     *         didn't change.
+     * @return <code>true</code> if the network parameters were changed, or the network wan't on the given interface.
+     *         <code>false</code> if it existed and didn't change.
      */
-    private boolean interfaceWasModified(VdsNetworkInterface iface) {
-        return !iface.equals(getExistingIfaces().get(iface.getName()));
+    private boolean networkWasModified(VdsNetworkInterface iface) {
+        VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
+
+        if (existingIface == null) {
+            return true;
+        }
+
+        return !ObjectUtils.equals(iface.getNetworkName(), existingIface.getNetworkName())
+                || iface.getBootProtocol() != existingIface.getBootProtocol()
+                || staticBootProtoPropertiesChanged(iface, existingIface);
+    }
+
+    /**
+     * @param iface
+     *            New interface definition.
+     * @param existingIface
+     *            Existing interface definition.
+     * @return <code>true</code> if the boot protocol is static, and one of the properties has changed.
+     *         <code>false</code> otherwise.
+     */
+    private boolean staticBootProtoPropertiesChanged(VdsNetworkInterface iface, VdsNetworkInterface existingIface) {
+        return iface.getBootProtocol() == NetworkBootProtocol.StaticIp
+                && (!ObjectUtils.equals(iface.getAddress(), existingIface.getAddress())
+                        || !ObjectUtils.equals(iface.getGateway(), existingIface.getGateway())
+                        || !ObjectUtils.equals(iface.getSubnet(), existingIface.getSubnet()));
     }
 
     private boolean isBond(VdsNetworkInterface iface) {
@@ -246,9 +271,28 @@ public class SetupNetworksHelper {
             bonds.put(bondName, new ArrayList<VdsNetworkInterface>());
         }
 
-        if (interfaceWasModified(iface)) {
+        if (bondWasModified(iface)) {
             modifiedBonds.put(bondName, iface);
         }
+    }
+
+    /**
+     * Check if the given bond was modified (or added).<br>
+     * Currently changes that are recognized are if bonding options changed, or the bond was added.
+     *
+     * @param iface
+     *            The bond to check.
+     * @return <code>true</code> if the bond was changed, or is a new one. <code>false</code> if it existed and didn't
+     *         change.
+     */
+    private boolean bondWasModified(VdsNetworkInterface iface) {
+        VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
+
+        if (existingIface == null) {
+            return true;
+        }
+
+        return !ObjectUtils.equals(iface.getBondOptions(), existingIface.getBondOptions());
     }
 
     /**

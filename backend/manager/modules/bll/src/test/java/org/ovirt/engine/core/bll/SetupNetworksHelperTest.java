@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
@@ -75,13 +76,10 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(nic);
 
         nic.setNetworkName(net.getName());
+
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
-        validateAndExpectNoViolations(helper);
-        assertNoBondsModified(helper);
-        assertNetworkModified(helper, net);
-        assertNoNetworksRemoved(helper);
-        assertNoBondsRemoved(helper);
+        validateAndAssertNetworkModified(helper, net);
     }
 
     @Test
@@ -118,6 +116,83 @@ public class SetupNetworksHelperTest {
         assertNetworkModified(helper, net);
         assertNoNetworksRemoved(helper);
         assertNoBondsRemoved(helper);
+    }
+
+    @Test
+    public void networkReplacedOnNic() {
+        network net = createNetwork("net");
+        network newNet = createNetwork("net2");
+        mockExistingNetworks(net, newNet);
+        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        mockExistingIfaces(nic);
+        nic.setNetworkName(newNet.getName());
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndExpectNoViolations(helper);
+        assertNoBondsModified(helper);
+        assertNetworkModified(helper, newNet);
+        assertNetworkRemoved(helper, net.getName());
+        assertNoBondsRemoved(helper);
+    }
+
+    @Test
+    public void bootProtocolChanged() {
+        network net = createNetwork("net");
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        nic.setBootProtocol(NetworkBootProtocol.None);
+        mockExistingIfaces(nic);
+        nic.setBootProtocol(NetworkBootProtocol.Dhcp);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void gatewayChanged() {
+        network net = createNetwork("net");
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        nic.setBootProtocol(NetworkBootProtocol.StaticIp);
+        nic.setGateway(RandomUtils.instance().nextString(10));
+        mockExistingIfaces(nic);
+        nic.setGateway(RandomUtils.instance().nextString(10));
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void subnetChanged() {
+        network net = createNetwork("net");
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        nic.setBootProtocol(NetworkBootProtocol.StaticIp);
+        nic.setSubnet(RandomUtils.instance().nextString(10));
+        mockExistingIfaces(nic);
+        nic.setSubnet(RandomUtils.instance().nextString(10));
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void ipChanged() {
+        network net = createNetwork("net");
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        nic.setBootProtocol(NetworkBootProtocol.StaticIp);
+        nic.setAddress(RandomUtils.instance().nextString(10));
+        mockExistingIfaces(nic);
+        nic.setAddress(RandomUtils.instance().nextString(10));
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndAssertNetworkModified(helper, net);
     }
 
     /* --- Tests for bonds functionality --- */
@@ -244,6 +319,9 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(parameters);
 
         validateAndExpectNoViolations(helper);
+
+        // The expected network name is null, since the bond didn't change from the one in the DB.
+        bond.setNetworkName(null);
         assertBondModified(helper, bond);
         assertNetworkModified(helper, network);
         assertNoBondsRemoved(helper);
@@ -299,7 +377,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(parameters);
 
         validateAndExpectNoViolations(helper);
-        assertBondModified(helper, bond);
+        assertNoBondsModified(helper);
         assertNoNetworksModified(helper);
         assertNetworkRemoved(helper, networkName);
         assertNoBondsRemoved(helper);
@@ -321,8 +399,42 @@ public class SetupNetworksHelperTest {
         validateAndExpectNoViolations(helper);
         assertNetworkModified(helper, newNet);
         assertNetworkRemoved(helper, net.getName());
-        assertBondModified(helper, bond);
+        assertNoBondsModified(helper);
         assertNoBondsRemoved(helper);
+    }
+
+    @Test
+    public void bondOptionsChanged() {
+        VdsNetworkInterface bond = createBond(BOND_NAME, null);
+        bond.setBondOptions(RandomUtils.instance().nextString(10));
+        List<VdsNetworkInterface> slaves = createNics(bond.getName());
+
+        mockExistingIfacesWithBond(bond, slaves);
+        bond.setBondOptions(RandomUtils.instance().nextString(10));
+
+        SetupNetworksHelper helper = createHelper(createParametersForBond(bond, slaves));
+
+        validateAndExpectNoViolations(helper);
+        assertBondModified(helper, bond);
+        assertNoNetworksModified(helper);
+        assertNoNetworksRemoved(helper);
+        assertNoBondsRemoved(helper);
+    }
+
+    @Test
+    public void bootProtocolChangedOverBond() {
+        network net = createNetwork("net");
+        mockExistingNetworks(net);
+
+        VdsNetworkInterface bond = createBond(BOND_NAME, net.getName());
+        bond.setBootProtocol(NetworkBootProtocol.None);
+        List<VdsNetworkInterface> slaves = createNics(bond.getName());
+        mockExistingIfacesWithBond(bond, slaves);
+        bond.setBootProtocol(NetworkBootProtocol.Dhcp);
+
+        SetupNetworksHelper helper = createHelper(createParametersForBond(bond, slaves));
+
+        validateAndAssertNetworkModified(helper, net);
     }
 
     /* --- Tests for VLANs functionality --- */
@@ -383,6 +495,14 @@ public class SetupNetworksHelperTest {
         List<VdcBllMessages> violations = helper.validate();
         assertTrue(MessageFormat.format("Expected violation {0} but only got {1}.", violation, violations),
                 violations.contains(violation));
+    }
+
+    private void validateAndAssertNetworkModified(SetupNetworksHelper helper, network net) {
+        validateAndExpectNoViolations(helper);
+        assertNoBondsModified(helper);
+        assertNetworkModified(helper, net);
+        assertNoNetworksRemoved(helper);
+        assertNoBondsRemoved(helper);
     }
 
     private void assertBondRemoved(SetupNetworksHelper helper, String expectedBondName) {
