@@ -29,6 +29,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class SetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
 
+    /** Time between polling attempts, to prevent flooding the host/network. */
+    private static final long POLLING_BREAK = 500;
     private static final List<VDSStatus> SUPPORTED_HOST_STATUSES =
             Arrays.asList(VDSStatus.Maintenance, VDSStatus.Up, VDSStatus.NonOperational);
     private static Log log = LogFactory.getLog(SetupNetworksCommand.class);
@@ -166,12 +168,16 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     }
 
     private void pollVds() {
+        long timeBeforePoll = System.currentTimeMillis();
         FutureVDSCall<VDSReturnValue> task =
                 Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.Poll,
                         new VdsIdVDSCommandParametersBase(getVds().getId()));
         try {
-            log.debugFormat("polling host {0}", getVdsName());
             task.get(Config.<Integer> GetValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
+
+            if (System.currentTimeMillis() - timeBeforePoll < POLLING_BREAK) {
+                Thread.sleep(POLLING_BREAK);
+            }
         } catch (Exception e) {
             // ignore failure. network can go down due to VDSM changing the network
         }
