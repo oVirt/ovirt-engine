@@ -218,14 +218,13 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         vdsByUniqueId.getUniqueId());
             }
 
-            boolean isPending = false;
             // TODO: always add in pending state, and if auto approve call
             // approve command action after registration
-            RefObject<Boolean> tempRefObject = new RefObject<Boolean>(isPending);
+            RefObject<Boolean> isPending = new RefObject<Boolean>(Boolean.FALSE);
             getQueryReturnValue().setSucceeded(
                     HandleOldVdssWithSameHostName(vdsByUniqueId) && HandleOldVdssWithSameName(vdsByUniqueId)
-                    && CheckAutoApprovalDefinitions(tempRefObject) && Register(vdsByUniqueId, vdsGroupId, tempRefObject.argvalue));
-            isPending = tempRefObject.argvalue;
+                            && CheckAutoApprovalDefinitions(isPending)
+                            && Register(vdsByUniqueId, vdsGroupId, isPending.argvalue.booleanValue()));
             if (Config.<Boolean> GetValue(ConfigValues.LogVdsRegistration)) {
                 log.infoFormat("RegisterVdsQuery::ExecuteCommand - Leaving Succeded value is {0}",
                         getQueryReturnValue().getSucceeded());
