@@ -696,8 +696,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Volume Rebalance")
     String VAR__TYPE__GLUSTER_VOLUME_REBALANCE();
 
-    @DefaultStringValue("$type Gluster Volume Brick")
-    String VAR__TYPE__GLUSTER_VOLUME_BRICK();
+    @DefaultStringValue("$type Gluster Brick")
+    String VAR__TYPE__GLUSTER_BRICK();
 
     @DefaultStringValue("Cannot ${action} ${type}. The chosen disk drive letter is already in use, please select a free one.")
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
@@ -1977,6 +1977,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Stripe count can not be reduced.")
     String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Brick ${brick} already used by the volume ${volumeName}.")
+    String ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME();
 
     @DefaultStringValue("Cannot ${action} ${type}. No up server found in ${clusterName}.")
     String ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND();

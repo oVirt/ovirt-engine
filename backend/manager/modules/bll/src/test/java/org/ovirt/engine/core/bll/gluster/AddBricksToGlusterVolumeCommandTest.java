@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,6 +37,9 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     @Mock
     VdsStaticDAO vdsStaticDao;
+
+    @Mock
+    GlusterBrickDao brickDao;
 
     private String serverName = "myhost";
 
@@ -84,6 +88,27 @@ public class AddBricksToGlusterVolumeCommandTest {
         return bricks;
     }
 
+    private List<GlusterBrickEntity> getBricks(Guid glusterServerId) {
+        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        GlusterBrickEntity brick;
+        for (Integer i = 0; i < 5; i++) {
+            brick =
+                    new GlusterBrickEntity(volumeId1,
+                            new VdsStatic(serverName,
+                                    "127.0.0.1",
+                                    "0934390834",
+                                    20,
+                                    new Guid(),
+                                    glusterServerId,
+                                    serverName,
+                                    true,
+                                    VDSType.oVirtNode),
+                            "/tmp/s" + i.toString(),
+                            GlusterBrickStatus.UP);
+            bricks.add(brick);
+        }
+        return bricks;
+    }
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.NewGuid());
@@ -96,9 +121,11 @@ public class AddBricksToGlusterVolumeCommandTest {
     private void prepareMocks(AddBricksToGlusterVolumeCommand command) {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
+        doReturn(brickDao).when(command).getGlusterBrickDao();
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);
+        doReturn(getBricks(serverId)).when(brickDao).getGlusterVolumeBricksByServerId(serverId);
         doReturn(null).when(volumeDao).getById(null);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
     }
@@ -148,7 +175,7 @@ public class AddBricksToGlusterVolumeCommandTest {
     public void canDoActionFails() {
         cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4));
         prepareMocks(cmd);
-        assertTrue(cmd.canDoAction());
+        assertFalse(cmd.canDoAction());
     }
 
     @Test

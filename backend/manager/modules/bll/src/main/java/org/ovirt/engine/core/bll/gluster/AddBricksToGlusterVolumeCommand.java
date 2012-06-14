@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActionVDSParameters;
@@ -56,7 +57,9 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT);
             }
         }
-        return updateBrickServerNames(getParameters().getBricks(), true);
+
+        return (updateBrickServerNames(getParameters().getBricks(), true)
+                && validateBricks(getParameters().getBricks()));
     }
 
     @Override
@@ -180,6 +183,28 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                 : GlusterBrickStatus.DOWN;
     }
 
+    private boolean validateBricks(List<GlusterBrickEntity> newBricks) {
+        for (GlusterBrickEntity brick : newBricks) {
+            if (brickExists(brick))  {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
+                addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
+                addCanDoActionMessage(String.format("$volumeName %1$s", getGlusterVolumeDao().getById(brick.getVolumeId()).getName()));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean brickExists(GlusterBrickEntity newBrick) {
+        for (GlusterBrickEntity brick : getGlusterBrickDao().getGlusterVolumeBricksByServerId(newBrick.getServerId())) {
+            if (GlusterCoreUtil.objectsEqual(newBrick.getVolumeId(), brick.getVolumeId())
+                    && GlusterCoreUtil.objectsEqual(newBrick.getServerId(), brick.getServerId())
+                    && GlusterCoreUtil.objectsEqual(newBrick.getBrickDirectory(), brick.getBrickDirectory())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {

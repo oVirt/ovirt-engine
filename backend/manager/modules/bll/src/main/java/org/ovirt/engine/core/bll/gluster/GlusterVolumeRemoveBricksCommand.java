@@ -36,7 +36,7 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME_BRICK);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_BRICK);
     }
 
     @Override
