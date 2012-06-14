@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -69,12 +68,14 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void managedNetworkAddedToNic() {
+        network net = createNetwork("net");
         VdsNetworkInterface nic = createNic("nic0", null);
-        mockExistingIfaces(nic);
-        nic.setNetworkName("net");
 
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic);
+
+        nic.setNetworkName(net.getName());
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
-        network net = mockExistingNetwork(nic.getNetworkName());
 
         validateAndExpectNoViolations(helper);
         assertNoBondsModified(helper);
@@ -101,15 +102,16 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void networkMovedFromNicToNic() {
-        String networkName = "net";
-        VdsNetworkInterface nic1 = createNic("nic0", networkName);
+        network net = createNetwork("net");
+        VdsNetworkInterface nic1 = createNic("nic0", net.getname());
         VdsNetworkInterface nic2 = createNic("nic1", null);
-        mockExistingIfaces(nic1, nic2);
-        nic2.setNetworkName(networkName);
-        nic1.setNetworkName(null);
 
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic1, nic2);
+
+        nic2.setNetworkName(net.getname());
+        nic1.setNetworkName(null);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic1, nic2));
-        network net = mockExistingNetwork(networkName);
 
         validateAndExpectNoViolations(helper);
         assertNoBondsModified(helper);
@@ -230,14 +232,16 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void bondWithNetworkAttached() {
+        network network = createNetwork("net");
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
         List<VdsNetworkInterface> ifaces = createNics(null);
 
+        mockExistingNetworks(network);
         mockExistingIfacesWithBond(bond, ifaces);
-        bond.setNetworkName("net");
+
+        bond.setNetworkName(network.getName());
         SetupNetworksParameters parameters = createParametersForBond(bond, ifaces);
         SetupNetworksHelper helper = createHelper(parameters);
-        network network = mockExistingNetwork(bond.getNetworkName());
 
         validateAndExpectNoViolations(helper);
         assertBondModified(helper, bond);
@@ -303,18 +307,20 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void networkReplacedOnBond() {
-        String networkName = "net";
-        VdsNetworkInterface bond = createBond(BOND_NAME, networkName);
+        network net = createNetwork("net");
+        network newNet = createNetwork("net2");
+        VdsNetworkInterface bond = createBond(BOND_NAME, net.getName());
         List<VdsNetworkInterface> slaves = createNics(bond.getName());
 
+        mockExistingNetworks(net, newNet);
         mockExistingIfacesWithBond(bond, slaves);
-        bond.setNetworkName(networkName + "a");
-        network net = mockExistingNetwork(bond.getNetworkName());
+
+        bond.setNetworkName(newNet.getName());
         SetupNetworksHelper helper = createHelper(createParametersForBond(bond, slaves));
 
         validateAndExpectNoViolations(helper);
-        assertNetworkModified(helper, net);
-        assertNetworkRemoved(helper, networkName);
+        assertNetworkModified(helper, newNet);
+        assertNetworkRemoved(helper, net.getName());
         assertBondModified(helper, bond);
         assertNoBondsRemoved(helper);
     }
@@ -323,14 +329,15 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void vlanOverBond() {
+        network network = createNetwork("net");
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
         List<VdsNetworkInterface> ifacesToBond = createNics(null);
+
+        mockExistingNetworks(network);
         mockExistingIfacesWithBond(bond, ifacesToBond);
 
         SetupNetworksParameters parameters = createParametersForBond(bond, ifacesToBond);
-        String networkName = "net";
-        parameters.getInterfaces().add(createVlan(bond.getName(), 100, networkName));
-        network network = mockExistingNetwork(networkName);
+        parameters.getInterfaces().add(createVlan(bond.getName(), 100, network.getName()));
 
         SetupNetworksHelper helper = createHelper(parameters);
 
@@ -432,6 +439,15 @@ public class SetupNetworksHelperTest {
                 "Expected no bonds to be modified but some were modified. Modified bonds: {0}",
                 helper.getBonds()),
                 0, helper.getBonds().size());
+    }
+
+    /**
+     * @param networkName
+     *            The network's name.
+     * @return A network with some defaults and the given name,
+     */
+    private network createNetwork(String networkName) {
+        return new network("", "", Guid.NewGuid(), networkName, "", "", 0, 100, false, 0, true);
     }
 
     /**
@@ -579,11 +595,8 @@ public class SetupNetworksHelperTest {
         return parameters;
     }
 
-    private network mockExistingNetwork(String networkName) {
-        network network = new network("", "", Guid.NewGuid(), networkName, "", "", 0, 100, false, 0, true);
-        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(Collections.singletonList(network));
-
-        return network;
+    private void mockExistingNetworks(network... networks) {
+        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(Arrays.asList(networks));
     }
 
     private void mockExistingIfacesWithBond(VdsNetworkInterface bond, List<VdsNetworkInterface> ifacesToBond) {
