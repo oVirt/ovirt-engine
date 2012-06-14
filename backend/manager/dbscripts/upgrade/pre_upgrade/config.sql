@@ -73,7 +73,7 @@ select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 select fn_db_add_config_value('ConfigDir','/etc/engine','general');
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
-select fn_db_add_config_value('CustomPublicConfig_AppsWebSite','http://marketplace.redhat.com/rhev?origin=engine-$EngineVersion','general');
+select fn_db_add_config_value('CustomPublicConfig_AppsWebSite','','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
 select fn_db_add_config_value('DBEngine','SQLServer','general');
