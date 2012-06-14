@@ -536,6 +536,9 @@ public final class ImagesHandler {
                     StorageDomainValidator storageDomainValidator =
                                 new StorageDomainValidator(domain);
                     returnValue = storageDomainValidator.isDomainExistAndActive(messages);
+                    if(!returnValue) {
+                        break;
+                    }
                 }
                 if (diskSpaceCheck && returnValue && !StorageDomainSpaceChecker.isBelowThresholds(domain)) {
                     returnValue = false;
