@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -220,14 +219,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean checkCanBeMoveInVm() {
-        List<VM> listVms = getVmsForDiskId();
+        List<VM> vmsForDisk = getVmsForDiskId();
         int vmCount = 0;
         boolean canMoveDisk = true;
-        while (listVms.size() > vmCount && canMoveDisk) {
-            VM vm = listVms.get(vmCount++);
-            if (VMStatus.Down != vm.getstatus()) {
+        while (vmsForDisk.size() > vmCount && canMoveDisk) {
+            VM currVm = vmsForDisk.get(vmCount++);
+            if (VMStatus.Down != currVm.getstatus()) {
                 VmDevice vmDevice =
-                        getVmDeviceDAO().get(new VmDeviceId(getImage().getId(), vm.getId()));
+                        getVmDeviceDAO().get(new VmDeviceId(getImage().getId(), currVm.getId()));
                 if (vmDevice.getIsPlugged()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                     canMoveDisk = false;
@@ -267,13 +266,13 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {
-        return DbFacade.getInstance().getVmDeviceDAO();
+        return getDbFacade().getVmDeviceDAO();
     }
 
     @Override
     protected void executeCommand() {
         overrideParameters();
-        VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
+        VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
                 VdcActionType.MoveOrCopyImageGroup,
                 getParameters(),
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
@@ -372,11 +371,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 sharedLockMap = Collections.singletonMap(vmTemplate.getId(), LockingGroup.TEMPLATE.name());
             }
         } else {
-            List<VM> listVms = getVmsForDiskId();
-            if (!listVms.isEmpty()) {
+            List<VM> vmsForDisk = getVmsForDiskId();
+            if (!vmsForDisk.isEmpty()) {
                 sharedLockMap = new HashMap<Guid, String>();
-                for (VM vm : listVms) {
-                    sharedLockMap.put(vm.getId(), LockingGroup.VM.name());
+                for (VM currVm : vmsForDisk) {
+                    sharedLockMap.put(currVm.getId(), LockingGroup.VM.name());
                 }
             }
         }

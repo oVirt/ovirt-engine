@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParamete
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@SuppressWarnings("serial")
 @InternalCommandAttribute
 public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends BaseImagesCommand<T> {
     public MoveOrCopyImageGroupCommand(T parameters) {
@@ -39,7 +39,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         case END_FAILURE:
             if (_diskImage == null) {
                 List<DiskImage> diskImages =
-                        DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+                        getDiskImageDAO().getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
                 _diskImage = (diskImages.isEmpty()) ? null : diskImages.get(0);
             }
 
@@ -60,48 +60,49 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         VDSReturnValue vdsReturnValue = null;
 
         if (getParameters().getUseCopyCollapse()) {
-            vdsReturnValue =
-                    Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.CopyImage,
-                                    new CopyImageVDSCommandParameters(getStorageDomain().getstorage_pool_id()
-                                            .getValue(),
-                                            getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
-                                                    .getValue()
-                                                    : getDiskImage().getstorage_ids().get(0),
-                                            getParameters()
-                                                    .getContainerId(),
-                                            getParameters().getImageGroupID(),
-                                            getParameters()
-                                                    .getImageId(),
-                                            getParameters().getDestImageGroupId(),
-                                            getParameters().getDestinationImageId(),
-                                            "",
-                                            getParameters().getStorageDomainId(),
-                                            getParameters()
-                                                    .getCopyVolumeType(),
-                                            getParameters().getVolumeFormat(),
-                                            getParameters()
-                                                    .getVolumeType(),
-                                            getParameters().getPostZero(),
-                                            getParameters()
-                                                    .getForceOverride(),
-                                            getStoragePool().getcompatibility_version().toString()));
+            vdsReturnValue = runVdsCommand(
+                    VDSCommandType.CopyImage,
+                    new CopyImageVDSCommandParameters(getStorageDomain().getstorage_pool_id()
+                            .getValue(),
+                            getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
+                                    .getValue()
+                                    : getDiskImage().getstorage_ids().get(0),
+                            getParameters()
+                                    .getContainerId(),
+                            getParameters().getImageGroupID(),
+                            getParameters()
+                                    .getImageId(),
+                            getParameters().getDestImageGroupId(),
+                            getParameters().getDestinationImageId(),
+                            "",
+                            getParameters().getStorageDomainId(),
+                            getParameters()
+                                    .getCopyVolumeType(),
+                            getParameters().getVolumeFormat(),
+                            getParameters()
+                                    .getVolumeType(),
+                            getParameters().getPostZero(),
+                            getParameters()
+                                    .getForceOverride(),
+                            getStoragePool().getcompatibility_version().toString()));
         } else {
-            vdsReturnValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.MoveImageGroup,
-                            new MoveImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
-                                    getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
-                                            .getValue() : getDiskImage().getstorage_ids().get(0), getDiskImage()
-                                            .getId(), getParameters().getStorageDomainId(),
-                                    getParameters().getContainerId(), getParameters().getOperation(), getParameters()
-                                            .getPostZero(), getParameters().getForceOverride(), getStoragePool()
-                                            .getcompatibility_version().toString()));
+            vdsReturnValue = runVdsCommand(
+                    VDSCommandType.MoveImageGroup,
+                    new MoveImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id()
+                            .getValue(),
+                            getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
+                                    .getValue()
+                                    : getDiskImage().getstorage_ids().get(0),
+                            getDiskImage()
+                                    .getId(),
+                            getParameters().getStorageDomainId(),
+                            getParameters().getContainerId(),
+                            getParameters().getOperation(),
+                            getParameters()
+                                    .getPostZero(),
+                            getParameters().getForceOverride(),
+                            getStoragePool()
+                                    .getcompatibility_version().toString()));
         }
 
         if (vdsReturnValue.getSucceeded()) {
@@ -117,17 +118,15 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                         .getAllSnapshotsForImageGroup(getParameters().getDestImageGroupId());
                 setSnapshotForShareableDisk(snapshots);
                 for (DiskImage snapshot : snapshots) {
-                    DbFacade.getInstance()
-                            .getImageStorageDomainMapDao()
-                            .remove(new image_storage_domain_map_id(snapshot.getImageId(), snapshot.getstorage_ids().get(0)));
-                    DbFacade.getInstance()
-                            .getImageStorageDomainMapDao().save(new image_storage_domain_map(snapshot.getImageId(),
-                                    getParameters().getStorageDomainId()));
+                    getImageStorageDomainMapDao().remove
+                            (new image_storage_domain_map_id(snapshot.getImageId(), snapshot.getstorage_ids().get(0)));
+                    getImageStorageDomainMapDao().save
+                            (new image_storage_domain_map(snapshot.getImageId(), getParameters().getStorageDomainId()));
                 }
             } else if (getParameters().getAddImageDomainMapping()) {
-                DbFacade.getInstance()
-                        .getImageStorageDomainMapDao().save(new image_storage_domain_map(getParameters().getImageId(),
-                        getParameters().getStorageDomainId()));
+                getImageStorageDomainMapDao().save
+                        (new image_storage_domain_map(getParameters().getImageId(),
+                                getParameters().getStorageDomainId()));
             }
 
             setSucceeded(true);
@@ -140,7 +139,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
      * so the shareable disk needs to be distinct when updating the storage domain.
      * @param snapshots - All the images which related to the image group id
      */
-    private void setSnapshotForShareableDisk(List<DiskImage> snapshots) {
+    private static void setSnapshotForShareableDisk(List<DiskImage> snapshots) {
         if (!snapshots.isEmpty() && snapshots.get(0).isShareable()) {
             DiskImage sharedDisk = snapshots.get(0);
             snapshots.clear();
@@ -165,10 +164,9 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         if (getMoveOrCopyImageOperation() == ImageOperation.Copy) {
             UnLockImage();
             if (getParameters().getAddImageDomainMapping()) {
-                // remove iamge-storage mapping
-                DbFacade.getInstance()
-                        .getImageStorageDomainMapDao()
-                        .remove(new image_storage_domain_map_id(getParameters().getImageId(),
+                // remove image-storage mapping
+                getImageStorageDomainMapDao().remove
+                        (new image_storage_domain_map_id(getParameters().getImageId(),
                                 getParameters().getStorageDomainId()));
             }
             RevertTasks();
@@ -204,7 +202,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
     @Override
     protected boolean canPerformRollbackUsingCommand(VdcActionType commandType, VdcActionParametersBase params) {
-        return DbFacade.getInstance().getDiskImageDAO().get(getParameters().getDestinationImageId()) != null;
+        return getDiskImageDAO().get(getParameters().getDestinationImageId()) != null;
     }
 
 }
