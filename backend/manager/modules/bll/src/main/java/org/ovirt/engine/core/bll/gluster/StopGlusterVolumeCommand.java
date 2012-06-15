@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -35,8 +36,10 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
             return false;
         }
 
-        if (!getGlusterVolume().isOnline()) {
+        GlusterVolumeEntity volume = getGlusterVolume();
+        if (!volume.isOnline()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STOPPED);
+            addCanDoActionMessage(String.format("$volumeName %1$s", volume.getName()));
             return false;
         }
         return true;

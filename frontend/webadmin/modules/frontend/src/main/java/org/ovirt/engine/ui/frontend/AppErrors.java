@@ -1870,7 +1870,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cluster does not support Gluster service.")
     String ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Volume name already exists.")
+    @DefaultStringValue("Cannot ${action} ${type}. Volume name ${volumeName} already exists.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is not valid.")
@@ -1900,13 +1900,13 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Invalid host id in brick.")
     String ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume already started.")
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume ${volumeName} already started.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STARTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume already stopped.")
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume ${volumeName} already stopped.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STOPPED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is up.")
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume ${volumeName} is up.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP();
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is down.")
