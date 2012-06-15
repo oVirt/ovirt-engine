@@ -78,7 +78,6 @@ FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"
 FILE_ISOUPLOADER_CONF="/etc/ovirt-engine/isouploader.conf"
 FILE_LOGCOLLECTOR_CONF="/etc/ovirt-engine/logcollector.conf"
 FILE_PSQL_CONF="/var/lib/pgsql/data/postgresql.conf"
-FILE_LIMITS_CONF="/etc/security/limits.conf"
 FILE_OVIRT_HTTPD_CONF="/etc/httpd/conf.d/ovirt-engine.conf"
 FILE_HTTPD_SSL_CONFIG="/etc/httpd/conf.d/ssl.conf"
 FILE_HTTPD_CONF="/etc/httpd/conf/httpd.conf"
@@ -132,8 +131,6 @@ CONST_ORG_NAME_SIZE_LIMIT=64
 CONST_VDSM_UID = 36
 CONST_KVM_GID  = 36
 CONST_MAX_PSQL_CONNS= 150
-CONST_FD_OPEN = 65535
-CONST_FD_LINE = "jboss           %s    nofile          %s"
 CONST_SHMMAX=35554432
 
 # This is needed for avoiding error in create_ca when supporting max cn length of 64.

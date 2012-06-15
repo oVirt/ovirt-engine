@@ -124,7 +124,7 @@ def initSequences():
                         'condition'       : [],
                         'condition_match' : [],
                         'steps'           : [ { 'title'     : output_messages.INFO_UPD_RHEVM_CONF,
-                                                'functions' : [_editToolsConfFile, updateFileDescriptors] } ]
+                                                'functions' : [_editToolsConfFile] } ]
                        },
                       { 'description'     : 'Update local postgresql configuration',
                         'condition'       : [utils.compareStrIgnoreCase, controller.CONF["DB_REMOTE_INSTALL"], "local"],
@@ -1727,66 +1727,6 @@ def _editToolsConfFile():
             fileHandler.close()
         else:
             logging.debug("Could not find %s" % confFile)
-
-def updateFileDescriptors():
-    """
-    edit /etc/security/limit.conf and make sure that the File descriptors for jboss
-    are 65k
-    """
-    try:
-        logging.debug("opening %s", basedefs.FILE_LIMITS_CONF)
-        tempFile = tempfile.mktemp(dir="/tmp")
-        shutil.copy2(basedefs.FILE_LIMITS_CONF, tempFile)
-
-        with open(tempFile,"r") as confFile:
-            confFileContent = confFile.readlines()
-
-        limitsDict = { 'soft' : False,
-                      'hard' : False
-                    }
-
-        with open(tempFile, "w") as outFile:
-            logging.debug("itterating over file content")
-            for line in confFileContent:
-                line = line.strip()
-                lineToWrite = line
-
-                # If the lines contains nofile (i.e. the directive that specified the amount
-                # of allowed open file descriptors and is not a comment
-                if re.search("\s+nofile\s+", line) and not re.search("^#", line):
-                    # Look for both hard & soft limits.
-                    for key in limitsDict:
-                        found = re.search("jboss\s+%s\s+nofile\s+(\d+)" % key, line)
-                        if found:
-                            logging.debug("Current %s limit of file descriptors for jboss is %s", key, found.group(1))
-                            limitsDict[key] = found.group(1)
-
-                            if limitsDict[key] != basedefs.CONST_FD_OPEN:
-                                logging.debug("Changing %s limit of nofiles to %s", key, str(basedefs.CONST_FD_OPEN))
-                                lineToWrite = basedefs.CONST_FD_LINE % (key, basedefs.CONST_FD_OPEN)
-                            else:
-                                logging.debug("Leaving %s line of nofiles as it is", key)
-
-                # Write Line to file
-                outFile.write("%s%s" % (lineToWrite, os.linesep))
-
-            # If we did not find any line matching the nofiles soft/hard limit for jboss, add them now
-            for key in limitsDict:
-                if not limitsDict[key]:
-                    logging.debug("Adding %s limit to file", key)
-                    outFile.write("%s%s" % (basedefs.CONST_FD_LINE % (key, basedefs.CONST_FD_OPEN), os.linesep))
-
-        logging.debug("copying %s over %s", tempFile, basedefs.FILE_LIMITS_CONF)
-        shutil.copy2(tempFile, basedefs.FILE_LIMITS_CONF)
-
-    except:
-        logging.error("Failed to edit %s", basedefs.FILE_LIMITS_CONF)
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_FAILED_LIMITS)
-
-    finally:
-        logging.debug("removing %s", tempFile)
-        os.remove(tempFile)
 
 def _summaryParamsToLog():
     if len(controller.CONF) > 0:

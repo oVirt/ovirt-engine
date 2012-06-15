@@ -538,6 +538,7 @@ fi
 # Files needed by the service:
 %config(noreplace) %{_sysconfdir}/sysconfig/%{engine_name}
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine-service.xml
+%config(noreplace) %{_sysconfdir}/security/limits.d/10-ovirt-engine.conf
 %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine-service-logging.properties
 %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine-service-users.properties
 %{engine_usr}/scripts/engine-service.py*

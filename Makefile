@@ -139,6 +139,7 @@ create_dirs:
 	@install -dm 755 $(PREFIX)/var/lock/ovirt-engine
 	@install -dm 755 $(PREFIX)/etc/tmpfiles.d
 	@install -dm 755 $(PREFIX)/etc/cron.daily
+	@install -dm 755 $(PREFIX)/etc/security/limits.d
 	@install -dm 755 $(PREFIX)/etc/rc.d/init.d
 	@install -dm 755 $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains,sysprep}
 	@install -dm 755 $(PREFIX)$(EAR_DIR)
@@ -356,5 +357,6 @@ install_service:
 	install -m 644 packaging/fedora/engine-service-logging.properties $(PREFIX)/etc/ovirt-engine
 	install -m 644 packaging/fedora/engine-service-users.properties $(PREFIX)/etc/ovirt-engine
 	install -m 644 packaging/fedora/engine-service.sysconfig $(PREFIX)/etc/sysconfig/ovirt-engine
+	install -m 644 packaging/fedora/engine-service.limits $(PREFIX)/etc/security/limits.d/10-ovirt-engine.conf
 	install -m 755 packaging/fedora/engine-service.py $(PREFIX)/usr/share/ovirt-engine/scripts
 	install -m 644 packaging/fedora/engine-service.systemd $(PREFIX)/usr/lib/systemd/system/ovirt-engine.service
