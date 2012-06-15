@@ -7,7 +7,7 @@ import org.ovirt.engine.core.config.entity.ConfigKey;
 /**
  * This value helper is for values in the form of key:password. The helper can strip down and encrypt or decrypt the
  * password only. The actual value may be a comma delimited list of key-val pair. e.g: example.com:123456,
- * redhat.com:0o9i8u, A.B.C:clearTextPass
+ * ovirt.org:0o9i8u, A.B.C:clearTextPass
  */
 public class CompositePasswordValueHelper implements ValueHelper {
 

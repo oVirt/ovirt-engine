@@ -23,7 +23,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("administrator")
     AdUserName(5),
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("REDHAT.COM:123456")
+    @DefaultValueAttribute("EXAMPLE.COM:123456")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.DomainsPasswordMap)
     AdUserPassword(8),
     @TypeConverterAttribute(String.class)
@@ -31,7 +31,7 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     LocalAdminPassword(9),
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("REDHAT.COM")
+    @DefaultValueAttribute("EXAMPLE.COM")
     DomainName(10),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("180")
@@ -366,7 +366,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("500")
     MaxResultsPageSize(124),
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("RedHat")
+    @DefaultValueAttribute("oVirt")
     OrganizationName(125),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -734,11 +734,11 @@ public enum ConfigValues {
     SANWipeAfterDelete(267),
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("c:\\Program Files\\RedHat\\oVirt Engine")
+    @DefaultValueAttribute("/etc/ovirt-engine")
     ConfigDir(267),
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("c:\\Program Files\\RedHat\\oVirt Engine\\Service")
+    @DefaultValueAttribute("/usr/share/ovirt-engine")
     DataDir(268),
 
     @TypeConverterAttribute(Integer.class)

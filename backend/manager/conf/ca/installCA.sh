@@ -10,7 +10,7 @@ usage () {
     echo "Usage:"
     echo "  $0 [Subject] [Country] [Organization] [Alias] [Password] [ANSI Start Date] [Working Directory] [CA Subject]"
     echo "e.g.:"
-    echo "  $0 hostname.fqdn US RedHat engine NoSoup4U $DATE"
+    echo "  $0 hostname.fqdn US oVirt engine NoSoup4U $DATE"
 
     exit 1
 }

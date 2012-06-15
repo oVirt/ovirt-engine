@@ -237,7 +237,7 @@ select fn_db_add_config_value('NumberOfUSBSlots','4','general');
 select fn_db_add_config_value('NumberOfVmsForTopSizeVms','10','general');
 select fn_db_add_config_value('NumberVmRefreshesBeforeSave','5','general');
 --Handling Organization Name
-select fn_db_add_config_value('OrganizationName','Redhat','general');
+select fn_db_add_config_value('OrganizationName','oVirt','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');
 select fn_db_add_config_value('OvfVirtualSystemType','ENGINE','general');
 select fn_db_add_config_value('OvirtInitialSupportedIsoVersion','5.8','general');
