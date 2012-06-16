@@ -103,7 +103,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField
     @Path(value = "description.entity")
-    EntityModelTextBoxEditor descriptionEditor;
+    protected EntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Ignore
@@ -179,7 +179,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     // ==Console Tab==
     @UiField
-    DialogTab consoleTab;
+    protected DialogTab consoleTab;
 
     @UiField(provided = true)
     @Path(value = "displayProtocol.selectedItem")
@@ -281,7 +281,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     // ==Boot Options Tab==
     @UiField
-    DialogTab bootOptionsTab;
+    protected DialogTab bootOptionsTab;
 
     @UiField(provided = true)
     @Path(value = "firstBootDevice.selectedItem")

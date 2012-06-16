@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
@@ -200,6 +201,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView;
@@ -609,6 +611,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(PoolNewPopupPresenterWidget.class,
                 PoolNewPopupPresenterWidget.ViewDef.class,
                 PoolNewPopupView.class);
+        bindPresenterWidget(PoolEditPopupPresenterWidget.class,
+                PoolEditPopupPresenterWidget.ViewDef.class,
+                PoolEditPopupView.class);
 
         // Template
         bindPresenter(TemplateSubTabPanelPresenter.class,

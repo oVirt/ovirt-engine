@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -35,7 +36,8 @@ public class PoolModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<vm_pools, PoolListModel> getPoolListProvider(ClientGinjector ginjector,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<PoolNewPopupPresenterWidget> poolPopupProvider) {
+            final Provider<PoolNewPopupPresenterWidget> poolPopupProvider,
+            final Provider<PoolEditPopupPresenterWidget> poolEditPopupProvider) {
         return new MainTabModelProvider<vm_pools, PoolListModel>(ginjector, PoolListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PoolListModel source,
@@ -43,7 +45,7 @@ public class PoolModule extends AbstractGinModule {
                 if (lastExecutedCommand == getModel().getNewCommand()) {
                     return poolPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getEditCommand()) {
-                    return poolPopupProvider.get();
+                    return poolEditPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
