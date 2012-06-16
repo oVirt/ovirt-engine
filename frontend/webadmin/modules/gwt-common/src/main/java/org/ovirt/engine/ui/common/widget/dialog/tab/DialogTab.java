@@ -13,6 +13,8 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -100,6 +102,23 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
 
     public InlineLabel getTabLabel() {
         return tabLabel;
+    }
+
+    /**
+     * Disables the content widget recursively, using {@link HasEnabled} interface.
+     */
+    public void disableContent() {
+        disable(getContent());
+    }
+
+    private void disable(Widget content) {
+        if (content instanceof IndexedPanel) {
+            for (int i = 0; i < ((IndexedPanel) content).getWidgetCount(); i++) {
+                disable(((IndexedPanel) content).getWidget(i));
+            }
+        } else if (content instanceof HasEnabled) {
+            ((HasEnabled) content).setEnabled(false);
+        }
     }
 
 }
