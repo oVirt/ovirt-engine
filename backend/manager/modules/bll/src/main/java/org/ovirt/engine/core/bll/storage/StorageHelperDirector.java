@@ -38,8 +38,8 @@ public class StorageHelperDirector {
                 try {
                     actionType = Class.forName(formattedClassName);
                 } catch (ClassNotFoundException cnfe) {
-                    log.error("StorageHelperDirector Error:: the lookup for following class has failed: "
-                            + formattedClassName, cnfe);
+                    log.debugFormat("StorageHelperDirector Error:: the lookup for following class has failed: {0}"
+                            , formattedClassName);
                 }
 
                 // if action type not exist - operation invalid
