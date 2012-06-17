@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -46,11 +47,15 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddDiskToVmCommandTest {
+    private static int MAX_BLOCK_SIZE = 8192;
+    private static int FREE_SPACE_LOW = 10;
+    private static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
+
     @Rule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxBlockDiskSize, Integer.MAX_VALUE),
-            mockConfig(ConfigValues.FreeSpaceLow, 10),
-            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, 5)
+            mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
+            mockConfig(ConfigValues.FreeSpaceLow, FREE_SPACE_LOW),
+            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, FREE_SPACE_CRITICAL_LOW_IN_GB)
             );
 
     @Mock
@@ -238,6 +243,43 @@ public class AddDiskToVmCommandTest {
     }
 
     /**
+     * CanDoAction should succeed when the requested disk space is less or equal than 'MaxBlockDiskSize'
+     */
+    @Test
+    public void canDoActionMaxBlockDiskSizeCheckSucceeds() {
+        Guid storageId = Guid.NewGuid();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(createDiskImage(MAX_BLOCK_SIZE));
+        initializeCommand(storageId, parameters);
+
+        mockVm();
+        mockStorageDomain(storageId, StorageType.ISCSI);
+        mockStoragePoolIsoMap();
+
+        runAndAssertCanDoActionSuccess();
+    }
+
+    /**
+     * CanDoAction should fail when the requested disk space is larger than 'MaxBlockDiskSize'
+     */
+    @Test
+    public void canDoActionMaxBlockDiskSizeCheckFails() {
+        Guid storageId = Guid.NewGuid();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(createDiskImage(MAX_BLOCK_SIZE * 2));
+        initializeCommand(storageId, parameters);
+
+        mockVm();
+        mockStorageDomain(storageId, StorageType.ISCSI);
+        mockStoragePoolIsoMap();
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED.toString()));
+    }
+
+    /**
      * Initialize the command for testing, using the given storage domain id for the parameters.
      *
      * @param storageId
@@ -313,10 +355,18 @@ public class AddDiskToVmCommandTest {
      *            Id of the domain.
      */
     private storage_domains mockStorageDomain(Guid storageId) {
-        return mockStorageDomain(storageId, 6, 4);
+        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN);
+    }
+
+    private storage_domains mockStorageDomain(Guid storageId, StorageType storageType) {
+        return mockStorageDomain(storageId, 6, 4, storageType);
     }
 
     private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize) {
+        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN);
+    }
+
+    private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize, StorageType storageType) {
         Guid storagePoolId = Guid.NewGuid();
         storage_pool sp = new storage_pool();
         sp.setId(storagePoolId);
@@ -327,6 +377,7 @@ public class AddDiskToVmCommandTest {
         sd.setused_disk_size(usedSize);
         sd.setstorage_pool_id(storagePoolId);
         sd.setstatus(StorageDomainStatus.Active);
+        sd.setstorage_type(storageType);
         when(storageDomainDAO.get(storageId)).thenReturn(sd);
         when(storageDomainDAO.getAllForStorageDomain(storageId)).thenReturn(Collections.singletonList(sd));
         when(storageDomainDAO.getForStoragePool(storageId, storagePoolId)).thenReturn(sd);
@@ -365,6 +416,12 @@ public class AddDiskToVmCommandTest {
         image.setvolume_type(VolumeType.Preallocated);
         image.setDiskInterface(DiskInterface.IDE);
         image.setSizeInGigabytes(5);
+        return image;
+    }
+
+    private static DiskImage createDiskImage(long sizeInGigabytes) {
+        DiskImage image = new DiskImage();
+        image.setSizeInGigabytes(sizeInGigabytes);
         return image;
     }
 
