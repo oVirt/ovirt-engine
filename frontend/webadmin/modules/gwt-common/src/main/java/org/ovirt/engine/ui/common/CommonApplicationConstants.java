@@ -58,7 +58,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Custom Properties")
     String runOncePopupCustomPropertiesLabel();
 
-    @DefaultStringValue("Vnc")
+    @DefaultStringValue("VNC")
     String runOncePopupDisplayConsoleVncLabel();
 
     @DefaultStringValue("Spice")
