@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -48,7 +50,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VmGuideModel extends GuideModel
@@ -633,6 +637,12 @@ public class VmGuideModel extends GuideModel
                 return;
             }
 
+            if ((Boolean) model.getAttachDisk().getEntity())
+            {
+                OnAttachDisks();
+                return;
+            }
+
             // Save changes.
             storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
 
@@ -689,6 +699,38 @@ public class VmGuideModel extends GuideModel
         {
             Cancel();
         }
+    }
+
+    private void OnAttachDisks()
+    {
+        VM vm = (VM) getEntity();
+        DiskModel model = (DiskModel) getWindow();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+
+        ArrayList<EntityModel> disksToAttach = (Boolean) model.getIsInternal().getEntity() ?
+                (ArrayList<EntityModel>) model.getInternalAttachableDisks().getSelectedItems() :
+                (ArrayList<EntityModel>) model.getExternalAttachableDisks().getSelectedItems();
+
+        for (EntityModel item : disksToAttach)
+        {
+            DiskModel disk = (DiskModel) item.getEntity();
+            AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
+                    vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
+            paramerterList.add(parameters);
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.AttachDiskToVm, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        VmGuideModel localModel = (VmGuideModel) result.getState();
+                        localModel.getWindow().StopProgress();
+                        Cancel();
+                    }
+                },
+                this);
     }
 
     private void UpdateWipeAfterDelete(StorageType storageType, EntityModel wipeAfterDeleteModel, boolean isNew)
