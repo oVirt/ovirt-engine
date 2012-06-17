@@ -1282,18 +1282,18 @@ AS
 SELECT     object_id, ad_element_id
 FROM       permissions_view
 WHERE      object_type_id = 19
--- Or the user has permissions on the VM or template the disk is attached to
+-- Or the user has permissions on the VM the disk is attached to
 UNION ALL
-SELECT     device_id, ad_element_id
+SELECT     device_id, user_vm_permissions_view.user_id as ad_element_id
 FROM       vm_device
-INNER JOIN permissions_view ON object_id = vm_id AND object_type_id IN (2, 4) AND allows_viewing_children
--- Or the user has permission on the data center containing the vm/template
+INNER JOIN user_vm_permissions_view ON user_vm_permissions_view.entity_id = vm_device.vm_id
+WHERE      vm_device.type = 'disk' and vm_device.device = 'disk'
+-- Or the user has permissions on the template the disk is attached to
 UNION ALL
-SELECT     device_id, ad_element_id
+SELECT     device_id, user_vm_template_permissions_view.user_id as ad_element_id
 FROM       vm_device
-INNER JOIN vm_static ON vm_device.vm_id = vm_static.vm_guid
-INNER JOIN vds_groups on vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children
+INNER JOIN user_vm_template_permissions_view ON user_vm_template_permissions_view.entity_id = vm_device.vm_id
+WHERE      type = 'disk' and device = 'disk'
 -- Or the user has permissions on the storage domain containing the disk
 UNION ALL
 SELECT     image_id, ad_element_id
