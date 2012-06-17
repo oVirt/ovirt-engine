@@ -1760,14 +1760,14 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                ArrayList<DiskImage> list = new ArrayList<DiskImage>();
+                ArrayList<Disk> list = new ArrayList<Disk>();
                 if (source != null)
                 {
                     Iterable listEnumerable = (Iterable) source;
                     Iterator listIterator = listEnumerable.iterator();
                     while (listIterator.hasNext())
                     {
-                        list.add((DiskImage) listIterator.next());
+                        list.add((Disk) listIterator.next());
                     }
                 }
                 return list;
