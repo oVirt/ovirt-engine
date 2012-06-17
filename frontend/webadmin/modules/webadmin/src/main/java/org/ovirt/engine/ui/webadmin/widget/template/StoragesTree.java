@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -54,7 +54,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         addItemToPanel(panel, new Image(resources.storageImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), storage.getstorage_name(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<StorageDomainType>(), storage.getstorage_domain_type(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new EnumLabel<StorageDomainStatus>(), storage.getstatus(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<StorageDomainSharedStatus>(), storage.getstorage_domain_shared_status(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getavailable_disk_size(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getused_disk_size(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "90px"); //$NON-NLS-1$
