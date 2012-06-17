@@ -69,6 +69,7 @@ import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -569,7 +570,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            the type of the object to check
      * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
      */
-    protected boolean checkUserAuthorization(Guid userId, final ActionGroup actionGroup, final Guid object, final VdcObjectType type) {
+    protected boolean checkUserAuthorization(Guid userId,
+            final ActionGroup actionGroup,
+            final Guid object,
+            final VdcObjectType type) {
         // Grant if there is matching permission in the database:
         final NGuid permId =
                 getDbFacade().getEntityPermissions(userId, actionGroup, object, type);
@@ -610,7 +614,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            the type of the object to check
      * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
      */
-    protected boolean checkUserAndGroupsAuthorization(Guid userId, String groupIds, final ActionGroup actionGroup, final Guid object, final VdcObjectType type) {
+    protected boolean checkUserAndGroupsAuthorization(Guid userId,
+            String groupIds,
+            final ActionGroup actionGroup,
+            final Guid object,
+            final VdcObjectType type) {
         // Grant if there is matching permission in the database:
         final NGuid permId =
                 getDbFacade().getEntityPermissionsForUserAndGroups(userId, groupIds, actionGroup, object, type);
@@ -1154,7 +1162,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         Map<Guid, String> sharedLocks = getSharedLocks();
         if (exclusiveLocks != null || sharedLocks != null) {
             EngineLock lock = new EngineLock(exclusiveLocks, sharedLocks);
-            if (LockManagerFactory.getLockManager().acquireLock(lock)) {
+            if (getLockManager().acquireLock(lock)) {
                 log.infoFormat("Lock Acquired to object {0}", lock);
                 commandLock = lock;
             } else {
@@ -1168,10 +1176,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void freeLock() {
         if (commandLock != null) {
-            LockManagerFactory.getLockManager().releaseLock(commandLock);
+            getLockManager().releaseLock(commandLock);
             log.infoFormat("Lock freed to object {0}", commandLock);
             commandLock = null;
         }
+    }
+
+    protected LockManager getLockManager() {
+        return LockManagerFactory.getLockManager();
     }
 
     protected Map<Guid, String> getExclusiveLocks() {

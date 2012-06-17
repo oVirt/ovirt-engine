@@ -47,7 +47,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -119,33 +118,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
         returnValue = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
         if (returnValue && vm != null && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-                    getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
+                getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
         returnValue = returnValue
-                      && ImagesHandler.CheckImageConfiguration(
-                                getStorageDomain().getStorageStaticData(),
-                                (DiskImage) getParameters().getDiskInfo(),
-                                getReturnValue().getCanDoActionMessages())
-                                && (vm == null || isDiskPassPCIAndIDELimit(getParameters().getDiskInfo()));
-        List<DiskImage> emptyList = Collections.emptyList();
-        returnValue =
-                returnValue
-                        && (vm == null
-                        || ImagesHandler.PerformImagesChecks(vm,
-                                getReturnValue().getCanDoActionMessages(),
-                                vm.getstorage_pool_id(),
-                                getStorageDomainId().getValue(),
-                                false,
-                                false,
-                                false,
-                                false,
-                                true,
-                                false,
-                                false,
-                                true,
-                                emptyList));
+                && checkImageConfiguration()
+                && (vm == null || isDiskPassPCIAndIDELimit(getParameters().getDiskInfo()));
+        returnValue = returnValue && (vm == null || performImagesChecks(vm));
 
         if (returnValue && !hasFreeSpace(getStorageDomain())) {
             returnValue = false;
@@ -160,6 +140,30 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return returnValue;
     }
 
+    /** Checks if the iamge's configuration is legal */
+    protected boolean checkImageConfiguration() {
+        return ImagesHandler.CheckImageConfiguration(
+                getStorageDomain().getStorageStaticData(),
+                getDiskImageInfo(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    protected boolean performImagesChecks(VM vm) {
+        return ImagesHandler.PerformImagesChecks(vm,
+                getReturnValue().getCanDoActionMessages(),
+                vm.getstorage_pool_id(),
+                getStorageDomainId().getValue(),
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                true,
+                Collections.emptyList());
+    }
+
     private void setAllowSnapshotForDisk() {
         if (getParameters().getDiskInfo().isShareable()) {
             getParameters().getDiskInfo().setAllowSnapshot(false);
@@ -170,7 +174,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private long getRequestDiskSpace() {
         if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
-            return ((DiskImage) getParameters().getDiskInfo()).getSizeInGigabytes();
+            return getDiskImageInfo().getSizeInGigabytes();
         }
         return 0;
     }
@@ -181,11 +185,23 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private boolean hasFreeSpace(storage_domains storageDomain) {
-        if (((DiskImage)getParameters().getDiskInfo()).getvolume_type() == VolumeType.Preallocated) {
-            return StorageDomainSpaceChecker.hasSpaceForRequest(storageDomain, ((DiskImage)getParameters().getDiskInfo()).getSizeInGigabytes());
-        } else {
-            return StorageDomainSpaceChecker.isBelowThresholds(storageDomain);
+        if (getDiskImageInfo().getvolume_type() == VolumeType.Preallocated) {
+            return doesStorageDomainhaveSpaceForRequest(storageDomain);
         }
+        return isStorageDomainBelowThresholds(storageDomain);
+    }
+
+    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain) {
+        return StorageDomainSpaceChecker.hasSpaceForRequest(storageDomain, getDiskImageInfo().getSizeInGigabytes());
+    }
+
+    protected boolean isStorageDomainBelowThresholds(storage_domains storageDomain) {
+        return StorageDomainSpaceChecker.isBelowThresholds(storageDomain);
+    }
+
+    /** @return The disk from the parameters, cast to a {@link DiskImage} */
+    private DiskImage getDiskImageInfo() {
+        return (DiskImage) getParameters().getDiskInfo();
     }
 
     private boolean isExceedMaxBlockDiskSize() {
@@ -201,13 +217,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      */
     protected StorageDomainStaticDAO getStorageDomainStaticDao() {
         return DbFacade.getInstance().getStorageDomainStaticDAO();
-    }
-
-    /**
-     * @return The StorageDomainDAO
-     */
-    protected StorageDomainDAO getStorageDomainDao() {
-        return DbFacade.getInstance().getStorageDomainDAO();
     }
 
     protected SnapshotDao getSnapshotDao() {
@@ -226,7 +235,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      * @return The ID of the storage domain where the VM's disks reside.
      */
     private Guid getDisksStorageDomainId() {
-        return ((DiskImage)getVm().getDiskMap().values().iterator().next()).getstorage_ids().get(0);
+        return ((DiskImage) getVm().getDiskMap().values().iterator().next()).getstorage_ids().get(0);
     }
 
     @Override
@@ -237,9 +246,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getVm().getDiskMap() != null &&
                 !getVm().getDiskMap().isEmpty()) {
             return getDisksStorageDomainId();
-        } else {
-            return storageDomainId == null ? Guid.Empty : storageDomainId;
         }
+
+        return storageDomainId == null ? Guid.Empty : storageDomainId;
     }
 
     @Override
@@ -247,7 +256,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
             // Set default quota id if storage pool enforcement is disabled.
             getParameters().setQuotaId(QuotaHelper.getInstance()
-                    .getQuotaIdToConsume(((DiskImage) getParameters().getDiskInfo()).getQuotaId(),
+                    .getQuotaIdToConsume(getDiskImageInfo().getQuotaId(),
                             getStoragePool()));
 
             return (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
@@ -322,7 +331,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         AddImageFromScratchParameters parameters =
                 new AddImageFromScratchParameters(Guid.Empty,
                         getParameters().getVmId(),
-                        (DiskImage) getParameters().getDiskInfo());
+                        getDiskImageInfo());
         parameters.setQuotaId(getParameters().getQuotaId());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
         parameters.setParentCommand(VdcActionType.AddDisk);

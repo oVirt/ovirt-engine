@@ -80,8 +80,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
 
     protected boolean isDiskCanBeAddedToVm(Disk diskInfo) {
         boolean returnValue = true;
-        // update disks from db
-        VmHandler.updateDisksFromDb(getVm());
+        updateDisksFromDb();
         if (returnValue && diskInfo.isBoot()) {
             for (Disk disk : getVm().getDiskMap().values()) {
                 if (disk.isBoot()) {
@@ -94,6 +93,11 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             }
         }
         return returnValue;
+    }
+
+    /** Update's the VM's disks from the database */
+    protected void updateDisksFromDb() {
+        VmHandler.updateDisksFromDb(getVm());
     }
 
     protected boolean isVersionSupportedForShareable(Disk disk, String compVersion) {

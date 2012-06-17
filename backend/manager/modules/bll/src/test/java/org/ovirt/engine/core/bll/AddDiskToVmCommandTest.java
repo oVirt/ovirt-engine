@@ -3,56 +3,56 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ VmHandler.class, ImagesHandler.class, StorageDomainSpaceChecker.class, Config.class,
-        AsyncTaskManager.class, SchedulerUtilQuartzImpl.class })
-@Ignore
+@RunWith(MockitoJUnitRunner.class)
 public class AddDiskToVmCommandTest {
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MaxBlockDiskSize, Integer.MAX_VALUE),
+            mockConfig(ConfigValues.FreeSpaceLow, 10),
+            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, 5)
+            );
+
     @Mock
     private StorageDomainDAO storageDomainDAO;
 
@@ -69,53 +69,12 @@ public class AddDiskToVmCommandTest {
     private VmDAO vmDAO;
 
     @Mock
-    private AsyncTaskManager asyncTaskManager;
+    private StoragePoolDAO storagePoolDAO;
 
     /**
      * The command under test.
      */
-    protected AddDiskCommand<AddDiskParameters> command;
-
-    @SuppressWarnings("unchecked")
-    @Before
-    public void setUp() {
-        mockStatic(SchedulerUtilQuartzImpl.class);
-        SchedulerUtilQuartzImpl scheduler = mock(SchedulerUtilQuartzImpl.class);
-        when(SchedulerUtilQuartzImpl.getInstance()).thenReturn(scheduler);
-        mockStatic(Config.class);
-        when(Config.GetValue(ConfigValues.AsyncTaskPollingRate)).thenReturn(Integer.MAX_VALUE);
-        when(Config.GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds)).
-                thenReturn(Integer.MAX_VALUE);
-        when(Config.GetValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes)).
-                thenReturn(Integer.MAX_VALUE);
-        mockStatic(AsyncTaskManager.class);
-        MockitoAnnotations.initMocks(this);
-        mockStatic(VmHandler.class);
-        mockStatic(ImagesHandler.class);
-        when(ImagesHandler.CheckImageConfiguration(
-                any(storage_domain_static.class), any(DiskImageBase.class), any(ArrayList.class))).thenReturn(true);
-        when(ImagesHandler.PerformImagesChecks(
-                any(VM.class),
-                any(ArrayList.class),
-                any(Guid.class),
-                any(Guid.class),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(), anyBoolean(), any(ArrayList.class))).thenReturn(true);
-        mockStatic(StorageDomainSpaceChecker.class);
-        when(StorageDomainSpaceChecker.isBelowThresholds(any(storage_domains.class))).thenReturn(true);
-        when(Config.GetValue(ConfigValues.MaxBlockDiskSize)).thenReturn(Integer.MAX_VALUE);
-        when(AsyncTaskManager.getInstance()).thenReturn(asyncTaskManager);
-        when(asyncTaskManager.EntityHasTasks(any(Guid.class))).thenReturn(false);
-        final int defaultFreeSpaceLow = 10;
-        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceLow)).thenReturn(defaultFreeSpaceLow);
-        final int defaultFreeSpaceGB = 5;
-        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB)).thenReturn(defaultFreeSpaceGB);
-    }
+    private AddDiskCommand<AddDiskParameters> command;
 
     @Test
     public void canDoActionSucceedsOnDiskDomainCheckWhenNoDisks() throws Exception {
@@ -123,7 +82,6 @@ public class AddDiskToVmCommandTest {
         initializeCommand(storageId);
 
         mockVm();
-        mockVmNetworks();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
 
@@ -136,7 +94,6 @@ public class AddDiskToVmCommandTest {
         Guid storageId = Guid.NewGuid();
 
         mockVmWithDisk(storageId);
-        mockVmNetworks();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
 
@@ -149,7 +106,6 @@ public class AddDiskToVmCommandTest {
         initializeCommand(storageId);
 
         mockVmWithDisk(storageId);
-        mockVmNetworks();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
 
@@ -162,31 +118,16 @@ public class AddDiskToVmCommandTest {
         initializeCommand(storageId);
 
         mockVmWithDisk(Guid.NewGuid());
-        mockVmNetworks();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
-        doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDao();
 
         assertTrue(command.canDoAction());
     }
 
     @Test
-    public void canDoActionFailsOnNullDiskType() throws Exception {
-        Guid storageId = Guid.NewGuid();
-        DiskImageBase image = new DiskImageBase();
-        image.setDiskInterface(DiskInterface.IDE);
-        image.setvolume_type(VolumeType.Preallocated);
-        image.setvolume_format(VolumeFormat.COW);
-        AddDiskParameters params = new AddDiskParameters(Guid.NewGuid(), image);
-        initializeCommand(storageId, params);
-        assertFalse(command.validateInputs());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VALIDATION.DISK_TYPE.NOT_NULL"));
-    }
-
-    @Test
     public void canDoActionFailsOnNullDiskInterface() throws Exception {
         Guid storageId = Guid.NewGuid();
-        DiskImageBase image = new DiskImageBase();
+        DiskImage image = new DiskImage();
         image.setvolume_format(VolumeFormat.COW);
         image.setvolume_type(VolumeType.Preallocated);
         AddDiskParameters params = new AddDiskParameters(Guid.NewGuid(), image);
@@ -203,7 +144,6 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
-        mockVmNetworks();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
         mockStorageDomainSpaceChecker(domains, true);
@@ -219,7 +159,6 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
-        mockVmNetworks();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
         mockStorageDomainSpaceChecker(domains, false);
@@ -238,7 +177,6 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
-        mockVmNetworks();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
         mockStorageDomainSpaceChecker(domains, false);
@@ -257,7 +195,6 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
-        mockVmNetworks();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
         mockStorageDomainSpaceCheckerRequest(domains, true);
@@ -272,7 +209,6 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
-        mockVmNetworks();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
         mockStorageDomainSpaceCheckerRequest(domains, false);
@@ -291,7 +227,6 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
-        mockVmNetworks();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
         mockStorageDomainSpaceCheckerRequest(domains, false);
@@ -316,9 +251,9 @@ public class AddDiskToVmCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setStorageDomainId(storageId);
         if (volumeType == VolumeType.Preallocated) {
-            parameters.setDiskInfo(createPreallocDiskImageBase());
+            parameters.setDiskInfo(createPreallocDiskImage());
         } else if (volumeType == VolumeType.Sparse) {
-            parameters.setDiskInfo(createSparseDiskImageBase());
+            parameters.setDiskInfo(createSparseDiskImage());
         }
         initializeCommand(storageId, parameters);
     }
@@ -326,6 +261,17 @@ public class AddDiskToVmCommandTest {
     private void initializeCommand(Guid storageId, AddDiskParameters params) {
         params.setStorageDomainId(storageId);
         command = spy(new AddDiskCommand<AddDiskParameters>(params));
+        doReturn(true).when(command).acquireLockInternal();
+        doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
+        doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
+        doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDao();
+        doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
+        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDAO();
+        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        doNothing().when(command).updateDisksFromDb();
+        doReturn(true).when(command).checkImageConfiguration();
+        doReturn(true).when(command).performImagesChecks(any(VM.class));
+        doReturn(true).when(command).isStorageDomainBelowThresholds(any(storage_domains.class));
     }
 
     /**
@@ -345,7 +291,6 @@ public class AddDiskToVmCommandTest {
      */
     private void mockStoragePoolIsoMap() {
         storage_pool_iso_map spim = new storage_pool_iso_map();
-        doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
         when(storagePoolIsoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(spim);
     }
 
@@ -356,17 +301,9 @@ public class AddDiskToVmCommandTest {
         VM vm = new VM();
         vm.setstatus(VMStatus.Down);
         vm.setstorage_pool_id(Guid.NewGuid());
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
-    }
-
-    /**
-     * Mock the VM networks (none).
-     */
-    private void mockVmNetworks() {
-        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDAO();
     }
 
     /**
@@ -380,53 +317,64 @@ public class AddDiskToVmCommandTest {
     }
 
     private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize) {
+        Guid storagePoolId = Guid.NewGuid();
+        storage_pool sp = new storage_pool();
+        sp.setId(storagePoolId);
+        when(storagePoolDAO.get(storagePoolId)).thenReturn(sp);
+
         storage_domains sd = new storage_domains();
         sd.setavailable_disk_size(availableSize);
         sd.setused_disk_size(usedSize);
-        doReturn(storageDomainDAO).when(command).getStorageDomainDao();
+        sd.setstorage_pool_id(storagePoolId);
+        sd.setstatus(StorageDomainStatus.Active);
         when(storageDomainDAO.get(storageId)).thenReturn(sd);
+        when(storageDomainDAO.getAllForStorageDomain(storageId)).thenReturn(Collections.singletonList(sd));
+        when(storageDomainDAO.getForStoragePool(storageId, storagePoolId)).thenReturn(sd);
+
         return sd;
     }
 
     /**
-     * Run the canDoAction and assert that it succeeds, while printing the messages (for easier debug if test fails).
+     * Run the canDoAction and assert that it succeeds
      */
     private void runAndAssertCanDoActionSuccess() {
         boolean canDoAction = command.canDoAction();
-        System.out.println(command.getReturnValue().getCanDoActionMessages());
+        log.info(command.getReturnValue().getCanDoActionMessages());
         assertTrue(canDoAction);
     }
 
     /**
      * @return Valid parameters for the command.
      */
-    private AddDiskParameters createParameters() {
-        DiskImageBase image = new DiskImageBase();
+    private static AddDiskParameters createParameters() {
+        DiskImage image = new DiskImage();
         image.setDiskInterface(DiskInterface.IDE);
         AddDiskParameters parameters = new AddDiskParameters(Guid.NewGuid(), image);
         return parameters;
     }
 
-    private DiskImageBase createSparseDiskImageBase() {
-        DiskImageBase base = new DiskImageBase();
-        base.setvolume_type(VolumeType.Sparse);
-        base.setDiskInterface(DiskInterface.IDE);
-        return base;
+    private static DiskImage createSparseDiskImage() {
+        DiskImage image = new DiskImage();
+        image.setvolume_type(VolumeType.Sparse);
+        image.setDiskInterface(DiskInterface.IDE);
+        return image;
     }
 
-    private DiskImageBase createPreallocDiskImageBase() {
-        DiskImageBase base = new DiskImageBase();
-        base.setvolume_type(VolumeType.Preallocated);
-        base.setDiskInterface(DiskInterface.IDE);
-        base.setSizeInGigabytes(5);
-        return base;
+    private static DiskImage createPreallocDiskImage() {
+        DiskImage image = new DiskImage();
+        image.setvolume_type(VolumeType.Preallocated);
+        image.setDiskInterface(DiskInterface.IDE);
+        image.setSizeInGigabytes(5);
+        return image;
     }
 
     private void mockStorageDomainSpaceChecker(storage_domains domain, boolean succeeded) {
-        when(StorageDomainSpaceChecker.isBelowThresholds(domain)).thenReturn(succeeded);
+        doReturn(succeeded).when(command).isStorageDomainBelowThresholds(domain);
     }
 
     private void mockStorageDomainSpaceCheckerRequest(storage_domains domain, boolean succeeded) {
-        when(StorageDomainSpaceChecker.hasSpaceForRequest(eq(domain), anyInt())).thenReturn(succeeded);
+        doReturn(succeeded).when(command).doesStorageDomainhaveSpaceForRequest(domain);
     }
+
+    private static final Log log = LogFactory.getLog(AddDiskToVmCommandTest.class);
 }
