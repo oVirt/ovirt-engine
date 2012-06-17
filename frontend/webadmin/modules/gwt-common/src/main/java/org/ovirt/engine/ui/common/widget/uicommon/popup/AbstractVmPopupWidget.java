@@ -165,9 +165,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     protected Label prestartedVmsHintLabel;
 
-    // ==Windows Prep Tab==
+    // ==Initial run Tab==
     @UiField
-    protected DialogTab windowsSysPrepTab;
+    protected DialogTab initialRunTab;
 
     @UiField(provided = true)
     @Path(value = "domain.selectedItem")
@@ -364,8 +364,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         applyStyles();
 
-        // Default is false
-        windowsSysPrepTab.setVisible(false);
         poolTab.setVisible(false);
 
         localize(constants);
@@ -510,8 +508,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         numOfDesktopsEditor.setLabel("+"); //$NON-NLS-1$
         prestartedVmsEditor.setLabel(constants.prestartedPoolPopup());
 
-        // Windows Sysprep Tab
-        windowsSysPrepTab.setLabel(constants.windowsSysprepVmPopup());
+        // initial run Tab
+        initialRunTab.setLabel(constants.initialRunVmPopup());
         domainEditor.setLabel(constants.domainVmPopup());
         timeZoneEditor.setLabel(constants.tzVmPopup());
 
@@ -698,11 +696,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
                 if ("IsWindowsOS".equals(propName)) { //$NON-NLS-1$
-                    if (vm.getIsWindowsOS()) {
-                        windowsSysPrepTab.setVisible(true);
-                    } else {
-                        windowsSysPrepTab.setVisible(false);
-                    }
+                    domainEditor.setEnabled(vm.getIsWindowsOS());
                 } else if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsGeneralTabValid()) {
                         generalTab.markAsValid();

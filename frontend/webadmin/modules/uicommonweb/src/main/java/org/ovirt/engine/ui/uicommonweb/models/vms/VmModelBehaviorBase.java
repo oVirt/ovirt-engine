@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -137,11 +138,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    private Iterable<Map.Entry<String, String>> cachedTimeZones;
+    private List<Iterable<Entry<String, String>>> cachedTimeZones = Arrays.asList(null, null);
+
+    final int windowsTimezones = 0;
+    final int generalTimezones = 1;
 
     protected void UpdateTimeZone()
     {
-        if (cachedTimeZones == null)
+        final int index = getModel().getIsWindowsOS() ? windowsTimezones : generalTimezones;
+
+        if (cachedTimeZones.get(index) == null)
         {
             AsyncDataProvider.GetTimeZoneList(new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -149,7 +155,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         public void OnSuccess(Object target, Object returnValue) {
 
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                            cachedTimeZones = ((HashMap<String, String>) returnValue).entrySet();
+                            cachedTimeZones.set(index, ((HashMap<String, String>) returnValue).entrySet());
                             behavior.PostUpdateTimeZone();
 
                         }
@@ -164,18 +170,22 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void PostUpdateTimeZone()
     {
         // If there was some time zone selected before, try select it again.
-        String oldTimeZoneKey =
-                ((Map.Entry<String, String>) getModel().getTimeZone().getSelectedItem()).getKey();
+        Object selectedItem = getModel().getTimeZone().getSelectedItem();
+        String oldTimeZoneKey = selectedItem == null ? null : ((Map.Entry<String, String>) selectedItem).getKey();
 
-        getModel().getTimeZone().setItems(cachedTimeZones);
+        final int index = getModel().getIsWindowsOS() ? windowsTimezones : generalTimezones;
+
+        getModel().getTimeZone().setItems(cachedTimeZones.get(index));
+
         if (oldTimeZoneKey != null)
         {
-            getModel().getTimeZone().setSelectedItem(Linq.FirstOrDefault(cachedTimeZones,
+            getModel().getTimeZone()
+                    .setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(index),
                     new Linq.TimeZonePredicate(oldTimeZoneKey)));
         }
         else
         {
-            getModel().getTimeZone().setSelectedItem(null);
+            getModel().getTimeZone().setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(index)));
         }
     }
 

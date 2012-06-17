@@ -186,11 +186,13 @@
 			</t:DialogTab>
 		</t:tab>
 		<t:tab>
-			<t:DialogTab ui:field="windowsSysPrepTab">
+		       <t:DialogTab ui:field="initialRunTab">
 				<t:content>
 					<g:FlowPanel>
+				      	        <g:Label addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />
+					        <e:ListModelListBoxEditor ui:field="timeZoneEditor" />
+						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.initialRunWindows}" />
 						<e:ListModelListBoxEditor ui:field="domainEditor" />
-						<e:ListModelListBoxEditor ui:field="timeZoneEditor" />
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

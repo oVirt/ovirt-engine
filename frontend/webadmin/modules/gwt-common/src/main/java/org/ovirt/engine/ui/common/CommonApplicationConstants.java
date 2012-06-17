@@ -88,8 +88,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Attach CD")
     String runOncePopupAttachIsoLabel();
 
-    @DefaultStringValue("Windows Sysprep")
-    String runOncePopupWindowsSysprepLabel();
+    @DefaultStringValue("Initial Run")
+    String runOncePopupInitialRunLabel();
 
     @DefaultStringValue("Domain")
     String runOncePopupSysPrepDomainNameLabel();
@@ -304,8 +304,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Pool Type")
     String poolTypeVmPopup();
 
-    @DefaultStringValue("Windows Sysprep")
-    String windowsSysprepVmPopup();
+    @DefaultStringValue("Initial Run")
+    String initialRunVmPopup();
 
     @DefaultStringValue("Domain")
     String domainVmPopup();
@@ -919,4 +919,11 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Advanced Parameters")
     String advancedParameters();
+
+    @DefaultStringValue("General")
+    String initialRunGeneral();
+
+    @DefaultStringValue("Windows")
+    String initialRunWindows();
+
 }

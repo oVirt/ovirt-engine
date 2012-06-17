@@ -1063,6 +1063,19 @@ public class UnitVmModel extends Model {
         setCpuPinning(new EntityModel());
         getCpuPinning().setEntity("");
         getCpuPinning().setIsAvailable(false);
+
+        initTimeZones();
+    }
+
+    private void initTimeZones() {
+        getOSType().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getBehavior().UpdateTimeZone();
+            }
+        });
+
     }
 
     public void Initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1454,10 +1467,8 @@ public class UnitVmModel extends Model {
         getKernel_parameters().setIsAvailable(getIsLinux_Unassign_UnknownOS());
 
         getDomain().setIsChangable(getIsWindowsOS());
-        getDomain().setIsAvailable(getIsWindowsOS());
+        getBehavior().UpdateTimeZone();
 
-        getTimeZone().setIsChangable(getIsWindowsOS());
-        getTimeZone().setIsAvailable(getIsWindowsOS());
     }
 
     private void FirstBootDevice_SelectedItemChanged(Object sender, EventArgs args)

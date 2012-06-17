@@ -35,7 +35,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     private void disableAllTabs() {
         generalTab.disableContent();
         poolTab.disableContent();
-        windowsSysPrepTab.disableContent();
+        initialRunTab.disableContent();
         consoleTab.disableContent();
         hostTab.disableContent();
         highAvailabilityTab.disableContent();

@@ -59,10 +59,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     Style style;
 
     @UiField
+    @Ignore
+    Label initialRunLabel;
+
+    @UiField
     VerticalPanel linuxBootOptionsPanel;
 
     @UiField
-    DisclosurePanel windowsSysprepPanel;
+    DisclosurePanel initialRunPanel;
 
     @UiField
     @Path(value = "floppyImage.selectedItem")
@@ -186,6 +190,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         kernelParamsEditor.setLabel(constants.runOncePopupKernelParamsLabel());
 
         // WindowsSysprep
+        initialRunLabel.setText(constants.runOncePopupInitialRunLabel());
         sysPrepDomainNameListBoxEditor.setLabel(constants.runOncePopupSysPrepDomainNameLabel());
         useAlternateCredentialsEditor.setLabel(constants.runOnceUseAlternateCredentialsLabel());
         sysPrepUserNameEditor.setLabel(constants.runOncePopupSysPrepUserNameLabel());
@@ -229,7 +234,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     void addStyles() {
         linuxBootOptionsPanel.setVisible(false);
-        windowsSysprepPanel.setVisible(false);
+        initialRunPanel.setVisible(true);
         attachFloppyEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
         attachIsoEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
         floppyImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
@@ -256,15 +261,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 linuxBootOptionsPanel.setVisible((Boolean) isLinuxOptionsAvailable.getEntity());
-            }
-        });
-
-        // Update Windows Sysprep options panel
-        final EntityModel isSysprepEnabled = object.getIsSysprepEnabled();
-        object.getIsSysprepEnabled().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                windowsSysprepPanel.setVisible((Boolean) isSysprepEnabled.getEntity());
             }
         });
 

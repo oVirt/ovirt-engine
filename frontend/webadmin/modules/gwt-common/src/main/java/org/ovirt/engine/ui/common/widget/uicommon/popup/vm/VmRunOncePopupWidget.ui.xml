@@ -39,12 +39,12 @@
 
 		.attachImageCheckbox {
 		}
-		
+
 		.attachImageSelectbox {
 			margin-left: 30px;
 		}
 
-		.attachImagePanel,.linuxBootOptionsPanel,.windowsSysprepPanel {
+		.attachImagePanel,.linuxBootOptionsPanel,.initialRunPanel {
 			margin-top: 5px;
 			width: 98%;
 		}
@@ -81,7 +81,7 @@
 		}
 
 		.bootSequenceButtonUp {
-			
+
 		}
 
 		.bootSequenceButtonDown {
@@ -150,9 +150,9 @@
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
-		<g:DisclosurePanel ui:field="windowsSysprepPanel" label="{constants.runOncePopupWindowsSysprepLabel}" addStyleNames="{style.panelStyle}">
-			<g:VerticalPanel addStyleNames="{style.windowsSysprepPanel}">
-				<g:Label ui:field="windowsSysprepLabel" addStyleNames="{style.extraOptionsPanel}" />
+                <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
+                        <g:VerticalPanel addStyleNames="{style.initialRunPanel}">
+				<g:Label ui:field="initialRunLabel" addStyleNames="{style.extraOptionsPanel}" />
 				<w:ComboBox ui:field="sysPrepDomainNameComboBox" />
 				<e:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
 				<e:EntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
