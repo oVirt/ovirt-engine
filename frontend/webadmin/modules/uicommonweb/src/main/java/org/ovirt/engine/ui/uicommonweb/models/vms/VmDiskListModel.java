@@ -675,7 +675,7 @@ public class VmDiskListModel extends SearchableListModel
         }
         else
         {
-            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getId(), (DiskImage) disk);
+            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk);
             actionType = VdcActionType.UpdateVmDisk;
         }
 

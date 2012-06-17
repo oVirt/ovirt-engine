@@ -309,7 +309,7 @@ public class DiskListModel extends ListWithDetailsModel
         }
         else
         {
-            parameters = new UpdateVmDiskParameters(Guid.Empty, disk.getId(), (DiskImage) disk);
+            parameters = new UpdateVmDiskParameters(Guid.Empty, disk.getId(), disk);
             actionType = VdcActionType.UpdateVmDisk;
         }
 
