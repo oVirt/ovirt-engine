@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -116,6 +120,16 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             logable.setVmId(vm.getId());
             AuditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
         }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = new HashMap<String, String>();
+            jobProperties.put(VdcObjectType.VDS.name().toLowerCase(),
+                    (getVdsName() == null) ? "" : getVdsName());
+        }
+        return jobProperties;
     }
 
     private static Log log = LogFactory.getLog(VdsNotRespondingTreatmentCommand.class);
