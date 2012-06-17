@@ -202,8 +202,11 @@ public class VmNetworkInterfaceValidationTest {
         return VALID_MAC_ADDRESS.replace(VALID_MAC_ADDRESS.charAt(random.nextInt(VALID_MAC_ADDRESS.length())), 'x');
     }
 
+    /**
+     * @return A MAC address that is at least 1 char long but shorter than a valid MAC address.
+     */
     private String createShortMacAddress() {
-        return VALID_MAC_ADDRESS.substring(0, random.nextInt(VALID_MAC_ADDRESS.length()));
+        return VALID_MAC_ADDRESS.substring(random.nextInt(VALID_MAC_ADDRESS.length() - 2) + 1);
     }
 
     private class TestParams extends VdcActionParametersBase {
