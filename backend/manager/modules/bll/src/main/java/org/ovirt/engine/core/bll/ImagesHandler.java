@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
@@ -21,6 +22,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -31,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -607,13 +611,13 @@ public final class ImagesHandler {
     }
 
     public static List<LunDisk> filterDiskBasedOnLuns(Collection<Disk> listOfDisks) {
-        List<LunDisk> diskImages = new ArrayList<LunDisk>();
+        List<LunDisk> lunDisks = new ArrayList<LunDisk>();
         for (Disk disk : listOfDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.LUN) {
-                diskImages.add((LunDisk) disk);
+                lunDisks.add((LunDisk) disk);
             }
         }
-        return diskImages;
+        return lunDisks;
     }
 
     public static void removeDiskImage(DiskImage diskImage) {
@@ -624,6 +628,26 @@ public final class ImagesHandler {
             log.error("Failed adding new disk image and related entities to db", ex);
             throw new VdcBLLException(VdcBllErrors.DB, ex);
         }
+    }
+
+    public static void removeLunDisk(LunDisk lunDisk) {
+        DbFacade.getInstance()
+                .getVmDeviceDAO()
+                .remove(new VmDeviceId(lunDisk.getId(),
+                        null));
+        LUNs lun = lunDisk.getLun();
+        DbFacade.getInstance()
+                .getDiskLunMapDao()
+                .remove(new DiskLunMapId(lunDisk.getId(), lun.getLUN_id()));
+        DbFacade.getInstance().getBaseDiskDao().remove(lunDisk.getId());
+
+        lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
+                .getStorageServerConnectionDAO()
+                .getAllForLun(lun.getLUN_id())));
+
+        StorageHelperDirector.getInstance().getItem(
+                lun.getLunConnections().get(0).getstorage_type()).removeLun(lun);
+
     }
 
     public static void removeImage(DiskImage diskImage) {

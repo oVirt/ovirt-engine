@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
@@ -23,16 +22,13 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -264,25 +260,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                if (disk.getVmEntityType() == VmEntityType.VM) {
-                    DbFacade.getInstance()
-                            .getVmDeviceDAO()
-                            .remove(new VmDeviceId(disk.getId(),
-                                    disk.getvm_guid()));
-                }
-                LUNs lun = ((LunDisk) disk).getLun();
-                DbFacade.getInstance()
-                        .getDiskLunMapDao()
-                        .remove(new DiskLunMapId(disk.getId(), lun.getLUN_id()));
-                DbFacade.getInstance().getBaseDiskDao().remove(disk.getId());
-
-                lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
-                        .getStorageServerConnectionDAO()
-                        .getAllForLun(lun.getLUN_id())));
-
-                StorageHelperDirector.getInstance().getItem(
-                        lun.getLunConnections().get(0).getstorage_type()).removeLun(lun);
-
+                ImagesHandler.removeLunDisk((LunDisk) disk);
                 return null;
             }
         });

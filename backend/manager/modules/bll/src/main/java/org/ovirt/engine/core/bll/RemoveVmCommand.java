@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -55,7 +56,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     private boolean removeVm() {
         VM vm = getVm();
         Guid vmId = getVmId();
-        hasImages = vm.getDiskMap().size() > 0;
+        hasImages = vm.getDiskList().size() > 0;
 
         RemoveVmInSpm(vm.getstorage_pool_id(), vmId);
         if (hasImages && !RemoveVmImages(null)) {
@@ -187,10 +188,23 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     protected void RemoveVmFromDb() {
+        removeLunDisks();
         RemoveVmUsers();
         RemoveVmNetwork();
         new SnapshotsManager().removeSnapshots(getVmId());
         RemoveVmStatic();
+    }
+
+    /**
+     * The following method will perform a removing of all lunDisks from vm.
+     * These is only DB operation
+     */
+    private void removeLunDisks() {
+        List<LunDisk> lunDisks =
+                ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values());
+        for (LunDisk lunDisk : lunDisks) {
+            ImagesHandler.removeLunDisk(lunDisk);
+        }
     }
 
     @Override
@@ -201,7 +215,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 // between ExecuteVmCommand (for example, of a first multiple VMs removal that includes VM A,
                 // and a second multiple VMs removal that include the same VM).
                 setVm(DbFacade.getInstance().getVmDAO().get(getVmId()));
+
                 if (getVm() != null) {
+                    VmHandler.updateDisksFromDb(getVm());
                     RemoveVmFromDb();
                 }
             }
