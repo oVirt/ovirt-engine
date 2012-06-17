@@ -271,7 +271,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             getQueryReturnValue().setIsSearchValid(true);
             if (useCache) {
                 // first lets check the cache of queries.
-                searchKey = String.format("%1$s,%2$s", searchText, getParameters().getMaxCount());
+                searchKey = String.format("%1$s,%2$s,%3$s", searchText, getParameters().getMaxCount(),getParameters().getCaseSensitive());
                 data = mQueriesCache.get(searchKey);
                 isExistsValue = (data != null);
 
