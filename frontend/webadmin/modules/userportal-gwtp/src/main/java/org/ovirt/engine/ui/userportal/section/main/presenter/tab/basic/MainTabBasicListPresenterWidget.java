@@ -54,14 +54,18 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
             addToSlot(TYPE_VmListContent, basicVmPresenterWidget);
         }
 
-        selectDefaul(modelProvider.getModel(), items);
+        selectDefault(modelProvider.getModel(), items);
     }
 
     /**
      * When there is nothing selected, selects the first. When there is something selected, does nothing.
      */
-    private void selectDefaul(UserPortalBasicListModel model, List<UserPortalItemModel> items) {
+    private void selectDefault(UserPortalBasicListModel model, List<UserPortalItemModel> items) {
         if (model.getSelectedItem() != null) {
+            return;
+        }
+
+        if (items == null || items.size() == 0) {
             return;
         }
 
