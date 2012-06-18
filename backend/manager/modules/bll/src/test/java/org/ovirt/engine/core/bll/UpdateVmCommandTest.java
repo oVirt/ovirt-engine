@@ -153,7 +153,7 @@ public class UpdateVmCommandTest {
         vmStatic.setdedicated_vm_for_vds(Guid.NewGuid());
 
         assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_DEFAULT_VDS_NOT_VALID);
+        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
     }
 
     @Test
@@ -167,7 +167,7 @@ public class UpdateVmCommandTest {
         vmStatic.setdedicated_vm_for_vds(Guid.NewGuid());
 
         assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_DEFAULT_VDS_NOT_VALID);
+        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
     }
 
     @Test
@@ -206,6 +206,15 @@ public class UpdateVmCommandTest {
         vmStatic.setIsQuotaDefault(false);
 
         assertTrue("Quota default should be updatable", command.areUpdatedFieldsLegal());
+    }
+
+    @Test
+    public void testChangeClusterForbidden() {
+        prepareVmToPassCanDoAction();
+        vmStatic.setvds_group_id(Guid.NewGuid());
+
+        assertFalse("canDoAction should have failed with cant change cluster.", command.canDoAction());
+        assertCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);
     }
 
     private void prepareVmToPassCanDoAction() {
