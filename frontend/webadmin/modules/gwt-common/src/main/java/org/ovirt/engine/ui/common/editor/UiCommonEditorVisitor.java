@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.widget.HasAccess;
-import org.ovirt.engine.ui.common.widget.HasEnabled;
+import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
@@ -201,9 +201,12 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         }
     }
 
-    void onIsChangablePropertyChange(HasEnabled editor, EntityModel model) {
-        boolean isChangable = model.getIsChangable();
-        editor.setEnabled(isChangable, model.getChangeProhibitionReasons());
+    void onIsChangablePropertyChange(HasEnabledWithHints editor, EntityModel model) {
+        if (model.getIsChangable()) {
+            editor.setEnabled(true);
+        } else {
+            editor.disable(model.getChangeProhibitionReasons());
+        }
     }
 
     void onIsAvailablePropertyChange(HasAccess editor, EntityModel model) {

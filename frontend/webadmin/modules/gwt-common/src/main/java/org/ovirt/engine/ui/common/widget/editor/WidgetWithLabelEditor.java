@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasAccess;
-import org.ovirt.engine.ui.common.widget.HasEnabled;
+import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.Focusable;
  *
  */
 public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel<T, ?>>
-        extends OptionalFieldEditor<T, LeafValueEditor<T>> implements HasValidation, HasEnabled, HasAccess, HasAllKeyHandlers, Focusable {
+        extends OptionalFieldEditor<T, LeafValueEditor<T>> implements HasValidation, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, Focusable {
 
     public static <T, W extends AbstractValidatedWidgetWithLabel<T, ?>> WidgetWithLabelEditor<T, W> of(
             LeafValueEditor<T> subEditor, W widgetWithLabel) {
@@ -72,8 +72,8 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
     }
 
     @Override
-    public void setEnabled(boolean enabled, List<String> disabilityHints) {
-        widgetWithLabel.setEnabled(enabled, disabilityHints);
+    public void disable(List<String> disabilityHints) {
+        widgetWithLabel.disable(disabilityHints);
     }
 
     @Override

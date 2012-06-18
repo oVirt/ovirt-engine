@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
  *            Content widget type.
  */
 public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?>> extends AbstractValidatedWidget
-        implements HasLabel, HasEnabled, HasAccess, HasAllKeyHandlers, Focusable, HasElementId {
+        implements HasLabel, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, Focusable, HasElementId {
 
     interface WidgetUiBinder extends UiBinder<Widget, AbstractValidatedWidgetWithLabel<?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -187,9 +187,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     @Override
-    public void setEnabled(boolean enabled, List<String> disabilityHints) {
-        setEnabled(enabled);
-        updateWidgetTitle(enabled ? null : getDisabilityTitle(disabilityHints));
+    public void disable(List<String> disabilityHints) {
+        setEnabled(false);
+        updateWidgetTitle(getDisabilityTitle(disabilityHints));
     }
 
     private void updateWidgetTitle(String title) {
