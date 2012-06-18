@@ -1,18 +1,23 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumes;
+import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
@@ -22,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.IdQueryParameters;
@@ -81,6 +87,8 @@ public class BackendGlusterVolumesResource
 
         validateEnumParameters(volume);
 
+        validateAccessControl(volume);
+
         GlusterVolumeEntity volumeEntity = getMapper(GlusterVolume.class, GlusterVolumeEntity.class).map(volume, null);
         volumeEntity.setClusterId(asGuid(parent.get().getId()));
         mapBricks(volume, volumeEntity);
@@ -102,6 +110,34 @@ public class BackendGlusterVolumesResource
         if (volume.isSetAccessProtocols())
         {
             validateEnums(AccessProtocol.class, volume.getAccessProtocols().getAccessProtocols());
+        }
+    }
+
+    private void validateAccessControl(GlusterVolume volume) {
+        if (volume.isSetAccessControlList() && volume.getAccessControlList().isSetAccessControlList()
+                && volume.isSetOptions() && volume.getOptions().isSetOptions())
+        {
+            for (Option option : volume.getOptions().getOptions())
+            {
+                if (option.getName().equals(GlusterConstants.OPTION_AUTH_ALLOW))
+                {
+                    List<String> acList = volume.getAccessControlList().getAccessControlList();
+                    List<String> acOptionList = Arrays.asList(option.getValue().split(","));
+
+                    if (acList.size() == acOptionList.size() && acList.containsAll(acOptionList))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Fault fault = new Fault();
+                        fault.setReason(localize(Messages.DUPLICATE_ACCESS_CONTROL_GLUSTER_VOLUME_REASON));
+                        fault.setDetail(localize(Messages.DUPLICATE_ACCESS_CONTROL_GLUSTER_VOLUME_DETAIL));
+                        Response response = Response.status(Response.Status.BAD_REQUEST).entity(fault).build();
+                        throw new WebApplicationException(response);
+                    }
+                }
+            }
         }
     }
 
