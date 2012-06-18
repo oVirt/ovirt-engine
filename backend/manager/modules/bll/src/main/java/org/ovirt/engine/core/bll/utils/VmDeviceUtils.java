@@ -203,7 +203,7 @@ public class VmDeviceUtils {
      * @return The device that was added.
      */
     public static VmDevice addNetworkInterfaceDevice(VmDeviceId id, boolean plugged) {
-        return addManagedDevice(id, VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, null, plugged, false);
+        return addManagedDevice(id, VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, Collections.<String, Object> emptyMap(), plugged, false);
     }
 
 
