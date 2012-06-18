@@ -170,9 +170,11 @@ public class OvfVmReader extends OvfReader {
             _vm.getStaticData().setdomain(node.InnerText);
         }
         node = content.SelectSingleNode("CreationDate");
-        final Date creationDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
-        if (creationDate != null) {
-            _vm.getStaticData().setcreation_date(creationDate);
+        if (node != null) {
+            final Date creationDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
+            if (creationDate != null) {
+                _vm.getStaticData().setcreation_date(creationDate);
+            }
         }
         node = content.SelectSingleNode("ExportDate");
         if (node != null) {
