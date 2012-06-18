@@ -176,8 +176,6 @@ public class VmDiskListModel extends SearchableListModel
     public void setEntity(VM value)
     {
         super.setEntity(value);
-
-        UpdateIsDiskHotPlugAvailable();
     }
 
     @Override
@@ -191,6 +189,7 @@ public class VmDiskListModel extends SearchableListModel
         }
 
         UpdateActionAvailability();
+        UpdateIsDiskHotPlugAvailable();
     }
 
     @Override
