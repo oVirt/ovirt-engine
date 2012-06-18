@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.NGuid;
@@ -23,12 +22,12 @@ public class UserPortalTemplateListModel extends TemplateListModel
     @Override
     protected void SyncSearch()
     {
-        AsyncDataProvider.GetVmTemplatesWithPermittedAction(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.GetAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object returnValue) {
                 ((UserPortalTemplateListModel) model).setItems((Iterable) returnValue);
             }
-        }), ActionGroup.EDIT_TEMPLATE_PROPERTIES);
+        }));
     }
 
     @Override

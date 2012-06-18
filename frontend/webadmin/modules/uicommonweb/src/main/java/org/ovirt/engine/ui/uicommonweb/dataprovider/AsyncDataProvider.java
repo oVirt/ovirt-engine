@@ -1171,6 +1171,12 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void GetAllVmTemplates(AsyncQuery aQuery) {
+        aQuery.converterCallback = new TemplateConverter();
+        VdcQueryParametersBase params = new VdcQueryParametersBase();
+        Frontend.RunQuery(VdcQueryType.GetAllVmTemplates, params, aQuery);
+    }
+
     public static void IsUSBEnabledByDefault(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
