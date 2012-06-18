@@ -56,5 +56,5 @@ public interface AssignedRolesResource {
      * @return    matching subresource if found
      */
     @Path("{id}")
-    public AssignedRoleResource getRoleSubResource(@PathParam("id") String id);
+    public RoleResource getRoleSubResource(@PathParam("id") String id);
 }

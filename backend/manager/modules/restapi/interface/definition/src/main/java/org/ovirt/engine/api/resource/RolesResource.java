@@ -58,5 +58,5 @@ public interface RolesResource {
      * @return    matching subresource if found
      */
     @Path("{id}")
-    public RoleResource getRoleSubResource(@PathParam("id") String id);
+    public UpdatableRoleResource getRoleSubResource(@PathParam("id") String id);
 }

@@ -103,7 +103,7 @@ import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.api.resource.PermitsResource;
-import org.ovirt.engine.api.resource.RoleResource;
+import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
@@ -231,8 +231,8 @@ public class LinkHelper {
         map = new ParentToCollectionMap(PermitResource.class, PermitsResource.class, Role.class);
         TYPES.put(Permit.class, map);
 
-        map = new ParentToCollectionMap(RoleResource.class, RolesResource.class);
-        map.add(RoleResource.class, AssignedRolesResource.class, User.class);
+        map = new ParentToCollectionMap(UpdatableRoleResource.class, RolesResource.class);
+        map.add(UpdatableRoleResource.class, AssignedRolesResource.class, User.class);
         TYPES.put(Role.class, map);
 
         map = new ParentToCollectionMap(SnapshotResource.class, SnapshotsResource.class, VM.class);
