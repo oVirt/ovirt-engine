@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -12,8 +15,15 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     @Override
     public void edit(final UnitVmModel object) {
         super.edit(object);
-        disableAllTabs();
-        enableEditPoolFields();
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (object.getProgress() == null) { //$NON-NLS-1$
+                    disableAllTabs();
+                    enableEditPoolFields();
+                }
+            }
+        });
     }
 
     private void enableEditPoolFields() {

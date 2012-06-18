@@ -13,10 +13,11 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class KeyValueLineWidget extends Composite implements HasEditorDriver<KeyValueLineModel> {
+public class KeyValueLineWidget extends Composite implements HasEditorDriver<KeyValueLineModel>, HasEnabled {
 
     interface WidgetUiBinder extends UiBinder<Widget, KeyValueLineWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -25,6 +26,8 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
     interface Driver extends SimpleBeanEditorDriver<KeyValueLineModel, KeyValueLineWidget> {
         Driver driver = GWT.create(Driver.class);
     }
+
+    private boolean enabled = true;
 
     @UiField
     WidgetStyle style;
@@ -95,6 +98,23 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
 
     interface WidgetStyle extends CssResource {
         String fieldWidth();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        keyField.setEnabled(enabled);
+        valueField.setEnabled(enabled);
+        valuesField.setEnabled(enabled);
+        plusButton.setEnabled(enabled);
+        minusButton.setEnabled(enabled);
+
+        this.enabled = enabled;
+
     }
 
 }

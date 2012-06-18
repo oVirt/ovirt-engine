@@ -467,6 +467,7 @@ public class PoolListModel extends ListWithDetailsModel
 
                 PoolModel model = new PoolModel(behavior);
                 model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+                model.StartProgress("");
                 setWindow(model);
                 model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
                 model.setHashName("edit_pool"); //$NON-NLS-1$
