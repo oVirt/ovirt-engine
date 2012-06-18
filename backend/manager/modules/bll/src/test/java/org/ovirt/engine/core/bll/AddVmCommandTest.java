@@ -325,7 +325,7 @@ public class AddVmCommandTest {
     private <T extends VmManagementParametersBase> void initCommandMethods(AddVmCommand<T> cmd) {
         doReturn(Guid.NewGuid()).when(cmd).getStoragePoolId();
         doReturn(true).when(cmd).canAddVm(Matchers.<ArrayList> any(ArrayList.class),
-                anyInt(), anyString(), Matchers.<Guid> any(Guid.class), anyInt());
+                anyString(), Matchers.<Guid> any(Guid.class), anyInt());
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
     }
 

@@ -7,13 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
@@ -28,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -42,8 +42,8 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -142,7 +142,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean CanAddVm(ArrayList<String> reasons, Collection<storage_domains> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
-        boolean returnValue = canAddVm(reasons, 1, vmStaticFromParams.getvm_name(), getStoragePoolId()
+        boolean returnValue = canAddVm(reasons, vmStaticFromParams.getvm_name(), getStoragePoolId()
                 .getValue(), vmStaticFromParams.getpriority());
         // check that template image and vm are on the same storage pool
 
@@ -441,8 +441,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return true;
     }
 
-    protected boolean canAddVm(ArrayList<String> reasons, int vmsCount, String name,
-            Guid storagePoolId, int vmPriority) {
+    protected boolean canAddVm(ArrayList<String> reasons, String name, Guid storagePoolId,
+            int vmPriority) {
         boolean returnValue;
         // Checking if a desktop with same name already exists
         boolean exists = (Boolean) Backend.getInstance()
@@ -459,7 +459,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         boolean checkTemplateLock = getParameters().getParentCommand() == VdcActionType.AddVmPoolWithVms ? false : true;
 
-        returnValue = VmHandler.VerifyAddVm(reasons, vmsCount, getVmTemplate(), storagePoolId, vmPriority);
+        returnValue = VmHandler.VerifyAddVm(reasons,
+                getVmInterfaces().size(),
+                getVmTemplate(),
+                storagePoolId,
+                vmPriority);
 
         if (returnValue && !getParameters().getDontCheckTemplateImages()) {
             for (storage_domains storage : destStorages.values()) {

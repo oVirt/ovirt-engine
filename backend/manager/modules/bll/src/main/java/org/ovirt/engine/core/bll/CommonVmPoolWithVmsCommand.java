@@ -238,7 +238,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         if (!VmHandler.VerifyAddVm(getReturnValue().getCanDoActionMessages(),
-                getParameters().getVmsCount(),
+                getParameters().getVmsCount() * getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplateId()).size(),
                 getVmTemplate(),
                 grp.getstorage_pool_id().getValue(),
                 getParameters().getVmStaticData().getpriority())) {

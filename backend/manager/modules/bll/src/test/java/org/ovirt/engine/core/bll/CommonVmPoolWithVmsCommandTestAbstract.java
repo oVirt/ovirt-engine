@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -37,6 +39,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 
@@ -76,6 +79,9 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
 
     @Mock
     protected VmTemplateDAO vmTemplateDAO;
+
+    @Mock
+    protected VmNetworkInterfaceDAO vmNetworkInterfaceDao;
 
     @Mock
     protected StorageDomainDAO storageDomainDAO;
@@ -169,6 +175,12 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
     private void mockVMTemplateDAO() {
         when(dbFacada.getVmTemplateDAO()).thenReturn(vmTemplateDAO);
         when(vmTemplateDAO.get(vmTemplateId)).thenReturn(vmTemplate);
+    }
+
+    private void mockVmNetworkInterfaceDao() {
+        when(dbFacada.getVmNetworkInterfaceDAO()).thenReturn(vmNetworkInterfaceDao);
+        when(vmNetworkInterfaceDao.getAllForTemplate(vmTemplateId))
+                .thenReturn(Collections.<VmNetworkInterface> emptyList());
     }
 
     private void mockVdsGroupDAO() {
@@ -335,5 +347,6 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         mockVdsGroupDAO();
         mockVMPoolDAO();
         mockVMTemplateDAO();
+        mockVmNetworkInterfaceDao();
     }
 }

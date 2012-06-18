@@ -73,19 +73,19 @@ public class VmHandler {
      *
      * @param reasons
      *            The reasons.
-     * @param vmsCount
-     *            The VMS count.
+     * @param nicsCount
+     *            How many vNICs need to be allocated.
      * @param vmTemplate
      *            The vm template id.
      * @return
      */
     public static boolean VerifyAddVm(ArrayList<String> reasons,
-            int vmsCount,
+            int nicsCount,
             VmTemplate vmTemplate,
             Guid storagePoolId,
             int vmPriority) {
         boolean returnValue = true;
-        if (MacPoolManager.getInstance().getavailableMacsCount() < vmsCount) {
+        if (MacPoolManager.getInstance().getavailableMacsCount() < nicsCount) {
             if (reasons != null) {
                 reasons.add(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
             }
