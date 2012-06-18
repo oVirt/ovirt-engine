@@ -44,7 +44,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         retValue =
                 retValue && acquireLockInternal() && isVmExist() && isVmUpOrDown() && isDiskCanBeAddedToVm(disk)
                         && isDiskPassPCIAndIDELimit(disk);
-        if (retValue && (getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId())) && !disk.isShareable())) {
+        if (retValue && getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
         }
