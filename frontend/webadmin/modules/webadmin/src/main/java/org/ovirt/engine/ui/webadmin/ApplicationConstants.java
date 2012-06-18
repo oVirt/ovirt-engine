@@ -370,7 +370,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Root Password")
     String hostPopupRootPasswordLabel();
 
-    @DefaultStringValue("Override IP tables")
+    @DefaultStringValue("Automatically configure host firewall")
     String hostPopupOverrideIpTablesLabel();
 
     @DefaultStringValue("Enable Power Management")
@@ -433,7 +433,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("ISO Name")
     String hostInstallIsoLabel();
 
-    @DefaultStringValue("Override IP tables")
+    @DefaultStringValue("Automatically configure host firewall")
     String hostInstallOverrideIpTablesLabel();
 
     @DefaultStringValue("General")
