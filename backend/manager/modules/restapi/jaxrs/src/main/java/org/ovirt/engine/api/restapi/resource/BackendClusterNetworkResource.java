@@ -23,6 +23,11 @@ public class BackendClusterNetworkResource
     }
 
     @Override
+    public Network get() {
+        return super.get();
+    }
+
+    @Override
     public Network update(Network incoming) {
         Network oldNetwork = get();
         if (incoming.isSetDisplay() && (!oldNetwork.isSetDisplay() || (oldNetwork.isDisplay() != incoming.isDisplay()))) {
