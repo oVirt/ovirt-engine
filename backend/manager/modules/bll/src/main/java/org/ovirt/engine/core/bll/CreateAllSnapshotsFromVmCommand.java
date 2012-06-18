@@ -213,7 +213,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void removeQuotaCommandLeftOver() {
-        if (!isInternalExecution()) {
+        if (!isInternalExecution() && getDisksList().size() > 0) {
             QuotaManager.removeStorageDeltaQuotaCommand(getQuotaId(),
                     getDisksList().get(0).getstorage_ids().get(0).getValue(),
                     getStoragePool().getQuotaEnforcementType(),
