@@ -18,6 +18,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
+import org.ovirt.engine.core.common.validation.annotation.ValidVdsGroup;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.compat.Version;
                                   name = "vdsgroup_with_running_vms",
                                   query = "from VDSGroup g where g.id = :vds_group_id and :vds_group_id in (select s.vds_group_id from VmStatic s, VmDynamic d where d.status not in (0, 13, 14) and d.id = s.id)")
               })
+@ValidVdsGroup(groups = { CreateEntity.class })
 public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<NGuid> {
 
 
@@ -377,4 +379,5 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         }
         return true;
     }
+
 }
