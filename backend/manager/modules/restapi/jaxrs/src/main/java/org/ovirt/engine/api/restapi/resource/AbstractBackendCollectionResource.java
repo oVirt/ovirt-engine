@@ -56,15 +56,13 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
 
     private SearchParameters getSearchParameters(SearchType searchType, String constraint) {
         SearchParameters searchParams = new SearchParameters(constraint, searchType);
-        HashMap<String, String> queryConstraints = QueryHelper.getQueryConstraints(getUriInfo(),
-                                                                                   FROM_CONSTRAINT_PARAMETER);
-
         HashMap<String, String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(),
-                                                                                     CASE_SENSITIVE_CONSTRAINT_PARAMETER);
+                                                                                     CASE_SENSITIVE_CONSTRAINT_PARAMETER,
+                                                                                     FROM_CONSTRAINT_PARAMETER);
 
-        if (queryConstraints.containsKey(FROM_CONSTRAINT_PARAMETER)) {
+        if (matrixConstraints.containsKey(FROM_CONSTRAINT_PARAMETER)) {
             try {
-                searchParams.setSearchFrom(Long.parseLong(queryConstraints.get(FROM_CONSTRAINT_PARAMETER)));
+                searchParams.setSearchFrom(Long.parseLong(matrixConstraints.get(FROM_CONSTRAINT_PARAMETER)));
             } catch (Exception ex) {
                 LOG.error("Unwrapping of '"+FROM_CONSTRAINT_PARAMETER+"' search parameter failed.", ex);
             }
