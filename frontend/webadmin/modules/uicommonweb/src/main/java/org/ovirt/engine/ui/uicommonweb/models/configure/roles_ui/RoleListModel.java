@@ -26,11 +26,11 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
-import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -236,7 +236,7 @@ public class RoleListModel extends ListWithDetailsModel
                 for (roles item : (ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
                     // ignore CONSUME_QUOTA_ROLE in UI
-                    if (item.getId().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
+                    if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         continue;
                     }
                     if (roleListModel.getItemsFilter() == null || roleListModel.getItemsFilter() == item.getType())

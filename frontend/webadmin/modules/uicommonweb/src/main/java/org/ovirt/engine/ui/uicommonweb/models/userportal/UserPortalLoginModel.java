@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
@@ -92,10 +93,6 @@ public class UserPortalLoginModel extends LoginModel
             OnPropertyChanged(new PropertyChangedEventArgs("IsChangingPassword")); //$NON-NLS-1$
         }
     }
-
-    public static final String ENGINEUserRoleId = "00000000-0000-0000-0001-000000000001"; //$NON-NLS-1$
-    public Guid Everyone = new Guid("eee00000-0000-0000-0000-123456789eee"); //$NON-NLS-1$
-    public Guid UserTemplateBasedVM = new Guid("def00009-0000-0000-0000-def000000009"); //$NON-NLS-1$
 
     private VdcUser privateLoggedUser;
 
@@ -295,7 +292,7 @@ public class UserPortalLoginModel extends LoginModel
                         loginModel.GetUserRoles(loginModel);
 
                     }
-                }), new Guid(ENGINEUserRoleId));
+                }), ApplicationGuids.engineUser.asGuid());
     }
 
     // Get logged user's permissions and create a list of roles associated with the user (and proceed to Step3).
@@ -312,8 +309,11 @@ public class UserPortalLoginModel extends LoginModel
                         ArrayList<Guid> roleIdList = new ArrayList<Guid>();
                         for (permissions permission : permissions) {
 
-                            // ignore ALL Everyone/UserPoralBasedVM permissions
-                            if (isEveyoneUserPortalBasedVmPermission(permission)) {
+                            // ignore:
+                            // ALL Everyone/UserPoralBasedVM permissions and
+                            // ALL Everyone/QuotaConsumer persmissions
+                            if (isEveyoneUserPortalBasedVmPermission(permission)
+                                    || isEveryoneQuotaConsumerPermission(permission)) {
                                 continue;
                             }
                             if (!roleIdList.contains(permission.getrole_id()))
@@ -336,8 +336,16 @@ public class UserPortalLoginModel extends LoginModel
                     }
 
                     private boolean isEveyoneUserPortalBasedVmPermission(permissions permission) {
-                        return permission.getad_element_id().getValue().equals(Everyone)
-                                && permission.getrole_id().getValue().equals(UserTemplateBasedVM);
+                        return permission.getad_element_id().getValue().equals(ApplicationGuids.everyone.asGuid())
+                                &&
+                                permission.getrole_id()
+                                        .getValue()
+                                        .equals(ApplicationGuids.userTemplateBasedVM.asGuid());
+                    }
+
+                    private boolean isEveryoneQuotaConsumerPermission(permissions permission) {
+                        return permission.getad_element_id().getValue().equals(ApplicationGuids.everyone.asGuid()) &&
+                                permission.getrole_id().getValue().equals(ApplicationGuids.quotaConsumer.asGuid());
                     }
                 }), loginModel.getLoggedUser().getUserId());
     }

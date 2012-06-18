@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.AddUserParameters;
@@ -35,15 +39,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-@SuppressWarnings("unused")
 public class UserListModel extends ListWithDetailsModel
 {
-    public static Guid EveryoneUserId = new Guid("eee00000-0000-0000-0000-123456789eee"); //$NON-NLS-1$
-
     private UICommand privateAddCommand;
 
     public UICommand getAddCommand()

@@ -21,13 +21,12 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
 
-@SuppressWarnings("unused")
 public class AdElementListModel extends SearchableListModel
 {
 
@@ -180,7 +179,7 @@ public class AdElementListModel extends SearchableListModel
                         ArrayList<roles> newRoles = new ArrayList<roles>();
                         for (roles r : roles) {
                             // ignore CONSUME_QUOTA_ROLE in UI
-                            if (!r.getId().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
+                            if (!r.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                                 newRoles.add(r);
                             }
                         }
@@ -191,7 +190,7 @@ public class AdElementListModel extends SearchableListModel
                                 roleValue = r;
                                 first = false;
                             }
-                            if (r.getId() != null && r.getId().equals(new Guid("00000000-0000-0000-0001-000000000001"))) //$NON-NLS-1$
+                            if (r.getId() != null && r.getId().equals(ApplicationGuids.engineUser.asGuid())) //$NON-NLS-1$
                             {
                                 roleValue = r;
                                 break;

@@ -16,9 +16,9 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -97,7 +97,7 @@ public class UserPermissionListModel extends SearchableListModel
                         (ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<permissions> newList = new ArrayList<permissions>();
                 for (permissions permission : list) {
-                    if (!permission.getrole_id().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
+                    if (!permission.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         newList.add(permission);
                     }
                 }

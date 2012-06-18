@@ -52,14 +52,19 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     protected void onBind() {
         super.onBind();
 
-        getView().setMainTabPanelVisible(userRole.isExtendedUser());
-
         registerHandler(getView().getAboutLink().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopup);
             }
         }));
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+
+        getView().setMainTabPanelVisible(userRole.isExtendedUser());
     }
 
 }

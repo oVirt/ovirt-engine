@@ -23,11 +23,11 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
-import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -87,8 +87,8 @@ public class QuotaUserListModel extends SearchableListModel {
                 Map<Guid, permissions> map = new HashMap<Guid, permissions>();
                 for (permissions permission : list) {
                     //filter out sys-admin and dc admin from consumers sub-tab
-                    if (permission.getrole_id().equals(QuotaPermissionListModel.SUPER_USER)
-                            || permission.getrole_id().equals(QuotaPermissionListModel.DATA_CENTER_ADMIN)) {
+                    if (permission.getrole_id().equals(ApplicationGuids.superUser.asGuid())
+                            || permission.getrole_id().equals(ApplicationGuids.dataCenterAdmin.asGuid())) {
                         continue;
                     }
                     if (!map.containsKey(permission.getad_element_id())) {
@@ -96,7 +96,7 @@ public class QuotaUserListModel extends SearchableListModel {
                     } else {
                         if (map.get(permission.getad_element_id())
                                 .getrole_id()
-                                .equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
+                                .equals(ApplicationGuids.quotaConsumer.asGuid())) {
                             map.put(permission.getad_element_id(), permission);
                         }
                     }
@@ -148,7 +148,7 @@ public class QuotaUserListModel extends SearchableListModel {
             removeExe = true;
         }
         for (permissions perm : items) {
-            if (!perm.getrole_id().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
+            if (!perm.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                 removeExe = false;
                 break;
             }
@@ -232,7 +232,7 @@ public class QuotaUserListModel extends SearchableListModel {
         if (model.getIsEveryoneSelected())
         {
             DbUser tempVar = new DbUser();
-            tempVar.setuser_id(UserListModel.EveryoneUserId);
+            tempVar.setuser_id(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
         }
         else {
@@ -254,7 +254,7 @@ public class QuotaUserListModel extends SearchableListModel {
         {
             permissions tempVar2 = new permissions();
             tempVar2.setad_element_id(user.getuser_id());
-            tempVar2.setrole_id(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID);
+            tempVar2.setrole_id(ApplicationGuids.quotaConsumer.asGuid());
             permissions perm = tempVar2;
             perm.setObjectId(((Quota) getEntity()).getId());
             perm.setObjectType(VdcObjectType.Quota);

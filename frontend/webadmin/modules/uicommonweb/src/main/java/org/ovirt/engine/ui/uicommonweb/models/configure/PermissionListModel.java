@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -27,16 +29,14 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
-import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
 
 public class PermissionListModel extends SearchableListModel
 {
@@ -246,7 +246,7 @@ public class PermissionListModel extends SearchableListModel
         if (model.getIsEveryoneSelected())
         {
             DbUser tempVar = new DbUser();
-            tempVar.setuser_id(UserListModel.EveryoneUserId);
+            tempVar.setuser_id(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
         }
         else

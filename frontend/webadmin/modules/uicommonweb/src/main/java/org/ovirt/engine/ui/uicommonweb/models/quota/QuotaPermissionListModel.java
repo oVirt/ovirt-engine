@@ -6,19 +6,15 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class QuotaPermissionListModel extends PermissionListModel {
-
-    public static final Guid CONSUME_QUOTA_ROLE_ID = new Guid("DEF0000a-0000-0000-0000-DEF00000000a"); //$NON-NLS-1$
-    public static final Guid SUPER_USER = new Guid("00000000-0000-0000-0000-000000000001"); //$NON-NLS-1$
-    public static final Guid DATA_CENTER_ADMIN = new Guid("DEF00002-0000-0000-0000-DEF000000002"); //$NON-NLS-1$
 
     public QuotaPermissionListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
@@ -44,7 +40,7 @@ public class QuotaPermissionListModel extends PermissionListModel {
                         (ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<permissions> newList = new ArrayList<permissions>();
                 for (permissions permission : list) {
-                    if (!permission.getrole_id().equals(CONSUME_QUOTA_ROLE_ID)) {
+                    if (!permission.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         newList.add(permission);
                     }
                 }
