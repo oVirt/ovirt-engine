@@ -294,7 +294,6 @@ public class VolumeBrickModel extends Model {
 
         if (!validateBrickDirectory((String) brickDirectory.getEntity()))
         {
-            setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryMsg());
             return;
         }
 
@@ -331,15 +330,35 @@ public class VolumeBrickModel extends Model {
     }
 
     private boolean validateBrickDirectory(String brickDir) {
-        boolean valid = true;
 
-        if (brickDir.length() < 2 ||
-                !brickDir.startsWith("/") || brickDir.charAt(1) == '/' || brickDir.contains(" ")) //$NON-NLS-1$ //$NON-NLS-2$
+        if (brickDir.length() < 2)
         {
-            valid = false;
+            setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryAtleastTwoCharacterseMsg());
+            return false;
         }
 
-        return valid;
+        if(!brickDir.startsWith("/"))//$NON-NLS-1$
+        {
+            setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryStartWithSlashMsg());
+            return false;
+        }
+
+        if (brickDir.contains(" "))//$NON-NLS-1$
+        {
+            setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryContainsSpaceMsg());
+            return false;
+        }
+
+        if (brickDir.charAt(1) == '/'
+                || (brickDir.charAt(1) == '.' && brickDir.length() == 2)
+                || brickDir.charAt(1) == '*'
+                || (brickDir.length() == 3 && brickDir.charAt(1) == '.' && brickDir.charAt(2) == '.'))
+        {
+            setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryMsg());
+            return false;
+        }
+
+        return true;
     }
 
     private void clearBrickDetails()

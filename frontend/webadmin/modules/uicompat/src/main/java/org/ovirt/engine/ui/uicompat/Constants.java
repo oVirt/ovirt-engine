@@ -1308,6 +1308,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Invalid Brick Directory")
     String invalidBrickDirectoryMsg();
 
+    @DefaultStringValue("Brick Directory should start with '/'")
+    String invalidBrickDirectoryStartWithSlashMsg();
+
+    @DefaultStringValue("Brick Directory should not contain any space")
+    String invalidBrickDirectoryContainsSpaceMsg();
+
+    @DefaultStringValue("Brick Directory should be at least 2 characters")
+    String invalidBrickDirectoryAtleastTwoCharacterseMsg();
+
     @DefaultStringValue("Brick Directory field is mandatory")
     String emptyBrickDirectoryMsg();
 
