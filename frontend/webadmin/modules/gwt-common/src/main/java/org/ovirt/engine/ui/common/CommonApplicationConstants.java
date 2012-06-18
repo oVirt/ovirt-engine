@@ -49,10 +49,10 @@ public interface CommonApplicationConstants extends Constants {
 
     // Model-bound widgets
 
-    @DefaultStringValue("Boot Options:")
+    @DefaultStringValue("Boot Options")
     String runOncePopupBootOptionsLabel();
 
-    @DefaultStringValue("Display Protocol:")
+    @DefaultStringValue("Display Protocol")
     String runOncePopupDisplayProtocolLabel();
 
     @DefaultStringValue("Custom Properties")
@@ -70,7 +70,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Start in Pause Mode")
     String runOncePopupRunAndPauseLabel();
 
-    @DefaultStringValue("Linux Boot Options:")
+    @DefaultStringValue("Linux Boot Options")
     String runOncePopupLinuxBootOptionsLabel();
 
     @DefaultStringValue("kernel path")
@@ -88,7 +88,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Attach CD")
     String runOncePopupAttachIsoLabel();
 
-    @DefaultStringValue("Windows Sysprep:")
+    @DefaultStringValue("Windows Sysprep")
     String runOncePopupWindowsSysprepLabel();
 
     @DefaultStringValue("Domain")

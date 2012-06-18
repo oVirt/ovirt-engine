@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -25,10 +26,12 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -48,32 +51,18 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         String attachImageCheckBoxLabel();
 
         String attachImageSelectBoxLabel();
+
+        String attachImageSelectbox();
     }
 
     @UiField
     Style style;
 
     @UiField
-    @Ignore
-    Label bootOptionsLabel;
-
-    @UiField
-    @Ignore
-    Label displayProtocolLabel;
-
-    @UiField
-    @Ignore
-    Label linuxBootOptionsLabel;
-
-    @UiField
-    @Ignore
-    Label windowsSysprepLabel;
-
-    @UiField
     VerticalPanel linuxBootOptionsPanel;
 
     @UiField
-    VerticalPanel windowsSysprepPanel;
+    DisclosurePanel windowsSysprepPanel;
 
     @UiField
     @Path(value = "floppyImage.selectedItem")
@@ -161,7 +150,16 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     private BootSequenceModel bootSequenceModel;
 
-    public VmRunOncePopupWidget(CommonApplicationConstants constants) {
+    private CommonApplicationResources resources;
+
+    @UiFactory
+    protected DisclosurePanel createPanel(String label)
+    {
+        return new DisclosurePanel(resources.decreaseIcon(), resources.increaseIcon(), label);
+    }
+
+    public VmRunOncePopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources) {
+        this.resources = resources;
         initCheckBoxEditors();
         initRadioButtonEditors();
         initComboBox();
@@ -176,7 +174,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     void localize(CommonApplicationConstants constants) {
         // Boot Options
-        bootOptionsLabel.setText(constants.runOncePopupBootOptionsLabel());
         runAsStatelessEditor.setLabel(constants.runOncePopupRunAsStatelessLabel());
         runAndPauseEditor.setLabel(constants.runOncePopupRunAndPauseLabel());
         attachFloppyEditor.setLabel(constants.runOncePopupAttachFloppyLabel());
@@ -184,13 +181,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         bootSequenceLabel.setText(constants.runOncePopupBootSequenceLabel());
 
         // Linux Boot Options
-        linuxBootOptionsLabel.setText(constants.runOncePopupLinuxBootOptionsLabel());
         kernelPathEditor.setLabel(constants.runOncePopupKernelPathLabel());
         initrdPathEditor.setLabel(constants.runOncePopupInitrdPathLabel());
         kernelParamsEditor.setLabel(constants.runOncePopupKernelParamsLabel());
 
         // WindowsSysprep
-        windowsSysprepLabel.setText(constants.runOncePopupWindowsSysprepLabel());
         sysPrepDomainNameListBoxEditor.setLabel(constants.runOncePopupSysPrepDomainNameLabel());
         useAlternateCredentialsEditor.setLabel(constants.runOnceUseAlternateCredentialsLabel());
         sysPrepUserNameEditor.setLabel(constants.runOncePopupSysPrepUserNameLabel());
@@ -199,7 +194,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         // Display Protocol
         displayConsoleVncEditor.setLabel(constants.runOncePopupDisplayConsoleVncLabel());
         displayConsoleSpiceEditor.setLabel(constants.runOncePopupDisplayConsoleSpiceLabel());
-        displayProtocolLabel.setText(constants.runOncePopupDisplayProtocolLabel());
     }
 
     void initCheckBoxEditors() {
@@ -240,6 +234,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         attachIsoEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
         floppyImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
         isoImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
+        floppyImageEditor.addContentWidgetStyleName(style.attachImageSelectbox());
+        isoImageEditor.addContentWidgetStyleName(style.attachImageSelectbox());
     }
 
     @Override

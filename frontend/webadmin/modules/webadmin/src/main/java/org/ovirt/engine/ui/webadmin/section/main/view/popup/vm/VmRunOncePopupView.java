@@ -14,7 +14,7 @@ public class VmRunOncePopupView extends AbstractModelBoundWidgetPopupView<RunOnc
 
     @Inject
     public VmRunOncePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, new VmRunOncePopupWidget(constants), "420px", "640px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, resources, new VmRunOncePopupWidget(constants, resources), "460px", "640px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

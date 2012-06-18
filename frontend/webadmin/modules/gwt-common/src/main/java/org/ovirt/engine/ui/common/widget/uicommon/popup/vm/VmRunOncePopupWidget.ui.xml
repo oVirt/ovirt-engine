@@ -6,6 +6,7 @@
 	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmRunOncePopupWidget.Style">
 		.title {
@@ -13,81 +14,81 @@
 			font-size: 13px;
 			margin: 5px;
 		}
-		
+
 		.customPropertiesPanel {
 			border-top: 1px #C0C0C0 solid;
 			border-bottom: 1px #C0C0C0 solid;
 			margin-top: 5px;
 			margin-bottom: 10px;
-			height: 60px;
-			width: 98%;
+			height: 120px;
+			width: 96%;
+			padding: 0px;
 		}
-		
+
 		.bootOptionsPanel {
 			width: 100%;
 		}
-		
+
 		.attachImageSelectBoxLabel {
 			display: none;
 		}
-		
+
 		.attachImageCheckBoxLabel {
 			width: 115px;
 		}
-		
+
 		.attachImageCheckbox {
-			
 		}
 		
 		.attachImageSelectbox {
-			
+			margin-left: 30px;
 		}
-		
+
 		.attachImagePanel,.linuxBootOptionsPanel,.windowsSysprepPanel {
 			margin-top: 5px;
 			width: 98%;
 		}
-		
+
 		.extraOptionsPanel {
 			margin-left: 10px;
 			margin-bottom: 3px;
 		}
-		
+
 		.linuxBootOption {
 			margin-left: 20px;
 		}
-		
+
 		.sysprepOption {
 			margin-left: 30px;
 		}
-		
+
 		.imagesLabel {
 			display: none;
 		}
-		
+
 		.bootSequencePanel {
 			margin-top: 6px;
 			margin-bottom: 8px;
 			margin-left: 10px;
 			width: 95%;
 		}
-		
+
 		.bootSequenceButton {
 			height: 13px;
 			width: 13px;
 			background: white;
 			border: 0px;
 		}
-		
+
 		.bootSequenceButtonUp {
 			
 		}
-		
+
 		.bootSequenceButtonDown {
 			position: relative;
 			top: 10px;
 		}
-		
+
 		.bootSequenceButtonPanel {
 			position: absolute;
 			background: white;
@@ -97,69 +98,80 @@
 			height: 60px;
 			width: 25px
 		}
+
+		.panelStyle {
+			background: #e5ecff;
+			border-top: 2px solid white;
+			width: 100%;
+		}
 	</ui:style>
 
 	<g:FlowPanel>
-		<g:VerticalPanel addStyleNames="{style.bootOptionsPanel}">
-			<g:Label ui:field="bootOptionsLabel" addStyleNames="{style.title}" />
+		<g:DisclosurePanel label="{constants.runOncePopupBootOptionsLabel}" addStyleNames="{style.panelStyle}">
+			<g:VerticalPanel addStyleNames="{style.bootOptionsPanel}">
+				<g:VerticalPanel addStyleNames="{style.attachImagePanel}">
+					<g:HorizontalPanel>
+						<e:EntityModelCheckBoxEditor ui:field="attachFloppyEditor" addStyleNames="{style.attachImageCheckbox}" />
+						<e:ListModelListBoxEditor ui:field="floppyImageEditor" addStyleNames="{style.attachImageSelectbox}" />
+					</g:HorizontalPanel>
 
-			<g:VerticalPanel addStyleNames="{style.attachImagePanel}">
-				<g:HorizontalPanel>
-					<e:EntityModelCheckBoxEditor ui:field="attachFloppyEditor" addStyleNames="{style.attachImageCheckbox}" />
-					<e:ListModelListBoxEditor ui:field="floppyImageEditor" addStyleNames="{style.attachImageSelectbox}" />
-				</g:HorizontalPanel>
-
-				<g:HorizontalPanel>
-					<e:EntityModelCheckBoxEditor ui:field="attachIsoEditor" addStyleNames="{style.attachImageCheckbox}" />
-					<e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.attachImageSelectbox}" />
-				</g:HorizontalPanel>
-			</g:VerticalPanel>
-
-			<g:AbsolutePanel ui:field="bootSequencePanel" addStyleNames="{style.bootSequencePanel}">
-				<g:Label ui:field="bootSequenceLabel" />
-
-				<g:VerticalPanel addStyleNames="{style.bootSequenceButtonPanel}">
-					<g:PushButton ui:field="bootSequenceUpButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonUp}"
-						enabled="false">
-						<g:upFace image='{resources.bootSequenceListBoxButtonUp}' />
-					</g:PushButton>
-
-					<g:PushButton ui:field="bootSequenceDownButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonDown}"
-						enabled="false">
-						<g:upFace image='{resources.bootSequenceListBoxButtonDown}' />
-					</g:PushButton>
+					<g:HorizontalPanel>
+						<e:EntityModelCheckBoxEditor ui:field="attachIsoEditor" addStyleNames="{style.attachImageCheckbox}" />
+						<e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.attachImageSelectbox}" />
+					</g:HorizontalPanel>
 				</g:VerticalPanel>
-			</g:AbsolutePanel>
 
-			<e:EntityModelCheckBoxEditor ui:field="runAsStatelessEditor" />
-			<e:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
+				<g:AbsolutePanel ui:field="bootSequencePanel" addStyleNames="{style.bootSequencePanel}">
+					<g:Label ui:field="bootSequenceLabel" />
 
+					<g:VerticalPanel addStyleNames="{style.bootSequenceButtonPanel}">
+						<g:PushButton ui:field="bootSequenceUpButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonUp}"
+							enabled="false">
+							<g:upFace image='{resources.bootSequenceListBoxButtonUp}' />
+						</g:PushButton>
+
+						<g:PushButton ui:field="bootSequenceDownButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonDown}"
+							enabled="false">
+							<g:upFace image='{resources.bootSequenceListBoxButtonDown}' />
+						</g:PushButton>
+					</g:VerticalPanel>
+				</g:AbsolutePanel>
+
+				<e:EntityModelCheckBoxEditor ui:field="runAsStatelessEditor" />
+				<e:EntityModelCheckBoxEditor ui:field="runAndPauseEditor" />
+			</g:VerticalPanel>
+		</g:DisclosurePanel>
+
+		<g:DisclosurePanel label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel ui:field="linuxBootOptionsPanel" addStyleNames="{style.linuxBootOptionsPanel}">
-				<g:Label ui:field="linuxBootOptionsLabel" addStyleNames="{style.extraOptionsPanel}" />
 				<e:EntityModelTextBoxEditor ui:field="kernelPathEditor" addStyleNames="{style.linuxBootOption}" />
 				<e:EntityModelTextBoxEditor ui:field="initrdPathEditor" addStyleNames="{style.linuxBootOption}" />
 				<e:EntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption}" />
 			</g:VerticalPanel>
+		</g:DisclosurePanel>
 
-			<g:VerticalPanel ui:field="windowsSysprepPanel" addStyleNames="{style.windowsSysprepPanel}">
+		<g:DisclosurePanel ui:field="windowsSysprepPanel" label="{constants.runOncePopupWindowsSysprepLabel}" addStyleNames="{style.panelStyle}">
+			<g:VerticalPanel addStyleNames="{style.windowsSysprepPanel}">
 				<g:Label ui:field="windowsSysprepLabel" addStyleNames="{style.extraOptionsPanel}" />
 				<w:ComboBox ui:field="sysPrepDomainNameComboBox" />
 				<e:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
 				<e:EntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
 				<e:EntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
 			</g:VerticalPanel>
+		</g:DisclosurePanel>
 
-		</g:VerticalPanel>
+		<g:DisclosurePanel label="{constants.runOncePopupDisplayProtocolLabel}" addStyleNames="{style.panelStyle}">
+			<g:VerticalPanel>
+				<e:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
+				<e:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
+			</g:VerticalPanel>
+		</g:DisclosurePanel>
 
-		<g:ScrollPanel addStyleNames="{style.customPropertiesPanel}">
-			<k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
-		</g:ScrollPanel>
-
-		<g:VerticalPanel>
-			<g:Label ui:field="displayProtocolLabel" addStyleNames="{style.title}" />
-			<e:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
-			<e:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
-		</g:VerticalPanel>
+		<g:DisclosurePanel label="{constants.customPropsVmPopup}" addStyleNames="{style.panelStyle}">
+			<g:ScrollPanel addStyleNames="{style.customPropertiesPanel}">
+				<k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
+			</g:ScrollPanel>
+		</g:DisclosurePanel>
 	</g:FlowPanel>
 
 </ui:UiBinder>
