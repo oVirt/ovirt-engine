@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
     <artifactId>manager</artifactId>
-    <version>3.1.0-0001</version>
+    <version>3.1.0</version>
   </parent>
   <artifactId>dbscripts</artifactId>
   <packaging>pom</packaging>

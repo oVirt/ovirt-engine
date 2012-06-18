@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine.ui</groupId>
     <artifactId>webadmin-modules</artifactId>
-    <version>3.1.0-0001</version>
+    <version>3.1.0</version>
   </parent>
   <artifactId>gwt-extension</artifactId>
   <packaging>jar</packaging>
