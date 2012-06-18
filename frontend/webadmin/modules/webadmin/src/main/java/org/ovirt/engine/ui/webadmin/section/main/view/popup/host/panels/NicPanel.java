@@ -45,28 +45,7 @@ public class NicPanel extends NetworkItemPanel {
         }
         rowPanel.setWidget(0, 2, nicImage);
         rowPanel.setWidget(0, 3, titleLabel);
-        rowPanel.setWidget(0, 4, actionButton);
         return rowPanel;
-    }
-
-    @Override
-    protected void onAction() {
-        item.edit();
-    }
-
-    @Override
-    protected void onMouseOut() {
-        super.onMouseOut();
-        actionButton.setVisible(false);
-    }
-
-    @Override
-    protected void onMouseOver() {
-        super.onMouseOver();
-        NetworkInterfaceModel nic = (NetworkInterfaceModel) item;
-        if (!nic.isBonded() && nic.getItems().size() > 0) {
-            actionButton.setVisible(true);
-        }
     }
 
     private ImageResource getStatusImage() {
@@ -80,5 +59,10 @@ public class NicPanel extends NetworkItemPanel {
         default:
             return resources.questionMarkImage();
         }
+    }
+
+    @Override
+    protected void onAction() {
+       // Do nothing
     }
 }

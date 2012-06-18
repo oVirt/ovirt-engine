@@ -104,11 +104,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Edit Bond Interface {0}")
     String editBondInterfaceTitle(String name);
 
-    @DefaultMessage("Edit Management Interface {0}")
-    String editManagementInterfaceTitle(String name);
-
     @DefaultMessage("Edit Interface {0}")
     String editInterfaceTitle(String name);
+
+    @DefaultMessage("Edit Network {0}")
+    String editNetworkTitle(String name);
 
     @DefaultMessage("({0} bricks selected)")
     String noOfBricksSelected(int brickCount);

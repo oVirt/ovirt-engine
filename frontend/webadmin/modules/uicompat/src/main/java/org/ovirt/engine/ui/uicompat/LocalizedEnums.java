@@ -372,6 +372,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___UpdateAdGroupTimeLeasedPool();
 
+	String VdcActionType___UpdateNetworkToVdsInterface();
+
 	String VdcActionType___UpdateNetwork();
 
 	String VdcActionType___UpdateRole();

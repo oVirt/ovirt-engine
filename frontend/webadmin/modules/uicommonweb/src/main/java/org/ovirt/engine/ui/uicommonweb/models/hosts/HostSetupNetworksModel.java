@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -164,26 +165,28 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     public void onEdit(NetworkItemModel<?> item) {
-        assert item instanceof NetworkInterfaceModel : "only nics can be edited"; //$NON-NLS-1$
-        NetworkInterfaceModel nic = (NetworkInterfaceModel) item;
-        assert nic.getItems().size() > 0 : "must have at least one network to edit"; //$NON-NLS-1$
-        final VdsNetworkInterface entity = nic.getEntity();
-        Model editPopup;
-        BaseCommandTarget okTarget;
-        if (nic instanceof BondNetworkInterfaceModel) {
+        Model editPopup = null;
+        BaseCommandTarget okTarget = null;
+        if (item instanceof BondNetworkInterfaceModel) {
             /*****************
              * Bond Dialog
              *****************/
-            BondNetworkInterfaceModel bondModel = (BondNetworkInterfaceModel) nic;
+            final VdsNetworkInterface entity = ((NetworkInterfaceModel)item).getEntity();
             editPopup = new HostBondInterfaceModel(true);
             final HostBondInterfaceModel bondDialogModel = (HostBondInterfaceModel) editPopup;
             bondDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editBondInterfaceTitle(entity.getName()));
-            bondDialogModel.getBondingOptions().setIsAvailable(true);
-            bondDialogModel.getBond().setIsAvailable(false);
+            bondDialogModel.getNetwork().setIsAvailable(false);
+            bondDialogModel.getCheckConnectivity().setIsAvailable(false);
+            bondDialogModel.getAddress().setIsAvailable(false);
+            bondDialogModel.getSubnet().setIsAvailable(false);
+            bondDialogModel.getGateway().setIsAvailable(false);
+            bondDialogModel.setBootProtocolAvailable(false);
 
-            // this dialog has only one selected network, just put the first one
-            bondDialogModel.getNetwork().setSelectedItem(nic.getItems().get(0).getEntity());
-            bondDialogModel.setBootProtocol(entity.getBootProtocol());
+            // bond name
+            bondDialogModel.getBond().setIsChangable(false);
+            List<VdsNetworkInterface> bondName  = Arrays.asList(entity);
+            bondDialogModel.getBond().setItems(bondName);
+            bondDialogModel.getBond().setSelectedItem(entity);
 
             // bond options
             String bondOptions = entity.getBondOptions();
@@ -210,85 +213,79 @@ public class HostSetupNetworksModel extends EntityModel {
                 bondDialogModel.getBondingOptions().setSelectedItem(customKey);
             }
 
-            // Addresses
-            bondDialogModel.getAddress().setEntity(entity.getAddress());
-            bondDialogModel.getSubnet().setEntity(entity.getSubnet());
-            bondDialogModel.getGateway().setEntity(entity.getGateway());
-            bondDialogModel.getNetwork().setIsAvailable(false);
-            bondDialogModel.setNoneBootProtocolAvailable(!entity.getIsManagement());
-
             // OK Target
             okTarget = new BaseCommandTarget() {
                 @Override
                 public void ExecuteCommand(UICommand command) {
-                    if (!bondDialogModel.Validate()) {
-                        return;
-                    }
-                    entity.setAddress((String) bondDialogModel.getAddress().getEntity());
-                    entity.setSubnet((String) bondDialogModel.getSubnet().getEntity());
-                    entity.setGateway((String) bondDialogModel.getGateway().getEntity());
-                    entity.setBootProtocol(bondDialogModel.getBootProtocol());
                     setBondOptions(entity, bondDialogModel);
                     hostInterfaceListModel.CancelConfirm();
                 }
             };
-        } else if (entity.getIsManagement()) {
-            /*****************
-             * Management Network Dialog
-             *****************/
-            editPopup = new HostManagementNetworkModel(true);
-            final HostManagementNetworkModel mgmntDialogModel = (HostManagementNetworkModel) editPopup;
-            mgmntDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editManagementInterfaceTitle(entity.getName()));
-            mgmntDialogModel.getAddress().setEntity(entity.getAddress());
-            mgmntDialogModel.getSubnet().setEntity(entity.getSubnet());
-            mgmntDialogModel.getGateway().setEntity(entity.getGateway());
-            mgmntDialogModel.setNoneBootProtocolAvailable(false);
-            mgmntDialogModel.getBondingOptions().setIsAvailable(false);
-            mgmntDialogModel.getInterface().setIsAvailable(false);
-            mgmntDialogModel.setBootProtocol(entity.getBootProtocol());
+        } else if (item instanceof LogicalNetworkModel){
+            LogicalNetworkModel logicalNetwork = (LogicalNetworkModel)item;
+            final VdsNetworkInterface entity = logicalNetwork.getAttachedToNic().getEntity();
 
-            // OK Target
-            okTarget = new BaseCommandTarget() {
-                @Override
-                public void ExecuteCommand(UICommand command) {
-                    if (!mgmntDialogModel.Validate()) {
-                        return;
-                    }
-                    entity.setBootProtocol(mgmntDialogModel.getBootProtocol());
-                    entity.setAddress((String) mgmntDialogModel.getAddress().getEntity());
-                    entity.setSubnet((String) mgmntDialogModel.getSubnet().getEntity());
-                    entity.setGateway((String) mgmntDialogModel.getGateway().getEntity());
-                    hostInterfaceListModel.CancelConfirm();
-                }
-            };
-        } else {
-            /*****************
-             * Nic Dialog
-             *****************/
-            editPopup = new HostInterfaceModel(true);
-            final HostInterfaceModel interfaceDialogModel = (HostInterfaceModel) editPopup;
-            interfaceDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editInterfaceTitle(entity.getName()));
-            interfaceDialogModel.getAddress().setEntity(entity.getAddress());
-            interfaceDialogModel.getSubnet().setEntity(entity.getSubnet());
-            interfaceDialogModel.getName().setIsAvailable(false);
-            interfaceDialogModel.getNetwork().setIsAvailable(false);
-            // this dialog has only one selected network, just put the first one
-            interfaceDialogModel.getNetwork().setSelectedItem(nic.getItems().get(0).getEntity());
-            interfaceDialogModel.setBootProtocol(entity.getBootProtocol());
+            if (logicalNetwork.isManagement()) {
+                /*****************
+                 * Management Network Dialog
+                 *****************/
+                editPopup = new HostManagementNetworkModel(true);
+                final HostManagementNetworkModel mgmntDialogModel = (HostManagementNetworkModel) editPopup;
+                mgmntDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
+                mgmntDialogModel.setEntity(logicalNetwork.getEntity());
+                mgmntDialogModel.getAddress().setEntity(entity.getAddress());
+                mgmntDialogModel.getSubnet().setEntity(entity.getSubnet());
+                mgmntDialogModel.getGateway().setEntity(entity.getGateway());
+                mgmntDialogModel.setNoneBootProtocolAvailable(false);
+                mgmntDialogModel.getBondingOptions().setIsAvailable(false);
+                mgmntDialogModel.getInterface().setIsAvailable(false);
+                mgmntDialogModel.setBootProtocol(entity.getBootProtocol());
 
-            // OK Target
-            okTarget = new BaseCommandTarget() {
-                @Override
-                public void ExecuteCommand(UICommand command) {
-                    if (!interfaceDialogModel.Validate()) {
-                        return;
+                // OK Target
+                okTarget = new BaseCommandTarget() {
+                    @Override
+                    public void ExecuteCommand(UICommand command) {
+                        if (!mgmntDialogModel.Validate()) {
+                            return;
+                        }
+                        entity.setBootProtocol(mgmntDialogModel.getBootProtocol());
+                        entity.setAddress((String) mgmntDialogModel.getAddress().getEntity());
+                        entity.setSubnet((String) mgmntDialogModel.getSubnet().getEntity());
+                        entity.setGateway((String) mgmntDialogModel.getGateway().getEntity());
+                        hostInterfaceListModel.CancelConfirm();
                     }
-                    entity.setBootProtocol(interfaceDialogModel.getBootProtocol());
-                    entity.setAddress((String) interfaceDialogModel.getAddress().getEntity());
-                    entity.setSubnet((String) interfaceDialogModel.getSubnet().getEntity());
-                    hostInterfaceListModel.CancelConfirm();
-                }
-            };
+                };
+            }else{
+                /*****************
+                 * Network Dialog
+                 *****************/
+                editPopup = new HostInterfaceModel(true);
+                final HostInterfaceModel networkDialogModel = (HostInterfaceModel) editPopup;
+                networkDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editNetworkTitle(logicalNetwork.getName()));
+                networkDialogModel.getAddress().setEntity(entity.getAddress());
+                networkDialogModel.getSubnet().setEntity(entity.getSubnet());
+                networkDialogModel.getName().setIsAvailable(false);
+                networkDialogModel.getBondingOptions().setIsAvailable(false);
+
+                networkDialogModel.getNetwork().setIsChangable(false);
+                networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getEntity());
+
+                networkDialogModel.setBootProtocol(entity.getBootProtocol());
+
+                // OK Target
+                okTarget = new BaseCommandTarget() {
+                    @Override
+                    public void ExecuteCommand(UICommand command) {
+                        if (!networkDialogModel.Validate()) {
+                            return;
+                        }
+                        entity.setBootProtocol(networkDialogModel.getBootProtocol());
+                        entity.setAddress((String) networkDialogModel.getAddress().getEntity());
+                        entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
+                        hostInterfaceListModel.CancelConfirm();
+                    }
+                };
+            }
         }
 
         // ok command
@@ -334,6 +331,7 @@ public class HostSetupNetworksModel extends EntityModel {
             bondPopup.getAddress().setIsAvailable(false);
             bondPopup.getSubnet().setIsAvailable(false);
             bondPopup.getGateway().setIsAvailable(false);
+            bondPopup.setBootProtocolAvailable(false);
             List<VdsNetworkInterface> freeBonds = getFreeBonds();
             if (freeBonds.isEmpty()) {
                 popupWindow = new ConfirmationModel();
@@ -344,7 +342,6 @@ public class HostSetupNetworksModel extends EntityModel {
                 return;
             }
             bondPopup.getBond().setItems(freeBonds);
-            bondPopup.setBootProtocolAvailable(false);
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
                 @Override

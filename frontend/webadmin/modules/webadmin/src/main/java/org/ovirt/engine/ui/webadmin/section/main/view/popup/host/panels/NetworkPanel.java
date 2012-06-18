@@ -28,7 +28,7 @@ public class NetworkPanel extends NetworkItemPanel {
         Image vmImage = new Image(resources.networkVm());
         Image monitorImage = new Image(resources.networkMonitor());
 
-        Grid rowPanel = new Grid(1, 6);
+        Grid rowPanel = new Grid(1, 7);
         rowPanel.setCellSpacing(3);
         rowPanel.setWidth("100%"); //$NON-NLS-1$
         rowPanel.setHeight("100%"); //$NON-NLS-1$
@@ -50,9 +50,10 @@ public class NetworkPanel extends NetworkItemPanel {
         }
         Label titleLabel = new Label(getItemTitle());
         rowPanel.setWidget(0, 2, titleLabel);
-        rowPanel.setWidget(0, 3, mgmtNetworkImage);
-        rowPanel.setWidget(0, 4, monitorImage);
-        rowPanel.setWidget(0, 5, vmImage);
+        rowPanel.setWidget(0, 3, actionButton);
+        rowPanel.setWidget(0, 4, mgmtNetworkImage);
+        rowPanel.setWidget(0, 5, monitorImage);
+        rowPanel.setWidget(0, 6, vmImage);
         return rowPanel;
     }
 
@@ -67,12 +68,6 @@ public class NetworkPanel extends NetworkItemPanel {
         }
     }
 
-    @Override
-    protected void onAction() {
-        // TODO Auto-generated method stub
-
-    }
-
     private String getItemTitle() {
         LogicalNetworkModel networkModel = (LogicalNetworkModel) item;
         if (networkModel.hasVlan()) {
@@ -83,6 +78,26 @@ public class NetworkPanel extends NetworkItemPanel {
 
     private void infoImage(Image image, boolean show) {
         image.setStylePrimaryName(show ? style.networkImageEnabled() : style.networkImageDisabled());
+    }
+
+    @Override
+    protected void onAction() {
+        item.edit();
+    }
+
+    @Override
+    protected void onMouseOut() {
+        super.onMouseOut();
+        actionButton.setVisible(false);
+    }
+
+    @Override
+    protected void onMouseOver() {
+        super.onMouseOver();
+        LogicalNetworkModel network = (LogicalNetworkModel) item;
+        if (network!=null && network.getAttachedToNic()!=null) {
+            actionButton.setVisible(true);
+        }
     }
 
 }

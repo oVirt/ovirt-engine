@@ -58,4 +58,21 @@ public class BondPanel extends NicPanel {
         return vPanel;
     }
 
+    @Override
+    protected void onAction() {
+        item.edit();
+    }
+
+    @Override
+    protected void onMouseOut() {
+        super.onMouseOut();
+        actionButton.setVisible(false);
+    }
+
+    @Override
+    protected void onMouseOver() {
+        super.onMouseOver();
+        actionButton.setVisible(true);
+    }
+
 }

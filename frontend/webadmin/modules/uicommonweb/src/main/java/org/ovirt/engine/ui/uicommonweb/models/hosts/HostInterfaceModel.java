@@ -1,11 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -14,8 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class HostInterfaceModel extends EntityModel
@@ -278,7 +277,7 @@ public class HostInterfaceModel extends EntityModel
     private void UpdateCanSpecify()
     {
         network network = (network) getNetwork().getSelectedItem();
-        boolean isChangable = getIsStaticAddress() && network != null && !network.getId().equals(NGuid.Empty);
+        boolean isChangable = getIsStaticAddress();
         getAddress().setIsChangable(isChangable);
         getSubnet().setIsChangable(isChangable);
     }
@@ -291,7 +290,7 @@ public class HostInterfaceModel extends EntityModel
         getSubnet().setIsValid(true);
 
         network net = (network) getNetwork().getSelectedItem();
-        if (getIsStaticAddress() && getNetwork().getSelectedItem() != null && !net.getId().equals(NGuid.Empty))
+        if (getIsStaticAddress())
         {
             getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
             getSubnet().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });

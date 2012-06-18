@@ -8,14 +8,13 @@
 	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
 
 	<ui:style>
-	
 	</ui:style>
 
 	<d:SimpleDialogPanel width="400px" height="600px">
 		<d:content>
-			<g:DockLayoutPanel ui:field="layoutPanel" >
-				<g:north size="300">
-					<g:VerticalPanel ui:field="mainPanel" >
+			<g:DockLayoutPanel ui:field="layoutPanel">
+				<g:north size="330">
+					<g:VerticalPanel ui:field="mainPanel">
 						<e:ListModelListBoxEditor ui:field="bondEditor" />
 						<e:ListModelListBoxEditor ui:field="networkEditor" />
 						<e:ListModelListBoxEditor ui:field="bondingModeEditor" />

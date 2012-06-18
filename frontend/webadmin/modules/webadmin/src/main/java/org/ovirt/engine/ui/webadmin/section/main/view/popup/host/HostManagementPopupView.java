@@ -215,7 +215,6 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
             // hide widgets
             info.setVisible(false);
             message.setVisible(false);
-            nameEditor.setVisible(false);
             checkConnectivity.setVisible(false);
             bondingModeEditor.setVisible(false);
             commitChanges.setVisible(false);
@@ -225,6 +224,9 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
             asPopupPanel().setPixelSize(400, 350);
         }
 
+        if (object.getEntity() != null){
+            nameEditor.asValueBox().setValue(object.getEntity().getName());
+        }
     }
 
     @Override
