@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.engineencryptutils;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -206,13 +208,26 @@ public class EncryptionUtils {
     }
 
     public static KeyStore getKeyStore(String path, String passwd, String storeType) {
+        File storeFile = new File(path);
+        InputStream storeIn = null;
         try {
-            InputStream fis = new FileInputStream(path);
+            storeIn = new FileInputStream(storeFile);
             KeyStore store = KeyStore.getInstance(storeType);
-            store.load(fis, passwd.toCharArray());
+            store.load(storeIn, passwd.toCharArray());
             return store;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (Exception exception) {
+            log.error("Can't load keystore from file \"" + storeFile.getAbsolutePath() + "\".", exception);
+            throw new RuntimeException(exception);
+        }
+        finally {
+            if (storeIn != null) {
+                try {
+                    storeIn.close();
+                }
+                catch (IOException exception) {
+                    log.warn("Can't close keystore file \"" + storeFile.getAbsolutePath() + "\".", exception);
+                }
+            }
         }
     }
 
