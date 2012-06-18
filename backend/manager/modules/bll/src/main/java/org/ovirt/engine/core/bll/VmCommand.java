@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.tags;
@@ -410,6 +411,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected int getBlockSparseInitSizeInGB() {
         return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
+    }
+
+    protected List<ValidationError> validateCustomProperties(VmStatic vmStaticFromParams) {
+        return VmPropertiesUtils.getInstance().validateVMProperties(
+                getVdsGroup().getcompatibility_version(),
+                vmStaticFromParams);
     }
 
     protected static void handleCustomPropertiesError(List<ValidationError> validationErrors, ArrayList<String> message) {

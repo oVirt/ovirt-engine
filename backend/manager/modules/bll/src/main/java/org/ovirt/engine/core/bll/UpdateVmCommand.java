@@ -181,22 +181,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
             } else if (getVm().getStaticData() != null) {
-                VM vm = DbFacade.getInstance().getVmDAO().get(getVm().getStaticData().getId());
+                VM vm = getVmDAO().get(getVm().getStaticData().getId());
                 // Checking if a desktop with same name already exists
                 VmStatic vmStaticDataFromParams = getParameters().getVmStaticData();
-                boolean exists = (Boolean) Backend
-                        .getInstance()
+                boolean exists = (Boolean) getBackend()
                         .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
                                 new IsVmWithSameNameExistParameters(vmStaticDataFromParams.getvm_name()))
                         .getReturnValue();
                 if (exists && (!StringHelper.EqOp(vm.getvm_name(), vmStaticDataFromParams.getvm_name()))) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
-
-                } else if (!(validationErrors =
-                        VmPropertiesUtils.getInstance()
-                                .validateVMProperties(getVdsGroupDAO().get(getParameters().getVm().getvds_group_id())
-                                        .getcompatibility_version(),
-                                        vmStaticDataFromParams)).isEmpty()) {
+                } else if (!(validationErrors = validateCustomProperties(vmStaticDataFromParams)).isEmpty()) {
                     handleCustomPropertiesError(validationErrors, getReturnValue().getCanDoActionMessages());
 
                 } else if (vmStaticDataFromParams.getauto_startup()
@@ -225,7 +219,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         }
 
                         if (vmStaticDataFromParams.getdedicated_vm_for_vds() != null) {
-                            VDS vds = DbFacade.getInstance().getVdsDAO().get(
+                            VDS vds = getVdsDAO().get(
                                     new Guid(vmStaticDataFromParams.getdedicated_vm_for_vds().toString()));
                             // if vds doesnt exist or not the same cluster
                             if (vds == null || !vds.getvds_group_id().equals(vmStaticDataFromParams.getvds_group_id())) {
@@ -239,7 +233,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                                 getReturnValue().getCanDoActionMessages())) {
                             retValue = false;
                         }
-                        if (vm.getnum_of_monitors() < vmStaticDataFromParams.getnum_of_monitors()) {
+                        if (retValue && vm.getnum_of_monitors() < vmStaticDataFromParams.getnum_of_monitors()) {
                             List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
                             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                                     .getVmNetworkInterfaceDAO().getAllForVm(getVmId());
@@ -326,8 +320,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void setCustomDefinedProperties(VmStatic vmStaticDataFromParams) {
         VMCustomProperties properties =
-                VmPropertiesUtils.getInstance().parseProperties(getVdsGroupDAO()
-                        .get(getParameters().getVm().getvds_group_id())
+                VmPropertiesUtils.getInstance().parseProperties(getVdsGroup()
                         .getcompatibility_version(),
                         vmStaticDataFromParams.getCustomProperties());
 

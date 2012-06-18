@@ -5,13 +5,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
 
@@ -48,10 +47,10 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         boolean result = true;
         if (vm.getdedicated_vm_for_vds() != null) {
             // get dedicated host id
-            Guid guid = new Guid(vm.getdedicated_vm_for_vds().getUuid());
+            Guid guid = vm.getdedicated_vm_for_vds().getValue();
             // get dedicated host cluster and comparing it to VM cluster
-            VdsStatic vds = DbFacade.getInstance().getVdsStaticDAO().get(guid);
-            result = (vm.getvds_group_id().equals(vds.getvds_group_id()));
+            VDS vds = getVdsDAO().get(guid);
+            result = vds != null && (vm.getvds_group_id().equals(vds.getvds_group_id()));
         }
         if (!result) {
             getReturnValue().getCanDoActionMessages()
