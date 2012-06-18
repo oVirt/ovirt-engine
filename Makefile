@@ -129,6 +129,7 @@ create_dirs:
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/notifier/lib
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
+	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/service
 	@install -dm 755 $(PREFIX)/usr/share/java
 	@install -dm 755 $(PREFIX)/usr/bin
 	@install -dm 755 $(PREFIX)/usr/share/man/man8
@@ -366,9 +367,12 @@ install_service:
 
 	# Install the files:
 	install -m 644 packaging/fedora/engine-service.xml $(PREFIX)/etc/ovirt-engine
-	install -m 644 packaging/fedora/engine-service-logging.properties $(PREFIX)/etc/ovirt-engine
-	install -m 644 packaging/fedora/engine-service-users.properties $(PREFIX)/etc/ovirt-engine
+	install -m 644 packaging/fedora/engine-service-logging.properties $(PREFIX)/usr/share/ovirt-engine/service
 	install -m 644 packaging/fedora/engine-service.sysconfig $(PREFIX)/etc/sysconfig/ovirt-engine
 	install -m 644 packaging/fedora/engine-service.limits $(PREFIX)/etc/security/limits.d/10-ovirt-engine.conf
-	install -m 755 packaging/fedora/engine-service.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	install -m 755 packaging/fedora/engine-service.py $(PREFIX)/usr/share/ovirt-engine/service
 	install -m 644 packaging/fedora/engine-service.systemd $(PREFIX)/usr/lib/systemd/system/ovirt-engine.service
+
+	# Install the links:
+	ln -s /usr/share/ovirt-engine/service/engine-service.py $(PREFIX)/usr/bin/engine-service
+

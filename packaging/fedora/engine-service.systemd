@@ -5,10 +5,8 @@ After=network.service postgresql.service
 [Service]
 Type=forking
 PIDFile=/var/run/ovirt-engine.pid
-EnvironmentFile=/etc/sysconfig/ovirt-engine
-LimitNOFILE=65535
-ExecStart=/usr/share/ovirt-engine/scripts/engine-service.py start
-ExecStop=/usr/share/ovirt-engine/scripts/engine-service.py stop
+ExecStart=/usr/bin/engine-service start
+ExecStop=/usr/bin/engine-service stop
 
 [Install]
 WantedBy=multi-user.target

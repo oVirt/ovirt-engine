@@ -14,54 +14,156 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Start/stop oVirt Engine
+#
+# chkconfig: - 65 34
+# description: oVirt Engine
+# pidfile: /var/run/ovirt-engine.pid
+
+import configobj
 import errno
 import glob
 import grp
 import optparse
 import os
 import pwd
+import resource
 import signal
 import stat
 import string
 import sys
+import syslog
 import time
 import traceback
 
+
+# The name of the engine:
+engineName = "engine-service"
+
+# The engine system configuration variables:
+engineSysconfig = None
+
 # The name of the user and group that should run the service:
-engineUser = os.getenv("ENGINE_USER", "ovirt")
-engineGroup = os.getenv("ENGINE_GROUP", "ovirt")
 engineUid = 0
 engineGid = 0
 
 # JBoss directories:
-jbossHomeDir = os.getenv("JBOSS_HOME", "/usr/share/jboss-as")
+jbossHomeDir = None
 
 # JBoss files:
-jbossModulesJar = os.path.join(jbossHomeDir, "jboss-modules.jar")
+jbossModulesJar = None
 
 # Engine directories:
-engineEtcDir = os.getenv("ENGINE_ETC", "/etc/ovirt-engine")
-engineLogDir = os.getenv("ENGINE_LOG", "/var/log/ovirt-engine")
-engineTmpDir = os.getenv("ENGINE_TMP", "/var/cache/ovirt-engine")
-engineUsrDir = os.getenv("ENGINE_USR", "/usr/share/ovirt-engine")
-engineVarDir = os.getenv("ENGINE_VAR", "/var/lib/ovirt-engine")
-engineContentDir = os.path.join(engineVarDir, "content")
-engineDeploymentsDir = os.path.join(engineVarDir, "deployments")
-engineEarDir = os.path.join(engineUsrDir, "engine.ear")
+engineEtcDir = None
+engineLogDir = None
+engineTmpDir = None
+engineUsrDir = None
+engineVarDir = None
+engineLockDir = None
+engineContentDir = None
+engineDeploymentsDir = None
+engineEarDir = None
 
 # Engine files:
-enginePidFile = os.getenv("ENGINE_PID", "/var/run/ovirt-engine.pid")
-engineLoggingFile = os.path.join(engineEtcDir, "engine-service-logging.properties")
-engineConfigFile = os.path.join(engineEtcDir, "engine-service.xml")
-engineConsoleFile = os.path.join(engineLogDir, "console.log")
+enginePidFile = None
+engineLoggingFile = None
+engineConfigFile = None
+engineLogFile = None
+engineBootLogFile = None
+engineConsoleLogFile = None
+engineServerLogFile = None
 
-# Time to wait for the engine to finish:
-engineStopTime = int(os.getenv("ENGINE_STOP_TIME", "10"))
-engineStopInterval = int(os.getenv("ENGINE_STOP_INTERVAL", "1"))
+
+def loadSysconfig():
+    # Load the configuration file:
+    engineSysconfigFile = "/etc/sysconfig/ovirt-engine"
+    if not os.path.exists(engineSysconfigFile):
+        raise Exception("The engine sysconfig file \"%s\" doesn't exist." % engineSysconfigFile)
+    global engineSysconfig
+    engineSysconfig = configobj.ConfigObj(engineSysconfigFile)
+
+    # Get the id of the engine user:
+    engineUser = getSysconfig("ENGINE_USER", "ovirt")
+    global engineUid
+    try:
+        engineUid = pwd.getpwnam(engineUser).pw_uid
+    except:
+        raise Exception("The engine user \"%s\" doesn't exist." % engineUser)
+
+    # Get id of the engine group:
+    engineGroup = getSysconfig("ENGINE_GROUP", "ovirt")
+    global engineGid
+    try:
+        engineGid = grp.getgrnam(engineGroup).gr_gid
+    except:
+        raise Exception("The engine group \"%s\" doesn't exist." % engineGroup)
+
+    # JBoss directories:
+    global jbossHomeDir
+    jbossHomeDir = getSysconfig("JBOSS_HOME", "/usr/share/jboss-as")
+
+    # JBoss files:
+    global jbossModulesJar
+    jbossModulesJar = os.path.join(jbossHomeDir, "jboss-modules.jar")
+
+    # Engine directories:
+    global engineEtcDir
+    global engineLogDir
+    global engineTmpDir
+    global engineUsrDir
+    global engineVarDir
+    global engineLockDir
+    global engineServiceDir
+    global engineContentDir
+    global engineDeploymentsDir
+    global engineEarDir
+    engineEtcDir = getSysconfig("ENGINE_ETC", "/etc/ovirt-engine")
+    engineLogDir = getSysconfig("ENGINE_LOG", "/var/log/ovirt-engine")
+    engineTmpDir = getSysconfig("ENGINE_TMP", "/var/cache/ovirt-engine")
+    engineUsrDir = getSysconfig("ENGINE_USR", "/usr/share/ovirt-engine")
+    engineVarDir = getSysconfig("ENGINE_VAR", "/var/lib/ovirt-engine")
+    engineLockDir = getSysconfig("ENGINE_LOCK", "/var/lock/ovirt-engine")
+    engineServiceDir = os.path.join(engineUsrDir, "service")
+    engineContentDir = os.path.join(engineVarDir, "content")
+    engineDeploymentsDir = os.path.join(engineVarDir, "deployments")
+    engineEarDir = os.path.join(engineUsrDir, "engine.ear")
+
+    # Engine files:
+    global enginePidFile
+    global engineLoggingFile
+    global engineConfigFile
+    global engineLogFile
+    global engineBootLogFile
+    global engineConsoleLogFile
+    global engineServerLogFile
+    enginePidFile = getSysconfig("ENGINE_PID", "/var/run/ovirt-engine.pid")
+    engineLoggingFile = os.path.join(engineServiceDir, "engine-service-logging.properties")
+    engineConfigFile = os.path.join(engineEtcDir, "engine-service.xml")
+    engineLogFile = os.path.join(engineLogDir, "engine.log")
+    engineBootLogFile = os.path.join(engineLogDir, "boot.log")
+    engineConsoleLogFile = os.path.join(engineLogDir, "console.log")
+    engineServerLogFile = os.path.join(engineLogDir, "server.log")
+
+
+def getSysconfig(variable, default=None):
+    # Then try with the environment (it overrides the config file):
+    value = os.getenv(variable)
+    if value:
+        return value
+
+    # Then try with the config file:
+    value = engineSysconfig.get(variable)
+    if value:
+        return value
+
+    # Finally use the default value:
+    return default
+
 
 def checkIdentity():
     if os.getuid() != 0:
         raise Exception("This script should run with the root user.")
+
 
 def checkOwnership(name, uid=None, gid=None):
     # Get the metadata of the file:
@@ -85,29 +187,26 @@ def checkOwnership(name, uid=None, gid=None):
         else:
             raise Exception("The file \"%s\" is not owned by group \"%s\", but by \"%s\"." % (name, group, owner))
 
+
 def checkDirectory(name, uid=None, gid=None):
     if not os.path.isdir(name):
         raise Exception("The directory \"%s\" doesn't exist." % name)
     checkOwnership(name, uid, gid)
+
 
 def checkFile(name, uid=None, gid=None):
     if not os.path.isfile(name):
         raise Exception("The file \"%s\" doesn't exist." % name)
     checkOwnership(name, uid, gid)
 
-def checkInstallation():
-    # Get and check the ids of the engine user and group:
-    global engineUid
-    global engineGid
-    try:
-        engineUid = pwd.getpwnam(engineUser).pw_uid
-    except:
-        raise Exception("The engine user \"%s\" doesn't exist." % engineUser)
-    try:
-        engineGid = grp.getgrnam(engineGroup).gr_gid
-    except:
-        raise Exception("The engine group \"%s\" doesn't exist." % engineGroup)
 
+def checkLog(name):
+    log = os.path.join(engineLogDir, name)
+    if os.path.exists(log):
+        checkOwnership(log, engineUid, engineGid)
+
+
+def checkInstallation():
     # Check the required JBoss directories and files:
     checkDirectory(jbossHomeDir)
     checkFile(jbossModulesJar)
@@ -117,6 +216,8 @@ def checkInstallation():
     checkDirectory(engineLogDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineUsrDir, uid=0, gid=0)
     checkDirectory(engineVarDir, uid=engineUid, gid=engineGid)
+    checkDirectory(engineLockDir, uid=engineUid, gid=engineGid)
+    checkDirectory(engineServiceDir, uid=0, gid=0)
     checkDirectory(engineContentDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineDeploymentsDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineTmpDir, uid=engineUid, gid=engineGid)
@@ -124,12 +225,14 @@ def checkInstallation():
     checkFile(engineLoggingFile)
     checkFile(engineConfigFile)
 
-    # If the engine console file exists then check that it has the right
-    # ownership, otherwise the engine will not be able to write to it:
-    if os.path.exists(engineConsoleFile):
-        checkOwnership(engineConsoleFile, uid=engineUid, gid=engineGid)
+    # Check that log files are owned by the engine user, if they exist:
+    checkLog(engineLogFile)
+    checkLog(engineBootLogFile)
+    checkLog(engineConsoleLogFile)
+    checkLog(engineServerLogFile)
 
     # XXX: Add more checks here!
+
 
 def loadEnginePid():
     if not os.path.exists(enginePidFile):
@@ -137,26 +240,29 @@ def loadEnginePid():
     with open(enginePidFile, "r") as enginePidFd:
         return int(enginePidFd.read())
 
+
 def saveEnginePid(pid):
     with open(enginePidFile, "w") as enginePidFd:
         enginePidFd.write(str(pid) + "\n")
+
 
 def removeEnginePid():
     if os.path.exists(enginePidFile):
         os.remove(enginePidFile)
 
+
 def startEngine():
     # Get the PID:
     enginePid = loadEnginePid()
     if enginePid:
-        print("The engine PID file \"%s\" already exists." % enginePidFile)
+        syslog.syslog(syslog.LOG_WARNING, "The engine PID file \"%s\" already exists." % enginePidFile)
         return
 
     # Make sure the engine archive directory is linked in the deployments
     # directory, if not link it now:
     engineEarLink = os.path.join(engineDeploymentsDir, "engine.ear")
     if not os.path.islink(engineEarLink):
-        print("The symbolic link \"%s\" doesn't exist, will create it now." % engineEarLink)
+        syslog.syslog(syslog.LOG_INFO, "The symbolic link \"%s\" doesn't exist, will create it now." % engineEarLink)
         try:
             os.symlink(engineEarDir, engineEarLink)
         except:
@@ -179,10 +285,10 @@ def startEngine():
 
     # Get heap configuration parameters from the environment or use defaults if
     # they are not provided:
-    engineHeapMin = os.getenv("ENGINE_HEAP_MIN", "1g")
-    engineHeapMax = os.getenv("ENGINE_HEAP_MAX", "1g")
-    enginePermMin = os.getenv("ENGINE_PERM_MIN", "256m")
-    enginePermMax = os.getenv("ENGINE_PERM_MAX", "256m")
+    engineHeapMin = getSysconfig("ENGINE_HEAP_MIN", "1g")
+    engineHeapMax = getSysconfig("ENGINE_HEAP_MAX", "1g")
+    enginePermMin = getSysconfig("ENGINE_PERM_MIN", "256m")
+    enginePermMax = getSysconfig("ENGINE_PERM_MAX", "256m")
 
     # Module path should include first the engine modules so that they can override
     # those provided by the application server if needed:
@@ -195,6 +301,9 @@ def startEngine():
 
     # Add arguments for the java virtual machine:
     engineArgs.extend([
+        # The name or the process, as displayed by ps:
+        engineName,
+
         # Virtual machine options:
         "-server",
         "-XX:+UseCompressedOops",
@@ -209,15 +318,21 @@ def startEngine():
         "-Djava.awt.headless=true",
     ])
 
+    # Add extra system properties provided in the configuration:
+    engineProperties = getSysconfig("ENGINE_PROPERTIES")
+    if engineProperties:
+        for engineProperty in engineProperties.split():
+            if not engineProperty.startswith("-D"):
+                engineProperty = "-D" + engineProperty
+            engineArgs.append(engineProperty)
+
     # Add arguments for remote debugging of the java virtual machine:
-    engineDebugAddress = os.getenv("ENGINE_DEBUG_ADDRESS")
+    engineDebugAddress = getSysconfig("ENGINE_DEBUG_ADDRESS")
     if engineDebugAddress:
-        engineArgs.extend([
-            "-Xrunjdwp:transport=dt_socket,address=%s,server=y,suspend=n" % engineDebugAddress,
-        ])
+        engineArgs.append("-Xrunjdwp:transport=dt_socket,address=%s,server=y,suspend=n" % engineDebugAddress)
 
     # Enable verbose garbage collection if required:
-    engineVerboseGC = os.getenv("ENGINE_VERBOSE_GC", "false").lower()
+    engineVerboseGC = getSysconfig("ENGINE_VERBOSE_GC", "false").lower()
     if engineVerboseGC in [ "t", "true", "y", "yes" ]:
         engineArgs.extend([
             "-verbose:gc",
@@ -251,9 +366,14 @@ def startEngine():
     # If this is the parent process then the last thing we have to do is
     # saving the child process PID to the file:
     if enginePid != 0:
-        print("Started engine process %d." % enginePid)
+        syslog.syslog(syslog.LOG_INFO, "Started engine process %d." % enginePid)
         saveEnginePid(enginePid)
         return
+
+    # Change the resource limits while we are root as we won't be
+    # able to change them once we assume the engine identity:
+    engineNofile = int(getSysconfig("ENGINE_NOFILE", "65535"))
+    resource.setrlimit(resource.RLIMIT_NOFILE, (engineNofile, engineNofile))
 
     # This is the child process, first thing we do is assume the engine
     # identity:
@@ -266,7 +386,7 @@ def startEngine():
     os.chdir("/")
 
     # Then open the console log and redirect standard output and errors to it:
-    engineConsoleFd = os.open(engineConsoleFile, os.O_CREAT | os.O_WRONLY | os.O_APPEND)
+    engineConsoleFd = os.open(engineConsoleLogFile, os.O_CREAT | os.O_WRONLY | os.O_APPEND, 0660)
     os.dup2(engineConsoleFd, 1)
     os.dup2(engineConsoleFd, 2)
     os.close(engineConsoleFd)
@@ -274,16 +394,23 @@ def startEngine():
     # Finally execute the java virtual machine:
     os.execvp("java", engineArgs)
 
+
 def stopEngine():
     # Load the PID:
     enginePid = loadEnginePid()
     if not enginePid:
-        print("The engine PID file \"%s\" doesn't exist." % enginePidFile)
+        syslog.syslog(syslog.LOG_INFO, "The engine PID file \"%s\" doesn't exist." % enginePidFile)
         return
 
     # First check that the process exists:
     if not os.path.exists("/proc/%d" % enginePid):
-        raise Exception("The engine PID file \"%s\" contains %d, but that process doesn't exist." % (enginePidFile, enginePid))
+        syslog.syslog(syslog.LOG_WARNING, "The engine PID file \"%s\" contains %d, but that process doesn't exist, will just remove the file." % (enginePidFile, enginePid))
+        removeEnginePid()
+        return
+
+    # Get the time to wait for the engine to stop from the configuration:
+    stopTime = int(getSysconfig("ENGINE_STOP_TIME", "10"))
+    stopInterval = int(getSysconfig("ENGINE_STOP_INTERVAL", "1"))
 
     # Kill the process softly and wait for it to dissapear or for the timeout
     # to expire:
@@ -291,23 +418,24 @@ def stopEngine():
     initialTime = time.time()
     timeElapsed = 0
     while os.path.exists("/proc/%d" % enginePid):
-        print("Waiting up to %d seconds for engine process %d to finish." % ((engineStopTime - timeElapsed), enginePid))
+        syslog.syslog(syslog.LOG_INFO, "Waiting up to %d seconds for engine process %d to finish." % ((stopTime - timeElapsed), enginePid))
         timeElapsed = time.time() - initialTime
-        if timeElapsed > engineStopTime:
+        if timeElapsed > stopTime:
             break
-        time.sleep(engineStopInterval)
+        time.sleep(stopInterval)
 
     # If the process didn't dissapear after the allowed time then we forcibly
     # kill it:
     if os.path.exists("/proc/%d" % enginePid):
-        print("The engine process %d didn't finish after waiting %d seconds, killing it." % (enginePid, timeElapsed))
+        syslog.syslog(syslog.LOG_WARNING, "The engine process %d didn't finish after waiting %d seconds, killing it." % (enginePid, timeElapsed))
         os.kill(enginePid, signal.SIGKILL)
-        print("Killed engine process %d." % enginePid)
+        syslog.syslog(syslog.LOG_WARNING, "Killed engine process %d." % enginePid)
     else:
-        print("Stopped engine process %d." % enginePid)
+        syslog.syslog(syslog.LOG_INFO, "Stopped engine process %d." % enginePid)
 
     # And finally we remove the PID file:
     removeEnginePid()
+
 
 def checkEngine():
     # First check that the engine PID file exists:
@@ -321,40 +449,82 @@ def checkEngine():
 
     # XXX: Here we could check deeper the status of the engine sending a
     # request to the health status servlet.
-    print("Engine process %d is running." % enginePid)
+    syslog.syslog(syslog.LOG_INFO, "Engine process %d is running." % enginePid)
+
 
 def showUsage():
-    print("Usage: %s {start|stop|status}" % os.path.basename(sys.argv[0]))
+    print("Usage: %s {start|stop|restart|status}" % engineName)
+
+
+def prettyAction(label, action):
+    # Determine the colors to use according to the type of terminal:
+    colorNormal = ""
+    colorSuccess = ""
+    colorFailure = ""
+    moveColumn = ""
+    if os.getenv("TERM") in ["linux", "xterm"]:
+        colorNormal = "\033[0;39m"
+        colorSuccess = "\033[0;32m"
+        colorFailure  = "\033[0;31m"
+        moveColumn = "\033[60G"
+
+    # Inform that we are doing the job:
+    sys.stdout.write(label + " " + engineName + ":")
+    sys.stdout.flush()
+
+    # Do the real action:
+    try:
+        action()
+        sys.stdout.write(moveColumn + " [  " + colorSuccess + "OK" + colorNormal + "  ]\n")
+    except Exception as exception:
+        sys.stdout.write(moveColumn + " [" + colorFailure + "FAILED" + colorNormal + "]\n")
+        raise
 
 
 def main():
+    # Open connection to the syslog daemon:
+    syslog.openlog(engineName, syslog.LOG_PID)
+
     # Check the arguments:
     args = sys.argv[1:]
-    if len(args) != 1 or not args[0] in [ "start", "stop", "status" ]:
+    if len(args) != 1 or not args[0] in [ "start", "stop", "restart", "status" ]:
         showUsage()
         sys.exit(1)
 
     try:
-        # Check the identity of the user running the script:
-        checkIdentity()
+        # Load the configuration:
+        loadSysconfig()
 
-        # Check sanity of the installation:
+        # Do some important checks:
+        checkIdentity()
         checkInstallation()
 
         # Perform the requested action:
         action = args[0].lower()
         if action == "start":
-            startEngine()
+            prettyAction("Starting", startEngine)
         elif action == "stop":
-            stopEngine()
+            prettyAction("Stopping", stopEngine)
+        elif action == "restart":
+            prettyAction("Stopping", stopEngine)
+            prettyAction("Starting", startEngine)
         elif action == "status":
-            checkEngine()
+            try:
+                checkEngine()
+                print("ovirt-engine is running")
+            except:
+                print("ovirt-engine is stopped")
+                raise
     except Exception as exception:
         #traceback.print_exc()
-        print(exception)
+        syslog.syslog(syslog.LOG_ERR, str(exception))
         sys.exit(1)
     else:
         sys.exit(0)
+
+    # Close connection to syslog:
+    syslog.closelog()
+
 
 if __name__ == "__main__":
     main()
