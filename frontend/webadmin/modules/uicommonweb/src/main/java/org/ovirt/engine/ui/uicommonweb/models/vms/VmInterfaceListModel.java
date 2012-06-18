@@ -176,11 +176,8 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getMAC().setIsChangable(false);
         model.getActive().setIsChangable(isActivateSupported);
 
-        if (isActivateSupported){
-            model.getActive().setEntity(true);
-        }else{
-            model.getActive().setEntity(false);
-        }
+        model.getActive().setEntity(true);
+
         model.getPortMirroring().setEntity(false);
 
         final UICommand okCommand = new UICommand("OnSave", this); //$NON-NLS-1$
