@@ -123,6 +123,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                         if (domain.getstatus() == null
                                                 || domain.getstatus() == StorageDomainStatus.Unknown) {
                                             domain.setstatus(StorageDomainStatus.Active);
+                                        } else if (domain.getstatus() == StorageDomainStatus.Maintenance) {
+                                            domain.setstatus(StorageDomainStatus.InActive);
                                         } else if (domain.getstatus() == StorageDomainStatus.Locked) {
                                             throw new VdcBLLException(
                                                     VdcBllErrors.CANT_RECONSTRUCT_WHEN_A_DOMAIN_IN_POOL_IS_LOCKED,
