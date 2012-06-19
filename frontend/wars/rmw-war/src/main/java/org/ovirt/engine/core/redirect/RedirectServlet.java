@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -44,7 +45,7 @@ public class RedirectServlet extends HttpServlet {
         try {
             backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
 
-            params = new GetConfigurationValueParameters(conf);
+            params = new GetConfigurationValueParameters(conf, Config.DefaultConfigurationVersion);
 
             v = backend.runInternalQuery(VdcQueryType.GetConfigurationValue, params);
             if (v != null) {

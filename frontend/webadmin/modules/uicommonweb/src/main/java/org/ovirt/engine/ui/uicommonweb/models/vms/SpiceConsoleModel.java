@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -281,17 +282,15 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 ArrayList<VdcQueryParametersBase> parametersList =
                         new ArrayList<VdcQueryParametersBase>();
                 parametersList.add(new GetVdsByVdsIdParameters(thisVm.getrun_on_vds().getValue()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite));
-                GetConfigurationValueParameters spiceSecureChannelParams =
-                        new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels);
-                spiceSecureChannelParams.setVersion(thisVm.getvds_group_compatibility_version().toString());
-                parametersList.add(spiceSecureChannelParams);
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, Config.DefaultConfigurationVersion));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, Config.DefaultConfigurationVersion));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels,
+                        thisVm.getvds_group_compatibility_version().toString()));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, Config.DefaultConfigurationVersion));
                 parametersList.add(new GetVdsByVdsIdParameters(thisVm.getrun_on_vds().getValue()));
                 parametersList.add(new VdcQueryParametersBase());
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys, Config.DefaultConfigurationVersion));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys, Config.DefaultConfigurationVersion));
 
                 if (isoDomain != null)
                 {

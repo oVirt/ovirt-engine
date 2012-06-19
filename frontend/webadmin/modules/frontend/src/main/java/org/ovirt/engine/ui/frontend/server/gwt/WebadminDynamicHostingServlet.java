@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -39,8 +40,8 @@ public class WebadminDynamicHostingServlet extends GwtDynamicHostPageServlet {
 
     private Integer getApplicationMode(HttpServletRequest request) {
         return (Integer) runPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode),
-                request);
+                new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode,
+                Config.DefaultConfigurationVersion), request);
     }
 
 }

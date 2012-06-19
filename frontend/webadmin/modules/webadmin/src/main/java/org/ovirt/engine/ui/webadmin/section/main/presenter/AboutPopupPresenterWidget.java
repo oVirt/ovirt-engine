@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -70,7 +71,7 @@ public class AboutPopupPresenterWidget extends PresenterWidget<AboutPopupPresent
         AsyncQuery aQuery = new AsyncQuery();
 
         Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.VdcVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.VdcVersion, Config.DefaultConfigurationVersion),
                 aQuery);
 
         AsyncQuery _asyncQuery = new AsyncQuery();

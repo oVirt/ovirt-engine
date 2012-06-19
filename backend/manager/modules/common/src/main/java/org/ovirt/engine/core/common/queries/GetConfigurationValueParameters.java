@@ -24,6 +24,11 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
         privateVersion = value;
     }
 
+    public GetConfigurationValueParameters(ConfigurationValues cVal, String version) {
+        _configValue = cVal;
+        privateVersion = version;
+    }
+
     public GetConfigurationValueParameters() {
     }
 }

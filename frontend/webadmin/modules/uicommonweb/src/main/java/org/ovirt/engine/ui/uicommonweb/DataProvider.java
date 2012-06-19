@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
@@ -129,7 +130,7 @@ public final class DataProvider
     public static String GetLocalFSPath()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.RhevhLocalFSPath));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.RhevhLocalFSPath, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -377,7 +378,7 @@ public final class DataProvider
     public static int GetMinimalVmMemSize()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VMMinMemorySizeInMB));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VMMinMemorySizeInMB, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -390,7 +391,7 @@ public final class DataProvider
     public static int GetMaximalVmMemSize32OS()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VM32BitMaxMemorySizeInMB));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VM32BitMaxMemorySizeInMB, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -403,7 +404,7 @@ public final class DataProvider
     public static int GetMaximalVmMemSize64OS()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VM64BitMaxMemorySizeInMB));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VM64BitMaxMemorySizeInMB, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -488,7 +489,7 @@ public final class DataProvider
     public static String GetDefaultExportPath()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ExportDefaultPath));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ExportDefaultPath, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -501,7 +502,7 @@ public final class DataProvider
     public static String GetDefaultImportPath()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ImportDefaultPath));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ImportDefaultPath, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -771,7 +772,7 @@ public final class DataProvider
         if (cachedNumOfMonitors == null)
         {
             VdcQueryReturnValue returnValue =
-                    GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ValidNumOfMonitors));
+                    GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ValidNumOfMonitors, Config.DefaultConfigurationVersion));
 
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
@@ -826,7 +827,7 @@ public final class DataProvider
     public static String GetAuthenticationMethod()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.AuthenticationMethod));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.AuthenticationMethod, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -916,7 +917,7 @@ public final class DataProvider
     public static String[] GetADPathList()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ComputerADPaths));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ComputerADPaths, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -947,7 +948,7 @@ public final class DataProvider
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
-                        new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion));
+                        new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1020,7 +1021,7 @@ public final class DataProvider
     public static int GetClusterServerMemoryOverCommit()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommitForServers));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommitForServers, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1033,7 +1034,7 @@ public final class DataProvider
     public static int GetClusterDesktopMemoryOverCommit()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommit));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommit, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1407,7 +1408,7 @@ public final class DataProvider
     public static boolean IsSSLEnabled()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1420,7 +1421,7 @@ public final class DataProvider
     public static boolean EnableSpiceRootCertificateValidation()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1459,7 +1460,7 @@ public final class DataProvider
     public static String GetSpiceSecureChannelList()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1472,7 +1473,7 @@ public final class DataProvider
     public static String GetCipherSuite()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1485,7 +1486,7 @@ public final class DataProvider
     public static boolean IsUSBEnabledByDefault()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.EnableUSBAsDefault));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.EnableUSBAsDefault, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1498,7 +1499,7 @@ public final class DataProvider
     public static String GetSpiceToggleFullScreenKeys()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1511,7 +1512,7 @@ public final class DataProvider
     public static String GetSpiceReleaseCursorKeys()
     {
         VdcQueryReturnValue returnValue =
-                DataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys));
+                DataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1580,7 +1581,7 @@ public final class DataProvider
     public static int GetClusterDefaultCpuOverCommit()
     {
         VdcQueryReturnValue returnValue =
-                DataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.CpuOverCommitDurationMinutes));
+                DataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.CpuOverCommitDurationMinutes, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1593,7 +1594,7 @@ public final class DataProvider
     public static VdsSelectionAlgorithm GetDefaultVdsSelectionAlgorithm()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VdsSelectionAlgorithm));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VdsSelectionAlgorithm, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1606,7 +1607,7 @@ public final class DataProvider
     public static int GetHighUtilizationForEvenDistribution()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForEvenlyDistribute));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForEvenlyDistribute, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1619,7 +1620,7 @@ public final class DataProvider
     public static int GetHighUtilizationForPowerSave()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1632,7 +1633,7 @@ public final class DataProvider
     public static int GetLowUtilizationForPowerSave()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.LowUtilizationForPowerSave));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.LowUtilizationForPowerSave, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1645,7 +1646,7 @@ public final class DataProvider
     public static int GetVcpuConsumptionPercentage()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VcpuConsumptionPercentage));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VcpuConsumptionPercentage, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1989,7 +1990,7 @@ public final class DataProvider
     public static int GetDefaultPoolLeasePeriod()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPoolLeaseDays));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPoolLeaseDays, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2002,7 +2003,7 @@ public final class DataProvider
     public static Date GetDefaultPoolLeaseStartTime()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPoolLeaseStartTime));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPoolLeaseStartTime, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2015,7 +2016,7 @@ public final class DataProvider
     public static Date GetDefaultPoolLeaseEndTime()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPoolLeaseEndTime));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPoolLeaseEndTime, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2145,7 +2146,7 @@ public final class DataProvider
         if (_cachedSearchResultsLimit == -1)
         {
             VdcQueryReturnValue returnValue =
-                    GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SearchResultsLimit));
+                    GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SearchResultsLimit, Config.DefaultConfigurationVersion));
 
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
@@ -2347,7 +2348,7 @@ public final class DataProvider
     public static int GetDiskMaxSize()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxBlockDiskSize));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxBlockDiskSize, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2455,7 +2456,7 @@ public final class DataProvider
     public static int GetMaxVmPriority()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2495,7 +2496,7 @@ public final class DataProvider
         if (cacheDataCenterMaxNameLength == -1) // cache not initialized -> call Backend:
         {
             VdcQueryReturnValue returnValue =
-                    GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.StoragePoolNameSizeLimit));
+                    GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.StoragePoolNameSizeLimit, Config.DefaultConfigurationVersion));
 
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
@@ -2517,7 +2518,7 @@ public final class DataProvider
         if (cacheStorageDomainMaxNameLength == -1) // cache not initialized -> call Backend:
         {
             VdcQueryReturnValue returnValue =
-                    DataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.StorageDomainNameSizeLimit));
+                    DataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.StorageDomainNameSizeLimit, Config.DefaultConfigurationVersion));
 
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
@@ -2582,7 +2583,7 @@ public final class DataProvider
     private static boolean GetSANWipeAfterDelete()
     {
         VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SANWipeAfterDelete));
+                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.SANWipeAfterDelete, Config.DefaultConfigurationVersion));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
