@@ -6,6 +6,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.DiskImageList;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 
 @SuppressWarnings("unused")
 public class TemplateImportDiskListModel extends TemplateDiskListModel
@@ -33,6 +35,7 @@ public class TemplateImportDiskListModel extends TemplateDiskListModel
                         for (DiskImage diskImage : diskImageList.getDiskImages()) {
                             list.add(diskImage);
                         }
+                        Linq.Sort(list, new DiskByAliasComparer());
                         setItems(list);
                         return;
                     }

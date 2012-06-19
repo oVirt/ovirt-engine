@@ -15,6 +15,8 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -79,14 +81,16 @@ public class VmImportDiskListModel extends VmDiskListModel
     protected void OnEntityChanged()
     {
         super.OnEntityChanged();
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm != null && vm.getDiskMap() != null)
         {
             ArrayList<DiskImage> list = new ArrayList<DiskImage>();
             for (Disk img : vm.getDiskMap().values())
             {
-                list.add((DiskImage)img);
+                list.add((DiskImage) img);
             }
+
+            Linq.Sort(list, new DiskByAliasComparer());
             setItems(list);
         }
         else
@@ -132,14 +136,14 @@ public class VmImportDiskListModel extends VmDiskListModel
 
     public void VolumeType_SelectedItemChanged(DiskImage disk, VolumeType selectedVolumeType)
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm != null)
         {
             for (Object item : getItems())
             {
                 for (Map.Entry<Guid, Disk> kvp : vm.getDiskMap().entrySet())
                 {
-                    DiskImage innerDisk = (DiskImage)kvp.getValue();
+                    DiskImage innerDisk = (DiskImage) kvp.getValue();
                     if (innerDisk.getId().equals(disk.getId()))
                     {
                         innerDisk.setvolume_type(selectedVolumeType);
