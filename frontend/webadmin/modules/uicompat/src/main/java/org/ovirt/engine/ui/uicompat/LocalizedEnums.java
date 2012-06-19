@@ -294,6 +294,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___CommitNetworkChanges();
 
+	String VdcActionType___SetupNetworks();
+
 	String VdcActionType___CreateAllSnapshotsFromVm();
 
 	String VdcActionType___DetachActionFromRole();
