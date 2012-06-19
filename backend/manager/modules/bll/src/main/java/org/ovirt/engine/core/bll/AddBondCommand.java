@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
@@ -11,7 +12,6 @@ import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -31,15 +31,23 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
     @Override
     protected void executeCommand() {
         String address = getParameters().getAddress();
-        String subnet = StringHelper.isNullOrEmpty(getParameters().getSubnet()) ? getParameters().getNetwork()
+        String subnet = StringUtils.isEmpty(getParameters().getSubnet()) ? getParameters().getNetwork()
                 .getsubnet() : getParameters().getSubnet();
-        String gateway = StringHelper.isNullOrEmpty(getParameters().getGateway()) ? getParameters().getNetwork()
+        String gateway = StringUtils.isEmpty(getParameters().getGateway()) ? getParameters().getNetwork()
                 .getgateway() : getParameters().getGateway();
 
-        NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                getParameters().getNetwork().getname(), getParameters().getNetwork().getvlan_id(), getParameters()
-                        .getBondName(), getParameters().getNics(), address, subnet, gateway, getParameters()
-                        .getNetwork().getstp(), getParameters().getBondingOptions(), getParameters().getBootProtocol());
+        NetworkVdsmVDSCommandParameters parameters =
+                new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
+                        getParameters().getNetwork().getname(),
+                        getParameters().getNetwork().getvlan_id(),
+                        getParameters().getBondName(),
+                        getParameters().getNics(),
+                        address,
+                        subnet,
+                        gateway,
+                        getParameters().getNetwork().getstp(),
+                        getParameters().getBondingOptions(),
+                        getParameters().getBootProtocol());
         VDSReturnValue retVal = Backend.getInstance().getResourceManager()
                 .RunVdsCommand(VDSCommandType.AddNetwork, parameters);
 
@@ -103,10 +111,10 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             if (iface == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
                 return false;
-            } else if (!StringHelper.isNullOrEmpty(iface.getBondName())) {
+            } else if (StringUtils.isNotEmpty(iface.getBondName())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
                 return false;
-            } else if (!StringHelper.isNullOrEmpty(iface.getNetworkName())) {
+            } else if (StringUtils.isNotEmpty(iface.getNetworkName())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
                 return false;
             } else if (NetworkUtils.interfaceHasVlan(iface, interfaces)) {
