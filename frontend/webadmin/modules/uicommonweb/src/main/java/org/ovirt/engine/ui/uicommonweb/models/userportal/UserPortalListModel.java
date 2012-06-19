@@ -806,7 +806,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                 RunOnceModel runOnceModel = (RunOnceModel) userPortalListModel.getWindow();
-                List<String> images = (List<String>) ((VdcQueryReturnValue) result).getReturnValue();
+                List<String> images = (List<String>) result;
                 runOnceModel.getIsoImage().setItems(images);
 
                 if (runOnceModel.getIsoImage().getIsChangable()
@@ -833,7 +833,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         (UserPortalItemModel) userPortalListModel.getSelectedItem();
                 RunOnceModel runOnceModel = (RunOnceModel) userPortalListModel.getWindow();
                 VM selectedVM = (VM) userPortalItemModel.getEntity();
-                List<String> images = (List<String>) ((VdcQueryReturnValue) result).getReturnValue();
+                List<String> images = (List<String>) result;
 
                 if (DataProvider.IsWindowsOsType(selectedVM.getvm_os()))
                 {
