@@ -8,7 +8,9 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
@@ -26,12 +28,18 @@ import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
 import org.ovirt.engine.ui.webadmin.widget.footer.StatusLabel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 
 public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<HostSetupNetworksModel> implements HostSetupNetworksPopupPresenterWidget.ViewDef {
+
+    interface Driver extends SimpleBeanEditorDriver<HostSetupNetworksModel, HostSetupNetworksPopupView> {
+
+        Driver driver = GWT.create(Driver.class);
+    }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostSetupNetworksPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -46,27 +54,44 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @UiField
     AnimatedVerticalPanel nicList;
 
+    @UiField(provided=true)
+    @Ignore
     StatusLabel status;
 
     @UiField
     NetworkPanelsStyle style;
 
-    private boolean rendered = false;
+    @UiField(provided = true)
+    @Path(value = "checkConnectivity.entity")
+    EntityModelCheckBoxEditor checkConnectivity;
 
-    private HostSetupNetworksModel uicommonModel;
+    @UiField(provided = true)
+    @Path(value = "commitChanges.entity")
+    EntityModelCheckBoxEditor commitChanges;
+
+    private boolean rendered = false;
 
     @Inject
     public HostSetupNetworksPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         status = new StatusLabel(EMPTY_STATUS);
+        checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
+        commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         status.setStylePrimaryName(style.statusLabel());
-        addStatusWidget(status.asWidget());
+        checkConnectivity.setContentWidgetStyleName(style.checkCon());
+        localize();
+        Driver.driver.initialize(this);
+    }
+
+    private void localize(){
+        checkConnectivity.setLabel(constants.checkConHostPopup()); //$NON-NLS-1$
+        commitChanges.setLabel(constants.saveNetConfigHostPopup());
     }
 
     @Override
     public void edit(HostSetupNetworksModel uicommonModel) {
-        this.uicommonModel = uicommonModel;
+        Driver.driver.edit(uicommonModel);
         uicommonModel.getNicsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -96,7 +121,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
     @Override
     public HostSetupNetworksModel flush() {
-        return uicommonModel;
+        return Driver.driver.flush();
     }
 
     private void updateNetworks(List<LogicalNetworkModel> allNetworks) {
@@ -120,5 +145,4 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         }
         nicList.addAll(groups, !rendered);
     }
-
 }

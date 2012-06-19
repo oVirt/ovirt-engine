@@ -28,4 +28,6 @@ public interface NetworkPanelsStyle extends CssResource {
     String nicPanel();
 
     String statusLabel();
+
+    String checkCon();
 }

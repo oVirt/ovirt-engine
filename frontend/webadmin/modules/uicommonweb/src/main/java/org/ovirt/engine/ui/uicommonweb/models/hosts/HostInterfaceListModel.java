@@ -2189,26 +2189,40 @@ public class HostInterfaceListModel extends SearchableListModel
     public void OnSetupNetworks() {
         final HostSetupNetworksModel model = (HostSetupNetworksModel) getWindow();
 
-        boolean checkConnectivity = true;
         int conectivityTimeout = 60000;
 
         SetupNetworksParameters params = new SetupNetworksParameters();
         params.setInterfaces(model.getAllNics());
-        params.setCheckConnectivity(checkConnectivity);
+        params.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
         params.setConectivityTimeout(conectivityTimeout);
         params.setVdsId(getEntity().getId());
         IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
 
             @Override
             public void Executed(FrontendActionAsyncResult result) {
-                model.StopProgress();
-                VdcReturnValueBase returnValue = result.getReturnValue();
-                if (returnValue != null && returnValue.getSucceeded()) {
-                    Cancel();
-                    Search();
+                VdcReturnValueBase returnValueBase = result.getReturnValue();
+                if (returnValueBase != null && returnValueBase.getSucceeded())
+                {
+                    EntityModel commitChanges =model.getCommitChanges();
+                    if ((Boolean) commitChanges.getEntity())
+                    {
+                        SaveNetworkConfig(getEntity().getId(),
+                                HostInterfaceListModel.this);
+                    }
+                    else
+                    {
+                        model.StopProgress();
+                        Cancel();
+                        Search();
+                    }
+                }
+                else
+                {
+                    model.StopProgress();
                 }
             }
         };
+        setcurrentModel(model);
         model.StartProgress(null);
         Frontend.RunAction(VdcActionType.SetupNetworks, params, callback);
     }
@@ -2278,8 +2292,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
             getSetupNetworksCommand().setIsAvailable(!isLessThan31);
 
-            getSaveNetworkConfigCommand().setIsAvailable(true);
-
+            getSaveNetworkConfigCommand().setIsAvailable(isLessThan31);
             getEditCommand().setIsAvailable(isLessThan31);
             getBondCommand().setIsAvailable(isLessThan31);
             getDetachCommand().setIsAvailable(isLessThan31);

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.footer" xmlns:ce="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle">
 		.title {
@@ -100,6 +101,11 @@
 			height: 36px;
 			width: 100%;
 		}
+
+		.checkCon {
+			width: 390px;
+			padding: 5px;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="900px" height="600px">
@@ -108,7 +114,7 @@
 				<g:HorizontalPanel spacing="20" width="100%" height="100%" verticalAlignment="ALIGN_TOP">
 					<g:Cell width="70%" height="100%">
 						<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
-							<g:Label text="Network Topology" styleName="{style.title}" />
+							<f:StatusLabel ui:field="status" />
 							<e:AnimatedVerticalPanel ui:field="nicList" width="100%" spacing="10" />
 						</g:VerticalPanel>
 					</g:Cell>
@@ -119,6 +125,10 @@
 						</g:VerticalPanel>
 					</g:Cell>
 				</g:HorizontalPanel>
+				<g:VerticalPanel>
+					<ce:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
+					<ce:EntityModelCheckBoxEditor ui:field="commitChanges" />
+				</g:VerticalPanel>
 			</g:HTMLPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

@@ -28,6 +28,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -109,6 +110,9 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     @Path(value = "commitChanges.entity")
     EntityModelCheckBoxEditor commitChanges;
 
+    @UiField
+    Style style;
+
     @Inject
     public HostManagementPopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants) {
         super(eventBus, resources);
@@ -140,6 +144,10 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
+        // Set Styles
+        checkConnectivity.setContentWidgetStyleName(style.checkCon());
+
+        // Localize
         nameEditor.setLabel(constants.networkNameInterface() + ":"); //$NON-NLS-1$
         networkEditor.setLabel(constants.intefaceHostPopup() + ":"); //$NON-NLS-1$
         bondingModeEditor.setLabel(constants.bondingModeHostPopup() + ":"); //$NON-NLS-1$
@@ -149,9 +157,10 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
         address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
         subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
         gateway.setLabel(constants.defaultGwHostPopup() + ":"); //$NON-NLS-1$
-        checkConnectivity.setLabel(constants.checkConHostPopup() + ":"); //$NON-NLS-1$
+        checkConnectivity.setLabel(constants.checkConHostPopup()); //$NON-NLS-1$
         info.setHTML(constants.changesTempHostPopup());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
+
 
         Driver.driver.initialize(this);
     }
@@ -243,4 +252,8 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     public void setMessage(String message) {
     }
 
+    interface Style extends CssResource {
+
+        String checkCon();
+    }
 }

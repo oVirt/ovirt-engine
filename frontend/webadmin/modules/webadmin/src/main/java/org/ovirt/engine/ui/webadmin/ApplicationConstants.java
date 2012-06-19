@@ -1778,7 +1778,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Default Gateway:")
     String defaultGwHostPopup();
 
-    @DefaultStringValue("Check Connectivity:")
+    @DefaultStringValue("Rollback changes if Host loses Connectivity to the Engine")
     String checkConHostPopup();
 
     @DefaultStringValue("<I>Changes done to the Networking configuration are temporary until explicitly saved.<BR>" +

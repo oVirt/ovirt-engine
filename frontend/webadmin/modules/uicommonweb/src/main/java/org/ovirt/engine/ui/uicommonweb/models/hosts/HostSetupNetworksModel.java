@@ -47,6 +47,30 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
  */
 public class HostSetupNetworksModel extends EntityModel {
 
+    private EntityModel privateCheckConnectivity;
+
+    public EntityModel getCheckConnectivity()
+    {
+        return privateCheckConnectivity;
+    }
+
+    private void setCheckConnectivity(EntityModel value)
+    {
+        privateCheckConnectivity = value;
+    }
+
+    private EntityModel privateCommitChanges;
+
+    public EntityModel getCommitChanges()
+    {
+        return privateCommitChanges;
+    }
+
+    public void setCommitChanges(EntityModel value)
+    {
+        privateCommitChanges = value;
+    }
+
     private static final EventDefinition NICS_CHANGED_EVENT_DEFINITION = new EventDefinition("NicsChanged", //$NON-NLS-1$
             HostSetupNetworksModel.class);
     private static final EventDefinition NETWORKS_CHANGED_EVENT_DEFINITION = new EventDefinition("NetworksChanged", //$NON-NLS-1$
@@ -84,6 +108,10 @@ public class HostSetupNetworksModel extends EntityModel {
         setNicsChangedEvent(new Event(NICS_CHANGED_EVENT_DEFINITION));
         setNetworksChangedEvent(new Event(NETWORKS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
+        setCheckConnectivity(new EntityModel());
+        getCheckConnectivity().setEntity(false);
+        setCommitChanges(new EntityModel());
+        getCommitChanges().setEntity(false);
 
         // ok command
         okCommand = new UICommand("OnSetupNetworks", this); //$NON-NLS-1$

@@ -7,8 +7,10 @@
 	xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
 	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
 
-	<ui:style>
-
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView.Style">
+		.checkCon{
+			width: 390px;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="400px" height="600px">
