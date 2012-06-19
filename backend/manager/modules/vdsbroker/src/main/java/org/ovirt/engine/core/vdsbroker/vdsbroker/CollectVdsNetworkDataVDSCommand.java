@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -139,44 +140,38 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         }
     }
 
-    private static String getVmNetworksImplementedAsBridgeless(VDS vds,
-            List<network> clusterNetworks) {
-        StringBuffer sb = new StringBuffer();
+    private static String getVmNetworksImplementedAsBridgeless(VDS vds, List<network> clusterNetworks) {
         Map<String, VdsNetworkInterface> interfacesByNetworkName = Entities.interfacesByNetworkName(vds.getInterfaces());
+        List<String> networkNames = new ArrayList<String>();
 
         for (network net : clusterNetworks) {
-            if (net.isVmNetwork() &&
-                    interfacesByNetworkName.containsKey(net.getName()) &&
-                    !interfacesByNetworkName.get(net.getName()).isBridged()) {
-                sb.append(net.getname()).append(",");
+            if (net.isVmNetwork()
+                    && interfacesByNetworkName.containsKey(net.getName())
+                    && !interfacesByNetworkName.get(net.getName()).isBridged()) {
+                networkNames.add(net.getname());
             }
         }
-        return sb.toString();
+
+        return StringUtils.join(networkNames, ",");
     }
 
     private static String getMissingOperationalClusterNetworks(VDS vds, List<network> clusterNetworks) {
-        StringBuffer sb = new StringBuffer();
         Map<String, network> vdsNetworksByName = Entities.entitiesByName(vds.getNetworks());
+        List<String> networkNames = new ArrayList<String>();
 
         for (network net : clusterNetworks) {
             if (net.getStatus() == Operational &&
                     net.isRequired() &&
                     !vdsNetworksByName.containsKey(net.getName())) {
-                sb.append(net.getName()).append(",");
+                networkNames.add(net.getname());
             }
         }
-        return sb.toString();
+        return StringUtils.join(networkNames, ",");
     }
 
-    private static void setNonOperationl(VDS vds,
-            NonOperationalReason reason,
-            Map<String, String> customLogValues) {
+    private static void setNonOperationl(VDS vds, NonOperationalReason reason, Map<String, String> customLogValues) {
         ResourceManager.getInstance()
                 .getEventListener()
-                .vdsNonOperational(vds.getId(),
-                        reason,
-                        true,
-                        true,
-                        Guid.Empty, customLogValues);
+                .vdsNonOperational(vds.getId(), reason, true, true, Guid.Empty, customLogValues);
     }
 }
