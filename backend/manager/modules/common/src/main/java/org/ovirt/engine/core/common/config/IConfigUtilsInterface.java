@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.config;
 import java.util.Date;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.Version;
 
@@ -97,20 +96,6 @@ public interface IConfigUtilsInterface {
      */
     void SetStringValue(String name, String value);
 
-    /**
-     * Validates that parsing the object to the target type is OK.
-     *
-     * @param type
-     *            The type.
-     * @param valueInApp
-     *            The value in app.
-     * @param defaultValue
-     *            The default value.
-     * @param returnValue
-     *            The return value.
-     * @return
-     */
-    boolean ValidateParse(DataType type, String valueInApp, String defaultValue, RefObject<Object> returnValue);
 
     <T> T GetValue(ConfigValues configValue, String version);
 
