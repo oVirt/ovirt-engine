@@ -95,6 +95,10 @@ public final class Extensions
                 major = 3;
                 minor = 0;
             }
+            else if (major == 4 && minor == 10) {
+                major = 3;
+                minor = 1;
+            }
             if (source.getBuild() == -1)
             {
                 return new Version(major, minor);
