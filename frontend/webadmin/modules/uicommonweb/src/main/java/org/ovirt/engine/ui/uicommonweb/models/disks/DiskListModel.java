@@ -536,8 +536,11 @@ public class DiskListModel extends ListWithDetailsModel
 
         for (Disk disk : disks)
         {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE
-                    && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED)
+            boolean isTemplateDisk = disk.getVmEntityType() == VmEntityType.TEMPLATE;
+            boolean isImageLocked = disk.getDiskStorageType() == DiskStorageType.IMAGE
+                    && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
+
+            if (isTemplateDisk || isImageLocked)
             {
                 return false;
             }
