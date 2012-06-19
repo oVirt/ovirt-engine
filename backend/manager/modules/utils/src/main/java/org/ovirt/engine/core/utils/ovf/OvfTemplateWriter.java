@@ -259,5 +259,7 @@ public class OvfTemplateWriter extends OvfWriter {
         // ummanged devices
         writeOtherDevices(_vmTemplate, _writer);
 
+        // End hardware section
+        _writer.WriteEndElement();
     }
 }
