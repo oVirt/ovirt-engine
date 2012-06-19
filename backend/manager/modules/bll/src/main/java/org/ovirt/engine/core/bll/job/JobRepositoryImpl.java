@@ -11,6 +11,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -217,6 +218,18 @@ public class JobRepositoryImpl implements JobRepository {
             public Void runInTransaction() {
                 stepDao.updateJobStepsCompleted(job.getId(), job.getStatus(), job.getEndTime());
                 jobDao.update(job);
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public void closeCompletedJobSteps(final Guid jobId, final JobExecutionStatus status) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                stepDao.updateJobStepsCompleted(jobId, status, new Date());
                 return null;
             }
         });

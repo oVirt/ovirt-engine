@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -127,5 +128,7 @@ public interface JobRepository {
      *            The job to end.
      */
     void updateCompletedJobAndSteps(Job job);
+
+    void closeCompletedJobSteps(Guid jobId, JobExecutionStatus status);
 
 }

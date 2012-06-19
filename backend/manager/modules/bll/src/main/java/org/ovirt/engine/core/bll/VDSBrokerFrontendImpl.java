@@ -72,7 +72,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
         if (result.getSucceeded()) {
             // Add async command to cached commands
             IVdsAsyncCommand prevCommand = _asyncRunningCommands.put(parameters.getVmId(), command);
-            if (prevCommand != null) {
+            if (prevCommand != null && !prevCommand.equals(command)) {
                 prevCommand.reportCompleted();
             }
         } else if (!result.getSucceeded()) {

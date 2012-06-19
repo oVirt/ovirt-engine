@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,6 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
@@ -229,6 +232,13 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             // restore CanDoAction value to false so CanDoAction checks will run again
             getReturnValue().setCanDoAction(false);
             log();
+            if (getExecutionContext() != null) {
+                Job job = getExecutionContext().getJob();
+                if (job != null) {
+                    // mark previous steps as fail
+                    JobRepositoryFactory.getJobRepository().closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
+                }
+            }
             ExecuteAction();
             if (!getReturnValue().getCanDoAction()) {
                 _isRerun = false;
