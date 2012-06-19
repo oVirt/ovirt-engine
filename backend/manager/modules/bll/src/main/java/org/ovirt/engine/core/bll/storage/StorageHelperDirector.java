@@ -30,23 +30,25 @@ public class StorageHelperDirector {
     private void InitializeHelpers() {
         try {
             for (StorageType storageType : StorageType.values()) {
-                Class<?> actionType = null;
-                String formattedClassName = String.format("%1$s.%2$s%3$s",
-                        ACTION_TYPE_PACKAGE,
-                        storageType.name(),
-                        ACTION_TYPE_CLASS);
-                try {
-                    actionType = Class.forName(formattedClassName);
-                } catch (ClassNotFoundException cnfe) {
-                    log.debugFormat("StorageHelperDirector Error:: the lookup for following class has failed: {0}"
-                            , formattedClassName);
-                }
+                if (storageType.isConcreteStorageType()) {
+                    Class<?> actionType = null;
+                    String formattedClassName = String.format("%1$s.%2$s%3$s",
+                            ACTION_TYPE_PACKAGE,
+                            storageType.name(),
+                            ACTION_TYPE_CLASS);
+                    try {
+                        actionType = Class.forName(formattedClassName);
+                    } catch (ClassNotFoundException cnfe) {
+                        log.debugFormat("StorageHelperDirector Error:: the lookup for following class has failed: {0}"
+                                , formattedClassName);
+                    }
 
-                // if action type not exist - operation invalid
-                if (actionType != null) {
-                    Constructor<?> info = actionType.getConstructors()[0];
-                    IStorageHelper currentHelper = (IStorageHelper) info.newInstance(null);
-                    _helpers.put(storageType, currentHelper);
+                    // if action type not exist - operation invalid
+                    if (actionType != null) {
+                        Constructor<?> info = actionType.getConstructors()[0];
+                        IStorageHelper currentHelper = (IStorageHelper) info.newInstance(null);
+                        _helpers.put(storageType, currentHelper);
+                    }
                 }
             }
         } catch (Exception ex) {
