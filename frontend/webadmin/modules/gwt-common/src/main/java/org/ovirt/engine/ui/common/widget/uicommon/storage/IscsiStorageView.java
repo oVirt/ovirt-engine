@@ -76,7 +76,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     double treeCollapsedHeight = 208, treeExpandedHeight = 306, lunsTreeHeight = 344;
     double tabPanelHeight = 368, tabContentHeight = 340, tabHeight = 175;
-    double textTop = 75, textLeft = -43, textWidth = 100;
+    double textTop = 35, textLeft = -84, textWidth = 100;
 
     protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 

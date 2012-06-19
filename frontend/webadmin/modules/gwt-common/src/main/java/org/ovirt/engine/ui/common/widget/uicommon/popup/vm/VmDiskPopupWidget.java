@@ -502,7 +502,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
         // Reveal view by storge type
         if (storageType == StorageType.ISCSI) {
-            storageView = new IscsiStorageView(false, 110, 210, 244, 268, 275, 125, 50, -43);
+            storageView = new IscsiStorageView(false, 110, 210, 244, 268, 275, 125, 35, -60);
         }
         else if (storageType == StorageType.FCP) {
             storageView = new FcpStorageView(false);
