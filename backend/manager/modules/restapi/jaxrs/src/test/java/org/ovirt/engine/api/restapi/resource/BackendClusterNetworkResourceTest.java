@@ -1,22 +1,21 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendClusterNetworksResourceTest.CLUSTER_ID;
+
 import java.util.ArrayList;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
+import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
-
-import org.ovirt.engine.api.model.Network;
-
-import static org.ovirt.engine.api.restapi.resource.BackendClusterNetworksResourceTest.CLUSTER_ID;
-import static org.easymock.EasyMock.expect;
 
 public class BackendClusterNetworkResourceTest
     extends AbstractBackendNetworkResourceTest<BackendClusterNetworkResource> {

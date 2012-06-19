@@ -1,10 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
-
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
+import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class BackendClusterNetworkResource
     extends AbstractBackendNetworkResource
