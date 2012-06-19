@@ -4,7 +4,9 @@ import java.util.StringTokenizer;
 
 /**
  * Wrapper class for StringTokenizer
+ * @deprecated Use {@link StringTokenizer} directly instead.
  */
+@Deprecated
 public class StringTokenizerCompat {
 
     protected StringTokenizer st;

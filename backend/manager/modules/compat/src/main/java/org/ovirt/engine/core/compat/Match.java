@@ -3,6 +3,10 @@ package org.ovirt.engine.core.compat;
 import java.util.regex.MatchResult;
 
 // I believe this is a wrapper for java.util.regex.MatchResult
+/**
+ * @deprecated Use {@link MatchResult} directly instead.
+ */
+@Deprecated
 public class Match {
     private String Value;
     private boolean Success;

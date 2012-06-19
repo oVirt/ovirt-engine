@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.compat;
 
+/**
+ * @deprecated Use org.apache.commons.collections.KeyValue instead.
+ */
+@Deprecated
 public class DictionaryEntry {
 
     private String key;

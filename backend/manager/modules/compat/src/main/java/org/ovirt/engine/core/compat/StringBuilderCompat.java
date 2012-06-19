@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.compat;
 
+/**
+ * @deprecated Use {@link StringBuilder} directly instead.
+ */
+@Deprecated
 public class StringBuilderCompat {
 
     protected static final String SEP = System.getProperty("line.separator");

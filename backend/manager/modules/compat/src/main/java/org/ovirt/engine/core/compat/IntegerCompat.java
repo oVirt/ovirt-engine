@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.compat;
 
+/**
+ * @deprecated Use org.apache.commons.lang.math.NumberUtils instead.
+ */
+@Deprecated
 public class IntegerCompat {
 
     /**

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.compat;
 
 /**
- * Please use #org.apache.commons.lang.StringUtils and avoid further usage of this class.
+ * @deprecated Please use #org.apache.commons.lang.StringUtils and avoid further usage of this class.
  */
 @Deprecated
 public final class StringHelper {

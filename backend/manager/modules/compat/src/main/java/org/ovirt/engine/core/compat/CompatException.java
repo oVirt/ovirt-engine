@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.compat;
 
+/**
+ * @deprecated Use {@link ApplicationException} or other more suitable exception instead.
+ */
+@Deprecated
 public class CompatException extends RuntimeException {
     public CompatException() {
         super();

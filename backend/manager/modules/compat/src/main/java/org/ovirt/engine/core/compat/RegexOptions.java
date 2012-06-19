@@ -2,6 +2,10 @@ package org.ovirt.engine.core.compat;
 
 import java.util.regex.Pattern;
 
+/**
+ * @deprecated Use {@link Pattern}'s options directly instead
+ */
+@Deprecated
 public class RegexOptions {
 
     public final static int Compiled = 0; // Java RegExp are always compiled,

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.compat;
 
+@Deprecated
 public class TimeZoneInfo {
 
     public final static TimeZoneInfo Local = new TimeZoneInfo();

@@ -4,6 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // This is a wrapper for the java.util.regex.Pattern class
+/**
+ * @deprecated Use {@link Pattern} instead, see usage exaple at:
+ * http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html
+ */
+@Deprecated
 public class Regex {
     public static Match Match(String string, String pattern) {
         return Match(string, pattern, 0);

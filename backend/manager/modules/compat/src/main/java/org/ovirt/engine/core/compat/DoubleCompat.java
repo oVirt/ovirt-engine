@@ -2,6 +2,10 @@ package org.ovirt.engine.core.compat;
 
 import java.math.BigDecimal;
 
+/**
+ * @deprecated Use org.apache.commons.lang.math.NumberUtils instead.
+ */
+@Deprecated
 public class DoubleCompat {
 
     public static BigDecimal tryParse(String value) {
