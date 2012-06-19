@@ -1,42 +1,30 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.spy;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Backend.class, Config.class, VmHandler.class, VmTemplateHandler.class})
 public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
-    /**
-     * The command under test.
-     */
-    private UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command;
-
+    @SuppressWarnings("serial")
+    @Override
     protected UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand() {
         AddVmPoolWithVmsParameters param = new AddVmPoolWithVmsParameters(vmPools, testVm,
                 VM_COUNT, DISK_SIZE);
         param.setStorageDomainId(firstStorageDomainId);
-        command = new UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(param);
-        return spy(command);
-    }
-
-    public UpdateVmPoolWithVmsCommandTest() {
-        super();
+        return spy(new UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(param) {
+            @Override
+            protected void initTemplate() {
+                // do nothing - is done here and not with mockito since it's called in the ctor
+            }
+        });
     }
 
     @Test
     public void validateCanDoAction() {
-        setupMocks();
         mockVMPoolDAO();
-        createCommand();
         assertTrue(command.canDoAction());
     }
 

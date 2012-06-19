@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,10 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -27,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -42,8 +45,20 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class CommonVmPoolWithVmsCommandTestAbstract {
+public abstract class CommonVmPoolWithVmsCommandTestAbstract {
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MaxVmNameLengthWindows, 15),
+            mockConfig(ConfigValues.MaxVmNameLengthNonWindows, 64),
+            mockConfig(ConfigValues.MaxVmsInPool, 87),
+            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 2048),
+            mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, 262144),
+            mockConfig(ConfigValues.FreeSpaceLow, 10),
+            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, 1),
+            mockConfig(ConfigValues.InitStorageSparseSizeInGB, 1)
+            );
 
     private final Guid vdsGroupId = Guid.NewGuid();
     protected final Guid firstStorageDomainId = Guid.NewGuid();
@@ -86,21 +101,30 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
     @Mock
     protected StorageDomainDAO storageDomainDAO;
 
-    public CommonVmPoolWithVmsCommandTestAbstract() {
-    }
+    /**
+     * The command under test.
+     */
+    protected CommonVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command;
 
+    protected abstract CommonVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand();
+
+    @Before
     public void setupMocks() {
         MockitoAnnotations.initMocks(this);
-        mockStaticClasses();
         mockGlobalParameters();
+        setUpCommand();
         mockVds();
-        mockVmHandler();
-        mockConfig();
         mockDbDAO();
     }
 
+    protected void setUpCommand() {
+        command = createCommand();
+        doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
+        doReturn(true).when(command).isMemorySizeLegal(any(Version.class));
+        doReturn(true).when(command).verifyAddVM(any(Guid.class));
+    }
+
     private void mockVds() {
-        mockVdsBroker();
         mockIsValidVdsCommand();
         mockGetImageDomainsListVdsCommand(100, 100);
     }
@@ -112,40 +136,10 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         vmTemplate = mockVmTemplate();
     }
 
-    private void mockStaticClasses() {
-        mockStatic(DbFacade.class);
-        mockStatic(Backend.class);
-        mockStatic(Config.class);
-        mockStatic(VmHandler.class);
-        mockStatic(VmTemplateHandler.class);
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void mockVmHandler() {
-        when(VmHandler.isMemorySizeLegal(Matchers.<VmOsType> anyObject(),
-                anyInt(),
-                Matchers.<ArrayList> any(ArrayList.class),
-                Matchers.<String> anyObject())).thenReturn(true);
-
-        when(VmHandler.VerifyAddVm(
-                        Matchers.<ArrayList> any(ArrayList.class),
-                        anyInt(),
-                        Matchers.<VmTemplate> anyObject(),
-                        Matchers.<Guid> any(Guid.class),
-                        anyInt()
-                        )).thenReturn(Boolean.TRUE);
-    }
-
-    private void mockVdsBroker() {
-        when(Backend.getInstance()).thenReturn(backend);
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
-    }
-
     private void mockIsValidVdsCommand() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(Boolean.TRUE);
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.IsValid),
-                Matchers.<VDSParametersBase> any(VDSParametersBase.class))).thenReturn(returnValue);
+        doReturn(returnValue).when(command).runVdsCommand(eq(VDSCommandType.IsValid), any(VDSParametersBase.class));
     }
 
     protected void mockGetImageDomainsListVdsCommand(int availableDiskSizeFirstDomain,
@@ -159,8 +153,8 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
                 Matchers.<VDSParametersBase> any(VDSParametersBase.class))).thenReturn(returnValue);
     }
 
-    protected void mockGetStorageDomainList(int availableDiskSizeFirstDomain,
-            int availableDiskSizeSecondDomain) {
+    protected void mockGetStorageDomainList
+            (int availableDiskSizeFirstDomain, int availableDiskSizeSecondDomain) {
         // Mock Dao
         storageDomainsList =
                 getStorageDomainList(availableDiskSizeFirstDomain, availableDiskSizeSecondDomain);
@@ -169,11 +163,11 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
     }
 
     private void mockVMPoolDAO() {
-        when(dbFacada.getVmPoolDAO()).thenReturn(vmPoolDAO);
+        doReturn(vmPoolDAO).when(command).getVmPoolDAO();
     }
 
     private void mockVMTemplateDAO() {
-        when(dbFacada.getVmTemplateDAO()).thenReturn(vmTemplateDAO);
+        doReturn(vmTemplateDAO).when(command).getVmTemplateDAO();
         when(vmTemplateDAO.get(vmTemplateId)).thenReturn(vmTemplate);
     }
 
@@ -184,17 +178,16 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
     }
 
     private void mockVdsGroupDAO() {
-        when(dbFacada.getVdsGroupDAO()).thenReturn(vdsGroupDAO);
+        doReturn(vdsGroupDAO).when(command).getVdsGroupDAO();
         when(vdsGroupDAO.get(vdsGroupId)).thenReturn(vdsGroup);
     }
 
     private void mockDiskImageDAO() {
-        when(dbFacada.getDiskImageDAO()).thenReturn(diskImageDAO);
         when(diskImageDAO.getSnapshotById(Matchers.<Guid> any(Guid.class))).thenReturn(getDiskImageList().get(0));
     }
 
     private void mockStorageDomainDAO(List<storage_domains> storageDomains) {
-        when(dbFacada.getStorageDomainDAO()).thenReturn(storageDomainDAO);
+        doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
         for (storage_domains storageDomain : storageDomains) {
             when(storageDomainDAO.getForStoragePool(storageDomain.getId(), storagePoolId)).thenReturn(storageDomain);
         }
@@ -229,7 +222,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         return storageDomain;
     }
 
-    private List<Guid> mockStorageGuidList(List<storage_domains> storageDomains) {
+    private static List<Guid> mockStorageGuidList(List<storage_domains> storageDomains) {
         List<Guid> storageGuidList = new ArrayList<Guid>();
         for (storage_domains storageDomain : storageDomains) {
             storageGuidList.add(storageDomain.getId());
@@ -249,26 +242,26 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
      * Mock VDS Group.
      */
     private VDSGroup mockVdsGroup() {
-        VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setvds_group_id(vdsGroupId);
-        vdsGroup.setcompatibility_version(new Version());
-        vdsGroup.setstorage_pool_id(storagePoolId);
-        return vdsGroup;
+        VDSGroup group = new VDSGroup();
+        group.setvds_group_id(vdsGroupId);
+        group.setcompatibility_version(new Version());
+        group.setstorage_pool_id(storagePoolId);
+        return group;
     }
 
     /**
-     * Mock VM Tempalte.
+     * Mock VM Template.
      */
     private VmTemplate mockVmTemplate() {
-        VmTemplate vmTemplate = new VmTemplate();
-        vmTemplate.setId(vmTemplateId);
-        vmTemplate.setstorage_pool_id(storagePoolId);
-        setDiskList(vmTemplate);
+        VmTemplate template = new VmTemplate();
+        template.setId(vmTemplateId);
+        template.setstorage_pool_id(storagePoolId);
+        setDiskList(template);
 
-        return vmTemplate;
+        return template;
     }
 
-    private void setDiskList(VmTemplate vmTemplate) {
+    private static void setDiskList(VmTemplate vmTemplate) {
         for (DiskImage diskImage : getDiskImageList()) {
             vmTemplate.getDiskList().add(diskImage);
         }
@@ -278,7 +271,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         }
     }
 
-    private List<DiskImage> getDiskImageList() {
+    private static List<DiskImage> getDiskImageList() {
         List<DiskImage> diskList = new ArrayList<DiskImage>();
         DiskImage diskImage = new DiskImage();
         diskImage.setId(Guid.NewGuid());
@@ -291,7 +284,7 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         return diskList;
     }
 
-    private Map<Guid, DiskImage> getDiskImageTempalteList() {
+    private static Map<Guid, DiskImage> getDiskImageTempalteList() {
         Map<Guid, DiskImage> diskTemplateList = new HashMap<Guid, DiskImage>();
         DiskImage diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.NewGuid());
@@ -304,18 +297,6 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
         diskTemplateList.put(diskImageTemplate.getId(), diskImageTemplate);
         return diskTemplateList;
-    }
-
-    private void mockConfig() {
-        when(Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthWindows)).thenReturn(15);
-        when(Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthNonWindows)).thenReturn(64);
-        when(Config.<Integer> GetValue(ConfigValues.MaxVmsInPool)).thenReturn(87);
-        when(Config.<Integer> GetValue(ConfigValues.VMMinMemorySizeInMB)).thenReturn(256);
-        when(Config.<Integer> GetValue(ConfigValues.VM32BitMaxMemorySizeInMB)).thenReturn(2048);
-        when(Config.<Integer> GetValue(ConfigValues.VM64BitMaxMemorySizeInMB)).thenReturn(262144);
-        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceLow)).thenReturn(10);
-        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB)).thenReturn(1);
-        when(Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB)).thenReturn(1);
     }
 
     private VmStatic getVmStatic() {
@@ -331,19 +312,14 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
      * Mock VM pools.
      */
     private vm_pools mockVmPools() {
-        vm_pools vmPools = new vm_pools();
-        vmPools.setvm_pool_name("simplePoolName");
-        vmPools.setvds_group_id(vdsGroupId);
-        vmPools.setvm_pool_id(vmPoolId);
-        return vmPools;
-    }
-
-    private void mockDbFacade() {
-        when(DbFacade.getInstance()).thenReturn(dbFacada);
+        vm_pools pool = new vm_pools();
+        pool.setvm_pool_name("simplePoolName");
+        pool.setvds_group_id(vdsGroupId);
+        pool.setvm_pool_id(vmPoolId);
+        return pool;
     }
 
     private void mockDbDAO() {
-        mockDbFacade();
         mockVdsGroupDAO();
         mockVMPoolDAO();
         mockVMTemplateDAO();

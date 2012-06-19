@@ -24,6 +24,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 @CustomLogFields({ @CustomLogField("VmPoolName") })
@@ -32,7 +33,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     protected vm_pools getVmPool() {
         if (mVmPool == null && getVmPoolId() != null) {
-            mVmPool = DbFacade.getInstance().getVmPoolDAO().get(getVmPoolId());
+            mVmPool = getVmPoolDAO().get(getVmPoolId());
         }
         return mVmPool;
     }
@@ -279,6 +280,9 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         } else {
             return false;
         }
+    }
 
+    protected VmPoolDAO getVmPoolDAO() {
+        return getDbFacade().getVmPoolDAO();
     }
 }

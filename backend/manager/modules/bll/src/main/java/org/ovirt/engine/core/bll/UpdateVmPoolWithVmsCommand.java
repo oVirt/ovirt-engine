@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T> {
@@ -28,18 +27,14 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
 
     @Override
     protected Guid GetPoolId() {
-        // List<vm_pool_map> list =
-        // DbFacade.Instance.GetVmPoolsMapByVmPoolId(VmPool.vm_pool_id);
-        // AddVmPoolWithVmsParametersData.VmStaticData =
-        // DbFacade.Instance.GetVmStaticById(list[0].vm_guid);
-        DbFacade.getInstance().getVmPoolDAO().update(getVmPool());
+        getVmPoolDAO().update(getVmPool());
         return getVmPool().getvm_pool_id();
     }
 
     @Override
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction();
-        vm_pools oldPool = DbFacade.getInstance().getVmPoolDAO().get(getVmPool().getvm_pool_id());
+        vm_pools oldPool = getVmPoolDAO().get(getVmPool().getvm_pool_id());
         if (returnValue && oldPool == null) {
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
             returnValue = false;
