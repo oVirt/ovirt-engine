@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -43,11 +44,15 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         if (isManagement()) {
             // mark the nic as a management nic
             targetNic.getEntity().setType(2);
+            targetNic.getEntity().setBootProtocol(NetworkBootProtocol.Dhcp);
+        }else{
+            targetNic.getEntity().setBootProtocol(NetworkBootProtocol.None);
         }
         if (!createBridge) {
             return null;
         }
         VdsNetworkInterface targetNicEntity = targetNic.getEntity();
+
         if (hasVlan()) {
             // create vlan bridge (eth0.1)
             VdsNetworkInterface bridge = new VdsNetworkInterface();
@@ -75,6 +80,10 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         VdsNetworkInterface nicEntity = attachingNic.getEntity();
         if (!hasVlan()) {
             nicEntity.setNetworkName(null);
+            nicEntity.setBootProtocol(null);
+            nicEntity.setAddress(null);
+            nicEntity.setSubnet(null);
+            nicEntity.setGateway(null);
         }
         setBridge(null);
         // is this a management nic?
