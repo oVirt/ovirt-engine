@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -122,7 +121,14 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean networkExists() {
-        return Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVdsGroupId())).containsKey(getNetworkName());
+        List<network_cluster> networks = getNetworkClusterDAO().getAllForCluster(getVdsGroupId());
+        for (network_cluster network_cluster : networks) {
+            if (network_cluster.getnetwork_id().equals(getNetwork().getId())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean VdsGroupExists() {

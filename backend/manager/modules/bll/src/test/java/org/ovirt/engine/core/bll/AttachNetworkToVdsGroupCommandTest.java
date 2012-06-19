@@ -25,7 +25,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
-import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -40,9 +39,6 @@ public class AttachNetworkToVdsGroupCommandTest {
     NetworkClusterDAO networkClusterDAO;
 
     @Mock
-    NetworkDAO networkDAO;
-
-    @Mock
     VdsGroupDAO vdsGroupDAO;
 
     @Before
@@ -53,21 +49,12 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     @Test
     public void networkExists() {
-        simulateNetworkAlreadyExists();
-        simulateVdsGroupExists();
-        assertCanDoActionSucceeds();
-    }
-
-    @Test
-    public void newNetwork() {
-        simulateNetworkDoesNotExist();
         simulateVdsGroupExists();
         assertCanDoActionSucceeds();
     }
 
     @Test
     public void noVdsGroup() {
-        simulateNetworkDoesNotExist();
         simulateVdsGroupDoesNotExist();
         assertCanDoActionFailure(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID.toString());
     }
@@ -104,20 +91,7 @@ public class AttachNetworkToVdsGroupCommandTest {
             protected NetworkClusterDAO getNetworkClusterDAO() {
                 return networkClusterDAO;
             }
-
-            @Override
-            protected NetworkDAO getNetworkDAO() {
-                return networkDAO;
-            }
         };
-    }
-
-    private void simulateNetworkAlreadyExists() {
-        dbFacadeReturnNetworkListFromDb();
-    }
-
-    private void simulateNetworkDoesNotExist() {
-        dbFacadeReturnEmptyNetworkList();
     }
 
     private void simulateVdsGroupExists() {
@@ -134,14 +108,6 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     private void dbFacadeReturnNoVdsGroup() {
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(null);
-    }
-
-    private void dbFacadeReturnNetworkListFromDb() {
-        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(getNetworkList());
-    }
-
-    private void dbFacadeReturnEmptyNetworkList() {
-        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(new ArrayList<Network>());
     }
 
     private void dbFacadeReturnVdsGroup() {
