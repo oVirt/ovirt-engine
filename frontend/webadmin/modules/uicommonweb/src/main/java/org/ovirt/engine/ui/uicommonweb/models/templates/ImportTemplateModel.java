@@ -287,12 +287,10 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
                                     + ConstantsManager.getInstance().getConstants().templateAlreadyExistsMsg());
                             if (list.size() == alreadyInSystem.size()) {
                                 getCloneAllTemplates().setEntity(true);
-                                getCloneAllTemplates().setIsChangable(false);
                                 getCloneTemplatesSuffix().setIsAvailable(true);
                             } else {
                                 getCloneOnlyDuplicateTemplates().setIsAvailable(true);
                                 getCloneOnlyDuplicateTemplates().setEntity(true);
-                                getCloneOnlyDuplicateTemplates().setIsChangable(false);
                                 getCloneTemplatesSuffix().setIsAvailable(true);
                             }
                         } else {

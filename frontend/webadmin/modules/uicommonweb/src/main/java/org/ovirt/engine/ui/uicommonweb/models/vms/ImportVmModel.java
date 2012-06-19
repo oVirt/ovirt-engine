@@ -636,7 +636,6 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                                     + " " + ConstantsManager.getInstance().getConstants().vmAlreadyExistsMsg()); //$NON-NLS-1$
                             if (list.size() == alreadyInSystem.size()) {
                                 getCloneAllVMs().setEntity(true);
-                                getCloneAllVMs().setIsChangable(false);
                                 getCollapseSnapshots().setEntity(true);
                                 getCollapseSnapshots().setIsChangable(false);
                                 getCloneVMsSuffix().setIsAvailable(true);
@@ -644,7 +643,6 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                                 getCloneOnlyDuplicateVMs().setIsAvailable(true);
                                 getCloneOnlyDuplicateVMs_messageVisible().setEntity(true);
                                 getCloneOnlyDuplicateVMs().setEntity(true);
-                                getCloneOnlyDuplicateVMs().setIsChangable(false);
                                 getCloneVMsSuffix().setIsAvailable(true);
                             }
                         } else {
