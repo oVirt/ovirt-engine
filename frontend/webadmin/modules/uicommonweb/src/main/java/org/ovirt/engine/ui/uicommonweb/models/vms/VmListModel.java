@@ -33,8 +33,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -48,7 +46,6 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -74,13 +71,13 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
 import org.ovirt.engine.ui.uicompat.Assembly;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -90,7 +87,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ResourceManager;
 
-public class VmListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
+public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext
 {
 
     private UICommand privateNewServerCommand;
@@ -948,200 +945,26 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }), vm.getId(), true);
     }
 
-    private void Export()
-    {
-        VM vm = (VM) getSelectedItem();
-        if (vm == null)
-        {
-            return;
-        }
-
-        if (getWindow() != null)
-        {
-            return;
-        }
-
-        ExportVmModel model = new ExportVmModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().exportVirtualMachineTitle());
-        model.setHashName("export_virtual_machine"); //$NON-NLS-1$
-
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        VmListModel vmListModel = (VmListModel) target;
-                        ArrayList<storage_domains> storageDomains =
-                                (ArrayList<storage_domains>) returnValue;
-
-                        ArrayList<storage_domains> filteredStorageDomains =
-                                new ArrayList<storage_domains>();
-                        for (storage_domains a : storageDomains)
-                        {
-                            if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
-                            {
-                                filteredStorageDomains.add(a);
-                            }
-                        }
-
-                        vmListModel.PostExportGetStorageDomainList(filteredStorageDomains);
-                    }
-                }), vm.getstorage_pool_id());
+    @Override
+    protected String thereIsNoExportDomainBackupEntityAttachExportDomainToVmsDcMsg() {
+        return ConstantsManager.getInstance()
+                .getConstants()
+                .thereIsNoExportDomainBackupVmAttachExportDomainToVmsDcMsg();
     }
 
-    private void PostExportGetStorageDomainList(ArrayList<storage_domains> storageDomains)
-    {
-        ExportVmModel model = (ExportVmModel) getWindow();
-        model.getStorage().setItems(storageDomains);
-        model.getStorage().setSelectedItem(Linq.FirstOrDefault(storageDomains));
-
-        boolean noActiveStorage = true;
-        for (storage_domains a : storageDomains)
-        {
-            if (a.getstatus() == StorageDomainStatus.Active)
-            {
-                noActiveStorage = false;
-                break;
-            }
-        }
-
-        if (SelectedVmsOnDifferentDataCenters())
-        {
-            model.getCollapseSnapshots().setIsChangable(false);
-            model.getForceOverride().setIsChangable(false);
-
-            model.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .vmsResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg());
-
-            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-            tempVar.setIsDefault(true);
-            tempVar.setIsCancel(true);
-            model.getCommands().add(tempVar);
-        }
-        else if (storageDomains.isEmpty())
-        {
-            model.getCollapseSnapshots().setIsChangable(false);
-            model.getForceOverride().setIsChangable(false);
-
-            model.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .thereIsNoExportDomainBackupVmAttachExportDomainToVmsDcMsg());
-
-            UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
-            tempVar2.setIsDefault(true);
-            tempVar2.setIsCancel(true);
-            model.getCommands().add(tempVar2);
-
-        }
-        else if (noActiveStorage)
-        {
-            model.getCollapseSnapshots().setIsChangable(false);
-            model.getForceOverride().setIsChangable(false);
-
-            model.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .theRelevantExportDomainIsNotActivePleaseActivateItMsg());
-
-            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().close());
-            tempVar3.setIsDefault(true);
-            tempVar3.setIsCancel(true);
-            model.getCommands().add(tempVar3);
-        }
-        else
-        {
-            showWarningOnExistingVms(model);
-
-            UICommand tempVar4 = new UICommand("OnExport", this); //$NON-NLS-1$
-            tempVar4.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar4.setIsDefault(true);
-            model.getCommands().add(tempVar4);
-            UICommand tempVar5 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar5.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar5.setIsCancel(true);
-            model.getCommands().add(tempVar5);
-        }
+    @Override
+    protected VdcQueryType getEntityExportDomain() {
+        return VdcQueryType.GetVmsFromExportDomain;
     }
 
-    private void showWarningOnExistingVms(ExportVmModel model)
-    {
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
-        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        Object[] array = (Object[]) target;
-                        VmListModel vmListModel = (VmListModel) array[0];
-                        ExportVmModel exportVmModel = (ExportVmModel) array[1];
-                        ArrayList<storage_pool> storagePools =
-                                (ArrayList<storage_pool>) returnValue;
-
-                        vmListModel.PostShowWarningOnExistingVms(exportVmModel, storagePools);
-                    }
-                }), storageDomainId);
+    @Override
+    protected String entityResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg() {
+        return ConstantsManager.getInstance()
+                .getConstants()
+                .vmsResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg();
     }
 
-    private void PostShowWarningOnExistingVms(ExportVmModel exportModel, List<storage_pool> storagePools)
-    {
-        storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
-
-        String existingVMs = ""; //$NON-NLS-1$
-        if (storagePool != null)
-        {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void OnSuccess(Object model, Object ReturnValue)
-                {
-                    VmListModel vmListModel = (VmListModel) model;
-                    ExportVmModel exportModel1 = (ExportVmModel) vmListModel.getWindow();
-                    String existingVMs = ""; //$NON-NLS-1$
-
-                    if (ReturnValue != null)
-                    {
-                        for (Object selectedItem : vmListModel.getSelectedItems())
-                        {
-                            VM vm = (VM) selectedItem;
-                            VM foundVm = null;
-
-                            VdcQueryReturnValue returnValue = (VdcQueryReturnValue) ReturnValue;
-                            for (VM a : (ArrayList<VM>) returnValue.getReturnValue())
-                            {
-                                if (a.getId().equals(vm.getId()))
-                                {
-                                    foundVm = a;
-                                    break;
-                                }
-                            }
-
-                            if (foundVm != null)
-                            {
-                                existingVMs += "\u2022  " + vm.getvm_name() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
-                            }
-                        }
-                    }
-                    if (!StringHelper.isNullOrEmpty(existingVMs))
-                    {
-                        exportModel1.setMessage(ConstantsManager.getInstance()
-                                .getMessages()
-                                .vmsAlreadyExistOnTargetExportDomain(existingVMs));
-                    }
-                }
-            };
-
-            Guid storageDomainId = ((storage_domains) exportModel.getStorage().getSelectedItem()).getId();
-            GetAllFromExportDomainQueryParameters tempVar =
-                    new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
-            tempVar.setGetAll(true);
-            Frontend.RunQuery(VdcQueryType.GetVmsFromExportDomain, tempVar, _asyncQuery);
-        }
-    }
-
-    private boolean SelectedVmsOnDifferentDataCenters()
+    protected boolean entitiesSelectedOnDifferentDataCenters()
     {
         ArrayList<VM> vms = new ArrayList<VM>();
         for (Object selectedItem : getSelectedItems())
@@ -1163,6 +986,26 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
 
         return t.size() > 1;
+    }
+
+    protected String extractNameFromEntity(VM entity) {
+        return entity.getvm_name();
+    }
+
+    protected boolean entititesEqualsNullSafe(VM e1, VM e2) {
+        return e1.getId().equals(e2.getId());
+    }
+
+    @Override
+    protected String composeEntityOnStorage(String entities) {
+        return ConstantsManager.getInstance()
+                .getMessages()
+                .vmsAlreadyExistOnTargetExportDomain(entities);
+    }
+
+    @Override
+    protected Iterable<VM> asIterableReturnValue(Object returnValue) {
+        return (List<VM>) returnValue;
     }
 
     private void GetTemplatesNotPresentOnExportDomain()
@@ -2969,5 +2812,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     @Override
     protected String getListName() {
         return "VmListModel"; //$NON-NLS-1$
+    }
+
+    @Override
+    protected Guid extractStoragePoolIdNullSafe(VM entity) {
+        return entity.getstorage_pool_id();
     }
 }
