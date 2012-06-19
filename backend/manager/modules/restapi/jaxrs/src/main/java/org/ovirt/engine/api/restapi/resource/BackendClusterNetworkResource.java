@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
-import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
+import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class BackendClusterNetworkResource
@@ -28,14 +28,11 @@ public class BackendClusterNetworkResource
 
     @Override
     public Network update(Network incoming) {
-        Network oldNetwork = get();
-        if (incoming.isSetDisplay() && (!oldNetwork.isSetDisplay() || (oldNetwork.isDisplay() != incoming.isDisplay()))) {
-            performAction(VdcActionType.UpdateDisplayToVdsGroup,
-                          new DisplayNetworkToVdsGroupParameters(cluster.getVDSGroup(),
-                                                                 map(incoming, map(oldNetwork)),
-                                                                 incoming.isDisplay()));
-            return get();
-        }
-        return oldNetwork;
+        org.ovirt.engine.core.common.businessentities.Network network = map(incoming, map(get()));
+        network.getCluster().setnetwork_id(network.getId());
+        network.getCluster().setcluster_id(cluster.getVDSGroup().getId());
+        performAction(VdcActionType.UpdateNetworkOnCluster,
+                      new NetworkClusterParameters(network.getCluster()));
+        return get();
     }
 }

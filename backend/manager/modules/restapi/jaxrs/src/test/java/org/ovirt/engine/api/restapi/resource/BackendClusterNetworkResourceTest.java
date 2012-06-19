@@ -9,7 +9,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
+import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
@@ -67,8 +67,8 @@ public class BackendClusterNetworkResourceTest
         setUpEntityQueryExpectations(1, false);
         setUpEntityQueryExpectations(1, true);
         setUpVDSGroupExpectations(GUIDS[1]);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateDisplayToVdsGroup,
-                                           DisplayNetworkToVdsGroupParameters.class,
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetworkOnCluster,
+                                           NetworkClusterParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            true,
