@@ -19,6 +19,7 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<T> {
+
     public AddBondCommand(T parameters) {
         super(parameters);
         if (parameters.getNics() != null) {
@@ -30,26 +31,25 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
 
     @Override
     protected void executeCommand() {
-        String address = getParameters().getAddress();
-        String subnet = StringUtils.isEmpty(getParameters().getSubnet()) ? getParameters().getNetwork()
-                .getsubnet() : getParameters().getSubnet();
-        String gateway = StringUtils.isEmpty(getParameters().getGateway()) ? getParameters().getNetwork()
-                .getgateway() : getParameters().getGateway();
+        T params = getParameters();
+        String address = params.getAddress();
+        String subnet = StringUtils.isEmpty(params.getSubnet()) ? params.getNetwork()
+                .getsubnet() : params.getSubnet();
+        String gateway = StringUtils.isEmpty(params.getGateway()) ? params.getNetwork()
+                .getgateway() : params.getGateway();
 
-        NetworkVdsmVDSCommandParameters parameters =
-                new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                        getParameters().getNetwork().getname(),
-                        getParameters().getNetwork().getvlan_id(),
-                        getParameters().getBondName(),
-                        getParameters().getNics(),
-                        address,
-                        subnet,
-                        gateway,
-                        getParameters().getNetwork().getstp(),
-                        getParameters().getBondingOptions(),
-                        getParameters().getBootProtocol());
+        NetworkVdsmVDSCommandParameters vdsParams = new NetworkVdsmVDSCommandParameters(params.getVdsId(),
+                params.getNetwork(),
+                params.getBondName(),
+                params.getNics(),
+                address,
+                subnet,
+                gateway,
+                params.getBondingOptions(),
+                params.getBootProtocol());
+
         VDSReturnValue retVal = Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.AddNetwork, parameters);
+                .RunVdsCommand(VDSCommandType.AddNetwork, vdsParams);
 
         if (retVal.getSucceeded()) {
             // update vds network data
@@ -57,13 +57,13 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(getParameters().getVdsId()));
+                            new VdsIdAndVdsVDSCommandParametersBase(params.getVdsId()));
 
             if (retVal.getSucceeded()) {
                 // set network status (this can change the network status to
                 // operational)
-                VdsStatic vdsStatic = DbFacade.getInstance().getVdsStaticDAO().get(getParameters().getVdsId());
-                AttachNetworkToVdsGroupCommand.SetNetworkStatus(vdsStatic.getvds_group_id(), getParameters()
+                VdsStatic vdsStatic = DbFacade.getInstance().getVdsStaticDAO().get(params.getVdsId());
+                AttachNetworkToVdsGroupCommand.SetNetworkStatus(vdsStatic.getvds_group_id(), params
                         .getNetwork());
                 setSucceeded(true);
             }
@@ -142,8 +142,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         // check that the network exists in current cluster
-        List<network> networks = DbFacade.getInstance().getNetworkDAO()
-                .getAllForCluster(getVds().getvds_group_id());
+        List<network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getVds().getvds_group_id());
         if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
             @Override
             public boolean eval(network network) {
