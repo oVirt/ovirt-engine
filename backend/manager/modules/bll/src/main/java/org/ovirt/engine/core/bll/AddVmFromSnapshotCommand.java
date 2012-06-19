@@ -90,6 +90,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 getActionType().getActionGroup()));
         permissionList =
                 QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
+
+        addPermissionSubjectForCustomProperties(permissionList);
         return permissionList;
     }
 

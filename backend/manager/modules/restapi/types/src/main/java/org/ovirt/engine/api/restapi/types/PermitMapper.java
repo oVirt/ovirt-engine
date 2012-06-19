@@ -66,6 +66,8 @@ public class PermitMapper {
             return PermitType.MANIPULATE_VM_SNAPSHOTS;
         case RECONNECT_TO_VM:
             return PermitType.RECONNECT_TO_VM;
+        case CHANGE_VM_CUSTOM_PROPERTIES:
+            return PermitType.CHANGE_VM_CUSTOM_PROPERTIES;
         case CREATE_HOST:
             return PermitType.CREATE_HOST;
         case EDIT_HOST_CONFIGURATION:

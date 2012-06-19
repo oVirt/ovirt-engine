@@ -34,6 +34,8 @@ public enum ActionGroup {
      */
     RECONNECT_TO_VM(13, RoleType.USER, VdcObjectType.VM, true, ApplicationMode.VirtOnly),
 
+    CHANGE_VM_CUSTOM_PROPERTIES(14, RoleType.ADMIN, VdcObjectType.VM, true, ApplicationMode.VirtOnly),
+
     // host (vds) actions groups
     CREATE_HOST(100, RoleType.ADMIN, VdcObjectType.VDS, true),
     EDIT_HOST_CONFIGURATION(101, RoleType.ADMIN, VdcObjectType.VDS, true),

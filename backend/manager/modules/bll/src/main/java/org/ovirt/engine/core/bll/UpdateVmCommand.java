@@ -10,7 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -308,6 +310,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList,
                         getStoragePool(),
                         getParameters().getVmStaticData().getQuotaId());
+
+        // user need specific permission to change custom properties
+        if (isVmExist()
+                &&
+                (!StringUtils.equals(getVm().getPredefinedProperties(), getParameters().getVmStaticData()
+                        .getPredefinedProperties())
+                || !StringUtils.equals(getVm().getUserDefinedProperties(), getParameters().getVmStaticData()
+                        .getUserDefinedProperties()))) {
+            permissionList.add(new PermissionSubject(getParameters().getVmId(),
+                    VdcObjectType.VM,
+                    ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+        }
         return permissionList;
     }
 

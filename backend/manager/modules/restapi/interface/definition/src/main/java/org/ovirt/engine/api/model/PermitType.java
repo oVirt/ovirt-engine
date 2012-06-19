@@ -16,6 +16,7 @@
 
 package org.ovirt.engine.api.model;
 
+
 public enum PermitType {
     CREATE_VM(1, RoleType.USER),
     DELETE_VM(2, RoleType.USER),
@@ -30,6 +31,7 @@ public enum PermitType {
     MOVE_VM(11, RoleType.USER),
     MANIPULATE_VM_SNAPSHOTS(12, RoleType.USER),
     RECONNECT_TO_VM(13, RoleType.ADMIN),
+    CHANGE_VM_CUSTOM_PROPERTIES(14, RoleType.ADMIN),
     // host (vds) actions groups
     CREATE_HOST(100, RoleType.ADMIN),
     EDIT_HOST_CONFIGURATION(101, RoleType.ADMIN),

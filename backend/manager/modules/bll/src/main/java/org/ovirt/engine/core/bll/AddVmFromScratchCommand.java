@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -158,8 +157,11 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getVdsGroupId(),
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getVdsGroupId(),
                 VdcObjectType.VdsGroups,
                 getActionType().getActionGroup()));
+        addPermissionSubjectForCustomProperties(permissionList);
+        return permissionList;
     }
 }

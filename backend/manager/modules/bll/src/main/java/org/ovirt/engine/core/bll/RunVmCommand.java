@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -1112,6 +1114,19 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     @Override
     protected Map<Guid, String> getExclusiveLocks() {
         return Collections.singletonMap(getVmId(), LockingGroup.VM.name());
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+
+        // special permission is needed to use custom properties
+        if (!StringUtils.isEmpty(getParameters().getCustomProperties())) {
+            permissionList.add(new PermissionSubject(getParameters().getVmId(),
+                    VdcObjectType.VM,
+                    ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+        }
+        return permissionList;
     }
 
     private static Log log = LogFactory.getLog(RunVmCommand.class);

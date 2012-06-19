@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -715,7 +716,19 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
         permissionList.addAll(QuotaHelper.getInstance()
                 .getPermissionsForDiskImagesList(diskInfoDestinationMap.values(), getStoragePool()));
+
+        addPermissionSubjectForCustomProperties(permissionList);
         return permissionList;
+    }
+
+    protected void addPermissionSubjectForCustomProperties(List<PermissionSubject> permissionList) {
+        VmStatic vmFromParams = getParameters().getVmStaticData();
+
+        // user need specific permission to change custom properties
+        if (vmFromParams != null && !StringUtils.isEmpty(vmFromParams.getCustomProperties())) {
+            permissionList.add(new PermissionSubject(getVdsGroupId(),
+                    VdcObjectType.VdsGroups, ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+        }
     }
 
     protected void addVmPermission() {
