@@ -1526,9 +1526,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     @Override
     protected void ExecuteVDSCommand() {
+        boolean isStartReconstruct = false;
         synchronized (getCurrentIrsProxyData().syncObj) {
             try {
-
                 if (getIrsProxy() != null) {
                     ExecuteIrsBrokerCommand();
                 } else {
@@ -1583,35 +1583,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 if (getCurrentIrsProxyData().getHasVdssForSpmSelection()) {
                     failover();
                 } else {
-                    storage_domain_static masterDomain = null;
-                    List<storage_domain_static> storageDomainStaticList = DbFacade.getInstance()
-                            .getStorageDomainStaticDAO().getAllForStoragePool(getParameters().getStoragePoolId());
-                    for (storage_domain_static storageDomainStatic : storageDomainStaticList) {
-                        if (storageDomainStatic.getstorage_domain_type() == StorageDomainType.Master) {
-                            masterDomain = storageDomainStatic;
-                            break;
-                        }
-                    }
-
-                    if (masterDomain != null) {
-                        if (getCurrentIrsProxyData().duringReconstructMaster.compareAndSet(false, true)) {
-                            try {
-                                ResourceManager.getInstance()
-                                         .getEventListener()
-                                         .masterDomainNotOperational(masterDomain.getId(),
-                                                 getParameters().getStoragePoolId());
-                            } finally {
-                                getCurrentIrsProxyData().duringReconstructMaster.set(false);
-                            }
-                        } else {
-                            log.debug("The pool is during reconstruct master, skipping handling problematic domains "
-                                    + getParameters().getStoragePoolId());
-                        }
-                    } else {
-                        log.errorFormat(
-                                "IrsBroker::IRSNoMasterDomainException:: Could not find master domain for pool {0} !!!",
-                                getParameters().getStoragePoolId());
-                    }
+                    isStartReconstruct = true;
                 }
             } catch (IRSNetworkException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
@@ -1665,14 +1637,48 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 // realize what to do in each case:
                 failover();
             } finally {
-                if (_irsProxyData.containsKey(getParameters().getStoragePoolId())
-                        && getCurrentIrsProxyData().getTriedVdssList().size() != 0) {
+                if (_irsProxyData.containsKey(getParameters().getStoragePoolId())) {
                     getCurrentIrsProxyData().getTriedVdssList().clear();
                 }
                 if (!getCurrentIrsProxyData().getIsValidWithoutSpmStart()) {
                     getCurrentIrsProxyData().setCurrentVdsId(Guid.Empty);
                 }
             }
+        }
+        if (isStartReconstruct) {
+            startReconstruct();
+        }
+    }
+
+    private void startReconstruct() {
+        storage_domain_static masterDomain = null;
+        List<storage_domain_static> storageDomainStaticList = DbFacade.getInstance()
+                .getStorageDomainStaticDAO().getAllForStoragePool(getParameters().getStoragePoolId());
+        for (storage_domain_static storageDomainStatic : storageDomainStaticList) {
+            if (storageDomainStatic.getstorage_domain_type() == StorageDomainType.Master) {
+                masterDomain = storageDomainStatic;
+                break;
+            }
+        }
+
+        if (masterDomain != null) {
+            if (getCurrentIrsProxyData().duringReconstructMaster.compareAndSet(false, true)) {
+                try {
+                    ResourceManager.getInstance()
+                             .getEventListener()
+                             .masterDomainNotOperational(masterDomain.getId(),
+                                     getParameters().getStoragePoolId());
+                } finally {
+                    getCurrentIrsProxyData().duringReconstructMaster.set(false);
+                }
+            } else {
+                log.debug("The pool is during reconstruct master, skipping handling problematic domains "
+                        + getParameters().getStoragePoolId());
+            }
+        } else {
+            log.errorFormat(
+                    "IrsBroker::IRSNoMasterDomainException:: Could not find master domain for pool {0} !!!",
+                    getParameters().getStoragePoolId());
         }
     }
 
