@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -38,11 +37,14 @@ public class UserPortalTemplateListModel extends TemplateListModel
         {
             ArrayList items = new ArrayList();
             items.add(item);
-            getEditCommand().setIsExecutionAllowed(item.getstatus() != VmTemplateStatus.Locked
-                    && !item.getId().equals(NGuid.Empty));
-            getRemoveCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(items,
-                    VmTemplate.class,
-                    VdcActionType.RemoveVmTemplate));
+            getEditCommand().setIsExecutionAllowed(
+                    item.getstatus() != VmTemplateStatus.Locked &&
+                            !isBlankTemplateSelected());
+            getRemoveCommand().setIsExecutionAllowed(
+                    VdcActionUtils.CanExecute(items, VmTemplate.class,
+                            VdcActionType.RemoveVmTemplate) &&
+                            !isBlankTemplateSelected()
+                    );
         }
         else
         {

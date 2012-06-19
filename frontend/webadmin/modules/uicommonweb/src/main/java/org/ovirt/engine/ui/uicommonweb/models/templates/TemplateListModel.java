@@ -634,7 +634,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                 (((ArrayList) getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
                         : new ArrayList();
 
-        boolean blankSelected = getSelectedItem() != null && Guid.OpEquality(item.getId(), NGuid.Empty);
+        boolean blankSelected = isBlankTemplateSelected();
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && item != null
                 && item.getstatus() != VmTemplateStatus.Locked);
@@ -677,6 +677,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                     .getConstants()
                     .blankTemplateCannotBeCopied());
         }
+    }
+
+    protected boolean isBlankTemplateSelected() {
+        return getSelectedItem() != null && Guid.OpEquality(((VmTemplate) getSelectedItem()).getId(), NGuid.Empty);
     }
 
     @Override
