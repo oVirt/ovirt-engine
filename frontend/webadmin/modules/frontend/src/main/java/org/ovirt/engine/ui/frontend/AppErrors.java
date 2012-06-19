@@ -414,10 +414,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type} if custom VM properties are in invalid format. Please check the input.")
     String ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX();
 
-    @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties are not configured by the system. These keys are: $MissingKeys")
+    @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties are not configured by the system. The keys are: ${MissingKeys}")
     String ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_KEYS();
 
-    @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties have illegal values. These keys are: $WrongValueKeys")
+    @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties have illegal values. The keys are: ${WrongValueKeys}")
     String ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_VALUES();
 
     @DefaultStringValue("Cannot ${action} ${type}. There are no available running Hosts in the Host Cluster.")
@@ -1524,7 +1524,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Authentication Failed. Wrong domain name was provided for authentication")
     String USER_FAILED_TO_AUTHENTICATE_WRONG_REALM();
 
-    @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties appear more than once. These keys are: $DuplicateKeys")
+    @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties appear more than once. The keys are: ${DuplicateKeys}")
     String ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_DUPLICATE_KEYS();
 
     @DefaultStringValue("Host Address can not be modified due to Security restrictions.  In order to change Host Address, Host has to be reinstalled")
