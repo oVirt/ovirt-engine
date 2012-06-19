@@ -103,7 +103,7 @@
 		}
 
 		.checkCon {
-			width: 390px;
+			width: 370px;
 			padding: 5px;
 		}
 	</ui:style>

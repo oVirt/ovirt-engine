@@ -109,7 +109,7 @@ public class HostSetupNetworksModel extends EntityModel {
         setNetworksChangedEvent(new Event(NETWORKS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
         setCheckConnectivity(new EntityModel());
-        getCheckConnectivity().setEntity(false);
+        getCheckConnectivity().setEntity(true);
         setCommitChanges(new EntityModel());
         getCommitChanges().setEntity(false);
 

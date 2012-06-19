@@ -195,7 +195,7 @@ public class HostManagementNetworkModel extends EntityModel
         setGateway(new EntityModel());
 
         setCheckConnectivity(new EntityModel());
-        getCheckConnectivity().setEntity(false);
+        getCheckConnectivity().setEntity(true);
         setBondingOptions(new ListModel());
 
         EntityModel tempVar = new EntityModel();

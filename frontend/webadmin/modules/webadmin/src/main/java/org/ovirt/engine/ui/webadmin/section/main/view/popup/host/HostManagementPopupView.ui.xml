@@ -9,7 +9,8 @@
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView.Style">
 		.checkCon{
-			width: 390px;
+			width: 370px;
+			padding: 5px;
 		}
 	</ui:style>
 

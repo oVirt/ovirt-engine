@@ -1778,7 +1778,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Default Gateway:")
     String defaultGwHostPopup();
 
-    @DefaultStringValue("Rollback changes if Host loses Connectivity to the Engine")
+    @DefaultStringValue("Verify connectivity between Host and ovirt-engine")
     String checkConHostPopup();
 
     @DefaultStringValue("<I>Changes done to the Networking configuration are temporary until explicitly saved.<BR>" +
