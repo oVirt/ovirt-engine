@@ -1374,6 +1374,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Network name must be 1-15 long and can contain only 'A-Z', 'a-z', '0-9', '_' characters")
     String NETWORK_ILEGAL_NETWORK_NAME();
 
+    @DefaultStringValue("Network interface name is already in use")
+    String NETWORK_INTERFACE_NAME_ALREADY_IN_USE();
+
     @DefaultStringValue("Storage related operations can't be performed while the Storage Pool Manager is down.\nPlease make sure the Storage Pool Manager is up and running, and check network connectivity.")
     String STORAGE_OPERATION_FAILED_SPM_NETWORK_PROBLEMS();
 
