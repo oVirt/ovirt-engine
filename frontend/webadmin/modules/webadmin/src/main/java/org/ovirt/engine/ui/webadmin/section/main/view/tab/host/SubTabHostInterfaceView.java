@@ -82,7 +82,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts()).asString(), "10%"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.bondInterface(), "20%"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.vlanInterface(), "20%"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.newInterface(), "20%"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.networkNameInterface(), "20%"); //$NON-NLS-1$
 
         table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.addEditInterface()) {
             @Override
