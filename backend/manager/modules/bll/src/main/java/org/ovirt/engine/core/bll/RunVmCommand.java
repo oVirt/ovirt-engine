@@ -13,11 +13,14 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -44,6 +47,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -62,6 +68,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -325,10 +332,20 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             CreateAllSnapshotsFromVmParameters p = tempVar;
             p.setSnapshotType(SnapshotType.STATELESS);
 
+            Map<String, String> values = getVmValuesForMsgResolving();
+
+            // Creating snapshots as sub step of run stateless
+            Step createSnapshotsStep = addSubStep(StepEnum.EXECUTING,
+                    StepEnum.CREATING_SNAPSHOTS, values);
+
+            // Add the step as the first step of the new context
+            ExecutionContext createSnapshotsCtx = new ExecutionContext();
+            createSnapshotsCtx.setMonitored(true);
+            createSnapshotsCtx.setStep(createSnapshotsStep);
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
                             p,
-                            new CommandContext(getCompensationContext(), getLock()));
+                            new CommandContext(createSnapshotsCtx,getCompensationContext(), getLock()));
 
             // setting lock to null in order not to release lock twice
             setLock(null);
@@ -350,6 +367,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getvm_name());
             }
         }
+    }
+
+    protected Map<String, String> getVmValuesForMsgResolving() {
+        Map<String, String> values = Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName());
+        return values;
     }
 
     private void removeVmStatlessImages() {
@@ -915,8 +937,30 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
             getParameters().setShouldBeLogged(false);
             getParameters().setRunAsStateless(false);
+            ExecutionContext runStatelessVmCtx = new ExecutionContext();
+            Step step = getExecutionContext().getStep();
+            // Retrieve the job object and its steps as this the endSuccessfully stage of command execution -
+            // at this is a new instance of the command is used
+            // (comparing with the execution state) so all information on the job and steps should be retrieved.
+            Job job = JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId());
+            Step executingStep = job.getDirectStep(StepEnum.EXECUTING);
+            // We would like to to set the run stateless step as substep of executing step
             getParameters().setIsInternal(true);
-            setSucceeded(Backend.getInstance().runInternalAction(VdcActionType.RunVm, getParameters())
+            // The iternal command should be monitored for tasks
+            runStatelessVmCtx.setMonitored(true);
+            Step runStatelessStep =
+                    ExecutionHandler.addSubStep(getExecutionContext(),
+                            executingStep,
+                            StepEnum.RUN_STATELESS_VM,
+                            ExecutionMessageDirector.resolveStepMessage(StepEnum.RUN_STATELESS_VM,
+                                    getVmValuesForMsgResolving()));
+            // This is needed in order to end the job upon exextuion of the steps of the child command
+            runStatelessVmCtx.setShouldEndJob(true);
+            // Since run stateless step involves invocation of command, we should set the run stateless vm step as
+            // the "beginning step" of the child command.
+            runStatelessVmCtx.setStep(runStatelessStep);
+            setSucceeded(Backend.getInstance()
+                    .runInternalAction(VdcActionType.RunVm, getParameters(), new CommandContext(runStatelessVmCtx))
                     .getSucceeded());
             if (!getSucceeded()) {
                 // could not run the vm don't try to run the end action
