@@ -441,4 +441,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
         return null;
     }
+
+    public String getDiskAlias() {
+        return getParameters().getDiskInfo().getDiskAlias();
+    }
 }

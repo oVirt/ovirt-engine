@@ -32,9 +32,4 @@ public class HotUnPlugDiskFromVmCommand<T extends HotPlugDiskToVmParameters> ext
     protected VDSCommandType getPlugAction() {
         return VDSCommandType.HotUnPlugDisk;
     }
-
-    @Override
-    public String getDiskAlias() {
-        return disk.getDiskAlias();
-    }
 }
