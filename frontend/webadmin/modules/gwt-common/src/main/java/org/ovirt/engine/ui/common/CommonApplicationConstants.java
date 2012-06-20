@@ -7,7 +7,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("")
     String empty();
 
-    @DefaultStringValue("Oops!")
+    @DefaultStringValue("")
     String errorPopupCaption();
 
     @DefaultStringValue("Close")
