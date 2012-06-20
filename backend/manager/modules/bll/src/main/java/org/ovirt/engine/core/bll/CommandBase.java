@@ -61,6 +61,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.dbbroker.generic.RepositoryException;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
@@ -1371,6 +1372,31 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 }
             }
         }
+    }
+
+    /**
+     * Adds a sub step on the current execution context by providing parent and new step information and step description
+     * @param parentStep parent step to add the new sub step on
+     * @param newStep step to add
+     * @param description  description of step to be added
+     * @return
+     */
+    protected Step addSubStep(StepEnum parentStep, StepEnum newStep, String description) {
+        return ExecutionHandler.addSubStep(getExecutionContext(),
+                getExecutionContext().getJob().getStep(parentStep),
+                newStep,
+                description);
+    }
+
+    /**
+     * Adds a sub step on the current execution context by providing parent and new step information and map that will be resolved to create a text message that describes the new step
+     * @param parentStep parent step to add the new sub step on
+     * @param newStep step to add
+     * @param map of values that will be used to compose the description of the step
+     * @return
+     */
+    protected Step addSubStep(StepEnum parentStep, StepEnum newStep, Map<String, String> valuesMap) {
+        return addSubStep(parentStep, newStep, ExecutionMessageDirector.resolveStepMessage(newStep, valuesMap));
     }
 
 }
