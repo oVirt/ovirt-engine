@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -314,6 +316,7 @@ public class AddDiskToVmCommandTest {
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(true).when(command).performImagesChecks(any(VM.class));
         doReturn(true).when(command).isStorageDomainBelowThresholds(any(storage_domains.class));
+        doReturn(mockSnapshotValidator()).when(command).getSnapshotValidator();
     }
 
     /**
@@ -346,6 +349,12 @@ public class AddDiskToVmCommandTest {
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
+    }
+
+    private SnapshotsValidator mockSnapshotValidator() {
+        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
+        when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(new ValidationResult());
+        return snapshotsValidator;
     }
 
     /**

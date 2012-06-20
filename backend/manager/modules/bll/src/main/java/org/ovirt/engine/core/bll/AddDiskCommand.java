@@ -138,7 +138,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize)));
             returnValue = false;
         }
-        return returnValue && (vm == null || validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId())));
+        return returnValue && (vm == null || validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())));
+    }
+
+    protected SnapshotsValidator getSnapshotValidator() {
+        return new SnapshotsValidator();
     }
 
     /** Checks if the iamge's configuration is legal */
