@@ -517,7 +517,7 @@ public class BackendHostResourceTest
                                        "memory.buffers", "memory.cached", "swap.total", "swap.free", "swap.used",
                                        "swap.cached", "ksm.cpu.current", "cpu.current.user", "cpu.current.system",
                                        "cpu.current.idle", "cpu.load.avg.5m"},
-                         new BigDecimal[] {asDec(5120*Mb), asDec(1024*Mb), asDec(35*Mb), asDec(38*Mb), asDec(0), asDec(0), asDec(30*Mb),
+                         new BigDecimal[] {asDec(5120*Mb), asDec(1024*Mb), asDec(4096*Mb), asDec(38*Mb), asDec(0), asDec(0), asDec(30*Mb),
                                            asDec(25*Mb), asDec(5*Mb), asDec(0), asDec(40), asDec(45), asDec(50), asDec(55), new BigDecimal(0.0060, new MathContext(2))});
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetHost());
