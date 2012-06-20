@@ -1775,7 +1775,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Subnet Mask")
     String subnetMaskHostPopup();
 
-    @DefaultStringValue("Default Gateway:")
+    @DefaultStringValue("Default Gateway")
     String defaultGwHostPopup();
 
     @DefaultStringValue("Verify connectivity between Host and ovirt-engine")
