@@ -95,6 +95,9 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private Map<String, LogicalNetworkModel> networkMap;
 
+    // The purpose of this map is to keep the network parameters while moving the network from one nic to another
+    private final Map<String, NetworkParameters> networkToLastDetachParams;
+
     private NetworkOperationFactory operationFactory;
     private List<Network> allNetworks;
     private final HostInterfaceListModel hostInterfaceListModel;
@@ -105,6 +108,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
     public HostSetupNetworksModel(HostInterfaceListModel hostInterfaceListModel) {
         this.hostInterfaceListModel = hostInterfaceListModel;
+        networkToLastDetachParams = new HashMap<String, NetworkParameters>();
         setNicsChangedEvent(new Event(NICS_CHANGED_EVENT_DEFINITION));
         setNetworksChangedEvent(new Event(NETWORKS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
@@ -681,5 +685,10 @@ public class HostSetupNetworksModel extends EntityModel {
             okCommand.setIsExecutionAllowed(true);
         }
     }
+
+    public Map<String, NetworkParameters> getNetworkToLastDetachParams() {
+        return networkToLastDetachParams;
+    }
+
 
 }

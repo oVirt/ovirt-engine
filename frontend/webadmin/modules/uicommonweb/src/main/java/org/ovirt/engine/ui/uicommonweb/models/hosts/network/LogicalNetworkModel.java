@@ -2,12 +2,12 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
 
 /**
  * A Model for Logical Networks
@@ -41,12 +41,19 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         attachedToNic = targetNic;
         List<LogicalNetworkModel> networksOnTarget = targetNic.getItems();
         networksOnTarget.add(this);
+
+        NetworkParameters netParams = getSetupModel().getNetworkToLastDetachParams().get(getName());
+
+        if (netParams != null){
+            targetNic.getEntity().setBootProtocol(netParams.getBootProtocol());
+            targetNic.getEntity().setAddress(netParams.getAddress());
+            targetNic.getEntity().setSubnet(netParams.getSubnet());
+            targetNic.getEntity().setGateway(netParams.getGateway());
+        }
+
         if (isManagement()) {
             // mark the nic as a management nic
             targetNic.getEntity().setType(2);
-            targetNic.getEntity().setBootProtocol(NetworkBootProtocol.Dhcp);
-        }else{
-            targetNic.getEntity().setBootProtocol(NetworkBootProtocol.None);
         }
         if (!createBridge) {
             return null;
@@ -78,6 +85,18 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         nicNetworks.remove(this);
         // clear network name
         VdsNetworkInterface nicEntity = attachingNic.getEntity();
+
+        NetworkParameters netParams = new NetworkParameters();
+        netParams.setBootProtocol(nicEntity.getBootProtocol());
+        netParams.setAddress(nicEntity.getAddress());
+        netParams.setSubnet(nicEntity.getSubnet());
+
+        if (isManagement()){
+            netParams.setGateway(nicEntity.getGateway());
+        }
+
+        getSetupModel().getNetworkToLastDetachParams().put(getName(), netParams);
+
         if (!hasVlan()) {
             nicEntity.setNetworkName(null);
             nicEntity.setBootProtocol(null);
@@ -90,7 +109,6 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         if (nicEntity.getIsManagement()) {
             nicEntity.setType(0);
         }
-
     }
 
     public NetworkInterfaceModel getAttachedToNic() {
