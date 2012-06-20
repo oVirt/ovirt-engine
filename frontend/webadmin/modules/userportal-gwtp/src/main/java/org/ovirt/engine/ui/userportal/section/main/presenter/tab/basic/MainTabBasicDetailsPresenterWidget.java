@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -144,7 +145,8 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
-        if (!item.getIsPool() && consoleUtils.determineDefaultProtocol(item) != null) {
+        if (!item.getIsPool() && consoleUtils.determineDefaultProtocol(item) != null
+                && item.getStatus().equals(VMStatus.Up)) {
             return true;
         }
 
