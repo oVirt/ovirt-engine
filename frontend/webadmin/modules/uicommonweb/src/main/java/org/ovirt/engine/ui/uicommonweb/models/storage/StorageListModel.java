@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -489,17 +488,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void PrepareSanStorageForEdit(SanStorageModel model)
     {
         storage_domains storage = (storage_domains) getSelectedItem();
-
-        AsyncDataProvider.GetLunsByVgId(new AsyncQuery(model, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-
-                SanStorageModel sanStorageModel = (SanStorageModel) target;
-                ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
-                sanStorageModel.ApplyData(lunList, true);
-
-            }
-        }), storage.getstorage());
+        model.setStorageDomain(storage);
     }
 
     private void ImportDomain()
