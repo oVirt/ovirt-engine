@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -47,16 +47,19 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             if (isVlan(net)) {
                 opts.put("vlan", net.getvlan_id().toString());
             }
+
             // TODO: add bootproto to network object
-            switch (i.getBootProtocol()) {
-            case Dhcp:
-                opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
-                break;
-            case StaticIp:
-                putIfNotEmpty(opts, "ipaddr", i.getAddress());
-                putIfNotEmpty(opts, "netmask", i.getSubnet());
-                putIfNotEmpty(opts, "gateway", i.getGateway());
-                break;
+            if (i.getBootProtocol() != null) {
+                switch (i.getBootProtocol()) {
+                case Dhcp:
+                    opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
+                    break;
+                case StaticIp:
+                    putIfNotEmpty(opts, "ipaddr", i.getAddress());
+                    putIfNotEmpty(opts, "netmask", i.getSubnet());
+                    putIfNotEmpty(opts, "gateway", i.getGateway());
+                    break;
+                }
             }
 
             if (net.getMtu() != 0) {
