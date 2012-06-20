@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -62,11 +63,13 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
+        if (retValue && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            retValue = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId()));
+        }
         if (retValue && getParameters().isPlugUnPlug()
-
                 && getVm().getstatus() != VMStatus.Down) {
             retValue = isOSSupportingHotPlug() && isHotPlugSupported()
-                            && isInterfaceSupportedForPlugUnPlug(disk);
+                    && isInterfaceSupportedForPlugUnPlug(disk);
         }
         return retValue;
     }

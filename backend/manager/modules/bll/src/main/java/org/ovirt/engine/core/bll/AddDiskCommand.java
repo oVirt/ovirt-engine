@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -137,7 +138,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize)));
             returnValue = false;
         }
-        return returnValue;
+        return returnValue && (vm == null || validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId())));
     }
 
     /** Checks if the iamge's configuration is legal */
