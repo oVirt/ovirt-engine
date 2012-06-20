@@ -62,6 +62,8 @@
 			float: right;
 			font-size: 12px;
 			margin-left: 4px;
+			cursor: hand;
+			cursor: pointer;
 		}
 		
 		.contentWidget {
