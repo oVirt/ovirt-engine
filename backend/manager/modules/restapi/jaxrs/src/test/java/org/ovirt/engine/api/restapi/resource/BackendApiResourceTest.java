@@ -131,7 +131,7 @@ public class BackendApiResourceTest extends Assert {
         BASE_PATH + "/datacenters",
         BASE_PATH + "/datacenters?search={query}",
         BASE_PATH + "/events",
-        BASE_PATH + "/events?search={query}&from={event_id}",
+        BASE_PATH + "/events;from={event_id}?search={query}",
         BASE_PATH + "/hosts",
         BASE_PATH + "/hosts?search={query}",
         BASE_PATH + "/networks",

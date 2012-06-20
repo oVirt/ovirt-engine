@@ -164,7 +164,7 @@ public class LinkHelper {
 
     private static final String SEARCH_RELATION = "/search";
     private static final String SEARCH_TEMPLATE = "?search={query}";
-    private static final String PARAMETER_TEMPLATE = "&%s={%s}";
+    private static final String MATRIX_PARAMETER_TEMPLATE = ";%s={%s}";
 
     /**
      * A constant representing the pseudo-parent of a top-level collection
@@ -683,7 +683,7 @@ public class LinkHelper {
     public static void addLink(String url, BaseResource resource, String rel, ParametersSet params) {
         Link link = new Link();
         link.setRel(rel + SEARCH_RELATION);
-        link.setHref(combine(combine(url, rel) + SEARCH_TEMPLATE, params));
+        link.setHref(combine(combine(url, rel), params) + SEARCH_TEMPLATE);
         resource.getLinks().add(link);
     }
 
@@ -712,7 +712,7 @@ public class LinkHelper {
         String combined_params = "";
         if (params != null) {
            for (Parameter entry : params.getParameters()) {
-                combined_params += String.format(PARAMETER_TEMPLATE, entry.getName(), entry.getValue());
+                combined_params += String.format(MATRIX_PARAMETER_TEMPLATE, entry.getName(), entry.getValue());
            }
         }
         return head + combined_params;
@@ -765,7 +765,7 @@ public class LinkHelper {
     public static Link createLink(String url, String rel, List<ParametersSet> params) {
         Link link = new Link();
         link.setRel(rel + SEARCH_RELATION);
-        link.setHref(combine(url + SEARCH_TEMPLATE, params));
+        link.setHref(combine(url, params) + SEARCH_TEMPLATE);
         return link;
     }
 
@@ -818,7 +818,7 @@ public class LinkHelper {
         if (params != null) {
            for (ParametersSet ps : params) {
                for (Parameter param : ps.getParameters()) {
-                   combined_params += String.format(PARAMETER_TEMPLATE, param.getName(), param.getValue());
+                   combined_params += String.format(MATRIX_PARAMETER_TEMPLATE, param.getName(), param.getValue());
               }
 
            }

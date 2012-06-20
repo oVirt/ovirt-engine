@@ -180,6 +180,7 @@ public class BackendApiResource
 
     private String addPath(UriBuilder uriBuilder, Link link) {
         String query = "";
+        String matrix = "";
         String path = relative(link);
 
         // otherwise UriBuilder.build() will substitute {query}
@@ -188,8 +189,14 @@ public class BackendApiResource
             path = path.substring(0, path.indexOf("?"));
         }
 
+        // otherwise UriBuilder.build() will substitute {matrix}
+        if (path.contains(";")) {
+            matrix = path.substring(path.indexOf(";"));
+            path = path.substring(0, path.indexOf(";"));
+        }
+
         link = JAXBHelper.clone(OBJECT_FACTORY.createLink(link));
-        link.setHref(uriBuilder.clone().path(path).build() + query);
+        link.setHref(uriBuilder.clone().path(path).build().toString() + matrix + query);
 
         return LinkHeader.format(link);
     }
