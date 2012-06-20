@@ -152,9 +152,40 @@ public class VmDAOTest extends BaseDAOTestCase {
     public void testGetAll() {
         List<VM> result = dao.getAll();
 
+        VmDAOTest.assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that retrieving VMs works as expected for a privileged user with filtering enabled.
+     */
+    @Test
+    public void testGetAllWithPermissionsPrivilegedUser() {
+        List<VM> result = dao.getAll(PRIVILEGED_USER_ID, true);
+
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(VM_COUNT, result.size());
+        assertTrue(result.contains(existingVm));
+    }
+
+    /**
+     * Ensures that retrieving VMs works as expected with filtering disabled for an unprivileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsDisabledUnprivilegedUser() {
+        List<VM> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+
+        VmDAOTest.assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that no VM is retrieved for an unprivileged user with filtering enabled.
+     */
+    @Test
+    public void testGetWithPermissionsUnprivilegedUser() {
+        List<VM> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /**
@@ -294,4 +325,9 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertNull(after);
     }
 
+    private static void assertCorrectGetAllResult(List<VM> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(VM_COUNT, result.size());
+    }
 }

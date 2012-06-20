@@ -160,6 +160,18 @@ public interface VmDAO extends DAO {
     public List<VM> getAllVmsRelatedToQuotaId(Guid quotaId);
 
     /**
+     * Retrieves the list of all VMS with optional permission filtering.
+     *
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     *
+     * @return the list of all VMs
+     */
+    List<VM> getAll(Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves the list of all VMS.
      *
      * @return the list of all VMs

@@ -523,11 +523,14 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVms() RETURNS SETOF vms
+Create or replace FUNCTION GetAllFromVms(v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
-   FROM vms;
+   FROM vms
+   WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM user_vm_permissions_view
+                                       WHERE user_id = v_user_id AND entity_id = vm_guid));
 
 END; $procedure$
 LANGUAGE plpgsql;

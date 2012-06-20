@@ -173,9 +173,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
     @Override
     public List<VM> getAll() {
+        return getAll(null, false);
+    }
+
+    @Override
+    public List<VM> getAll(Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllFromVms",
                 VMRowMapper.instance,
-                getCustomMapSqlParameterSource());
+                getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
