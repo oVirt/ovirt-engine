@@ -39,7 +39,7 @@ public class CommandContext {
      *            the compensation context
      */
     public CommandContext(CompensationContext compensationContext) {
-        setCompensationContext(compensationContext);
+        this(null, compensationContext, null);
     }
 
     /**
@@ -49,7 +49,34 @@ public class CommandContext {
      *            the execution context
      */
     public CommandContext(ExecutionContext executionContext) {
+        this(executionContext, null, null);
+    }
+
+    /**
+     * Creates instance which holds the execution and compensation contexts, and the lock passed by parent command
+     *
+     * @param executionContext
+     *            the execution context
+     * @param compensationContext
+     *            the compensation context
+     * @param lock
+     *            the lock passed by the parent command
+     */
+    public CommandContext(ExecutionContext executionContext, CompensationContext compensationContext, EngineLock lock) {
+        setCompensationContext(compensationContext);
         setExecutionContext(executionContext);
+        this.lock = lock;
+    }
+
+    /**
+     * Creates instance which holds the execution and compensation contexts
+     * @param executionContext
+     *            the execution context
+     * @param compensationContext
+     *            the compensation context
+     */
+    public CommandContext(ExecutionContext executionContext, CompensationContext compensationContext) {
+        this(executionContext, compensationContext, null);
     }
 
     /**
