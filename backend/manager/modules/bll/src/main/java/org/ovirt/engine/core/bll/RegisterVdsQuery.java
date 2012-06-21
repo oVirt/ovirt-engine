@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,26 +36,44 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCommandBase<P> {
+
+    private AuditLogType _error = AuditLogType.forValue(0);
+    private String _strippedVdsUniqueId;
     private final AuditLogableBase _logable;
+
+    private static Object _doubleRegistrationLock = new Object();
+    /**
+     * 'z' has the highest ascii value from the acceptable characters, so the bit set size should be initiated to it.
+     * the size is 'z'+1 so that each char will be represented in the BitSet with index which equals to it's char value.
+     */
+    private static final BitSet validChars = new BitSet('z' + 1);
+
+    static {
+        // the set method sets the bits from the specified from index(inclusive) to the specified toIndex(exclusive) to
+        // true so the toIndex should be incremented in 1 in order to include the char represented by that index in the
+        // range.
+        validChars.set('a', 'z' + 1);
+        validChars.set('A', 'Z' + 1);
+        validChars.set('0', '9' + 1);
+        validChars.set('-');
+        validChars.set('.');
+        validChars.set(':');
+        validChars.set('_');
+    }
+
 
     public RegisterVdsQuery(P parameters) {
         super(parameters);
         _logable = new AuditLogableBase(parameters.getVdsId());
     }
 
-    private AuditLogType _error = AuditLogType.forValue(0);
-    private static Object _doubleRegistrationLock = new Object();
-
-    private static final String validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-.:_";
-    private String _strippedVdsUniqueId;
-
-    private String getStrippedVdsUniqueId() {
+    protected String getStrippedVdsUniqueId() {
         if (_strippedVdsUniqueId == null) {
             // since we use the management IP field, makes sense to remove the
             // illegal characters in advance
             StringBuilder builder = new StringBuilder();
             for (char ch : getParameters().getVdsUniqueId().toCharArray()) {
-                if (validChars.indexOf(ch) != -1) {
+                if (validChars.get(ch)) {
                     builder.append(ch);
                 }
             }
