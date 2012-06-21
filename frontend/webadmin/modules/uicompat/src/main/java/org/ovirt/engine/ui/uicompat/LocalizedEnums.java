@@ -454,6 +454,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___AddSANStorageDomain();
 
+	String VdcActionType___AddLocalStorageDomain();
+
 	String VdcActionType___AddStoragePoolWithStorages();
 
 	String VdcActionType___AttachStorageDomainToPool();
