@@ -363,7 +363,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildUnmanagedDevices() {
-        Map<String, String> customMap = new HashMap<String, String>();
+        @SuppressWarnings("unchecked")
+        Map<String, String> customMap = (createInfo.containsKey(VdsProperties.Custom)) ?
+                (Map<String, String>) createInfo.getItem(VdsProperties.Custom) : new HashMap<String, String>();
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDAO()
