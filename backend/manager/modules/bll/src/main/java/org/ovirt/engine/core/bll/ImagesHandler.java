@@ -514,17 +514,7 @@ public final class ImagesHandler {
         boolean returnValue = true;
         ArrayList<DiskImage> irsImages = new ArrayList<DiskImage>();
 
-        if (checkImagesExist) {
-            boolean isImagesExist = isImagesExists(images, storagePoolId, storageDomainId, irsImages);
-            if (!isImagesExist) {
-                returnValue = false;
-                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString());
-            }
-        }
-        if (returnValue && checkImagesIllegal) {
-            returnValue = CheckImagesLegality(messages, images, vm, irsImages);
-        }
-        if (returnValue && (diskSpaceCheck || checkStorageDomain)) {
+        if (diskSpaceCheck || checkStorageDomain) {
             Set<Guid> domainsIds = new HashSet<Guid>();
             if (!Guid.Empty.equals(storageDomainId)) {
                 domainsIds.add(storageDomainId);
@@ -550,6 +540,17 @@ public final class ImagesHandler {
                     break;
                 }
             }
+        }
+
+        if (returnValue && checkImagesExist) {
+            boolean isImagesExist = isImagesExists(images, storagePoolId, storageDomainId, irsImages);
+            if (!isImagesExist) {
+                returnValue = false;
+                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString());
+            }
+        }
+        if (returnValue && checkImagesIllegal) {
+            returnValue = CheckImagesLegality(messages, images, vm, irsImages);
         }
         return returnValue;
     }
