@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Body {
     private String parameterType;
+    private Boolean required;
     private List<Signature> signatures = new LinkedList<Signature>();
     public List<Signature> getSignatures() {
         return signatures;
@@ -24,5 +25,11 @@ public class Body {
     }
     public void setParameterType(String parameterType) {
         this.parameterType = parameterType;
+    }
+    public Boolean isRequired() {
+        return required;
+    }
+    public void setRequired(Boolean required) {
+        this.required = required;
     }
 }

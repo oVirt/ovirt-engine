@@ -20,6 +20,7 @@ actions:
 - name: /api/vms/{vm:id}|rel=delete
   request:
     body:
+      required: false
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
@@ -238,10 +239,9 @@ actions:
 - name: /api/vms/{vm:id}/disks/{disk:id}|rel=delete
   request:
     body:
+      required: false
       parameterType: Action
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {}
       - mandatoryArguments: {action.detach: 'xs:boolean'}
         optionalArguments: {}
     urlparams:
@@ -909,16 +909,11 @@ actions:
 - name: /api/datacenters/{datacenter:id}|rel=delete
   request:
     body:
-      parameterType: null
-      signatures: []
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {}
-- name: /api/datacenters/{datacenter:id}|rel=delete
-  request:
-    body:
+      required: false
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.force: 'xs:boolean'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml|json}
@@ -1862,14 +1857,11 @@ actions:
 - name: /api/templates/{template:id}/disks/{disk:id}|rel=delete
   request:
     body:
+      required: false
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.storage_domain.id: 'xs:string', action.force: 'xs:boolean'}
-      - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean'}
-      - mandatoryArguments: {}
-        optionalArguments: {}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml|json}

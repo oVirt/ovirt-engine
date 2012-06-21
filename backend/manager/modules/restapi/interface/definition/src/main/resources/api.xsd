@@ -2451,6 +2451,13 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
+    <xs:attribute name="required" type="xs:boolean">
+                <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:element name="request" type="Request"/>

@@ -34,7 +34,6 @@ public interface TemplateDisksResource extends ReadOnlyDevicesResource<Disk, Dis
     // used for direct lun disk removal
     @DELETE
     @Path("{id}")
-    @RsdlIgnore //TODO:remove this annotation once we have support for signatures with different Parameter-Type in the Body.
     public Response remove(@PathParam("id") String id);
 
     // used for removing disk from specific SD or forcing disk removal

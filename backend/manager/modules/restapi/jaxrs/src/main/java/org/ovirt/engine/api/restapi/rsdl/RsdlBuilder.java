@@ -25,6 +25,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -110,6 +111,7 @@ public class RsdlBuilder {
         for (DetailedLink link : getLinks()) {
             rsdl.getLinks().getLinks().add(link);
         }
+        uniteDuplicateLinks(rsdl);
         return rsdl;
     }
 
@@ -357,6 +359,7 @@ public class RsdlBuilder {
 
     private void addBodyParams(DetailedLink link, Action action) {
         if (action.getRequest().getBody() != null) {
+            link.getRequest().getBody().setRequired(action.getRequest().getBody().isRequired());
             if (action.getRequest().getBody().getSignatures() != null) {
                 for (Signature signature : action.getRequest().getBody().getSignatures()) {
                     ParametersSet ps = new ParametersSet();
@@ -535,5 +538,52 @@ public class RsdlBuilder {
         int startIndex = prefix.lastIndexOf('/')+1;
         int endPos = prefix.endsWith("s") ?  prefix.length() -1 : prefix.length();
         return prefix.substring(startIndex, endPos);
+    }
+
+    /**
+     * There is a special kind of url: a url that may receive a body (with parameters in it),
+     * or may not. For example, when deleting a datacenter, the user may pass nothing in the body,
+     * or may pass <action><force>true</force></action>.
+     *
+     * RSDL builder will encounter both signatures during construction, and when it encounters the
+     * first is has no knowledge of the second yet, so it must create both linke.
+     *
+     * This method will be called at the end of construction, and search for such duplicate links.
+     * It will unite these pairs into a single link with required=false in the <body>.
+     * @param rsdl
+     */
+    private void uniteDuplicateLinks(RSDL rsdl) {
+        Map<String, DetailedLink> linksMap = new HashMap<String, DetailedLink>();
+        Collection<DetailedLink> linksToDelete = new LinkedList<DetailedLink>();
+        for (DetailedLink link : rsdl.getLinks().getLinks()) {
+            String linkId = link.getHref() + link.getRel();
+            if (linksMap.containsKey(linkId)) {
+              //duplicate found, determine which of the two should be deleted
+                DetailedLink linkToDelete = decideWhichToDelete(linksMap.get(linkId), link);
+                if (linkToDelete!=null) {
+                    linksToDelete.add(linkToDelete);
+                }
+            } else {
+                linksMap.put(linkId, link);
+            }
+        }
+        for (DetailedLink link : linksToDelete) {
+            rsdl.getLinks().getLinks().remove(link);
+        }
+    }
+
+    private DetailedLink decideWhichToDelete(DetailedLink link1, DetailedLink link2) {
+        String link1ParamType = link1.getRequest().getBody().getType();
+        String link2ParamType = link2.getRequest().getBody().getType();
+        //Verify for both links that body is not mandatory
+        if ( (link1.getRequest().getBody().isRequired()==false) && (link2.getRequest().getBody().isRequired()==false) ){
+            if (link1ParamType!=null && link2ParamType==null) {
+                return link2;
+            }
+            if (link1ParamType==null && link2ParamType!=null) {
+                return link1;
+            }
+        }
+        return null;
     }
 }
