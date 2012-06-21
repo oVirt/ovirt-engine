@@ -106,9 +106,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Logical Networks")
     String dataCenterNetworkSubTabLabel();
 
-    @DefaultStringValue("This operation is destructive and unrecoverable!")
-    String dataCenterRecoveryStoragePopupWarningLabel();
-
     @DefaultStringValue("This operation will replace the current master domain with the selected domain.<br/> After the operation is finished you will be able to remove the replaced domain if desired.")
     String dataCenterRecoveryStoragePopupMessageLabel();
 

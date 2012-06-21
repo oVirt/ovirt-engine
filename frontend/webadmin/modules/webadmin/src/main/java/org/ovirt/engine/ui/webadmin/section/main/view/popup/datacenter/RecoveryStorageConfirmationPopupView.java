@@ -53,10 +53,6 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
 
     @UiField
     @Ignore
-    Label warningLabel;
-
-    @UiField
-    @Ignore
     HTML messageLabel;
 
     @UiField
@@ -113,8 +109,6 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                // Warning
-                warningLabel.setText(applicationConstants.dataCenterRecoveryStoragePopupWarningLabel());
 
                 // Message
                 messageLabel.setHTML(applicationConstants.dataCenterRecoveryStoragePopupMessageLabel());

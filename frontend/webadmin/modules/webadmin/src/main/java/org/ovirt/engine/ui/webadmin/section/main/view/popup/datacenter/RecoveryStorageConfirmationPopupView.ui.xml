@@ -19,12 +19,6 @@
 			padding-top: 10px;
 		}
 
-		.warningLabel {
-			padding-bottom: 20px;
-			color: red;
-			font-weight:bold;
-		}
-
 		.sdItemsPanel {
 			width: 100%;
 			height: 50%;
@@ -38,7 +32,6 @@
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
 				<g:FlowPanel addStyleNames="{style.messages}">
-					<g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
 					<g:HTML ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
 				</g:FlowPanel>
 				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false"/>
