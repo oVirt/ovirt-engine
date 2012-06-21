@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -51,6 +52,12 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
             retValue = false;
         }
 
+        // Check if disk has no snapshots before detaching it.
+        if (retValue && DiskStorageType.IMAGE == disk.getDiskStorageType()
+                && getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
+            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
+            retValue = false;
+        }
         return retValue;
     }
 

@@ -1800,6 +1800,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk cannot be shareable if it depends on a snapshot or is bootable. In order to share it, remove the disk's snapshots, and make sure it's not bootable.")
     String SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The disk is already configured in a snapshot. In order to detach it, remove the disk's snapshots.")
+    String ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT();
+
     @DefaultStringValue("Cannot ${action} ${type}. Disk is already shared between VMs. Remove the disk from the VMs and try to update the disk again")
     String DISK_IS_ALREADY_SHARED_BETWEEN_VMS();
 
