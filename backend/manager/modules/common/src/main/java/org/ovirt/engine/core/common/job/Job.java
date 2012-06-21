@@ -224,6 +224,18 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
         return stepByType;
     }
 
+    public Step getDirectStep(StepEnum stepType) {
+        Step stepByType = null;
+        for (Step step : steps) {
+            // A direct step is a step that has no parent step
+            if (step.getStepType() == stepType && step.getParentStepId() == null) {
+                stepByType = step;
+                break;
+            }
+        }
+        return stepByType;
+    }
+
     public void markJobEnded(boolean result) {
         if (status == JobExecutionStatus.STARTED) {
             endTime = lastUpdateTime = new Date();
