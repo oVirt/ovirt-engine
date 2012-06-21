@@ -134,4 +134,8 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
     protected BigDecimal asDec(long l) {
         return new BigDecimal(l);
     }
+
+    protected BigDecimal asDec(double d) {
+        return new BigDecimal(d);
+    }
 }

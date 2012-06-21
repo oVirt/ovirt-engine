@@ -105,6 +105,9 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
     static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         expect(entity.getread_rate()).andReturn(1).anyTimes();
         expect(entity.getwrite_rate()).andReturn(2).anyTimes();
+        expect(entity.getReadLatency()).andReturn(3.0).anyTimes();
+        expect(entity.getWriteLatency()).andReturn(4.0).anyTimes();
+        expect(entity.getFlushLatency()).andReturn(5.0).anyTimes();
         return entity;
     }
 

@@ -168,6 +168,9 @@ public class BackendVmDiskResourceTest
         expect(entity.getId()).andReturn(DISK_ID).anyTimes();
         expect(entity.getread_rate()).andReturn(10);
         expect(entity.getwrite_rate()).andReturn(20);
+        expect(entity.getReadLatency()).andReturn(30.0).times(2);
+        expect(entity.getWriteLatency()).andReturn(40.0).times(2);
+        expect(entity.getFlushLatency()).andReturn(50.0).times(2);
         expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
         List<DiskImage> ifaces = new ArrayList<DiskImage>();
         ifaces.add(entity);
@@ -181,8 +184,8 @@ public class BackendVmDiskResourceTest
         assertSame(entity, query.resolve(DISK_ID));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
-                         new String[] {"data.current.read", "data.current.write"},
-                         new BigDecimal[] {asDec(10), asDec(20)});
+                         new String[] {"data.current.read", "data.current.write", "disk.read.latency", "disk.write.latency", "disk.flush.latency"},
+                         new BigDecimal[] {asDec(10), asDec(20), asDec(30.0), asDec(40.0), asDec(50.0)});
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetDisk());
         assertEquals(DISK_ID.toString(), adopted.getDisk().getId());
