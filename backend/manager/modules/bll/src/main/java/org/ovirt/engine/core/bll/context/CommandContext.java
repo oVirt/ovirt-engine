@@ -64,6 +64,11 @@ public class CommandContext {
         this.lock = lock;
     }
 
+    public CommandContext(CompensationContext compensationContext, EngineLock lock) {
+        this(compensationContext);
+        this.lock = lock;
+    }
+
     public void setCompensationContext(CompensationContext compensationContext) {
         this.compensationContext = compensationContext;
     }

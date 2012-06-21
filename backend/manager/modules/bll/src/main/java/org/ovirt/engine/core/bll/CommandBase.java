@@ -1158,17 +1158,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected boolean acquireLockInternal() {
         boolean returnValue = true;
-        Map<Guid, String> exclusiveLocks = getExclusiveLocks();
-        Map<Guid, String> sharedLocks = getSharedLocks();
-        if (exclusiveLocks != null || sharedLocks != null) {
-            EngineLock lock = new EngineLock(exclusiveLocks, sharedLocks);
-            if (getLockManager().acquireLock(lock)) {
-                log.infoFormat("Lock Acquired to object {0}", lock);
-                commandLock = lock;
-            } else {
-                log.infoFormat("Failed to Acquire Lock to object {0}", lock);
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
-                returnValue = false;
+        // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
+        if (commandLock == null) {
+            Map<Guid, String> exclusiveLocks = getExclusiveLocks();
+            Map<Guid, String> sharedLocks = getSharedLocks();
+            if (exclusiveLocks != null || sharedLocks != null) {
+                EngineLock lock = new EngineLock(exclusiveLocks, sharedLocks);
+                if (getLockManager().acquireLock(lock)) {
+                    log.infoFormat("Lock Acquired to object {0}", lock);
+                    commandLock = lock;
+                } else {
+                    log.infoFormat("Failed to Acquire Lock to object {0}", lock);
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+                    returnValue = false;
+                }
             }
         }
         return returnValue;
