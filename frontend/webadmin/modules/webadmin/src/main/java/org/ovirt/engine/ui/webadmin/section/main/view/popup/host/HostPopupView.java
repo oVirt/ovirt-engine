@@ -173,9 +173,14 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
+        addStyles();
 
         Driver.driver.initialize(this);
         applyModeCustomizations();
+    }
+
+    private void addStyles() {
+        overrideIpTablesEditor.addContentWidgetStyleName(style.overrideIpStyle());
     }
 
     private void initEditors() {
@@ -203,6 +208,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
     }
 
     void localize(ApplicationConstants constants) {
@@ -234,7 +240,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     }
 
     private void applyModeCustomizations() {
-        if(ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
+        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
         {
             spmTab.setVisible(false);
             powerManagementTab.setVisible(false);
@@ -273,7 +279,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         });
 
         testButton.setCommand(object.getTestCommand());
-
 
         // Create SPM related controls.
         IEventListener spmListener = new IEventListener() {
@@ -340,9 +345,10 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         tabPanel.switchTab(powerManagementTab);
     }
 
-
     interface Style extends CssResource {
 
         String radioButton();
+
+        String overrideIpStyle();
     }
 }

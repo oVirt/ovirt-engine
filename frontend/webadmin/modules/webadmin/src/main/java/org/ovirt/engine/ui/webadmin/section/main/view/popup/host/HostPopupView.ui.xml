@@ -49,6 +49,9 @@
         .radioButton {
             margin-right: 15px;
         }
+        .overrideIpStyle {
+            width: 220px;
+        }
 
     </ui:style>
 
