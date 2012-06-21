@@ -7,6 +7,7 @@ APP_NAME="oVirt Engine"
 DB_ADMIN="postgres"
 DB_NAME="engine"
 DB_POSTGRES = "postgres"
+DB_TEMPLATE = "template1"
 DB_HOST="localhost"
 DB_USER="engine"
 DB_PORT="5432"
@@ -23,6 +24,12 @@ NFS_SERVICE_NAME="nfs-server"
 NOTIFIER_SERVICE_NAME = "engine-notifierd"
 FREEIPA_RPM = "freeipa-server"
 IPA_RPM = "ipa-server"
+PGPASS_FILE_HEADER_LINE = "# This section was created during %s setup.\n\
+# DO NOT CHANGE IT MANUALLY - OTHER UTILITIES AND TOOLS DEPEND ON ITS STRUCTURE." % APP_NAME
+PGPASS_FILE_OPENING_LINE = "# Beginning of the oVirt Engine DB settings section"
+PGPASS_FILE_USER_LINE = "DB USER credentials"
+PGPASS_FILE_ADMIN_LINE = "DB ADMIN credentials"
+PGPASS_FILE_CLOSING_LINE = "#####  End of %s DB settings section." % APP_NAME
 
 JBOSS_HTTP_PORT="8080"
 JBOSS_HTTPS_PORT="8443"

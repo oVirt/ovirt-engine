@@ -551,6 +551,16 @@ def getDbAdminUser():
         return admin_user
     return basedefs.DB_ADMIN
 
+def getDbUser():
+    """
+    Retrieve Admin user from .pgpass file on the system.
+    Use default settings if file is not found.
+    """
+    db_user = getDbConfig("user")
+    if db_user:
+        return db_user
+    return basedefs.DB_USER
+
 def getDbHostName():
     """
     Retrieve DB Host name from .pgpass file on the system.
@@ -576,23 +586,39 @@ def getDbConfig(param):
     """
     Generic function to retrieve values from admin line in .pgpass
     """
-    field = {'admin' : 3, 'host' : 0, 'port' : 1}
+    # 'user' and 'admin' are the same fields, just different lines
+    # and for different cases
+    field = {'user' : 3, 'admin' : 3, 'host' : 0, 'port' : 1}
     if param not in field.keys():
         return False
 
-    inDbConfigSection = False
+    inDbAdminSection = False
+    inDbUserSection = False
     if (os.path.exists(basedefs.DB_PASS_FILE)):
         logging.debug("found existing pgpass file, fetching DB %s value" % param)
         with open (basedefs.DB_PASS_FILE) as pgPassFile:
             for line in pgPassFile:
-                if "oVirt-engine DB ADMIN settings section" in line:
-                    inDbConfigSection = True
+
+                # find the line with "DB ADMIN"
+                if basedefs.PGPASS_FILE_ADMIN_LINE in line:
+                    inDbAdminSection = True
                     continue
 
-                if inDbConfigSection:
-                    # Means we're on DB ADMIN user line, as it's for all DBs
-                    dbcreds = line.split(":")
-                    pgPassFile.close()
+                if inDbAdminSection and param == "admin" and \
+                   not line.startswith("#"):
+                    # Means we're on DB ADMIN line, as it's for all DBs
+                    dbcreds = line.split(":", 4)
+                    return dbcreds[field[param]]
+
+                # find the line with "DB USER"
+                if basedefs.PGPASS_FILE_USER_LINE in line:
+                    inDbUserSection = True
+                    continue
+
+                # fetch the values
+                if inDbUserSection:
+                    # Means we're on DB USER line, as it's for all DBs
+                    dbcreds = line.split(":", 4)
                     return dbcreds[field[param]]
 
     return False
@@ -643,7 +669,7 @@ def renameDB(oldname, newname):
 
     logging.info("Renaming '%s' to '%s'..." % (oldname, newname))
     sqlQuery="ALTER DATABASE %s RENAME TO %s" % (oldname, newname)
-    execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(),
+    execRemoteSqlCommand(getDbUser(), getDbHostName(), getDbPort(),
                                basedefs.DB_POSTGRES, sqlQuery, True,
                                output_messages.ERR_DB_RENAME % (oldname, newname))
 
@@ -732,7 +758,7 @@ def checkIfDbIsUp():
     and not return a value
     """
     logging.debug("checking if db is already installed and running..")
-    execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, "select 1", True)
+    execRemoteSqlCommand(getDbUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, "select 1", True)
 
 def localHost(hostname):
     # Create an ip set of possible IPs on the machine. Set has only unique values, so
@@ -768,7 +794,7 @@ def listTempDbs():
         raise Exception ("\n" + output_messages.ERR_DB_TEMP_LIST + "\n")
 
     # if there are temp DB that need to be removed, add them to DB list
-    tempDbs = re.findall("engine_\w*", output)
+    tempDbs = re.findall("^engine_\w*", output)
     if len(tempDbs) > 0:
         dbListRemove.extend(tempDbs)
 

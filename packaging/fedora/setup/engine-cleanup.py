@@ -260,7 +260,7 @@ class DB():
         # Drop DBs - including the tempoarary ones created during upgrade operations
         # go over all dbs in the list of temp DBs and remove them
         for dbname in utils.listTempDbs():
-            cmd = [basedefs.EXEC_DROPDB, "-w", "-U", DB_ADMIN, "-h", DB_HOST, "-p", DB_PORT, dbname]
+            cmd = [basedefs.EXEC_DROPDB, "-w", "-U", utils.getDbAdminUser(), "-h", DB_HOST, "-p", DB_PORT, dbname]
             output, rc = utils.execCmd(cmd, None, False, MSG_ERROR_DROP_DB)
             if rc:
                 logging.error("DB drop operation failed. Check that there are no active connection to the '%s' DB." % dbname)
@@ -398,7 +398,7 @@ if __name__ == '__main__':
         # Initialise DB settings
         DB_HOST = utils.getDbHostName()
         DB_PORT = utils.getDbPort()
-        DB_ADMIN = utils.getDbAdminUser()
+        DB_ADMIN = utils.getDbUser()
 
         # get iso and domain from user arguments
         (options, args) = getOptions()

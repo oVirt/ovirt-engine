@@ -480,7 +480,7 @@ class DB():
         # run the rename query and raise Exception on error
         query = "ALTER DATABASE %s RENAME TO %s" % (self.name, newname)
         try:
-            utils.execRemoteSqlCommand(SERVER_ADMIN, SERVER_NAME, SERVER_PORT, basedefs.DB_POSTGRES, query, True, MSG_ERROR_RENAME_DB)
+            utils.execRemoteSqlCommand(SERVER_ADMIN, SERVER_NAME, SERVER_PORT, basedefs.DB_TEMPLATE, query, True, MSG_ERROR_RENAME_DB)
             # set name to the newname
             self.name = newname
             # toggle dbrenamed value to TRUE
@@ -714,7 +714,7 @@ if __name__ == '__main__':
         # DB Configuration
         SERVER_NAME = utils.getDbHostName()
         SERVER_PORT = utils.getDbPort()
-        SERVER_ADMIN = utils.getDbAdminUser()
+        SERVER_ADMIN = utils.getDbUser()
 
         # get iso and domain from user arguments
         (options, args) = getOptions()

@@ -1115,35 +1115,59 @@ def _updatePgPassFile():
     file syntax:
     hostname:port:database:username:password
     to allow access to any db - write '*' instead of database
+
+    The .pgpass file for our application is created with a specific structure.
+    This structure is very important, and it is imperative not to modifiy it
+    manually.
+    The structure of the file is as follows:
+    # The following section was created during oVirt Engine setup.
+    # DO NOT CHANGE IT MANUALLY - OTHER UTILITIES AND TOOLS DEPEND ON ITS STRUCTURE.
+    # Beginning of the oVirt Engine DB settings section
+    # DB ADMIN credentials
+    <DB ADMIN PGPASS LINE>
+    # DB USER credentials
+    <DB USER PGPASS LINE>
+    #####  End of oVirt Engine DB settings section
     """
     try:
         #backup existing .pgpass
-        if (os.path.exists(basedefs.DB_PASS_FILE)):
+        if os.path.exists(basedefs.DB_PASS_FILE):
             backupFile = "%s.%s" % (basedefs.DB_PASS_FILE, utils.getCurrentDateTime())
             logging.debug("found existing pgpass file, backing current to %s" % (backupFile))
             os.rename(basedefs.DB_PASS_FILE, backupFile)
 
-        pgPassFile = open (basedefs.DB_PASS_FILE, "w")
+        with open(basedefs.DB_PASS_FILE, "w") as pgPassFile:
 
-        pgPassFile.write("#####  oVirt-engine DB ADMIN settings section. Do not change!!"+"\n")
-        #insert line for postgres - db admin
-        #(very important for maintance and upgrades in case user rhevm is not created yet).
-        # Use parameters received from the user and skip if the install is local
-        if "DB_ADMIN" in controller.CONF.keys():
-            logging.info("Using db credentials provided by the user")
-            # Create an admin user line
-            pglines = _updatePgPassLine(controller.CONF["DB_HOST"], controller.CONF["DB_PORT"],"*",
-                                          controller.CONF["DB_ADMIN"], controller.CONF["DB_PASS"])
-        else:
-            logging.info("Using default db credentials")
-            # Create an admin user line
-            pglines = _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, "*", basedefs.DB_ADMIN, controller.CONF["DB_PASS"])
-            # Add 'engine' user line
-            pglines = pglines + "\n" + _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, basedefs.DB_NAME, basedefs.DB_USER, controller.CONF["DB_PASS"])
+            # Add header and opening lines
+            pgPassFile.write(basedefs.PGPASS_FILE_HEADER_LINE + "\n")
+            pgPassFile.write(basedefs.PGPASS_FILE_OPENING_LINE + "\n")
 
-        pgPassFile.write(pglines + "\n")
-        pgPassFile.write("#####  End of oVirt-engine DB ADMIN settings section."+"\n")
-        pgPassFile.close()
+            # Create credentials lines
+            adminLine = "# %s." % basedefs.PGPASS_FILE_ADMIN_LINE
+            userLine = "# %s." % basedefs.PGPASS_FILE_USER_LINE
+
+            pgPassFile.write(adminLine + "\n")
+
+            # Use parameters received from the user and skip if the install is local
+            if "DB_ADMIN" in controller.CONF.keys():
+                logging.info("Using db credentials provided by the user")
+
+                # Create user lines
+                pgPassFile.write(userLine + "\n")
+                pglines = _updatePgPassLine(controller.CONF["DB_HOST"], controller.CONF["DB_PORT"],"*",
+                                            controller.CONF["DB_ADMIN"], controller.CONF["DB_PASS"])
+            else:
+                logging.info("Using default db credentials")
+
+                # Create an admin user line
+                pglines = _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, "*", basedefs.DB_ADMIN, controller.CONF["DB_PASS"])
+
+                # Add users
+                pglines = pglines + "\n" + userLine + "\n"
+                pglines = pglines + _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, "*", basedefs.DB_USER, controller.CONF["DB_PASS"])
+
+            pgPassFile.write(pglines + "\n")
+            pgPassFile.write(basedefs.PGPASS_FILE_CLOSING_LINE + "\n")
 
         #make sure the file has still 0600 mod
         os.chmod(basedefs.DB_PASS_FILE, 0600)
