@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
@@ -19,7 +21,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class StorageDomainDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_STORAGE_DOMAINS_FOR_PRIVELEGED_USER = 1;
 
-    private static final String EXISTING_DOMAIN_ID = "72e3a666-89e1-4005-a7ca-f7548004a9ab";
+    private static final Guid EXISTING_DOMAIN_ID = FixturesTool.STORAGE_DOAMIN_SCALE_SD5;
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
     private static final String EXISTING_CONNECTION = "10.35.64.25";
     private static final Guid EXISTING_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
@@ -33,7 +35,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         super.setUp();
 
         dao = prepareDAO(dbFacade.getStorageDomainDAO());
-        existingDomain = dao.get(new Guid(EXISTING_DOMAIN_ID));
+        existingDomain = dao.get(EXISTING_DOMAIN_ID);
 
         newStaticDomain = new storage_domain_static();
         newStaticDomain.setstorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
@@ -47,7 +49,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         Guid result = dao.getMasterStorageDomainIdForPool(EXISTING_STORAGE_POOL_ID);
 
         assertNotNull(result);
-        assertEquals(new Guid(EXISTING_DOMAIN_ID), result);
+        assertEquals(EXISTING_DOMAIN_ID, result);
     }
 
     /**
@@ -390,6 +392,33 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
                         existingDomain.getId());
         assertNotNull(result);
         assertEquals(result.getId(), existingDomain.getId());
+    }
+
+    /**
+     * Asserts that the existing Storage Domain exists and has VMs and VM Templates, the after remove asserts
+     * that the existing domain is removed along with the VM and VM Templates
+     */
+    @Test
+    public void testRemove() {
+        List<VM> vms = getDbFacade().getVmDAO().getAllForStorageDomain(EXISTING_DOMAIN_ID);
+        List<VmTemplate> templates = getDbFacade().getVmTemplateDAO().getAllForStorageDomain(EXISTING_DOMAIN_ID);
+
+        assertFalse(vms.isEmpty());
+        assertFalse(templates.isEmpty());
+        assertNotNull(dao.get(EXISTING_DOMAIN_ID));
+
+        dao.remove(existingDomain.getId());
+
+        assertNull(dao.get(EXISTING_DOMAIN_ID));
+
+        for (VM vm : vms) {
+            assertNull(getDbFacade().getVmDAO().get(vm.getId()));
+        }
+
+        for (VmTemplate template : templates) {
+            assertNull(getDbFacade().getVmTemplateDAO().get(template.getId()));
+        }
+
     }
 
     /**

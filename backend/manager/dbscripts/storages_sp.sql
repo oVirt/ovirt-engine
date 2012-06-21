@@ -516,9 +516,7 @@ BEGIN
          insert into tt_TEMPSTORAGEDOMAINMAPTABLE select image_id
          from image_storage_domain_map where storage_domain_id = v_storage_domain_id;
    END;
-   
-   delete FROM image_storage_domain_map where storage_domain_id = v_storage_domain_id;
-	
+
    BEGIN
       CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATESTABLE AS select vm_guid
          from images_storage_domain_view where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
@@ -528,6 +526,8 @@ BEGIN
          from images_storage_domain_view where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
    END;
 
+   delete FROM image_storage_domain_map where storage_domain_id = v_storage_domain_id;
+
    delete FROM permissions where object_id in (select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
    delete FROM snapshots WHERE vm_id in (select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
    delete FROM images where image_guid in (select image_id from tt_TEMPSTORAGEDOMAINMAPTABLE);
@@ -535,10 +535,15 @@ BEGIN
    delete FROM permissions where object_id in (select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id = v_storage_domain_id;
    delete FROM vm_static where vm_guid in(select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
-   delete from vm_static where vm_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
+
+   -- Delete pools and snapshots of pools based on templates from the storage domain to be removed
+   delete FROM snapshots where vm_id in (select vm_guid FROM vm_static where vmt_guid in (select vm_guid from tt_TEMPTEMPLATESTABLE));
+   delete FROM vm_static where vmt_guid in (select vm_guid from tt_TEMPTEMPLATESTABLE);
+
+   delete FROM vm_static where vm_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM storage_domain_dynamic where id  = v_storage_domain_id;
    delete FROM storage_domain_static where id  = v_storage_domain_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
