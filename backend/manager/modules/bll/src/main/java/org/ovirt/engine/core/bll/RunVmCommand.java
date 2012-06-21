@@ -328,9 +328,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
                             p,
-                            new CommandContext(getCompensationContext()));
+                            new CommandContext(getCompensationContext(), getLock()));
 
+            // setting lock to null in order not to release lock twice
+            setLock(null);
             setSucceeded(vdcReturnValue.getSucceeded());
+
             if (vdcReturnValue.getSucceeded()) {
                 getParameters().getImagesParameters().add(p);
 
