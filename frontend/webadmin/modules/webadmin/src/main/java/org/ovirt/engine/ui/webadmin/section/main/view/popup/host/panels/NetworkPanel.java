@@ -24,9 +24,10 @@ public class NetworkPanel extends NetworkItemPanel {
     protected Widget getContents() {
         LogicalNetworkModel network = (LogicalNetworkModel) item;
 
-        Image mgmtNetworkImage = new Image(resources.mgmtNetwork());
-        Image vmImage = new Image(resources.networkVm());
-        Image monitorImage = new Image(resources.networkMonitor());
+        Image mgmtNetworkImage = new Image(network.isManagement() ? resources.mgmtNetwork() : resources.empty());
+        Image vmImage = new Image(network.getEntity().getis_display() ? resources.networkVm() : resources.empty());
+        Image monitorImage = new Image(network.getEntity().isVmNetwork() ? resources.networkMonitor() : resources.empty());
+        Image emptyImage = new Image(resources.empty());
 
         Grid rowPanel = new Grid(1, 7);
         rowPanel.setCellSpacing(3);
@@ -38,9 +39,11 @@ public class NetworkPanel extends NetworkItemPanel {
         columnFormatter.setWidth(1, "20px"); //$NON-NLS-1$
         columnFormatter.setWidth(2, "100%"); //$NON-NLS-1$
 
-        infoImage(mgmtNetworkImage, network.isManagement());
-        infoImage(monitorImage, network.getEntity().getis_display());
-        infoImage(vmImage, false);
+        if (network.isManagement()){
+            mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
+        }
+        monitorImage.setStylePrimaryName(style.networkImageBorder());
+        vmImage.setStylePrimaryName(style.networkImageBorder());
 
         rowPanel.setWidget(0, 0, dragImage);
 
@@ -74,10 +77,6 @@ public class NetworkPanel extends NetworkItemPanel {
             return networkModel.getName() + " (vlan " + networkModel.getVlanId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return item.getName();
-    }
-
-    private void infoImage(Image image, boolean show) {
-        image.setStylePrimaryName(show ? style.networkImageEnabled() : style.networkImageDisabled());
     }
 
     @Override

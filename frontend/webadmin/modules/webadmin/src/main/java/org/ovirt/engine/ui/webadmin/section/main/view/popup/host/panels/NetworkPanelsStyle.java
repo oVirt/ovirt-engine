@@ -19,9 +19,7 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String networkGroupDragOver();
 
-    String networkImageDisabled();
-
-    String networkImageEnabled();
+    String networkImageBorder();
 
     String networkPanel();
 

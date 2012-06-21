@@ -290,6 +290,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/network_monitor.png")
     ImageResource networkMonitor();
 
+    @Source("images/network/empty.png")
+    ImageResource empty();
+
     @Source("images/network/network_vm.png")
     ImageResource networkVm();
 
