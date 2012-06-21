@@ -880,9 +880,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected void EndImportCommand() {
-        if (!getParameters().isImportAsNewEntity()) {
-            setVm(null);
-        }
+        setVm(null);
 
         EndActionOnAllImageGroups();
         if (getVm() != null) {
