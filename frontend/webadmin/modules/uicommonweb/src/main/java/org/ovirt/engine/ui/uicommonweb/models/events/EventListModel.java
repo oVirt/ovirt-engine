@@ -24,7 +24,6 @@ import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class EventListModel extends SearchableListModel
 {
     private final GridTimer timer;
@@ -125,6 +124,18 @@ public class EventListModel extends SearchableListModel
     }
 
     @Override
+    public void Search() {
+        super.Search();
+
+        // Force refresh of the event list when the event tab is shown
+        // without waiting to the timer. This is invoked only the first
+        // time the Events tab is shown - than the timer takes care of this.
+        if (getEntity() != null) {
+            getRefreshCommand().Execute();
+        }
+    }
+
+    @Override
     protected void AsyncSearch()
     {
         super.AsyncSearch();
@@ -144,8 +155,8 @@ public class EventListModel extends SearchableListModel
                         (ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 requestingData = false;
                 for (AuditLog auditLog : list) {
-                    //in case the corr_id is created in client,
-                    //remove unnecessary data (leave only the corr_id).
+                    // in case the corr_id is created in client,
+                    // remove unnecessary data (leave only the corr_id).
                     if (auditLog.getCorrelationId() != null
                             && auditLog.getCorrelationId().startsWith(TaskListModel._WEBADMIN_)) {
                         auditLog.setCorrelationId(auditLog.getCorrelationId().split("_")[2]); //$NON-NLS-1$
@@ -206,6 +217,12 @@ public class EventListModel extends SearchableListModel
         }
         getItemsChangedEvent().raise(this, EventArgs.Empty);
         setLastEvent(Linq.FirstOrDefault(list));
+
+        // If there are no data for this entity, the LastEvent has to be fired in order
+        // to stop the progress animation (SearchableTabModelProvider).
+        if (Linq.FirstOrDefault(list) == null) {
+            OnPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
+        }
     }
 
     private boolean entitiesChanged = true;
@@ -219,7 +236,6 @@ public class EventListModel extends SearchableListModel
     /**
      * Returns true if and only if the two entities: <li>are not null <li>implement the IVdcQueryable.getQueryableId()
      * method <li>the old.getQueryableId().equals(new.getQueryableId())
-     *
      */
     private boolean calculateEntitiesChanged(Object newValue, Object oldValue) {
         if (newValue == null || oldValue == null) {
@@ -248,7 +264,6 @@ public class EventListModel extends SearchableListModel
 
     /**
      * Runs the onEntityContentChanged() only when the calculateEntitiesChanged(new, old) returns true
-     *
      */
     @Override
     protected void OnEntityChanged() {
