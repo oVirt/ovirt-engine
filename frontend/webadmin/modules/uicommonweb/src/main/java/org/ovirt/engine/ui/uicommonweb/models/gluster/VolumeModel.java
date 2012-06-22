@@ -73,6 +73,7 @@ public class VolumeModel extends Model {
     public VolumeModel() {
 
         setAddBricksCommand(new UICommand("AddBricks", this)); //$NON-NLS-1$
+        getAddBricksCommand().setIsExecutionAllowed(false);
 
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
@@ -124,19 +125,25 @@ public class VolumeModel extends Model {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (getTypeList().getSelectedItem() == GlusterVolumeType.REPLICATE
-                        || getTypeList().getSelectedItem() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+                        || getTypeList().getSelectedItem() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
                     getReplicaCount().setIsAvailable(true);
-                else
+                }
+                else {
                     getReplicaCount().setIsAvailable(false);
+                }
 
                 if (getTypeList().getSelectedItem() == GlusterVolumeType.STRIPE
-                        || getTypeList().getSelectedItem() == GlusterVolumeType.DISTRIBUTED_STRIPE)
+                        || getTypeList().getSelectedItem() == GlusterVolumeType.DISTRIBUTED_STRIPE) {
                     getStripeCount().setIsAvailable(true);
-                else
+                }
+                else {
                     getStripeCount().setIsAvailable(false);
+                }
 
-                if (!validateBrickCount())
+                if (!validateBrickCount() && getAddBricksCommand().getIsExecutionAllowed())
+                {
                     getAddBricksCommand().Execute();
+                }
             }
         });
 
@@ -269,7 +276,7 @@ public class VolumeModel extends Model {
     }
 
     public void addBricks(){
-        if (getWindow() != null)
+        if (getWindow() != null || getCluster().getSelectedItem() == null)
         {
             return;
         }
