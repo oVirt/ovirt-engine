@@ -9,7 +9,8 @@
 			line-height: 25px;
 		}
 		
-		.tabHolder {}
+		.tabHolder {
+		}
 		
 		.tabHolder:last-of-type {
 			border-bottom: solid 1px #d5d5d5;
@@ -26,43 +27,71 @@
 		.inactiveMiddle {
 		}
 		
-		a.middleLink {
+		.middleLink {
 			font-weight: bold;
+			display: inline-block;
+			width: 100%;
 		}
 		
-		a.activeMiddleLink {
+		.activeMiddleLink {
 			color: white;
 		}
 		
-		a.inactiveMiddleLink {
+		.inactiveMiddleLink {
 			color: #719823;
 		}
 		
+		.anchor {
+			text-decoration: none;
+			border-style: none;
+		}
+
+		a.anchor, a.anchor:visited, a.anchor:hover {
+			color: transparent;
+		}
+
 		.upperPaddingPanel {
 			height: 4px;
 			border-top: solid 1px #d5d5d5;
 			background-color: #f1f1f1;
 		}
 		
-		.activeLeft {}
-		.inactiveLeft {}
-		.activeRight {}
-		.inactiveRight {}
-		.activeArrow {}
-		.inactiveArrow {}
-		.alignLeft {}
-		.alignRight {}
+		.activeLeft {
+		}
+		
+		.inactiveLeft {
+		}
+		
+		.activeRight {
+		}
+		
+		.inactiveRight {
+		}
+		
+		.activeArrow {
+		}
+		
+		.inactiveArrow {
+		}
+		
+		.alignLeft {
+		}
+		
+		.alignRight {
+		}
 	</ui:style>
-	
+
 	<g:FlowPanel addStyleNames="{style.tabHolder}">
-		<g:SimplePanel addStyleNames="{style.upperPaddingPanel}"/>
+		<g:SimplePanel addStyleNames="{style.upperPaddingPanel}" />
 		<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab}">
-			<div ui:field="leftElement" />
-			<div ui:field="rightElement" />
-			<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
-				<g:InlineHyperlink ui:field="hyperlink" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}" />
-			</div>
-			<div ui:field="arrowElement" />
+			<a href="" ui:field="hyperlink" class="{style.anchor}">
+				<div ui:field="leftElement" />
+				<div ui:field="rightElement" />
+				<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
+					<g:Label ui:field="hyperlinkLabel" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}"/>
+				</div>
+				<div ui:field="arrowElement" />
+			</a>
 		</g:HTMLPanel>
 	</g:FlowPanel>
 

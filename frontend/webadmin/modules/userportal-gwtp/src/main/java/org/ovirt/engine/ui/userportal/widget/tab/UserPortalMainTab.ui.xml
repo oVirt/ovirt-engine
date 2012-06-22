@@ -55,22 +55,33 @@
 			background-color: #719823;
 		}
 
-		a.middleLink {
+		.middleLink {
 			font-size: 12.5px;
 			font-family: Arial,sans-serif;
+			display: inline-block;
+			width: 100%;
 		}
 
-		a.activeMiddleLink {
+		.activeMiddleLink {
 			color: #719823;
 		}
 
-		a.inactiveMiddleLink {
+		.inactiveMiddleLink {
 		    font-family: Arial,sans-serif;
 			color: #ffe0e0;
 		}
 
-		a.inactiveMiddleLink:hover {
+		.tab:hover .inactiveMiddleLink {
 			color: #ffffff;
+		}
+
+		.anchor {
+			text-decoration: none;
+			border-style: none;
+		}
+
+		a.anchor, a.anchor:visited, a.anchor:hover {
+			color: transparent;
 		}
 
 		.arrow {
@@ -94,13 +105,15 @@
 	</ui:style>
 
 	<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab} {style.alignLeft}">
-		<div ui:field="leftElement" class="{style.left} {style.inactiveLeft}" />
-		<div ui:field="rightElement" class="{style.right} {style.inactiveRight}" />
-		<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
-			<g:InlineHyperlink ui:field="hyperlink" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}"/>
-		</div>
-		<div ui:field="arrowElement" class="{style.arrow} {style.inactiveArrow}" />
-		<div style="clear: both;" />
+		<a href="" ui:field="hyperlink" class="{style.anchor}">
+			<div ui:field="leftElement" class="{style.left} {style.inactiveLeft}" />
+			<div ui:field="rightElement" class="{style.right} {style.inactiveRight}" />
+			<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
+				<g:Label ui:field="hyperlinkLabel" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}"/>
+			</div>
+			<div ui:field="arrowElement" class="{style.arrow} {style.inactiveArrow}" />
+			<div style="clear: both;" />
+		</a>
 	</g:HTMLPanel>
 
 </ui:UiBinder>

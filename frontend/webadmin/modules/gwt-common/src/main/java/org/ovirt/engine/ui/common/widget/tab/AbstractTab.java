@@ -2,11 +2,12 @@ package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.ui.common.widget.Align;
 
+import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.gwtplatform.mvp.client.TabData;
 
@@ -20,7 +21,7 @@ import com.gwtplatform.mvp.client.TabData;
  * <li>{@link #rightElement} that represents the right corner of the tab
  * <li>{@link #middleElement} that represents the middle area of the tab
  * <li>{@link #arrowElement} that represents the arrow area of the tab
- * <li>{@link #hyperlink} widget used to select (activate) the given tab
+ * <li>{@link #hyperlinkLabel} widget used to select (activate) the given tab
  * <li>{@link #style} with required CSS classes
  * </ul>
  */
@@ -70,7 +71,10 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
     public Element arrowElement;
 
     @UiField
-    public Hyperlink hyperlink;
+    public Label hyperlinkLabel;
+
+    @UiField
+    public AnchorElement hyperlink;
 
     @UiField
     public Style style;
@@ -91,7 +95,7 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
         leftElement.replaceClassName(style.inactiveLeft(), style.activeLeft());
         rightElement.replaceClassName(style.inactiveRight(), style.activeRight());
         middleElement.replaceClassName(style.inactiveMiddle(), style.activeMiddle());
-        hyperlink.getElement().replaceClassName(style.inactiveMiddleLink(), style.activeMiddleLink());
+        hyperlinkLabel.getElement().replaceClassName(style.inactiveMiddleLink(), style.activeMiddleLink());
         arrowElement.replaceClassName(style.inactiveArrow(), style.activeArrow());
     }
 
@@ -100,7 +104,7 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
         leftElement.replaceClassName(style.activeLeft(), style.inactiveLeft());
         rightElement.replaceClassName(style.activeRight(), style.inactiveRight());
         middleElement.replaceClassName(style.activeMiddle(), style.inactiveMiddle());
-        hyperlink.getElement().replaceClassName(style.activeMiddleLink(), style.inactiveMiddleLink());
+        hyperlinkLabel.getElement().replaceClassName(style.activeMiddleLink(), style.inactiveMiddleLink());
         arrowElement.replaceClassName(style.activeArrow(), style.inactiveArrow());
     }
 
@@ -111,17 +115,17 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
 
     @Override
     public String getText() {
-        return hyperlink.getText();
+        return hyperlinkLabel.getText();
     }
 
     @Override
     public void setTargetHistoryToken(String historyToken) {
-        hyperlink.setTargetHistoryToken(historyToken);
+        hyperlink.setHref("#" + historyToken); //$NON-NLS-1$
     }
 
     @Override
     public void setText(String text) {
-        hyperlink.setText(text);
+        hyperlinkLabel.setText(text);
     }
 
     @Override
