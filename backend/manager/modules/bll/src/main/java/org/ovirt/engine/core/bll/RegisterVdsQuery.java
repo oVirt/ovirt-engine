@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
@@ -92,46 +93,48 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return _vdssByUniqueId;
     }
 
-    protected boolean CanDoAction(RefObject<String> errorMessage) {
-        boolean returnValue = true;
-        errorMessage.argvalue = "";
-        Long otp = getParameters().getOtp();
+
+    @Override
+    protected boolean validateInputs() {
+        if (!super.validateInputs()) {
+            return false;
+        }
+
+        VdcQueryReturnValue returnValue = getQueryReturnValue();
+        returnValue.setExceptionString("");
         try {
             String hostName = getParameters().getVdsHostName();
             if (StringUtils.isEmpty(hostName)) {
-                errorMessage.argvalue = "Cannot register Host - no Hostname address specified.";
-                returnValue = false;
-            } else {
-                List<VDS> vdssByUniqueId = getVdssByUniqueId();
-                if (vdssByUniqueId.size() > 1) {
-                    errorMessage.argvalue = "Cannot register Host - unique id is ambigious.";
-                    returnValue = false;
-                } else if (vdssByUniqueId.size() == 1) {
-                    VDS vds = vdssByUniqueId.get(0);
-                    if (!VdsHandler.isPendingOvirt(vds)) {
-                        errorMessage.argvalue =
-                                String.format("Illegal Host status %s and/or type %s for host %s, expected %s type with %s status.",
-                                        vds.getstatus().name(),
-                                        vds.getvds_type().name(),
-                                        vds.getvds_name(),
-                                        VDSType.oVirtNode.name(),
-                                        VDSStatus.PendingApproval.name());
-                        errorMessage.argvalue = VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.name();
-                        returnValue = false;
-                    } else if (otp != null && !isValidOtp(vds, otp)) {
-                        errorMessage.argvalue = "Invalid OTP for host " + hostName;
-                        returnValue = false;
-                    }
-                }
+                returnValue.setExceptionString("Cannot register Host - no Hostname address specified.");
+                return false;
             }
+            List<VDS> vdssByUniqueId = getVdssByUniqueId();
+            if (vdssByUniqueId.size() > 1) {
+                returnValue.setExceptionString("Cannot register Host - unique id is ambigious.");
+                return false;
+            }
+            if (vdssByUniqueId.size() == 1) {
+                VDS vds = vdssByUniqueId.get(0);
+                if (!VdsHandler.isPendingOvirt(vds)) {
+                    returnValue.setExceptionString(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.name());
+                    return false;
+                }
+                Long otp = getParameters().getOtp();
+                if (otp != null && !isValidOtp(vds, otp)) {
+                    returnValue.setExceptionString(String.format("Invalid OTP for host %s", hostName));
+                    return false;
+                }
+
+            }
+
         } catch (RuntimeException ex) {
-            log.error("RegisterVdsQuery::CanDoAction: An exception has been thrown.", ex);
-            errorMessage.argvalue = String.format("Cannot register Host - An exception has been thrown: %1$s",
-                    ex.getMessage());
-            returnValue = false;
+            log.error(ex);
+            returnValue.setExceptionString(String.format("Cannot register Host - An exception has been thrown: %1$s",
+                    ex.getMessage()));
+            return false;
         }
 
-        return returnValue;
+        return true;
     }
 
     private boolean isValidOtp(VDS vds, Long otp) {
@@ -148,18 +151,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     @Override
     protected void executeQueryCommand() {
-
-        // CanDoAction:
-        String errorMessage = null;
-        RefObject<String> tempRefObject = new RefObject<String>(errorMessage);
-        boolean tempVar = !CanDoAction(tempRefObject);
-        errorMessage = tempRefObject.argvalue;
-        if (tempVar) {
-            log.errorFormat("RegisterVdsQuery::ExecuteQueryCommand: CanDoAction failed: {0}", errorMessage);
-            throw new RuntimeException(errorMessage);
-        }
-
-        // ExecuteAction:
         TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {

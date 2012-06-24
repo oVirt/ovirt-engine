@@ -133,7 +133,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
      * @return true if all parameters class and its inner members passed
      *         validation
      */
-    private boolean validateInputs() {
+    protected boolean validateInputs() {
         Set<ConstraintViolation<P>> violations = validator.validate(getParameters());
         if (!violations.isEmpty()) {
             returnValue.setExceptionString(violations.toString());
