@@ -670,8 +670,11 @@ def _backupOldHttpdConfig():
 def _configureSelinuxBoolean():
     logging.debug("Enable httpd_can_network_connect boolean")
     cmd = [
-        basedefs.EXEC_SETSEBOOL,
-        "-P","httpd_can_network_connect","1",
+        basedefs.EXEC_SEMANAGE,
+        "boolean",
+        "--modify",
+        "--on",
+        "httpd_can_network_connect",
     ]
     out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_FAILED_UPDATING_SELINUX_BOOLEAN)
 
