@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -163,7 +162,7 @@ public class SessionDataContainer {
         if (map != null && !map.isEmpty()) {
             Map<String, Guid> userSessionMap = new HashMap<String, Guid>();
             for (Map.Entry<String, Map<String, Object>> entry : map.entrySet()) {
-                VdcUser user = (VdcUser) entry.getValue().get(VDC_USER_PARAMETER_NAME);
+                IVdcUser user = (IVdcUser) entry.getValue().get(VDC_USER_PARAMETER_NAME);
                 if (user != null) {
                     userSessionMap.put(entry.getKey(), user.getUserId());
                 }

@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
@@ -196,7 +195,7 @@ public class SessionDataContainerTest {
         doReturn(dbUserDAOMcok).when(container).getDbUserDAO();
 
         // Set some data
-        container.SetData(TEST_SESSION_ID, key, mock(VdcUser.class));
+        container.SetData(TEST_SESSION_ID, key, mock(IVdcUser.class));
         return dbUserDAOMcok;
     }
 
