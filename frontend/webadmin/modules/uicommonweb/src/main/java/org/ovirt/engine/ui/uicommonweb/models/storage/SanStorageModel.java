@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -59,16 +58,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
             getLUNsFailure = value;
             OnPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure")); //$NON-NLS-1$
         }
-    }
-
-    private storage_domains storageDomain;
-
-    public storage_domains getStorageDomain() {
-        return storageDomain;
-    }
-
-    public void setStorageDomain(storage_domains storageDomain) {
-        this.storageDomain = storageDomain;
     }
 
     private final List<LunModel> includedLUNs;
@@ -138,7 +127,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                                 VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                                 if (response.getSucceeded())
                                 {
-                                    model.ApplyData((ArrayList<LUNs>) response.getReturnValue());
+                                    model.ApplyData((ArrayList<LUNs>) response.getReturnValue(), false);
                                     model.setGetLUNsFailure(""); //$NON-NLS-1$
                                 }
                                 else
@@ -212,7 +201,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     /**
      * Creates model items from the provided list of business entities.
      */
-    public void ApplyData(List<LUNs> source)
+    public void ApplyData(List<LUNs> source, boolean isIncluded)
     {
         ArrayList<LunModel> newItems = new ArrayList<LunModel>();
 
@@ -239,10 +228,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
                         targets.add(model);
                     }
                 }
-
-                // Check whether the LUN is already included in the storage domain
-                String vgId = getStorageDomain().getstorage();
-                boolean isIncluded = vgId != null && vgId.equals(a.getvolume_group_id());
 
                 LunModel lunModel = new LunModel();
                 lunModel.setLunId(a.getLUN_id());
