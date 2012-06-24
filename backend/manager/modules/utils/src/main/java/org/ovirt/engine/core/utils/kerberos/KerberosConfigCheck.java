@@ -190,7 +190,9 @@ public class KerberosConfigCheck {
                 try {
                     lc.logout();
                 } catch (LoginException e) {
-                    System.out.println(ERROR_PREFIX + " logout failed " + e.getMessage());
+                    String formattedMessage = ERROR_PREFIX + " logout failed " + e.getMessage();
+                    System.out.println(formattedMessage);
+                    log.error(formattedMessage);
                 }
             }
         }
@@ -224,13 +226,15 @@ public class KerberosConfigCheck {
             log.debug("Check authentication finished successfully ");
         } catch (LoginException ex) {
             String resultMessage = ex.getMessage();
+            String formattedMessage = ERROR_PREFIX + " exception message: " + resultMessage;
+            log.error(formattedMessage);
 
             KerberosReturnCodeParser parser = new KerberosReturnCodeParser();
             result = parser.parse(resultMessage);
             if (result != AuthenticationResult.OTHER) {
                 return result;
             } else {
-                System.out.println(ERROR_PREFIX + " exception message: " + ex.getMessage());
+                System.out.println(formattedMessage);
             }
         }
         return result;
