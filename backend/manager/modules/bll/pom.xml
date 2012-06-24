@@ -18,6 +18,7 @@
     <engine.db>postgres</engine.db>
     <engine.schema>engine</engine.schema>
     <engine.powermock.fork>always</engine.powermock.fork>
+    <gluster.exclude>nothing-to-skip</gluster.exclude>
   </properties>
 
   <dependencies>
@@ -269,6 +270,7 @@
             <exclude>**/itests/*Test.java</exclude>
 	    <exclude>**/TestHelper*.java</exclude>
 	    <exclude>**/AbstractLdapTest.java</exclude>
+	    <exclude>${gluster.exclude}</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -298,9 +300,17 @@
       </properties>
     </profile>
     <profile>
-    <id>mssql</id>
+      <id>mssql</id>
       <properties>
         <engine.db>mssql</engine.db>
+      </properties>
+    </profile>
+    <!-- Optional profile to exlclude gluster tests -->
+    <!-- This is useful since gluster test use PowerMock, which sugnificantly slows down the build time -->
+    <profile>
+      <id>disable-gluster-tests</id>
+      <properties>
+        <gluster.exclude>**/gluster/*Test.java</gluster.exclude>
       </properties>
     </profile>
   </profiles>
