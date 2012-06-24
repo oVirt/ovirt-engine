@@ -11,6 +11,10 @@
   <packaging>jar</packaging>
   <name>oVirt RESTful API Backend Integration Type Mappers</name>
 
+  <properties>
+    <engine.powermock.fork>always</engine.powermock.fork>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
@@ -83,7 +87,7 @@
                 this setting should be removed as soon as powermock is fixed completely
                 or powermock dependency is removed.
            -->
-          <forkMode>always</forkMode>
+          <forkMode>${engine.powermock.fork}</forkMode>
         </configuration>
        </plugin>
      </plugins>

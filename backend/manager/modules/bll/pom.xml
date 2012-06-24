@@ -17,6 +17,7 @@
     <engine.bisocket.connector.port>4457</engine.bisocket.connector.port>
     <engine.db>postgres</engine.db>
     <engine.schema>engine</engine.schema>
+    <engine.powermock.fork>always</engine.powermock.fork>
   </properties>
 
   <dependencies>
@@ -249,7 +250,7 @@
                 this setting should be removed as soon as powermock is fixed completely
                 or powermock dependency is removed.
            -->
-          <forkMode>always</forkMode>
+          <forkMode>${engine.powermock.fork}</forkMode>
           <systemProperties>
             <property>
 	      <name>jboss.server.log.dir</name>
