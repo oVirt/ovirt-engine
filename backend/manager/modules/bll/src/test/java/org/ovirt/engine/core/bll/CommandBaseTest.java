@@ -21,6 +21,9 @@ import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest {
 
+    /** The session to use */
+    private String session = "";
+
     /** A dummy class for testing CommandBase's functionality */
     @SuppressWarnings("serial")
     private class CommandBaseDummy extends CommandBase<VdcActionParametersBase> {
@@ -46,12 +49,13 @@ public class CommandBaseTest {
     public void clearEnvironment() {
         ThreadLocalParamsContainer.clean();
         SessionDataContainer.getInstance().removeSession();
+        SessionDataContainer.getInstance().removeSession(session);
     }
 
     /** Testing the constructor, which adds the user id to the thread local container */
     @Test
     public void testConstructor() {
-        String session = RandomStringUtils.random(10);
+        session = RandomStringUtils.random(10);
 
         VdcUser user = mock(VdcUser.class);
         when(user.getUserId()).thenReturn(Guid.EVERYONE);
