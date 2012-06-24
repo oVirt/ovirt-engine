@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -34,7 +35,7 @@ public final class AsyncTaskFactory {
                             creationInfo.getTaskID(),
                             new VdcActionParametersBase(),
                             creationInfo.getStepId(),
-                            asyncTask == null ? null : asyncTask.getCommandId());
+                            asyncTask == null ? Guid.NewGuid() : asyncTask.getCommandId());
             creationInfo.setTaskType(AsyncTaskType.unknown);
         }
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);

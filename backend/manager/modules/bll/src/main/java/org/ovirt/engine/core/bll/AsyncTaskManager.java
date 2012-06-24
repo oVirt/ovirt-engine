@@ -504,7 +504,7 @@ public final class AsyncTaskManager {
     public void AddStoragePoolExistingTasks(storage_pool sp) {
         List<AsyncTaskCreationInfo> currPoolTasks = null;
         try {
-            currPoolTasks = (java.util.ArrayList<AsyncTaskCreationInfo>) Backend.getInstance().getResourceManager()
+            currPoolTasks = (ArrayList<AsyncTaskCreationInfo>) Backend.getInstance().getResourceManager()
                     .RunVdsCommand(VDSCommandType.SPMGetAllTasksInfo, new IrsBaseVDSCommandParameters(sp.getId()))
                     .getReturnValue();
         } catch (RuntimeException e) {
