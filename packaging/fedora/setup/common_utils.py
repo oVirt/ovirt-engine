@@ -844,3 +844,20 @@ def chownToJboss(target):
     uid = getUsernameId(basedefs.JBOSS_USER_NAME)
     gid = getGroupId(basedefs.JBOSS_GROUP_NAME)
     chown(target, uid, gid)
+
+def installed(rpm):
+    cmd = [
+        basedefs.EXEC_RPM,
+        "-q",
+        rpm,
+    ]
+    output, rc = execCmd(cmd)
+    return rc == 0
+
+def setHttpPortsToNonProxyDefault(controller):
+    logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default non-proxy values (8080 & 8443)")
+    httpParam = controller.getParamByName("HTTP_PORT")
+    httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTP_PORT)
+    httpParam = controller.getParamByName("HTTPS_PORT")
+    httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTPS_PORT)
+

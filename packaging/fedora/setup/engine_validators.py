@@ -178,10 +178,7 @@ def validateOverrideHttpdConfAndChangePortsAccordingly(param, options=[]):
     if retval and param.lower() == "no":
         logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default jboss values (8080 & 8443)")
         controller = Controller()
-        httpParam = controller.getParamByName("HTTP_PORT")
-        httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTP_PORT)
-        httpParam = controller.getParamByName("HTTPS_PORT")
-        httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTPS_PORT)
+        utils.setHttpPortsToNonProxyDefault(controller)
     elif retval:
         #stopping httpd service (in case it's up) when the configuration can be overridden
         logging.debug("stopping httpd service")
@@ -549,3 +546,53 @@ def _isPathWriteable(path):
         logging.warning("%s is not writeable" % path)
         return False
 
+def validateIpaAndHttpdStatus(conf):
+    """"
+    This function serve as a pre-condition to the ports group. This function will always return True,
+    Therefore the ports group will always be handled, but this function may changes the flow dynamically
+    according to http & ipa rpm status.
+    So, there are two purposes for this function:
+    1. check whether the relevant httpd configuration files were changed,
+    As it's an indication for the setup that the httpd application is being actively used,
+    Therefore we may need to ask (dynamic change) the user whether to override this configuration.
+    2. Check if IPA is installed and drop port 80/443 support.
+    """
+    # Check if IPA installed
+    if utils.installed(basedefs.IPA_RPM) or utils.installed(basedefs.FREEIPA_RPM):
+        # Change default ports
+        logging.debug("IPA rpms detected, disabling http proxy")
+        print output_messages.WARN_IPA_INSTALLED
+        controller = Controller()
+        utils.setHttpPortsToNonProxyDefault(controller)
+
+        # Don't use http proxy
+        paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
+        paramToChange.setKey("DEFAULT_VALUE", "no")
+    else:
+        if wereHttpdConfFilesChanged:
+            # If conf files were changed, the user should be asked if he really wants to use ports 80/443
+            paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
+            paramToChange.setKey("USE_DEFAULT", False)
+
+    # This validator must return true, so ports will always be handled
+    return True
+
+def wereHttpdConfFilesChanged():
+    logging.debug("checking whether HTTPD config files were changed")
+    conf_files = [basedefs.FILE_HTTPD_SSL_CONFIG, basedefs.FILE_HTTPD_CONF]
+    cmd = [
+        basedefs.EXEC_RPM,
+        "-V",
+        "--nomtime",
+        "httpd",
+        "mod_ssl",
+    ]
+
+    (output, rc) = utils.execCmd(cmdList=cmd)
+    for line in output.split(os.linesep):
+        if len(line) > 0:
+            changed_file = line.split()[-1]
+            if changed_file in conf_files:
+                logging.debug("HTTPD config file %s was changed" %(changed_file))
+                return True
+    return False

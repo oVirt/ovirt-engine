@@ -405,3 +405,4 @@ ERR_FAILED_UPDATING_SELINUX_BOOLEAN="Failed to enable SELinux boolean"
 # update listen ports
 ERR_EXP_UPD_HTTP_LISTEN_PORT="Error: can't update http listen port in file %s"
 ERR_EXP_UPD_HTTPS_LISTEN_PORT="Error: can't update https listen port in file %s"
+WARN_IPA_INSTALLED="Warning! IPA Installation detected. Support for port 80/443 will be disabled."

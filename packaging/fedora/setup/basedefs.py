@@ -20,6 +20,8 @@ HTTPD_SERVICE_NAME="httpd"
 HTTP_PORT_POLICY="http_port_t"
 NFS_SERVICE_NAME="nfs-server"
 NOTIFIER_SERVICE_NAME = "engine-notifierd"
+FREEIPA_RPM = "freeipa-server"
+IPA_RPM = "ipa-server"
 
 JBOSS_HTTP_PORT="8080"
 JBOSS_HTTPS_PORT="8443"

@@ -444,7 +444,7 @@ def initConfig():
     conf_groups = (
                     { "GROUP_NAME"            : "PORTS",
                       "DESCRIPTION"           : output_messages.INFO_GRP_PORTS,
-                      "PRE_CONDITION"         : _wereHttpdConfFilesChanged,
+                      "PRE_CONDITION"         : validate.validateIpaAndHttpdStatus,
                       "PRE_CONDITION_MATCH"   : True,
                       "POST_CONDITION"        : False,
                       "POST_CONDITION_MATCH"  : True},
@@ -686,32 +686,6 @@ def _configureHttpdSslKeys():
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_HTTPD_SSL_CONFIG%(basedefs.FILE_HTTPD_SSL_CONFIG))
-
-
-
-def _wereHttpdConfFilesChanged(conf):
-    """
-    This function serve as a pre-condition to the ports group. This function will always return True,
-    Therefore the ports group will always be handled, but this function may changes the flow dynamically
-    according to the httpd status.
-    So, the real purpose of this function is to check whether the relevant httpd configuration files were changed.
-    This is an indication for the setup that the httpd application is being actively used,
-    Therefore we may need to ask (dynamic change) the user whether to override this configuration.
-
-    """
-    logging.debug("checking whether HTTPD config files were changed")
-    conf_files = [basedefs.FILE_HTTPD_SSL_CONFIG, basedefs.FILE_HTTPD_CONF]
-    cmd = [basedefs.EXEC_RPM, "-V", "--nomtime", "httpd", "mod_ssl"]
-    (output, rc) = utils.execCmd(cmdList=cmd)
-    for line in output.split(os.linesep):
-        if len(line) > 0:
-            changed_file = line.split()[-1]
-            if changed_file in conf_files:
-                logging.debug("HTTPD config file %s was changed" %(changed_file))
-                paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
-                paramToChange.setKey("USE_DEFAULT", False)
-                break
-    return True
 
 
 def _redirectUrl():
