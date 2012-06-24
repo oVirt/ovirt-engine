@@ -994,6 +994,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Allow viewing the VM Console Screen")
 	String allowViewingTheVmConsoleScreenRoleTreeTooltip();
 
+	@DefaultStringValue("Allow setting port mirroring to VMs networks")
+	String allowVmNetworkPortMirroringRoleTreeTooltip();
+
 	@DefaultStringValue("Allow Change VM properties")
 	String allowChangeVmPropertiesRoleTreeTooltip();
 

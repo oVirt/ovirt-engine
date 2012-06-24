@@ -106,6 +106,7 @@ public class RoleTreeView
         array.add(ActionGroup.EDIT_DISK_PROPERTIES);
         array.add(ActionGroup.LOGIN);
         array.add(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES);
+        array.add(ActionGroup.PORT_MIRRORING);
         return array;
 
     }
@@ -349,7 +350,11 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
-                                                                                .allowMigratingVmBetweenHostsInClusterRoleTreeTooltip()) }) }),
+                                                                                .allowMigratingVmBetweenHostsInClusterRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.PORT_MIRRORING,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowVmNetworkPortMirroringRoleTreeTooltip()) }) }),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().vmPoolRoleTree(),
                                         new RoleNode[] {
                                                 new RoleNode(ConstantsManager.getInstance()

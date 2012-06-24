@@ -126,6 +126,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String ActionGroup___EDIT_DISK_PROPERTIES();
 
+	String ActionGroup___PORT_MIRRORING();
+
 	String ActionGroup___CONFIGURE_DISK_STORAGE();
 
 	String ActionGroup___DELETE_DISK();
