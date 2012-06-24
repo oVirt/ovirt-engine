@@ -55,7 +55,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
             statusImage = resources.nonOperationalImage();
             break;
         case PendingApproval:
-            statusImage = resources.upalertImage();
+            statusImage = resources.unconfiguredImage();
             break;
         case Initializing:
             statusImage = resources.waitImage();
