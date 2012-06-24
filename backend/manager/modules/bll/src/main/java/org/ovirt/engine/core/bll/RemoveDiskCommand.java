@@ -143,7 +143,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
      */
     private List<VM> getVmsForDiskId() {
         if (listVms == null) {
-            listVms = getVmDAO().getVmsListForDisk(disk.getId());
+            listVms = getVmDAO().getVmsListForDisk((Guid) getParameters().getEntityId());
         }
         return listVms;
     }
@@ -318,6 +318,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     public String getDiskAlias() {
-        return disk.getDiskAlias();
+        if (disk != null) {
+            return disk.getDiskAlias();
+        }
+        return "";
     }
 }
