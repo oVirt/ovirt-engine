@@ -290,6 +290,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     tempVar.setPostZero(disk.isWipeAfterDelete());
                     tempVar.setSourceDomainId(getParameters().getSourceDomainId());
                     tempVar.setForceOverride(true);
+                    tempVar.setImportEntity(true);
                     MoveOrCopyImageGroupParameters p = tempVar;
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(

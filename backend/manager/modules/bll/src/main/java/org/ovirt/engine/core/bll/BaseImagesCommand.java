@@ -337,15 +337,17 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void LockImage() {
-        SetImageStatus(getDiskImage(), ImageStatus.LOCKED);
+        SetImageStatus(getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage(),
+                ImageStatus.LOCKED);
     }
 
     protected void UnLockImage() {
-        SetImageStatus(getDiskImage(), ImageStatus.OK);
+        SetImageStatus(getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage(), ImageStatus.OK);
     }
 
     protected void MarkImageAsIllegal() {
-        SetImageStatus(getDiskImage(), ImageStatus.ILLEGAL);
+        SetImageStatus(getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage(),
+                ImageStatus.ILLEGAL);
     }
 
     protected static void SetImageStatus(DiskImage diskImage, ImageStatus imageStatus) {

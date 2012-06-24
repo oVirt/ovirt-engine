@@ -14,6 +14,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private Date oldLastModifiedValue;
     private Guid vmSnapshotId;
     private Guid imageGroupID = Guid.Empty;
+    private boolean importEntity;
 
     public ImagesActionsParametersBase() {
     }
@@ -73,5 +74,13 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public void setImageGroupID(Guid value) {
         imageGroupID = value;
+    }
+
+    public boolean isImportEntity() {
+        return importEntity;
+    }
+
+    public void setImportEntity(boolean importEntity) {
+        this.importEntity = importEntity;
     }
 }
