@@ -1035,7 +1035,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot get Storage Domains list.")
     String ERROR_GET_STORAGE_DOMAIN_LIST();
 
-    @DefaultStringValue("Mac Address is already in use.")
+    @DefaultStringValue("MAC Address is already in use.")
     String NETWORK_MAC_ADDRESS_IN_USE();
 
     @DefaultStringValue("The specified MAC Address cannot be set.\n-Please check MAC Address validity.")
