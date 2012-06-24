@@ -38,7 +38,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
                 return object.getlog_time();
             }
         };
-        getTable().addColumn(logTimeColumn, constants.timeEvent());
+        getTable().addColumn(logTimeColumn, constants.timeEvent(), "170px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
