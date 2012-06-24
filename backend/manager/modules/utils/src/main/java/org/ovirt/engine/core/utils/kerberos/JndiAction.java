@@ -46,6 +46,7 @@ public class JndiAction implements PrivilegedAction {
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put("java.naming.ldap.attributes.binary", "objectGUID");
         env.put(Context.SECURITY_AUTHENTICATION, "GSSAPI");
+        env.put("javax.security.sasl.qop", "auth-conf");
 
         // Send an SRV record DNS query to retrieve all the LDAP servers in the domain
         LdapSRVLocator locator = new LdapSRVLocator();
