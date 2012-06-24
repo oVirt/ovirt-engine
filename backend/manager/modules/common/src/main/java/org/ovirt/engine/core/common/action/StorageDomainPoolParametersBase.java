@@ -5,7 +5,16 @@ import org.ovirt.engine.core.compat.*;
 public class StorageDomainPoolParametersBase extends StorageDomainParametersBase {
     private static final long serialVersionUID = 6248101174739394633L;
 
-    boolean runSilent;
+    private boolean runSilent;
+    private boolean deactivate;
+
+    public boolean getDeactivate() {
+        return deactivate;
+    }
+
+    public void setDeactivate(boolean value) {
+        deactivate = value;
+    }
 
     public StorageDomainPoolParametersBase(Guid storageId, Guid storagePoolId) {
         super(storageId);

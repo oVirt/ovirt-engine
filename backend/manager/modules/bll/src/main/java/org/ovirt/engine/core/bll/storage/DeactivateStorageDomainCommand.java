@@ -27,8 +27,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -219,7 +217,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 @Override
                 public Object runInTransaction() {
                     getCompensationContext().snapshotEntityStatus(map, map.getstatus());
-                    map.setstatus(StorageDomainStatus.Maintenance);
+                    if (getParameters().getDeactivate()) {
+                        map.setstatus(StorageDomainStatus.InActive);
+                    } else {
+                        map.setstatus(StorageDomainStatus.Maintenance);
+                    }
                     getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                     if (!Guid.Empty.equals(_newMasterStorageDomainId)) {
                         storage_pool_iso_map mapOfNewMaster = getNewMaster().getStoragePoolIsoMapData();
@@ -287,6 +289,4 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 : getSucceeded() ? AuditLogType.USER_DEACTIVATED_STORAGE_DOMAIN
                         : AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED;
     }
-
-    private static final Log log = LogFactory.getLog(DeactivateStorageDomainCommand.class);
 }

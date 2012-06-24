@@ -87,7 +87,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                             ProceedStorageDomainTreatmentByDomainType(true);
                             // set status to inactive in order to send it on
                             // reconstruct or if its last master
-                            if (getParameters().getIsDeactivate()) {
+                            if (getParameters().getDeactivate()) {
                                 SetStorageDomainStatus(StorageDomainStatus.InActive);
                                 CalcStoragePoolStatusByDomainsStatus();
                             }
@@ -236,7 +236,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                         }
                                     }
                                     // only if we deactivate the storage domain we want to disconnect from it.
-                                    if (getParameters().getIsDeactivate()) {
+                                    if (getParameters().getDeactivate()) {
                                         StorageHelperDirector.getInstance()
                                                 .getItem(getStorageDomain().getstorage_type())
                                                 .DisconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
