@@ -655,9 +655,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 new AddVmTemplateParameters(newvm,
                         (String) model.getName().getEntity(),
                         (String) model.getDescription().getEntity());
-        addVmTemplateParameters.setDestinationStorageDomainId(((storage_domains) model.getStorageDomain()
-                .getSelectedItem()).getId());
+
         addVmTemplateParameters.setPublicUse((Boolean) model.getIsTemplatePublic().getEntity());
+
+        addVmTemplateParameters.setDiskInfoDestinationMap(
+                model.getDisksAllocationModel()
+                        .getImageToDestinationDomainMap((Boolean) model.getDisksAllocationModel()
+                                .getIsSingleStorageDomain()
+                                .getEntity()));
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
