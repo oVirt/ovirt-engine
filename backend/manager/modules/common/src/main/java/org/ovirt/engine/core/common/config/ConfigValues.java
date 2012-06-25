@@ -1162,9 +1162,14 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
     WANColorDepth(363),
+
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     VmPoolMaxSubsequentFailures(364),
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    CpuPinMigrationEnabled(365),
 
     Invalid(65535);
 

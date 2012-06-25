@@ -5,9 +5,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -65,6 +68,17 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     static boolean isCpuPinningValid(final String cpuPinning) {
         return StringUtils.isEmpty(cpuPinning) || cpuPinningPattern.matcher(cpuPinning).matches();
+    }
+
+    static boolean isPinningAndMigrationValid(List<String> reasons, VmStatic vmStaticData, String cpuPinning) {
+        final boolean cpuPinMigrationEnabled = Boolean.TRUE.equals(Config.<Boolean> GetValue(ConfigValues.CpuPinMigrationEnabled));
+        if (!cpuPinMigrationEnabled
+                && vmStaticData.getMigrationSupport() == MigrationSupport.MIGRATABLE
+                && StringUtils.isNotEmpty(cpuPinning)) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE.toString());
+            return false;
+        }
+        return true;
     }
 
 }

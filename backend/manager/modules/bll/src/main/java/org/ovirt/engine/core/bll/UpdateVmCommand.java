@@ -15,13 +15,13 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -276,6 +276,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // check cpuPinning
         if (!isCpuPinningValid(vmFromParams.getCpuPinning())) {
             addCanDoActionMessage(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
+            return false;
+        }
+
+        if (!isPinningAndMigrationValid(getReturnValue().getCanDoActionMessages(),
+                        getParameters().getVm().getStaticData(), getParameters().getVm().getCpuPinning())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE);
             return false;
         }
 
