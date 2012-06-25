@@ -729,15 +729,11 @@ public class ClusterModel extends Model
                 ServerCpu oldSelectedCpu = (ServerCpu) clusterModel.getCPU().getSelectedItem();
                 clusterModel.getCPU().setItems(cpus);
 
-                if (oldSelectedCpu != null)
-                {
-                    clusterModel.getCPU().setSelectedItem(Linq.FirstOrDefault(cpus,
-                            new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())));
-                }
+                clusterModel.getCPU().setSelectedItem(oldSelectedCpu != null ?
+                        Linq.FirstOrDefault(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
 
                 if (clusterModel.getCPU().getSelectedItem() == null || !isCPUinitialized)
                 {
-                    clusterModel.getCPU().setSelectedItem(Linq.FirstOrDefault(cpus));
                     InitCPU();
                 }
             }
