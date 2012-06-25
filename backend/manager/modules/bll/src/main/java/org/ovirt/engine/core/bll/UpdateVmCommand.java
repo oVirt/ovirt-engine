@@ -64,8 +64,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmStatic oldVmStatic = getVm().getStaticData();
         VmStatic newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setcreation_date(oldVmStatic.getcreation_date());
-        if (newVmStatic.getcreation_date().equals(DateTime.getMinValue())
-                || newVmStatic.getcreation_date().equals(DateTime.getMinValue())) {
+        if (newVmStatic.getcreation_date().equals(DateTime.getMinValue())) {
             newVmStatic.setcreation_date(new Date());
         }
         UpdateVmNetworks();
