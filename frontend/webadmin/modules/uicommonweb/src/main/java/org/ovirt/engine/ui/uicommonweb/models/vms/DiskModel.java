@@ -434,6 +434,15 @@ public class DiskModel extends Model
 
     private boolean isWipeAfterDeleteChangable;
     private boolean isQuotaAvailable;
+    private Guid vmId;
+
+    public Guid getVmId() {
+        return vmId;
+    }
+
+    public void setVmId(Guid vmId) {
+        this.vmId = vmId;
+    }
 
     public DiskModel()
     {
@@ -623,7 +632,7 @@ public class DiskModel extends Model
                 ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
 
                 ArrayList<storage_domains> filteredStorageDomains = new ArrayList<storage_domains>();
-                for (storage_domains a : (ArrayList<storage_domains>) storageDomains)
+                for (storage_domains a : storageDomains)
                 {
                     if (a.getstorage_domain_type() != StorageDomainType.ISO
                             && a.getstorage_domain_type() != StorageDomainType.ImportExport
@@ -832,7 +841,7 @@ public class DiskModel extends Model
                     model.getInternalAttachableDisks().setItems(Linq.ToEntityModelList(
                             Linq.FilterDisksByType(diskModels, DiskStorageType.IMAGE)));
                 }
-            }), getDatacenterId());
+            }), getDatacenterId(), vmId);
 
             // Get external attachable disks
             AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
@@ -845,7 +854,7 @@ public class DiskModel extends Model
                     model.getExternalAttachableDisks().setItems(Linq.ToEntityModelList(
                             Linq.FilterDisksByType(diskModels, DiskStorageType.LUN)));
                 }
-            }), null);
+            }), null, vmId);
         }
     }
 

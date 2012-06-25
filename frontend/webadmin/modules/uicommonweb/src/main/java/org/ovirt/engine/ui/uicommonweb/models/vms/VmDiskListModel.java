@@ -119,7 +119,7 @@ public class VmDiskListModel extends SearchableListModel
 
     public boolean getIsDiskHotPlugSupported()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         boolean isVmStatusApplicableForHotPlug =
                 vm != null && (vm.getstatus() == VMStatus.Up || vm.getstatus() == VMStatus.Down |
                         vm.getstatus() == VMStatus.Paused || vm.getstatus() == VMStatus.Suspended);
@@ -199,7 +199,7 @@ public class VmDiskListModel extends SearchableListModel
         {
             return;
         }
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
 
         super.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()));
     }
@@ -209,7 +209,7 @@ public class VmDiskListModel extends SearchableListModel
     {
         super.AsyncSearch();
 
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllDisksByVmId,
                 new GetAllDisksByVmIdParameters(vm.getId())));
@@ -230,7 +230,7 @@ public class VmDiskListModel extends SearchableListModel
 
     private void New()
     {
-        final VM vm = (VM) getEntity();
+        final VM vm = getEntity();
 
         if (getWindow() != null)
         {
@@ -244,6 +244,7 @@ public class VmDiskListModel extends SearchableListModel
         model.setIsNew(true);
         model.setDatacenterId(vm.getstorage_pool_id());
         model.getIsInVm().setEntity(true);
+        model.setVmId(getEntity().getId());
         model.StartProgress(null);
 
         AddDiskUpdateData();
@@ -260,7 +261,7 @@ public class VmDiskListModel extends SearchableListModel
                         getItems() != null ? Linq.<Disk> Cast(getItems()) : new ArrayList<Disk>();
 
                 ArrayList<storage_domains> filteredStorageDomains = new ArrayList<storage_domains>();
-                for (storage_domains a : (ArrayList<storage_domains>) storageDomains)
+                for (storage_domains a : storageDomains)
                 {
                     if (a.getstorage_domain_type() != StorageDomainType.ISO
                             && a.getstorage_domain_type() != StorageDomainType.ImportExport
@@ -435,7 +436,7 @@ public class VmDiskListModel extends SearchableListModel
             {
                 VmDiskListModel vmDiskListModel = (VmDiskListModel) model;
                 DiskModel diskModel = (DiskModel) vmDiskListModel.getWindow();
-                VM vm = (VM) vmDiskListModel.getEntity();
+                VM vm = vmDiskListModel.getEntity();
                 storage_domains storageDomain = (storage_domains) result;
                 Disk disk = (Disk) vmDiskListModel.getSelectedItem();
 
@@ -527,7 +528,7 @@ public class VmDiskListModel extends SearchableListModel
                         dModel.quota_storageSelectedItemChanged(((DiskImage) disk).getQuotaId());
                     }
                 }
-            }), ((VM) getEntity()).getstorage_pool_id());
+            }), getEntity().getstorage_pool_id());
         }
         else {
             ((DiskModel) getWindow()).getQuota().setIsAvailable(false);
@@ -569,7 +570,7 @@ public class VmDiskListModel extends SearchableListModel
     }
 
     private void OnRemove() {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
         boolean removeDisk = (Boolean) model.getLatch().getEntity();
         VdcActionType actionType = removeDisk ? VdcActionType.RemoveDisk : VdcActionType.DetachDiskFromVm;
@@ -600,7 +601,7 @@ public class VmDiskListModel extends SearchableListModel
 
     private void OnSave()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         DiskModel model = (DiskModel) getWindow();
 
         if (model.getProgress() != null || !model.Validate())
@@ -696,7 +697,7 @@ public class VmDiskListModel extends SearchableListModel
 
     private void OnAttachDisks()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         DiskModel model = (DiskModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
@@ -727,7 +728,7 @@ public class VmDiskListModel extends SearchableListModel
     }
 
     private void Plug(boolean plug) {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
 
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems()) {
@@ -765,7 +766,7 @@ public class VmDiskListModel extends SearchableListModel
             return;
         }
 
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
 
         MoveDiskModel model = new MoveDiskModel();
         model.setIsSingleDiskMove(disks.size() == 1);
@@ -817,7 +818,7 @@ public class VmDiskListModel extends SearchableListModel
 
     private void UpdateActionAvailability()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         Disk disk = (Disk) getSelectedItem();
         boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
                 ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
@@ -839,12 +840,12 @@ public class VmDiskListModel extends SearchableListModel
     }
 
     public boolean isVmDown() {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         return vm != null && vm.getstatus() == VMStatus.Down;
     }
 
     public boolean isHotPlugAvailable() {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         return vm != null && (vm.getstatus() == VMStatus.Up ||
                 vm.getstatus() == VMStatus.Paused || vm.getstatus() == VMStatus.Suspended);
     }
@@ -982,7 +983,7 @@ public class VmDiskListModel extends SearchableListModel
         {
             return;
         }
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
                 ? vm.getvds_group_compatibility_version() : new Version();
 

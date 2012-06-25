@@ -14,6 +14,7 @@ public class GetAllAttachableDisksQuery<P extends GetAllAttachableDisks> extends
         setReturnValue(DbFacade.getInstance()
                 .getDiskDao()
                 .getAllAttachableDisksByPoolId(getParameters().getStoragePoolId(),
+                        getParameters().getVmId(),
                         getUserID(),
                         getParameters().isFiltered()));
     }

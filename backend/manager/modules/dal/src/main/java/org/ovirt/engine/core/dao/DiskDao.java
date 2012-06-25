@@ -31,5 +31,13 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDAO<Disk> {
      */
     List<Disk> getAllForVm(Guid id, Guid userID, boolean isFiltered);
 
-    List<Disk> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered);
+    /**
+     * Retrieves all shared disks for the specified storage pool/virtual machine id,
+     * @param poolId
+     * @param vmId, if vmId=null retrieve all shared disks in SP
+     * @param userId
+     * @param isFiltered
+     * @return
+     */
+    List<Disk> getAllAttachableDisksByPoolId(Guid poolId, Guid vmId ,Guid userId, boolean isFiltered);
 }

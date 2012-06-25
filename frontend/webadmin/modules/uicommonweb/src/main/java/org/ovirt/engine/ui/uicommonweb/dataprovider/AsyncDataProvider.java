@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -31,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -1924,7 +1924,7 @@ public final class AsyncDataProvider {
         GetConfigFromCache(params, aQuery);
     }
 
-    public static void GetAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId) {
+    public static void GetAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1932,8 +1932,9 @@ public final class AsyncDataProvider {
                 return source != null ? (ArrayList<Disk>) source : new ArrayList<Disk>();
             }
         };
-
-        Frontend.RunQuery(VdcQueryType.GetAllAttachableDisks, new GetAllAttachableDisks(storagePoolId), aQuery);
+        GetAllAttachableDisks params = new GetAllAttachableDisks(storagePoolId);
+        params.setVmId(vmId);
+        Frontend.RunQuery(VdcQueryType.GetAllAttachableDisks, params, aQuery);
     }
 
     public static void GetPermittedStorageDomainsByStoragePoolId(AsyncQuery aQuery,

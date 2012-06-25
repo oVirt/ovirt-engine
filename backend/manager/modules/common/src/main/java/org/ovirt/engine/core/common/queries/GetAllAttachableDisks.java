@@ -7,6 +7,7 @@ public class GetAllAttachableDisks extends VdcQueryParametersBase {
     private static final long serialVersionUID = 155490543085422118L;
 
     private Guid storagePoolId;
+    private Guid vmId;
 
     public GetAllAttachableDisks() {
     }
@@ -21,6 +22,14 @@ public class GetAllAttachableDisks extends VdcQueryParametersBase {
 
     public Guid getStoragePoolId() {
         return storagePoolId;
+    }
+
+    public Guid getVmId() {
+        return vmId;
+    }
+
+    public void setVmId(Guid vmId) {
+        this.vmId = vmId;
     }
 
 }

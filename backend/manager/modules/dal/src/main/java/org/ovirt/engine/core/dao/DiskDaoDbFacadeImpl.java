@@ -32,9 +32,10 @@ public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> impl
     }
 
     @Override
-    public List<Disk> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered) {
+    public List<Disk> getAllAttachableDisksByPoolId(Guid poolId, Guid vmId, Guid userId, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_pool_id", poolId)
+                .addValue("vm_id", vmId)
                 .addValue("user_id", userId)
                 .addValue("is_filtered", isFiltered);
 

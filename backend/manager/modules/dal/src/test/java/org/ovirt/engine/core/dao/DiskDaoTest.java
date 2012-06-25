@@ -78,6 +78,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         List<Disk> result =
                 dao.getAllAttachableDisksByPoolId(FixturesTool.STORAGE_POOL_NFS,
                         null,
+                        null,
                         false);
 
         assertTrue(result.isEmpty());
@@ -86,7 +87,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllAttachableDisksByPoolIdNull() {
         List<Disk> result =
-                dao.getAllAttachableDisksByPoolId(null, null, false);
+                dao.getAllAttachableDisksByPoolId(null, null, null, false);
 
         assertFullGetAllAttachableDisksByPoolId(result);
     }
@@ -94,7 +95,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllAttachableDisksByPoolWithPermissions() {
         List<Disk> result =
-                dao.getAllAttachableDisksByPoolId(null, PRIVILEGED_USER_ID, true);
+                dao.getAllAttachableDisksByPoolId(null, null, PRIVILEGED_USER_ID, true);
 
         assertFullGetAllAttachableDisksByPoolId(result);
     }
@@ -102,7 +103,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllAttachableDisksByPoolWithNoPermissions() {
         List<Disk> result =
-                dao.getAllAttachableDisksByPoolId(null, UNPRIVILEGED_USER_ID, true);
+                dao.getAllAttachableDisksByPoolId(null, null, UNPRIVILEGED_USER_ID, true);
 
         assertTrue(result.isEmpty());
     }
@@ -110,7 +111,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllAttachableDisksByPoolWithNoPermissionsFilterDisabled() {
         List<Disk> result =
-                dao.getAllAttachableDisksByPoolId(null, UNPRIVILEGED_USER_ID, false);
+                dao.getAllAttachableDisksByPoolId(null, null, UNPRIVILEGED_USER_ID, false);
 
         assertFullGetAllAttachableDisksByPoolId(result);
     }

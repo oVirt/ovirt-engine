@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -28,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
@@ -99,7 +99,7 @@ public class VmGuideModel extends GuideModel
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
-                       isActivateSupported = (Boolean) returnValue;
+                        isActivateSupported = (Boolean) returnValue;
                     }
                 }), clusterCompatibilityVersion.toString());
     }
@@ -268,9 +268,9 @@ public class VmGuideModel extends GuideModel
 
         model.getActive().setIsChangable(isActivateSupported);
 
-        if (isActivateSupported){
+        if (isActivateSupported) {
             model.getActive().setEntity(true);
-        }else{
+        } else {
             model.getActive().setEntity(false);
         }
 
@@ -440,7 +440,7 @@ public class VmGuideModel extends GuideModel
         model.setIsNew(true);
         model.setDatacenterId(getEntity().getstorage_pool_id());
         model.getIsInVm().setEntity(true);
-
+        model.setVmId(getEntity().getId());
         ArrayList<storage_domains> storageDomains = new ArrayList<storage_domains>();
         for (storage_domains a : attachedStorageDomains)
         {
@@ -703,7 +703,7 @@ public class VmGuideModel extends GuideModel
 
     private void OnAttachDisks()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         DiskModel model = (DiskModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
