@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -23,31 +25,28 @@ public class MacPoolManager {
 
     private static final MacPoolManager _instance = new MacPoolManager();
 
-    static {
-    }
-
     public static MacPoolManager getInstance() {
         return _instance;
     }
 
-    private final java.util.ArrayList<String> mAvailableMacs = new java.util.ArrayList<String>();
-    private final java.util.ArrayList<String> mAllocatedMacs = new java.util.ArrayList<String>();
-    private final java.util.ArrayList<String> mAllocatedCustomMacs = new java.util.ArrayList<String>();
+    private final Set<String> mAvailableMacs = new HashSet<String>();
+    private final Set<String> mAllocatedMacs = new HashSet<String>();
+    private final Set<String> mAllocatedCustomMacs = new HashSet<String>();
     private final Object mLocObj = new Object();
     private boolean mInitialized = false;
 
     public void initialize() {
         synchronized (mLocObj) {
-
-            List<VM> vms = DbFacade.getInstance().getVmDAO().getAll();
             String ranges = Config.<String> GetValue(ConfigValues.MacPoolRanges);
-            if (!StringHelper.EqOp(ranges, "")) {
+            if (!"".equals(ranges)) {
                 try {
                     initRanges(ranges);
                 } catch (MacPoolExceededMaxException e) {
                     log.errorFormat("MAC Pool range exceeded maximum number of mac pool addressed. Please check Mac Pool configuration.");
                 }
             }
+
+            List<VM> vms = DbFacade.getInstance().getVmDAO().getAll();
             for (VM vm : vms) {
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                         .getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
@@ -203,7 +202,9 @@ public class MacPoolManager {
     }
 
     public boolean IsMacInUse(String mac) {
-        return mAllocatedMacs.contains(mac) || mAllocatedCustomMacs.contains(mac);
+        synchronized (mLocObj) {
+            return mAllocatedMacs.contains(mac) || mAllocatedCustomMacs.contains(mac);
+        }
     }
 
     private static Log log = LogFactory.getLog(MacPoolManager.class);
