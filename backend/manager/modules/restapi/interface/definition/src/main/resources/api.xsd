@@ -403,10 +403,14 @@
     </xs:attribute>
   </xs:complexType>
 
+  <xs:element name="vcpu_pin" type="VCpuPin"/>
+
   <xs:complexType name="VCpuPin">
     <xs:attribute name="vcpu" type="xs:int" use="required"/>
     <xs:attribute name="cpu_set" type="xs:string" use="required"/>
   </xs:complexType>
+
+  <xs:element name="cpu_tune" type="CpuTune"/>
 
   <xs:complexType name="CpuTune">
     <xs:sequence>
