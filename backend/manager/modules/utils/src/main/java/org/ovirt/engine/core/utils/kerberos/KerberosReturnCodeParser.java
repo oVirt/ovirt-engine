@@ -20,7 +20,7 @@ public class KerberosReturnCodeParser {
 
     static {
         messagesToReturnCode.put(INVALID_PRE_AUTH_RETURN_MSG, AuthenticationResult.INVALID_CREDENTIALS);
-        messagesToReturnCode.put(CLIENT_NOT_FOUND_RETURN_MSG, AuthenticationResult.INVALID_CREDENTIALS);
+        messagesToReturnCode.put(CLIENT_NOT_FOUND_RETURN_MSG, AuthenticationResult.CLIENT_NOT_FOUND_IN_KERBEROS_DATABASE);
         messagesToReturnCode.put(SERVER_NOT_FOUND_RETURN_MSG, AuthenticationResult.DNS_ERROR);
         messagesToReturnCode.put(CLOCK_SKEW_TOO_GREAT_RETURN_MSG, AuthenticationResult.CLOCK_SKEW_TOO_GREAT);
         messagesToReturnCode.put(USER_ACCOUNT_DISABLED_OR_LOCKED_RETURN_MSG,

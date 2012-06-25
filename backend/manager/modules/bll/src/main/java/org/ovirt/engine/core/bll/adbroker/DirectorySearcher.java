@@ -109,11 +109,16 @@ public class DirectorySearcher {
                 return response; // No point in continuing to next LDAP server if we have success.
             } catch (Exception exception) {
                 LdapSearchExceptionHandlingResponse handlingResponse = handler.handle(exception);
-                setException(handlingResponse.getTranslatedException());
+                Exception translatedException = handlingResponse.getTranslatedException();
+                setException(translatedException);
                 domain.scoreLdapServer(ldapURI, handlingResponse.getServerScore());
                 log.errorFormat("Failed ldap search server {0} due to {1}. We {2} try the next server",
                         ldapURI,
-                        handlingResponse.getTranslatedException(),
+                        translatedException.getMessage(),
+                        handlingResponse.isTryNextServer() ? "should" : "should not");
+                log.debugFormat("Failed ldap search server {0} due to {1}. We {2} try the next server",
+                        ldapURI,
+                        translatedException,
                         handlingResponse.isTryNextServer() ? "should" : "should not");
                 if (!handlingResponse.isTryNextServer()) {
                     return Collections.emptyList();

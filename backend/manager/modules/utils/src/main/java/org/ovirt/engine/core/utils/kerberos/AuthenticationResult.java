@@ -53,7 +53,11 @@ public enum AuthenticationResult {
     PASSWORD_EXPIRED(
             "Authentication Failed. The password has expired. Please change your password and login again.",
             "USER_PASSWORD_EXPIRED",
-            23, AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED);
+            23, AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED),
+    CLIENT_NOT_FOUND_IN_KERBEROS_DATABASE(
+            "Authentication Failed. Client not found in kerberos database.",
+            "USER_FAILED_TO_AUTHENTICATE_KERBEROS_ERROR",
+            24);
 
     private String vdcBllMessage;
     private String detailedMessage;

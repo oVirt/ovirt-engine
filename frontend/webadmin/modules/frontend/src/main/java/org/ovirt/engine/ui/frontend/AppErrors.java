@@ -732,6 +732,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Login failed. Please verify your login information or contact the system administrator.")
     String USER_FAILED_TO_AUTHENTICATE();
 
+    @DefaultStringValue("Login failed. Client not found in kerberos database. Please verify your login information or contact the system administrator.")
+
+    String USER_FAILED_TO_AUTHENTICATE_KERBEROS_ERROR();
     @DefaultStringValue("Login failed (Authentication Failed).\n- Please verify that the correct authentication method is used in your system.")
     String USER_FAILED_TO_AUTHENTICATION_WRONG_AUTHENTICATION_METHOD();
 
