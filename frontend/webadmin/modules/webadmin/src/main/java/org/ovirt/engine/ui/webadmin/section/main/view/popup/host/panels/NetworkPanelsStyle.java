@@ -11,6 +11,8 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String groupPanel();
 
+    String unassignedNetworksPanel();
+
     String itemPanel();
 
     String itemPanelError();

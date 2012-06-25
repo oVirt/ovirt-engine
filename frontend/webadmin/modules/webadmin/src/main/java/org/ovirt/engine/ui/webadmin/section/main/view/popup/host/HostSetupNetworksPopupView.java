@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupN
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkGroup;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.UnassignedNetworksPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
 import org.ovirt.engine.ui.webadmin.widget.footer.StatusLabel;
 
@@ -48,8 +49,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private static ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
     private static final String EMPTY_STATUS = constants.dragToMakeChangesSetupNetwork();
 
-    @UiField
-    AnimatedVerticalPanel networkList;
+    @UiField(provided = true)
+    UnassignedNetworksPanel networkList;
 
     @UiField
     AnimatedVerticalPanel nicList;
@@ -77,11 +78,18 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         status = new StatusLabel(EMPTY_STATUS);
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
+        networkList = new UnassignedNetworksPanel();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         status.setStylePrimaryName(style.statusLabel());
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
+        initUnassignedNetworksPanel();
         localize();
         Driver.driver.initialize(this);
+    }
+
+    private void initUnassignedNetworksPanel() {
+        networkList.setStyle(style);
+        networkList.setSpacing(10);
     }
 
     private void localize(){
@@ -117,6 +125,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 status.setFadeText(candidate != null ? candidate.getMessage(op1, op2) : constants.noValidActionSetupNetwork());
             }
         });
+
+        networkList.setSetupModel(uicommonModel);
     }
 
     @Override
