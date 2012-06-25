@@ -25,9 +25,8 @@ public class NetworkPanel extends NetworkItemPanel {
         LogicalNetworkModel network = (LogicalNetworkModel) item;
 
         Image mgmtNetworkImage = new Image(network.isManagement() ? resources.mgmtNetwork() : resources.empty());
-        Image vmImage = new Image(network.getEntity().getis_display() ? resources.networkVm() : resources.empty());
-        Image monitorImage = new Image(network.getEntity().isVmNetwork() ? resources.networkMonitor() : resources.empty());
-        Image emptyImage = new Image(resources.empty());
+        Image vmImage = new Image(network.getEntity().isVmNetwork() ? resources.networkVm() : resources.empty());
+        Image monitorImage = new Image(network.getEntity().getis_display() ? resources.networkMonitor() : resources.empty());
 
         Grid rowPanel = new Grid(1, 7);
         rowPanel.setCellSpacing(3);
