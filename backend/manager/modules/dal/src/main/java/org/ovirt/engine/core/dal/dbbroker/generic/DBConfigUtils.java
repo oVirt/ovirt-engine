@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.DataType;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.Reloadable;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDAO;
@@ -81,19 +80,11 @@ public class DBConfigUtils extends ConfigUtilsBase {
      */
     private static Object GetValue(VdcOption option) {
         Object result = option.getoption_value();
-        @SuppressWarnings("rawtypes")
-        java.lang.Class fieldType = null;
-        String defaultValue = null;
-        OptionBehaviourAttribute optionBehaviour = null;
-        @SuppressWarnings("rawtypes")
-        RefObject<java.lang.Class> tempRefObject = new RefObject<java.lang.Class>(fieldType);
-        RefObject<String> tempRefObject2 = new RefObject<String>(defaultValue);
-        RefObject<OptionBehaviourAttribute> tempRefObject3 = new RefObject<OptionBehaviourAttribute>(optionBehaviour);
-        boolean tempVar = ParseEnumValue(option.getoption_name(), tempRefObject, tempRefObject2, tempRefObject3);
-        fieldType = tempRefObject.argvalue;
-        defaultValue = tempRefObject2.argvalue;
-        optionBehaviour = tempRefObject3.argvalue;
-        if (tempVar) {
+        EnumValue enumValue = ParseEnumValue(option.getoption_name());
+        if (enumValue != null) {
+            final OptionBehaviourAttribute optionBehaviour = enumValue.getOptionBehaviour();
+            final Class<?> fieldType = enumValue.getFieldType();
+            final String defaultValue = enumValue.getDefaultValue();
             result = parseValue(option.getoption_value(), option.getoption_name(), fieldType);
 
             // if null use default from @DefaultValueAttribute

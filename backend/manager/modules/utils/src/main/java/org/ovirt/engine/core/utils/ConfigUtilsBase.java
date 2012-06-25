@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,11 +13,10 @@ import org.ovirt.engine.core.common.config.DefaultValueAttribute;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.TypeConverterAttribute;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
 /**
@@ -82,30 +82,42 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
     @Override
     public abstract <T> T GetValue(ConfigValues configValue, String version);
 
+    public final static class EnumValue {
+        final Class<?> fieldType;
+        final String defaultValue;
+        final OptionBehaviourAttribute optionBehaviour;
+        public EnumValue(Class<?> fieldType, String defaultValue, OptionBehaviourAttribute optionBehaviour) {
+            super();
+            this.fieldType = fieldType;
+            this.defaultValue = defaultValue;
+            this.optionBehaviour = optionBehaviour;
+        }
+        public Class<?> getFieldType() {
+            return fieldType;
+        }
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+        public OptionBehaviourAttribute getOptionBehaviour() {
+            return optionBehaviour;
+        }
+    }
+
+    private static final String TEMP = "Temp";
+
     /**
      * parse the enum value by its attributes and return the type, default value, and option behaviour (if any) return
      * false if cannot find value in enum or cannot get type
      *
      * @param name
-     * @param fieldType
-     * @param defaultValue
-     * @param optionBehaviour
      * @return
      */
-    @SuppressWarnings("rawtypes")
-    protected static boolean ParseEnumValue(String name, RefObject<java.lang.Class> fieldType,
-            RefObject<String> defaultValue, RefObject<OptionBehaviourAttribute> optionBehaviour) {
-        final String TEMP = "Temp";
-        boolean succeeded = true;
-        optionBehaviour.argvalue = null;
-        defaultValue.argvalue = null;
-        fieldType.argvalue = null;
+    protected static EnumValue ParseEnumValue(String name) {
 
-        java.lang.Class t = ConfigValues.class;
         // get field from enum for its attributes
-        java.lang.reflect.Field fi = null;
+        Field fi = null;
         try {
-            fi = t.getField(name);
+            fi = ConfigValues.class.getField(name);
         } catch (Exception ex) {
             // eat this exception. it is not fatal and will be handled like
             // fi==null;
@@ -117,29 +129,29 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
             if (!name.startsWith(TEMP)) {
                 log.warnFormat("Could not find enum value for option: {0}", name);
             }
-            succeeded = false;
-        }
-
-        else {
+            return null;
+        } else {
             // get type
             if (fi.isAnnotationPresent(TypeConverterAttribute.class)) {
-                fieldType.argvalue = fi.getAnnotation(TypeConverterAttribute.class).value();
+                final Class<?> fieldType = fi.getAnnotation(TypeConverterAttribute.class).value();
+                String defaultValue = null;
+                OptionBehaviourAttribute optionBehaviour = null;
 
                 // get default value
                 if (fi.isAnnotationPresent(DefaultValueAttribute.class)) {
-                    defaultValue.argvalue = fi.getAnnotation(DefaultValueAttribute.class).value();
+                    defaultValue = fi.getAnnotation(DefaultValueAttribute.class).value();
                 }
 
                 // get the attribute for default behaviour
                 if (fi.isAnnotationPresent(OptionBehaviourAttribute.class)) {
-                    optionBehaviour.argvalue = fi.getAnnotation(OptionBehaviourAttribute.class);
+                    optionBehaviour = fi.getAnnotation(OptionBehaviourAttribute.class);
                 }
+                return new EnumValue(fieldType, defaultValue, optionBehaviour);
             } else {
                 // if could not get type then cannot continue
-                succeeded = false;
+                return null;
             }
         }
-        return succeeded;
     }
 
     private static Log log = LogFactory.getLog(ConfigUtilsBase.class);

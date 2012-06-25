@@ -5,12 +5,10 @@ import java.text.SimpleDateFormat;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.DataType;
-import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * The DefaultValuesConfigUtil class represents a mock class, using for testing. The values fetched from this class are
@@ -30,18 +28,14 @@ public class DefaultValuesConfigUtil extends ConfigUtilsBase {
      */
     private static Object GetValue(VdcOption option) {
         Object resultClassValue = null;
-        RefObject<java.lang.Class> fieldType = new RefObject<java.lang.Class>();
-        RefObject<String> defaultValue = new RefObject<String>();
-        RefObject<OptionBehaviourAttribute> optionBehaviour = new RefObject<OptionBehaviourAttribute>();
 
-        boolean isSuccedded = ParseEnumValue(option.getoption_name(),
-                fieldType, defaultValue, optionBehaviour);
+        EnumValue enumValue = ParseEnumValue(option.getoption_name());
 
-        if (!isSuccedded) {
-            log.errorFormat("Fetching default value failed for option {0}.", fieldType);
+        if (enumValue == null) {
+            log.errorFormat("Fetching default value failed for option {0}.", option);
         } else {
-            resultClassValue = parseValue(defaultValue.argvalue, option.getoption_name(),
-                    fieldType.argvalue);
+            resultClassValue = parseValue(enumValue.getDefaultValue(), option.getoption_name(),
+                    enumValue.getFieldType());
         }
 
         return resultClassValue;
@@ -59,7 +53,7 @@ public class DefaultValuesConfigUtil extends ConfigUtilsBase {
      * @return - the value at the appropriate type class.
      */
     private static Object parseValue(String value, String name,
-            java.lang.Class fieldType) {
+            Class<?> fieldType) {
         Object retTypeValue = null;
         if (value != null) {
             try {
