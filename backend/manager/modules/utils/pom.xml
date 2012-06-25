@@ -122,6 +122,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- This is not used directly by the source, but the
+         compiler some how requires it indirectly: -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>

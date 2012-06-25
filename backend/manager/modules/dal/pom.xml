@@ -15,7 +15,6 @@
     <engine.db.username>postgres</engine.db.username>
     <engine.db.schema>engine</engine.db.schema>
     <version.info.dir>/etc/engine</version.info.dir>
-    <junit.version>4.4</junit.version>
     <skip.db.checksum.check>true</skip.db.checksum.check>
     <skip.db.checksum.store>true</skip.db.checksum.store>
   </properties>
@@ -82,6 +81,11 @@
     <dependency>
       <groupId>javassist</groupId>
       <artifactId>javassist</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

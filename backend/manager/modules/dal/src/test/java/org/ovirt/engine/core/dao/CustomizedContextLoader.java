@@ -6,6 +6,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.AbstractContextLoader;
 
 /**
@@ -21,8 +22,16 @@ public class CustomizedContextLoader extends AbstractContextLoader {
     }
 
     @Override
-    public ApplicationContext loadContext(String... locations) throws Exception {
+    public ApplicationContext loadContext(String ... locations) throws Exception {
+        return doLoadContext();
+    }
 
+    @Override
+    public ApplicationContext loadContext(MergedContextConfiguration mergedConfig) throws Exception {
+        return doLoadContext();
+    }
+
+    private ApplicationContext doLoadContext() throws Exception {
         // initialize spring application context to enable transaction support within
         // the Spring TestContext Framework
         GenericApplicationContext ctx = new GenericApplicationContext() {

@@ -123,7 +123,7 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
         @Override
-        protected Map<String, Object> doExecute(Map<String, Object> args) {
+        protected Map<String, Object> doExecute(Map<String, ?> args) {
             // Have only the declared parameters participate in the function metadata extraction, otherwise the
             // CallMetaDataContext thinks that the returned column names are parameters.
             getInParameterNames().addAll(args.keySet());

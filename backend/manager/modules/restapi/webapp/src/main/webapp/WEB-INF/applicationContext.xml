@@ -124,6 +124,11 @@
   </bean>
 
   <bean id="jndiTemplate" class="org.springframework.jndi.JndiTemplate">
+    <!-- This is needed in Spring 3, otherwise it will try to
+         inject a prefefined "environment" object whose type is
+         not compatible with the JndiTemplate environment
+         property: -->
+    <property name="environment"><null/></property>
     <!--property name="environment">
       <props>
         <prop key="java.naming.factory.initial">
