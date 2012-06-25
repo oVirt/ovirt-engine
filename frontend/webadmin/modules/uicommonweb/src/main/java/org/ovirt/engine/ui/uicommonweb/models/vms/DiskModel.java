@@ -777,7 +777,8 @@ public class DiskModel extends Model
             isQuotaAvailable = getQuota().getIsAvailable();
         }
         UpdateDatacenters();
-        getWipeAfterDelete().setIsChangable(isInternal ? isWipeAfterDeleteChangable : true);
+        getWipeAfterDelete().setIsChangable(isInternal ? isWipeAfterDeleteChangable : false);
+        getWipeAfterDelete().setIsAvailable(isInternal ? true : false);
         getQuota().setIsAvailable(isInternal ? isQuotaAvailable : false);
     }
 
