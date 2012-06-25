@@ -22,20 +22,17 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.1" name="com.sun.xml.bind">
+<module xmlns="urn:jboss:module:1.1" name="org.yaml.snakeyaml">
+
     <properties>
         <property name="jboss.api" value="private"/>
     </properties>
 
     <resources>
-        <resource-root path="jaxb-impl.jar"/>
-        <resource-root path="jaxb-xjc.jar"/>
-        <resource-root path="istack-commons-runtime.jar"/>
+        <resource-root path="snakeyaml.jar"/>
     </resources>
 
     <dependencies>
-        <module name="javax.api" />
-        <module name="javax.xml.bind.api" />
-        <module name="javax.xml.stream.api" />
+        <module name="javax.api"/>
     </dependencies>
 </module>

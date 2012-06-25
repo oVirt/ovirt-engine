@@ -152,8 +152,6 @@ virtualization infrastructure for Servers and Desktops.
 Summary: Engine core of oVirt Engine
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
-Requires: antlr-tool
-Requires: aopalliance
 Requires: apache-commons-beanutils
 Requires: apache-commons-codec
 Requires: apache-commons-collections
@@ -386,10 +384,13 @@ while read lib_path
 do
   rm -rf %{buildroot}%{engine_ear}/lib/${lib_path}*.jar
 done <<'.'
+antlr
 activation
+aopalliance
 c3p0
 ejb3-persistence
 jaxb-api
+jaxb-impl
 jboss-interceptors-api_1.1_spec
 stax-api
 xml-apis
@@ -401,8 +402,6 @@ do
   rm -rf %{buildroot}%{engine_ear}/lib/${lib_path}*.jar
   ln -s `build-classpath ${jar_name}` %{buildroot}%{engine_ear}/lib/${lib_path}.jar
 done <<'.'
-antlr antlr
-aopalliance aopalliance
 commons-beanutils commons-beanutils
 commons-codec commons-codec
 commons-collections commons-collections
@@ -417,7 +416,6 @@ ws-commons-util ws-commons-util
 xmlrpc3-client xmlrpc-client
 xmlrpc3-common xmlrpc-common
 geronimo-validation validation-api
-glassfish-jaxb/jaxb-impl jaxb-impl
 hibernate-validator hibernate-validator
 hibernate/hibernate-commons-annotations hibernate-commons-annotations
 jsch jsch
@@ -442,12 +440,8 @@ while read lib_path
 do
   rm -rf %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}*.jar
 done <<'.'
-activation
-jaxb-api
-jboss-logging
-jboss-vfs
-sjsxp
-stax-api
+commons-codec
+log4j
 .
 
 # Then for the system jar files (using build-classpath):
@@ -456,17 +450,7 @@ do
   rm -rf %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}*.jar
   ln -s `build-classpath ${jar_name}` %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}.jar
 done <<'.'
-aopalliance aopalliance
-commons-codec commons-codec
-commons-httpclient commons-httpclient
-glassfish-jaxb/jaxb-impl jaxb-impl
-jettison jettison
-resteasy/jaxrs-api jaxrs-api
-resteasy/resteasy-jaxb-provider resteasy-jaxb-provider
-resteasy/resteasy-jettison-provider resteasy-jettison-provider
-resteasy/resteasy-yaml-provider resteasy-yaml-provider
 snakeyaml snakeyaml
-istack-commons-runtime istack-commons-runtime
 .
 
 %preun

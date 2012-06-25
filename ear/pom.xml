@@ -130,16 +130,6 @@
 		<artifactId>spring-context</artifactId>
 		<version>${spring.version}</version>
 	</dependency>
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-instrument</artifactId>
-		<version>${spring.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-aop</artifactId>
-		<version>${spring.version}</version>
-	</dependency>
 
     <!-- Set the scope of depedencies provided by JBoss so that
          they are not included in the resulting archive: -->

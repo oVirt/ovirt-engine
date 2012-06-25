@@ -323,6 +323,7 @@ install_jboss_modules:
 	# JAXB module:
 	ln -s /usr/share/java/glassfish-jaxb/jaxb-impl.jar $(PREFIX)/usr/share/ovirt-engine/modules/com/sun/xml/bind/main/.
 	ln -s /usr/share/java/glassfish-jaxb/jaxb-xjc.jar $(PREFIX)/usr/share/ovirt-engine/modules/com/sun/xml/bind/main/.
+	ln -s /usr/share/java/istack-commons-runtime.jar $(PREFIX)/usr/share/ovirt-engine/modules/com/sun/xml/bind/main/.
 
 	# JAX-RS API modules:
 	ln -s /usr/share/java/resteasy/jaxrs-api.jar $(PREFIX)/usr/share/ovirt-engine/modules/javax/ws/rs/api/main/.
@@ -348,6 +349,17 @@ install_jboss_modules:
 	# Hibernate validator module:
 	ln -s /usr/share/java/hibernate-validator.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/hibernate/validator/main/.
 	ln -s /usr/share/java/jtype.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/hibernate/validator/main/.
+
+	# Jettison:
+	ln -s /usr/share/java/jettison.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jettison/main
+
+	# Apache MIME4J:
+	ln -s /usr/share/java/apache-mime4j/core.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/james/mime4j/main/.
+	ln -s /usr/share/java/apache-mime4j/dom.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/james/mime4j/main/.
+	ln -s /usr/share/java/apache-mime4j/storage.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/james/mime4j/main/.
+
+	# Snakeyaml:
+	ln -s /usr/share/java/snakeyaml.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/yaml/snakeyaml/main/.
 
 install_service:
 	@echo "*** Deploying service"
