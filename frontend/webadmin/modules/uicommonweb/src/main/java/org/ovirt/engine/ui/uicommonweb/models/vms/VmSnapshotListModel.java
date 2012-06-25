@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -459,7 +461,7 @@ public class VmSnapshotListModel extends SearchableListModel
                     public void OnSuccess(Object target, Object returnValue) {
                         VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
                         SnapshotModel snapshotModel = (SnapshotModel) vmSnapshotListModel.getWindow();
-                        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
+                        ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
                         vmSnapshotListModel.PostNew(disks);
                         snapshotModel.StopProgress();
@@ -468,10 +470,17 @@ public class VmSnapshotListModel extends SearchableListModel
                 vm.getId());
     }
 
-    public void PostNew(ArrayList<DiskImage> disks) {
+    public void PostNew(ArrayList<Disk> disks) {
         SnapshotModel model = (SnapshotModel) getWindow();
+        boolean isSnapshotSupportedDiskExists = false;
 
-        if (disks.isEmpty())
+        for (Disk disk : disks) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                isSnapshotSupportedDiskExists = true;
+            }
+        }
+
+        if (!isSnapshotSupportedDiskExists)
         {
             model.setMessage(ConstantsManager.getInstance()
                     .getConstants()

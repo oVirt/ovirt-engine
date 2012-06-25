@@ -669,7 +669,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Disk(s)")
 	String disksMsg();
 
-	@DefaultStringValue("Snapshot cannot be created since the VM has no Disks")
+	@DefaultStringValue("Snapshot cannot be created since the VM has no Virtual Disks")
 	String snapshotCannotBeCreatedSinceTheVMHasNoDisksMsg();
 
 	@DefaultStringValue("At least one disk must be marked.")
