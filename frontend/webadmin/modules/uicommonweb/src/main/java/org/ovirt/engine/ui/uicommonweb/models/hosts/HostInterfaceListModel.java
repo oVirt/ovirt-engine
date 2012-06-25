@@ -15,12 +15,12 @@ import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -2292,7 +2292,8 @@ public class HostInterfaceListModel extends SearchableListModel
 
             getSetupNetworksCommand().setIsAvailable(!isLessThan31);
 
-            getSaveNetworkConfigCommand().setIsAvailable(isLessThan31);
+            getSaveNetworkConfigCommand().setIsAvailable(true);
+
             getEditCommand().setIsAvailable(isLessThan31);
             getBondCommand().setIsAvailable(isLessThan31);
             getDetachCommand().setIsAvailable(isLessThan31);
