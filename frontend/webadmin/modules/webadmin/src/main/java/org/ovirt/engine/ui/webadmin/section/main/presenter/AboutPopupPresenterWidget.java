@@ -3,14 +3,17 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupView;
@@ -29,6 +32,7 @@ public class AboutPopupPresenterWidget extends PresenterWidget<AboutPopupPresent
 
         HasClickHandlers getCloseButton();
 
+        void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
     }
 
     @Inject
@@ -46,6 +50,17 @@ public class AboutPopupPresenterWidget extends PresenterWidget<AboutPopupPresent
                 getView().hide();
             }
         }));
+
+        getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
+            @Override
+            public void onKeyPress(NativeEvent event) {
+                if (KeyCodes.KEY_ESCAPE == event.getKeyCode()) {
+                    getView().hide();
+                    unbind();
+                }
+            }
+        });
+
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
+import org.ovirt.engine.ui.common.widget.dialog.DialogBoxWithKeyHandlers;
+import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -12,13 +14,12 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
-public class ConfigurePopupView extends AbstractPopupView<DialogBox> implements ConfigurePopupPresenterWidget.ViewDef {
+public class ConfigurePopupView extends AbstractPopupView<DialogBoxWithKeyHandlers> implements ConfigurePopupPresenterWidget.ViewDef {
 
     @UiField
     Label titleLabel;
@@ -63,12 +64,17 @@ public class ConfigurePopupView extends AbstractPopupView<DialogBox> implements 
         systemPermissionsTab.setLabel(constants.configureSystemPermissionTabLabel());
     }
 
-    interface ViewUiBinder extends UiBinder<DialogBox, ConfigurePopupView> {
+    interface ViewUiBinder extends UiBinder<DialogBoxWithKeyHandlers, ConfigurePopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     @Override
     public HasClickHandlers getCloseButton() {
         return closeButton;
+    }
+
+    @Override
+    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
+        asWidget().setKeyPressHandler(handler);
     }
 }

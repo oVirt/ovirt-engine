@@ -1,13 +1,16 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure;
 
+import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupView;
@@ -17,6 +20,7 @@ public class ConfigurePopupPresenterWidget extends PresenterWidget<ConfigurePopu
 
     public interface ViewDef extends PopupView {
         HasClickHandlers getCloseButton();
+        void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
     }
 
     private RoleModelProvider roleModelProvider;
@@ -47,6 +51,16 @@ public class ConfigurePopupPresenterWidget extends PresenterWidget<ConfigurePopu
                 getView().hide();
             }
         }));
+
+        getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
+            @Override
+            public void onKeyPress(NativeEvent event) {
+                if (KeyCodes.KEY_ESCAPE == event.getKeyCode()) {
+                    getView().hide();
+                    unbind();
+                }
+            }
+        });
     }
 
     @Override
