@@ -45,7 +45,7 @@
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
         <file path="/var/log/ovirt-engine/server.log"/>
-        <rotate-size value="1M"/>
+        <rotate-size value="10M"/>
         <max-backup-index value="30"/>
         <append value="true"/>
       </size-rotating-file-handler>
@@ -57,7 +57,7 @@
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
         <file path="/var/log/ovirt-engine/engine.log"/>
-        <rotate-size value="1M"/>
+        <rotate-size value="10M"/>
         <max-backup-index value="30"/>
         <append value="true"/>
       </size-rotating-file-handler>
