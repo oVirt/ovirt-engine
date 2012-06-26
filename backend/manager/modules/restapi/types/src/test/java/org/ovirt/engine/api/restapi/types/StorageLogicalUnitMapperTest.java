@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.LunStatus;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -45,7 +46,7 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         model.setvolume_group_id("volume_group_id_1");
         model.setStorageDomainId(Guid.Empty);
         model.setDiskId(Guid.Empty);
-        model.setPartitioned(true);
+        model.setStatus(org.ovirt.engine.core.common.businessentities.LunStatus.Free);
         LogicalUnit entity = StorageLogicalUnitMapper.map(model, (LogicalUnit)null);
         assertEquals(entity.getVendorId(), "vendor_id_1");
         assertEquals(entity.getProductId(), "product_id_1");
@@ -54,7 +55,17 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         assertEquals(entity.getVolumeGroupId(), "volume_group_id_1");
         assertEquals(entity.getStorageDomainId(), Guid.Empty.toString());
         assertEquals(entity.getDiskId(), Guid.Empty.toString());
-        assertEquals(entity.isPartitioned(), true);
+        assertEquals(entity.getStatus(), LunStatus.Free.value());
     }
+
+    @Test
+   public void testStorageDomainMappings() {
+       assertEquals(LunStatus.Free, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common
+               .businessentities.LunStatus.Free, null));
+       assertEquals(LunStatus.Used, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common
+               .businessentities.LunStatus.Used, null));
+       assertEquals(LunStatus.Unusable, StorageLogicalUnitMapper.map(org.ovirt.engine.core.common
+               .businessentities.LunStatus.Unusable, null));
+   }
 }
 

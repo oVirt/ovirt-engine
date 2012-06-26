@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.common.util.SizeConverter;
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.LunStatus;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
@@ -34,9 +35,11 @@ public class StorageLogicalUnitMapper {
         if (entity.getDiskId() != null) {
             model.setDiskId(entity.getDiskId().toString());
         }
+        if (entity.getStatus() != null) {
+            model.setStatus(map(entity.getStatus(), null).value());
+        }
         model.setSize(SizeConverter.gigasToBytes(entity.getDeviceSize()));
         model.setPaths(entity.getPathCount());
-        model.setPartitioned(entity.isPartitioned());
         return model;
     }
 
@@ -73,5 +76,19 @@ public class StorageLogicalUnitMapper {
             }
         }
         return entity;
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.LunStatus.class, to = LunStatus.class)
+    public static LunStatus map(org.ovirt.engine.core.common.businessentities.LunStatus status, LunStatus template) {
+        switch (status) {
+        case Free:
+            return LunStatus.Free;
+        case Used:
+            return LunStatus.Used;
+        case Unusable:
+            return LunStatus.Unusable;
+        default:
+            return null;
+        }
     }
 }

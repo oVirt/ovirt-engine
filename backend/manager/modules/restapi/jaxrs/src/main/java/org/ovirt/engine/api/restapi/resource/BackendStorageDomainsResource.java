@@ -99,10 +99,13 @@ public class BackendStorageDomainsResource
     }
 
     private Response addSAN(StorageDomain model, StorageType storageType, storage_domain_static entity, Guid hostId) {
+        boolean overrideLuns = model.getStorage().isSetOverrideLuns() ? model.getStorage().isOverrideLuns() : false;
+
         return performCreation(VdcActionType.AddSANStorageDomain,
                                getSanAddParams(entity,
                                                hostId,
-                                               getLunIds(model.getStorage(), storageType, hostId)),
+                                               getLunIds(model.getStorage(), storageType, hostId),
+                                               overrideLuns),
                                ID_RESOLVER);
     }
 
@@ -366,10 +369,12 @@ public class BackendStorageDomainsResource
 
     private AddSANStorageDomainParameters getSanAddParams(storage_domain_static entity,
                                                           Guid hostId,
-                                                          ArrayList<String> lunIds) {
+                                                          ArrayList<String> lunIds,
+                                                          boolean force) {
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(entity);
         params.setVdsId(hostId);
         params.setLunIds(lunIds);
+        params.setForce(force);
         return params;
     }
 

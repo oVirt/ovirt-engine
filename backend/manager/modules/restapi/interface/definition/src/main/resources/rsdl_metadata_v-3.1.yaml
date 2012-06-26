@@ -636,7 +636,7 @@ actions:
             logical_unit.port: 'xs:int', logical_unit.target: 'xs:string', logical_unit.username: 'xs:string', logical_unit.password: 'xs:string',
             logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
             logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
-        optionalArguments: {}
+        optionalArguments: {storagdomain.storage.override_luns: 'xs:boolean'}
       - mandatoryArguments: {storagdomain.name: 'xs:string', storagdomain.host.id|name: 'xs:string',
           storagdomain.type: 'xs:string', storagdomain.storage.type: 'xs:string',
           storagdomain.format: 'xs:boolean',storagdomain.storage.address: 'xs:string', 

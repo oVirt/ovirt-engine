@@ -753,6 +753,7 @@ public class BackendStorageDomainsResourceTest
         model.getStorage().getVolumeGroup().getLogicalUnits().get(0).setTarget(TARGET);
         model.getStorage().getVolumeGroup().getLogicalUnits().get(0).setAddress(ADDRESSES[0]);
         model.getStorage().getVolumeGroup().getLogicalUnits().get(0).setPort(PORT);
+        model.getStorage().setOverrideLuns(false);
         return model;
     }
 
