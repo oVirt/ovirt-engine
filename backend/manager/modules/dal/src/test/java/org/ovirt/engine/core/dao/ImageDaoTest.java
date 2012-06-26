@@ -74,4 +74,13 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         assertNotNull(imageFromDb);
         assertEquals(ImageStatus.LOCKED, imageFromDb.getStatus());
     }
+
+    @Test
+    public void testUpdateImageVmSnapshotId() {
+        Guid guid = Guid.NewGuid();
+        dao.updateImageVmSnapshotId(EXISTING_IMAGE_ID, guid);
+        Image imageFromDb = dao.get(EXISTING_IMAGE_ID);
+        assertNotNull(imageFromDb);
+        assertEquals("Image snapshot id wasn't updated properly", guid, imageFromDb.getSnapshotId());
+    }
 }

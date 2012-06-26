@@ -179,4 +179,8 @@ public class FixturesTool {
      */
     protected static final Guid ENTITY_WITH_TASKS_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
+    /**
+     * ID of an existing snapshot
+     */
+    protected static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");
 }

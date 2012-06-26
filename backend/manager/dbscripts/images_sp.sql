@@ -73,6 +73,21 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION UpdateImageVmSnapshotId(
+    v_image_id UUID,
+    v_vm_snapshot_id UUID)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE images
+    SET    vm_snapshot_id = v_vm_snapshot_id
+    WHERE  image_guid = v_image_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 Create or replace FUNCTION UpdateImage(
     v_creation_date TIMESTAMP WITH TIME ZONE,
     v_image_guid UUID,

@@ -14,11 +14,14 @@ import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -29,11 +32,20 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     private static final long serialVersionUID = -1686587389737849288L;
     private List<PermissionSubject> permsList = null;
-    private final Disk disk;
+    private Disk disk;
 
     public AttachDiskToVmCommand(T parameters) {
         super(parameters);
-        disk = getDiskDao().get((Guid)getParameters().getEntityId());
+        disk = loadDiskById((Guid) getParameters().getEntityId());
+    }
+
+    protected AttachDiskToVmCommand(T parameters, Disk disk) {
+        super(parameters);
+        this.disk = disk;
+    }
+
+    private Disk loadDiskById(Guid id) {
+        return getDiskDao().get(id);
     }
 
     @Override
@@ -77,28 +89,50 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     @Override
     protected void ExecuteVmCommand() {
-        final VmDevice vmDevice =
-                new VmDevice(new VmDeviceId(disk.getId(), getVmId()),
-                        VmDeviceType.DISK.getName(),
-                        VmDeviceType.DISK.getName(),
-                        "",
-                        0,
-                        null,
-                        true,
-                        getParameters().isPlugUnPlug(),
-                        false,
-                        "");
+        final VmDevice vmDevice = createVmDevice();
         getVmDeviceDao().save(vmDevice);
         // update cached image
         List<Disk> imageList = new ArrayList<Disk>();
         imageList.add(disk);
         VmHandler.updateDisksForVm(getVm(), imageList);
+        if (disk.isAllowSnapshot()) {
+            updateDiskVmSnapshotId();
+        }
         // update vm device boot order
-        VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
+        updateBootOrderInVmDevice();
         if (getParameters().isPlugUnPlug() && getVm().getstatus() != VMStatus.Down) {
             performPlugCommnad(VDSCommandType.HotPlugDisk, disk, vmDevice);
         }
         setSucceeded(true);
+    }
+
+    protected VmDevice createVmDevice() {
+        return new VmDevice(new VmDeviceId(disk.getId(), getVmId()),
+                VmDeviceType.DISK.getName(),
+                VmDeviceType.DISK.getName(),
+                "",
+                0,
+                null,
+                true,
+                getParameters().isPlugUnPlug(),
+                false,
+                "");
+    }
+
+    protected void updateBootOrderInVmDevice() {
+        VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
+    }
+
+    private void updateDiskVmSnapshotId() {
+        Guid snapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage diskImage = ((DiskImage) disk);
+            getImageDao().updateImageVmSnapshotId(diskImage.getImageId(),
+                    snapshotId);
+        } else {
+            throw new VdcBLLException(VdcBllErrors.StorageException,
+                    "update of snapshot id was initiated for unsupported disk type");
+        }
     }
 
     @Override

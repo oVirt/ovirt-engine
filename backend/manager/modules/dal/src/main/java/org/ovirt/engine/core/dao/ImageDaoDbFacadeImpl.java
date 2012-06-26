@@ -28,6 +28,14 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
     }
 
     @Override
+    public void updateImageVmSnapshotId(Guid id, Guid vmSnapshotId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("image_id", id)
+                .addValue("vm_snapshot_id", vmSnapshotId);
+        getCallsHandler().executeModification("UpdateImageVmSnapshotId", parameterSource);
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(Image entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("creation_date", entity.getCreationDate())

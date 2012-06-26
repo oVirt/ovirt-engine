@@ -10,4 +10,6 @@ import org.ovirt.engine.core.compat.NGuid;
  */
 public interface ImageDao extends GenericDao<Image, Guid>, StatusAwareDao<Guid, ImageStatus> {
     void updateQuotaForImageAndSnapshots(Guid imageGroupId, NGuid quotaId);
+
+    public void updateImageVmSnapshotId(Guid id, Guid vmSnapshotId);
 }

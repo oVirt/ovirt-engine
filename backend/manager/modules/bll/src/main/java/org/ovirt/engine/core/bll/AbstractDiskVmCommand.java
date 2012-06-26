@@ -29,6 +29,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 
 @CustomLogFields({ @CustomLogField("DiskAlias") })
@@ -160,6 +161,11 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
     protected DiskImageDAO getDiskImageDao() {
         return getDbFacade().getDiskImageDAO();
     }
+
+    protected SnapshotDao getSnapshotDao() {
+        return getDbFacade().getSnapshotDao();
+    }
+
 
     /**
      * @return The StoragePoolIsoMapDAO
