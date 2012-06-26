@@ -557,12 +557,13 @@ def validateIpaAndHttpdStatus(conf):
     Therefore we may need to ask (dynamic change) the user whether to override this configuration.
     2. Check if IPA is installed and drop port 80/443 support.
     """
+    controller = Controller()
+
     # Check if IPA installed
     if utils.installed(basedefs.IPA_RPM) or utils.installed(basedefs.FREEIPA_RPM):
         # Change default ports
         logging.debug("IPA rpms detected, disabling http proxy")
         print output_messages.WARN_IPA_INSTALLED
-        controller = Controller()
         utils.setHttpPortsToNonProxyDefault(controller)
 
         # Don't use http proxy
