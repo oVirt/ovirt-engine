@@ -42,14 +42,13 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -66,8 +65,7 @@ public class BackendVmsResource extends
     @Override
     public VMs list() {
         if (isFiltered())
-            return mapCollection(getBackendCollection(VdcQueryType.GetUserVmsByUserIdAndGroups,
-                    new GetUserVmsByUserIdAndGroupsParameters(getCurrent().get(VdcUser.class).getUserId())));
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllVms, new VdcQueryParametersBase()));
         else
          return mapCollection(getBackendCollection(SearchType.VM));
     }
