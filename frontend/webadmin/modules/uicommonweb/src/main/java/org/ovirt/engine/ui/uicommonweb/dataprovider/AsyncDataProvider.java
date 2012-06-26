@@ -1656,7 +1656,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdsIdParametersBase(id), aQuery);
     }
 
-    public static void GetLunsByVgId(AsyncQuery aQuery, String vgId) {
+    public static void GetLunsByVgId(AsyncQuery aQuery, String vgId, Guid vdsId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1664,9 +1664,8 @@ public final class AsyncDataProvider {
                 return source != null ? (ArrayList<LUNs>) source : new ArrayList<LUNs>();
             }
         };
-        GetLunsByVgIdParameters tempVar = new GetLunsByVgIdParameters();
-        tempVar.setVgId(vgId);
-        Frontend.RunQuery(VdcQueryType.GetLunsByVgId, tempVar, aQuery);
+        GetLunsByVgIdParameters params = new GetLunsByVgIdParameters(vgId, vdsId);
+        Frontend.RunQuery(VdcQueryType.GetLunsByVgId, params, aQuery);
     }
 
     public static void GetAllTemplatesFromExportDomain(AsyncQuery aQuery, Guid storagePoolId, Guid storageDomainId) {
