@@ -663,6 +663,18 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.createVG(sdUUID, deviceList, force);
+            OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc removeVG(String vgUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.removeVG(vgUUID);

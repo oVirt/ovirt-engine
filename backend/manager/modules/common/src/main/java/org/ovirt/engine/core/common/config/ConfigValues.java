@@ -1171,6 +1171,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     CpuPinMigrationEnabled(365),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    SupportForceCreateVG(366),
+
     Invalid(65535);
 
     private int intValue;

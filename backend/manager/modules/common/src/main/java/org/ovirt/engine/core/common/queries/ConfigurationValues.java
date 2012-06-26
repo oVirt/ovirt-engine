@@ -75,7 +75,8 @@ public enum ConfigurationValues {
     ShareableDiskEnabled(ConfigAuthType.User),
     DirectLUNDiskEnabled(ConfigAuthType.User),
     WANDisableEffects(ConfigAuthType.User),
-    WANColorDepth(ConfigAuthType.User);
+    WANColorDepth(ConfigAuthType.User),
+    SupportForceCreateVG;
 
     public static enum ConfigAuthType {
         Admin,

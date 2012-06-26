@@ -16,6 +16,16 @@ public class AddSANStorageDomainParameters extends StorageDomainManagementParame
         privateLunIds = value;
     }
 
+    private boolean force;
+
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
+    }
+
     public AddSANStorageDomainParameters(storage_domain_static storageDomain) {
         super(storageDomain);
     }
