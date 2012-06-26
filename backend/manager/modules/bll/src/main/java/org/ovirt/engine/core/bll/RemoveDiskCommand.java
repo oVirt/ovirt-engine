@@ -206,7 +206,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     vmDevice.getIsPlugged() && disk.isAllowSnapshot(),
                     vmDevice.getIsPlugged(),
                     false,
-                    true,
+                    vmCount == 1,
                     Arrays.asList(disk));
         }
         return validDisktoDelete;
