@@ -68,7 +68,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             if (listVms != null && !listVms.isEmpty()) {
                 for (VM vm : listVms) {
                     if (vm.getstatus() != VMStatus.Down) {
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                         return false;
                     }
                 }
