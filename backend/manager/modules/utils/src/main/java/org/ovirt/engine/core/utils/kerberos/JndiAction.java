@@ -118,19 +118,11 @@ public class JndiAction implements PrivilegedAction {
                             + userName + " in domain" + domainName);
                 }
             } catch (CommunicationException ex) {
-                System.out.println("Cannot connect to LDAP URL: " + currentLdapServer
-                        + ". Trying next LDAP server in list (if exists)");
+                handleCommunicationException(currentLdapServer, address);
             } catch (AuthenticationException ex) {
-                ex.printStackTrace();
-                AuthenticationResult result = AuthenticationResult.OTHER;
-                KerberosReturnCodeParser parser = new KerberosReturnCodeParser();
-                result = parser.parse(ex.toString());
-                String errorMsg = result.getDetailedMessage().replace("Authentication Failed", "LDAP query Failed");
-                System.out.println(InstallerConstants.ERROR_PREFIX + errorMsg);
-                log.error("Error from Kerberos: " + ex.getMessage());
+                handleAuthenticationException(ex);
             } catch (Exception ex) {
-                System.out.println("General error has occured" + ex.getMessage());
-                ex.printStackTrace();
+                handleGeneralException(ex);
                 break;
             } finally {
                 if (ctx != null) {
@@ -147,6 +139,37 @@ public class JndiAction implements PrivilegedAction {
 
         return AuthenticationResult.NO_USER_INFORMATION_WAS_FOUND_FOR_USER;
 
+    }
+
+    protected void handleGeneralException(Exception ex) {
+        System.out.println("General error has occured" + ex.getMessage());
+        ex.printStackTrace();
+    }
+
+    protected void handleAuthenticationException(AuthenticationException ex) {
+        ex.printStackTrace();
+        AuthenticationResult result = AuthenticationResult.OTHER;
+        KerberosReturnCodeParser parser = new KerberosReturnCodeParser();
+        result = parser.parse(ex.toString());
+        String errorMsg = result.getDetailedMessage().replace("Authentication Failed", "LDAP query Failed");
+        System.out.println(InstallerConstants.ERROR_PREFIX + errorMsg);
+        log.error("Error from Kerberos: " + ex.getMessage());
+    }
+
+    protected void handleCommunicationException(String currentLdapServer, String address) {
+        String communicationFailureReason = null;
+        if (currentLdapServer != null) {
+            communicationFailureReason = "Cannot connect to LDAP URL: " + currentLdapServer;
+        } else {
+            if (address != null) {
+                communicationFailureReason = "Cannot connect to LDAP server " + address;
+            } else {
+                communicationFailureReason =
+                        "Error in connectiong to LDAP server. LDAP server URL could not be obtained";
+            }
+        }
+        System.out.println(communicationFailureReason
+                + ". Trying next LDAP server in list (if exists)");
     }
 
     private String guidFromResults(SearchResult sr) throws NamingException {
