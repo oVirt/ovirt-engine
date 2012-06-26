@@ -701,16 +701,6 @@ public class HostGeneralModel extends EntityModel
 
                             ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
                             isos = Linq.OrderByDescending(isos, new Linq.RpmVersionComparer());
-
-                            // Filter out not compatible version (compare by major version).
-                            for (RpmVersion iso : Linq.ToList(isos)) {
-
-                                Version version = iso;
-                                if (version.getMajor() != hostOsVersion.getMajor()) {
-                                    isos.remove(iso);
-                                }
-                            }
-
                             model.getOVirtISO().setItems(isos);
                             model.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
                             model.getOVirtISO().setIsAvailable(true);
