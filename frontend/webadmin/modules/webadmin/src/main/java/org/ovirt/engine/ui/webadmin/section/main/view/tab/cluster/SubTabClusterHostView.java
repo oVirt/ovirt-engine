@@ -5,9 +5,11 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -52,13 +54,15 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         };
         getTable().addColumn(statusColumn, constants.statusClusterHost());
 
-        TextColumnWithTooltip<VDS> loadColumn = new TextColumnWithTooltip<VDS>() {
-            @Override
-            public String getValue(VDS object) {
-                return object.getvm_active() + " " + constants.vmsClusterHost(); //$NON-NLS-1$
-            }
-        };
-        getTable().addColumn(loadColumn, constants.loadClusterHost());
+        if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
+            TextColumnWithTooltip<VDS> loadColumn = new TextColumnWithTooltip<VDS>() {
+                @Override
+                public String getValue(VDS object) {
+                    return object.getvm_active() + " " + constants.vmsClusterHost(); //$NON-NLS-1$
+                }
+            };
+            getTable().addColumn(loadColumn, constants.loadClusterHost());
+        }
     }
 
 }
