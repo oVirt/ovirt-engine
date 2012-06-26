@@ -90,15 +90,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (diskImage.getVmEntityType() == VmEntityType.TEMPLATE) {
             // Temporary fix until re factoring vm_images_view and image_storage_domain_view
             diskImage.setstorage_ids(getDiskImageDAO().get(diskImage.getImageId()).getstorage_ids());
-        }
-
-        if (diskImage.getVmEntityType() != VmEntityType.TEMPLATE
-                && (getParameters().getStorageDomainId() == null || Guid.Empty.equals(getParameters().getStorageDomainId()))) {
+        } else if ((getParameters().getStorageDomainId() == null) || (Guid.Empty.equals(getParameters().getStorageDomainId()))) {
             getParameters().setStorageDomainId(diskImage.getstorage_ids().get(0));
             setStorageDomainId(diskImage.getstorage_ids().get(0));
         }
 
-        if (retValue && !diskImage.getstorage_ids().contains(getParameters().getStorageDomainId())) {
+        if (!diskImage.getstorage_ids().contains(getParameters().getStorageDomainId())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STOARGE_DOMAIN_IS_WRONG);
         }
