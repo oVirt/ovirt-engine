@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAl
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
@@ -210,6 +211,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.DisksAllocat
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDestroyPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageForceCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplatePopupView;
@@ -863,6 +865,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(StorageDestroyPopupPresenterWidget.class,
                 StorageDestroyPopupPresenterWidget.ViewDef.class,
                 StorageDestroyPopupView.class);
+
+        bindPresenterWidget(StorageForceCreatePopupPresenterWidget.class,
+                StorageForceCreatePopupPresenterWidget.ViewDef.class,
+                StorageForceCreatePopupView.class);
 
         bindPresenterWidget(VmDesktopNewPopupPresenterWidget.class,
                 VmDesktopNewPopupPresenterWidget.ViewDef.class,

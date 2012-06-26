@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
+import com.google.gwt.i18n.client.Messages.DefaultMessage;
+
 
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
@@ -13,6 +15,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	String close();
 
 	// Titles
+    @DefaultStringValue("")
+    String blank();
+
 	@DefaultStringValue("Error")
 	String errorTitle();
 
@@ -1413,9 +1418,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("V4")
     String nfsVersion4();
 
-    @DefaultStringValue("LUN includes partitions")
-    String partitionedLUN();
-
     @DefaultStringValue("DirectLUN disk is not supported by the Data Center Compatibility Version")
     String directLUNDiskNotSupported();
 
@@ -1442,4 +1444,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Can't save configuration - Management Network must be attached")
     String mgmtNotAttachedToolTip();
+    
+    @DefaultStringValue("LUN is not usable")
+    String lunUnusable();
+
+    @DefaultStringValue("Are you sure?")
+    String forceStorageDomainCreation();
+
+    @DefaultStringValue("The following LUNs are already in use:")
+    String lunsAlreadyInUse();
 }

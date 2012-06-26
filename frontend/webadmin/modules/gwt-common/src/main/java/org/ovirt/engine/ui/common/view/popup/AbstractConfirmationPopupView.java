@@ -11,7 +11,7 @@ public abstract class AbstractConfirmationPopupView extends AbstractModelBoundPo
 
     @UiField
     @Ignore
-    Label messageLabel;
+    public Label messageLabel;
 
     public AbstractConfirmationPopupView(EventBus eventBus, CommonApplicationResources resources) {
         super(eventBus, resources);

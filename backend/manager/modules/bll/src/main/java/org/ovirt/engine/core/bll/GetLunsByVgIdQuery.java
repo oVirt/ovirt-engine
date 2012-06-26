@@ -83,7 +83,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
 
         VDSBrokerFrontend vdsBrokerFrontend = getVdsBroker();
         GetDeviceListVDSCommandParameters parameters = new GetDeviceListVDSCommandParameters(
-                getParameters().getVdsId(), storageType, false);
+                getParameters().getVdsId(), storageType);
         List<LUNs> lunsList = (List<LUNs>) vdsBrokerFrontend.RunVdsCommand(
                 VDSCommandType.GetDeviceList, parameters).getReturnValue();
 

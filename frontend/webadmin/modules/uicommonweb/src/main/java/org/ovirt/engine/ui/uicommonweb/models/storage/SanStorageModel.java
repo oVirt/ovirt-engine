@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -58,6 +60,26 @@ public abstract class SanStorageModel extends SanStorageModelBase
             getLUNsFailure = value;
             OnPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure")); //$NON-NLS-1$
         }
+    }
+
+    private storage_domains storageDomain;
+
+    public storage_domains getStorageDomain() {
+        return storageDomain;
+    }
+
+    public void setStorageDomain(storage_domains storageDomain) {
+        this.storageDomain = storageDomain;
+    }
+
+    private boolean force;
+
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
     }
 
     private final List<LunModel> includedLUNs;
@@ -120,13 +142,13 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     model.setGetLUNsFailure(
                             ConstantsManager.getInstance().getConstants().couldNotRetrieveLUNsLunsFailure());
                 }
+                model.getContainer().StopProgress();
             }
         }, true);
         asyncQuery.setContext(getHash());
         Frontend.RunQuery(VdcQueryType.GetDeviceList,
                 new GetDeviceListQueryParameters(host.getId(), getType()),
                 asyncQuery);
-
     }
 
     private void ClearItems()
@@ -225,6 +247,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 lunModel.setTargets(targets);
                 lunModel.setSize(a.getDeviceSize());
                 lunModel.setIsAccessible(a.getAccessible());
+                lunModel.setStatus(a.getStatus());
                 lunModel.setIsIncluded(isIncluded);
                 lunModel.setIsSelected(isIncluded);
                 lunModel.setEntity(a);
@@ -252,17 +275,14 @@ public abstract class SanStorageModel extends SanStorageModelBase
         Messages messages = ConstantsManager.getInstance().getMessages();
 
         LUNs lun = (LUNs) lunModel.getEntity();
-        boolean nonEmpty = lun.isPartitioned() || lun.getStorageDomainId() != null || lun.getDiskId() != null ||
-                (lun.getvolume_group_id() != null && !lun.getvolume_group_id().isEmpty());
+        boolean nonEmpty = lun.getStorageDomainId() != null || lun.getDiskId() != null ||
+                lun.getStatus() == LunStatus.Unusable;
 
         // Graying out LUNs
         lunModel.setIsGrayedOut(isIgnoreGrayedOut() ? lun.getDiskId() != null : nonEmpty);
 
         // Adding 'GrayedOutReasons'
-        if (lun.isPartitioned()) {
-            lunModel.getGrayedOutReasons().add(constants.partitionedLUN());
-        }
-        else if (lun.getStorageDomainId() != null) {
+        if (lun.getStorageDomainId() != null) {
             lunModel.getGrayedOutReasons().add(
                     messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName()));
         }
@@ -270,9 +290,9 @@ public abstract class SanStorageModel extends SanStorageModelBase
             lunModel.getGrayedOutReasons().add(
                     messages.lunUsedByDiskWarning(lun.getDiskAlias()));
         }
-        else if (lun.getvolume_group_id() != null && !lun.getvolume_group_id().isEmpty()) {
+        else if (lun.getStatus() == LunStatus.Unusable) {
             lunModel.getGrayedOutReasons().add(
-                    messages.lunUsedByVGWarning(lun.getvolume_group_id()));
+                    constants.lunUnusable());
         }
     }
 
@@ -508,6 +528,27 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
 
         return luns;
+    }
+
+    public ArrayList<String> getUsedLunsMessages() {
+        ArrayList<String> usedLunsMessages = new ArrayList<String>();
+        Messages messages = ConstantsManager.getInstance().getMessages();
+
+        for (LunModel lunModel : getAddedLuns()) {
+            if (lunModel.getStatus() == LunStatus.Used) {
+                String reason = null;
+                LUNs lun = (LUNs) lunModel.getEntity();
+
+                if (lun.getvolume_group_id() != null && !lun.getvolume_group_id().isEmpty()) {
+                    reason = messages.lunUsedByVG(lun.getvolume_group_id());
+                }
+
+                usedLunsMessages.add(reason == null ? lunModel.getLunId() :
+                        lunModel.getLunId() + " (" + reason + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+
+        return usedLunsMessages;
     }
 
     @Override

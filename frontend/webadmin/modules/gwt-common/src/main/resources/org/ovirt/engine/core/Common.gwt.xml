@@ -49,6 +49,7 @@
 		<include
 			name="common/businessentities/LUN_storage_server_connection_map_id.java" />
 		<include name="common/businessentities/LUNs.java" />
+		<include name="common/businessentities/LunStatus.java" />
 		<include name="common/businessentities/network_cluster.java" />
 		<include name="common/businessentities/Network.java" />
 		<include name="common/businessentities/NetworkBootProtocol.java" />

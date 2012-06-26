@@ -1082,6 +1082,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             dataCenterGuideModel.SaveNewSanStorage();
                         }
 
+                        dataCenterGuideModel.getWindow().StopProgress();
                     }
                 }),
                 null,
@@ -1091,8 +1092,35 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public void SaveNewSanStorage()
     {
         StorageModel model = (StorageModel) getWindow();
+        SanStorageModel sanStorageModel = (SanStorageModel) model.getSelectedItem();
+        VDS host = (VDS) model.getHost().getSelectedItem();
+
+        ArrayList<String> usedLunsMessages = sanStorageModel.getUsedLunsMessages();
+
+        if (usedLunsMessages.isEmpty()) {
+            OnSaveSanStorage();
+        }
+        else {
+            ForceCreationWarning(usedLunsMessages);
+        }
+    }
+
+    private void OnSaveSanStorage()
+    {
+        ConfirmationModel confirmationModel = (ConfirmationModel) getConfirmWindow();
+
+        if (confirmationModel != null && !confirmationModel.Validate())
+        {
+            return;
+        }
+
+        CancelConfirm();
+        getWindow().StartProgress(null);
+
+        StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
+        boolean force = sanModel.isForce();
 
         ArrayList<String> lunIds = new ArrayList<String>();
         for (LunModel lun : sanModel.getAddedLuns())
@@ -1100,10 +1128,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             lunIds.add(lun.getLunId());
         }
 
-        AddSANStorageDomainParameters tempVar = new AddSANStorageDomainParameters(storageDomain);
-        tempVar.setVdsId(host.getId());
-        tempVar.setLunIds(lunIds);
-        Frontend.RunAction(VdcActionType.AddSANStorageDomain, tempVar,
+        AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(storageDomain);
+        params.setVdsId(host.getId());
+        params.setLunIds(lunIds);
+        params.setForce(force);
+        Frontend.RunAction(VdcActionType.AddSANStorageDomain, params,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
@@ -1123,6 +1152,31 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
                     }
                 }, this);
+    }
+
+    private void ForceCreationWarning(ArrayList<String> usedLunsMessages) {
+        StorageModel storageModel = (StorageModel) getWindow();
+        SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
+        sanStorageModel.setForce(true);
+
+        ConfirmationModel model = new ConfirmationModel();
+        setConfirmWindow(model);
+
+        model.setTitle(ConstantsManager.getInstance().getConstants().forceStorageDomainCreation());
+        model.setMessage(ConstantsManager.getInstance().getConstants().lunsAlreadyInUse());
+        model.setHashName("force_storage_domain_creation"); //$NON-NLS-1$
+        model.setItems(usedLunsMessages);
+
+        UICommand command;
+        command = new UICommand("OnSaveSanStorage", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        command.setIsDefault(true);
+        model.getCommands().add(command);
+
+        command = new UICommand("CancelConfirm", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        model.getCommands().add(command);
     }
 
     private void AttachStorageInternal(List<storage_domains> storages, String title)
@@ -1677,6 +1731,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         if (StringHelper.stringsEqual(command.getName(), "OnAddStorage")) //$NON-NLS-1$
         {
             OnAddStorage();
+        }
+
+        if (StringHelper.stringsEqual(command.getName(), "OnSaveSanStorage")) //$NON-NLS-1$
+        {
+            OnSaveSanStorage();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "OnAttachStorage")) //$NON-NLS-1$

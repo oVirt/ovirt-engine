@@ -3,12 +3,14 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
@@ -30,10 +32,12 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
     private final Provider<MoveHostPopupPresenterWidget> moveHostPopupProvider;
     private final Provider<FindSingleStoragePopupPresenterWidget> singleStoragePopupProvider;
     private final Provider<FindMultiStoragePopupPresenterWidget> multiStoragePopupProvider;
+    private final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider;
 
     @Inject
     public GuidePopupPresenterWidget(EventBus eventBus, ViewDef view,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
             Provider<ClusterPopupPresenterWidget> clusterPopupProvider,
             Provider<HostPopupPresenterWidget> hostPopupProvider,
             Provider<StoragePopupPresenterWidget> storagePopupProvider,
@@ -43,6 +47,7 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
             Provider<FindSingleStoragePopupPresenterWidget> singleStoragePopupProvider,
             Provider<FindMultiStoragePopupPresenterWidget> multiStoragePopupProvider) {
         super(eventBus, view, defaultConfirmPopupProvider);
+        this.forceCreateConfirmPopupProvider = forceCreateConfirmPopupProvider;
         this.clusterPopupProvider = clusterPopupProvider;
         this.hostPopupProvider = hostPopupProvider;
         this.storagePopupProvider = storagePopupProvider;
@@ -80,6 +85,16 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
             return vmDiskPopupPopupProvider.get();
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
+        }
+    }
+
+    @Override
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(GuideModel source,
+            UICommand lastExecutedCommand) {
+        if (lastExecutedCommand.getName().equals("OnAddStorage")) { //$NON-NLS-1$
+            return forceCreateConfirmPopupProvider.get();
+        } else {
+            return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
     }
 

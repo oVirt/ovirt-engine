@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
@@ -55,6 +56,7 @@ public class StorageModule extends AbstractGinModule {
             final Provider<StoragePopupPresenterWidget> popupProvider,
             final Provider<StorageRemovePopupPresenterWidget> removePopupProvider,
             final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider,
+            final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider) {
         return new MainTabModelProvider<storage_domains, StorageListModel>(ginjector, StorageListModel.class) {
             @Override
@@ -76,6 +78,9 @@ public class StorageModule extends AbstractGinModule {
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getDestroyCommand()) {
                     return destroyConfirmPopupProvider.get();
+                }
+                else if (lastExecutedCommand.getName().equals("OnSave")) { //$NON-NLS-1$
+                    return forceCreateConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }

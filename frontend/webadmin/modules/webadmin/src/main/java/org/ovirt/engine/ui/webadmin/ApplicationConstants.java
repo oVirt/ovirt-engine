@@ -2150,4 +2150,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("")
     String mainHeaderLabel();
+
+    @DefaultStringValue("This operation might be unrecoverable and destructive!")
+    String storageForceCreatePopupWarningLabel();
+
 }

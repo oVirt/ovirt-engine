@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.LunStatus;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -202,6 +203,16 @@ public class LunModel extends EntityModel
             targetsList = value;
             OnPropertyChanged(new PropertyChangedEventArgs("TargetsList")); //$NON-NLS-1$
         }
+    }
+
+    private LunStatus status;
+
+    public LunStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(LunStatus status) {
+        this.status = status;
     }
 
     public LunModel()
