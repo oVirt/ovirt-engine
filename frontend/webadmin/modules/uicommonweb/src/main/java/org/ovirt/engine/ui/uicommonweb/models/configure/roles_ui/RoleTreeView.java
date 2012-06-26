@@ -105,6 +105,7 @@ public class RoleTreeView
         array.add(ActionGroup.CONFIGURE_DISK_STORAGE);
         array.add(ActionGroup.EDIT_DISK_PROPERTIES);
         array.add(ActionGroup.LOGIN);
+        array.add(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES);
         return array;
 
     }
@@ -344,6 +345,10 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.MIGRATE_VM,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
+                                                                                .allowMigratingVmBetweenHostsInClusterRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
                                                                                 .allowMigratingVmBetweenHostsInClusterRoleTreeTooltip()) }) }),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().vmPoolRoleTree(),
                                         new RoleNode[] {
@@ -404,7 +409,7 @@ public class RoleTreeView
                                                                                 .getConstants()
                                                                                 .allowToChangePropertiesOfTheDiskRoleTreeTooltip()) }) }) });
 
-        //nothing to filter
+        // nothing to filter
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {
             ApplicationModeHelper.filterActionGroupTreeByApplictionMode(tree);
         }

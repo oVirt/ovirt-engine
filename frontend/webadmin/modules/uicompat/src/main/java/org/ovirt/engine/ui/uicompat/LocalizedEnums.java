@@ -84,6 +84,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String ActionGroup___MIGRATE_VM();
 
+	String ActionGroup___CHANGE_VM_CUSTOM_PROPERTIES();
+
 	String ActionGroup___IMPORT_EXPORT_VM();
 
 	String ActionGroup___CONFIGURE_VM_NETWORK();

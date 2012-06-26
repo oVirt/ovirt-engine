@@ -997,6 +997,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Allow Change VM properties")
 	String allowChangeVmPropertiesRoleTreeTooltip();
 
+	@DefaultStringValue("Allow changing VM custom properties")
+	String allowToChangeVmCustomPropertiesRoleTreeTooltip();
+
 	@DefaultStringValue("Allow to create new Vms")
 	String allowToCreateNewVmsRoleTreeTooltip();
 
