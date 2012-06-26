@@ -82,8 +82,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
         // Remember all discovered targets.
         lastDiscoveredTargets.clear();
         lastDiscoveredTargets.addAll(newItems);
-
-        getContainer().StopProgress();
     }
 
     @Override
@@ -99,11 +97,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
     {
         super.UpdateInternal();
 
-        if (getContainer().getProgress() != null)
-        {
-            return;
-        }
-
         VDS host = (VDS) getContainer().getHost().getSelectedItem();
         if (host == null)
         {
@@ -114,32 +107,26 @@ public abstract class SanStorageModel extends SanStorageModelBase
         ClearItems();
         InitializeItems(null, null);
 
-        getContainer().StartProgress(null);
-
+        AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                SanStorageModel model = (SanStorageModel) target;
+                VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+                if (response.getSucceeded()) {
+                    model.ApplyData((ArrayList<LUNs>) response.getReturnValue(), false);
+                    model.setGetLUNsFailure(""); //$NON-NLS-1$
+                }
+                else {
+                    model.setGetLUNsFailure(
+                            ConstantsManager.getInstance().getConstants().couldNotRetrieveLUNsLunsFailure());
+                }
+            }
+        }, true);
+        asyncQuery.setContext(getHash());
         Frontend.RunQuery(VdcQueryType.GetDeviceList,
                 new GetDeviceListQueryParameters(host.getId(), getType()),
-                new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                asyncQuery);
 
-                                SanStorageModel model = (SanStorageModel) target;
-                                VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
-                                if (response.getSucceeded())
-                                {
-                                    model.ApplyData((ArrayList<LUNs>) response.getReturnValue(), false);
-                                    model.setGetLUNsFailure(""); //$NON-NLS-1$
-                                }
-                                else
-                                {
-                                    model.setGetLUNsFailure(ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .couldNotRetrieveLUNsLunsFailure());
-                                }
-                                model.getContainer().StopProgress();
-
-                            }
-                        }, true));
     }
 
     private void ClearItems()
@@ -241,16 +228,17 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 lunModel.setIsIncluded(isIncluded);
                 lunModel.setIsSelected(isIncluded);
                 lunModel.setEntity(a);
-                LunModel lun = lunModel;
-                newItems.add(lun);
+
+                // Add LunModel
+                newItems.add(lunModel);
 
                 // Update isGrayedOut and grayedOutReason properties
-                UpdateGrayedOut(lun);
+                UpdateGrayedOut(lunModel);
 
                 // Remember included LUNs to prevent their removal while updating items.
                 if (isIncluded)
                 {
-                    includedLUNs.add(lun);
+                    includedLUNs.add(lunModel);
                 }
             }
         }
@@ -364,9 +352,14 @@ public abstract class SanStorageModel extends SanStorageModelBase
             {
                 for (LunModel newItem : newLuns)
                 {
-                    if (Linq.FirstOrDefault(items, new Linq.LunPredicate(newItem)) == null)
+                    LunModel existingItem = Linq.FirstOrDefault(items, new Linq.LunPredicate(newItem));
+                    if (existingItem == null)
                     {
                         items.add(newItem);
+                    }
+                    else
+                    {
+                        existingItem.setIsIncluded(existingItem.getIsIncluded() || newItem.getIsIncluded());
                     }
                 }
             }

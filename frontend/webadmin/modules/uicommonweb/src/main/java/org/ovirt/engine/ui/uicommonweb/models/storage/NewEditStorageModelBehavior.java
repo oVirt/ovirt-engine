@@ -41,7 +41,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                                 behavior.PostUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
 
                             }
-                        }), dataCenter.getId());
+                        }, getHash()), dataCenter.getId());
             }
             else if (item.getRole() == StorageDomainType.ImportExport)
             {
@@ -56,7 +56,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                                 behavior.PostUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
 
                             }
-                        }), dataCenter.getId());
+                        }, getHash()), dataCenter.getId());
             }
             else
             {

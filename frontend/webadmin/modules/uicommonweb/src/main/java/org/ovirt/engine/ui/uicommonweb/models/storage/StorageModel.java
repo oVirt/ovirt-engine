@@ -163,7 +163,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         Frontend.getQueryStartedEvent().addListener(this);
         Frontend.getQueryCompleteEvent().addListener(this);
         Frontend.Subscribe(new VdcQueryType[] { VdcQueryType.Search, VdcQueryType.GetConfigurationValue,
-                VdcQueryType.GetStoragePoolsByStorageDomainId });
+                VdcQueryType.GetStoragePoolsByStorageDomainId, VdcQueryType.GetStorageDomainsByStoragePoolId,
+                VdcQueryType.GetLunsByVgId, VdcQueryType.GetAllVdsByStoragePool,
+                VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList });
 
         setName(new EntityModel());
         setDataCenter(new ListModel());
@@ -190,6 +192,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         super.Initialize();
 
         setHash(getHashName() + new Date());
+        behavior.setHash(getHash());
 
         InitDataCenter();
     }
@@ -235,7 +238,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
     private int queryCounter;
 
-    private void Frontend_QueryStarted()
+    public void Frontend_QueryStarted()
     {
         queryCounter++;
         if (getProgress() == null)
@@ -244,7 +247,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
     }
 
-    private void Frontend_QueryComplete()
+    public void Frontend_QueryComplete()
     {
         queryCounter--;
         if (queryCounter == 0)
@@ -311,10 +314,14 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         if (getSelectedItem() != null)
         {
             // When changing host clear items for san storage model.
-            if (getSelectedItem() instanceof SanStorageModelBase && getStorage() == null)
+            if (getSelectedItem() instanceof SanStorageModelBase)
             {
                 SanStorageModelBase sanStorageModel = (SanStorageModelBase) getSelectedItem();
-                sanStorageModel.setItems(null);
+                sanStorageModel.setHash(getHash());
+
+                if (getStorage() == null) {
+                    sanStorageModel.setItems(null);
+                }
             }
 
             if (host != null)
@@ -566,38 +573,36 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
 
         VDS oldSelectedItem = (VDS) getHost().getSelectedItem();
+        VDS selectedItem = null;
+
         getHost().setItems(hosts);
 
         // Try to select previously selected host.
         if (oldSelectedItem != null)
         {
-            getHost().setSelectedItem(Linq.FirstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getId())));
+            selectedItem = Linq.FirstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getId()));
         }
 
         // Try to select an SPM host when edit storage.
-        if (getHost().getSelectedItem() == null && getStorage() != null)
+        if (selectedItem == null && getStorage() != null)
         {
             for (VDS host : hosts)
             {
                 if (host.getspm_status() == VdsSpmStatus.SPM)
                 {
-                    getHost().setSelectedItem(host);
+                    selectedItem = host;
                     break;
                 }
             }
         }
 
         // Select a default - first host in the list.
-        if (getHost().getSelectedItem() == null)
+        if (selectedItem == null)
         {
-            getHost().setSelectedItem(Linq.FirstOrDefault(hosts));
+            selectedItem = Linq.FirstOrDefault(hosts);
         }
 
-        if (queryCounter > 0) {
-            queryCounter++;
-        }
-        StopProgress();
-        getSelectedItem().getUpdateCommand().Execute();
+        getHost().setSelectedItem(selectedItem);
     }
 
     void UpdateFormat()

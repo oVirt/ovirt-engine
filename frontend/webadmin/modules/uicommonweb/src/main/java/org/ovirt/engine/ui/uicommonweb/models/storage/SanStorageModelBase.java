@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -229,12 +230,30 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
+    private String privateHash;
+
+    public String getHash()
+    {
+        return privateHash;
+    }
+
+    public void setHash(String value)
+    {
+        privateHash = value;
+    }
+
     public boolean loginAllInProgress;
     public SanTargetModel sanTargetModel;
     private ArrayList<SanTargetModel> targetsToConnect;
 
     protected SanStorageModelBase()
     {
+        Frontend.getQueryStartedEvent().addListener(this);
+        Frontend.getQueryCompleteEvent().addListener(this);
+
+        setHashName("SanStorageModelBase"); //$NON-NLS-1$
+        setHash(getHashName() + new Date());
+
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
         UICommand tempVar = new UICommand("LoginAll", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(false);
@@ -267,6 +286,36 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         else if (ev.equals(EntityChangedEventDefinition))
         {
             UseUserAuth_EntityChanged(sender, args);
+        }
+        else if (ev.equals(Frontend.QueryStartedEventDefinition)
+                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+        {
+            Frontend_QueryStarted();
+        }
+        else if (ev.equals(Frontend.QueryCompleteEventDefinition)
+                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+        {
+            Frontend_QueryComplete();
+        }
+    }
+
+    private int queryCounter;
+
+    private void Frontend_QueryStarted()
+    {
+        queryCounter++;
+        if (getProgress() == null)
+        {
+            StartProgress(null);
+        }
+    }
+
+    private void Frontend_QueryComplete()
+    {
+        queryCounter--;
+        if (queryCounter == 0)
+        {
+            StopProgress();
         }
     }
 
@@ -380,21 +429,18 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 new DiscoverSendTargetsQueryParameters(host.getId(), tempVar);
 
         setMessage(null);
-        getContainer().StartProgress(null);
 
-        Frontend.RunQuery(VdcQueryType.DiscoverSendTargets, parameters, new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        SanStorageModelBase model = (SanStorageModelBase) target;
-                        Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        model.PostDiscoverTargetsInternal(result != null ? (ArrayList<storage_server_connections>) result
-                                : new ArrayList<storage_server_connections>());
-
-                    }
-                },
-                true));
+        AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                SanStorageModelBase model = (SanStorageModelBase) target;
+                Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                model.PostDiscoverTargetsInternal(result != null ? (ArrayList<storage_server_connections>) result
+                        : new ArrayList<storage_server_connections>());
+            }
+        }, true);
+        asyncQuery.setContext(getHash());
+        Frontend.RunQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
 
     private void PostDiscoverTargetsInternal(ArrayList<storage_server_connections> items)

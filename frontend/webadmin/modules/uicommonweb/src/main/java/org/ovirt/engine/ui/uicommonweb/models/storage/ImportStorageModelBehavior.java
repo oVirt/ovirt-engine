@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -8,8 +10,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class ImportStorageModelBehavior extends StorageModelBehavior
@@ -42,7 +42,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                                 behavior.PostUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
 
                             }
-                        }), dataCenter.getId());
+                        }, getHash()), dataCenter.getId());
             }
             else if (item.getRole() == StorageDomainType.ImportExport)
             {
@@ -57,7 +57,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                                 behavior.PostUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
 
                             }
-                        }), dataCenter.getId());
+                        }, getHash()), dataCenter.getId());
             }
             else
             {

@@ -517,7 +517,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
                 sanStorageModel.ApplyData(lunList, true);
             }
-        }), storage.getstorage(), host.getId());
+        }, model.getHash()), storage.getstorage(), host.getId());
     }
 
     private void ImportDomain()
