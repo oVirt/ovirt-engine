@@ -3,19 +3,28 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
+import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
@@ -29,16 +38,29 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
     };
 
     private static final String VG_ID = Guid.NewGuid().toString();
+    private static final Guid VDS_ID = Guid.NewGuid();
 
     private static final String ADDRESS = "foo.bar.com";
     private static final String PORT = "123456";
     private static final String[] IQNS = new String[] { ADDRESS + ":1", ADDRESS + ":2", ADDRESS + ":3" };
+    private static final String PHYSICAL_DEVICE_FIELD = "sda";
+
+    private VDSBrokerFrontend vdsBrokerFrontendMock;
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        prepareMocks();
+    }
 
     @Test
     public void testQuery() {
         when(getQueryParameters().getVgId()).thenReturn(VG_ID);
+        when(getQueryParameters().getVdsId()).thenReturn(VDS_ID);
 
         expectGetLunsForVg(VG_ID);
+        expectGetDeviceList();
 
         StorageServerConnectionLunMapDAO lunMapDAO = setUpStorageServerConnectionLunMapDAO();
         StorageServerConnectionDAO cnxDAO = setUpStorageServerConnectionDAO();
@@ -51,6 +73,11 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
 
         checkSucceeded(getQuery(), true);
         checkReturnValue(getQuery());
+    }
+
+    private void prepareMocks() {
+        vdsBrokerFrontendMock = mock(VDSBrokerFrontend.class);
+        doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
     }
 
     protected StorageServerConnectionDAO setUpStorageServerConnectionDAO() {
@@ -69,6 +96,14 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
         LunDAO dao = mock(LunDAO.class);
         when(getDbFacadeMockInstance().getLunDAO()).thenReturn(dao);
         when(dao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns());
+    }
+
+    protected void expectGetDeviceList() {
+        VDSReturnValue returnValue = new VDSReturnValue();
+        returnValue.setSucceeded(true);
+        returnValue.setReturnValue(setUpLunsFromDeviceList());
+        when(vdsBrokerFrontendMock.RunVdsCommand(eq(VDSCommandType.GetDeviceList),
+                any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
     }
 
     protected void expectGetLunsMap(StorageServerConnectionLunMapDAO dao) {
@@ -102,6 +137,16 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
         return luns;
     }
 
+    protected List<LUNs> setUpLunsFromDeviceList() {
+        List<LUNs> luns = setUpLuns();
+        for (int i = 0; i < luns.size(); i++) {
+            HashMap<String, Boolean> pathsDictionary = new HashMap<String, Boolean>();
+            pathsDictionary.put(PHYSICAL_DEVICE_FIELD, true);
+            luns.get(i).setPathsDictionary(pathsDictionary);
+        }
+        return luns;
+    }
+
     protected storage_server_connections setUpConnection(int idx) {
         return new storage_server_connections(ADDRESS, GUIDS[idx].toString(), IQNS[idx], null,
                 StorageType.ISCSI, null, PORT, null);
@@ -125,6 +170,8 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
             assertEquals(GUIDS[i].toString(), cnx.getid());
             assertEquals(IQNS[i], cnx.getiqn());
             assertEquals(StorageType.ISCSI, cnx.getstorage_type());
+            assertNotNull(lun.getPathsDictionary());
+            assertEquals(1, lun.getPathsDictionary().size());
         }
     }
 }
