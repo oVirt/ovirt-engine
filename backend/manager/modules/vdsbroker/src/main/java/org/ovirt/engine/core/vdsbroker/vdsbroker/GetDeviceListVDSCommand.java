@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -16,7 +18,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
 
     protected static final String DEVTYPE_VALUE_FCP = "fcp";
     protected static final String DEVTYPE_FIELD = "devtype";
-    protected static final String PARTITIONED = "partitioned";
+    protected static final String STATUS = "status";
 
     /* Paths */
     protected static final String PATHSTATUS = "pathstatus";
@@ -33,13 +35,8 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        boolean filteringLUNsEnabled = getParameters().isFilteringLUNsEnabled();
-
-        XmlRpcStruct options = new XmlRpcStruct();
-        options.add(VdsProperties.includePartitioned, Boolean.toString(filteringLUNsEnabled));
-
         int storageType = getParameters().getStorageType().getValue();
-        _result = getBroker().getDeviceList(storageType, options);
+        _result = getBroker().getDeviceList(storageType);
 
         ProceedProxyReturnValue();
         setReturnValue(ParseLUNList(_result.lunList));
@@ -132,8 +129,9 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                 lun.setLunType(StorageType.ISCSI);
             }
         }
-        if (xlun.contains(PARTITIONED)) {
-            lun.setPartitioned(Boolean.valueOf(xlun.getItem(PARTITIONED).toString()));
+        if (xlun.contains(STATUS)) {
+            String status = xlun.getItem(STATUS).toString();
+            lun.setStatus(EnumUtils.valueOf(LunStatus.class, status, true));
         }
         return lun;
     }

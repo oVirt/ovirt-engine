@@ -711,9 +711,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public LUNListReturnForXmlRpc getDeviceList(int storageType, XmlRpcStruct options) {
+    public LUNListReturnForXmlRpc getDeviceList(int storageType) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceList(storageType, options.getInnerMap());
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceList(storageType);
             LUNListReturnForXmlRpc wrapper = new LUNListReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

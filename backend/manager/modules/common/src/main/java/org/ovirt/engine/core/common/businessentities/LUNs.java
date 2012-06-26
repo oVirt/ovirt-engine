@@ -46,7 +46,7 @@ public class LUNs implements Serializable {
         result = prime * result + ((serial == null) ? 0 : serial.hashCode());
         result = prime * result + ((vendorId == null) ? 0 : vendorId.hashCode());
         result = prime * result + ((volumeGroupId == null) ? 0 : volumeGroupId.hashCode());
-        result = prime * result + (partitioned ? 1231 : 1237);
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((diskId == null) ? 0 : diskId.hashCode());
         result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
         result = prime * result + ((storageDomainId == null) ? 0 : storageDomainId.hashCode());
@@ -117,7 +117,10 @@ public class LUNs implements Serializable {
                 return false;
         } else if (!volumeGroupId.equals(other.volumeGroupId))
             return false;
-        if (partitioned != other.partitioned)
+        if (status == null) {
+            if (other.status != null)
+                return false;
+        } else if (!status.equals(other.status))
             return false;
         if (diskId == null) {
             if (other.diskId != null)
@@ -297,16 +300,16 @@ public class LUNs implements Serializable {
     }
 
     /**
-     * A flag indicating whether the LUN device contains partitions
+     * LUN's status
      */
-    private boolean partitioned;
+    private LunStatus status;
 
-    public boolean isPartitioned() {
-        return partitioned;
+    public LunStatus getStatus() {
+        return status;
     }
 
-    public void setPartitioned(boolean value) {
-        partitioned = value;
+    public void setStatus(LunStatus value) {
+        status = value;
     }
 
     /**

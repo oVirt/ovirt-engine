@@ -31,7 +31,7 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
         // Get Device List
         VDSBrokerFrontend vdsBrokerFrontend = getVdsBroker();
         GetDeviceListVDSCommandParameters parameters = new GetDeviceListVDSCommandParameters(
-                getParameters().getVdsId(), getParameters().getStorageType(), filteringLUNsEnabled);
+                getParameters().getVdsId(), getParameters().getStorageType());
         List<LUNs> luns = (List<LUNs>) vdsBrokerFrontend.RunVdsCommand(
                 VDSCommandType.GetDeviceList, parameters).getReturnValue();
 
@@ -50,9 +50,6 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
                             lun.getLUN_id(), lun.getvolume_group_id());
                 } else if (lunsFromDbById.containsKey(lun.getLUN_id())) {
                     log.debugFormat("LUN with GUID {0} already exists in the DB, so not returning it.",
-                            lun.getLUN_id());
-                } else if (lun.isPartitioned()) {
-                    log.debugFormat("LUN with GUID {0} contains partitions, so not returning it.",
                             lun.getLUN_id());
                 } else {
                     returnValue.add(lun);

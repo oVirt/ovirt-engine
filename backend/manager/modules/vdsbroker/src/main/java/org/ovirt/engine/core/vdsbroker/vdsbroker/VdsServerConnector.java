@@ -129,7 +129,7 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getVGInfo(String vgUUID);
 
-    public Map<String, Object> getDeviceList(int storageType, Map options);
+    public Map<String, Object> getDeviceList(int storageType);
 
     public Map<String, Object> getDeviceInfo(String devGUID);
 

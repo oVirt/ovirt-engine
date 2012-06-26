@@ -238,9 +238,6 @@ public final class VdsProperties {
     public static final String lastCheck = "lastCheck";
     public static final String delay = "delay";
 
-    // luns
-    public static final String includePartitioned = "includePartitioned";
-
     public static final String DISK_STATS = "diskStats";
     public static final String DISK_STATS_FREE = "free";
 

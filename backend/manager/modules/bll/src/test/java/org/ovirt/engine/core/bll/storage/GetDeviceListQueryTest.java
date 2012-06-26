@@ -146,10 +146,6 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
      * Create the input list of LUNs
      */
     private void createInputLUNs() {
-        LUNs partitionedLun = new LUNs();
-        partitionedLun.setLUN_id(Guid.NewGuid().toString());
-        partitionedLun.setPartitioned(true);
-
         LUNs lunWithVG = new LUNs();
         lunWithVG.setLUN_id(Guid.NewGuid().toString());
         lunWithVG.setvolume_group_id(new Guid().toString());
@@ -158,7 +154,6 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         lunExistsInDB.setLUN_id(Guid.NewGuid().toString());
 
         lunsInput = new ArrayList<LUNs>();
-        lunsInput.add(partitionedLun);
         lunsInput.add(lunWithVG);
         lunsInput.add(lunExistsInDB);
 
