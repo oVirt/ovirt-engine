@@ -545,7 +545,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 returnValue = returnValue && IsLegalClusterId(vmStaticData.getvds_group_id(), reasons);
             }
 
-            if (!isPinningAndMigrationValid(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
+            if (!validatePinningAndMigration(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
                 returnValue = false;
             }
 

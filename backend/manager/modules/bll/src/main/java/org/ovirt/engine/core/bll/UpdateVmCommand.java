@@ -288,7 +288,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!isPinningAndMigrationValid(getReturnValue().getCanDoActionMessages(),
+        if (!validatePinningAndMigration(getReturnValue().getCanDoActionMessages(),
                 getParameters().getVm().getStaticData(), getParameters().getVm().getCpuPinning())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE);
             return false;
