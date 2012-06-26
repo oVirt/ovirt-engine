@@ -91,6 +91,8 @@ public class OvfManager {
         // this is static data for all images:
         for (DiskImage image : images) {
             image.setcontainer_guid(vmTemplate.getId());
+            // It can be assumed that each disk which was in the OVF is allowed to be snapshot.
+            image.setAllowSnapshot(true);
         }
     }
 
