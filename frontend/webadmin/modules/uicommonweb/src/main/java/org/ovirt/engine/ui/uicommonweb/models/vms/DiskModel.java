@@ -735,9 +735,9 @@ public class DiskModel extends Model
         Boolean isInVm = (Boolean) getIsInVm().getEntity();
         Boolean isInternal = (Boolean) getIsInternal().getEntity();
 
-        getDataCenter().setIsAvailable(!isInVm || !isInternal);
+        getDataCenter().setIsAvailable(!isInVm);
 
-        if (isInternal) {
+        if (isInternal || isInVm) {
             AsyncDataProvider.GetDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void OnSuccess(Object target, Object returnValue) {
