@@ -93,7 +93,7 @@ select fn_db_add_config_value('DiskConfigurationList','System,Sparse,COW,true;Da
 select fn_db_add_config_value('DirectLUNDiskEnabled','false','2.2');
 select fn_db_add_config_value('DirectLUNDiskEnabled','false','3.0');
 select fn_db_add_config_value('DirectLUNDiskEnabled','true','3.1');
-select fn_db_add_config_value('DocsURL','','general');
+select fn_db_add_config_value('DocsURL','docs','general');
 --Handling NetBIOS Domain Name
 select fn_db_add_config_value('DomainName','example.com','general');
 select fn_db_add_config_value('EmulatedMachine','rhel5.5.0','2.2');
