@@ -954,7 +954,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove the master Storage Domain from the Data Center without another active Storage Domain to take its place.\n-Either activate another Storage Domain in the Data Center, or remove the Data Center.")
     String ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN();
 
-    @DefaultStringValue("Cannot destroy the master Storage Domain from the Data Center without another active Storage Domain to take its place.\n-Either activate another Storage Domain in the Data Center, or remove the Data Center.\n-If you have problems with master Storage Domain, consider recovery process.")
+    @DefaultStringValue("Cannot destroy the master Storage Domain from the Data Center without another active Storage Domain to take its place.\n-Either activate another Storage Domain in the Data Center, or remove the Data Center.\n-If you have problems with the master Data Domain, consider following the recovery process described in the documentation, or contact your system administrator.")
     String ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN();
 
     @DefaultStringValue("In order to complete the operation a new master Storage Domain needs to be elected, which requires at least one active Host in the Data Center.\n-Please make sure one of the Hosts is active in the Data Center first.")
