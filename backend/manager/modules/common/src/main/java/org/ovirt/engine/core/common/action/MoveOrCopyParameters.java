@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MoveOrCopyParameters extends StorageDomainParametersBase implements Serializable {
@@ -38,16 +36,6 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
 
     public void setCopyCollapse(boolean value) {
         privateCopyCollapse = value;
-    }
-
-    private HashMap<Guid, DiskImageBase> privateDiskInfoList;
-
-    public HashMap<Guid, DiskImageBase> getDiskInfoList() {
-        return privateDiskInfoList;
-    }
-
-    public void setDiskInfoList(HashMap<Guid, DiskImageBase> value) {
-        privateDiskInfoList = value;
     }
 
     private boolean privateTemplateMustExists;

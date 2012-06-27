@@ -123,10 +123,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
 
         if (retVal) {
-            Map<Guid, ? extends Disk> images = getParameters().getDiskInfoList();
-            if (images == null) {
-                images = getVm().getDiskMap();
-            }
+            Map<Guid, ? extends Disk> images = getVm().getDiskMap();
             // check that the images requested format are valid (COW+Sparse)
             retVal = ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
                     new ArrayList<Disk>(images.values()),

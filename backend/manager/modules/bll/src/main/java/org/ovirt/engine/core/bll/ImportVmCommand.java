@@ -289,19 +289,21 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
             retVal = false;
         }
-        if (retVal && getParameters().getCopyCollapse() && getParameters().getDiskInfoList() != null) {
-            for (DiskImageBase imageBase : getParameters().getDiskInfoList().values()) {
+        if (retVal && getParameters().getCopyCollapse() && getParameters().getVm().getDiskMap() != null) {
+            for (Disk disk : getParameters().getVm().getDiskMap().values()) {
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage key = (DiskImage) getVm().getDiskMap()
-                        .get(imageBase.getId());
+                        .get(disk.getId());
                 if (key != null) {
                     retVal =
                             ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
                                     .getStorageStaticData(),
-                                    imageBase,
+                                        (DiskImageBase) disk,
                                     canDoActionMessages);
                     if (!retVal) {
                         break;
                     }
+                }
                 }
             }
         }
@@ -543,12 +545,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             p.setStoragePoolId(getParameters().getStoragePoolId());
             p.setImportEntity(true);
             p.setEntityId(disk.getImageId());
-            if (getParameters().getDiskInfoList() != null
-                    && getParameters().getDiskInfoList().containsKey(diskGuidList.get(i))) {
-                p.setVolumeType(getParameters().getDiskInfoList().get(diskGuidList.get(i))
-                        .getvolume_type());
-                p.setVolumeFormat(getParameters().getDiskInfoList().get(diskGuidList.get(i))
-                        .getvolume_format());
+            if (getParameters().getVm().getDiskMap() != null
+                    && getParameters().getVm().getDiskMap().containsKey(diskGuidList.get(i))) {
+                DiskImageBase diskImageBase =
+                        (DiskImageBase) getParameters().getVm().getDiskMap().get(diskGuidList.get(i));
+                p.setVolumeType(diskImageBase.getvolume_type());
+                p.setVolumeFormat(diskImageBase.getvolume_format());
             }
             p.setParentParemeters(getParameters());
             p.setAddImageDomainMapping(getParameters().isImportAsNewEntity());
@@ -581,13 +583,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 disk.setvm_snapshot_id(snapshotId);
                 disk.setactive(true);
 
-                if (getParameters().getDiskInfoList() != null
-                        && getParameters().getDiskInfoList().containsKey(disk.getId())) {
-                    disk.setvolume_format(getParameters().getDiskInfoList()
-                            .get(disk.getId())
-                            .getvolume_format());
-                    disk.setvolume_type(getParameters().getDiskInfoList().get(disk.getId())
-                            .getvolume_type());
+                if (getParameters().getVm().getDiskMap() != null
+                        && getParameters().getVm().getDiskMap().containsKey(disk.getId())) {
+                    DiskImageBase diskImageBase =
+                            (DiskImageBase) getParameters().getVm().getDiskMap().get(disk.getId());
+                    disk.setvolume_format(diskImageBase.getvolume_format());
+                    disk.setvolume_type(diskImageBase.getvolume_type());
                 }
                 diskGuidList.add(disk.getId());
                 imageGuidList.add(disk.getImageId());

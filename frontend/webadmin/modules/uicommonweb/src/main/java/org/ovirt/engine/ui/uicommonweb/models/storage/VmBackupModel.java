@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -278,7 +277,6 @@ public class VmBackupModel extends ManageBackupModel {
             prm.setForceOverride(true);
 
             prm.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
-            HashMap<Guid, DiskImageBase> diskDictionary = new HashMap<Guid, DiskImageBase>();
 
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 Guid key = entry.getKey();
@@ -289,11 +287,7 @@ public class VmBackupModel extends ManageBackupModel {
                         (storage_domains) model.getDestinationStorage().getSelectedItem()
                         : model.getStorageById(map.get(disk.getId()));
                 disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), domain.getstorage_type()));
-
-                diskDictionary.put(key, disk);
             }
-
-            prm.setDiskInfoList(diskDictionary);
 
             if (!(Boolean) model.getIsSingleDestStorage().getEntity()) {
                 HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
