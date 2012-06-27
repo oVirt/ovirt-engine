@@ -229,6 +229,29 @@ public class storage_server_connections implements Serializable {
                 ssc.nfsTimeo);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{ id: ");
+        sb.append(this.getid());
+        sb.append(", connection: ");
+        sb.append(this.getconnection());
+        sb.append(", iqn: ");
+        sb.append(this.getiqn());
+        sb.append(", vfsType: ");
+        sb.append(this.getVfsType());
+        sb.append(", mountOptions: ");
+        sb.append(this.getMountOptions());
+        sb.append(", nfsVersion: ");
+        sb.append(this.getNfsVersion());
+        sb.append(", nfsRetrans: ");
+        sb.append(this.getNfsRetrans());
+        sb.append(", nfsTimeo: ");
+        sb.append(this.getNfsTimeo());
+        sb.append(" };");
+        return sb.toString();
+    }
+
     public Short getNfsVersion() {
         return nfsVersion;
     }

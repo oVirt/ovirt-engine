@@ -45,11 +45,7 @@ public class ConnectStorageServerVDSCommandParameters extends GetStorageConnecti
     private String getPrintableConnectionsList() {
         StringBuilder sb = new StringBuilder();
         for (storage_server_connections con : getConnectionList()) {
-            sb.append("{ id: ");
-            sb.append(con.getid());
-            sb.append(", connection: ");
-            sb.append(con.getconnection());
-            sb.append(" };");
+            sb.append(con);
         }
         return sb.toString();
     }
