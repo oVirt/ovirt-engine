@@ -5,18 +5,37 @@
 	xmlns:f="urn:import:org.ovirt.engine.ui.webadmin.widget.footer" xmlns:ce="urn:import:org.ovirt.engine.ui.common.widget.editor"
 	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels">
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle">
-		.title {
-			font-size: large;
+		.unassignedtitle {
+			font-size: small;
 			text-align: center;
+			margin-buttom: 5px;
 		}
-		
+
+		.assignedtitle {
+			font-size: small;
+			text-align: center;
+			margin-left: 210px;
+			margin-buttom: 5px;
+		}
+
+		.nicstitle {
+			font-size: small;
+			text-align: center;
+			margin-left: 80px;
+			margin-buttom: 5px;
+		}
+
 		.statusLabel {
 			font-size: 15px;
 			font-weight: bold;
 			color: gray;
+			padding-left: 20px;
+			padding-top: 5px;
 		}
-		
+
 		.itemPanel {
 			border-width: 1px;
 			border-style: solid;
@@ -25,54 +44,54 @@
 			font-size: 13px !important;
 			color: black;
 		}
-		
+
 		.itemPanelError {
 			border-color: red;
 			border-width: 2px;
 		}
-		
+
 		.networkGroupDragOver {
 			border-color: black !important;
 			box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
 		}
-		
+
 		.networkPanel {
 			background-color: #FFFFFF;
 			border-color: #C5C5C5;
 			cursor: move;
 			height: 36px;
 		}
-		
+
 		.networkPanel:HOVER {
 			background-color: #F6F6F6;
 			box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
 		}
-		
+
 		.mgmtNetwork {
 			font-weight: bold;
 		}
-		
+
 		.nicPanel {
 			background-color: #CED8DF;
 			border-color: #7A8D9A;
 			cursor: move;
 			height: 27px;
 		}
-		
+
 		.nicPanel:HOVER {
 			background-color: #BBBBBB;
 			box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);
 		}
-		
+
 		.bondPanel {
 			height: auto;
 			background-color: #EFEFEF;
 		}
-		
+
 		.bondPanel:HOVER {
 			background-color: #EFEFEF;
 		}
-		
+
 		.groupPanel {
 			border-color: #999999;
 			background-color: #F6F6F6;
@@ -80,20 +99,20 @@
 			border-style: solid;
 			width: 100%;
 		}
-		
+
 		.unassignedNetworksPanel {
 			border-width: 1px;
 			border-style: solid;
-			border-color: #999999;
-			 width: 100%;
-			 height: 100%;
+			border-color: #F6F6F6;
+			width: 100%;
+			height: 100%;
+			background-color: #F6F6F6;
 		}
 
 		.actionButton {
 			padding: 0px;
-			background: gray;
 		}
-		
+
 		.networkImageBorder {
 			border: 1px solid #C5C5C5;
 		}
@@ -109,26 +128,63 @@
 			width: 370px;
 			padding: 5px;
 		}
+
+		.allNicsPanel{
+			background-color: #F6F6F6;
+		}
+
+		.statusPanel{
+			background-color: #F6F6F6;
+			height: 30px;
+			border-bottom: 1px solid #C5C5C5;
+		}
+
+		.checkBoxesPanel{
+			border-top: 1px solid #C5C5C5;
+			width: 100%;
+		}
+
+		.separator {
+			background-color: #CED8DF;
+			width: 100%;
+			height: 100%;
+		}
+
+
 	</ui:style>
 
 	<d:SimpleDialogPanel width="900px" height="600px">
 		<d:content>
 			<g:HTMLPanel>
-				<g:HorizontalPanel spacing="20" width="100%" height="100%" verticalAlignment="ALIGN_TOP">
-					<g:Cell width="70%" height="100%">
+				<g:SimplePanel styleName="{style.statusPanel}">
+					<f:StatusLabel ui:field="status"/>
+				</g:SimplePanel>
+				<g:HorizontalPanel spacing="10" width="100%" height="80%" verticalAlignment="ALIGN_TOP">
+					<g:Cell width="69%" height="100%">
 						<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
-							<f:StatusLabel ui:field="status" />
-							<e:AnimatedVerticalPanel ui:field="nicList" width="100%" spacing="10" />
+						<g:HorizontalPanel>
+							<g:Label text="{constants.interfaces}" styleName="{style.nicstitle}" />
+							<g:Label text="{constants.assignedLogicalNetworks}" styleName="{style.assignedtitle}" />
+						</g:HorizontalPanel>
+						<g:ScrollPanel height="370px">
+							<e:AnimatedVerticalPanel ui:field="nicList" width="100%" spacing="10" styleName="{style.allNicsPanel}"/>
+						</g:ScrollPanel>
 						</g:VerticalPanel>
+					</g:Cell>
+					<g:Cell width="1%" height="100%">
+						<g:HTMLPanel styleName="{style.separator}" >
+						</g:HTMLPanel>
 					</g:Cell>
 					<g:Cell width="30%" height="100%">
 						<g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
-							<g:Label text="Unassigned Logical Networks" styleName="{style.title}" />
-							<p:UnassignedNetworksPanel ui:field="networkList"/>
+							<g:Label text="{constants.unassignedLogicalNetworks}" styleName="{style.unassignedtitle}" />
+							<g:ScrollPanel height="370px">
+								<p:UnassignedNetworksPanel ui:field="networkList"/>
+							</g:ScrollPanel>
 						</g:VerticalPanel>
 					</g:Cell>
 				</g:HorizontalPanel>
-				<g:VerticalPanel>
+				<g:VerticalPanel styleName="{style.checkBoxesPanel}" >
 					<ce:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
 					<ce:EntityModelCheckBoxEditor ui:field="commitChanges" />
 				</g:VerticalPanel>

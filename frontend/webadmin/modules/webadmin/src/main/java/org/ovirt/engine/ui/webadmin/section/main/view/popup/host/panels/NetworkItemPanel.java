@@ -50,7 +50,7 @@ public abstract class NetworkItemPanel extends DnDPanel {
     public NetworkItemPanel(NetworkItemModel<?> item, NetworkPanelsStyle style, Boolean draggable) {
         super(draggable);
         dragImage.setVisible(false);
-        Image editImage = new Image(resources.nicEdit());
+        Image editImage = new Image(resources.editHover());
         actionButton = new PushButton(editImage, new ClickHandler() {
 
             @Override
@@ -59,8 +59,9 @@ public abstract class NetworkItemPanel extends DnDPanel {
                 NetworkItemPanel.this.onAction();
             }
         });
+        actionButton.getDownFace().setImage(new Image(resources.editMouseDown()));
         actionButton.setPixelSize(editImage.getWidth(), editImage.getHeight());
-        actionButton.getElement().addClassName(style.actionButton());
+        actionButton.setStyleName(style.actionButton());
         actionButton.setVisible(false);
 
         this.item = item;

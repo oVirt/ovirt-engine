@@ -248,6 +248,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<L
         if (!value && clusterNetworkManageModel.isDisplayNetwork()) {
             clusterNetworkManageModel.setDisplayNetwork(false);
         }
+        if (!value && clusterNetworkManageModel.isRequired()) {
+            clusterNetworkManageModel.setRequired(false);
+        }
     }
 
     private boolean canEditAssign(EntityModel model) {

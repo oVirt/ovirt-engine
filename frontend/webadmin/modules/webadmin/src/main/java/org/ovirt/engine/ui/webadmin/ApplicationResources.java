@@ -302,8 +302,11 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/nic_up.png")
     ImageResource nicUp();
 
-    @Source("images/network/nic_edit.png")
-    ImageResource nicEdit();
+    @Source("images/network/edit_hover.png")
+    ImageResource editHover();
+
+    @Source("images/network/edit_mousedown.png")
+    ImageResource editMouseDown();
 
     @Source("images/network/nic_icon.png")
     ImageResource nicIcon();

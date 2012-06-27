@@ -2035,6 +2035,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Reset All")
     String resetAllVolumeParameter();
 
+    @DefaultStringValue("Interfaces")
+    String interfaces();
+
+    @DefaultStringValue("Assigned Logical Networks")
+    String assignedLogicalNetworks();
+
+    @DefaultStringValue("Unassigned Logical Networks")
+    String unassignedLogicalNetworks();
+
     // Brick
     @DefaultStringValue("Status")
     String statusBrick();

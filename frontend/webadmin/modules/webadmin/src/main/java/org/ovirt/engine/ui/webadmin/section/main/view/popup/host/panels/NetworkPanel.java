@@ -41,8 +41,14 @@ public class NetworkPanel extends NetworkItemPanel {
         if (network.isManagement()){
             mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
         }
-        monitorImage.setStylePrimaryName(style.networkImageBorder());
-        vmImage.setStylePrimaryName(style.networkImageBorder());
+
+        if (network.getEntity().isVmNetwork()){
+            vmImage.setStylePrimaryName(style.networkImageBorder());
+        }
+
+        if (network.getEntity().getis_display()){
+            monitorImage.setStylePrimaryName(style.networkImageBorder());
+        }
 
         rowPanel.setWidget(0, 0, dragImage);
 
