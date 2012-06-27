@@ -594,6 +594,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 if (getParameters().isImportAsNewEntity()) {
                     disk.setId(Guid.NewGuid());
                     disk.setImageId(Guid.NewGuid());
+                    for (int i = 0; i < list.size() - 1; i++) {
+                        list.get(i).setId(disk.getId());
+                        list.get(i).setvm_guid(getVmId());
+                    }
                 }
                 disk.setvm_guid(getVmId());
                 disk.setcreation_date(new Date());
