@@ -30,4 +30,8 @@ public interface NetworkPanelsStyle extends CssResource {
     String statusLabel();
 
     String checkCon();
+
+    String requiredTitlePanel();
+
+    String requiredLabel();
 }

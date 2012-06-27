@@ -1446,6 +1446,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Required")
     String requiredNetwork();
 
+    @DefaultStringValue("Non Required")
+    String nonRequiredNetwork();
+
     @DefaultStringValue("VM Network")
     String vmNetwork();
 

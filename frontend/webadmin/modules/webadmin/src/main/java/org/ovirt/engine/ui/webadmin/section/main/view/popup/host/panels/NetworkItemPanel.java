@@ -38,6 +38,7 @@ public abstract class NetworkItemPanel extends DnDPanel {
     final Image dragImage = new Image(resources.itemDraggable());
     final PushButton actionButton;
     final NetworkItemModel<?> item;
+
     final protected NetworkPanelsStyle style;
     protected NetworkItemPanel parentPanel;
     private MenuBar menu;
@@ -202,5 +203,9 @@ public abstract class NetworkItemPanel extends DnDPanel {
     private MenuBar subMenu() {
         MenuBar menuBar = new MenuBar(true);
         return menuBar;
+    }
+
+    public NetworkItemModel<?> getItem() {
+        return item;
     }
 }
