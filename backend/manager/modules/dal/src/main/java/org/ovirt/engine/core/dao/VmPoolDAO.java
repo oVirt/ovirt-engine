@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
@@ -101,16 +100,6 @@ public interface VmPoolDAO extends DAO, SearchDAO<vm_pools> {
     void addVmToPool(vm_pool_map map);
 
     List<vm_pool_map> getVmPoolsMapByVmPoolId(NGuid vmPoolId);
-
-    time_lease_vm_pool_map getTimeLeasedVmPoolMapByIdForVmPool(Guid id, NGuid vmPoolId);
-
-    void addTimeLeasedVmPoolMap(time_lease_vm_pool_map map);
-
-    void updateTimeLeasedVmPoolMap(time_lease_vm_pool_map map);
-
-    void removeTimeLeasedVmPoolMap(Guid id, Guid vmPoolId);
-
-    List<time_lease_vm_pool_map> getAllTimeLeasedVmPoolMaps();
 
     /**
      * Gets the maps of the given pool, for the Vms that are in the given status

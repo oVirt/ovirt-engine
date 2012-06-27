@@ -1,0 +1,2 @@
+ALTER TABLE time_lease_vm_pool_map drop CONSTRAINT pk_time_user_vm_pool_map;
+drop table time_lease_vm_pool_map cascade;

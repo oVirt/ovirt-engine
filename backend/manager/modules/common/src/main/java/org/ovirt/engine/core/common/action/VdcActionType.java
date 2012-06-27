@@ -127,10 +127,6 @@ public enum VdcActionType {
     DetachUserFromVmFromPool(312),
     AddVmToPool(313),
     RemoveVmFromPool(314, ActionGroup.EDIT_VM_POOL_CONFIGURATION, false),
-    // TODO: old implementation of TimeLeasedPools
-    // AttachUserToTimeLeasedPool(315),
-    // DetachUserFromTimeLeasedPool(316),
-    // UpdateUserToTimeLeasedPool(317),
     AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS),
     // UserAndGroupsCommands
     SetUserRole(405),
@@ -139,10 +135,6 @@ public enum VdcActionType {
     LogoutUser(408, false),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false),
     SetAdGroupRole(410),
-    // TODO: old implementation of TimeLeasedPools
-    // AttachAdGroupTimeLeasedPool(412),
-    // UpdateAdGroupTimeLeasedPool(413),
-    // DetachAdGroupFromTimeLeasedPool(414),
     RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS, false),
     ChangeUserPassword(416),
     CreateComputerAccount(417),

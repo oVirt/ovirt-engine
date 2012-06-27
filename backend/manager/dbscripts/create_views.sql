@@ -646,10 +646,9 @@ storage_pool_iso_map ON storage_pool_iso_map.storage_pool_id = storage_pool.id;
 
 CREATE OR REPLACE VIEW users_and_groups_to_vm_pool_map_view
 AS
-select	p.vm_pool_id as vm_pool_id, p.vm_pool_name as vm_pool_name, per.ad_element_id as user_id, tMap.start_time as "from", tMap.end_time as "to"
+select	p.vm_pool_id as vm_pool_id, p.vm_pool_name as vm_pool_name, per.ad_element_id as user_id
 FROM    vm_pools AS p
-INNER JOIN permissions as per on per.object_id = p.vm_pool_id
-left outer JOIN time_lease_vm_pool_map as tMap on tMap.vm_pool_id = p.vm_pool_id;
+INNER JOIN permissions as per on per.object_id = p.vm_pool_id;
 
 
 

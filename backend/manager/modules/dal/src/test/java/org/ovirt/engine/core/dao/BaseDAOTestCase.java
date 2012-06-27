@@ -59,7 +59,6 @@ import org.ovirt.engine.core.common.businessentities.tags_user_map;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
-import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.vm_template_image_map;
@@ -235,7 +234,6 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(tags_vds_map.class)
                             .addAnnotatedClass(tags_vm_map.class)
                             .addAnnotatedClass(tags_vm_pool_map.class)
-                            .addAnnotatedClass(time_lease_vm_pool_map.class)
                             .addAnnotatedClass(user_sessions.class)
                             .addAnnotatedClass(VdcOption.class)
                             .addAnnotatedClass(VdsDynamic.class)

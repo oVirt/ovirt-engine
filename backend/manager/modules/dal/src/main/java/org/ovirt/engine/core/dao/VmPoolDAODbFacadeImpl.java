@@ -8,12 +8,10 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.VmDAODbFacadeImpl.VMRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -153,55 +151,6 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public time_lease_vm_pool_map getTimeLeasedVmPoolMapByIdForVmPool(Guid id, NGuid vmPoolId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("id", id).addValue(
-                "vm_pool_id", vmPoolId);
-
-        return getCallsHandler().executeRead("Gettime_lease_vm_pool_mapByidAndByvm_pool_id",
-                TimeLeaseVmPoolRowMapper.instance,
-                parameterSource);
-    }
-
-    @Override
-    public void addTimeLeasedVmPoolMap(time_lease_vm_pool_map map) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("end_time", map.getend_time())
-                .addValue("id", map.getid())
-                .addValue("start_time", map.getstart_time())
-                .addValue("type", map.gettype())
-                .addValue("vm_pool_id", map.getvm_pool_id());
-
-        getCallsHandler().executeModification("Inserttime_lease_vm_pool_map", parameterSource);
-    }
-
-    @Override
-    public void updateTimeLeasedVmPoolMap(time_lease_vm_pool_map map) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("end_time",
-                map.getend_time()).addValue("id", map.getid()).addValue("start_time", map.getstart_time()).addValue(
-                "type", map.gettype()).addValue("vm_pool_id", map.getvm_pool_id());
-
-        getCallsHandler().executeModification("Updatetime_lease_vm_pool_map", parameterSource);
-
-    }
-
-    @Override
-    public void removeTimeLeasedVmPoolMap(Guid id, Guid vmPoolId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("id", id).addValue(
-                "vm_pool_id", vmPoolId);
-
-        getCallsHandler().executeModification("Deletetime_lease_vm_pool_map", parameterSource);
-    }
-
-    @Override
-    public List<time_lease_vm_pool_map> getAllTimeLeasedVmPoolMaps() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        return getCallsHandler().executeReadList("GetAllFromtime_lease_vm_pool_map",
-                TimeLeaseVmPoolRowMapper.instance,
-                parameterSource);
-    }
-
-    @Override
     public List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status",
@@ -263,21 +212,6 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             entity.setvds_group_id(Guid.createGuidFromString(rs
                     .getString("vds_group_id")));
             entity.setvds_group_name(rs.getString("vds_group_name"));
-            return entity;
-        }
-    }
-
-    private static class TimeLeaseVmPoolRowMapper implements ParameterizedRowMapper<time_lease_vm_pool_map> {
-        public final static TimeLeaseVmPoolRowMapper instance = new TimeLeaseVmPoolRowMapper();
-
-        @Override
-        public time_lease_vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-            time_lease_vm_pool_map entity = new time_lease_vm_pool_map();
-            entity.setend_time(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
-            entity.setid(Guid.createGuidFromString(rs.getString("id")));
-            entity.setstart_time(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
-            entity.settype(rs.getInt("type"));
-            entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
             return entity;
         }
     }

@@ -13,19 +13,15 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
-import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
-import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map_id;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.core.dao.vmpools.TimeLeaseVmPoolMapDAOHibernateImpl;
 import org.ovirt.engine.core.dao.vmpools.VmPoolMapDAOHibernateImpl;
 
 public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid> implements VmPoolDAO {
     private VmPoolMapDAOHibernateImpl vmPoolMapDAO = new VmPoolMapDAOHibernateImpl();
-    private TimeLeaseVmPoolMapDAOHibernateImpl timeLeaseVmPoolDAO = new TimeLeaseVmPoolMapDAOHibernateImpl();
 
     public VmPoolDAOHibernateImpl() {
         super(vm_pools.class);
@@ -42,7 +38,6 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
         super.setSession(session);
 
         vmPoolMapDAO.setSession(session);
-        timeLeaseVmPoolDAO.setSession(session);
     }
 
     @Override
@@ -126,31 +121,6 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
     @Override
     public List<vm_pool_map> getVmPoolsMapByVmPoolId(NGuid vmPoolId) {
         return vmPoolMapDAO.getVmPoolsMapByVmPoolId(vmPoolId);
-    }
-
-    @Override
-    public time_lease_vm_pool_map getTimeLeasedVmPoolMapByIdForVmPool(Guid id, NGuid vmPoolId) {
-        return timeLeaseVmPoolDAO.get(new time_lease_vm_pool_map_id(id, new Guid(vmPoolId.getUuid())));
-    }
-
-    @Override
-    public void addTimeLeasedVmPoolMap(time_lease_vm_pool_map map) {
-        timeLeaseVmPoolDAO.save(map);
-    }
-
-    @Override
-    public void updateTimeLeasedVmPoolMap(time_lease_vm_pool_map map) {
-        timeLeaseVmPoolDAO.update(map);
-    }
-
-    @Override
-    public void removeTimeLeasedVmPoolMap(Guid id, Guid vmPoolId) {
-        timeLeaseVmPoolDAO.remove(new time_lease_vm_pool_map_id(id, vmPoolId));
-    }
-
-    @Override
-    public List<time_lease_vm_pool_map> getAllTimeLeasedVmPoolMaps() {
-        return timeLeaseVmPoolDAO.getAll();
     }
 
     @Override
