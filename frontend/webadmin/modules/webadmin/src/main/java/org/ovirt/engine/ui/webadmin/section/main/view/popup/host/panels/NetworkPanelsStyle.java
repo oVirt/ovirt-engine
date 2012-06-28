@@ -31,6 +31,8 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String checkCon();
 
+    String commitChanges();
+
     String requiredTitlePanel();
 
     String requiredLabel();

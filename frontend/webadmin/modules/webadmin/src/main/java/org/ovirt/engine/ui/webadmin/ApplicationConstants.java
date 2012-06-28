@@ -2019,6 +2019,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("No Valid Action")
     String noValidActionSetupNetwork();
 
+
+    @DefaultStringValue("Check this checkbox to ensure you won't lose connectivity to the engine.")
+    String checkConnectivityInfoPart1();
+
+    @DefaultStringValue("If after changing the networks configuration the connectivity from the Host to the Engine is lost, changes are rolled back .")
+    String checkConnectivityInfoPart2();
+
+    @DefaultStringValue("Changes done to the Networking configuration are temporary until explicitly saved.")
+    String commitChangesInfoPart1();
+
+    @DefaultStringValue("Check the check-box to make the changes persistent")
+    String commitChangesInfoPart2();
+
     // Volume parameter
     @DefaultStringValue("Option Key")
     String optionKeyVolumeParameter();

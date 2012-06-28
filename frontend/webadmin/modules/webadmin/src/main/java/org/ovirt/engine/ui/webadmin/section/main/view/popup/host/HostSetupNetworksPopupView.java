@@ -19,8 +19,10 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCadidateEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InfoIcon;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkGroup;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle;
@@ -70,18 +72,27 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @Path(value = "commitChanges.entity")
     EntityModelCheckBoxEditor commitChanges;
 
+    @UiField(provided = true)
+    InfoIcon checkConnInfo;
+
+    @UiField(provided = true)
+    InfoIcon commitChangesInfo;
+
     private boolean rendered = false;
 
     @Inject
-    public HostSetupNetworksPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public HostSetupNetworksPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         status = new StatusLabel(EMPTY_STATUS);
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkList = new UnassignedNetworksPanel();
+        checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()));
+        commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         status.setStylePrimaryName(style.statusLabel());
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
+        commitChanges.setContentWidgetStyleName(style.commitChanges());
         initUnassignedNetworksPanel();
         localize();
         Driver.driver.initialize(this);
