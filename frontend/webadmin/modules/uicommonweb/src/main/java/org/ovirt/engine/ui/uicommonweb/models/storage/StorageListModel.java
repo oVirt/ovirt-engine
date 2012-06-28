@@ -29,10 +29,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.core.compat.ObservableCollection;
@@ -489,35 +486,20 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private void PrepareSanStorageForEdit(final SanStorageModel model)
+    private void PrepareSanStorageForEdit(SanStorageModel model)
     {
-        StorageModel storageModel = (StorageModel) getWindow();
-        storageModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PostPrepareSanStorageForEdit(model);
-            }
-        });
-    }
-
-    private void PostPrepareSanStorageForEdit(SanStorageModel model)
-    {
-        StorageModel storageModel = (StorageModel) getWindow();
         storage_domains storage = (storage_domains) getSelectedItem();
-        VDS host = (VDS) storageModel.getHost().getSelectedItem();
-
-        if (host == null) {
-            return;
-        }
 
         AsyncDataProvider.GetLunsByVgId(new AsyncQuery(model, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
+
                 SanStorageModel sanStorageModel = (SanStorageModel) target;
                 ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
                 sanStorageModel.ApplyData(lunList, true);
+
             }
-        }, model.getHash()), storage.getstorage(), host.getId());
+        }), storage.getstorage());
     }
 
     private void ImportDomain()
