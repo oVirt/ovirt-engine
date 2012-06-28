@@ -107,4 +107,11 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("{0} <span style='font-weight:bold;'>{1}</span> {2}")
     SafeHtml middleBold(String start, String middle, String end);
 
+    @Template("<span><span style='position: relative; margin-left: 20px; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
+            + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
+    SafeHtml imageTextSetupNetworkUsage(SafeHtml image, String text);
+
+    @Template("<div style='font-weight:bold; border-bottom-style:solid; border-bottom-width:1px; border-top-style:solid; border-top-width:1px; width:100%;'>{0}</div> ")
+    SafeHtml titleSetupNetworkTooltip(String title);
+
 }

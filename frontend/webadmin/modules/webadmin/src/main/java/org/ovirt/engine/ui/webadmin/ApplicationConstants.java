@@ -1883,17 +1883,20 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameItemInfo();
 
-    @DefaultStringValue("Description")
-    String descriptionItemInfo();
+    @DefaultStringValue("Usage")
+    String usageItemInfo();
 
-    @DefaultStringValue("VLan")
-    String VLanItemInfo();
+    @DefaultStringValue("VM")
+    String vmItemInfo();
 
     @DefaultStringValue("Display")
     String displayItemInfo();
 
     @DefaultStringValue("Management")
     String managementItemInfo();
+
+    @DefaultStringValue("MTU")
+    String mtuItemInfo();
 
     @DefaultStringValue("Boot Protocol")
     String bootProtocolItemInfo();
