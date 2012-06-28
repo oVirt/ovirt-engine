@@ -248,6 +248,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         };
         internalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable());
 
+        TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
+            @Override
+            public String getValue(EntityModel object) {
+                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
+                return diskImage.getDiskDescription();
+            }
+        };
+        internalDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable());
+
         TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
@@ -307,6 +316,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         };
         externalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable());
 
+        TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
+            @Override
+            public String getValue(EntityModel object) {
+                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
+                return disk.getDiskDescription();
+            }
+        };
+        externalDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable());
+
         TextColumnWithTooltip<EntityModel> lunIdColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
@@ -332,7 +350,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return (long) disk.getLun().getDeviceSize();
             }
         };
-        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage());
+        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage(), "60px");
 
         TextColumnWithTooltip<EntityModel> pathColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -341,7 +359,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return String.valueOf(disk.getLun().getPathCount());
             }
         };
-        externalDiskTable.addColumn(pathColumn, constants.pathSanStorage());
+        externalDiskTable.addColumn(pathColumn, constants.pathSanStorage(), "40px");
 
         TextColumnWithTooltip<EntityModel> vendorIdColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override

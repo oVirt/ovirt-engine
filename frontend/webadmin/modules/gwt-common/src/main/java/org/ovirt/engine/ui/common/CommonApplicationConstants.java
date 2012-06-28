@@ -723,6 +723,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Alias")
     String aliasVmDiskTable();
 
+    @DefaultStringValue("Description")
+    String descriptionVmDiskTable();
+
     @DefaultStringValue("ID")
     String idVmDiskTable();
 
