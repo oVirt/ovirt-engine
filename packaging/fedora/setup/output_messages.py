@@ -19,14 +19,13 @@ import basedefs
 #####################
 
 #Global parameters
-MY_NAME="oVirt Engine"
 CONST_CLEANUP="engine-cleanup"
 CONST_SETUP="engine-setup"
 CONST_MANAGE_DOMAINS="engine-manage-domains"
 
 #main
-INFO_HEADER="Welcome to %s setup utility" % MY_NAME
-INFO_INSTALL_SUCCESS="\n **** Installation completed successfully ******\n\n     (Please allow %s a few moments to start up.....)\n" % MY_NAME
+INFO_HEADER="Welcome to %s setup utility" % basedefs.APP_NAME
+INFO_INSTALL_SUCCESS="\n **** Installation completed successfully ******\n\n     (Please allow %s a few moments to start up.....)\n" % basedefs.APP_NAME
 INFO_INSTALL="Installing:"
 INFO_SET_DB_SECURITY="Setting Database Security"
 INFO_SET_DB_CONFIGURATION="Setting Database Configuration"
@@ -37,13 +36,13 @@ INFO_CREATE_DB="Creating Database"
 INFO_UPGRADE_DB="Upgrading Database Schema"
 INFO_UPD_DC_TYPE="Updating the Default Data Center Storage Type"
 INFO_UPD_JBOSS_CONF="Editing JBoss Configuration"
-INFO_UPD_RHEVM_CONF="Editing %s Configuration" % MY_NAME
+INFO_UPD_RHEVM_CONF="Editing %s Configuration" % basedefs.APP_NAME
 INFO_UPD_CONF="Editing %s Configuration"
 INFO_CFG_NFS="Configuring the Default ISO Domain"
 INFO_START_JBOSS="Starting JBoss Service"
 INFO_START_HTTPD="Starting HTTPD Service"
 INFO_CFG_IPTABLES="Configuring Firewall (iptables)"
-INFO_DSPLY_PARAMS="\n%s will be installed using the following configuration:" % MY_NAME
+INFO_DSPLY_PARAMS="\n%s will be installed using the following configuration:" % basedefs.APP_NAME
 INFO_USE_PARAMS="Proceed with the configuration listed above"
 INFO_NEED_STOP_JBOSS="\nIn order to proceed the installer must stop the JBoss service"
 INFO_Q_STOP_JBOSS="Would you like to stop the JBoss service"
@@ -51,9 +50,9 @@ INFO_PROCEED="Would you like to proceed"
 INFO_STOP_JBOSS="Stopping JBoss..."
 INFO_STOP_INSTALL_EXIT="Installation stopped, Goodbye."
 INFO_CLOSE_PORTS="Please verify that the specified ports are not used by any service on this host and run setup again"
-INFO_LOGIN_USER="Please use the user \"admin\" and password specified in order to login into %s" % MY_NAME
+INFO_LOGIN_USER="Please use the user \"admin\" and password specified in order to login into %s" % basedefs.APP_NAME
 INFO_ADD_USERS="To configure additional users, first configure authentication domains using the '%s' utility" % CONST_MANAGE_DOMAINS
-WARN_SECOND_RUN="\nWARNING: %s setup has already been run on this host.\nTo remove all configuration and reset %s please run %s.\nPlease be advised that executing %s without cleanup is not supported." % (MY_NAME, MY_NAME, CONST_CLEANUP, CONST_SETUP)
+WARN_SECOND_RUN="\nWARNING: %s setup has already been run on this host.\nTo remove all configuration and reset %s please run %s.\nPlease be advised that executing %s without cleanup is not supported." % (basedefs.APP_NAME, basedefs.APP_NAME, CONST_CLEANUP, CONST_SETUP)
 
 #runFunction
 INFO_DONE="DONE"
@@ -69,7 +68,7 @@ INFO_GRP_IPTABLES="Firewall related parameters"
 
 #_addFinalInfoMsg
 INFO_LOG_FILE_PATH="The installation log file is available at: %s"
-INFO_RHEVM_URL="To access "+MY_NAME+" please go to the following URL: %s"
+INFO_RHEVM_URL="To access "+basedefs.APP_NAME+" please go to the following URL: %s"
 
 #_printAdditionalMessages
 INFO_ADDTIONAL_MSG="Additional information:"
@@ -82,7 +81,7 @@ INFO_DB_RESTORED="Database upgrade failed. Previous database has been restored"
 #config ip tables
 INFO_IPTABLES_FILE="an example of the required configuration for iptables can be found at: %s"
 # the last 2 ports are http & https entered by the user
-INFO_IPTABLES_PORTS=MY_NAME + " requires the following TCP/IP Incoming ports to be opened on the firewall:\n\
+INFO_IPTABLES_PORTS=basedefs.APP_NAME + " requires the following TCP/IP Incoming ports to be opened on the firewall:\n\
 22, 8006, 8007, 8008, %s, %s "
 INFO_IPTABLES_BACKUP_FILE="The firewall has been updated, the old iptables configuration file was saved to %s"
 
@@ -176,7 +175,7 @@ INFO_VAL_ORG_NAME_ILLEGAL_CHARS="Error: organization name can't contain ',', '%'
 #iso domain warning
 WARN_ISO_DOMAIN_SECURITY="A default ISO share has been created on this host.\n\
    If IP based access restrictions are required, please edit %s entry in /etc/exports"
-WARN_LOW_MEMORY="There is less than %s GB of available free memory on this machine.\nIt is  recommended to have at least %s GB of available memory to run the %s." % (basedefs.CONST_WARN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB, MY_NAME)
+WARN_LOW_MEMORY="There is less than %s GB of available free memory on this machine.\nIt is  recommended to have at least %s GB of available memory to run the %s." % (basedefs.CONST_WARN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB, basedefs.APP_NAME)
 
 WARN_WEAK_PASS="Warning: Weak Password."
 

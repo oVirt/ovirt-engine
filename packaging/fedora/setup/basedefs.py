@@ -3,6 +3,7 @@ provides all the predefined variables for engine-setup
 """
 import os
 
+APP_NAME="oVirt Engine"
 DB_ADMIN="postgres"
 DB_NAME="engine"
 DB_POSTGRES = "postgres"
