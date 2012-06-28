@@ -7,21 +7,26 @@ import org.junit.Test;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDisksResourceTest
         extends AbstractBackendDisksResourceTest<BackendVmDisksResource> {
+
+    private static final Guid DISK_ID = GUIDS[0];
 
     public BackendVmDisksResourceTest() {
         super(new BackendVmDisksResource(PARENT_ID,
@@ -106,6 +111,36 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddAsyncFinished() throws Exception {
         doTestAddAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
+    }
+
+    @Test
+    public void testAttachDisk() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpActionExpectations (VdcActionType.AttachDiskToVm,
+                AttachDettachVmDiskParameters.class,
+                new String[] { "VmId", "EntityId" },
+                new Object[] { PARENT_ID, DISK_ID },
+                true,
+                true);
+        Disk model = getModel(0);
+        model.setId(DISK_ID.toString()); //means this is an existing disk --> attach
+        model.setSize(1024 * 1024L);
+        Response response = collection.add(model);
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void testDetachDisk() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.DetachDiskFromVm,
+                                           AttachDettachVmDiskParameters.class,
+                                           new String[] { "VmId", "EntityId" },
+                                           new Object[] { PARENT_ID, DISK_ID },
+                                           true,
+                                           true));
+        Action action = new Action();
+        action.setDetach(true);
+        verifyRemove(collection.remove(DISK_ID.toString(), action));
     }
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
