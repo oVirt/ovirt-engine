@@ -79,6 +79,12 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__USER);
+    }
+
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         // Not needed for admin operations.
         return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,

@@ -123,7 +123,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove a User that is attached to a VM. Remove VM from VMs tab first.")
     String USER_CANNOT_REMOVE_USER_DETECTED_RUNNING_VM();
 
-    @DefaultStringValue("Cannot ${action} ${type}.User is currently logged in.")
+    @DefaultStringValue("Cannot ${action} ${type}. User is currently logged in.")
     String USER_CANNOT_REMOVE_HIMSELF();
 
     @DefaultStringValue("Failed to get User data from Directory Server.")
@@ -548,6 +548,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$type User to VM")
     String VAR__TYPE__USER_FROM_VM();
+
+    @DefaultStringValue("$type User")
+    String VAR__TYPE__USER();
 
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
