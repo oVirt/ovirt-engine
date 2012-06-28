@@ -103,6 +103,7 @@ import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.api.resource.PermitsResource;
+import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.SnapshotResource;
@@ -196,6 +197,7 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(DiskResource.class, DisksResource.class);
         map.add(VmDiskResource.class, VmDisksResource.class, VM.class);
+        map.add(ReadOnlyDeviceResource.class, TemplateDisksResource.class, Template.class);
         TYPES.put(Disk.class, map);
 
         map = new ParentToCollectionMap(HostResource.class, HostsResource.class);

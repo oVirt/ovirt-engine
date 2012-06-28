@@ -25,8 +25,10 @@ public class BackendReadOnlyDisksResource
     public Disks list() {
         GetStorageDomainsByVmTemplateIdQueryParameters queryParams = new GetStorageDomainsByVmTemplateIdQueryParameters(parentId);
         List<storage_domains> storageDomains = getBackendCollection(storage_domains.class, VdcQueryType.GetStorageDomainsByVmTemplateId, queryParams);
-        Disks disks = mapCollection(getBackendCollection(queryType, queryParams));
+        List<org.ovirt.engine.core.common.businessentities.Disk> backendCollection = getBackendCollection(queryType, queryParams);
+        Disks disks = mapCollection(backendCollection, false);
         for (Disk disk : disks.getDisks()) {
+            disk.setVm(null);
             if (disk.isSetStorageDomains()) {
                 disk.getStorageDomains().getStorageDomains().clear();
             } else {
@@ -37,6 +39,7 @@ public class BackendReadOnlyDisksResource
                 storageDomain.setId(sd.getId().toString());
                 disk.getStorageDomains().getStorageDomains().add(storageDomain);
             }
+            addLinks(disk);
         }
         return disks;
     }

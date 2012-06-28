@@ -5,6 +5,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -47,4 +48,11 @@ public class BackendTemplateDisksResource
         return inject(new BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>(modelType, entityType, asGuidOr404(id), this));
     }
 
+    @Override
+    public Disk addParents(Disk disk) {
+        // REVISIT: when code refactored in ancestor, won't have to override here
+        disk.setTemplate(new Template());
+        disk.getTemplate().setId(parentId.toString());
+        return disk;
+    }
 }

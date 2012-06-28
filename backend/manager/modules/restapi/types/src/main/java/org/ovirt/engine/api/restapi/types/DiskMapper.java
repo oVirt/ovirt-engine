@@ -121,7 +121,7 @@ public class DiskMapper {
     public static Disk map(org.ovirt.engine.core.common.businessentities.Disk entity, Disk template) {
         Disk model = template != null ? template : new Disk();
         model.setName(entity.getDiskAlias());
-        if (!Guid.Empty.equals(entity.getvm_guid())) {
+        if (entity.getvm_guid()!=null && !Guid.Empty.equals(entity.getvm_guid())) {
             model.setVm(new VM());
             model.getVm().setId(entity.getvm_guid().toString());
         }

@@ -132,8 +132,6 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
 
     static void verifyModelSpecific(Disk model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
-        assertTrue(model.isSetVm());
-        assertEquals(PARENT_ID.toString(), model.getVm().getId());
         assertTrue(model.isSparse());
         assertTrue(!model.isBootable());
         assertTrue(model.isPropagateErrors());
