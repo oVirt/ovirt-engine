@@ -121,4 +121,76 @@
     <url-pattern>/docs/*</url-pattern>
   </servlet-mapping>
 
+  <!-- SpiceX.cab -->
+  <servlet>
+    <servlet-name>SpiceX.cab</servlet-name>
+    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
+    <init-param>
+      <param-name>type</param-name>
+      <param-value>application/octet-stream</param-value>
+    </init-param>
+    <init-param>
+      <param-name>file</param-name>
+      <param-value>/usr/share/spice/SpiceX.cab</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpiceX.cab</servlet-name>
+    <url-pattern>/spice/SpiceX.cab</url-pattern>
+  </servlet-mapping>
+
+  <!-- SpiceVersion.txt -->
+  <servlet>
+    <servlet-name>SpiceVersion.txt</servlet-name>
+    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
+    <init-param>
+      <param-name>type</param-name>
+      <param-value>text/plain</param-value>
+    </init-param>
+    <init-param>
+      <param-name>file</param-name>
+      <param-value>/usr/share/spice/SpiceVersion.txt</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpiceVersion.txt</servlet-name>
+    <url-pattern>/spice/SpiceVersion.txt</url-pattern>
+  </servlet-mapping>
+
+  <!-- SpiceX_x64.cab -->
+  <servlet>
+    <servlet-name>SpiceX_x64.cab</servlet-name>
+    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
+    <init-param>
+      <param-name>type</param-name>
+      <param-value>application/octet-stream</param-value>
+    </init-param>
+    <init-param>
+      <param-name>file</param-name>
+      <param-value>/usr/share/spice/SpiceX_x64.cab</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpiceX_x64.cab</servlet-name>
+    <url-pattern>/spice/SpiceX_x64.cab</url-pattern>
+  </servlet-mapping>
+
+  <!-- SpiceVersion_x64.txt -->
+  <servlet>
+    <servlet-name>SpiceVersion_x64.txt</servlet-name>
+    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
+    <init-param>
+      <param-name>type</param-name>
+      <param-value>text/plain</param-value>
+    </init-param>
+    <init-param>
+      <param-name>file</param-name>
+      <param-value>/usr/share/spice/SpiceVersion_x64.txt</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpiceVersion_x64.txt</servlet-name>
+    <url-pattern>/spice/SpiceVersion_x64.txt</url-pattern>
+  </servlet-mapping>
+
 </web-app>

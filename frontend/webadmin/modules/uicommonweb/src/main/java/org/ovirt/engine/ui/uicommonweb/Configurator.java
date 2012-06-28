@@ -25,11 +25,6 @@ public abstract class Configurator {
 
     private static final String DOCUMENTATION_LIB_PATH = "html/"; //$NON-NLS-1$
 
-    // Temporarily save the locations of webadmin and userportal.
-    // TODO: create a new SPICE RPM for webadmin
-    public static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/"; //$NON-NLS-1$
-    public static final String USERPORTAL_ROOT_FOLDER = "/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/"; //$NON-NLS-1$
-
     private static String documentationLangPath;
 
     public static String getDocumentationLangPath() {
@@ -289,8 +284,30 @@ public abstract class Configurator {
         }
     }
 
+    /**
+     * Calculates the root URL of the server from where the application was
+     * downloaded. For example, if the URL is
+     * <code>http://www.example.com:8080/foo/bar</code> it will return
+     * <code>http://www.example.com:8080</code>.
+     *
+     * @return the root URL of the server
+     */
+    public static String getRootURL() {
+        String moduleURL = GWT.getModuleBaseURL();
+        String separator = "://"; //$NON-NLS-1$
+        int index = moduleURL.indexOf(separator);
+        if (index == -1) {
+            throw new RuntimeException();
+        }
+        index = moduleURL.indexOf("/", index + separator.length()); //$NON-NLS-1$
+        if (index == -1) {
+            return moduleURL;
+        }
+        return moduleURL.substring(0, index);
+    }
+
     public static String getSpiceBaseURL() {
-        return GWT.getModuleBaseURL().replace(WEBADMIN_ROOT_FOLDER, USERPORTAL_ROOT_FOLDER);
+        return getRootURL() + "/spice/"; //$NON-NLS-1$
     }
 
     public void Configure(ISpice spice) {

@@ -114,11 +114,6 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     @Override
-    protected String removeModulName(String moduleName) {
-        return moduleName.replace(USERPORTAL_ROOT_FOLDER, "") + "/"; //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    @Override
     protected String clientBrowserType() {
         return clientAgentType.browser;
     }

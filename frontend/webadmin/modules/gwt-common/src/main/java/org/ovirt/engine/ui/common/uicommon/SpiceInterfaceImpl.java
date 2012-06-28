@@ -12,8 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 
-import com.google.gwt.core.client.GWT;
-
 public class SpiceInterfaceImpl implements ISpice {
     private static Logger logger = Logger.getLogger(SpiceInterfaceImpl.class
             .getName());
@@ -61,7 +59,7 @@ public class SpiceInterfaceImpl implements ISpice {
     private List<WANDisableEffects> wanDisableEffects;
     private boolean wanOptionsEnabled;
     ClientAgentType cat = new ClientAgentType();
-    private String spiceBaseURL = GWT.getModuleBaseURL();
+    private String spiceBaseURL;
 
     public SpiceInterfaceImpl() {
         logger.severe("Instantiating GWT Spice Implementation"); //$NON-NLS-1$
