@@ -1439,4 +1439,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Console Options")
     String consoleOptions();
+
+    @DefaultStringValue("Can't save configuration - Management Network must be attached")
+    String mgmtNotAttachedToolTip();
 }

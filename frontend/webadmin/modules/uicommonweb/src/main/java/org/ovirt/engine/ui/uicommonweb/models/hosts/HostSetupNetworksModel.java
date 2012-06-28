@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -681,8 +681,10 @@ public class HostSetupNetworksModel extends EntityModel {
         LogicalNetworkModel mgmtNetwork = networkMap.get(HostInterfaceListModel.ENGINE_NETWORK_NAME);
         if (!mgmtNetwork.isAttached()) {
             okCommand.setIsExecutionAllowed(false);
+            okCommand.setTitle(ConstantsManager.getInstance().getConstants().mgmtNotAttachedToolTip());
         } else {
             okCommand.setIsExecutionAllowed(true);
+            okCommand.setTitle(null);
         }
     }
 
