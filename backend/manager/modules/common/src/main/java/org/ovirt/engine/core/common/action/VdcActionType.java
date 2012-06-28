@@ -241,7 +241,6 @@ public enum VdcActionType {
     Disks(1211),
 
     // Config
-    SetConfigurationValue(1300, ActionGroup.CONFIGURE_ENGINE),
     ReloadConfigurations(1301, ActionGroup.CONFIGURE_ENGINE, false),
 
     // Gluster
