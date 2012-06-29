@@ -770,7 +770,7 @@ public class ManageDomains {
                         passwords,
                         simpleDomains,
                         userIds,
-                ldapProviderType,
+                        ldapProviderType,
                         utilityConfiguration.getLocalHostEntry(),
                         isValidate);
 
