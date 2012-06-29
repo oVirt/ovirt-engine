@@ -407,7 +407,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     {
         ClusterModel model = (ClusterModel) getWindow();
 
-        boolean validateCpu = model.getIsNew() || ((VDSGroup) getSelectedItem()).getcpu_name() != null;
+        boolean validateCpu =
+                (model.getIsNew() && (Boolean) model.getEnableOvirtService().getEntity())
+                        || (model.getIsEdit() && ((VDSGroup) getSelectedItem()).getcpu_name() != null);
 
         if (!model.Validate(validateCpu))
         {

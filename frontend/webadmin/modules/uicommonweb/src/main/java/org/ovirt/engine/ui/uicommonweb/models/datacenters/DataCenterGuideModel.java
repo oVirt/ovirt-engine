@@ -1379,7 +1379,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        if (!model.Validate(true)) // Since it is a new cluster, we will do cpu validations
+        if (!model.Validate((Boolean) model.getEnableOvirtService().getEntity())) // CPU is mandatory only if the
+                                                                                  // cluster is virt enabled
         {
             return;
         }
@@ -1390,7 +1391,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         cluster.setname((String) model.getName().getEntity());
         cluster.setdescription((String) model.getDescription().getEntity());
         cluster.setstorage_pool_id(((storage_pool) model.getDataCenter().getSelectedItem()).getId());
-        cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
+        if (model.getCPU().getSelectedItem() != null)
+        {
+            cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
+        }
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
