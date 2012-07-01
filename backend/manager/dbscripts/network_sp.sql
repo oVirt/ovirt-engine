@@ -81,12 +81,11 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromnetwork() RETURNS SETOF network_view
+Create or replace FUNCTION GetAllFromnetwork() RETURNS SETOF network
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT
-   distinct network_view.*
-   FROM network_view;
+   RETURN QUERY SELECT *
+   FROM network;
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -95,11 +94,11 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetnetworkByid(v_id UUID) RETURNS SETOF network_view
+Create or replace FUNCTION GetnetworkByid(v_id UUID) RETURNS SETOF network
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
-   FROM network_view
+   FROM network
    WHERE id = v_id;
 
 END; $procedure$
@@ -111,11 +110,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetnetworkByName(v_networkName VARCHAR(50))
-RETURNS SETOF network_view 
+RETURNS SETOF network
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM network_view
+   FROM network
    WHERE name = v_networkName;
 
 END; $procedure$
@@ -126,15 +125,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllNetworkByStoragePoolId(v_id UUID)
-RETURNS SETOF network_view
+RETURNS SETOF network
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT
-distinct   network.id, network.name, network.description, network.type, network.addr, network.subnet, network.gateway,
-                      network.vlan_id, network.stp, network.storage_pool_id,network.vm_network, CAST(0 AS BOOLEAN) as is_display, 0 as status,
-		      network.mtu as mtu,
-                      network.required as required
-   FROM network_view network
+RETURN QUERY SELECT *
+   FROM network
    where storage_pool_id = v_id;
 
 END; $procedure$
@@ -152,26 +147,26 @@ RETURNS SETOF networkViewClusterType
 BEGIN
 RETURN QUERY SELECT
     DISTINCT
-    network_view.id,
-    network_view.name,
-    network_view.description,
-    network_view.type,
-    network_view.addr,
-    network_view.subnet,
-    network_view.gateway,
-    network_view.vlan_id,
-    network_view.stp,
-    network_view.storage_pool_id,
-    network_view.mtu,
-    network_view.vm_network,
+    network.id,
+    network.name,
+    network.description,
+    network.type,
+    network.addr,
+    network.subnet,
+    network.gateway,
+    network.vlan_id,
+    network.stp,
+    network.storage_pool_id,
+    network.mtu,
+    network.vm_network,
     network_cluster.network_id,
     network_cluster.cluster_id,
     network_cluster.status,
     network_cluster.is_display,
     network_cluster.required
-   FROM network_view
+   FROM network
    INNER JOIN network_cluster
-   ON network_view.id = network_cluster.network_id
+   ON network.id = network_cluster.network_id
    where network_cluster.cluster_id = v_id
   AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                     FROM   user_vds_groups_permissions_view

@@ -298,8 +298,8 @@ BEGIN
 	WHEN v_entity_type = 20 THEN -- VmInterface
 
         select into v_vm_interface_id, v_storage_pool_id
-               vm_interface.id, network_view.storage_pool_id
-               from vm_interface inner join network_view on vm_interface.network_name=network_view.name;
+               vm_interface.id, network.storage_pool_id
+               from vm_interface inner join network on vm_interface.network_name=network.name;
 
         RETURN QUERY
             SELECT system_root_id AS id

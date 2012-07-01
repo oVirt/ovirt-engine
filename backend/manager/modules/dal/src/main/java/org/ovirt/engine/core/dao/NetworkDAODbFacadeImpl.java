@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -64,7 +64,7 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     @Override
     public List<Network> getAllForCluster(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllNetworkByClusterId",
-                NetworkRowMapper.instance,
+                NetworkClusterRowMapper.INSTANCE,
                 getCustomMapSqlParameterSource()
                         .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
@@ -96,7 +96,23 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         return NetworkRowMapper.instance;
     }
 
-    private static final class NetworkRowMapper implements ParameterizedRowMapper<Network> {
+    private static final class NetworkClusterRowMapper extends NetworkRowMapper
+            implements ParameterizedRowMapper<Network> {
+        public final static NetworkClusterRowMapper INSTANCE = new NetworkClusterRowMapper();
+
+        @Override
+        public Network mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Network entity = super.mapRow(rs, rowNum);
+
+            entity.setis_display((Boolean) rs.getObject("is_display"));
+            entity.setRequired(rs.getBoolean("required"));
+            entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
+
+            return entity;
+        }
+    }
+
+    private static class NetworkRowMapper implements ParameterizedRowMapper<Network> {
         public final static NetworkRowMapper instance = new NetworkRowMapper();
 
         @Override
@@ -113,9 +129,6 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
             entity.setstp(rs.getBoolean("stp"));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                  .getString("storage_pool_id")));
-            entity.setis_display((Boolean) rs.getObject("is_display"));
-            entity.setRequired(rs.getBoolean("required"));
-            entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
             entity.setMtu(rs.getInt("mtu"));
             entity.setVmNetwork(rs.getBoolean("vm_network"));
 
