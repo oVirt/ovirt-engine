@@ -744,15 +744,14 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && items.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0 && isAllDown);
 
-        storage_pool storagePoolItem = (getSelectedItem() != null ? (storage_pool) getSelectedItem() : null);
+        storage_pool storagePoolItem = (storage_pool) getSelectedItem();
 
-        getForceRemoveCommand().setIsExecutionAllowed(storagePoolItem != null && items.size() == 1
-                && storagePoolItem.getstatus() != StoragePoolStatus.Up
-                && storagePoolItem.getstatus() != StoragePoolStatus.Contend
-                && storagePoolItem.getstatus() != StoragePoolStatus.Uninitialized);
+        getForceRemoveCommand().setIsExecutionAllowed(storagePoolItem != null
+            && items.size() == 1
+            && storagePoolItem.getstatus() != StoragePoolStatus.Up);
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
-                || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
+            || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
 
         getActivateCommand().setIsExecutionAllowed(items.size() > 0);
         if (getActivateCommand().getIsExecutionAllowed())
