@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-
+@LockIdNameAttribute
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
 
     public AddVmFromTemplateCommand(T parameters) {

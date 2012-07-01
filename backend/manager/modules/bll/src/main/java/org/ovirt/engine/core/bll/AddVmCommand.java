@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -60,6 +62,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.VMCustomProper
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
 @SuppressWarnings("serial")
+@LockIdNameAttribute
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T> {
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
@@ -489,6 +492,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     return null;
                 }
             });
+            freeLock();
 
             addVmPermission();
             if (AddVmImages()) {
@@ -763,5 +767,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void addActiveSnapshot() {
         _vmSnapshotId = Guid.NewGuid();
         new SnapshotsManager().addActiveSnapshot(_vmSnapshotId, getVm(), getCompensationContext());
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        if (!StringUtils.isBlank(getParameters().getVm().getvm_name())) {
+            return Collections.singletonMap(getParameters().getVm().getvm_name(), LockingGroup.VM_NAME.name());
+        }
+        return null;
     }
 }

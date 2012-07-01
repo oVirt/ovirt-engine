@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -39,6 +42,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
+@LockIdNameAttribute
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T> {
     private static final long serialVersionUID = -2444359305003244168L;
 
@@ -346,5 +350,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             super.setVmId(getParameters().getVmStaticData().getId());
         }
         return super.getVmId();
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        if (!StringUtils.isBlank(getParameters().getVm().getvm_name())) {
+            return Collections.singletonMap(getParameters().getVm().getvm_name(), LockingGroup.VM_NAME.name());
+        }
+        return null;
     }
 }

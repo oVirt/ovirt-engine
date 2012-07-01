@@ -25,6 +25,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+@LockIdNameAttribute
 public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> extends AddVmCommand<T> {
     public AddVmFromScratchCommand(T parameters) {
         super(parameters);
