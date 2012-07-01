@@ -130,9 +130,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Storage")
 	String storageTitle();
 
-	@DefaultStringValue("Storages")
-	String storagesTitle();
-
 	@DefaultStringValue("Detach Storage")
 	String detachStorageTitle();
 
