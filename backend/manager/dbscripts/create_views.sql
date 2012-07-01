@@ -138,7 +138,8 @@ SELECT storage_impl.*,
        bd.disk_alias,
        bd.disk_description,
        bd.shareable,
-       bd.allow_snapshot
+       bd.allow_snapshot,
+       bd.boot
 FROM
 (
     SELECT 0 AS disk_storage_type,
@@ -161,7 +162,6 @@ FROM
            volume_type,
            volume_format,
            image_group_id,
-           boot,
            description, -- Snapshot fields
            ParentId,
            app_list,
@@ -205,7 +205,6 @@ FROM
            null AS volume_type,
            null AS volume_format,
            dlm.disk_id AS image_group_id,
-           null AS boot,
            null AS description, -- Snapshot fields
            null AS ParentId,
            null AS app_list,
