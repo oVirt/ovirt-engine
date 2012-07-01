@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -43,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -64,7 +64,6 @@ import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.Path;
@@ -112,7 +111,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                                     .toString())
                                     : null;
             if (vdsId != null) {
-                _destinationVds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+                _destinationVds = getVdsDAO().get(vdsId);
             }
         }
         return _destinationVds;
@@ -120,11 +119,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     private void InitRunVmCommand() {
         RunVmParams runVmParameters = getParameters();
-        if (!StringHelper.isNullOrEmpty(runVmParameters.getDiskPath())) {
+        if (!StringUtils.isEmpty(runVmParameters.getDiskPath())) {
             _cdImagePath = ImagesHandler.cdPathWindowsToLinux(runVmParameters.getDiskPath(), getVm()
                     .getstorage_pool_id());
         }
-        if (!StringHelper.isNullOrEmpty(runVmParameters.getFloppyPath())) {
+        if (!StringUtils.isEmpty(runVmParameters.getFloppyPath())) {
             _floppyImagePath = ImagesHandler.cdPathWindowsToLinux(runVmParameters.getFloppyPath(), getVm()
                     .getstorage_pool_id());
         }
@@ -135,7 +134,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
             refreshBootParameters(runVmParameters);
             // set vm disks
-            VmHandler.updateDisksForVm(getVm(), DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getId()));
+            VmHandler.updateDisksForVm(getVm(), getDiskDAO().getAllForVm(getVm().getId()));
         }
     }
 
@@ -148,19 +147,19 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         // if not run once then use default boot sequence
         refreshBootSequenceParameter(runVmParameters);
 
-        if (!StringHelper.isNullOrEmpty(runVmParameters.getinitrd_url())) {
+        if (!StringUtils.isEmpty(runVmParameters.getinitrd_url())) {
             getVm().setinitrd_url(runVmParameters.getinitrd_url());
         }
 
-        if (!StringHelper.isNullOrEmpty(runVmParameters.getkernel_url())) {
+        if (!StringUtils.isEmpty(runVmParameters.getkernel_url())) {
             getVm().setkernel_url(runVmParameters.getkernel_url());
         }
 
-        if (!StringHelper.isNullOrEmpty(runVmParameters.getkernel_params())) {
+        if (!StringUtils.isEmpty(runVmParameters.getkernel_params())) {
             getVm().setkernel_params(runVmParameters.getkernel_params());
         }
 
-        if (!StringHelper.isNullOrEmpty(runVmParameters.getCustomProperties())) {
+        if (!StringUtils.isEmpty(runVmParameters.getCustomProperties())) {
             getVm().setCustomProperties(runVmParameters.getCustomProperties());
         }
 
@@ -201,13 +200,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     private void ResumeVm() {
         mResume = true;
-        // Vds = ResourceManager.Instance.getVds(Vm.run_on_vds.Value);
         setVdsId(new Guid(getVm().getrun_on_vds().toString()));
         if (getVds() != null) {
             try {
                 IncrementVdsPendingVmsCount();
-                VDSReturnValue result = Backend
-                        .getInstance()
+                VDSReturnValue result = getBackend()
                         .getResourceManager()
                         .RunAsyncVdsCommand(VDSCommandType.Resume,
                                 new ResumeVDSCommandParameters(getVdsId(), getVm().getId()), this);
@@ -262,7 +259,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     @Override
     protected void ExecuteVmCommand() {
-        // Before running the VM we update its devices, as they may need to be changed due to configuration option change
+        // Before running the VM we update its devices, as they may need to be changed due to configuration option
+        // change
         VmDeviceUtils.updateVmDevices(getVm().getStaticData());
         setActionReturnValue(VMStatus.Down);
         if (InitVm()) {
@@ -287,7 +285,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     private boolean statelessSnapshotExistsForVm() {
-        return DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
+        return getDbFacade().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
     }
 
     /**
@@ -301,7 +299,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
         boolean isIsoFound = (findActiveISODomain(storagePoolId) != null);
         if (isIsoFound) {
-            if (StringHelper.isNullOrEmpty(getVm().getCdPath())) {
+            if (StringUtils.isEmpty(getVm().getCdPath())) {
                 getVm().setCdPath(getVm().getiso_path());
                 GuestToolsVersionTreatment();
                 refreshBootSequenceParameter(getParameters());
@@ -310,7 +308,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 }
                 getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(getVm().getCdPath(), getVm().getstorage_pool_id()));
             }
-        } else if (!StringHelper.isNullOrEmpty(getVm().getiso_path())) {
+        } else if (!StringUtils.isEmpty(getVm().getiso_path())) {
             getVm().setCdPath("");
             log.error("Can not attach CD without active ISO domain");
         }
@@ -345,9 +343,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             createSnapshotsCtx.setMonitored(true);
             createSnapshotsCtx.setStep(createSnapshotsStep);
             VdcReturnValueBase vdcReturnValue =
-                    Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
+                    getBackend().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
                             p,
-                            new CommandContext(createSnapshotsCtx,getCompensationContext(), getLock()));
+                            new CommandContext(createSnapshotsCtx, getCompensationContext(), getLock()));
 
             // setting lock to null in order not to release lock twice
             setLock(null);
@@ -372,8 +370,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     protected Map<String, String> getVmValuesForMsgResolving() {
-        Map<String, String> values = Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName());
-        return values;
+        return Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName());
     }
 
     private void removeVmStatlessImages() {
@@ -417,16 +414,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         refreshBootParameters(getParameters());
 
         // Set path for initrd and kernel image.
-        if (!StringHelper.isNullOrEmpty(getVm().getinitrd_url())) {
+        if (!StringUtils.isEmpty(getVm().getinitrd_url())) {
             getVm().setinitrd_url(getIsoPrefixFilePath(getVm().getinitrd_url()));
         }
 
-        if (!StringHelper.isNullOrEmpty(getVm().getkernel_url())) {
+        if (!StringUtils.isEmpty(getVm().getkernel_url())) {
             getVm().setkernel_url(getIsoPrefixFilePath(getVm().getkernel_url()));
         }
 
-        VMStatus vmStatus = (VMStatus) Backend
-                .getInstance()
+        VMStatus vmStatus = (VMStatus) getBackend()
                 .getResourceManager()
                 .RunAsyncVdsCommand(VDSCommandType.CreateVm, initVdsCreateVmParams(), this).getReturnValue();
 
@@ -525,8 +521,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 getVm().setUseSysPrep(true);
             }
             // if we attach floppy we don't need the sysprep
-            if (!StringHelper.isNullOrEmpty(getVm().getFloppyPath())) {
-                DbFacade.getInstance().getVmStaticDAO().update(getVm().getStaticData());
+            if (!StringUtils.isEmpty(getVm().getFloppyPath())) {
+                getVmStaticDAO().update(getVm().getStaticData());
             }
             // get what cpu flags should be passed to vdsm according to cluster
             // cpu name
@@ -571,18 +567,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         storage_domains isoDomain = null;
         if (!getVm().getvm_os().isLinux()
                 && (null != (isoDomain =
-                        LinqUtils.firstOrNull(
-                                DbFacade.getInstance()
-                                        .getStorageDomainDAO()
-                                        .getAllForStoragePool(getVm().getstorage_pool_id()),
+                        LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool(getVm().getstorage_pool_id()),
                                 new Predicate<storage_domains>() {
                                     @Override
                                     public boolean eval(storage_domains domain) {
                                         return domain.getstorage_domain_type() == StorageDomainType.ISO;
                                     }
                                 }))
-                        && isoDomain.getstatus() == StorageDomainStatus.Active && StringHelper
-                            .isNullOrEmpty(_cdImagePath))) {
+                        && isoDomain.getstatus() == StorageDomainStatus.Active && StringUtils.isEmpty(_cdImagePath))) {
 
             // get cluster version of the vm tools
             Version vmToolsClusterVersion = null;
@@ -603,7 +595,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             int bestToolVer = 0;
             for (RepoFileMetaData map : repoFilesMap) {
                 String fileName = map.getRepoFileName() != null ? map.getRepoFileName() : "";
-                Matcher matchToolPattern = Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern()).matcher(fileName);
+                Matcher matchToolPattern =
+                        Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern()).matcher(fileName);
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
                     // TODO: Should be group name string support in java7.
@@ -637,24 +630,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         }
 
         if (attachCd) {
-            // if minimalVdsRev isn't empty use new iso files name convention
-            // string qumranetToolsPath = minimalVdsRev == string.Empty
-            // ?
-            // string.Format("{0}{1}.iso", GuestToolsSetupIsoPrefix, revision)
-            // :
-            // // format is RHEV-ToolsSetup_tools_ver_vds_min_ver
-            // string.Format("{0}{1}_{2}.iso", GuestToolsSetupIsoPrefix,
-            // revision,
-            // minimalVdsRev);
             String qumranetToolsPath =
                     String.format("%1$s%2$s_%3$s.iso", IsoDomainListSyncronizer.getGuestToolsSetupIsoPrefix(),
                             selectedToolsClusterVersion, selectedToolsVersion);
 
-            String isoDir = (String) Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.IsoDirectory,
-                            new IrsBaseVDSCommandParameters(getVm().getstorage_pool_id())).getReturnValue();
+            String isoDir = (String) runVdsCommand(VDSCommandType.IsoDirectory,
+                    new IrsBaseVDSCommandParameters(getVm().getstorage_pool_id())).getReturnValue();
             qumranetToolsPath = Path.Combine(isoDir, qumranetToolsPath);
 
             getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(qumranetToolsPath, getVm().getstorage_pool_id()));
@@ -669,10 +650,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
         if (vm == null) {
             retValue = false;
-            if (message != null) {
-                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
-            }
-
+            message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
         } else if (!(validationErrors =
                 vmPropsUtils.validateVMProperties(vm.getvds_group_compatibility_version(),
                         vm.getStaticData())).isEmpty()) {
@@ -704,7 +682,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 }
 
                 // custom properties allowed only from cluster 2.3
-                else if (!StringHelper.isNullOrEmpty(vm.getStaticData().getCustomProperties()) &&
+                else if (!StringUtils.isEmpty(vm.getStaticData().getCustomProperties()) &&
                         !Config.<Boolean> GetValue(ConfigValues.SupportCustomProperties,
                                 vm.getvds_group_compatibility_version().getValue())) {
 
@@ -751,18 +729,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                                     .getReturnValue()).booleanValue();
                             if (vm.isStatusUp() || (vm.getstatus() == VMStatus.NotResponding) || isVmDuringInit) {
                                 retValue = false;
-                                if (message != null) {
-                                    message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
-                                }
+                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
                             } else if (vm.getstatus() == VMStatus.Paused && vm.getrun_on_vds() != null) {
                                 VDS vds = DbFacade.getInstance().getVdsDAO().get(
                                         new Guid(vm.getrun_on_vds().toString()));
                                 if (vds.getstatus() != VDSStatus.Up) {
                                     retValue = false;
-                                    if (message != null) {
-                                        message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
-                                        message.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
-                                    }
+                                    message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
+                                    message.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
                                 }
                             }
 
@@ -788,8 +762,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                             if (retValue
                                     && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
                                             VdcActionType.RunVm)) {
-                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
                                 retValue = false;
+                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
                             }
                         }
                     }
@@ -831,7 +805,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     protected static boolean validateIsoPath(Guid storageDomainId,
             RunVmParams runParams,
             ArrayList<String> messages) {
-        if (!StringHelper.isNullOrEmpty(runParams.getDiskPath())) {
+        if (!StringUtils.isEmpty(runParams.getDiskPath())) {
             if (storageDomainId == null) {
                 messages.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
                 return false;
@@ -857,7 +831,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             }
         }
 
-        if (!StringHelper.isNullOrEmpty(runParams.getFloppyPath())) {
+        if (!StringUtils.isEmpty(runParams.getFloppyPath())) {
             boolean retValForFloppy = false;
             VdcQueryReturnValue ret = Backend.getInstance().runInternalQuery(
                     VdcQueryType.GetAllFloppyImagesList,
@@ -901,9 +875,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         // check for Vm Payload
         if (canDoAction && getParameters().getVmPayload() != null) {
             canDoAction = checkPayload(getParameters().getVmPayload(),
-                        getParameters().getDiskPath());
+                    getParameters().getDiskPath());
 
-            if (canDoAction && !StringHelper.isNullOrEmpty(getParameters().getFloppyPath()) &&
+            if (canDoAction && !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
                     getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
                 addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
                 canDoAction = false;
@@ -934,8 +908,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             if (createSnapshotParameters != null) {
                 createSnapshotParameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             }
-            Backend.getInstance().EndAction(
-                    VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
+            getBackend().EndAction(VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
 
             getParameters().setShouldBeLogged(false);
             getParameters().setRunAsStateless(false);
@@ -961,7 +934,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             // Since run stateless step involves invocation of command, we should set the run stateless vm step as
             // the "beginning step" of the child command.
             runStatelessVmCtx.setStep(runStatelessStep);
-            setSucceeded(Backend.getInstance()
+            setSucceeded(getBackend()
                     .runInternalAction(VdcActionType.RunVm, getParameters(), new CommandContext(runStatelessVmCtx))
                     .getSucceeded());
             if (!getSucceeded()) {
@@ -972,9 +945,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             }
         }
 
-        /**
-         * Hibernation (VMStatus.Suspended) treatment:
-         */
+        // Hibernation (VMStatus.Suspended) treatment:
         else {
             super.EndSuccessfully();
         }
@@ -985,7 +956,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         SetIsVmRunningStateless();
 
         if (_isVmRunningStateless) {
-            VdcReturnValueBase vdcReturnValue = Backend.getInstance().endAction(VdcActionType.CreateAllSnapshotsFromVm,
+            VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext()));
 
             setSucceeded(vdcReturnValue.getSucceeded());
@@ -1044,7 +1015,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
      * @return true if all VM network interfaces are valid
      */
     private boolean validateNetworkInterfaces() {
-        Map<String,VmNetworkInterface> interfaceNetworkMap = Entities.interfacesByNetworkName(getVm().getInterfaces());
+        Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.interfacesByNetworkName(getVm().getInterfaces());
         Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
         List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getvds_group_id());
         Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
@@ -1053,8 +1024,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         // and they are attached to networks that are attached to the cluster
         // and they are attached to VM networks
         return isVmInterfacesConfigured(interfaceNetworkMap) &&
-               isVmInterfacesAttachedToClusterNetworks(clusterNetworksNames, interfaceNetworkNames) &&
-               isVmInterfacesAttachedToVmNetworks(clusterNetworks, interfaceNetworkNames);
+                isVmInterfacesAttachedToClusterNetworks(clusterNetworksNames, interfaceNetworkNames) &&
+                isVmInterfacesAttachedToVmNetworks(clusterNetworks, interfaceNetworkNames);
     }
 
     /**
@@ -1062,7 +1033,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
      *            VM interface network names
      * @return true if all VM network interfaces are attached to existing cluster networks
      */
-    private boolean isVmInterfacesConfigured(Map<String,VmNetworkInterface> interfacesMap) {
+    private boolean isVmInterfacesConfigured(Map<String, VmNetworkInterface> interfacesMap) {
         if (interfacesMap.containsKey(StringUtils.EMPTY)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
             return false;
@@ -1077,12 +1048,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
      *            VM interface network names
      * @return true if all VM network interfaces are attached to existing cluster networks
      */
-    private boolean isVmInterfacesAttachedToClusterNetworks(final Set<String> clusterNetworkNames, final Set<String> interfaceNetworkNames) {
+    private boolean isVmInterfacesAttachedToClusterNetworks(final Set<String> clusterNetworkNames,
+            final Set<String> interfaceNetworkNames) {
 
         Set<String> result = new HashSet<String>(interfaceNetworkNames);
         result.removeAll(clusterNetworkNames);
 
-        // If after removing the cluster network names we still have objects, then we have interface on networks that aren't
+        // If after removing the cluster network names we still have objects, then we have interface on networks that
+        // aren't
         // attached to the cluster
         if (result.size() > 0) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER);
@@ -1099,7 +1072,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
      *            VM interface network names
      * @return true if all VM network interfaces are attached to VM networks
      */
-    private boolean isVmInterfacesAttachedToVmNetworks(final List<Network> clusterNetworks, Set<String> interfaceNetworkNames) {
+    private boolean isVmInterfacesAttachedToVmNetworks(final List<Network> clusterNetworks,
+            Set<String> interfaceNetworkNames) {
         List<String> nonVmNetworkNames =
                 NetworkUtils.filterNonVmNetworkNames(clusterNetworks, interfaceNetworkNames);
 
@@ -1129,5 +1103,5 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         return permissionList;
     }
 
-    private static Log log = LogFactory.getLog(RunVmCommand.class);
+    private static final Log log = LogFactory.getLog(RunVmCommand.class);
 }
