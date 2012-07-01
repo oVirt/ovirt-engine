@@ -143,6 +143,7 @@ public class ManageDomains {
 
     private static void exitOnError(ManageDomainsResult result) {
         if (!result.isSuccessful()) {
+            log.error(result.getDetailedMessage());
             System.out.println(result.getDetailedMessage());
             System.exit(result.getExitCode());
         }
