@@ -32,7 +32,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class BaseBackendResource {
 
     private static String USER_FILTER_FIELD = "filter";
-    private Boolean filtered;
 
     protected static final Log LOG = LogFactory.getLog(AbstractBackendResource.class);
 
@@ -320,14 +319,10 @@ public class BaseBackendResource {
      * @return true if data should be filtered, otherwise queries are executed as admin.
      */
     protected boolean isFiltered() {
-        if (filtered == null) {
-            List<String> filterVar = getHttpHeaders().getRequestHeader(USER_FILTER_FIELD);
-            if (filterVar != null && filterVar.size() > 0)
-                filtered = Boolean.valueOf(filterVar.iterator().next());
-            else
-                filtered = Boolean.FALSE;
-        }
-
-        return filtered.booleanValue();
+        List<String> filterVar = getHttpHeaders().getRequestHeader(USER_FILTER_FIELD);
+        if (filterVar != null && filterVar.size() > 0)
+            return Boolean.valueOf(filterVar.iterator().next());
+        else
+            return false;
     }
 }

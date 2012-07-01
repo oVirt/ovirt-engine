@@ -476,6 +476,7 @@ public class Backend implements BackendInternal {
     public VdcReturnValueBase Login(LoginUserParameters parameters) {
         switch (parameters.getActionType()) {
         case AutoLogin:
+        case LoginUser:
         case LoginAdminUser: {
             CommandBase<?> command = CommandsFactory.CreateCommand(parameters.getActionType(), parameters);
             return command.ExecuteAction();
