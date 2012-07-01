@@ -350,7 +350,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return (long) disk.getLun().getDeviceSize();
             }
         };
-        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage(), "60px");
+        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> pathColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -359,7 +359,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return String.valueOf(disk.getLun().getPathCount());
             }
         };
-        externalDiskTable.addColumn(pathColumn, constants.pathSanStorage(), "40px");
+        externalDiskTable.addColumn(pathColumn, constants.pathSanStorage(), "40px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> vendorIdColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
