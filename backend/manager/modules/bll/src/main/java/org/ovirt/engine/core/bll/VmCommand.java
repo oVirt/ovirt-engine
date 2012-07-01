@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -41,9 +42,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
@@ -102,6 +104,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void ExecuteVmCommand() {
+        // The default action is no action.
+        // Other command may override this behavior.
     }
 
     @Override
@@ -111,11 +115,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Override
     protected List<tags> GetTagsAttachedToObject() {
-
-        return DbFacade
-                .getInstance()
-                .getTagDAO()
-                .getAllForVm((getParameters()).getVmId().toString());
+        return getTagDAO().getAllForVm((getParameters()).getVmId().toString());
     }
 
     // 26 PCI slots: 31 total minus 5 saved for qemu (Host Bridge, ISA Bridge,
@@ -183,12 +183,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     public static boolean UpdateVmInSpm(Guid storagePoolId,
             List<VM> vmsList,
             Guid storageDomainId) {
-        java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
-                new java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(
-                        vmsList.size());
+        HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
+                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(vmsList.size());
         OvfManager ovfManager = new OvfManager();
         for (VM vm : vmsList) {
-            java.util.ArrayList<DiskImage> AllVmImages = new java.util.ArrayList<DiskImage>();
+            ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
             VmHandler.updateDisksFromDb(vm);
             if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
                 vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
@@ -200,7 +199,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                             diskImage.getit_guid()));
                 }
             }
-            if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
+            if (StringUtils.isEmpty(vm.getvmt_name())) {
                 VmTemplate t = DbFacade.getInstance().getVmTemplateDAO().get(vm.getvmt_guid());
                 vm.setvmt_name(t.getname());
             }
@@ -240,12 +239,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void RemoveVmStatic() {
-        DbFacade.getInstance().getVmStaticDAO().remove(getVmId());
+        getVmStaticDAO().remove(getVmId());
     }
 
     protected void RemoveVmNetwork() {
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
-                .getAllForVm(getVmId());
+        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDAO().getAllForVm(getVmId());
         if (interfaces != null) {
             for (VmNetworkInterface iface : interfaces) {
                 MacPoolManager.getInstance().freeMac(iface.getMacAddress());
@@ -262,9 +260,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void RemoveVmUsers() {
-        List<tags_vm_map> all = DbFacade.getInstance().getTagDAO().getTagVmMapByVmIdAndDefaultTag(getVmId());
+        List<tags_vm_map> all = getTagDAO().getTagVmMapByVmIdAndDefaultTag(getVmId());
         for (tags_vm_map tagVm : all) {
-            DbFacade.getInstance().getTagDAO().detachVmFromTag(tagVm.gettag_id(), getVmId());
+            getTagDAO().detachVmFromTag(tagVm.gettag_id(), getVmId());
         }
     }
 
@@ -293,7 +291,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             }
 
-            Backend.getInstance().EndAction(
+            getBackend().EndAction(
                     p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(), p);
         }
     }
@@ -331,7 +329,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             // get all vm disks in order to check post zero - if one of the
             // disks is marked with wipe_after_delete
             boolean postZero =
-                    LinqUtils.filter(DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getId()),
+                    LinqUtils.filter(getDiskDAO().getAllForVm(getVm().getId()),
                             new Predicate<Disk>() {
                                 @Override
                                 public boolean eval(Disk disk) {
@@ -342,13 +340,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             // delete first image
             // the next 'DeleteImageGroup' command should also take care of the
             // image removal:
-            VDSReturnValue vdsRetValue1 = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.DeleteImageGroup,
-                            new DeleteImageGroupVDSCommandParameters(imagesList[1], imagesList[0], imagesList[2],
-                                    postZero, false, getVm().getvds_group_compatibility_version().toString()));
+            VDSReturnValue vdsRetValue1 = runVdsCommand(
+                    VDSCommandType.DeleteImageGroup,
+                    new DeleteImageGroupVDSCommandParameters(imagesList[1], imagesList[0], imagesList[2],
+                            postZero, false, getVm().getvds_group_compatibility_version().toString()));
 
             if (!vdsRetValue1.getSucceeded()) {
                 return false;
@@ -360,13 +355,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             // delete second image
             // the next 'DeleteImageGroup' command should also take care of the
             // image removal:
-            VDSReturnValue vdsRetValue2 = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.DeleteImageGroup,
-                            new DeleteImageGroupVDSCommandParameters(imagesList[1], imagesList[0], imagesList[4],
-                                    postZero, false, getVm().getvds_group_compatibility_version().toString()));
+            VDSReturnValue vdsRetValue2 = runVdsCommand(
+                    VDSCommandType.DeleteImageGroup,
+                    new DeleteImageGroupVDSCommandParameters(imagesList[1], imagesList[0], imagesList[4],
+                            postZero, false, getVm().getvds_group_compatibility_version().toString()));
 
             if (!vdsRetValue2.getSucceeded()) {
                 if (startPollingTasks) {
@@ -540,6 +532,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return getDbFacade().getVmDynamicDAO();
     }
 
+    protected TagDAO getTagDAO() {
+        return getDbFacade().getTagDAO();
+    }
+
+    protected DiskDao getDiskDAO() {
+        return getDbFacade().getDiskDao();
+    }
+
     protected boolean checkPayload(VmPayload payload, String isoPath) {
         boolean returnValue = true;
         if (payload.getType() != VmDeviceType.CDROM && payload.getType() != VmDeviceType.FLOPPY) {
@@ -550,12 +550,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
             addCanDoActionMessage(String.format("$size %1$s", lengthInKb.toString()));
             returnValue = false;
-        } else if (!StringHelper.isNullOrEmpty(isoPath) &&
-                payload.getType() == VmDeviceType.CDROM) {
+        } else if (!StringUtils.isEmpty(isoPath) && payload.getType() == VmDeviceType.CDROM) {
             addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_CDROM_EXCEEDED);
             returnValue = false;
         }
         return returnValue;
     }
-
 }
