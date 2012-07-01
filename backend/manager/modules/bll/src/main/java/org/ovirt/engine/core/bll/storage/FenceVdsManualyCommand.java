@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.FenceSpmStorageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SpmStatusVDSCommandParameters;
@@ -217,8 +218,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getProblematicVdsId(), getClass().getName());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getProblematicVdsId().toString(), LockingGroup.VDS_FENCE.name());
     }
 
     @Override

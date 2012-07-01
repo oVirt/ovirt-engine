@@ -29,8 +29,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Restores the given snapshot, including all the VM configuration that was stored in it.<br>
@@ -337,9 +335,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId(), LockingGroup.VM.name());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
     }
-
-    private static Log log = LogFactory.getLog(RemoveAllVmImagesCommand.class);
 }

@@ -48,7 +48,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private static final long serialVersionUID = -4520874214339816607L;
     private final Disk disk;
-    private Map<Guid, String> sharedLockMap;
+    private Map<String, String> sharedLockMap;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
 
@@ -124,13 +124,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (disk.getVmEntityType() == VmEntityType.VM) {
             List<VM> listVms = getVmsForDiskId();
             if (!listVms.isEmpty()) {
-                sharedLockMap = new HashMap<Guid, String>();
+                sharedLockMap = new HashMap<String, String>();
                 for (VM vm : listVms) {
-                    sharedLockMap.put(vm.getId(), LockingGroup.VM.name());
+                    sharedLockMap.put(vm.getId().toString(), LockingGroup.VM.name());
                 }
             }
         } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
-            sharedLockMap = Collections.singletonMap(disk.getvm_guid(), LockingGroup.TEMPLATE.name());
+            sharedLockMap = Collections.singletonMap(disk.getvm_guid().toString(), LockingGroup.TEMPLATE.name());
         }
     }
 
@@ -305,12 +305,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap((Guid) getParameters().getEntityId(), LockingGroup.DISK.name());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getEntityId().toString(), LockingGroup.DISK.name());
     }
 
     @Override
-    protected Map<Guid, String> getSharedLocks() {
+    protected Map<String, String> getSharedLocks() {
         return sharedLockMap;
     }
 

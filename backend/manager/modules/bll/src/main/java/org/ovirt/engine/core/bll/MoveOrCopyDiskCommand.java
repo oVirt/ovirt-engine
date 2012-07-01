@@ -40,7 +40,7 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends MoveOrCopyImageGroupCommand<T> {
 
     private static final long serialVersionUID = -7219975636530710384L;
-    private Map<Guid, String> sharedLockMap;
+    private Map<String, String> sharedLockMap;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
 
@@ -368,14 +368,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             } else {
                 VmTemplate vmTemplate = templates.iterator().next();
                 setVmTemplate(vmTemplate);
-                sharedLockMap = Collections.singletonMap(vmTemplate.getId(), LockingGroup.TEMPLATE.name());
+                sharedLockMap = Collections.singletonMap(vmTemplate.getId().toString(), LockingGroup.TEMPLATE.name());
             }
         } else {
             List<VM> vmsForDisk = getVmsForDiskId();
             if (!vmsForDisk.isEmpty()) {
-                sharedLockMap = new HashMap<Guid, String>();
+                sharedLockMap = new HashMap<String, String>();
                 for (VM currVm : vmsForDisk) {
-                    sharedLockMap.put(currVm.getId(), LockingGroup.VM.name());
+                    sharedLockMap.put(currVm.getId().toString(), LockingGroup.VM.name());
                 }
             }
         }
@@ -383,12 +383,12 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getImage().getId(), LockingGroup.DISK.name());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getImage().getId().toString(), LockingGroup.DISK.name());
     }
 
     @Override
-    protected Map<Guid, String> getSharedLocks() {
+    protected Map<String, String> getSharedLocks() {
         return sharedLockMap;
     }
 

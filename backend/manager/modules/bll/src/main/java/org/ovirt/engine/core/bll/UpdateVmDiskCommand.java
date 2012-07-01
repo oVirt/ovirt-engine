@@ -38,8 +38,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private List<PermissionSubject> listPermissionSubjects;
     private final Disk _oldDisk;
     private boolean shouldUpdateQuotaForDisk;
-    private Map<Guid, String> sharedLockMap;
-    private Map<Guid, String> exclusiveLockMap;
+    private Map<String, String> sharedLockMap;
+    private Map<String, String> exclusiveLockMap;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
@@ -80,18 +80,18 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private void buidSharedLockMap(List<VM> listVms) {
         if (listVms != null && !listVms.isEmpty()) {
-            sharedLockMap = new HashMap<Guid, String>();
+            sharedLockMap = new HashMap<String, String>();
             for (VM vm : listVms) {
-                sharedLockMap.put(vm.getId(), LockingGroup.VM.name());
+                sharedLockMap.put(vm.getId().toString(), LockingGroup.VM.name());
             }
         }
     }
 
     private void buidExclusiveLockMap(List<VM> listVms) {
         if (getParameters().getDiskInfo().isBoot() && listVms != null && !listVms.isEmpty()) {
-            exclusiveLockMap = new HashMap<Guid, String>();
+            exclusiveLockMap = new HashMap<String, String>();
             for (VM vm : listVms) {
-                exclusiveLockMap.put(vm.getId(), LockingGroup.VM_DISK_BOOT.name());
+                exclusiveLockMap.put(vm.getId().toString(), LockingGroup.VM_DISK_BOOT.name());
             }
         }
     }
@@ -295,12 +295,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     @Override
-    protected Map<Guid, String> getSharedLocks() {
+    protected Map<String, String> getSharedLocks() {
         return sharedLockMap;
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
+    protected Map<String, String> getExclusiveLocks() {
         return exclusiveLockMap;
     }
 }

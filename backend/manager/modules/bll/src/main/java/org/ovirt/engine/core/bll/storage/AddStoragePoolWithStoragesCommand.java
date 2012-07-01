@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -278,8 +279,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getStoragePoolId().getValue(), getClass().getName());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getStoragePoolId().toString(), LockingGroup.POOL.name());
     }
 
     @Override

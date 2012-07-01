@@ -1112,8 +1112,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId(), LockingGroup.VM.name());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
     }
 
     @Override

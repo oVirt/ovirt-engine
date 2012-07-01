@@ -1161,8 +1161,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         boolean returnValue = true;
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
         if (commandLock == null) {
-            Map<Guid, String> exclusiveLocks = getExclusiveLocks();
-            Map<Guid, String> sharedLocks = getSharedLocks();
+            Map<String, String> exclusiveLocks = getExclusiveLocks();
+            Map<String, String> sharedLocks = getSharedLocks();
             if (exclusiveLocks != null || sharedLocks != null) {
                 EngineLock lock = new EngineLock(exclusiveLocks, sharedLocks);
                 if (getLockManager().acquireLock(lock)) {
@@ -1190,11 +1190,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return LockManagerFactory.getLockManager();
     }
 
-    protected Map<Guid, String> getExclusiveLocks() {
+    protected Map<String, String> getExclusiveLocks() {
         return null;
     }
 
-    protected Map<Guid, String> getSharedLocks() {
+    protected Map<String, String> getSharedLocks() {
         return null;
     }
 

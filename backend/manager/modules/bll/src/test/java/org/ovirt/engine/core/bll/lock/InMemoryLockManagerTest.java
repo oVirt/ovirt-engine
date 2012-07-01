@@ -26,22 +26,22 @@ public class InMemoryLockManagerTest {
     private EngineLock lockLock1;
     private EngineLock lockLock2;
     private EngineLock updateAndLockLock;
-    private Guid updateGuid;
-    private Guid lockGuid;
+    private String updateGuid;
+    private String lockGuid;
     private InMemoryLockManager lockMager;
 
     @Before
     public void setup() {
         mockLockManager();
-        updateGuid = Guid.NewGuid();
-        lockGuid = Guid.NewGuid();
-        Map<Guid, String> updateRegionsMap = new HashMap<Guid, String>();
+        updateGuid = Guid.NewGuid().toString();
+        lockGuid = Guid.NewGuid().toString();
+        Map<String, String> updateRegionsMap = new HashMap<String, String>();
         updateRegionsMap.put(updateGuid, "1");
         updateLock1 = new EngineLock();
         updateLock1.setSharedLocks(updateRegionsMap);
         lockLock1 = new EngineLock();
         lockLock1.setExclusiveLocks(updateRegionsMap);
-        Map<Guid, String> lockedRegionsMap = new HashMap<Guid, String>();
+        Map<String, String> lockedRegionsMap = new HashMap<String, String>();
         lockedRegionsMap.put(lockGuid, "2");
         lockLock2 = new EngineLock();
         lockLock2.setExclusiveLocks(lockedRegionsMap);

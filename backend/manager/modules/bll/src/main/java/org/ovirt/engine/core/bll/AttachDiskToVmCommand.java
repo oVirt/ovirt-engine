@@ -117,9 +117,9 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
+    protected Map<String, String> getExclusiveLocks() {
         if (disk.isBoot()) {
-            return Collections.singletonMap(getParameters().getVmId(), LockingGroup.VM_DISK_BOOT.name());
+            return Collections.singletonMap(getParameters().getVmId().toString(), LockingGroup.VM_DISK_BOOT.name());
         }
         return null;
     }

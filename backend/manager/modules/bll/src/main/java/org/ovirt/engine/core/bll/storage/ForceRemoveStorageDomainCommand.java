@@ -100,7 +100,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getStorageDomainId(), LockingGroup.STORAGE.name());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getStorageDomainId().toString(), LockingGroup.STORAGE.name());
     }
 }

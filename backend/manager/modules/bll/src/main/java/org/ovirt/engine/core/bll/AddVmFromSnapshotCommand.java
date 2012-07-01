@@ -393,8 +393,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getSourceSnapshotId(), getClass().getName());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getSourceSnapshotId().toString(), getClass().getName());
     }
 
 }

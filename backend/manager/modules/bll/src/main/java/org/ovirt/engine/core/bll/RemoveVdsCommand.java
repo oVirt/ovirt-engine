@@ -199,7 +199,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getVdsId(), LockingGroup.VDS.name());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVdsId().toString(), LockingGroup.VDS.name());
     }
 }

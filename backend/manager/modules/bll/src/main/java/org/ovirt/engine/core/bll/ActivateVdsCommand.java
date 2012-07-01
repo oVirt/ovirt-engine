@@ -90,7 +90,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getVdsId(), LockingGroup.VDS.name());
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVdsId().toString(), LockingGroup.VDS.name());
     }
 }

@@ -22,7 +22,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -110,12 +109,12 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         globalLock.lock();
         try {
             if (lock.getSharedLocks() != null) {
-                for (Entry<Guid, String> entry : lock.getSharedLocks().entrySet()) {
+                for (Entry<String, String> entry : lock.getSharedLocks().entrySet()) {
                     releaseSharedLock(buildHashMapKey(entry));
                 }
             }
             if (lock.getExclusiveLocks() != null) {
-                for (Entry<Guid, String> entry : lock.getExclusiveLocks().entrySet()) {
+                for (Entry<String, String> entry : lock.getExclusiveLocks().entrySet()) {
                     releaseExclusiveLock(buildHashMapKey(entry));
                 }
             }
@@ -183,8 +182,8 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
      * @param entry
      * @return
      */
-    private String buildHashMapKey(Entry<Guid, String> entry) {
-        return entry.getKey().toString() + entry.getValue();
+    private String buildHashMapKey(Entry<String, String> entry) {
+        return entry.getKey() + entry.getValue();
     }
 
     /**
@@ -198,7 +197,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         boolean checkOnly = true;
         for (int i = 0; i < 2; i++) {
             if (lock.getSharedLocks() != null) {
-                for (Entry<Guid, String> entry : lock.getSharedLocks().entrySet()) {
+                for (Entry<String, String> entry : lock.getSharedLocks().entrySet()) {
                     if (!insertSharedLock(buildHashMapKey(entry), checkOnly)) {
                         log.debugFormat("Failed to acquire lock. Shared lock is taken for key :{0} , value: {1}",
                                 entry.getKey(),
@@ -208,7 +207,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
                 }
             }
             if (lock.getExclusiveLocks() != null) {
-                for (Entry<Guid, String> entry : lock.getExclusiveLocks().entrySet()) {
+                for (Entry<String, String> entry : lock.getExclusiveLocks().entrySet()) {
                     if (!insertExclusiveLock(buildHashMapKey(entry), checkOnly)) {
                         log.debugFormat("Failed to acquire lock. Exclusive lock is taken for key: {0} , value: {1}",
                                 entry.getKey(),

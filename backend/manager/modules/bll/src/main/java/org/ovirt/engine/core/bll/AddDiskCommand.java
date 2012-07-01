@@ -426,18 +426,18 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     @Override
-    protected Map<Guid, String> getExclusiveLocks() {
+    protected Map<String, String> getExclusiveLocks() {
         if (getParameters().getDiskInfo().isBoot() && getParameters().getVmId() != null
                 && !Guid.Empty.equals(getParameters().getVmId())) {
-            return Collections.singletonMap(getParameters().getVmId(), LockingGroup.VM_DISK_BOOT.name());
+            return Collections.singletonMap(getParameters().getVmId().toString(), LockingGroup.VM_DISK_BOOT.name());
         }
         return null;
     }
 
     @Override
-    protected Map<Guid, String> getSharedLocks() {
+    protected Map<String, String> getSharedLocks() {
         if (getParameters().getVmId() != null && !Guid.Empty.equals(getParameters().getVmId())) {
-            return Collections.singletonMap(getParameters().getVmId(), LockingGroup.VM.name());
+            return Collections.singletonMap(getParameters().getVmId().toString(), LockingGroup.VM.name());
         }
         return null;
     }
