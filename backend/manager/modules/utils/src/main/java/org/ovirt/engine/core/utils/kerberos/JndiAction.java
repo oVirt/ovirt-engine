@@ -115,7 +115,7 @@ public class JndiAction implements PrivilegedAction {
                 } else {
                     System.out.println(InstallerConstants.ERROR_PREFIX
                             + " Failed to query rootDSE in order to get the baseDN. Could not query for user "
-                            + userName + " in domain" + domainName);
+                            + userName + " in domain " + domainName);
                 }
             } catch (CommunicationException ex) {
                 handleCommunicationException(currentLdapServer, address);
