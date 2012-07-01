@@ -193,7 +193,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         List<ValidationError> validationErrors = validateCustomProperties(vmFromParams.getStaticData());
         if (!validationErrors.isEmpty()) {
-            handleCustomPropertiesError(validationErrors, getReturnValue().getCanDoActionMessages());
+            VmHandler.handleCustomPropertiesError(validationErrors, getReturnValue().getCanDoActionMessages());
             return false;
         }
 
@@ -283,7 +283,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (!isPinningAndMigrationValid(getReturnValue().getCanDoActionMessages(),
-                        getParameters().getVm().getStaticData(), getParameters().getVm().getCpuPinning())) {
+                getParameters().getVm().getStaticData(), getParameters().getVm().getCpuPinning())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE);
             return false;
         }

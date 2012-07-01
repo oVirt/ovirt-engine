@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +41,28 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationFailureReason;
 
 public class VmHandler {
+    private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToVdcBllMessagesMap =
+            new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
+    private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToFormatMessages =
+            new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
+    static {
+        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.DUPLICATE_KEY,
+                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_DUPLICATE_KEYS.name());
+        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.KEY_DOES_NOT_EXIST,
+                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_KEYS.name());
+        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.INCORRECT_VALUE,
+                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_VALUES.name());
+        failureReasonsToFormatMessages.put(ValidationFailureReason.DUPLICATE_KEY, "$DuplicateKeys %1$s");
+        failureReasonsToFormatMessages.put(ValidationFailureReason.KEY_DOES_NOT_EXIST, "$MissingKeys %1$s");
+        failureReasonsToFormatMessages.put(ValidationFailureReason.INCORRECT_VALUE, "$WrongValueKeys %1$s");
+
+    }
+
     public static ObjectIdentityChecker mUpdateVmsStatic;
 
     /**
@@ -410,10 +431,14 @@ public class VmHandler {
      *     Messages for CanDoAction().
      * @return
      */
-    public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy, VmOsType osType, VDSGroup vdsGroup, List<String> messages) {
+    public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy,
+            VmOsType osType,
+            VDSGroup vdsGroup,
+            List<String> messages) {
         boolean retVal = true;
         if (UsbPolicy.ENABLED_NATIVE.equals(usbPolicy)) {
-            if(!Config.<Boolean> GetValue(ConfigValues.NativeUSBEnabled, vdsGroup.getcompatibility_version().getValue())) {
+            if (!Config.<Boolean> GetValue(ConfigValues.NativeUSBEnabled, vdsGroup.getcompatibility_version()
+                    .getValue())) {
                 messages.add(VdcBllMessages.USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL.toString());
                 retVal = false;
             }
@@ -425,6 +450,16 @@ public class VmHandler {
         }
         return retVal;
     }
+
+    protected static void handleCustomPropertiesError(List<ValidationError> validationErrors, ArrayList<String> message) {
+        String invalidSyntaxMsg = VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX.name();
+
+        List<String> errorMessages =
+                VmPropertiesUtils.getInstance().generateErrorMessages(validationErrors, invalidSyntaxMsg,
+                        failureReasonsToVdcBllMessagesMap, failureReasonsToFormatMessages);
+        message.addAll(errorMessages);
+    }
+
     private static final Log log = LogFactory.getLog(VmHandler.class);
 
 }

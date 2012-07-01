@@ -56,30 +56,13 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationFailureReason;
 
 @SuppressWarnings("serial")
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
-    private static int Kb = 1024;
+    private static final int Kb = 1024;
     private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
     protected final static int MAX_NETWORK_INTERFACES_SUPPORTED = 8;
-    private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToVdcBllMessagesMap =
-            new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
-    private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToFormatMessages =
-            new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
-    static {
-        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.DUPLICATE_KEY,
-                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_DUPLICATE_KEYS.name());
-        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.KEY_DOES_NOT_EXIST,
-                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_KEYS.name());
-        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.INCORRECT_VALUE,
-                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_VALUES.name());
-        failureReasonsToFormatMessages.put(ValidationFailureReason.DUPLICATE_KEY, "$DuplicateKeys %1$s");
-        failureReasonsToFormatMessages.put(ValidationFailureReason.KEY_DOES_NOT_EXIST, "$MissingKeys %1$s");
-        failureReasonsToFormatMessages.put(ValidationFailureReason.INCORRECT_VALUE, "$WrongValueKeys %1$s");
-
-    }
 
     public VmCommand(T parameters) {
         super(parameters);
@@ -318,7 +301,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected boolean HandleHibernatedVm(VdcActionType parentCommand, boolean startPollingTasks) {
-        // this is temp code until it will be implmented in SPM
+        // this is temp code until it will be implemented in SPM
         String[] strings = getVm().gethibernation_vol_handle().split(",");
         List<Guid> guids = new LinkedList<Guid>();
         for (String string : strings) {
@@ -409,15 +392,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return VmPropertiesUtils.getInstance().validateVMProperties(
                 getVdsGroup().getcompatibility_version(),
                 vmStaticFromParams);
-    }
-
-    protected static void handleCustomPropertiesError(List<ValidationError> validationErrors, ArrayList<String> message) {
-        String invalidSyntaxMsg = VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX.name();
-
-        List<String> errorMessages =
-                VmPropertiesUtils.getInstance().generateErrorMessages(validationErrors, invalidSyntaxMsg,
-                        failureReasonsToVdcBllMessagesMap, failureReasonsToFormatMessages);
-        message.addAll(errorMessages);
     }
 
     /**

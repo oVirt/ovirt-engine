@@ -1,31 +1,36 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -38,37 +43,34 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
-import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Backend.class, ImagesHandler.class, QuotaManager.class })
+@RunWith(MockitoJUnitRunner.class)
 public class RunVmCommandTest {
+
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.VdsSelectionAlgorithm, "General", "0"),
+            mockConfig(ConfigValues.PredefinedVMProperties, "3.0", "0"),
+            mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", "0")
+            );
 
     /**
      * The command under test.
@@ -76,31 +78,29 @@ public class RunVmCommandTest {
     private RunVmCommand<RunVmParams> command;
 
     @Mock
-    VDSBrokerFrontend vdsBrokerFrontend;
+    private VDSBrokerFrontend vdsBrokerFrontend;
 
     @Mock
     private VmDAO vmDAO;
 
-    @Mock
-    private QuotaManager quotaManager;
+    @Spy
+    private VmRunHandler vmRunHandler = VmRunHandler.getInstance();
 
     @Mock
-    BackendInternal backend;
+    private BackendInternal backend;
 
-    private static String ISO_PREFIX = "iso://";
-    private static String ACTIVE_ISO_PREFIX =
+    private static final String ISO_PREFIX = "iso://";
+    private static final String ACTIVE_ISO_PREFIX =
             "/rhev/data-center/mnt/some_computer/f6bccab4-e2f5-4e02-bba0-5748a7bc07b6/images/11111111-1111-1111-1111-111111111111";
-    private static String INACTIVE_ISO_PREFIX = "";
+    private static final String INACTIVE_ISO_PREFIX = "";
 
-    public RunVmCommandTest() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-        mockStatic(Backend.class);
-    }
+    public void mockBackend() {
+        doReturn(backend).when(command).getBackend();
+        doReturn(backend).when(vmRunHandler).getBackend();
 
-    @Before
-    public void testBackendSetup() {
-        when(Backend.getInstance()).thenReturn(backend);
+        VDSReturnValue vdsReturnValue = new VDSReturnValue();
+        vdsReturnValue.setReturnValue(true);
+        when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
         // Set Valid Iso Prefix
@@ -116,13 +116,14 @@ public class RunVmCommandTest {
     private void setCreateVmVDSMethod() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(VMStatus.Up);
-        when(backend.getResourceManager().RunAsyncVdsCommand(Matchers.eq(VDSCommandType.CreateVm),
-                Matchers.any(VdsAndVmIDVDSParametersBase.class), Matchers.any(IVdsAsyncCommand.class))).thenReturn(returnValue);
+        when(backend.getResourceManager().RunAsyncVdsCommand(eq(VDSCommandType.CreateVm),
+                any(VdsAndVmIDVDSParametersBase.class),
+                any(IVdsAsyncCommand.class))).thenReturn(returnValue);
     }
 
     private static DiskImage createImage() {
         final DiskImage diskImage = new DiskImage();
-        diskImage.setimage_group_id(Guid.NewGuid());
+        diskImage.setId(Guid.NewGuid());
         diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid())));
         return diskImage;
     }
@@ -130,7 +131,7 @@ public class RunVmCommandTest {
     private static VmDevice createDiskVmDevice(final DiskImage diskImage) {
         final VmDevice vmDevice = new VmDevice();
         vmDevice.setIsPlugged(true);
-        vmDevice.setId(new VmDeviceId(diskImage.getimage_group_id(), Guid.NewGuid()));
+        vmDevice.setId(new VmDeviceId(diskImage.getId(), Guid.NewGuid()));
         return vmDevice;
     }
 
@@ -140,11 +141,14 @@ public class RunVmCommandTest {
      * @param isoPrefix
      *            - Valid Iso patch or blank (when the Iso is not active.
      */
-    private void setIsoPrefixVDSMethod(String isoPrefix) {
-        VDSReturnValue isoPrefixReturnValue = new VDSReturnValue();
-        isoPrefixReturnValue.setReturnValue(isoPrefix);
-        when(backend.getResourceManager().RunVdsCommand(Matchers.eq(VDSCommandType.IsoPrefix),
-                Matchers.any(IrsBaseVDSCommandParameters.class))).thenReturn(isoPrefixReturnValue);
+    private void setIsoPrefixVDSMethod(final String isoPrefix) {
+        doAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return ImagesHandler.cdPathWindowsToLinux(invocation.getArguments()[0].toString(), isoPrefix);
+            }
+
+        }).when(command).cdPathWindowsToLinux(anyString());
     }
 
     @Test
@@ -283,14 +287,13 @@ public class RunVmCommandTest {
     }
 
     private VM createVmForTesting(String initrd, String kernel) {
-        RunVmCommand<RunVmParams> spyCommand = createCommand();
-        mockVm(spyCommand);
+        mockVm(command);
 
         // Set parameter
         RunVmParams runVmParams = command.getParameters();
         runVmParams.setinitrd_url(initrd);
         runVmParams.setkernel_url(kernel);
-        spyCommand.CreateVm();
+        command.CreateVm();
 
         // Check Vm
         VM vm = vmDAO.get(command.getParameters().getVmId());
@@ -305,28 +308,41 @@ public class RunVmCommandTest {
         vm.setstatus(VMStatus.Down);
         AuditLogableBaseMockUtils.mockVmDao(spyVmCommand, vmDAO);
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
-        PowerMockito.mockStatic(QuotaManager.class);
         return vm;
     }
 
-    private RunVmCommand<RunVmParams> createCommand() {
+    @Before
+    public void createCommand() {
         RunVmParams param = new RunVmParams(Guid.NewGuid());
-        command = new RunVmCommand<RunVmParams>(param);
-        return spy(command);
+        command = spy(new RunVmCommand<RunVmParams>(param));
+        doNothing().when(command).removeQuotaCommandLeftOver();
+
+        mockVmRunHandler();
+        mockSuccessfulSnapshotValidator();
+        mockVmPropertiesUtils();
+        mockBackend();
+    }
+
+    protected void mockVmRunHandler() {
+        doReturn(vmRunHandler).when(command).getVmRunHandler();
+
+        doReturn(true).when(vmRunHandler).performImageChecksForRunningVm(any(VM.class),
+                anyListOf(String.class),
+                any(RunVmParams.class),
+                anyListOf(Disk.class));
+        doReturn(false).when(vmRunHandler).isVmInPreview(any(VM.class));
     }
 
     @Test
     public void canRunVmFailNodisk() {
-        initMocks(new ArrayList<Disk>(), new HashMap<VDSCommandType, Boolean>(), new ArrayList<VmDevice>());
+        initDAOMocks(Collections.<Disk> emptyList(), Collections.<VmDevice> emptyList());
 
         final VM vm = new VM();
-        final ArrayList<String> messages = new ArrayList<String>();
-        Assert.assertFalse(RunVmCommand.CanRunVm(vm,
-                messages,
-                new RunVmParams(),
-                new VdsSelector(vm, new NGuid(), true),
-                mockSuccessfulSnapshotValidator(), mockVmPropertiesUtils()));
-        Assert.assertTrue(messages.contains("VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK"));
+        doReturn(vm).when(command).getVm();
+        doReturn(new VdsSelector(vm, new Guid(), true)).when(command).getVdsSelector();
+
+        assertFalse(command.canRunVm());
+        assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK"));
     }
 
     @Test
@@ -335,16 +351,14 @@ public class RunVmCommandTest {
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
         final VmDevice vmDevice = createDiskVmDevice(diskImage);
-        initMocks(disks, new HashMap<VDSCommandType, Boolean>(), Collections.singletonList(vmDevice));
+        initDAOMocks(disks, Collections.singletonList(vmDevice));
         final VM vm = new VM();
         vm.setstatus(VMStatus.Up);
-        final ArrayList<String> messages = new ArrayList<String>();
-        Assert.assertFalse(RunVmCommand.CanRunVm(vm,
-                messages,
-                new RunVmParams(),
-                new VdsSelector(vm, new NGuid(), true),
-                mockSuccessfulSnapshotValidator(), mockVmPropertiesUtils()));
-        Assert.assertTrue(messages.contains("ACTION_TYPE_FAILED_VM_IS_RUNNING"));
+        doReturn(vm).when(command).getVm();
+        doReturn(new VdsSelector(vm, new NGuid(), true)).when(command).getVdsSelector();
+
+        assertFalse(command.canRunVm());
+        assertTrue(command.getReturnValue().getCanDoActionMessages().contains("ACTION_TYPE_FAILED_VM_IS_RUNNING"));
     }
 
     @Test
@@ -353,21 +367,21 @@ public class RunVmCommandTest {
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
         final VmDevice vmDevice = createDiskVmDevice(diskImage);
-        initMocks(disks, new HashMap<VDSCommandType, Boolean>(), Collections.singletonList(vmDevice));
+        initDAOMocks(disks, Collections.singletonList(vmDevice));
         final VM vm = new VM();
-        final ArrayList<String> messages = new ArrayList<String>();
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         when(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))
                 .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT));
-        Assert.assertFalse(RunVmCommand.CanRunVm(vm,
-                messages,
-                new RunVmParams(),
-                new VdsSelector(vm, new NGuid(), true),
-                snapshotsValidator, mockVmPropertiesUtils()));
-        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT.name()));
+        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
+        doReturn(vm).when(command).getVm();
+
+        assertFalse(command.canRunVm());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT.name()));
     }
 
-    private static void canRunStatelessVmTest(boolean autoStartUp,
+    private void canRunStatelessVmTest(boolean autoStartUp,
             boolean isVmStateless,
             Boolean isStatelessParam,
             boolean shouldPass) {
@@ -375,48 +389,41 @@ public class RunVmCommandTest {
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
         final VmDevice vmDevice = createDiskVmDevice(diskImage);
-        final HashMap<VDSCommandType, Boolean> calls = new HashMap<VDSCommandType, Boolean>();
 
-        final VdsSelector vdsSelector = Mockito.mock(VdsSelector.class);
-        Mockito.when(vdsSelector.CanFindVdsToRunOn(any(ArrayList.class), anyBoolean())).thenReturn(true);
+        final VdsSelector vdsSelector = mock(VdsSelector.class);
+        when(vdsSelector.CanFindVdsToRunOn(anyListOf(String.class), anyBoolean())).thenReturn(true);
+        doReturn(vdsSelector).when(command).getVdsSelector();
 
-        calls.put(VDSCommandType.IsVmDuringInitiating, false);
-        initMocks(disks, calls, Collections.singletonList(vmDevice));
+        VDSReturnValue vdsReturnValue = new VDSReturnValue();
+        vdsReturnValue.setReturnValue(false);
+        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.IsVmDuringInitiating), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
+        initDAOMocks(disks, Collections.singletonList(vmDevice));
 
         final VM vm = new VM();
         // set stateless and HA
         vm.setis_stateless(isVmStateless);
         vm.setauto_startup(autoStartUp);
+        doReturn(vm).when(command).getVm();
 
-        final ArrayList<String> messages = new ArrayList<String>();
-        final RunVmParams runParams = new RunVmParams();
-        runParams.setRunAsStateless(isStatelessParam);
-        boolean canRunVm =
-                RunVmCommand.CanRunVm(vm,
-                        messages,
-                        runParams,
-                        vdsSelector,
-                        mockSuccessfulSnapshotValidator(),
-                        mockVmPropertiesUtils());
+        command.getParameters().setRunAsStateless(isStatelessParam);
+        boolean canRunVm = command.canRunVm();
 
-        if (shouldPass) {
-            Assert.assertTrue(canRunVm);
-            Assert.assertFalse(messages.contains("VM_CANNOT_RUN_STATELESS_HA"));
-        } else {
-            Assert.assertFalse(canRunVm);
-            Assert.assertTrue(messages.contains("VM_CANNOT_RUN_STATELESS_HA"));
-        }
+        final List<String> messages = command.getReturnValue().getCanDoActionMessages();
+        assertEquals(shouldPass, canRunVm);
+        assertEquals(shouldPass, !messages.contains("VM_CANNOT_RUN_STATELESS_HA"));
     }
 
-    private static VmPropertiesUtils mockVmPropertiesUtils() {
+    private VmPropertiesUtils mockVmPropertiesUtils() {
         // Mocks vm properties utils (mocks a successful validation)
         VmPropertiesUtils utils = spy(new VmPropertiesUtils());
         doReturn(Collections.singletonMap("agent", "true")).when(utils).getPredefinedProperties(any(Version.class),
                 any(VmStatic.class));
         doReturn(Collections.singletonMap("buff", "123")).when(utils).getUserDefinedProperties(any(Version.class),
                 any(VmStatic.class));
-        doReturn(new HashSet<Version>(Arrays.asList(Version.v3_0,Version.v3_1))).when(utils).getSupportedClusterLevels();
-        doReturn(Collections.EMPTY_LIST).when(utils).validateVMProperties(any(Version.class), any(VmStatic.class));
+        doReturn(new HashSet<Version>(Arrays.asList(Version.v3_0, Version.v3_1))).when(utils)
+                .getSupportedClusterLevels();
+        doReturn(Collections.emptyList()).when(utils).validateVMProperties(any(Version.class), any(VmStatic.class));
+        doReturn(utils).when(command).getVmPropertiesUtils();
         return utils;
     }
 
@@ -451,119 +458,34 @@ public class RunVmCommandTest {
     }
 
     /**
-     * Workaround of the singleton design pattern with PowerMock and Mockito.
-     *
      * @param disks
-     *            the disks for the VM
+     * @param vmDevices
+     * @param guid
      */
-    @SuppressWarnings("unchecked")
-    private static void initMocks(final List<Disk> disks, final Map<VDSCommandType, Boolean> calls,
-            final List<VmDevice> vmDevices) {
-        final Guid guid = new Guid("00000000-0000-0000-0000-000000000000");
-        final IConfigUtilsInterface cfgUtils = Mockito.mock(IConfigUtilsInterface.class);
-        Mockito.when(cfgUtils.GetValue(ConfigValues.VdsSelectionAlgorithm, "general")).thenReturn("0");
-        Mockito.when(cfgUtils.GetValue(ConfigValues.PredefinedVMProperties, "3.0")).thenReturn("0");
-        Mockito.when(cfgUtils.GetValue(ConfigValues.UserDefinedVMProperties, "3.0")).thenReturn("0");
-        Config.setConfigUtils(cfgUtils);
+    protected void initDAOMocks(final List<Disk> disks, final List<VmDevice> vmDevices) {
+        final DiskDao diskDao = mock(DiskDao.class);
+        when(diskDao.getAllForVm(Guid.Empty)).thenReturn(disks);
+        doReturn(diskDao).when(command).getDiskDAO();
+        doReturn(diskDao).when(vmRunHandler).getDiskDAO();
 
-        final DiskDao diskDao = Mockito.mock(DiskDao.class);
-        Mockito.when(diskDao.getAllForVm(guid)).thenReturn(disks);
-
-        final StorageDomainDAO storageDomainDAO = Mockito.mock(StorageDomainDAO.class);
-        Mockito.when(storageDomainDAO.getAllForStoragePool(guid))
+        final StorageDomainDAO storageDomainDAO = mock(StorageDomainDAO.class);
+        when(storageDomainDAO.getAllForStoragePool(Guid.Empty))
                 .thenReturn(new ArrayList<storage_domains>());
+        doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
+        doReturn(storageDomainDAO).when(vmRunHandler).getStorageDomainDAO();
 
-        final VmDeviceDAO vmDeviceDao = Mockito.mock(VmDeviceDAO.class);
-        Mockito.when(vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(guid,
+        final VmDeviceDAO vmDeviceDao = mock(VmDeviceDAO.class);
+        when(vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(Guid.Empty,
                 VmDeviceType.DISK.getName(),
                 VmDeviceType.DISK.getName())).thenReturn(vmDevices);
-
-        final DbFacade facadeMock = new DbFacade() {
-            @Override
-            public DiskDao getDiskDao() {
-                return diskDao;
-            }
-
-            @Override
-            public StorageDomainDAO getStorageDomainDAO() {
-                return storageDomainDAO;
-            }
-
-            @Override
-            public VmDeviceDAO getVmDeviceDAO() {
-                return vmDeviceDao;
-            }
-        };
-
-        final VDSBrokerFrontend vdsBrokerFrontendMock = new VDSBrokerFrontend() {
-            @Override
-            public VDSReturnValue RunVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
-                final VDSReturnValue vdsReturnValue = new VDSReturnValue();
-                if (calls.containsKey(commandType)) {
-                    vdsReturnValue.setReturnValue(calls.get(commandType));
-                } else {
-                    vdsReturnValue.setReturnValue(Boolean.TRUE);
-                }
-                return vdsReturnValue;
-            }
-
-            @Override
-            public VDSReturnValue RunAsyncVdsCommand(VDSCommandType commandType,
-                    VdsAndVmIDVDSParametersBase parameters,
-                    IVdsAsyncCommand command) {
-                return null;
-            }
-
-            @Override
-            public IVdsAsyncCommand GetAsyncCommandForVm(Guid vmId) {
-                return null;
-            }
-
-            @Override
-            public IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId) {
-                return null;
-            }
-
-            @Override
-            public FutureVDSCall<VDSReturnValue> runFutureVdsCommand(FutureVDSCommandType commandType,
-                    VdsIdVDSCommandParametersBase parameters) {
-                return null;
-            }
-
-        };
-
-        final Backend backendMock = new Backend() {
-            @Override
-            public VDSBrokerFrontend getResourceManager() {
-                return vdsBrokerFrontendMock;
-            }
-        };
-        PowerMockito.mockStatic(Backend.class);
-        Mockito.when(Backend.getInstance()).thenReturn(backendMock);
-
-        PowerMockito.mockStatic(DbFacade.class);
-        Mockito.when(DbFacade.getInstance()).thenReturn(facadeMock);
-
-        PowerMockito.mockStatic(ImagesHandler.class);
-        Mockito.when(ImagesHandler.PerformImagesChecks(any(VM.class),
-                any(ArrayList.class),
-                any(Guid.class),
-                any(Guid.class),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(),
-                anyBoolean(), any(List.class)))
-                .thenReturn(true);
-        Mockito.when(ImagesHandler.isVmInPreview(any(Guid.class))).thenReturn(false);
+        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
+        doReturn(vmDeviceDao).when(vmRunHandler).getVmDeviceDAO();
     }
 
-    private static SnapshotsValidator mockSuccessfulSnapshotValidator() {
+    private SnapshotsValidator mockSuccessfulSnapshotValidator() {
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
+        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         return snapshotsValidator;
     }
 }

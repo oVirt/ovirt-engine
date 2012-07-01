@@ -1,0 +1,316 @@
+package org.ovirt.engine.core.bll;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
+
+/** A utility class for verifying running a vm*/
+public class VmRunHandler {
+    private static final VmRunHandler instance = new VmRunHandler();
+
+    public static VmRunHandler getInstance() {
+        return instance;
+    }
+
+    public boolean canRunVm(VM vm, ArrayList<String> message, RunVmParams runParams,
+            VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator, VmPropertiesUtils vmPropsUtils) {
+        boolean retValue = true;
+
+        List<VmPropertiesUtils.ValidationError> validationErrors = null;
+
+        if (vm == null) {
+            retValue = false;
+            message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
+        } else if (!(validationErrors =
+                vmPropsUtils.validateVMProperties(vm.getvds_group_compatibility_version(),
+                        vm.getStaticData())).isEmpty()) {
+            VmHandler.handleCustomPropertiesError(validationErrors, message);
+            retValue = false;
+        } else {
+            BootSequence boot_sequence = ((runParams.getBootSequence()) != null) ? runParams.getBootSequence() : vm
+                    .getdefault_boot_sequence();
+            Guid storagePoolId = vm.getstorage_pool_id();
+            // Block from running a VM with no HDD when its first boot device is
+            // HD
+            // and no other boot devices are configured
+            List<Disk> vmDisks = getPluggedDisks(vm);
+            if (boot_sequence == BootSequence.C && vmDisks.size() == 0) {
+                String messageStr = !vmDisks.isEmpty() ?
+                        VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
+                        VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString();
+
+                message.add(messageStr);
+                retValue = false;
+            } else {
+                // If CD appears as first and there is no ISO in storage
+                // pool/ISO inactive -
+                // you cannot run this VM
+
+                if (boot_sequence == BootSequence.CD && findActiveISODomain(storagePoolId) == null) {
+                    message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
+                    retValue = false;
+                }
+
+                // custom properties allowed only from cluster 2.3
+                else if (!StringUtils.isEmpty(vm.getStaticData().getCustomProperties()) &&
+                        !Config.<Boolean> GetValue(ConfigValues.SupportCustomProperties,
+                                vm.getvds_group_compatibility_version().getValue())) {
+
+                    message.add(VdcBllMessages.CUSTOM_VM_PROPERTIES_INVALID_VALUES_NOT_ALLOWED_IN_CURRENT_CLUSTER.toString());
+                    retValue = false;
+
+                } else {
+                    // if there is network in the boot sequence, check that the
+                    // vm has network,
+                    // otherwise the vm cannot be run in vdsm
+                    if (boot_sequence == BootSequence.N
+                            && DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()).size() == 0) {
+                        message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
+                        retValue = false;
+                    } else if (vmDisks.size() > 0) {
+                        ValidationResult vmDuringSnapshotResult =
+                                snapshotsValidator.vmNotDuringSnapshot(vm.getId());
+                        if (!vmDuringSnapshotResult.isValid()) {
+                            message.add(vmDuringSnapshotResult.getMessage().name());
+                            retValue = false;
+                        }
+
+                        if (retValue && !performImageChecksForRunningVm(vm, message, runParams, vmDisks)) {
+                            retValue = false;
+                        }
+                        // Check if iso and floppy path exists
+                        if (retValue && !vm.getauto_startup()
+                                && !validateIsoPath(findActiveISODomain(vm.getstorage_pool_id()),
+                                        runParams,
+                                        message)) {
+                            retValue = false;
+                        } else if (retValue) {
+                            boolean isVmDuringInit = ((Boolean) getBackend()
+                                    .getResourceManager()
+                                    .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
+                                            new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
+                                    .getReturnValue()).booleanValue();
+                            if (vm.isStatusUp() || (vm.getstatus() == VMStatus.NotResponding) || isVmDuringInit) {
+                                retValue = false;
+                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
+                            } else if (vm.getstatus() == VMStatus.Paused && vm.getrun_on_vds() != null) {
+                                VDS vds = DbFacade.getInstance().getVdsDAO().get(
+                                        new Guid(vm.getrun_on_vds().toString()));
+                                if (vds.getstatus() != VDSStatus.Up) {
+                                    retValue = false;
+                                    message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
+                                    message.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
+                                }
+                            }
+
+                            boolean isStatelessVm = shouldVmRunAsStateless(runParams, vm);
+
+                            if (retValue && isStatelessVm && isVmInPreview(vm)) {
+                                retValue = false;
+                                message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_WHILE_IN_PREVIEW.toString());
+                            }
+
+                            // if the VM itself is stateless or run once as stateless
+                            if (retValue && isStatelessVm && vm.getauto_startup()) {
+                                retValue = false;
+                                message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA.toString());
+                            }
+
+                            retValue = retValue == false ? retValue : vdsSelector.CanFindVdsToRunOn(message, false);
+
+                            /**
+                             * only if can do action ok then check with actions matrix that status is valid for this
+                             * action
+                             */
+                            if (retValue
+                                    && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
+                                            VdcActionType.RunVm)) {
+                                retValue = false;
+                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return retValue;
+    }
+
+    /**
+     * Check isValid, storageDomain and diskSpace only if VM is not HA VM
+     */
+    protected boolean performImageChecksForRunningVm
+            (VM vm, List<String> message, RunVmParams runParams, List<Disk> vmDisks) {
+        return ImagesHandler.PerformImagesChecks(vm, message,
+                vm.getstorage_pool_id(), Guid.Empty, !vm.getauto_startup(),
+                true, false, false, false, false,
+                !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup(),
+                !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup(),
+                vmDisks);
+    }
+
+    protected boolean isVmInPreview(VM vm) {
+        return ImagesHandler.isVmInPreview(vm.getId());
+    }
+
+    /**
+     * The following method should return only plugged images which are attached to VM,
+     * only those images are relevant for the RunVmCommand
+     * @param vm
+     * @return
+     */
+    protected List<Disk> getPluggedDisks(VM vm) {
+        List<Disk> diskImages = getDiskDAO().getAllForVm(vm.getId());
+        List<VmDevice> diskVmDevices = getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                VmDeviceType.DISK.getName(),
+                VmDeviceType.DISK.getName());
+        List<Disk> result = new ArrayList<Disk>();
+        for (Disk diskImage : diskImages) {
+            for (VmDevice diskVmDevice : diskVmDevices) {
+                if (diskImage.getId().equals(diskVmDevice.getDeviceId())) {
+                    if (diskVmDevice.getIsPlugged()) {
+                        result.add(diskImage);
+                    }
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks if there is an active ISO domain in the storage pool. If so returns the Iso Guid, otherwise returns null.
+     *
+     * @param storagePoolId
+     *            The storage pool id.
+     * @return Iso Guid of active Iso, and null if not.
+     */
+    public Guid findActiveISODomain(Guid storagePoolId) {
+        Guid isoGuid = null;
+        List<storage_domains> domains = getStorageDomainDAO().getAllForStoragePool(
+                storagePoolId);
+        for (storage_domains domain : domains) {
+            if (domain.getstorage_domain_type() == StorageDomainType.ISO) {
+                storage_domains sd = getStorageDomainDAO().getForStoragePool(domain.getId(),
+                        storagePoolId);
+                if (sd != null && sd.getstatus() == StorageDomainStatus.Active) {
+                    isoGuid = sd.getId();
+                    break;
+                }
+            }
+        }
+        return isoGuid;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean validateIsoPath(Guid storageDomainId,
+            RunVmParams runParams,
+            ArrayList<String> messages) {
+        if (!StringUtils.isEmpty(runParams.getDiskPath())) {
+            if (storageDomainId == null) {
+                messages.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
+                return false;
+            }
+            boolean retValForIso = false;
+            VdcQueryReturnValue ret =
+                    getBackend().runInternalQuery(VdcQueryType.GetAllIsoImagesList,
+                            new GetAllIsoImagesListParameters(storageDomainId));
+            if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
+                List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
+                if (repoFileNameList != null) {
+                    for (RepoFileMetaData isoFileMetaData : (List<RepoFileMetaData>) ret.getReturnValue()) {
+                        if (isoFileMetaData.getRepoFileName().equals(runParams.getDiskPath())) {
+                            retValForIso = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!retValForIso) {
+                messages.add(VdcBllMessages.ERROR_CANNOT_FIND_ISO_IMAGE_PATH.toString());
+                return false;
+            }
+        }
+
+        if (!StringUtils.isEmpty(runParams.getFloppyPath())) {
+            boolean retValForFloppy = false;
+            VdcQueryReturnValue ret =
+                    getBackend().runInternalQuery(VdcQueryType.GetAllFloppyImagesList,
+                            new GetAllIsoImagesListParameters(storageDomainId));
+            if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
+                List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
+                if (repoFileNameList != null) {
+
+                    for (RepoFileMetaData isoFileMetaData : (List<RepoFileMetaData>) ret.getReturnValue()) {
+                        if (isoFileMetaData.getRepoFileName().equals(runParams.getFloppyPath())) {
+                            retValForFloppy = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!retValForFloppy) {
+                messages.add(VdcBllMessages.ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH.toString());
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean shouldVmRunAsStateless(RunVmParams param, VM vm) {
+        if (param.getRunAsStateless() != null) {
+            return param.getRunAsStateless();
+        }
+        return vm.getis_stateless();
+    }
+
+    protected BackendInternal getBackend() {
+        return Backend.getInstance();
+    }
+
+    protected DiskDao getDiskDAO() {
+        return DbFacade.getInstance().getDiskDao();
+    }
+
+    protected VmDeviceDAO getVmDeviceDAO() {
+        return DbFacade.getInstance().getVmDeviceDAO();
+    }
+
+    protected StorageDomainDAO getStorageDomainDAO() {
+        return DbFacade.getInstance().getStorageDomainDAO();
+    }
+}

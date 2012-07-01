@@ -19,11 +19,11 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
-import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
-import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -340,13 +340,17 @@ public final class ImagesHandler {
     }
 
     public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId) {
+        return cdPathWindowsToLinux(windowsPath, (String) Backend.getInstance()
+                .getResourceManager()
+                .RunVdsCommand(VDSCommandType.IsoPrefix, new IrsBaseVDSCommandParameters(storagePoolId))
+                .getReturnValue());
+    }
+
+    public static String cdPathWindowsToLinux(String windowsPath, String isoPrefix) {
         if (StringHelper.isNullOrEmpty(windowsPath)) {
             return windowsPath; // empty string is used for 'eject'.
         }
         String fileName = Path.GetFileName(windowsPath);
-        String isoPrefix = (String) Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.IsoPrefix, new IrsBaseVDSCommandParameters(storagePoolId))
-                .getReturnValue();
         return String.format("%1$s/%2$s", isoPrefix, fileName);
     }
 
@@ -528,9 +532,9 @@ public final class ImagesHandler {
                         domainId, storagePoolId);
                 if (checkStorageDomain) {
                     StorageDomainValidator storageDomainValidator =
-                                new StorageDomainValidator(domain);
+                            new StorageDomainValidator(domain);
                     returnValue = storageDomainValidator.isDomainExistAndActive(messages);
-                    if(!returnValue) {
+                    if (!returnValue) {
                         break;
                     }
                 }
@@ -570,7 +574,8 @@ public final class ImagesHandler {
                         diskImage.setimageStatus(image.getimageStatus());
                         DbFacade.getInstance().getImageDao().update(diskImage.getImage());
                         returnValue = false;
-                        ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
+                        ListUtils.nullSafeAdd(messages,
+                                VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
                         break;
                     }
                 }

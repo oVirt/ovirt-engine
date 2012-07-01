@@ -152,7 +152,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (returnValue) {
             List<ValidationError> validationErrors = validateCustomProperties(vmStaticFromParams);
             if (!validationErrors.isEmpty()) {
-                handleCustomPropertiesError(validationErrors, reasons);
+                VmHandler.handleCustomPropertiesError(validationErrors, reasons);
                 returnValue = false;
             }
         }
@@ -314,21 +314,24 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         // check for Vm Payload
         if (returnValue && getParameters().getVmPayload() != null) {
             returnValue = checkPayload(getParameters().getVmPayload(),
-                        getParameters().getVmStaticData().getiso_path());
+                    getParameters().getVmStaticData().getiso_path());
             if (returnValue) {
                 // we save the content in base64 string
                 getParameters().getVmPayload().setContent(Base64.encodeBase64String(
-                            getParameters().getVmPayload().getContent().getBytes()));
+                        getParameters().getVmPayload().getContent().getBytes()));
             }
         }
 
         // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages())) {
-                returnValue = false;
+        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(),
+                getParameters().getVm().getos(),
+                getVdsGroup(),
+                getReturnValue().getCanDoActionMessages())) {
+            returnValue = false;
         }
 
-        //check cpuPinning
-        if(returnValue && !isCpuPinningValid(getParameters().getVm().getCpuPinning())) {
+        // check cpuPinning
+        if (returnValue && !isCpuPinningValid(getParameters().getVm().getCpuPinning())) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
         }
@@ -364,7 +367,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     private boolean validateProvidedDestinations() {
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-            if(diskImage.getstorage_ids() == null || diskImage.getstorage_ids().isEmpty()) {
+            if (diskImage.getstorage_ids() == null || diskImage.getstorage_ids().isEmpty()) {
                 diskImage.setstorage_ids(new ArrayList<Guid>());
                 diskImage.getstorage_ids().add(getParameters().getStorageDomainId());
             }
@@ -428,7 +431,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         // Set default quota id for each disk image in the source if storage pool enforcement is disabled.
         for (DiskImage diskImage : getImagesToCheckDestinationStorageDomains()) {
-            diskImage.setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(diskImage.getQuotaId(), getStoragePool()));
+            diskImage.setQuotaId(QuotaHelper.getInstance()
+                    .getQuotaIdToConsume(diskImage.getQuotaId(), getStoragePool()));
         }
         if (!isInternalExecution()) {
             return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
@@ -551,11 +555,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         .toString());
             }
 
-            if(!returnValue) {
+            if (!returnValue) {
                 returnValue = returnValue && IsLegalClusterId(vmStaticData.getvds_group_id(), reasons);
             }
 
-            if(!isPinningAndMigrationValid(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
+            if (!isPinningAndMigrationValid(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
                 returnValue = false;
             }
 
