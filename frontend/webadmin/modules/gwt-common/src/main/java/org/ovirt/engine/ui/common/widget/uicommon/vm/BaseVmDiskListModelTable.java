@@ -66,8 +66,13 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
         TextColumnWithTooltip<Disk> storageDomainColumn = new TextColumnWithTooltip<Disk>() {
             @Override
             public String getValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getStoragesNames().get(0) : constants.notAvailableLabel();
+                if (object.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage diskImage = (DiskImage)object;
+                    if (diskImage.getStoragesNames() != null) {
+                        return diskImage.getStoragesNames().get(0);
+                    }
+                }
+                return constants.notAvailableLabel();
             }
         };
         getTable().addColumn(storageDomainColumn, constants.storageDomainDisk());
