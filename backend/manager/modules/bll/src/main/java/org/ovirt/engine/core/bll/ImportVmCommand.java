@@ -935,7 +935,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
 
         if (networks.length() > 0) {
-            networks.deleteCharAt(networks.length()); // remove the last comma
+            networks.deleteCharAt(networks.length() - 1); // remove the last comma
             AuditLogableBase logable = new AuditLogableBase();
             logable.AddCustomValue("Newtorks", networks.toString());
             logable.AddCustomValue("Interfaces", ifaces.toString());
