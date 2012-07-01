@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -29,6 +31,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     private static final long serialVersionUID = -3202434016040084728L;
     private boolean hasImages;
+    private List<String> disksLeftInVm = new ArrayList<String>();
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -178,7 +181,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         case END_FAILURE:
         case END_SUCCESS:
         default:
-            return AuditLogType.USER_REMOVE_VM_FINISHED;
+            return disksLeftInVm.isEmpty() ? AuditLogType.USER_REMOVE_VM_FINISHED
+                    : AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS;
         }
     }
 
@@ -215,15 +219,36 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 // between ExecuteVmCommand (for example, of a first multiple VMs removal that includes VM A,
                 // and a second multiple VMs removal that include the same VM).
                 setVm(DbFacade.getInstance().getVmDAO().get(getVmId()));
-
                 if (getVm() != null) {
-                    VmHandler.updateDisksFromDb(getVm());
+                    updateDisksAfterVmRemoved();
+
+                    // Remove VM from DB.
                     RemoveVmFromDb();
                 }
             }
             setSucceeded(true);
         } finally {
             freeLock();
+        }
+    }
+
+    /**
+     * Update disks for VM after disks were removed.
+     */
+    private void updateDisksAfterVmRemoved() {
+        VmHandler.updateDisksFromDb(getVm());
+
+        // Get all disk images for VM (VM should not have any image disk associated with it).
+        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(),
+                true,
+                false);
+
+        // If the VM still has disk images related to it, change their status to Illegal.
+        if (!diskImages.isEmpty()) {
+            for (DiskImage diskImage : diskImages) {
+                disksLeftInVm.add(diskImage.getDiskAlias());
+            }
+            AddCustomValue("DisksNames", StringUtils.join(disksLeftInVm, ","));
         }
     }
 }

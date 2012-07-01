@@ -10,8 +10,12 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * This command removes all Vm images and all created snapshots both from Irs
@@ -44,7 +48,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         }
 
         boolean noImagesRemovedYet = true;
-        for (DiskImage image : images) {
+        for (final DiskImage image : images) {
             if (mImagesToBeRemoved.contains(image.getImageId())) {
                 RemoveImageParameters tempVar = new RemoveImageParameters(image.getImageId());
                 tempVar.setParentCommand(getParameters().getParentCommand());
@@ -67,16 +71,43 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                         return;
                     }
 
-                    log.errorFormat("Can't remove image id: {0} for VM id: {1} due to: {2}.",
-                            image.getImageId(), getParameters().getVmId(),
+                    log.errorFormat("Can't remove image id: {0} for VM id: {1} due to: {2}. Image will be set at illegal state with no snapshot id.",
+                            image.getImageId(),
+                            getParameters().getVmId(),
                             vdcReturnValue.getFault().getMessage());
-                }
 
+                    TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                            new TransactionMethod<Object>() {
+                                @Override
+                                public Object runInTransaction() {
+                                    // If VDSM task didn't succeed to initiate a task we change the disk to at illegal
+                                    // state.
+                                    updateDiskImagesToIllegal(image);
+                                    return true;
+                                }
+                            });
+                }
                 noImagesRemovedYet = false;
             }
         }
 
         setSucceeded(true);
+    }
+
+    /**
+     * Update all disks images of specific disk image to illegal state, and set the vm snapshot id to null, since now
+     * they are not connected to any VM.
+     *
+     * @param diskImage - The disk to update.
+     */
+    private void updateDiskImagesToIllegal(DiskImage diskImage) {
+        List<DiskImage> snapshotDisks =
+                getDbFacade().getDiskImageDAO().getAllSnapshotsForImageGroup(diskImage.getId());
+        for (DiskImage diskSnapshot : snapshotDisks) {
+            diskSnapshot.setvm_snapshot_id(null);
+            diskSnapshot.setimageStatus(ImageStatus.ILLEGAL);
+            getDbFacade().getImageDao().update(diskSnapshot.getImage());
+        }
     }
 
     @Override
