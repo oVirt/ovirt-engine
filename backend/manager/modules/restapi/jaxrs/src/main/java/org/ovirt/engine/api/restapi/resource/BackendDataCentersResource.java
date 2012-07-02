@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -34,7 +35,11 @@ public class BackendDataCentersResource extends
 
     @Override
     public DataCenters list() {
-        return mapCollection(getBackendCollection(SearchType.StoragePool));
+        if (isFiltered())
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllStoragePools,
+                    new VdcQueryParametersBase()));
+        else
+            return mapCollection(getBackendCollection(SearchType.StoragePool));
     }
 
     @Override
