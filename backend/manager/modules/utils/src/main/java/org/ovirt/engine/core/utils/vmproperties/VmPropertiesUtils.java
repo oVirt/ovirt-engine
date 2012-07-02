@@ -35,7 +35,6 @@ public class VmPropertiesUtils {
     private final String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]"; // all characters
                                                                                                     // but the delimiter
                                                                                                     // are allowed
-    private final Pattern KEY_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
     private final Pattern VALUE_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")+");
 
     // private static final Pattern KEY_VALIDATION_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER + ")+");
