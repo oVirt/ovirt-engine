@@ -381,8 +381,6 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentDomainNameEntry, DOMAIN_SEPERATOR, null);
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
-        DomainsConfigurationEntry authModeEntry =
-                new DomainsConfigurationEntry(currentAuthModeEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
         Set<Entry<String, String>> domainValues = domainNameEntry.getValues();
         for (Entry<String, String> currDomain : domainValues) {
@@ -421,7 +419,6 @@ public class ManageDomains {
         }
 
         domainNameEntry.setValueForDomain(domainName, null);
-        String domainNameEntryString = domainNameEntry.getDomainsConfigurationEntry();
 
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
         String currentAdUserPasswordEntry = configurationProvider.getConfigValue(ConfigValues.AdUserPassword);
@@ -525,7 +522,6 @@ public class ManageDomains {
         }
 
         domainNameEntry.setValueForDomain(domainName, null);
-        String domainNameEntryString = domainNameEntry.getDomainsConfigurationEntry();
 
         // Assuming we got here, we need to change the configuration of the others as well
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
