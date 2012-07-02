@@ -315,7 +315,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(getVm().getId(),
                     "stateless snapshot");
             tempVar.setShouldBeLogged(false);
-            tempVar.setParentCommand(VdcActionType.RunVm);
+            tempVar.setParentCommand(getActionType());
             tempVar.setEntityId(getParameters().getEntityId());
             CreateAllSnapshotsFromVmParameters p = tempVar;
             p.setSnapshotType(SnapshotType.STATELESS);
