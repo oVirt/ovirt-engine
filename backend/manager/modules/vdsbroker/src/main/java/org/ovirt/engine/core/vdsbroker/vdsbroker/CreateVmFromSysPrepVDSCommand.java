@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class CreateVmFromSysPrepVDSCommand<P extends CreateVmFromSysPrepVDSCommandParameters>
         extends CreateVDSCommand<P> {
@@ -12,7 +11,7 @@ public class CreateVmFromSysPrepVDSCommand<P extends CreateVmFromSysPrepVDSComma
                         parameters.getDomain(),
                         parameters.getSysPrepParams());
 
-        if (!StringHelper.EqOp(sysPrepContent, "")) {
+        if (!"".equals(sysPrepContent)) {
             builder.buildSysprepVmPayload(sysPrepContent);
         }
     }
