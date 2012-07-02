@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
@@ -371,7 +370,7 @@ public class Backend implements BackendInternal {
             boolean isPerformUserCheck) {
         if (isPerformUserCheck) {
             String sessionId = addSessionToContext(parameters);
-            if (StringHelper.isNullOrEmpty(sessionId)
+            if (StringUtils.isEmpty(sessionId)
                     || SessionDataContainer.getInstance().getUser(sessionId, parameters.getRefresh()) == null) {
                 VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
                 returnValue.setSucceeded(false);
@@ -393,17 +392,17 @@ public class Backend implements BackendInternal {
     private static String addSessionToContext(VdcQueryParametersBase parameters) {
         String sessionId = parameters.getHttpSessionId();
         boolean isAddToContext = true;
-        if (StringHelper.isNullOrEmpty(sessionId)) {
+        if (StringUtils.isEmpty(sessionId)) {
             sessionId = parameters.getSessionId();
         }
         // This is a workaround for front end
         // Where no session, try to get Id of session which was attached to
         // request
-        if (StringHelper.isNullOrEmpty(sessionId)) {
+        if (StringUtils.isEmpty(sessionId)) {
             sessionId = ThreadLocalParamsContainer.getHttpSessionId();
             isAddToContext = false;
         }
-        if (!StringHelper.isNullOrEmpty(sessionId) && isAddToContext) {
+        if (!StringUtils.isEmpty(sessionId) && isAddToContext) {
             ThreadLocalParamsContainer.setHttpSessionId(sessionId);
         }
         return sessionId;
@@ -427,9 +426,9 @@ public class Backend implements BackendInternal {
             boolean isInternal,
             ExecutionContext executionContext) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
-        if (!StringHelper.isNullOrEmpty(sessionId)) {
+        if (!StringUtils.isEmpty(sessionId)) {
             for (VdcActionParametersBase parameter : parameters) {
-                if (StringHelper.isNullOrEmpty(parameter.getSessionId())) {
+                if (StringUtils.isEmpty(parameter.getSessionId())) {
                     parameter.setSessionId(sessionId);
                 }
             }
@@ -548,7 +547,7 @@ public class Backend implements BackendInternal {
     }
 
     public VdcReturnValueBase RunUserAction(VdcActionType actionType, VdcActionParametersBase parameters) {
-        if (StringHelper.isNullOrEmpty(parameters.getHttpSessionId())) {
+        if (StringUtils.isEmpty(parameters.getHttpSessionId())) {
             return NotAutorizedError();
         }
 
@@ -562,7 +561,7 @@ public class Backend implements BackendInternal {
     public ArrayList<VdcReturnValueBase> RunUserMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters) {
         for (VdcActionParametersBase parameter : parameters) {
-            if (StringHelper.isNullOrEmpty(parameter.getHttpSessionId())) {
+            if (StringUtils.isEmpty(parameter.getHttpSessionId())) {
                 ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
                 for (int i = 0; i < parameters.size(); i++) {
                     returnValues.add(NotAutorizedError());

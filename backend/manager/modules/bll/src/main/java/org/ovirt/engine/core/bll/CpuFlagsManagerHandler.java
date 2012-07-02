@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -157,13 +157,13 @@ public final class CpuFlagsManagerHandler {
 
             String[] cpus = Config.<String> GetValue(ConfigValues.ServerCPUList, ver.toString()).split("[;]", -1);
             for (String cpu : cpus) {
-                if (!StringHelper.isNullOrEmpty(cpu)) {
+                if (!StringUtils.isEmpty(cpu)) {
                     // [0]-level, [1]-name, [2]-flags, [3]-verb
                     final String[] info = cpu.split("[:]", -1);
                     if (info.length == 4) {
                         // if no flags at all create new list instead of split
                         HashSet<String> flgs =
-                                (StringHelper.isNullOrEmpty(info[2])) ? new HashSet<String>()
+                                (StringUtils.isEmpty(info[2])) ? new HashSet<String>()
                                         : new HashSet<String>(Arrays.asList(info[2].split("[,]", -1)));
 
                         ServerCpu sc = new ServerCpu(info[1], Integer.parseInt(info[0].trim()), flgs, info[3]);
@@ -221,7 +221,7 @@ public final class CpuFlagsManagerHandler {
             ServerCpu result = null;
             ServerCpu clusterCpu = null;
             // if there are flags but no cluster or cant find cluster
-            if (!StringHelper.isNullOrEmpty(serverFlags) && clusterCpuName != null) {
+            if (!StringUtils.isEmpty(serverFlags) && clusterCpuName != null) {
                 if (!((clusterCpu = _intelCpuByNameDictionary.get(clusterCpuName)) != null)
                         && !((clusterCpu = _amdCpuByNameDictionary.get(clusterCpuName)) != null)) {
                     result = FindMaxServerCpuByFlags(serverFlags);
@@ -280,7 +280,7 @@ public final class CpuFlagsManagerHandler {
             List<String> missingFlags = null;
 
             HashSet<String> lstServerflags =
-                    (StringHelper.isNullOrEmpty(serverFlags)) ? new HashSet<String>()
+                    (StringUtils.isEmpty(serverFlags)) ? new HashSet<String>()
                             : new HashSet<String>(Arrays.asList(serverFlags.split("[,]", -1)));
 
             // first find cluster cpu
@@ -325,7 +325,7 @@ public final class CpuFlagsManagerHandler {
             if (clusterCpuName == null) {
                 return false;
             } else {
-                if (StringHelper.isNullOrEmpty(serverFlags)) {
+                if (StringUtils.isEmpty(serverFlags)) {
                     return true;
                 } else {
                     Set<String> lstServerflags = new HashSet<String>(
@@ -387,7 +387,7 @@ public final class CpuFlagsManagerHandler {
          */
         public ServerCpu FindMaxServerCpuByFlags(String flags) {
             ServerCpu result = null;
-            HashSet<String> lstFlags = (StringHelper.isNullOrEmpty(flags)) ? new HashSet<String>()
+            HashSet<String> lstFlags = (StringUtils.isEmpty(flags)) ? new HashSet<String>()
                     : new HashSet<String>(Arrays.asList(flags.split("[,]", -1)));
 
             if (lstFlags.contains(_intelFlag)) {

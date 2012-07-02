@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapCreateComputerAccountParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
@@ -11,7 +12,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.CreateComputerAccountParameters;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -79,17 +79,17 @@ public class CreateComputerAccountCommand<T extends CreateComputerAccountParamet
     }
 
     String getActualUser() {
-        return StringHelper.isNullOrEmpty(getParameters().getUserName()) ? getCurrentUser().getUserName()
+        return StringUtils.isEmpty(getParameters().getUserName()) ? getCurrentUser().getUserName()
                 : getParameters().getUserName();
     }
 
     String getActualPassword() {
-        return StringHelper.isNullOrEmpty(getParameters().getUserPassword()) ? getCurrentUser()
+        return StringUtils.isEmpty(getParameters().getUserPassword()) ? getCurrentUser()
                 .getPassword() : getParameters().getUserPassword();
     }
 
     String getActualDomain() {
-        return StringHelper.isNullOrEmpty(getParameters().getDomain()) ? getCurrentUser()
+        return StringUtils.isEmpty(getParameters().getDomain()) ? getCurrentUser()
                 .getDomainControler() : getParameters().getDomain();
     }
 

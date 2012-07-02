@@ -3,13 +3,15 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -17,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -26,7 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -52,7 +52,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         AddCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
         this.setVmName(DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
-        if (StringHelper.isNullOrEmpty(getParameters().getInterface().getMacAddress())) {
+        if (StringUtils.isEmpty(getParameters().getInterface().getMacAddress())) {
             getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
         }
 
@@ -146,9 +146,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                 return false;
             }
         }
-
         // this must be the last check because it's add mac to the pool
-        if (!StringHelper.isNullOrEmpty(getParameters().getInterface().getMacAddress())) {
+        if (!StringUtils.isEmpty(getParameters().getInterface().getMacAddress())) {
             Regex re = new Regex(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS);
             if (re.IsMatch(getParameters().getInterface().getMacAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -33,14 +34,14 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
 
             // An empty 'mCdImagePath' means eject CD
-            if (!StringHelper.isNullOrEmpty(mCdImagePath)) {
+            if (!StringUtils.isEmpty(mCdImagePath)) {
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
             } else {
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EJECT_CD);
             }
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
         } else if ((VmRunHandler.getInstance().findActiveISODomain(getVm().getstorage_pool_id()) == null)
-                && !StringHelper.isNullOrEmpty(mCdImagePath)) {
+                && !StringUtils.isEmpty(mCdImagePath)) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
             setSucceeded(false);

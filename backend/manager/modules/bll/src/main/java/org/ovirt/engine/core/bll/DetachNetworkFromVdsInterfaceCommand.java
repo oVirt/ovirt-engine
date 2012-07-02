@@ -2,13 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -89,8 +90,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
             return false;
         }
-
-        if (StringHelper.isNullOrEmpty(getParameters().getInterface().getNetworkName())) {
+        if (StringUtils.isEmpty(getParameters().getInterface().getNetworkName())) {
             getParameters().getInterface().setNetworkName(iface.getNetworkName());
         }
 
@@ -105,8 +105,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                 }
             }
         }
-
-        if (StringHelper.isNullOrEmpty(iface.getNetworkName())) {
+        if (StringUtils.isEmpty(iface.getNetworkName())) {
             if (iface.getBonded() != null && iface.getBonded() == true) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NOT_ATTACCH_TO_NETWORK);
             } else {

@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -35,9 +36,9 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         String bond = null;
         T params = getParameters();
         String address = params.getAddress();
-        String subnet = StringHelper.isNullOrEmpty(params.getSubnet()) ? params.getNetwork()
+        String subnet = StringUtils.isEmpty(params.getSubnet()) ? params.getNetwork()
                 .getsubnet() : params.getSubnet();
-        String gateway = StringHelper.isNullOrEmpty(params.getGateway()) ? "" : params.getGateway();
+        String gateway = StringUtils.isEmpty(params.getGateway()) ? "" : params.getGateway();
         java.util.ArrayList<String> nics = new java.util.ArrayList<String>();
         nics.add(params.getInterface().getName());
 
@@ -96,21 +97,18 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
             return false;
         }
-
         // check if the parameters interface is part of a bond
-        if (!StringHelper.isNullOrEmpty(params.getInterface().getBondName())) {
+        if (!StringUtils.isEmpty(params.getInterface().getBondName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_IN_BOND);
             return false;
         }
-
         // Check that the specify interface has no network
-        if (!StringHelper.isNullOrEmpty(iface.getNetworkName())) {
+        if (!StringUtils.isEmpty(iface.getNetworkName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_HAVE_NETWORK);
             return false;
         }
-
         if (!NetworkUtils.getEngineNetwork().equals(params.getNetwork().getname())
-                && !StringHelper.isNullOrEmpty(params.getGateway())) {
+                && !StringUtils.isEmpty(params.getGateway())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
         }
@@ -137,7 +135,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
         // check address exists in static ip
         if (params.getBootProtocol() == NetworkBootProtocol.StaticIp) {
-            if (StringHelper.isNullOrEmpty(params.getAddress())) {
+            if (StringUtils.isEmpty(params.getAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
