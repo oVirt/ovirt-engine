@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public final class ErrorTranslatorImpl implements ErrorTranslator {
 
@@ -159,7 +159,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
                 // just a message that doesn't have a value in the resource:
                 {
                     String[] splitted = errorMsg.toLowerCase().split("[_]", -1);
-                    ret = StringHelper.join(" ", splitted);
+                    ret = StringUtils.join(splitted, " ");
                 }
             }
         }
