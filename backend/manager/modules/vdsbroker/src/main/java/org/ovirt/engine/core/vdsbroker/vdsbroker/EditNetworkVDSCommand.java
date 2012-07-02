@@ -3,9 +3,9 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {
     public EditNetworkVDSCommand(P parameters) {
@@ -29,19 +29,19 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
             options.put(VdsProperties.bootproto, VdsProperties.dhcp);
             break;
         case StaticIp:
-            if (!StringHelper.isNullOrEmpty(getParameters().getInetAddr())) {
+            if (!StringUtils.isEmpty(getParameters().getInetAddr())) {
                 options.put(VdsProperties.ipaddr, getParameters().getInetAddr());
             }
-            if (!StringHelper.isNullOrEmpty(getParameters().getNetworkMask())) {
+            if (!StringUtils.isEmpty(getParameters().getNetworkMask())) {
                 options.put(VdsProperties.netmask, getParameters().getNetworkMask());
             }
-            if (!StringHelper.isNullOrEmpty(getParameters().getGateway())) {
+            if (!StringUtils.isEmpty(getParameters().getGateway())) {
                 options.put(VdsProperties.gateway, getParameters().getGateway());
             }
             break;
         }
 
-        if (!StringHelper.isNullOrEmpty(getParameters().getBondingOptions())) {
+        if (!StringUtils.isEmpty(getParameters().getBondingOptions())) {
             options.put(VdsProperties.bonding_opts, getParameters().getBondingOptions());
         }
 
