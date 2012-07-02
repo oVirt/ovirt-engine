@@ -4,19 +4,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsVersion;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -272,7 +277,8 @@ public class VdsSelector {
     }
 
     private Guid getVdsToRunOn(Iterable<VDS> vdss) {
-        ArrayList<VDS> readyToRun = new ArrayList<VDS>();
+        final List<VDS> readyToRun = new ArrayList<VDS>();
+        final List<VmNetworkInterface> vmNICs = getVmNetworkInterfaceDAO().getAllForVm(getVm().getId());
         for (VDS curVds : vdss) {
             // vds must be in the correct group
             if (!curVds.getvds_group_id().equals(getVm().getvds_group_id()))
@@ -301,10 +307,38 @@ public class VdsSelector {
             if (!IsVMSwapValueLegal(curVds))
                 continue;
 
+            if(!areRequiredNetworksAvailable(vmNICs, getInterfaceDAO().getAllInterfacesForVds(curVds.getId())))
+                continue;
+
             readyToRun.add(curVds);
         }
 
         return readyToRun.isEmpty() ? Guid.Empty : getBestVdsToRun(readyToRun);
+    }
+
+    boolean areRequiredNetworksAvailable(final List<VmNetworkInterface> vmNetworkInterfaces,
+            final List<VdsNetworkInterface> allInterfacesForVds) {
+        for (final VmNetworkInterface vmIf : vmNetworkInterfaces) {
+            boolean found = false;
+            for (final VdsNetworkInterface vdsIf : allInterfacesForVds) {
+                if (StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
+        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
+    }
+
+    InterfaceDAO getInterfaceDAO() {
+        return DbFacade.getInstance().getInterfaceDAO();
     }
 
     private Guid getBestVdsToRun(List<VDS> list) {
