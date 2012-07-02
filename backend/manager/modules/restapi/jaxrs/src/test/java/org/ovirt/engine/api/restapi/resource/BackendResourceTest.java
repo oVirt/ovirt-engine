@@ -1,19 +1,23 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpEntityExpectations;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
+import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendResourceTest extends AbstractBackendBaseTest {
-    BackendClusterResource resource;
+    BackendHostResource resource;
 
     @Test
     public void testQueryWithoutFilter() throws Exception {
@@ -35,9 +39,24 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         resource.get();
     }
 
+    @Test
+    public void testActionWithCorrelationId() throws Exception {
+        setUpGetEntityExpectations(false);
+        expect(httpHeaders.getRequestHeader("Correlation-Id")).andReturn(asList("Some-Correlation-id")).anyTimes();
+        resource.setUriInfo((setUpActionExpectations(VdcActionType.UpdateVds,
+                                           UpdateVdsActionParameters.class,
+                                           new String[] { "RootPassword", "CorrelationId" },
+                                           new Object[] { NAMES[2], "Some-Correlation-id" },
+                                           true,
+                                           true)));
+        Action action = new Action();
+        action.setRootPassword(NAMES[2]);        
+        resource.install(action);
+    }
+
     @Override
     protected void init() {
-        resource = new BackendClusterResource(GUIDS[0].toString());
+        resource = new BackendHostResource(GUIDS[0].toString(), new BackendHostsResource());
         resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
         resource.setSessionHelper(sessionHelper);
@@ -46,14 +65,18 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     }
 
     protected void setUpGetEntityExpectations(boolean filter) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVdsGroupById,
-                GetVdsGroupByIdParameters.class,
+        setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
+                GetVdsByVdsIdParameters.class,
                 new String[] { "VdsId", "Filtered" },
                 new Object[] { GUIDS[0], filter },
                 getEntity(0));
     }
 
-    protected VDSGroup getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VDSGroup.class), index);
+    protected VDS getEntity(int index) {        
+        VDS vds = setUpEntityExpectations(control.createMock(VDS.class), index);
+        VdsStatic vdsStatic = control.createMock(VdsStatic.class);
+        expect(vdsStatic.getId()).andReturn(GUIDS[2]).anyTimes();
+        expect(vds.getStaticData()).andReturn(vdsStatic).anyTimes();
+        return vds;
     }
 }
