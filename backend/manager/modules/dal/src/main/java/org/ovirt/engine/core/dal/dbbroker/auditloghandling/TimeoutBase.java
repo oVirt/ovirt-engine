@@ -1,13 +1,16 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-import org.ovirt.engine.core.compat.StringHelper;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class TimeoutBase implements java.io.Serializable {
+public abstract class TimeoutBase implements Serializable {
     private static final long serialVersionUID = -4969034051659487755L;
-    private static java.util.HashMap<String, TimeoutBase> mHandler = new java.util.HashMap<String, TimeoutBase>();
-    private static Object mLock = new Object();
+    private static final Map<String, TimeoutBase> mHandler = new HashMap<String, TimeoutBase>();
+    private static final Object mLock = new Object();
     private boolean mUseTimeout;
-    private java.util.Date mEndTime = new java.util.Date(0);
+    private Date mEndTime = new Date(0);
 
     public boolean getUseTimout() {
         return mUseTimeout;
@@ -17,11 +20,11 @@ public abstract class TimeoutBase implements java.io.Serializable {
         mUseTimeout = value;
     }
 
-    public java.util.Date getEndTime() {
+    public Date getEndTime() {
         return mEndTime;
     }
 
-    public void setEndTime(java.util.Date value) {
+    public void setEndTime(Date value) {
         mUseTimeout = true;
         mEndTime = value;
     }
@@ -31,8 +34,7 @@ public abstract class TimeoutBase implements java.io.Serializable {
     protected abstract String getKey();
 
     private String getkeyForCheck() {
-        return StringHelper.EqOp(getTimeoutObjectId(), "") ? getKey() : String.format("%1$s_%2$s", getKey(),
-                getTimeoutObjectId());
+        return "".equals(getTimeoutObjectId()) ? getKey() : String.format("%1$s_%2$s", getKey(), getTimeoutObjectId());
     }
 
     public String getTimeoutObjectId() {
