@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.TestCase;
+
 import org.ovirt.engine.core.compat.backendcompat.PropertyCompat;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
-
-import junit.framework.TestCase;
 
 public class PropertyCompatTest extends TestCase {
     public String someValue = "Anakin";
@@ -23,7 +23,7 @@ public class PropertyCompatTest extends TestCase {
         assertEquals("Null Value", "JarJar", result);
     }
 
-    public void testGetAvalableValues() {
+    public void testGetAvailableValues() {
         Map<String, String> values = new HashMap<String, String>();
         Set<String> properties = new HashSet<String>(Arrays.asList("somevalue"));
         TypeCompat.getPropertyValues(this, properties, values);

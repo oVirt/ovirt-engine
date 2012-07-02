@@ -815,7 +815,7 @@ public final class AuditLogDirector {
     static String resolveMessage(String message, AuditLogableBase logable) {
         String returnValue = message;
         if (logable != null) {
-            Map<String, String> map = getAvalableValues(logable);
+            Map<String, String> map = getAvailableValues(logable);
             returnValue = resolveMessage(message, map);
         }
         return returnValue;
@@ -859,7 +859,7 @@ public final class AuditLogDirector {
         return buffer.toString();
     }
 
-    static Map<String, String> getAvalableValues(AuditLogableBase logable) {
+    static Map<String, String> getAvailableValues(AuditLogableBase logable) {
         Map<String, String> returnValue =
                 new HashMap<String, String>(logable.getCustomValues());
         Class<?> type = AuditLogableBase.class;
