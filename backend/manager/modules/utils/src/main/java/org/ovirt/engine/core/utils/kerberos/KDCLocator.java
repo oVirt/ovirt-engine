@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.utils.kerberos;
 
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * KDCs locator helper class. This class is used in order to locate KDCs in the DNS (based on a given realm). For each
@@ -22,5 +20,4 @@ public class KDCLocator extends DnsSRVLocator {
 
     }
 
-    private static Log log = LogFactory.getLog(KDCLocator.class);
 }
