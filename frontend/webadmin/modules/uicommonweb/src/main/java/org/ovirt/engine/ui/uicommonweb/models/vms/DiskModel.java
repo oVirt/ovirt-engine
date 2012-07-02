@@ -836,6 +836,7 @@ public class DiskModel extends Model
                 public void OnSuccess(Object target, Object returnValue) {
                     DiskModel model = (DiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+                    Linq.Sort(disks, new Linq.DiskByAliasComparer());
                     ArrayList<DiskModel> diskModels = Linq.DisksToDiskModelList(disks);
 
                     model.getInternalAttachableDisks().setItems(Linq.ToEntityModelList(
@@ -849,6 +850,7 @@ public class DiskModel extends Model
                 public void OnSuccess(Object target, Object returnValue) {
                     DiskModel model = (DiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+                    Linq.Sort(disks, new Linq.DiskByAliasComparer());
                     ArrayList<DiskModel> diskModels = Linq.DisksToDiskModelList(disks);
 
                     model.getExternalAttachableDisks().setItems(Linq.ToEntityModelList(
