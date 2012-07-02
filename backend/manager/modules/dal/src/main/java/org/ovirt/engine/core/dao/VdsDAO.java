@@ -72,23 +72,9 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      */
     List<VDS> getAllWithUniqueId(String id);
 
-    /**
-     * Retrieves all instances for the specified type.
-     *
-     * @param vds
-     *            the type
-     * @return the list of instances
-     */
-    List<VDS> getAllOfType(VDSType vds);
+    List<VDS> getVdsToRun(VDSType type, Guid groupId, VDSStatus status, int minNrOfCpus);
 
-    /**
-     * Retrieves all instances for the given list of types.
-     *
-     * @param types
-     *            the type filter
-     * @return the list of instances
-     */
-    List<VDS> getAllOfTypes(VDSType[] types);
+    List<VDS> getVdsToRun(VDSType[] types, Guid groupId, VDSStatus status, int minNrOfCpus);
 
     /**
      * Retrieves all instances by group id.

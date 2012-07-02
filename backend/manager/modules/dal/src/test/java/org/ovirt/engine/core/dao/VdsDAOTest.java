@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -163,49 +164,10 @@ public class VdsDAOTest extends BaseDAOTestCase {
      * Ensures that an empty collection is returned if the type is not present.
      */
     @Test
-    public void testGetAllOfTypeWithUnrepresentedType() {
-        List<VDS> result = dao.getAllOfType(VDSType.oVirtNode);
+    public void testGetVdsToRun() {
+        List<VDS> result = dao.getVdsToRun(VDSType.VDS, new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"), VDSStatus.Up, 0);
 
         assertIncorrectGetResult(result);
-    }
-
-    /**
-     * Ensures that all of the right instances for the given type.
-     */
-    @Test
-    public void testGetAllOfType() {
-        List<VDS> result = dao.getAllOfType(VDSType.VDS);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (VDS vds : result) {
-            assertEquals(VDSType.VDS, vds.getvds_type());
-        }
-    }
-
-    /**
-     * Ensures that an empty collection is returned.
-     */
-    @Test
-    public void testGetAllOfTypesWithUnrepresentedTypes() {
-        List<VDS> result = dao
-                .getAllOfTypes(new VDSType[] { VDSType.oVirtNode });
-
-        assertIncorrectGetResult(result);
-    }
-
-    /**
-     * Ensures that all of the right instances for the given types.
-     */
-    @Test
-    public void testGetAllOfTypes() {
-        List<VDS> result = dao.getAllOfTypes(new VDSType[] { VDSType.VDS });
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (VDS vds : result) {
-            assertEquals(VDSType.VDS, vds.getvds_type());
-        }
     }
 
     /**

@@ -695,19 +695,23 @@ LANGUAGE plpgsql;
 
 
 
-
-Create or replace FUNCTION GetVdsByType(v_vds_type INTEGER) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsToRun(v_vds_type INTEGER, v_vds_groupid UUID, v_vds_status INTEGER, v_min_cpu_cores INTEGER) RETURNS SETOF vds
    AS $procedure$
 BEGIN
 BEGIN
       RETURN QUERY SELECT DISTINCT vds.*
       FROM vds
-      WHERE vds_type = v_vds_type;
+      WHERE
+         vds_type = v_vds_type
+         AND vds_group_id = v_vds_groupid
+         AND status = v_vds_status
+         AND cpu_cores >= v_min_cpu_cores;
    END;
 
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
+
 
 
 

@@ -74,23 +74,6 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     }
 
     @Override
-    public List<VDS> getAllOfTypes(VDSType[] types) {
-        List<VDS> list = new ArrayList<VDS>();
-        for (VDSType type : types) {
-            list.addAll(getAllOfType(type));
-        }
-        return list;
-    }
-
-    @Override
-    public List<VDS> getAllOfType(VDSType type) {
-        return getCallsHandler().executeReadList("GetVdsByType",
-                VdsRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("vds_type", type));
-    }
-
-    @Override
     public List<VDS> getAllForVdsGroupWithoutMigrating(Guid id) {
         return getCallsHandler().executeReadList("GetVdsWithoutMigratingVmsByVdsGroupId",
                 VdsRowMapper.instance,
@@ -284,5 +267,26 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setAutoRecoverable(rs.getBoolean("recoverable"));
             return entity;
         }
+    }
+
+    @Override
+    public List<VDS> getVdsToRun(final VDSType type, final Guid groupId, final VDSStatus status, final int minNrOfCpus) {
+        return getCallsHandler().executeReadList("GetVdsToRun",
+                VdsRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_type", type)
+                        .addValue("vds_groupid", groupId)
+                        .addValue("vds_status", status)
+                        .addValue("min_cpu_cores", minNrOfCpus)
+                );
+    }
+
+    @Override
+    public List<VDS> getVdsToRun(VDSType[] types, Guid groupId, VDSStatus status, int minNrOfCpus) {
+        final List<VDS> result = new ArrayList<VDS>();
+        for(final VDSType type : types) {
+            result.addAll(getVdsToRun(type, groupId, status, minNrOfCpus));
+        }
+        return result;
     }
 }
