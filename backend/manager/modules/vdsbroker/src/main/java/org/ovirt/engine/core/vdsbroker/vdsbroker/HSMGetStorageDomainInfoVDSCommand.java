@@ -10,16 +10,15 @@ import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.Pair;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfoVDSCommandParameters>
-extends VdsBrokerCommand<P> {
+        extends VdsBrokerCommand<P> {
     public HSMGetStorageDomainInfoVDSCommand(P parameters) {
         super(parameters);
     }
@@ -35,7 +34,7 @@ extends VdsBrokerCommand<P> {
         setReturnValue(pairSdStatic);
     }
 
-    private Pair<storage_domain_static, SANState> BuildStorageStaticFromXmlRpcStruct(XmlRpcStruct xmlRpcStruct) {
+    private static Pair<storage_domain_static, SANState> BuildStorageStaticFromXmlRpcStruct(XmlRpcStruct xmlRpcStruct) {
         try {
             Pair<storage_domain_static, SANState> returnValue = new Pair<storage_domain_static, SANState>();
             storage_domain_static sdStatic = new storage_domain_static();
@@ -48,7 +47,7 @@ extends VdsBrokerCommand<P> {
             }
             if (xmlRpcStruct.contains("class")) {
                 String domainType = xmlRpcStruct.getItem("class").toString();
-                if (StringHelper.EqOp(domainType.toLowerCase(), "backup")) {
+                if ("backup".equalsIgnoreCase(domainType)) {
                     sdStatic.setstorage_domain_type(StorageDomainType.ImportExport);
                 } else {
                     sdStatic.setstorage_domain_type(EnumUtils.valueOf(StorageDomainType.class, domainType, true));
@@ -62,7 +61,7 @@ extends VdsBrokerCommand<P> {
                 if (sdStatic.getstorage_type() == StorageType.NFS && xmlRpcStruct.contains("remotePath")) {
                     String path = xmlRpcStruct.getItem("remotePath").toString();
                     List<storage_server_connections> connections = DbFacade.getInstance()
-                    .getStorageServerConnectionDAO().getAllForStorage(path);
+                            .getStorageServerConnectionDAO().getAllForStorage(path);
                     if (connections.isEmpty()) {
                         sdStatic.setConnection(new storage_server_connections());
                         sdStatic.getConnection().setconnection(path);
@@ -108,5 +107,5 @@ extends VdsBrokerCommand<P> {
         return _result;
     }
 
-    private static Log log = LogFactory.getLog(HSMGetStorageDomainInfoVDSCommand.class);
+    private static final Log log = LogFactory.getLog(HSMGetStorageDomainInfoVDSCommand.class);
 }
