@@ -1,6 +1,6 @@
-
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,18 +10,17 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringBuilderCompat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class SysprepHandler {
-    private static Map<String, String> userPerDomain = new HashMap<String, String>();
+    private static final Map<String, String> userPerDomain = new HashMap<String, String>();
     private static Map<String, String> passwordPerDomain = new HashMap<String, String>();
-    public static final java.util.HashMap<String, Integer> timeZoneIndex = new java.util.HashMap<String, Integer>();
+    public static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
 
     // we get a string like "(GMT-04:30) Afghanistan Standard Time"
     // we use regex to extract the time only and replace it to number
@@ -168,7 +167,7 @@ public final class SysprepHandler {
     private static String getTimeZone(VM vm) {
         String timeZone;
         // Can be empty if the VM was imported.
-        if (StringHelper.isNullOrEmpty(vm.gettime_zone())) {
+        if (StringUtils.isEmpty(vm.gettime_zone())) {
             vm.settime_zone(TimeZoneInfo.Local.getId());
         }
 
@@ -191,7 +190,7 @@ public final class SysprepHandler {
     }
 
     private static String getSysprepDir() {
-        return Config.<String> GetValue(ConfigValues.DataDir) + java.io.File.separator + "sysprep";
+        return Config.<String> GetValue(ConfigValues.DataDir) + File.separator + "sysprep";
     }
 
     private static String LoadFile(String fileName) {
@@ -224,7 +223,7 @@ public final class SysprepHandler {
         timeZoneIndex.put("(GMT+04:00) Arabian Standard Time", 165);
         timeZoneIndex.put("(GMT+03:00) Arabic Standard Time", 158);
         timeZoneIndex.put("(GMT-04:00) Atlantic Standard Time", 50);
-        //timeZoneIndex.put("(GMT+04:00) Azerbaijan Standard Time", xxx);
+        // timeZoneIndex.put("(GMT+04:00) Azerbaijan Standard Time", xxx);
         timeZoneIndex.put("(GMT-10:00) Azores Standard Time", 80);
         timeZoneIndex.put("(GMT-06:00) Canada Central Standard Time", 25);
         timeZoneIndex.put("(GMT-01:00) Cape Verde Standard Time", 83);
@@ -232,7 +231,7 @@ public final class SysprepHandler {
         timeZoneIndex.put("(GMT+09:30) Cen. Australia Standard Time", 250);
         timeZoneIndex.put("(GMT-06:00) Central America Standard Time", 33);
         timeZoneIndex.put("(GMT+06:00) Central Asia Standard Time", 195);
-        //timeZoneIndex.put("(GMT-04:00) Central Brazilian Standard Time ", xxx);
+        // timeZoneIndex.put("(GMT-04:00) Central Brazilian Standard Time ", xxx);
         timeZoneIndex.put("(GMT+01:00) Central Europe Standard Time", 95);
         timeZoneIndex.put("(GMT+01:00) Central European Standard Time", 100);
         timeZoneIndex.put("(GMT+11:00) Central Pacific Standard Time", 280);
@@ -306,7 +305,7 @@ public final class SysprepHandler {
     // the "Afghanistan Standard Time" is the vm Key that we get from the method getTimezoneKey()
     // "175" is the timezone keys that xp/2003 excpect to get, vista/7/2008 gets "Afghanistan Standard Time"
     public static String getTimezoneIndexByKey(String key) {
-        for(String s: timeZoneIndex.keySet()) {
+        for (String s : timeZoneIndex.keySet()) {
             if (getTimezoneKey(s).equals(key)) {
                 return timeZoneIndex.get(s).toString();
             }
