@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
@@ -86,8 +85,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                         // set name and state - if active true, otherwise false
                         lun.getPathsDictionary()
                                 .put(xcon.getItem(PHYSICAL_DEVICE_FIELD).toString(),
-                                        StringHelper.EqOp(
-                                                xcon.getItem(DEVICE_STATE_FIELD).toString(), DEVICE_ACTIVE_VALUE));
+                                        DEVICE_ACTIVE_VALUE.equals(xcon.getItem(DEVICE_STATE_FIELD).toString()));
                     }
                 }
             }
