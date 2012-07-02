@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
@@ -38,14 +38,14 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmCD() {
-        if (!StringHelper.isNullOrEmpty(vm.getCdPath())) {
+        if (!StringUtils.isEmpty(vm.getCdPath())) {
             createInfo.add(VdsProperties.CDRom, vm.getCdPath());
         }
     }
 
     @Override
     protected void buildVmFloppy() {
-        if (!StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
+        if (!StringUtils.isEmpty(vm.getFloppyPath())) {
             createInfo.add(VdsProperties.Floppy, vm.getFloppyPath());
         }
     }
@@ -106,6 +106,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     }
 
     private static final String UTF8_CHARSET_ENCODING = "UTF8";
+
     @Override
     protected void buildSysprepVmPayload(String strSysPrepContent) {
         byte[] binarySysPrep;
@@ -184,7 +185,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 networks.append(",");
             }
         }
-        if (!StringHelper.isNullOrEmpty(macs.toString().trim())) {
+        if (!StringUtils.isEmpty(macs.toString().trim())) {
             createInfo.add(VdsProperties.mac_addr, macs.toString());
             createInfo.add(VdsProperties.nic_type, nics.toString());
             createInfo.add(VdsProperties.bridge, networks.toString());
@@ -227,6 +228,6 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmMemoryBalloon() {
-     // Not supported in old code
+        // Not supported in old code
     }
 }
