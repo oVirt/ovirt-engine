@@ -12,10 +12,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 
@@ -200,7 +200,7 @@ public class VmPropertiesUtils {
     }
 
     private void parseVMPropertiesRegex(String properties, Map<String, Pattern> keysToRegex) {
-        if (StringHelper.isNullOrEmpty(properties)) {
+        if (StringUtils.isEmpty(properties)) {
             return;
         }
 
@@ -232,7 +232,7 @@ public class VmPropertiesUtils {
      */
     private List<ValidationError> validateProperties(Version version, String properties) {
 
-        if (StringHelper.isNullOrEmpty(properties)) { // No errors in case of empty value
+        if (StringUtils.isEmpty(properties)) { // No errors in case of empty value
             return Collections.emptyList();
         }
         if (syntaxErrorInProperties(properties)) {
@@ -326,7 +326,7 @@ public class VmPropertiesUtils {
      */
     public void getVMProperties(Version version, Map<String, String> propertiesMap, String vmPropertiesFieldValue) {
         // format of properties is key1=val1,key2=val2,key3=val3,key4=val4
-        if (StringHelper.isNullOrEmpty(vmPropertiesFieldValue)) {
+        if (StringUtils.isEmpty(vmPropertiesFieldValue)) {
             return;
         }
 
@@ -347,7 +347,7 @@ public class VmPropertiesUtils {
             Map<String, String> propertiesMap) {
         Set<ValidationError> errorsSet = new HashSet<VmPropertiesUtils.ValidationError>();
         List<ValidationError> results = new ArrayList<VmPropertiesUtils.ValidationError>();
-        if (!StringHelper.isNullOrEmpty(vmPropertiesFieldValue)) {
+        if (!StringUtils.isEmpty(vmPropertiesFieldValue)) {
             String keyValuePairs[] = SEMICOLON_PATTERN.split(vmPropertiesFieldValue);
 
             for (String keyValuePairStr : keyValuePairs) {
@@ -434,9 +434,9 @@ public class VmPropertiesUtils {
      */
     public String customProperties(String predefinedProperties, String userDefinedProperties) {
         StringBuilder result = new StringBuilder();
-        result.append((StringHelper.isNullOrEmpty(predefinedProperties)) ? "" : predefinedProperties);
+        result.append((StringUtils.isEmpty(predefinedProperties)) ? "" : predefinedProperties);
         result.append((result.length() == 0) ? "" : ";");
-        result.append((StringHelper.isNullOrEmpty(userDefinedProperties)) ? "" : userDefinedProperties);
+        result.append((StringUtils.isEmpty(userDefinedProperties)) ? "" : userDefinedProperties);
         return result.toString();
     }
 
