@@ -10,8 +10,7 @@
 	<ui:with field='itemResources'
 		type='org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup' />
 
-	<ui:with field='messages'
-		type='org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemMessages' />
+	<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
 
 	<ui:style
 		type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemView.Style">
@@ -151,7 +150,7 @@
 				
 				<g:layer top='55px' height='30px' left='5px' width='150px'>
 					<g:SimplePanel ui:field="consoleBaner" addStyleNames="{style.consoleBannerStyle}">
-						<g:Label addStyleNames="{style.consoleBannerLabelStyle}" text="{messages.doubleClickForConsole}"/>
+						<g:Label addStyleNames="{style.consoleBannerLabelStyle}" text="{constants.doubleClickForConsole}"/>
 					</g:SimplePanel>
 				</g:layer>
 

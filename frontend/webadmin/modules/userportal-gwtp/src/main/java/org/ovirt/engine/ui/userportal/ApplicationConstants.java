@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.userportal;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
-import com.google.gwt.i18n.client.Constants.DefaultStringValue;
-
 public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("oVirt Engine User Portal")
@@ -289,4 +287,73 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("UserPortal Documentation")
     String userPortalDoc();
+
+    // machine status messages
+    @DefaultStringValue("Powering Up")
+    String WaitForLaunch();
+
+    @DefaultStringValue("Powering Up")
+    String PoweringUp();
+
+    @DefaultStringValue("Powering Up")
+    String RebootInProgress();
+
+    @DefaultStringValue("Powering Up")
+    String RestoringState();
+
+    @DefaultStringValue("Machine is Ready")
+    String MigratingFrom();
+
+    @DefaultStringValue("Machine is Ready")
+    String MigratingTo();
+
+    @DefaultStringValue("Machine is Ready")
+    String Up();
+
+    @DefaultStringValue("Paused")
+    String Paused();
+
+    @DefaultStringValue("Paused")
+    String Suspended();
+
+    @DefaultStringValue("Powering Down")
+    String PoweringDown();
+
+    @DefaultStringValue("Powering Down")
+    String PoweredDown();
+
+    @DefaultStringValue("Not Available")
+    String Unknown();
+
+    @DefaultStringValue("Not Available")
+    String Unassigned();
+
+    @DefaultStringValue("Not Available")
+    String NotResponding();
+
+    @DefaultStringValue("Please Wait..")
+    String SavingState();
+
+    @DefaultStringValue("Please Wait..")
+    String ImageLocked();
+
+    @DefaultStringValue("Machine is Down")
+    String Down();
+
+    // machine messages
+    @DefaultStringValue("Shutdown VM")
+    String shutdownVm();
+
+    @DefaultStringValue("Suspend VM")
+    String suspendVm();
+
+    @DefaultStringValue("Take VM")
+    String takeVm();
+
+    @DefaultStringValue("Run VM")
+    String runVm();
+
+    @DefaultStringValue("Double Click for Console")
+    String doubleClickForConsole();
+
 }

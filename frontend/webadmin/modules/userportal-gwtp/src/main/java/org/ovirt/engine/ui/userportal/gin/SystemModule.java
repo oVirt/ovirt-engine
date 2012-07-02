@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 import org.ovirt.engine.ui.userportal.section.DefaultMainSectionExtendedPlace;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicListItemMessages;
 import org.ovirt.engine.ui.userportal.system.ApplicationInit;
 
 import com.google.inject.Singleton;
@@ -47,7 +46,6 @@ public class SystemModule extends BaseSystemModule {
         bindResourceConfiguration(ApplicationConstants.class, ApplicationMessages.class,
                 ApplicationResources.class, ApplicationTemplates.class);
         bind(ApplicationResourcesWithLookup.class).in(Singleton.class);
-        bind(MainTabBasicListItemMessages.class).in(Singleton.class);
     }
 
 }

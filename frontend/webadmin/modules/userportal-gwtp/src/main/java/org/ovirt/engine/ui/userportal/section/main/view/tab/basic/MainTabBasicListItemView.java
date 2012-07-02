@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListItemPresenterWidget;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalImageButtonDefinition;
@@ -83,7 +84,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     private final ErrorPopupManager errorPopupManager;
 
-    private final MainTabBasicListItemMessages messages;
+    private final ApplicationConstants constants;
 
     interface Driver extends SimpleBeanEditorDriver<UserPortalItemModel, MainTabBasicListItemView> {
         Driver driver = GWT.create(Driver.class);
@@ -122,11 +123,11 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     public MainTabBasicListItemView(
             final ApplicationResources applicationResources,
             final MainTabBasicListItemMessagesTranslator translator,
-            final MainTabBasicListItemMessages messages,
+            final ApplicationConstants constants,
             final ErrorPopupManager errorPopupManager) {
 
         this.applicationResources = applicationResources;
-        this.messages = messages;
+        this.constants = constants;
         this.errorPopupManager = errorPopupManager;
 
         vmStatus = new ValueLabel<VMStatus>(new AbstractRenderer<VMStatus>() {
@@ -143,8 +144,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     }
 
     protected void initButtons(ApplicationResources applicationResources, final UserPortalItemModel model) {
-        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(model.getIsPool() ? messages.takeVm()
-                : messages.runVm(),
+        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(
+                model.getIsPool() ? constants.takeVm() : constants.runVm(),
                 applicationResources.playIcon(),
                 applicationResources.playDisabledIcon()) {
 
@@ -155,7 +156,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
         }, style.runButtonAdditionalStyle());
 
-        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(messages.shutdownVm(),
+        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(
+                constants.shutdownVm(),
                 applicationResources.stopIcon(),
                 applicationResources.stopDisabledIcon()) {
 
@@ -166,7 +168,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
         }, style.shutdownButtonAdditionalStyle());
 
-        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(messages.suspendVm(),
+        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(
+                constants.suspendVm(),
                 applicationResources.pauseIcon(),
                 applicationResources.pauseDisabledIcon()) {
 
