@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.ldap;
 
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This class is responsible to return SRV records for ldap servers in a domain
@@ -26,7 +24,5 @@ public class LdapSRVLocator extends DnsSRVLocator {
         return getSRVResult(records);
 
     }
-
-    private static Log log = LogFactory.getLog(LdapSRVLocator.class);
 
 }
