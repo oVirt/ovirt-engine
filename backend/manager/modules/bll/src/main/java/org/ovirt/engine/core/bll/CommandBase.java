@@ -1383,7 +1383,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected Step addSubStep(StepEnum parentStep, StepEnum newStep, String description) {
         return ExecutionHandler.addSubStep(getExecutionContext(),
-                getExecutionContext().getJob().getStep(parentStep),
+                (getExecutionContext().getJob() != null) ? getExecutionContext().getJob().getStep(parentStep)
+                        : getExecutionContext().getStep(),
                 newStep,
                 description);
     }
