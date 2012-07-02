@@ -3,10 +3,10 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.TransactiveAttribute;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -32,13 +32,13 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
             options.put(VdsProperties.bootproto, VdsProperties.dhcp);
             break;
         case StaticIp:
-            if (!StringHelper.isNullOrEmpty(getParameters().getInetAddr())) {
+            if (!StringUtils.isEmpty(getParameters().getInetAddr())) {
                 options.put(VdsProperties.ipaddr, getParameters().getInetAddr());
             }
-            if (!StringHelper.isNullOrEmpty(getParameters().getNetworkMask())) {
+            if (!StringUtils.isEmpty(getParameters().getNetworkMask())) {
                 options.put(VdsProperties.netmask, getParameters().getNetworkMask());
             }
-            if (!StringHelper.isNullOrEmpty(getParameters().getGateway())) {
+            if (!StringUtils.isEmpty(getParameters().getGateway())) {
                 options.put(VdsProperties.gateway, getParameters().getGateway());
             }
             break;
@@ -46,7 +46,7 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
 
         options.put(VdsProperties.stp, (getParameters().getStp()) ? "yes" : "no");
 
-        if (!StringHelper.isNullOrEmpty(getParameters().getBondingOptions())) {
+        if (!StringUtils.isEmpty(getParameters().getBondingOptions())) {
             options.put(VdsProperties.bonding_opts, getParameters().getBondingOptions());
         }
 
@@ -92,5 +92,5 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
         }
     }
 
-    private static Log log = LogFactory.getLog(AddNetworkVDSCommand.class);
+    private static final Log log = LogFactory.getLog(AddNetworkVDSCommand.class);
 }
