@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
@@ -10,7 +11,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -56,11 +56,11 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
     }
 
     private static void addOrEmpty(Map<String, String> map, String what, String name) {
-        map.put(name, StringHelper.isNullOrEmpty(what) ? "" : what);
+        map.put(name, StringUtils.isEmpty(what) ? "" : what);
     }
 
     private static void addIfNotNullOrEmpty(Map<String, String> map, String what, String name) {
-        if (!StringHelper.isNullOrEmpty(what)) {
+        if (!StringUtils.isEmpty(what)) {
             map.put(name, what);
         }
     }
