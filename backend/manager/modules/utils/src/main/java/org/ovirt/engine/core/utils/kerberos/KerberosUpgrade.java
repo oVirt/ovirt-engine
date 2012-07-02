@@ -13,7 +13,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.StringHelper;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.ovirt.engine.core.utils.CLIParser;
 
@@ -169,7 +169,7 @@ public class KerberosUpgrade {
         OptionNames[] enumValues = OptionNames.values();
         sb.append(" in ('");
 
-        sb.append(StringHelper.join("','", enumValues));
+        sb.append(StringUtils.join(enumValues, "','"));
         sb.append("')");
         System.out.println(sb.toString());
         return sb.toString();
