@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
-import org.ovirt.engine.core.utils.StringUtils;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extends VdsBrokerCommand<P> {
@@ -47,7 +47,7 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
 
     private void addAddress(XmlRpcStruct map, String address) {
         if (org.apache.commons.lang.StringUtils.isNotBlank(address)) {
-            map.add("address", StringUtils.string2Map(getParameters().getVmDevice().getAddress()));
+            map.add("address", XmlRpcStringUtils.string2Map(getParameters().getVmDevice().getAddress()));
         }
     }
 

@@ -3,7 +3,6 @@
  */
 package org.ovirt.engine.core.utils.ejb;
 
-import org.ovirt.engine.core.utils.StringUtils;
 
 /**
  *
@@ -14,14 +13,12 @@ public class EngineEJBUtilsStrategy extends EJBUtilsStrategy {
 
     @Override
     protected void addJNDIBeans() {
-        addBeanJNDIName(BeanType.BACKEND,
-                        StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/Backend"));
-        addBeanJNDIName(BeanType.SCHEDULER, StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-scheduler/Scheduler"));
+        addBeanJNDIName(BeanType.BACKEND, ENGINE_CONTEXT_PREFIX.concat("engine-bll/Backend"));
+        addBeanJNDIName(BeanType.SCHEDULER, ENGINE_CONTEXT_PREFIX.concat("engine-scheduler/Scheduler"));
         addBeanJNDIName(BeanType.USERS_DOMAINS_CACHE,
-                        StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/UsersDomainsCacheManagerService"));
-        addBeanJNDIName(BeanType.VDS_EVENT_LISTENER,
-                StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/VdsEventListener"));
-        addBeanJNDIName(BeanType.LOCK_MANAGER, StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/LockManager"));
+                ENGINE_CONTEXT_PREFIX.concat("engine-bll/UsersDomainsCacheManagerService"));
+        addBeanJNDIName(BeanType.VDS_EVENT_LISTENER, ENGINE_CONTEXT_PREFIX.concat("engine-bll/VdsEventListener"));
+        addBeanJNDIName(BeanType.LOCK_MANAGER, ENGINE_CONTEXT_PREFIX.concat("engine-bll/LockManager"));
     }
 
     @Override

@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.StringUtils;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class VmInfoBuilder extends VmInfoBuilderBase {
@@ -452,7 +452,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private static void addAddress(VmDevice vmDevice, XmlRpcStruct struct) {
-        Map<String, String> addressMap = StringUtils.string2Map(vmDevice.getAddress());
+        Map<String, String> addressMap = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
         if (addressMap.size() > 0) {
             struct.add(VdsProperties.Address, addressMap);
         }

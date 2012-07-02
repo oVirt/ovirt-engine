@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.StringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class VmOldInfoBuilder extends VmInfoBuilderBase {
@@ -105,9 +105,17 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         createInfo.add("drives", drives.toArray(drivesArray));
     }
 
+    private static final String UTF8_CHARSET_ENCODING = "UTF8";
     @Override
     protected void buildSysprepVmPayload(String strSysPrepContent) {
-        byte[] binarySysPrep = StringUtils.charsetDecodeStringUTF8(strSysPrepContent);
+        byte[] binarySysPrep;
+
+        try {
+            binarySysPrep = strSysPrepContent.getBytes(UTF8_CHARSET_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unsupported charset while building VM sysprep", e);
+        }
+
         createInfo.add(VdsProperties.sysprepInf, binarySysPrep);
     }
 
