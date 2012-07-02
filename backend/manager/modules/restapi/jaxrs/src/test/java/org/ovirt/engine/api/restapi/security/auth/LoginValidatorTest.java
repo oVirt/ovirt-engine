@@ -126,7 +126,7 @@ public class LoginValidatorTest extends Assert {
         expect(
             backend.Login((LoginUserParameters) eqActionParams(LoginUserParameters.class,
                     new String[] { "UserName", "UserPassword", "Domain", "ActionType", "SessionId" },
-                    new Object[] { USER, SECRET, DOMAIN, VdcActionType.LoginAdminUser, session.getSessionId() }))).andReturn(result);
+                    new Object[] { USER, SECRET, DOMAIN, VdcActionType.LoginUser, session.getSessionId() }))).andReturn(result);
         expect(result.getCanDoAction()).andReturn(canDo);
         expect(result.getSucceeded()).andReturn(success).anyTimes();
         VdcUser user = control.createMock(VdcUser.class);
