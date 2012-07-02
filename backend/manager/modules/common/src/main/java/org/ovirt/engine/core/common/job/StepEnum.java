@@ -18,6 +18,7 @@ public enum StepEnum {
     MIGRATE_VM,
     CREATING_SNAPSHOTS,
     RUN_STATELESS_VM,
+    TAKING_VM_FROM_POOL,
 
     /**
      * Maps VDSM tasks type to {@code StepEnum} so it can be resolvable as readable description

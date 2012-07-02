@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
@@ -18,11 +20,14 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 
 @LockIdNameAttribute
 public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters> extends
@@ -152,14 +157,33 @@ VmPoolUserCommandBase<T> {
             runVmParams.setEntityId(vmToAttach);
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
             runVmParams.setRunAsStateless(true);
+            ExecutionContext runVmContext = createRunVmContext(getVm());
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
-                    runVmParams);
+                    runVmParams, new CommandContext(runVmContext));
 
             getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
             setSucceeded(vdcReturnValue.getSucceeded());
             setActionReturnValue(vmToAttach);
             getReturnValue().getTaskIdList().addAll(getReturnValue().getInternalTaskIdList());
         }
+    }
+
+    private ExecutionContext createRunVmContext(VM vm) {
+        ExecutionContext ctx = new ExecutionContext();
+        try {
+            Step step = ExecutionHandler.addSubStep(getExecutionContext(),
+                    getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                    StepEnum.TAKING_VM_FROM_POOL,
+                    ExecutionMessageDirector.resolveStepMessage(StepEnum.TAKING_VM_FROM_POOL, Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName())));
+            ctx.setStep(step);
+            ctx.setMonitored(true);
+            ctx.setShouldEndJob(true);
+        } catch (RuntimeException e) {
+            log.errorFormat("Error when creating executing context for running stateless VM. Error is: {0} ",
+                    e.getMessage());
+            log.debug("", e);
+        }
+        return ctx;
     }
 
     @Override
