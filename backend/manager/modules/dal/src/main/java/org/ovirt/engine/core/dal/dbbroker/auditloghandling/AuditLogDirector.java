@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DictionaryEntry;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.ResXResourceReader;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
@@ -23,9 +22,10 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class AuditLogDirector {
-    private static Log log = LogFactory.getLog(AuditLogDirector.class);
-    private static Map<AuditLogType, String> mMessages = new EnumMap<AuditLogType, String>(AuditLogType.class);
-    private static Map<AuditLogType, AuditLogSeverity> mSeverities = new EnumMap<AuditLogType, AuditLogSeverity>(AuditLogType.class);
+    private static final Log log = LogFactory.getLog(AuditLogDirector.class);
+    private static final Map<AuditLogType, String> mMessages = new EnumMap<AuditLogType, String>(AuditLogType.class);
+    private static final Map<AuditLogType, AuditLogSeverity> mSeverities =
+            new EnumMap<AuditLogType, AuditLogSeverity>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
 
     static {
@@ -630,8 +630,8 @@ public final class AuditLogDirector {
     }
 
     private static void initConfigSeverities() {
-        mSeverities.put(AuditLogType. RELOAD_CONFIGURATIONS_SUCCESS, AuditLogSeverity.NORMAL);
-        mSeverities.put(AuditLogType. RELOAD_CONFIGURATIONS_FAILURE, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.RELOAD_CONFIGURATIONS_SUCCESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.RELOAD_CONFIGURATIONS_FAILURE, AuditLogSeverity.ERROR);
     }
 
     private static void initUserAccountSeverities() {
@@ -745,7 +745,7 @@ public final class AuditLogDirector {
                             null, null);
                 }
                 getDbFacadeInstance().getAuditLogDAO().save(auditLog);
-                if (!StringHelper.EqOp(loggerString, "")) {
+                if (!"".equals(loggerString)) {
                     log.infoFormat(loggerString, resolvedMessage);
                 }
             } else if (auditLogable != null) {
