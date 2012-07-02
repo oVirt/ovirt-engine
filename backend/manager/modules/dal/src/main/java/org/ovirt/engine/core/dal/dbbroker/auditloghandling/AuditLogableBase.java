@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transaction;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -17,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AdGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
@@ -48,7 +50,7 @@ public class AuditLogableBase extends TimeoutBase {
     private Guid mUserId = Guid.Empty;
     private String mUserName;
     private String mVmName;
-    private final java.util.HashMap<String, String> customValues = new java.util.HashMap<String, String>();
+    private final Map<String, String> customValues = new HashMap<String, String>();
     private NGuid mVdsId;
     private String mVdsName;
     private NGuid mVmTemplateId;
@@ -94,7 +96,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public String getUserName() {
-        if (StringHelper.isNullOrEmpty(mUserName) && getCurrentUser() != null) {
+        if (StringUtils.isEmpty(mUserName) && getCurrentUser() != null) {
             mUserName = getCurrentUser().getUserName();
         }
         return mUserName;
@@ -263,9 +265,8 @@ public class AuditLogableBase extends TimeoutBase {
     public NGuid getStorageDomainId() {
         if (_storageDomain != null) {
             return _storageDomain.getId();
-        } else {
-            return _storageDomainId;
         }
+        return _storageDomainId;
     }
 
     public void setStorageDomainId(final NGuid value) {
@@ -275,9 +276,8 @@ public class AuditLogableBase extends TimeoutBase {
     public String getStorageDomainName() {
         if (getStorageDomain() != null) {
             return getStorageDomain().getstorage_name();
-        } else {
-            return "";
         }
+        return "";
     }
 
     private storage_pool _storagePool;
@@ -311,9 +311,8 @@ public class AuditLogableBase extends TimeoutBase {
     public String getStoragePoolName() {
         if (getStoragePool() != null) {
             return getStoragePool().getname();
-        } else {
-            return "";
         }
+        return "";
     }
 
     public AuditLogType getAuditLogTypeValue() {
@@ -430,9 +429,8 @@ public class AuditLogableBase extends TimeoutBase {
     public String getVdsGroupName() {
         if (getVdsGroup() != null) {
             return getVdsGroup().getname();
-        } else {
-            return "";
         }
+        return "";
     }
 
     protected void log() {
@@ -468,7 +466,7 @@ public class AuditLogableBase extends TimeoutBase {
         customValues.put(name.toLowerCase(), newValue);
     }
 
-    public java.util.Map<String, String> getCustomValues() {
+    public Map<String, String> getCustomValues() {
         return customValues;
     }
 
@@ -480,9 +478,8 @@ public class AuditLogableBase extends TimeoutBase {
     public String GetCustomValue(final String name) {
         if (customValues.containsKey(name)) {
             return customValues.get(name);
-        } else {
-            return "";
         }
+        return "";
     }
 
     public void setCorrelationId(String correlationId) {
@@ -611,6 +608,6 @@ public class AuditLogableBase extends TimeoutBase {
         return DbFacade.getInstance();
     }
 
-    private static Log log = LogFactory.getLog(AuditLogableBase.class);
+    private static final Log log = LogFactory.getLog(AuditLogableBase.class);
 
 }
