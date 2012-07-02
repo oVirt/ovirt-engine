@@ -23,14 +23,17 @@
   <properties>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
-    <!-- Directory into which JSR-269 annotation processors will generate their sources -->
+    <!-- Directory where JSR-269 annotation processors generate their sources -->
     <generatedSourcesDirectory>generated-sources/annotations</generatedSourcesDirectory>
+    <!-- Directory where GWT compiler generates normally-transient types for review (-gen compiler option) -->
+    <gwtGenDirectory>gen</gwtGenDirectory>
     <junit.version>4.8.1</junit.version>
     <gwtp.version>0.6</gwtp.version>
     <guice.version>3.0</guice.version>
     <gin.version>1.5.0</gin.version>
     <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
+    <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
     <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
     <build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
     <aspectj-maven-plugin.version>1.4</aspectj-maven-plugin.version>
@@ -87,6 +90,21 @@
           <version>${maven-resources-plugin.version}</version>
           <configuration>
             <encoding>${project.build.sourceEncoding}</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${maven-clean-plugin.version}</version>
+          <configuration>
+            <filesets>
+              <fileset>
+                <directory>${gwtGenDirectory}</directory>
+                <includes>
+                  <include>**/*</include>
+                </includes>
+              </fileset>
+            </filesets>
           </configuration>
         </plugin>
         <plugin>

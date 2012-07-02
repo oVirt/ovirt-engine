@@ -270,7 +270,7 @@
               <port>8080</port>
               <noServer>true</noServer>
               <bindAddress>0.0.0.0</bindAddress>
-              <gen>gen</gen>
+              <gen>${gwtGenDirectory}</gen>
               <extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
               <copyWebapp>true</copyWebapp>
               <compileSourcesArtifacts>
