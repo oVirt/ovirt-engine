@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.VDSCommandBase;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNoMasterDomainException;
@@ -205,15 +205,15 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         return outEx;
     }
 
-    protected VdcBllErrors GetReturnValueFromStatus(StatusForXmlRpc status) {
+    protected VdcBllErrors GetReturnValueFromStatus(StatusForXmlRpc xmlRpcStatus) {
         try {
-            VdcBllErrors bllErrors = VdcBllErrors.forValue(status.mCode);
+            VdcBllErrors bllErrors = VdcBllErrors.forValue(xmlRpcStatus.mCode);
             if (bllErrors == null) {
-                log.warn("Weird return value: " + status);
+                log.warn("Weird return value: " + xmlRpcStatus);
                 bllErrors = VdcBllErrors.unexpected;
             }
             return bllErrors;
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             return VdcBllErrors.unexpected;
         }
     }
@@ -241,13 +241,11 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
                 returnValue = getReturnValueFromBroker().toString();
             }
             log.infoFormat("Command {0} return value \n {1}", getClass().getName(), returnValue);
-            if (!StringHelper.isNullOrEmpty(getAdditionalInformation())) {
+            if (!StringUtils.isEmpty(getAdditionalInformation())) {
                 log.info(getAdditionalInformation());
             }
-        } else {
-            // log.InfoFormat("Cannot print return value of command {0}",GetType().Name);
         }
     }
 
-    private static Log log = LogFactory.getLog(BrokerCommandBase.class);
+    private static final Log log = LogFactory.getLog(BrokerCommandBase.class);
 }
