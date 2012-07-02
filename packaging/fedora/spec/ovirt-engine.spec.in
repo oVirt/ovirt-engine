@@ -385,14 +385,15 @@ while read lib_path
 do
   rm -rf %{buildroot}%{engine_ear}/lib/${lib_path}*.jar
 done <<'.'
-antlr
 activation
+antlr
 aopalliance
 c3p0
 ejb3-persistence
 jaxb-api
 jaxb-impl
 jboss-interceptors-api_1.1_spec
+spring-asm
 stax-api
 xml-apis
 .
@@ -403,23 +404,33 @@ do
   rm -rf %{buildroot}%{engine_ear}/lib/${lib_path}*.jar
   ln -s `build-classpath ${jar_name}` %{buildroot}%{engine_ear}/lib/${lib_path}.jar
 done <<'.'
+apache-mina/mina-core mina-core
+apache-sshd/sshd-core sshd-core
 commons-beanutils commons-beanutils
 commons-codec commons-codec
 commons-collections commons-collections
 commons-httpclient commons-httpclient
 commons-lang commons-lang
 dom4j dom4j
-apache-mina/mina-core mina-core
-apache-sshd/sshd-core sshd-core
+geronimo-validation validation-api
+hibernate/hibernate-commons-annotations hibernate-commons-annotations
+hibernate-validator hibernate-validator
+jsch jsch
+objectweb-asm/asm-all asm-all
 quartz quartz
 slf4j/api slf4j-api
+springframework/spring-aop spring-aop
+springframework/spring-beans spring-beans
+springframework/spring-context spring-context
+springframework/spring-core spring-core
+springframework/spring-expression spring-expression
+springframework/spring-instrument spring-instrument
+springframework/spring-jdbc spring-jdbc
+springframework/spring-tx spring-tx
+spring-ldap/spring-ldap-core spring-ldap-core
 ws-commons-util ws-commons-util
 xmlrpc3-client xmlrpc-client
 xmlrpc3-common xmlrpc-common
-geronimo-validation validation-api
-hibernate-validator hibernate-validator
-hibernate/hibernate-commons-annotations hibernate-commons-annotations
-jsch jsch
 .
 
 # Replace jar files in the RESTAPI web application with links to ther
