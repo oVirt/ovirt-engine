@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -10,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ThreadUtils;
@@ -107,7 +107,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
      */
     private boolean isSysprepUsed(final VM vm) {
         return vm.useSysPrep() && vm.getvm_os().isWindows()
-                && StringHelper.isNullOrEmpty(vm.getFloppyPath());
+                && StringUtils.isEmpty(vm.getFloppyPath());
     }
 
     private void HandleVdsInformation() {
