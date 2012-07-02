@@ -5,25 +5,25 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
-import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.dal.dbbroker.user_sessions;
-
 /**
  * <code>DBUserDAODbFacadeImpl</code> provides an implementation of {@link DbUserDAO} with the previously developed
- * {@link DbFacade} code.
+ * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade.DbFacade} code.
  *
  */
 public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO {
-    private class DbUserRowMapper implements ParameterizedRowMapper<DbUser> {
+    private static class DbUserRowMapper implements ParameterizedRowMapper<DbUser> {
+        public static final DbUserRowMapper instance = new DbUserRowMapper();
+
         @Override
         public DbUser mapRow(ResultSet rs, int rowNum) throws SQLException {
             DbUser entity = new DbUser();
@@ -76,7 +76,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", id);
 
-        return getCallsHandler().executeRead("GetUserByUserId", new DbUserRowMapper(), parameterSource);
+        return getCallsHandler().executeRead("GetUserByUserId", DbUserRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -84,37 +84,32 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("username", username);
 
-        return getCallsHandler().executeRead("GetUserByUserName", new DbUserRowMapper(), parameterSource);
+        return getCallsHandler().executeRead("GetUserByUserName", DbUserRowMapper.instance, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DbUser> getAllForVm(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id);
 
-        return getCallsHandler().executeReadList("GetUsersByVmGuid", new DbUserRowMapper(),
-                parameterSource);
+        return getCallsHandler().executeReadList("GetUsersByVmGuid", DbUserRowMapper.instance, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DbUser> getAllTimeLeasedUsersForVm(int vmid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_id", vmid);
 
         return getCallsHandler().executeReadList("Gettime_leasedusers_by_vm_pool_id",
-                new DbUserRowMapper(),
+                DbUserRowMapper.instance,
                 parameterSource);
     }
 
     @Override
     public List<DbUser> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query,
-                new DbUserRowMapper());
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, DbUserRowMapper.instance);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<user_sessions> getAllUserSessions() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
@@ -139,13 +134,11 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
         return getCallsHandler().executeReadList("GetAllFromuser_sessions", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DbUser> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        return getCallsHandler().executeReadList("GetAllFromUsers", new DbUserRowMapper(),
-                parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromUsers", DbUserRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -155,7 +148,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
 
     @Override
     public void saveSession(user_sessions session) {
-        if (!StringHelper.EqOp(session.getsession_id(), "")) {
+        if (!"".equals(session.getsession_id())) {
             MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                     .addValue("browser", session.getbrowser())
                     .addValue("client_type", session.getclient_type())
