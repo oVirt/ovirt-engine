@@ -99,11 +99,11 @@ Configure iptables ?"
 
 
 INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_USAGE="Should the installer configure the ports, overriding the current httpd configuration"
-INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_PROMPT="ovirt uses httpd to proxy requests to the application server.\n\
+INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_PROMPT="%s uses httpd to proxy requests to the application server.\n\
 It looks like the httpd installed locally is being actively used.\n\
 The installer can override current configuration .\n\
 Alternately you can use JBoss directly (on ports higher than 1024)\n\
-Do you wish to override current httpd configuration and restart the service?"
+Do you wish to override current httpd configuration and restart the service?" % basedefs.APP_NAME
 
 
 
