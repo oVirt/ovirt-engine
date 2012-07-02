@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -42,7 +41,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
         try {
             storage_domains domain = new storage_domains();
             if (xmlRpcStruct.contains("status")) {
-                if (StringHelper.EqOp(xmlRpcStruct.getItem("status").toString(), "Attached")) {
+                if ("Attached".equals(xmlRpcStruct.getItem("status").toString())) {
                     domain.setstatus(StorageDomainStatus.InActive);
                 } else {
                     domain.setstatus(EnumUtils.valueOf(StorageDomainStatus.class, xmlRpcStruct.getItem("status")
@@ -53,7 +52,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
             domain.setavailable_disk_size((size == null) ? null : (int) (size / IrsBrokerCommand.BYTES_TO_GB));
             size = IrsBrokerCommand.AssignLongValue(xmlRpcStruct, "disktotal");
             domain.setused_disk_size((size == null || domain.getavailable_disk_size() == null) ? null :
-                (int) (size / IrsBrokerCommand.BYTES_TO_GB) - domain.getavailable_disk_size());
+                    (int) (size / IrsBrokerCommand.BYTES_TO_GB) - domain.getavailable_disk_size());
             if (xmlRpcStruct.contains("alerts")) {
                 Object[] rawAlerts = (Object[]) xmlRpcStruct.getItem("alerts");
                 Set<VdcBllErrors> alerts = new HashSet<VdcBllErrors>(rawAlerts.length);
@@ -89,5 +88,5 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
         return _result;
     }
 
-    private static Log log = LogFactory.getLog(GetStorageDomainStatsVDSCommand.class);
+    private static final Log log = LogFactory.getLog(GetStorageDomainStatsVDSCommand.class);
 }
