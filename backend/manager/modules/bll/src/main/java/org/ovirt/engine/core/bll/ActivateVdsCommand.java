@@ -79,11 +79,11 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     protected boolean canDoAction() {
         boolean returnValue = true;
         if (getVds() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_NOT_EXIST);
+            AddErrorMessages(VdcBllMessages.VAR__ACTION__ACTIVATE, VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_NOT_EXIST);
             returnValue = false;
         }
         if (returnValue && getVds().getstatus() == VDSStatus.Up) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_ALREADY_UP);
+            AddErrorMessages(VdcBllMessages.VAR__ACTION__ACTIVATE, VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_ALREADY_UP);
             returnValue = false;
         }
         return returnValue;
@@ -92,5 +92,11 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     protected Map<String, String> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getVdsId().toString(), LockingGroup.VDS.name());
+    }
+
+    private void AddErrorMessages(VdcBllMessages messageActionTypeParameter, VdcBllMessages messageReason) {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(messageActionTypeParameter);
+        addCanDoActionMessage(messageReason);
     }
 }
