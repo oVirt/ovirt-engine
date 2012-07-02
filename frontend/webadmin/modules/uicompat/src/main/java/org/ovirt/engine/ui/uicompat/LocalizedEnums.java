@@ -490,6 +490,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___RemoveVmTemplateFromImportExport();
 
+	String VdcActionType___AddQuota();
+
+	String VdcActionType___UpdateQuota();
+
+	String VdcActionType___RemoveQuota();
+
 	// Gluster Action Types
 	String VdcActionType___CreateGlusterVolume();
 
