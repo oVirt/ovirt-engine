@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -60,7 +59,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
             if (getParameters().getAction() == FenceActionType.Status && _result.Power != null) {
                 String stat = _result.Power.toLowerCase();
                 String msg = _result.mStatus.mMessage;
-                if (StringHelper.EqOp(stat, "on") || StringHelper.EqOp(stat, "off")) {
+                if ("on".equals(stat) || "off".equals(stat)) {
                     getVDSReturnValue().setSucceeded(true);
                 } else {
                     if (!getParameters().getTargetVdsID().equals(Guid.Empty)) {
@@ -78,13 +77,15 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
             handleSkippedOperation();
         }
     }
+
     /**
     * Handles cases where fencing operation was skipped (host is already in requested state)
     */
     private void handleSkippedOperation() {
-        FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED,"");
+        FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED, "");
         AuditLogableBase auditLogable = new AuditLogableBase();
-        auditLogable.AddCustomValue("HostName", (DbFacade.getInstance().getVdsDAO().get(getParameters().getTargetVdsID())).getvds_name());
+        auditLogable.AddCustomValue("HostName",
+                (DbFacade.getInstance().getVdsDAO().get(getParameters().getTargetVdsID())).getvds_name());
         auditLogable.AddCustomValue("AgentStatus", GetActualActionName());
         auditLogable.AddCustomValue("Operation", getParameters().getAction().toString());
         AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
@@ -109,9 +110,9 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                 getParameters().getType(), getParameters().getUser(),
                 getParameters().getPassword(), "status", "", options);
         if (_result.Power != null) {
-            String status = _result.Power.toLowerCase();
-            if ((action == FenceActionType.Start && status.equals("on")) ||
-                    action == FenceActionType.Stop && status.equals("off"))
+            String powerStatus = _result.Power.toLowerCase();
+            if ((action == FenceActionType.Start && powerStatus.equals("on")) ||
+                    action == FenceActionType.Stop && powerStatus.equals("off"))
                 ret = true;
         }
         return ret;
