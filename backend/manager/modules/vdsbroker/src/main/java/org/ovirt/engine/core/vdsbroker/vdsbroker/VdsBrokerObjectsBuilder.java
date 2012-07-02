@@ -2,6 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -30,13 +33,11 @@ import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.FormatException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LongCompat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -46,12 +47,11 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
-
 /**
- * This class encapsulate the knowlage of how to create objects from the VDS Rpc protocol responce. This class has
- * methods that receive XmlRpcStruct and construct the following Classes: VmDynamic VdsDynamic VdsStatic
+ * This class encapsulate the knowledge of how to create objects from the VDS RPC protocol response.
+ * This class has methods that receive XmlRpcStruct and construct the following Classes: VmDynamic VdsDynamic VdsStatic.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class VdsBrokerObjectsBuilder {
     private final static int VNC_START_PORT = 5900;
     private final static double NANO_SECONDS = 1000000000;
@@ -110,7 +110,7 @@ public class VdsBrokerObjectsBuilder {
             String session = (String) xmlRpcStruct.getItem(VdsProperties.session);
             try {
                 vm.setsession(SessionState.valueOf(session));
-            } catch (java.lang.Exception e) {
+            } catch (Exception e) {
                 log.errorFormat("vm session value illegal : {0}", session);
             }
         }
@@ -118,10 +118,10 @@ public class VdsBrokerObjectsBuilder {
             vm.setkvm_enable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.kvmEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.acpiEnable)) {
-                vm.setacpi_enable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.acpiEnable)));
+            vm.setacpi_enable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.acpiEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.win2kHackEnable)) {
-                vm.setWin2kHackEnable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.win2kHackEnable)));
+            vm.setWin2kHackEnable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.win2kHackEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.status)) {
             vm.setstatus(convertToVmStatus((String) xmlRpcStruct.getItem(VdsProperties.status)));
@@ -153,7 +153,7 @@ public class VdsBrokerObjectsBuilder {
             try {
                 vm.setdisplay_type(DisplayType.valueOf(displayType));
 
-            } catch (java.lang.Exception e2) {
+            } catch (Exception e2) {
                 log.errorFormat("vm display type value illegal : {0}", displayType);
             }
         }
@@ -177,7 +177,7 @@ public class VdsBrokerObjectsBuilder {
             String hash = (String) xmlRpcStruct.getItem(VdsProperties.hash);
             try {
                 vm.setHash(hash);
-            } catch (java.lang.Exception e) {
+            } catch (Exception e) {
                 log.errorFormat("vm hash value illegal : {0}", hash);
             }
         }
@@ -192,8 +192,6 @@ public class VdsBrokerObjectsBuilder {
         // ------------- vm internal agent data
         vm.setguest_cur_user_name(AssignStringValue(xmlRpcStruct, VdsProperties.guest_cur_user_name));
         vm.setguest_last_login_time(AssignDateTImeFromEpoch(xmlRpcStruct, VdsProperties.guest_last_login_time));
-        // vm.guest_last_logout_time = AssignDateTImeFromEpoch(xmlRpcStruct,
-        // VdsProperties.guest_last_logout_time);
         vm.setvm_host(AssignStringValue(xmlRpcStruct, VdsProperties.vm_host));
 
         initAppsList(xmlRpcStruct, vm);
@@ -255,11 +253,10 @@ public class VdsBrokerObjectsBuilder {
 
         // ------------- vm network statistics -----------------------
         if (xmlRpcStruct.containsKey(VdsProperties.vm_network)) {
-            java.util.Map networkStruct =
-                    (java.util.Map) xmlRpcStruct.getItem(VdsProperties.vm_network);
-            vm.setInterfaceStatistics(new java.util.ArrayList<VmNetworkInterface>());
+            Map networkStruct = (Map) xmlRpcStruct.getItem(VdsProperties.vm_network);
+            vm.setInterfaceStatistics(new ArrayList<VmNetworkInterface>());
             for (Object tempNic : networkStruct.values()) {
-                XmlRpcStruct nic = new XmlRpcStruct((java.util.Map) tempNic);
+                XmlRpcStruct nic = new XmlRpcStruct((Map) tempNic);
                 VmNetworkInterface stats = new VmNetworkInterface();
                 vm.getInterfaceStatistics().add(stats);
 
@@ -314,18 +311,6 @@ public class VdsBrokerObjectsBuilder {
 
         UpdatePackagesVersions(vds, xmlRpcStruct);
 
-        // ----------- vm statistic data ---------------------------
-        //
-        // vds.destroy_rate = AssignDecimalValue(xmlRpcStruct,
-        // VdsProperties.destroy_rate);
-        // vds.destroy_total = AssignIntValue(xmlRpcStruct,
-        // VdsProperties.destroy_total);
-        // vds.launch_rate = AssignDecimalValue(xmlRpcStruct,
-        // VdsProperties.launch_rate);
-        // vds.launch_total = AssignIntValue(xmlRpcStruct,
-        // VdsProperties.launch_total);
-        //
-
         vds.setsupported_cluster_levels(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_cluster_levels));
         vds.setsupported_engines(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_engines));
         vds.setIScsiInitiatorName(AssignStringValue(xmlRpcStruct, VdsProperties.iSCSIInitiatorName));
@@ -348,19 +333,19 @@ public class VdsBrokerObjectsBuilder {
     private static void UpdatePackagesVersions(VDS vds, XmlRpcStruct xmlRpcStruct) {
         if (xmlRpcStruct.contains(VdsProperties.host_os)) {
             vds.sethost_os(GetPackageVersionFormated(
-                    new XmlRpcStruct((java.util.Map) xmlRpcStruct.getItem(VdsProperties.host_os)), true));
+                    new XmlRpcStruct((Map) xmlRpcStruct.getItem(VdsProperties.host_os)), true));
         }
         if (xmlRpcStruct.contains(VdsProperties.packages)) {
             // packages is an array of xmlRpcStruct (that each is a name, ver,
             // release.. of a package)
             for (Object hostPackageMap : (Object[]) xmlRpcStruct.getItem(VdsProperties.packages)) {
-                XmlRpcStruct hostPackage = new XmlRpcStruct((java.util.Map) hostPackageMap);
+                XmlRpcStruct hostPackage = new XmlRpcStruct((Map) hostPackageMap);
                 String packageName = AssignStringValue(hostPackage, VdsProperties.package_name);
-                if (StringHelper.EqOp(packageName, VdsProperties.kvmPackageName)) {
+                if (VdsProperties.kvmPackageName.equals(packageName)) {
                     vds.setkvm_version(GetPackageVersionFormated(hostPackage, false));
-                } else if (StringHelper.EqOp(packageName, VdsProperties.spicePackageName)) {
+                } else if (VdsProperties.spicePackageName.equals(packageName)) {
                     vds.setspice_version(GetPackageVersionFormated(hostPackage, false));
-                } else if (StringHelper.EqOp(packageName, VdsProperties.kernelPackageName)) {
+                } else if (VdsProperties.kernelPackageName.equals(packageName)) {
                     vds.setkernel_version(GetPackageVersionFormated(hostPackage, false));
                 }
             }
@@ -391,13 +376,13 @@ public class VdsBrokerObjectsBuilder {
         String packageVersion = (hostPackage.get(VdsProperties.package_version) != null) ? (String) hostPackage
                 .get(VdsProperties.package_version) : null;
         String packageRelease = (hostPackage.get(VdsProperties.package_release) != null) ? (String) hostPackage
-                        .get(VdsProperties.package_release) : null;
+                .get(VdsProperties.package_release) : null;
 
         StringBuilder sb = new StringBuilder();
-        if (!StringHelper.isNullOrEmpty(packageVersion)) {
+        if (!StringUtils.isEmpty(packageVersion)) {
             sb.append(packageVersion);
         }
-        if (!StringHelper.isNullOrEmpty(packageRelease)) {
+        if (!StringUtils.isEmpty(packageRelease)) {
             if (sb.length() > 0) {
                 sb.append(String.format(" - %1$s", packageRelease));
             } else {
@@ -412,17 +397,17 @@ public class VdsBrokerObjectsBuilder {
         String packageVersion = AssignStringValue(hostPackage, VdsProperties.package_version);
         String packageRelease = AssignStringValue(hostPackage, VdsProperties.package_release);
         StringBuilder sb = new StringBuilder();
-        if (!StringHelper.isNullOrEmpty(packageName) && getName) {
+        if (!StringUtils.isEmpty(packageName) && getName) {
             sb.append(packageName);
         }
-        if (!StringHelper.isNullOrEmpty(packageVersion)) {
+        if (!StringUtils.isEmpty(packageVersion)) {
             if (sb.length() > 0) {
                 sb.append(String.format(" - %1$s", packageVersion));
             } else {
                 sb.append(packageVersion);
             }
         }
-        if (!StringHelper.isNullOrEmpty(packageRelease)) {
+        if (!StringUtils.isEmpty(packageRelease)) {
             if (sb.length() > 0) {
                 sb.append(String.format(" - %1$s", packageRelease));
             } else {
@@ -437,8 +422,8 @@ public class VdsBrokerObjectsBuilder {
         vds.setusage_mem_percent(AssignIntValue(xmlRpcStruct, VdsProperties.mem_usage));
 
         // ------------- vds network statistics ---------------------
-        java.util.Map<String, Object> interfaces = (java.util.Map<String, Object>) ((xmlRpcStruct
-                .getItem(VdsProperties.network) instanceof java.util.Map) ? xmlRpcStruct.getItem(VdsProperties.network)
+        Map<String, Object> interfaces = (Map<String, Object>) ((xmlRpcStruct
+                .getItem(VdsProperties.network) instanceof Map) ? xmlRpcStruct.getItem(VdsProperties.network)
                 : null);
         if (interfaces != null) {
             int networkUsage = 0;
@@ -452,8 +437,8 @@ public class VdsBrokerObjectsBuilder {
                 }
                 if (iface != null) {
                     iface.setVdsId(vds.getId());
-                    java.util.Map<String, Object> dictTemp =
-                            (java.util.Map<String, Object>) ((interfaces.get(name) instanceof java.util.Map) ? interfaces
+                    Map<String, Object> dictTemp =
+                            (Map<String, Object>) ((interfaces.get(name) instanceof Map) ? interfaces
                                     .get(name)
                                     : null);
                     XmlRpcStruct dict = new XmlRpcStruct(dictTemp);
@@ -468,18 +453,14 @@ public class VdsBrokerObjectsBuilder {
                     iface.setSpeed(AssignIntValue(dict, VdsProperties.if_speed));
                     iface.getStatistics().setStatus(AssignInterfaceStatusValue(dict, VdsProperties.iface_status));
 
-                    // try
-                    // {
-                    int hold = (iface.getStatistics().getTransmitRate().compareTo(iface.getStatistics().getReceiveRate()) > 0 ? iface.getStatistics().getTransmitRate() : iface
-                            .getStatistics().getReceiveRate()).intValue();
+                    int hold =
+                            (iface.getStatistics().getTransmitRate().compareTo(iface.getStatistics().getReceiveRate()) > 0 ? iface.getStatistics()
+                                    .getTransmitRate()
+                                    : iface
+                                            .getStatistics().getReceiveRate()).intValue();
                     if (hold > networkUsage) {
                         networkUsage = hold;
                     }
-                    // }
-                    // catch (OverflowException ex)
-                    // {
-                    // log.error("Failed to assign usage network percent", ex);
-                    // }
                 }
             }
             vds.setusage_network_percent((networkUsage > 100) ? 100 : networkUsage);
@@ -489,29 +470,21 @@ public class VdsBrokerObjectsBuilder {
         vds.setcpu_sys(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_sys));
         vds.setcpu_user(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_user));
         if (vds.getcpu_sys() != null && vds.getcpu_user() != null) {
-            // try
-            // {
-            vds.setusage_cpu_percent((int)(vds.getcpu_sys() + vds.getcpu_user()));
+            vds.setusage_cpu_percent((int) (vds.getcpu_sys() + vds.getcpu_user()));
             if (vds.getusage_cpu_percent() >= vds.gethigh_utilization()
                     || vds.getusage_cpu_percent() <= vds.getlow_utilization()) {
                 if (vds.getcpu_over_commit_time_stamp() == null) {
-                    vds.setcpu_over_commit_time_stamp(new java.util.Date());
+                    vds.setcpu_over_commit_time_stamp(new Date());
                 }
             } else {
                 vds.setcpu_over_commit_time_stamp(null);
             }
-            // }
-            // LIVANT - this is a comapt exception, please check
-            // catch (OverflowException ex)
-            // {
-            // log.error("Failed to assign usage cpu percent", ex);
-            // }
         }
-        //CPU load reported by VDSM is in uptime-style format, i.e. normalized
-        //to unity, so that say an 8% load is reported as 0.08
+        // CPU load reported by VDSM is in uptime-style format, i.e. normalized
+        // to unity, so that say an 8% load is reported as 0.08
 
         Double d = AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_load);
-        d = ( d != null ) ? d : 0;
+        d = (d != null) ? d : 0;
         vds.setcpu_load(d.doubleValue() * 100.0);
         vds.setcpu_idle(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_idle));
         vds.setmem_available(AssignLongValue(xmlRpcStruct, VdsProperties.mem_available));
@@ -570,14 +543,14 @@ public class VdsBrokerObjectsBuilder {
 
     private static void updateVDSDomainData(VDS vds, XmlRpcStruct xmlRpcStruct) {
         if (xmlRpcStruct.containsKey(VdsProperties.domains)) {
-            java.util.Map<String, Object> domains = (java.util.Map<String, Object>)
+            Map<String, Object> domains = (Map<String, Object>)
                     xmlRpcStruct.getItem(VdsProperties.domains);
-            java.util.ArrayList<VDSDomainsData> domainsData = new java.util.ArrayList<VDSDomainsData>();
-            for (java.util.Map.Entry<String, ?> value : domains.entrySet()) {
+            ArrayList<VDSDomainsData> domainsData = new ArrayList<VDSDomainsData>();
+            for (Map.Entry<String, ?> value : domains.entrySet()) {
                 try {
                     VDSDomainsData data = new VDSDomainsData();
                     data.setDomainId(new Guid(value.getKey().toString()));
-                    java.util.Map<String, Object> internalValue = (java.util.Map<String, Object>) value.getValue();
+                    Map<String, Object> internalValue = (Map<String, Object>) value.getValue();
                     double lastCheck = 0;
                     data.setCode((Integer) (internalValue).get(VdsProperties.code));
                     if (internalValue.containsKey(VdsProperties.lastCheck)) {
@@ -590,7 +563,7 @@ public class VdsBrokerObjectsBuilder {
                     }
                     data.setDelay(delay);
                     domainsData.add(data);
-                } catch (java.lang.Exception e) {
+                } catch (Exception e) {
                     log.error("failed building domains", e);
                 }
             }
@@ -598,21 +571,13 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    // internal static void updateVDSStaticData(VDS vds, XmlRpcStruct
-    // xmlRpcStruct)
-    // {
-    // // ----------- read once vds info ---------------------
-    // //vds.protocol = AssignDecimalValue(xmlRpcStruct,
-    // VdsProperties.Protocol);
-    //
-    // }
-
+    @SuppressWarnings("null")
     private static InterfaceStatus AssignInterfaceStatusValue(XmlRpcStruct input, String name) {
         InterfaceStatus ifaceStatus = InterfaceStatus.None;
         if (input.containsKey(name)) {
             String stringValue = (String) ((input.getItem(name) instanceof String) ? input.getItem(name) : null);
-            if (!StringHelper.isNullOrEmpty(stringValue)) {
-                if (StringHelper.EqOp(stringValue.toLowerCase().trim(), "up")) {
+            if (!StringUtils.isEmpty(stringValue)) {
+                if (stringValue.toLowerCase().trim().equals("up")) {
                     ifaceStatus = InterfaceStatus.Up;
                 } else {
                     ifaceStatus = InterfaceStatus.Down;
@@ -648,9 +613,9 @@ public class VdsBrokerObjectsBuilder {
                 return (Integer) input.getItem(name);
             }
             String stringValue = (String) input.getItem(name);
-            if (!StringHelper.isNullOrEmpty(stringValue)) { // in case the input
-                                                            // is decimal and we
-                                                            // need int.
+            if (!StringUtils.isEmpty(stringValue)) { // in case the input
+                                                     // is decimal and we
+                                                     // need int.
                 stringValue = stringValue.split("[.]", -1)[0];
             }
             try {
@@ -664,15 +629,16 @@ public class VdsBrokerObjectsBuilder {
         return null;
     }
 
+    @SuppressWarnings("null")
     private static Long AssignLongValue(XmlRpcStruct input, String name) {
         if (input.containsKey(name)) {
             if (input.getItem(name) instanceof Long || input.getItem(name) instanceof Integer) {
                 return Long.parseLong(input.getItem(name).toString());
             }
             String stringValue = (String) ((input.getItem(name) instanceof String) ? input.getItem(name) : null);
-            if (!StringHelper.isNullOrEmpty(stringValue)) { // in case the input
-                                                            // is decimal and we
-                                                            // need int.
+            if (!StringUtils.isEmpty(stringValue)) { // in case the input
+                                                     // is decimal and we
+                                                     // need int.
                 stringValue = stringValue.split("[.]", -1)[0];
             }
             final Long dec = LongCompat.tryParse(stringValue);
@@ -704,18 +670,18 @@ public class VdsBrokerObjectsBuilder {
                 }
             }
             if (arr != null) {
-                return StringHelper.join(",", arr);
+                return StringUtils.join(arr, ',');
             }
         }
         return null;
     }
 
-    private static java.util.Date AssignDateTImeFromEpoch(XmlRpcStruct input, String name) {
-        java.util.Date retval = null;
+    private static Date AssignDateTImeFromEpoch(XmlRpcStruct input, String name) {
+        Date retval = null;
         try {
             if (input.containsKey(name)) {
                 Double secsSinceEpoch = (Double) input.getItem(name);
-                java.util.Calendar calendar = java.util.Calendar.getInstance();
+                Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(secsSinceEpoch.longValue());
                 retval = calendar.getTime();
             }
@@ -739,15 +705,14 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static void initDisks(XmlRpcStruct vmStruct, VmDynamic vm) {
-        Map disks =
-                (Map) vmStruct.getItem(VdsProperties.vm_disks);
-        java.util.ArrayList<DiskImageDynamic> disksData = new java.util.ArrayList<DiskImageDynamic>();
+        Map disks = (Map) vmStruct.getItem(VdsProperties.vm_disks);
+        ArrayList<DiskImageDynamic> disksData = new ArrayList<DiskImageDynamic>();
         List<Disk> vmDisksFromDb = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
         for (Object diskAsObj : disks.values()) {
-            XmlRpcStruct disk = new XmlRpcStruct((java.util.Map) diskAsObj);
+            XmlRpcStruct disk = new XmlRpcStruct((Map) diskAsObj);
             DiskImageDynamic diskData = new DiskImageDynamic();
             String imageGroupIdString = AssignStringValue(disk, VdsProperties.image_group_id);
-            if (!StringHelper.isNullOrEmpty(imageGroupIdString)) {
+            if (!StringUtils.isEmpty(imageGroupIdString)) {
                 Guid imageGroupIdGuid = new Guid(imageGroupIdString);
                 DiskImage vmCurrentDisk = null;
                 for (Disk vmDisk : vmDisksFromDb) {
@@ -835,22 +800,20 @@ public class VdsBrokerObjectsBuilder {
 
     private static VMStatus convertToVmStatus(String statusName) {
         VMStatus status = VMStatus.Unassigned;
-        if (StringHelper.EqOp(statusName, "Running") || StringHelper.EqOp(statusName, "Unknown")) {
+        if ("Running".equals(statusName) || "Unknown".equals(statusName)) {
             status = VMStatus.Up;
         }
-        else if (StringHelper.EqOp(statusName, "Migration Source")) {
+        else if ("Migration Source".equals(statusName)) {
             status = VMStatus.MigratingFrom;
         }
-        else if (StringHelper.EqOp(statusName, "Migration Destination")) {
+        else if ("Migration Destination".equals(statusName)) {
             status = VMStatus.MigratingTo;
         } else {
-            {
-                try {
-                    statusName = statusName.replace(" ", "");
-                    status = EnumUtils.valueOf(VMStatus.class, statusName, true);
-                } catch (java.lang.Exception e) {
-                    log.errorFormat("Vm status: {0} illegal", statusName);
-                }
+            try {
+                statusName = statusName.replace(" ", "");
+                status = EnumUtils.valueOf(VMStatus.class, statusName, true);
+            } catch (Exception e) {
+                log.errorFormat("Vm status: {0} illegal", statusName);
             }
         }
         return status;
@@ -923,7 +886,7 @@ public class VdsBrokerObjectsBuilder {
                     currVlans.put(key, iface.getVlanId());
                 }
 
-                Map<String,Object> vlan = (Map<String,Object>) vlans.get(key);
+                Map<String, Object> vlan = (Map<String, Object>) vlans.get(key);
 
                 iface.setAddress((String) vlan.get("addr"));
                 iface.setSubnet((String) vlan.get("netmask"));
@@ -951,7 +914,7 @@ public class VdsBrokerObjectsBuilder {
                 iface.setVdsId(vds.getId());
                 iface.setBonded(true);
 
-                Map<String, Object> bond = (Map<String, Object>) bonds.get(key);;
+                Map<String, Object> bond = (Map<String, Object>) bonds.get(key);
                 if (bond != null) {
                     iface.setMacAddress((String) bond.get("hwaddr"));
                     iface.setAddress((String) bond.get("addr"));
@@ -967,7 +930,8 @@ public class VdsBrokerObjectsBuilder {
                     }
 
                     XmlRpcStruct config =
-                            (bond.get("cfg") instanceof Map) ? new XmlRpcStruct((Map<String, Object>) bond.get("cfg")) : null;
+                            (bond.get("cfg") instanceof Map) ? new XmlRpcStruct((Map<String, Object>) bond.get("cfg"))
+                                    : null;
 
                     if (config != null && config.getItem("BONDING_OPTS") != null) {
                         iface.setBondOptions(config.getItem("BONDING_OPTS").toString());
@@ -989,9 +953,9 @@ public class VdsBrokerObjectsBuilder {
                     Network net = new Network();
                     net.setname(key);
 
-                    net.setaddr((String)network.get("addr"));
-                    net.setsubnet((String)network.get("netmask"));
-                    net.setgateway((String)network.get(VdsProperties.GLOBAL_GATEWAY));
+                    net.setaddr((String) network.get("addr"));
+                    net.setsubnet((String) network.get("netmask"));
+                    net.setgateway((String) network.get(VdsProperties.GLOBAL_GATEWAY));
                     if (StringUtils.isNotBlank((String) network.get(VdsProperties.mtu))) {
                         net.setMtu(Integer.parseInt((String) network.get(VdsProperties.mtu)));
                     }
@@ -1079,7 +1043,7 @@ public class VdsBrokerObjectsBuilder {
             iface.setBridged(bridged);
 
             // set the management ip
-            if (StringHelper.EqOp(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
+            if (StringUtils.equals(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
                 iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
             }
             iface.setSubnet(net.getsubnet());
@@ -1137,16 +1101,16 @@ public class VdsBrokerObjectsBuilder {
     private static void AddBootProtocol(XmlRpcStruct cfg, VdsNetworkInterface iface) {
         if (cfg != null) {
             if (cfg.getItem("BOOTPROTO") != null) {
-                if (StringHelper.EqOp(cfg.getItem("BOOTPROTO").toString().toLowerCase(), "dhcp")) {
+                if (cfg.getItem("BOOTPROTO").toString().toLowerCase().equals("dhcp")) {
                     iface.setBootProtocol(NetworkBootProtocol.Dhcp);
                 } else {
                     iface.setBootProtocol(NetworkBootProtocol.None);
                 }
-            } else if (cfg.containsKey("IPADDR") && !StringHelper.isNullOrEmpty(cfg.getItem("IPADDR").toString())) {
+            } else if (cfg.containsKey("IPADDR") && !StringUtils.isEmpty(cfg.getItem("IPADDR").toString())) {
                 iface.setBootProtocol(NetworkBootProtocol.StaticIp);
                 if (cfg.containsKey(VdsProperties.gateway)) {
                     Object gateway = cfg.getItem(VdsProperties.gateway);
-                    if (gateway != null && !StringHelper.isNullOrEmpty(gateway.toString())) {
+                    if (gateway != null && !StringUtils.isEmpty(gateway.toString())) {
                         iface.setGateway(gateway.toString());
                     }
                 }
@@ -1175,6 +1139,5 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static Log log = LogFactory.getLog(VdsBrokerObjectsBuilder.class);
-
+    private static final Log log = LogFactory.getLog(VdsBrokerObjectsBuilder.class);
 }
