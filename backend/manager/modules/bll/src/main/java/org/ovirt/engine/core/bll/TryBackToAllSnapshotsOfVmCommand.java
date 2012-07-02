@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -27,13 +27,24 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @LockIdNameAttribute
+@NonTransactiveCommandAttribute(forceCompensation=true)
 public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfVmParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = 2636628918352438919L;
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
+
+    /**
+     * Constructor for command creation when compensation is applied on startup
+     * @param commandId
+     */
+    protected TryBackToAllSnapshotsOfVmCommand(Guid commandId) {
+        super(commandId);
+    }
 
     public TryBackToAllSnapshotsOfVmCommand(T parameters) {
         super(parameters);
@@ -74,7 +85,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
                     getCompensationContext());
             UpdateVmInSpm(getVm().getstorage_pool_id(),
-                    new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })));
+                    Arrays.asList(getVm()));
         } else {
             setCommandShouldBeLogged(false);
             log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
@@ -85,48 +96,64 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void ExecuteVmCommand() {
-        Guid previousActiveSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
-        getSnapshotDao().remove(previousActiveSnapshotId);
-        snapshotsManager.addSnapshot(previousActiveSnapshotId,
-                "Active VM before the preview",
+
+        final Guid newActiveSnapshotId = Guid.NewGuid();
+        Guid previousActiveSnapshotId = TransactionSupport.executeInNewTransaction(new TransactionMethod<Guid>() {
+            @Override
+            public Guid runInTransaction() {
+                Snapshot previousActiveSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+                getCompensationContext().snapshotEntity(previousActiveSnapshot);
+                Guid previousActiveSnapshotId = previousActiveSnapshot.getId();
+                getSnapshotDao().remove(previousActiveSnapshotId);
+                snapshotsManager.addSnapshot(previousActiveSnapshotId,
+                        "Active VM before the preview",
                         SnapshotType.PREVIEW,
                         getVm(),
                         getCompensationContext());
-        Guid newActiveSnapshotId = Guid.NewGuid();
-        snapshotsManager.addActiveSnapshot(newActiveSnapshotId, getVm(), getCompensationContext());
-        snapshotsManager.removeAllIllegalDisks(previousActiveSnapshotId);
+                snapshotsManager.addActiveSnapshot(newActiveSnapshotId, getVm(), getCompensationContext());
+                snapshotsManager.removeAllIllegalDisks(previousActiveSnapshotId);
+                getCompensationContext().stateChanged();
+                return previousActiveSnapshotId;
+            }
+        });
 
-        List<DiskImage> images = DbFacade
+        final List<DiskImage> images = DbFacade
                 .getInstance()
                 .getDiskImageDAO()
                 .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
         if (images.size() > 0) {
-            VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
+            VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
             freeLock();
-            for (DiskImage image : images) {
-                ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(image.getImageId());
-                tempVar.setParentCommand(VdcActionType.TryBackToAllSnapshotsOfVm);
-                tempVar.setVmSnapshotId(newActiveSnapshotId);
-                tempVar.setEntityId(getParameters().getEntityId());
-                tempVar.setParentParemeters(getParameters());
-                ImagesContainterParametersBase p = tempVar;
-                VdcReturnValueBase vdcReturnValue =
-                        Backend.getInstance().runInternalAction(VdcActionType.TryBackToSnapshot,
-                                p,
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-                getParameters().getImagesParameters().add(p);
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    for (DiskImage image : images) {
+                        ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(image.getImageId());
+                        tempVar.setParentCommand(VdcActionType.TryBackToAllSnapshotsOfVm);
+                        tempVar.setVmSnapshotId(newActiveSnapshotId);
+                        tempVar.setEntityId(getParameters().getEntityId());
+                        tempVar.setParentParemeters(getParameters());
+                        ImagesContainterParametersBase p = tempVar;
+                        VdcReturnValueBase vdcReturnValue =
+                                Backend.getInstance().runInternalAction(VdcActionType.TryBackToSnapshot,
+                                        p,
+                                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                        getParameters().getImagesParameters().add(p);
 
-                if (vdcReturnValue.getSucceeded()) {
-                    getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
-                } else if (vdcReturnValue.getFault() != null) {
-                    // if we have a fault, forward it to the user
-                    throw new VdcBLLException(vdcReturnValue.getFault().getError(), vdcReturnValue.getFault()
-                            .getMessage());
-                } else {
-                    log.error("Cannot create snapshot");
-                    throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                        if (vdcReturnValue.getSucceeded()) {
+                            getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+                        } else if (vdcReturnValue.getFault() != null) {
+                            // if we have a fault, forward it to the user
+                            throw new VdcBLLException(vdcReturnValue.getFault().getError(), vdcReturnValue.getFault()
+                                    .getMessage());
+                        } else {
+                            log.error("Cannot create snapshot");
+                            throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+                        }
+                    }
+                    return null;
                 }
-            }
+            });
         } else {
             getSnapshotDao().updateStatus(previousActiveSnapshotId, SnapshotStatus.OK);
         }

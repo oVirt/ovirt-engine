@@ -109,6 +109,11 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
     }
 
     @Test
+    public void getSnaphsotByTypeReturnsIdForExistingByTypeAndStatus() throws Exception {
+        assertNotNull(dao.get(EXISTING_VM_ID, SnapshotType.REGULAR));
+    }
+
+    @Test
     public void getIdByTypeReturnsIdForExistingByTypeAndStatus() throws Exception {
         assertEquals(getExistingEntityId(), dao.getId(EXISTING_VM_ID, SnapshotType.REGULAR));
     }
