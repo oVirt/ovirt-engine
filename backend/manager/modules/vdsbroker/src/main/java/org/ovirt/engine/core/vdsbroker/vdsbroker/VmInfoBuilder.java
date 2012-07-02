@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -29,7 +30,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -72,11 +72,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         else {
             // get vm device for Video Cards from DB
             List<VmDevice> vmDevices =
-                DbFacade.getInstance()
-                .getVmDeviceDAO()
-                .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceType.VIDEO.getName());
+                    DbFacade.getInstance()
+                            .getVmDeviceDAO()
+                            .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceType.VIDEO.getName());
             for (VmDevice vmDevice : vmDevices) {
-                // skip unamanged devices (handled separtely)
+                // skip unmanaged devices (handled separately)
                 if (!vmDevice.getIsManaged()) {
                     continue;
                 }
@@ -114,7 +114,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addDevice(struct, vmDevice, "");
         }
         // check first if CD was given as a parameter
-        else if (vm.isRunOnce() && !StringHelper.isNullOrEmpty(vm.getCdPath())) {
+        else if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath())) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
                             VmDeviceType.DISK.getName(),
@@ -177,7 +177,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addDevice(struct, vmDevice, "");
         }
         // check first if Floppy was given as a parameter
-        else if (vm.isRunOnce() && !StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
+        else if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getFloppyPath())) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
                             VmDeviceType.DISK.getName(),
@@ -195,7 +195,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         } else {
             // get vm device for this Floppy from DB
             List<VmDevice> vmDevices =
-                DbFacade.getInstance()
+                    DbFacade.getInstance()
                             .getVmDeviceDAO()
                             .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                     VmDeviceType.DISK.getName(),
@@ -396,7 +396,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmBootSequence() {
-        //Check if boot sequence in parameters is diffrent from default boot sequence
+        // Check if boot sequence in parameters is diffrent from default boot sequence
         if (managedDevices != null) {
             // recalculate boot order from source devices and set it to target devices
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm,
@@ -478,7 +478,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
-    private void addFloppyDetails(VmDevice vmDevice, XmlRpcStruct struct) {
+    private static void addFloppyDetails(VmDevice vmDevice, XmlRpcStruct struct) {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
         struct.add(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
@@ -486,7 +486,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
     }
 
-    private void addCdDetails(VmDevice vmDevice, XmlRpcStruct struct) {
+    private static void addCdDetails(VmDevice vmDevice, XmlRpcStruct struct) {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
         struct.add(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
@@ -513,7 +513,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
-    private HashMap<String, Object> getNewMonitorSpecParams() {
+    private static HashMap<String, Object> getNewMonitorSpecParams() {
         HashMap<String, Object> specParams = new HashMap<String, Object>();
         specParams.put("vram", VmDeviceCommonUtils.HIGH_VIDEO_MEM);
         return specParams;
@@ -523,13 +523,15 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDAO()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceType.CONTROLLER.getName(), VmDeviceType.USB.getName());
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                VmDeviceType.CONTROLLER.getName(),
+                                VmDeviceType.USB.getName());
         for (VmDevice vmDevice : vmDevices) {
             XmlRpcStruct struct = new XmlRpcStruct();
             struct.add(VdsProperties.Type, vmDevice.getType());
             struct.add(VdsProperties.Device, vmDevice.getDevice());
             setVdsPropertiesFromSpecParams(vmDevice.getSpecParams(), struct);
-            struct.add(VdsProperties.SpecParams, new HashMap<String,Object>());
+            struct.add(VdsProperties.SpecParams, new HashMap<String, Object>());
             struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
             addAddress(vmDevice, struct);
             String model = (String) struct.getItem(VdsProperties.Model);
@@ -545,9 +547,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private void buildVmUsbSlots() {
         List<VmDevice> vmDevices =
-            DbFacade.getInstance()
-                    .getVmDeviceDAO()
-                    .getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceType.REDIR.getName(), VmDeviceType.SPICEVMC.getName());
+                DbFacade.getInstance()
+                        .getVmDeviceDAO()
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                VmDeviceType.REDIR.getName(),
+                                VmDeviceType.SPICEVMC.getName());
         for (VmDevice vmDevice : vmDevices) {
             XmlRpcStruct struct = new XmlRpcStruct();
             struct.add(VdsProperties.Type, vmDevice.getType());
@@ -610,28 +614,29 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // validate & set spec params for balloon device
         if (specParams == null) {
             vmDevice.setSpecParams(new HashMap<String, Object>());
+        } else {
+            specParams.put(VdsProperties.Model, VdsProperties.Virtio);
         }
-        specParams.put(VdsProperties.Model, VdsProperties.Virtio);
         addDevice(struct, vmDevice, null);
     }
 
-    private void setVdsPropertiesFromSpecParams(Map<String,Object> specParams, XmlRpcStruct struct) {
+    private static void setVdsPropertiesFromSpecParams(Map<String, Object> specParams, XmlRpcStruct struct) {
         Set<Entry<String, Object>> values = specParams.entrySet();
         for (Entry<String, Object> currEntry : values) {
             if (currEntry.getValue() instanceof String) {
-                struct.add(currEntry.getKey(), (String)currEntry.getValue());
-            } else if (currEntry.getValue() instanceof Map){
-                struct.add(currEntry.getKey(), (Map)currEntry.getValue());
+                struct.add(currEntry.getKey(), (String) currEntry.getValue());
+            } else if (currEntry.getValue() instanceof Map) {
+                struct.add(currEntry.getKey(), (Map) currEntry.getValue());
             }
         }
     }
 
-    /*
-     * This method returns true if it is the first master model
-     * It is used due to the requirement to send this device before the other controllers.
-     * There is an open bug on libvirt on that. Until then we make sure it is passed first.
+    /**
+     * This method returns true if it is the first master model It is used due to the requirement to send this device
+     * before the other controllers. There is an open bug on libvirt on that. Until then we make sure it is passed
+     * first.
      */
-    private boolean isFirstMasterController(String model) {
+    private static boolean isFirstMasterController(String model) {
         return model.equalsIgnoreCase(FIRST_MASTER_MODEL);
     }
 
