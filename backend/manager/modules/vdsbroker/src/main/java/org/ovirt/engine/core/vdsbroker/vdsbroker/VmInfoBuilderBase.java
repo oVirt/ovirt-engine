@@ -11,14 +11,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.comparators.DiskImageByBootComparator;
@@ -78,7 +77,7 @@ public abstract class VmInfoBuilderBase {
         createInfo.add(VdsProperties.niceLevel,
                 (new Integer(vm.getnice_level())).toString());
         if (vm.getstatus() == VMStatus.Suspended
-                && !StringHelper.isNullOrEmpty(vm.gethibernation_vol_handle())) {
+                && !StringUtils.isEmpty(vm.gethibernation_vol_handle())) {
             createInfo.add(VdsProperties.hiberVolHandle,
                     vm.gethibernation_vol_handle());
         }
@@ -138,13 +137,13 @@ public abstract class VmInfoBuilderBase {
 
     protected void buildVmBootOptions() {
         // Boot Options
-        if (!StringHelper.isNullOrEmpty(vm.getinitrd_url())) {
+        if (!StringUtils.isEmpty(vm.getinitrd_url())) {
             createInfo.add(VdsProperties.InitrdUrl, vm.getinitrd_url());
         }
-        if (!StringHelper.isNullOrEmpty(vm.getkernel_url())) {
+        if (!StringUtils.isEmpty(vm.getkernel_url())) {
             createInfo.add(VdsProperties.KernelUrl, vm.getkernel_url());
 
-            if (!StringHelper.isNullOrEmpty(vm.getkernel_params())) {
+            if (!StringUtils.isEmpty(vm.getkernel_params())) {
                 createInfo.add(VdsProperties.KernelParams,
                         vm.getkernel_params());
             }
@@ -158,7 +157,7 @@ public abstract class VmInfoBuilderBase {
         } else {
             // get vm timezone
             String timeZone = TimeZoneInfo.Local.getId();
-            if (!StringHelper.isNullOrEmpty(vm.gettime_zone())) {
+            if (!StringUtils.isEmpty(vm.gettime_zone())) {
                 timeZone = vm.gettime_zone();
             }
 
