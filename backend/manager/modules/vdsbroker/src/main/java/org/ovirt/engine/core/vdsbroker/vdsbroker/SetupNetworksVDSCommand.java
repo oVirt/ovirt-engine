@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
@@ -77,7 +76,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         return networks;
     }
 
-    private boolean isVlan(Network net) {
+    private static boolean isVlan(Network net) {
         return net.getvlan_id() != null;
     }
 
@@ -88,7 +87,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             XmlRpcStruct opts = new XmlRpcStruct();
             opts.add(SLAVES, getBondNics(bond, getParameters().getInterfaces()));
 
-            if (!StringHelper.isNullOrEmpty(bond.getBondOptions())) {
+            if (!StringUtils.isEmpty(bond.getBondOptions())) {
                 opts.add(BONDING_OPTIONS, bond.getBondOptions());
             }
             bonds.add(bond.getName(), opts);
@@ -118,7 +117,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         }
     }
 
-    private List<String> getBondNics(VdsNetworkInterface bond, List<VdsNetworkInterface> interfaces) {
+    private static List<String> getBondNics(VdsNetworkInterface bond, List<VdsNetworkInterface> interfaces) {
         List<String> nics = new ArrayList<String>();
 
         for (VdsNetworkInterface i : interfaces) {
@@ -129,7 +128,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         return nics;
     }
 
-    private VdsNetworkInterface findNetworkInterface(String network,
+    private static VdsNetworkInterface findNetworkInterface(String network,
             List<VdsNetworkInterface> interfaces,
             List<VdsNetworkInterface> bonds) {
         for (VdsNetworkInterface i : interfaces) {
