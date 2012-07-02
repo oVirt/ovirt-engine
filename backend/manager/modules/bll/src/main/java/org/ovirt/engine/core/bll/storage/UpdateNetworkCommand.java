@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.AttachNetworkToVdsGroupCommand;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends StorageHandlingCommandBase<T> {
+public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
     private List<VDSGroup> _clusters;
 
     public UpdateNetworkCommand(T parameters) {
@@ -41,6 +41,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         if (getStoragePool() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+            return false;
+        }
+
+        if (!validateVmNetwork()) {
             return false;
         }
 

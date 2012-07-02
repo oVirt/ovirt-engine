@@ -1175,6 +1175,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     SupportForceCreateVG(366),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    NonVmNetworkSupported(367),
+
     Invalid(65535);
 
     private int intValue;

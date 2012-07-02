@@ -30,6 +30,10 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
 
+        if (!validateVmNetwork()) {
+            return false;
+        }
+
         // check that network name not start with 'bond'
         if (getParameters().getNetwork().getname().toLowerCase().startsWith("bond")) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME);

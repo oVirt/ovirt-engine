@@ -1857,7 +1857,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed ${action} ${type}. One or more network interfaces have incomplete network configuration. Please configure these interfaces and try again.")
     String ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED();
 
-    @DefaultStringValue(" Non VM networks is not supported for this (compatibility) version of Data Center.")
+    @DefaultStringValue("Non-VM networks are not supported in this Data-Center.")
     String NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL();
 
     String VALIDATION_DISK_IMAGE_DESCRIPTION_NOT_ASCII();

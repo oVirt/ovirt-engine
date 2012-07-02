@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.NotImplementedException;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
@@ -19,5 +23,19 @@ public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends St
     @Override
     protected void executeCommand() {
         throw new NotImplementedException();
+    }
+
+    protected boolean validateVmNetwork() {
+        boolean retVal = true;
+
+        if (!getParameters().getNetwork().isVmNetwork()) {
+            Version version = getStoragePoolDAO().get(getParameters().getStoragePoolId()).getcompatibility_version();
+            retVal = Config.<Boolean> GetValue(ConfigValues.NonVmNetworkSupported, version.getValue());
+            if (!retVal) {
+                addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
+            }
+        }
+
+        return retVal;
     }
 }

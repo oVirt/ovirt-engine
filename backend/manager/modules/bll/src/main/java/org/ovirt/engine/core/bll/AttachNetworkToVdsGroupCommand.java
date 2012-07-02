@@ -5,25 +5,25 @@ import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
-import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -111,20 +111,18 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean changesAreClusterCompatible() {
-        if (getParameters().getNetwork().isVmNetwork() == false
-                && getVdsGroup().getcompatibility_version().compareTo(Version.v3_1) < 0) {
-            addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
-            return false;
+        if (getParameters().getNetwork().isVmNetwork() == false) {
+            boolean isSupported = Config.<Boolean> GetValue(ConfigValues.NonVmNetworkSupported, getVdsGroup().getcompatibility_version().getValue());
+            if (!isSupported) {
+                addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
+                return false;
+            }
         }
         return true;
     }
 
     private boolean networkExists() {
         return Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVdsGroupId())).containsKey(getNetworkName());
-    }
-
-    protected NetworkDAO getNetworkDAO() {
-        return getDbFacade().getNetworkDAO();
     }
 
     private boolean VdsGroupExists() {
