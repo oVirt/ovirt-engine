@@ -33,7 +33,6 @@ public class DnsSRVLocator {
     private static final String SRV_RECORD = "SRV";
     private static Pattern SPACE_PATTERN = Pattern.compile(" ");
     private static SrvRecord invalidRecord = new SrvRecord(false, false, 0, 0, 0, "");
-    private int numberOfValidRecords = 0;
     private Random random = new Random(System.currentTimeMillis());
 
     public static final String TCP = "_tcp";
@@ -324,7 +323,6 @@ public class DnsSRVLocator {
             String host = s.next();
             StringBuilder sb = new StringBuilder(host);
             sb.append(":").append(port);
-            numberOfValidRecords++;
             return new SrvRecord(priority, weight, sb.toString());
         } catch (InputMismatchException ex) {
             log.errorFormat("the record {0} has invalid format", recordStr);
