@@ -690,8 +690,8 @@ public class HostGeneralModel extends EntityModel
         model.getHostVersion().setEntity(hostOsVersion.getMajor() + "." + hostOsVersion.getMinor()); //$NON-NLS-1$
         model.getHostVersion().setIsAvailable(false);
 
+        getWindow().StartProgress(null);
         if (getEntity().getvds_type() == VDSType.oVirtNode) {
-
             AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(model,
                     new INewAsyncCallback() {
                         @Override
@@ -714,6 +714,7 @@ public class HostGeneralModel extends EntityModel
                             }
 
                             AddInstallCommands(model, isos.isEmpty());
+                            getWindow().StopProgress();
                         }
                     }),
                     null);
@@ -730,6 +731,7 @@ public class HostGeneralModel extends EntityModel
             }
 
             AddInstallCommands(model, false);
+            getWindow().StopProgress();
         }
     }
 
