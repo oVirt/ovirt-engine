@@ -56,7 +56,7 @@ public enum AuthenticationResult {
             23, AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED),
     CLIENT_NOT_FOUND_IN_KERBEROS_DATABASE(
             "Authentication Failed. Client not found in kerberos database.",
-            "USER_FAILED_TO_AUTHENTICATE_KERBEROS_ERROR",
+            "USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD",
             24);
 
     private String vdcBllMessage;

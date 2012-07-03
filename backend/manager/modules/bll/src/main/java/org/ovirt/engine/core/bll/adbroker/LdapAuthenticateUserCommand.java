@@ -3,10 +3,10 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AdUser;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
     public LdapAuthenticateUserCommand(LdapUserPasswordBaseParameters parameters) {
@@ -97,6 +97,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
                 result = AuthenticationResult.OTHER;
             }
             errorMsg = VdcBllMessages.valueOf(result.getVdcBllMessage());
+            log.error(result.getDetailedMessage());
         }
         authResult = new UserAuthenticationResult(errorMsg);
         return authResult;
