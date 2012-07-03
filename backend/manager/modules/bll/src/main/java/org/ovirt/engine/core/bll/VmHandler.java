@@ -100,7 +100,7 @@ public class VmHandler {
      *            The vm template id.
      * @return
      */
-    public static boolean VerifyAddVm(ArrayList<String> reasons,
+    public static boolean VerifyAddVm(List<String> reasons,
             int nicsCount,
             VmTemplate vmTemplate,
             Guid storagePoolId,

@@ -86,14 +86,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             setQuotaId(getParameters().getVmStaticData().getQuotaId());
         }
 
-        if (getVmTemplate() != null) {
-            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
-        }
         parameters.setEntityId(getVmId());
-        if (getVdsGroup() != null) {
-            setStoragePoolId(getVdsGroup().getstorage_pool_id() != null ? getVdsGroup().getstorage_pool_id()
-                    .getValue() : Guid.Empty);
-        }
+        initTemplateDisks();
+        initStoragePoolId();
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
@@ -104,15 +99,20 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         super(commandId);
     }
 
+    protected void initStoragePoolId() {
+        if (getVdsGroup() != null) {
+            setStoragePoolId(getVdsGroup().getstorage_pool_id() != null ? getVdsGroup().getstorage_pool_id().getValue()
+                    : Guid.Empty);
+        }
+    }
+
+    protected void initTemplateDisks() {
+        if (getVmTemplate() != null) {
+            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+        }
+    }
+
     private Guid _vmSnapshotId = Guid.Empty;
-
-    protected VmDynamicDAO getVmDynamicDao() {
-        return DbFacade.getInstance().getVmDynamicDAO();
-    }
-
-    protected VmStaticDAO getVmStaticDao() {
-        return DbFacade.getInstance().getVmStaticDAO();
-    }
 
     protected Guid getVmSnapshotId() {
         return _vmSnapshotId;
@@ -396,10 +396,15 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
             return validateProvidedDestinations();
         }
+        fillImagesMapBasedOnTemplate();
+        return true;
+    }
+
+    protected void fillImagesMapBasedOnTemplate() {
         ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
+                getStorageDomainDAO().getAllForStoragePool(getVmTemplate().getstorage_pool_id().getValue()),
                 diskInfoDestinationMap,
                 destStorages, false);
-        return true;
     }
 
     protected boolean validateIsImagesOnDomains() {
@@ -443,11 +448,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return true;
     }
 
-    protected boolean canAddVm(ArrayList<String> reasons, String name, Guid storagePoolId,
+    protected boolean canAddVm(List<String> reasons, String name, Guid storagePoolId,
             int vmPriority) {
         boolean returnValue;
         // Checking if a desktop with same name already exists
-        boolean exists = (Boolean) Backend.getInstance()
+        boolean exists = (Boolean) getBackend()
                 .runInternalQuery(VdcQueryType.IsVmWithSameNameExist, new IsVmWithSameNameExistParameters(name))
                 .getReturnValue();
 
@@ -461,11 +466,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         boolean checkTemplateLock = getParameters().getParentCommand() == VdcActionType.AddVmPoolWithVms ? false : true;
 
-        returnValue = VmHandler.VerifyAddVm(reasons,
-                getVmInterfaces().size(),
-                getVmTemplate(),
-                storagePoolId,
-                vmPriority);
+        returnValue = verifyAddVM(reasons, storagePoolId, vmPriority);
 
         if (returnValue && !getParameters().getDontCheckTemplateImages()) {
             for (storage_domains storage : destStorages.values()) {
@@ -477,6 +478,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         return returnValue;
+    }
+
+    protected boolean verifyAddVM(List<String> reasons, Guid storagePoolId, int vmPriority) {
+        return VmHandler.VerifyAddVm(reasons,
+                getVmInterfaces().size(),
+                getVmTemplate(),
+                storagePoolId,
+                vmPriority);
     }
 
     @Override
@@ -648,7 +657,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 tempVar.setParentParemeters(getParameters());
                 tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
                 VdcReturnValueBase result =
-                        Backend.getInstance().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,
+                        getBackend().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,
                                 tempVar,
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                 getParameters().getImagesParameters().add(tempVar);
@@ -780,4 +789,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
         return null;
     }
+
+    protected VmDynamicDAO getVmDynamicDao() {
+        return DbFacade.getInstance().getVmDynamicDAO();
+    }
+
+    protected VmStaticDAO getVmStaticDao() {
+        return DbFacade.getInstance().getVmStaticDAO();
+    }
+
 }

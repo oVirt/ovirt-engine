@@ -70,12 +70,12 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     }
 
     public static boolean isVmTemplateImagesReady(VmTemplate vmTemplate,
-                                                  Guid storageDomainId,
-                                                  ArrayList<String> reasons,
-                                                  boolean checkImagesExists,
-                                                  boolean checkLocked,
-                                                  boolean checkIllegal,
-                                                  boolean checkStorageDomain, List<DiskImage> providedVmtImages) {
+            Guid storageDomainId,
+            List<String> reasons,
+            boolean checkImagesExists,
+            boolean checkLocked,
+            boolean checkIllegal,
+            boolean checkStorageDomain, List<DiskImage> providedVmtImages) {
         boolean returnValue = true;
         List<DiskImage> vmtImages = providedVmtImages;
         if (checkStorageDomain) {
@@ -160,7 +160,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
      * @return <c>true</c> if [is vm priority value legal] [the specified
      *         value]; otherwise, <c>false</c>.
      */
-    public static boolean IsVmPriorityValueLegal(int value, java.util.ArrayList<String> reasons) {
+    public static boolean IsVmPriorityValueLegal(int value, List<String> reasons) {
         boolean res = false;
         if (value >= 0 && value <= Config.<Integer> GetValue(ConfigValues.VmPriorityMaxValue)) {
             res = true;
@@ -188,7 +188,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     }
 
     public static boolean UpdateTemplateInSpm(Guid storagePoolId, List<VmTemplate> templatesList,
-                                              Guid storageDomainId, List<DiskImage> images) {
+            Guid storageDomainId, List<DiskImage> images) {
         java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> templatesAndMetaDictionary =
                 new java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(
                         templatesList.size());

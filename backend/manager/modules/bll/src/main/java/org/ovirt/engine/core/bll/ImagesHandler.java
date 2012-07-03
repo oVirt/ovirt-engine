@@ -71,6 +71,13 @@ public final class ImagesHandler {
                 DbFacade.getInstance()
                         .getStorageDomainDAO()
                         .getAllForStoragePool(template.getstorage_pool_id().getValue());
+        fillImagesMapBasedOnTemplate(template, domains, diskInfoDestinationMap, destStorages, notCheckSize);
+    }
+
+    public static void fillImagesMapBasedOnTemplate(VmTemplate template,
+            List<storage_domains> domains,
+            Map<Guid, DiskImage> diskInfoDestinationMap,
+            Map<Guid, storage_domains> destStorages, boolean notCheckSize) {
         Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
         for (storage_domains storageDomain : domains) {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);

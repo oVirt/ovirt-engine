@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -71,10 +70,12 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return storageDomainId;
     }
 
+    @Override
     protected Guid getStoragePoolIdFromSourceImageContainer() {
         return sourceVmFromDb.getstorage_pool_id().getValue();
     }
 
+    @Override
     protected boolean shouldCheckSpaceInStorageDomains() {
         return !getImagesToCheckDestinationStorageDomains().isEmpty();
     }
@@ -95,6 +96,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return permissionList;
     }
 
+    @Override
     protected List<VmNetworkInterface> getVmInterfaces() {
         if (_vmInterfaces == null) {
             _vmInterfaces = vmFromConfiguration.getInterfaces();
@@ -144,6 +146,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return true;
     }
 
+    @Override
     protected DiskImage cloneDiskImage(Guid newVmId,
             Guid storageDomainId,
             Guid newImageGroupId,
@@ -189,11 +192,13 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return diskImagesFromConfiguration;
     }
 
+    @Override
     protected void logErrorOneOrMoreActiveDomainsAreMissing() {
         log.errorFormat("Can not found any default active domain for one of the disks of snapshot with id : {0}",
                 sourceSnapshotId);
     }
 
+    @Override
     protected Collection<DiskImage> getDiskImagesToBeCloned() {
         return getDiskImagesFromConfiguration();
     }
@@ -313,7 +318,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
+        return getDbFacade().getSnapshotDao();
     }
 
     private void lockEntities() {
@@ -384,6 +389,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         getVmDynamicDao().updateStatus(getVmId(), VMStatus.Down);
     }
 
+    @Override
     protected void removeQuotaCommandLeftOver() {
         if (!isInternalExecution()) {
             QuotaManager.removeMultiStorageDeltaQuotaCommand(getQuotaConsumeMap(getImagesForQuotaValidation()),
