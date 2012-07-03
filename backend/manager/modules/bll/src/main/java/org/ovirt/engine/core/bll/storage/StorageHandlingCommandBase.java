@@ -139,8 +139,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean CheckStoragePoolStatus(StoragePoolStatus status) {
         boolean returnValue = false;
-        if (getStoragePool() != null) {
-            storage_pool storagePool = getStoragePoolDAO().get(getStoragePool().getId());
+        storage_pool storagePool = getStoragePool();
+        if (storagePool != null) {
             returnValue = (storagePool.getstatus() == status);
             if (!returnValue
                     && !getReturnValue().getCanDoActionMessages().contains(
@@ -153,8 +153,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean CheckStoragePoolStatusNotEqual(StoragePoolStatus status, VdcBllMessages onFailMessage) {
         boolean returnValue = false;
-        if (getStoragePool() != null) {
-            storage_pool storagePool = getStoragePoolDAO().get(getStoragePool().getId());
+        storage_pool storagePool = getStoragePool();
+        if (storagePool != null) {
             returnValue = (storagePool.getstatus() != status);
             if (!returnValue
                     && !getReturnValue().getCanDoActionMessages().contains(onFailMessage.name())) {
