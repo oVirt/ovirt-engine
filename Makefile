@@ -294,7 +294,6 @@ install_misc:
 	# should it have it in the manager machine.
 	install -m 755 backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts/
 	install -m 644 backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
-	install -m 644 packaging/fedora/setup/resources/postgres/postgres-ds.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	install -m 755 packaging/resources/ovirtlogrot.sh ${PREFIX}/usr/share/ovirt-engine/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${PREFIX}/etc/cron.daily/
 	install -m 644 packaging/resources/ovirt-tmpfilesd ${PREFIX}/etc/tmpfiles.d/ovirt-engine.conf
