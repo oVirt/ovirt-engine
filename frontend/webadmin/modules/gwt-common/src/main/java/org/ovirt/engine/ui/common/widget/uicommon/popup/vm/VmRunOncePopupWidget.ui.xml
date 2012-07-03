@@ -142,16 +142,16 @@
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
-		<g:DisclosurePanel label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
-			<g:VerticalPanel ui:field="linuxBootOptionsPanel" addStyleNames="{style.linuxBootOptionsPanel}">
+		<g:DisclosurePanel ui:field="linuxBootOptionsPanel" label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
+			<g:VerticalPanel addStyleNames="{style.linuxBootOptionsPanel}">
 				<e:EntityModelTextBoxEditor ui:field="kernelPathEditor" addStyleNames="{style.linuxBootOption}" />
 				<e:EntityModelTextBoxEditor ui:field="initrdPathEditor" addStyleNames="{style.linuxBootOption}" />
 				<e:EntityModelTextBoxEditor ui:field="kernelParamsEditor" addStyleNames="{style.linuxBootOption}" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
-                <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
-                        <g:VerticalPanel addStyleNames="{style.initialRunPanel}">
+        <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
+            <g:VerticalPanel addStyleNames="{style.initialRunPanel}">
 				<g:Label ui:field="initialRunLabel" addStyleNames="{style.extraOptionsPanel}" />
 				<w:ComboBox ui:field="sysPrepDomainNameComboBox" />
 				<e:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />

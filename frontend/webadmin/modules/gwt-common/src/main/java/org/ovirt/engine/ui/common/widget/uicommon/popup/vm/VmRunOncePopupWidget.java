@@ -63,7 +63,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     Label initialRunLabel;
 
     @UiField
-    VerticalPanel linuxBootOptionsPanel;
+    DisclosurePanel linuxBootOptionsPanel;
 
     @UiField
     DisclosurePanel initialRunPanel;
@@ -260,7 +260,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         object.getIsLinuxOptionsAvailable().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                linuxBootOptionsPanel.setVisible((Boolean) isLinuxOptionsAvailable.getEntity());
+                boolean toShow = (Boolean) isLinuxOptionsAvailable.getEntity();
+                linuxBootOptionsPanel.setVisible(toShow);
             }
         });
 
