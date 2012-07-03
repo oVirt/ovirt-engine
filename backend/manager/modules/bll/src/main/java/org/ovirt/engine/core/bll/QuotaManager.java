@@ -236,7 +236,6 @@ public class QuotaManager {
                     graceStoragePercentage,
                     quotaName,
                     quotaEnforcedType,
-                    commandId,
                     canDoActionMessages)) {
                 return false;
             } else {
@@ -415,7 +414,7 @@ public class QuotaManager {
                 quotaDeltaVal.setMemSizeToBeUsed(desiredMem);
             }
         } else {
-            addCommandForExistingQuota(commandId, quotaLimitId, 0d, desiredCpu, desiredMem, quotaDeltaMap);
+            addCommandForExistingQuota(commandId, 0d, desiredCpu, desiredMem, quotaDeltaMap);
         }
     }
 
@@ -440,7 +439,7 @@ public class QuotaManager {
                 quotaDeltaVal.setStorageSizeToBeUsed(desiredSize);
             }
         } else {
-            addCommandForExistingQuota(commandId, quotaLimitId, desiredSize, 0, 0d, quotaDeltaMap);
+            addCommandForExistingQuota(commandId, desiredSize, 0, 0d, quotaDeltaMap);
         }
     }
 
@@ -451,7 +450,6 @@ public class QuotaManager {
             Double desiredMemSize) {
         Map<Guid, QuotaDeltaValue> commandMap = new HashMap<Guid, QuotaDeltaValue>();
         addCommandForExistingQuota(commandId,
-                quotaLimitId,
                 desiredStorageSize,
                 desiredCPUSize,
                 desiredMemSize,
@@ -459,7 +457,6 @@ public class QuotaManager {
     }
 
     private static void addCommandForExistingQuota(Guid commandId,
-            Guid quotaLimitId,
             Double desiredStorageSize,
             Integer desiredCPUSize,
             Double desiredMemSize,
@@ -549,7 +546,6 @@ public class QuotaManager {
             double maxGraceStoragePercentage,
             String quotaName,
             QuotaEnforcementTypeEnum quotaEnforceType,
-            Guid commandId,
             List<String> canDoActionMessages) {
         if (quotaStorage.getStorageSizeGB().equals(QuotaHelper.UNLIMITED)) {
             return true;
