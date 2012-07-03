@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.vdscommands.UpdateSpmHostNameVDSCommandParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class UpdateSpmHostNameVDSCommand<P extends UpdateSpmHostNameVDSCommandParameters> extends IrsBrokerCommand<P> {
     public UpdateSpmHostNameVDSCommand(P parameters) {
@@ -13,7 +13,7 @@ public class UpdateSpmHostNameVDSCommand<P extends UpdateSpmHostNameVDSCommandPa
     protected void ExecuteVDSCommand() {
         // only if hostName in IrsProxy cache is the same as sent hostName
         // update to new hostName
-        if (StringHelper.EqOp(getCurrentIrsProxyData().getmCurrentIrsHost(), getParameters().getOldHostName())) {
+        if (StringUtils.equals(getCurrentIrsProxyData().getmCurrentIrsHost(), getParameters().getOldHostName())) {
             getCurrentIrsProxyData().setmCurrentIrsHost(getParameters().getNewHostName());
         }
     }
