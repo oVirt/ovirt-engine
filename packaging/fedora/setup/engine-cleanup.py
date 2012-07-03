@@ -48,7 +48,7 @@ MSG_ERR_CANT_FIND_PGPASS_FILE="Could not find DB password file %s. Skipping DB c
 
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
-MSG_INFO_STOP_JBOSS = "Stopping JBoss service"
+MSG_INFO_STOP_JBOSS = "Stopping %s service" % basedefs.JBOSS_SERVICE_NAME
 MSG_INFO_STOP_NOTIFIERD = "Stopping engine-notifierd service"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_REMOVE_DB = "Removing Database"
@@ -304,7 +304,7 @@ class DB():
         return True
 
 def stopJboss():
-    logging.debug("stoping jboss service.")
+    logging.debug("stoping %s service." % basedefs.JBOSS_SERVICE_NAME)
 
     cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop"]
     output, rc = utils.execCmd(cmd, None, True, MSG_ERR_FAILED_STP_JBOSS_SERVICE, [])
