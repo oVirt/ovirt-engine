@@ -335,7 +335,7 @@ public class VmMapper {
         if (entity.getvm_creation_date() != null) {
             model.setCreationTime(DateMapper.map(entity.getvm_creation_date(), null));
         }
-        if (entity.getDynamicData().getLastStartTime()!=null) {
+        if (entity.getDynamicData() != null && entity.getDynamicData().getLastStartTime()!=null) {
             model.setStartTime(DateMapper.map(entity.getDynamicData().getLastStartTime(), null));
         }
         model.setPlacementPolicy(new VmPlacementPolicy());
