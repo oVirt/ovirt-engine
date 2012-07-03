@@ -152,7 +152,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
         // Make sure the Vm is running stateless
         if (returnValue) {
-            if (!vmIsRunningStateless(vmId, messages)) {
+            if (!vmIsRunningStateless(vmId)) {
                 returnValue = false;
             }
         }
@@ -160,7 +160,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return returnValue;
     }
 
-    private static boolean vmIsRunningStateless(Guid vmId, ArrayList<String> messages) {
+    private static boolean vmIsRunningStateless(Guid vmId) {
         return DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotType.STATELESS);
     }
 
