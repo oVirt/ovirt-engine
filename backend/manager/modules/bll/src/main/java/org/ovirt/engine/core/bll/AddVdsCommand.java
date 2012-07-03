@@ -380,12 +380,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // having oVirt in pending approval state allows having a host with same name and address
         Guid vdsForUniqueId = getParameters().getVdsForUniqueId();
         if (vdsForUniqueId == null) {
-            return !VdsHandler.isVdsExist(getParameters().getVdsStaticData(),
+            return !VdsHandler.isVdsExist(vdsStaticData,
                     getReturnValue().getCanDoActionMessages());
-        } else {
-            return !VdsHandler.isVdsExistForPendingOvirt(getParameters().getVdsStaticData(),
-                    getReturnValue().getCanDoActionMessages(), vdsForUniqueId);
         }
+        return !VdsHandler.isVdsExistForPendingOvirt(vdsStaticData,
+                getReturnValue().getCanDoActionMessages(), vdsForUniqueId);
     }
 
     /**
