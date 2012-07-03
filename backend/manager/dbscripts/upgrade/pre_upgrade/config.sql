@@ -456,7 +456,7 @@ select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','ge
 select fn_db_update_config_value('ENGINEEARLib','%JBOSS_HOME%/standalone/deployments/engine.ear','general');
 select fn_db_update_config_value('FenceAgentDefaultParams','ilo3:lanplus,power_wait=4','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
-select fn_db_update_config_value('MinimalETLVersion','3.0.0','general');
+select fn_db_update_config_value('MinimalETLVersion','3.1.0','general');
 select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
 select fn_db_update_config_value('RhevhLocalFSPath','/data/images/rhev','general');
