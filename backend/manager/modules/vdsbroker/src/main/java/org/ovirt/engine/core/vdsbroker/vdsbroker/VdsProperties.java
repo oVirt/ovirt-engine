@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 //      (currently in vdsBroker and irsBroker)
 //public static class VdsBrokerFactory
 //{
-//    //TODO: fucked up because could not make real factory here
+//    //TODO: messed up because could not make real factory here
 //    public static IVdsBroker create(string host, uint port)
 //    {
 //        return new VdsBroker(host, port);
