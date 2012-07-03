@@ -443,8 +443,7 @@ public final class AsyncTaskManager {
         log.infoFormat("AsyncTaskManager::SetNewMap: The map contains now {0} tasks", _tasks.size());
     }
 
-    public synchronized Guid CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters,
-                                        boolean pollingEnabled) {
+    public synchronized Guid CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
         SPMAsyncTask task = AsyncTaskFactory.Construct(taskType, taskParameters);
         AddTaskToManager(task);
         return task == null ? Guid.Empty : task.getTaskID();

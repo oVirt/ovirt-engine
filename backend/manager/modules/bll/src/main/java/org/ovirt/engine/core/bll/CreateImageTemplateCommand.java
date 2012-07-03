@@ -114,7 +114,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 paramsForTask, asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.copyImage, p, false);
+        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.copyImage, p);
 
         return ret;
     }

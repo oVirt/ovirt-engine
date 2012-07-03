@@ -102,7 +102,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 parametersForTask, asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p, false);
+        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
 
         return ret;
     }

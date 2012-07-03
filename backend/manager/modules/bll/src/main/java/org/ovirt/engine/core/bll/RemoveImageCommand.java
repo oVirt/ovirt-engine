@@ -66,7 +66,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 getParametersForTask(parentCommand, getParameters()), asyncTaskCreationInfo.getStepId(),
                 getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p, false);
+        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p);
 
         return ret;
     }

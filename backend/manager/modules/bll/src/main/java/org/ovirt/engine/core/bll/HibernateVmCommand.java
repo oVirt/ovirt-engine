@@ -186,7 +186,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 getParameters(), asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid taskID = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p, false);
+        Guid taskID = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
 
         return taskID;
     }

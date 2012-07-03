@@ -56,7 +56,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 getParameters(), asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.mergeSnapshots, p, false);
+        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.mergeSnapshots, p);
 
         return ret;
     }

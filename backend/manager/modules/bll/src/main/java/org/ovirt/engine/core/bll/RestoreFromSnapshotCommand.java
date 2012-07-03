@@ -73,7 +73,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 commandParams, asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteVolume, p, false);
+        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteVolume, p);
 
         return ret;
     }

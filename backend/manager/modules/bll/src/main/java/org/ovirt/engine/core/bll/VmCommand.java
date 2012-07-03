@@ -370,7 +370,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 getParameters(), asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid taskID = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p, false);
+        Guid taskID = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p);
 
         return taskID;
     }
