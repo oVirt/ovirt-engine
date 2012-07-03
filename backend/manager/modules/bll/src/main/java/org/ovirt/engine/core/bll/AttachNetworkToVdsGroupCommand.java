@@ -46,10 +46,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     @Override
     protected void executeCommand() {
         if (networkExists()) {
-            network_cluster cluster = getNetwork().getCluster();
-            cluster.setcluster_id(getVdsGroupId());
-            cluster.setnetwork_id(getNetwork().getId());
-            getNetworkClusterDAO().update(cluster);
+            getNetworkClusterDAO().update(getParameters().getNetworkCluster());
         } else {
             getNetworkClusterDAO().save(new network_cluster(getVdsGroupId(), getNetwork().getId(),
                     NetworkStatus.Operational.getValue(), false, getNetwork().isRequired()));
@@ -123,7 +120,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     private boolean networkExists() {
         List<network_cluster> networks = getNetworkClusterDAO().getAllForCluster(getVdsGroupId());
         for (network_cluster network_cluster : networks) {
-            if (network_cluster.getnetwork_id().equals(getNetwork().getId())) {
+            if (network_cluster.getnetwork_id().equals(
+                    getParameters().getNetworkCluster().getnetwork_id())) {
                 return true;
             }
         }

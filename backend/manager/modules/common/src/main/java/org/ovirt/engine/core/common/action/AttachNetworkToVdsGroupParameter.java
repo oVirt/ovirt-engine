@@ -1,13 +1,21 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network_cluster;
 
-public class AttachNetworkToVdsGroupParameter extends VdsGroupOperationParameters {
+public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
     private static final long serialVersionUID = -2874549285727269806L;
     private Network _network;
 
     public AttachNetworkToVdsGroupParameter(VDSGroup group, Network net) {
-        super(group);
+        super(new network_cluster(group.getId(),
+                net.getId(),
+                0,
+
+                // Cluster attachment data can sometimes be missing, so use defaults in that case.
+                net.getCluster() == null ? false : net.getCluster().getis_display(),
+                net.getCluster() == null ? true : net.getCluster().isRequired()));
         _network = net;
     }
 

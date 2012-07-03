@@ -45,14 +45,14 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
     @Test
     public void testRemove() throws Exception {
-        VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUpEntityQueryExpectations(2);
 
         setUriInfo(setUpActionExpectations(VdcActionType.DetachNetworkToVdsGroup,
                                            AttachNetworkToVdsGroupParameter.class,
-                                           new String[] { "VdsGroup" },
-                                           new Object[] { vdsGroup },
+                                           new String[] { "VdsGroupId" },
+                                           new Object[] { CLUSTER_ID },
                                            true,
                                            true));
         verifyRemove(collection.remove(GUIDS[0].toString()));
@@ -70,14 +70,14 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUpEntityQueryExpectations(2);
 
         setUriInfo(setUpActionExpectations(VdcActionType.DetachNetworkToVdsGroup,
                                            AttachNetworkToVdsGroupParameter.class,
-                                           new String[] { "VdsGroup" },
-                                           new Object[] { vdsGroup },
+                                           new String[] { "VdsGroupId" },
+                                           new Object[] { CLUSTER_ID },
                                            canDo,
                                            success));
         try {
@@ -96,8 +96,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
         setUpCreationExpectations(VdcActionType.AttachNetworkToVdsGroup,
                                   AttachNetworkToVdsGroupParameter.class,
-                                  new String[] { "VdsGroup" },
-                                  new Object[] { vdsGroup },
+                                  new String[] { "VdsGroupId" },
+                                  new Object[] { CLUSTER_ID },
                                   true,
                                   true,
                                   null,
@@ -124,12 +124,12 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     private void doTestBadAddNetwork(boolean canDo, boolean success, String detail) throws Exception {
-        VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUriInfo(setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
                                            AttachNetworkToVdsGroupParameter.class,
-                                           new String[] { "VdsGroup" },
-                                           new Object[] { vdsGroup },
+                                           new String[] { "VdsGroupId" },
+                                           new Object[] { CLUSTER_ID },
                                            canDo,
                                            success));
         Network model = getModel(0);
@@ -151,11 +151,11 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpEntityQueryExpectations(1, null);
         setUpGetClusterExpectations();
         setUpGetNetworksByDataCenterExpectations(1, null);
-        VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpVDSGroupExpectations(CLUSTER_ID);
         setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
                 AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroup" },
-                new Object[] { vdsGroup },
+                new String[] { "VdsGroupId" },
+                new Object[] { CLUSTER_ID },
                 true,
                 true);
         ((BackendClusterNetworksResource)collection).add(model);
