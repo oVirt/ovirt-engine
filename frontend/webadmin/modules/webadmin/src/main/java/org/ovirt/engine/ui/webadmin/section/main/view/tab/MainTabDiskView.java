@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -57,6 +58,14 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 return object.getId().toString();
             }
         }, constants.idDisk(), "120px"); //$NON-NLS-1$
+
+        getTable().addColumn(new ImageResourceColumn<Disk>() {
+            @Override
+            public ImageResource getValue(Disk object) {
+                return object.getVmEntityType() == VmEntityType.VM ? resources.vmsImage() :
+                        object.getVmEntityType() == VmEntityType.TEMPLATE ? resources.templatesImage() : null;
+            }
+        }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         getTable().addColumn(new ImageResourceColumn<Disk>() {
             @Override
