@@ -247,9 +247,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remote path to NFS export, takes either the form: FQDN:/path or IP:/path e.g. server.example.com:/export/VMs")
     String storagePopupNfsPathHintLabel();
 
-    @DefaultStringValue("* It is recommended to keep the default values in the fields below unchanged.")
-    String storagePopupNfsAdvancedOptionsLabel();
-
     @DefaultStringValue("Path to device to mount / remote export")
     String storagePopupPosixPathHintLabel();
 

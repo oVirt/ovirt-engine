@@ -42,14 +42,6 @@
             display: none;
         }
 
-        .expander {
-            background: Transparent;
-            border: none;
-            padding: 0px;
-            margin: 5px;
-            float: left;
-        }
-
     </ui:style>
 
     <g:VerticalPanel addStyleNames="{style.content}">
@@ -71,7 +63,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <g:ToggleButton ui:field="expander" addStyleNames="{style.expander}"/>
+                        <d:AdvancedParametersExpander ui:field="expander"/>
                     </td>
                 </tr>
                 <table ui:field="expanderContent">

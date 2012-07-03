@@ -24,6 +24,7 @@ public class VmServerNewPopupWidget extends AbstractVmPopupWidget {
         isStatelessEditor.setVisible(false);
         numOfMonitorsEditor.setVisible(false);
         allowConsoleReconnectEditor.setVisible(false);
+        expander.setVisible(false);
     }
 
 }

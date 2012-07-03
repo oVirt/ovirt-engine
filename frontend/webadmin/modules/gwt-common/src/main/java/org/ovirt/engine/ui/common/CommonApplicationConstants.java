@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface CommonApplicationConstants extends Constants {
 
@@ -216,14 +217,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Number of Monitors")
     String numOfMonitorsVm();
 
-    @DefaultStringValue(
-            "Allow a user to connect to the console of this VM when a different " +
-                    "user has also connected since the last boot." +
-                    "Note: With this option selected, the VM will not need to be " +
-                    "rebooted before allowing a new user to connect. This may result in " +
-                    "exposure of the previous user's session under certain conditions."
-            )
-            String allowConsoleReconnect();
+    @DefaultStringValue("Disable strict user checking")
+    String allowConsoleReconnect();
 
     @DefaultStringValue("USB Policy")
     String usbPolicyVm();
@@ -929,4 +924,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Windows")
     String initialRunWindows();
 
+    @DefaultStringValue("* It is recommended to keep the default values in the fields below unchanged.")
+    String advancedOptionsLabel();
 }

@@ -20,6 +20,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -55,6 +56,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 
 public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
@@ -328,6 +330,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     CommonApplicationConstants constants;
 
+    @UiField
+    @Ignore
+    protected AdvancedParametersExpander expander;
+
+    @UiField
+    @Ignore
+    Panel expanderContent;
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(CommonApplicationConstants constants) {
         this.constants = constants;
@@ -362,11 +372,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         disksAllocationView = new DisksAllocationView(constants);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        expander.initWithContent(expanderContent.getElement());
         applyStyles();
 
         poolTab.setVisible(false);
 
         localize(constants);
+
         Driver.driver.initialize(this);
     }
 

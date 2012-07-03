@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
@@ -17,17 +18,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -67,7 +62,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     @UiField
     @Ignore
-    ToggleButton expander;
+    AdvancedParametersExpander expander;
 
     @UiField
     @Ignore
@@ -120,10 +115,14 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        initExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
-        wireEvents();
         Driver.driver.initialize(this);
+    }
+
+    private void initExpander() {
+        expander.initWithContent(expanderContent);
     }
 
     void addStyles() {
@@ -131,23 +130,6 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
         expanderContent.setClassName(style.expanderContent());
 
-
-        SafeHtml expandImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.expanderImage()).getHTML());
-        expander.getUpFace().setHTML(templates.imageTextButton(expandImage, constants.advancedParameters()));
-
-        SafeHtml collapseImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.expanderDownImage()).getHTML());
-        expander.getDownFace().setHTML(templates.imageTextButton(collapseImage, constants.advancedParameters()));
-    }
-
-    void wireEvents() {
-
-        expander.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-                expanderContent.getStyle().setDisplay(expander.isDown() ? Style.Display.BLOCK : Style.Display.NONE);
-            }
-        });
     }
 
     void initEditors() {
@@ -166,7 +148,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
         pathLabel.setText(constants.storagePopupNfsPathLabel());
         pathHintLabel.setText(constants.storagePopupNfsPathHintLabel());
-        warningLabel.setText(constants.storagePopupNfsAdvancedOptionsLabel());
+        warningLabel.setText(constants.advancedOptionsLabel());
         versionLabel.setText(constants.storagePopupNfsVersionLabel());
         retransmissionsLabel.setText(constants.storagePopupNfsRetransmissionsLabel());
         timeoutLabel.setText(constants.storagePopupNfsTimeoutLabel());

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+		.expander {
+            background: Transparent;
+            border: none;
+            padding: 0px;
+            margin: 5px;
+            float: left;
+        }
+	</ui:style>
+
+	<g:ToggleButton ui:field="expander" addStyleNames="{style.expander}"/>
+
+</ui:UiBinder>
