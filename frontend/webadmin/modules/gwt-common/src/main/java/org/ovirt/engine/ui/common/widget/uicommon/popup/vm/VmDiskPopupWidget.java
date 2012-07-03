@@ -73,6 +73,14 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
+    @Path("interface.selectedItem")
+    ListModelListBoxEditor<Object> interfaceEditor;
+
+    @UiField(provided = true)
+    @Path("volumeType.selectedItem")
+    ListModelListBoxEditor<Object> volumeTypeEditor;
+
+    @UiField(provided = true)
     @Path("dataCenter.selectedItem")
     ListModelListBoxEditor<Object> datacenterEditor;
 
@@ -81,21 +89,13 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     ListModelListBoxEditor<Object> storageDomainEditor;
 
     @UiField(provided = true)
-    @Path(value = "host.selectedItem")
-    @WithElementId("host")
-    ListModelListBoxEditor<Object> hostListEditor;
-
-    @UiField(provided = true)
     @Path("quota.selectedItem")
     ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField(provided = true)
-    @Path("interface.selectedItem")
-    ListModelListBoxEditor<Object> interfaceEditor;
-
-    @UiField(provided = true)
-    @Path("volumeType.selectedItem")
-    ListModelListBoxEditor<Object> volumeTypeEditor;
+    @Path(value = "host.selectedItem")
+    @WithElementId("host")
+    ListModelListBoxEditor<Object> hostListEditor;
 
     @UiField(provided = true)
     @Path(value = "storageType.selectedItem")
