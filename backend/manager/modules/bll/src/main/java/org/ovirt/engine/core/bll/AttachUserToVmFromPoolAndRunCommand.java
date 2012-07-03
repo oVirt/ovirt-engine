@@ -157,7 +157,7 @@ VmPoolUserCommandBase<T> {
             runVmParams.setEntityId(vmToAttach);
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
             runVmParams.setRunAsStateless(true);
-            ExecutionContext runVmContext = createRunVmContext(getVm());
+            ExecutionContext runVmContext = createRunVmContext();
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
                     runVmParams, new CommandContext(runVmContext));
 
@@ -168,7 +168,7 @@ VmPoolUserCommandBase<T> {
         }
     }
 
-    private ExecutionContext createRunVmContext(VM vm) {
+    private ExecutionContext createRunVmContext() {
         ExecutionContext ctx = new ExecutionContext();
         try {
             Step step = ExecutionHandler.addSubStep(getExecutionContext(),
