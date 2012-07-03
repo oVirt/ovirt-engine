@@ -1,5 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -10,12 +19,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
 
@@ -29,10 +32,15 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<PosixStorageView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     WidgetStyle style;
 
     @UiField
+    @WithElementId
     @Path(value = "path.entity")
     EntityModelTextBoxOnlyEditor pathEditor;
 
@@ -45,6 +53,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     Label pathHintLabel;
 
     @UiField
+    @WithElementId
     @Path(value = "vfsType.entity")
     EntityModelTextBoxOnlyEditor vfsTypeEditor;
 
@@ -53,6 +62,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     Label vfsTypeLabel;
 
     @UiField
+    @WithElementId
     @Path(value = "mountOptions.entity")
     EntityModelTextBoxOnlyEditor mountOptionsEditor;
 
@@ -68,6 +78,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     public PosixStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         Driver.driver.initialize(this);
     }

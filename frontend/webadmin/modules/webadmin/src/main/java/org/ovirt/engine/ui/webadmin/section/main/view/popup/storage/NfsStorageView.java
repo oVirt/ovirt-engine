@@ -1,5 +1,18 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableElement;
@@ -19,16 +32,6 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
@@ -42,10 +45,15 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<NfsStorageView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     WidgetStyle style;
 
     @UiField
+    @WithElementId
     @Path(value = "path.entity")
     EntityModelTextBoxOnlyEditor pathEditor;
 
@@ -70,6 +78,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     TableElement expanderContent;
 
     @UiField(provided = true)
+    @WithElementId
     @Path(value = "version.selectedItem")
     ListModelListBoxOnlyEditor<Object> versionEditor;
 
@@ -82,6 +91,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     Label versionLabel;
 
     @UiField
+    @WithElementId
     @Path(value = "retransmissions.entity")
     EntityModelTextBoxOnlyEditor retransmissionsEditor;
 
@@ -90,6 +100,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     Label retransmissionsLabel;
 
     @UiField
+    @WithElementId
     @Path(value = "timeout.entity")
     EntityModelTextBoxOnlyEditor timeoutEditor;
 
@@ -109,6 +120,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         wireEvents();
         Driver.driver.initialize(this);
