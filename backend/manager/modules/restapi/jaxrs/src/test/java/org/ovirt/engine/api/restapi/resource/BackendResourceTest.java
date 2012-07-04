@@ -50,7 +50,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
                                            true,
                                            true)));
         Action action = new Action();
-        action.setRootPassword(NAMES[2]);        
+        action.setRootPassword(NAMES[2]);
         resource.install(action);
     }
 
@@ -72,7 +72,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
                 getEntity(0));
     }
 
-    protected VDS getEntity(int index) {        
+    protected VDS getEntity(int index) {
         VDS vds = setUpEntityExpectations(control.createMock(VDS.class), index);
         VdsStatic vdsStatic = control.createMock(VdsStatic.class);
         expect(vdsStatic.getId()).andReturn(GUIDS[2]).anyTimes();
