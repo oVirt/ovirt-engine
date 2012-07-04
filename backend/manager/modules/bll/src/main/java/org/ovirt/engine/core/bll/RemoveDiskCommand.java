@@ -184,29 +184,29 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private boolean canRemoveVmImageDisk() {
-        setVmId(disk.getvm_guid());
-        boolean validDisktoDelete = true;
-        int vmCount = 0;
-        while (getVmsForDiskId().size() > vmCount && validDisktoDelete) {
-            VM vm = listVms.get(vmCount++);
+        boolean firstTime = true;
+        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+        List<Disk> diskList = Arrays.asList(disk);
+        for (VM vm : listVms) {
             VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getId()));
-            validDisktoDelete = validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()));
-            // Validate image only in the first image of the iteration since we check the same image every time.
-            validDisktoDelete = validDisktoDelete && ImagesHandler.PerformImagesChecks(vm,
+            if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) || !ImagesHandler.PerformImagesChecks(vm,
                     getReturnValue().getCanDoActionMessages(),
                     vm.getstorage_pool_id(),
                     getParameters().getStorageDomainId(),
                     false,
-                    vmCount == 1,
+                    firstTime,
                     false,
                     false,
                     vmDevice.getIsPlugged() && disk.isAllowSnapshot(),
                     vmDevice.getIsPlugged(),
                     false,
-                    vmCount == 1,
-                    Arrays.asList(disk));
+                    firstTime,
+                    diskList)) {
+                return false;
+            }
+            firstTime = false;
         }
-        return validDisktoDelete;
+        return true;
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {
