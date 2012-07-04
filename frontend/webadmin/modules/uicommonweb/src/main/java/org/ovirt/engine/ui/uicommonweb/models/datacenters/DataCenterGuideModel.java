@@ -1379,7 +1379,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        if (!model.Validate())
+        if (!model.Validate(true)) // Since it is a new cluster, we will do cpu validations
         {
             return;
         }

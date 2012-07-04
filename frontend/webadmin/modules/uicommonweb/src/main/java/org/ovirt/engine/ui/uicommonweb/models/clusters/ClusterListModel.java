@@ -406,7 +406,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     public void OnSave()
     {
         ClusterModel model = (ClusterModel) getWindow();
-        if (!model.Validate())
+
+        boolean validateCpu = model.getIsNew() || ((VDSGroup) getSelectedItem()).getcpu_name() != null;
+
+        if (!model.Validate(validateCpu))
         {
             return;
         }
@@ -458,7 +461,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setname((String) model.getName().getEntity());
         cluster.setdescription((String) model.getDescription().getEntity());
         cluster.setstorage_pool_id(((storage_pool) model.getDataCenter().getSelectedItem()).getId());
-        cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
+        if (model.getCPU().getSelectedItem() != null)
+        {
+            cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
+        }
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);

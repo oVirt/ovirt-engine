@@ -809,12 +809,12 @@ public class ClusterModel extends Model
                 : (NGuid) (selectedDataCenter.getId()));
     }
 
-    public boolean Validate()
+    public boolean Validate(boolean validateCpu)
     {
-        return Validate(true);
+        return Validate(true, validateCpu);
     }
 
-    public boolean Validate(boolean validateStoragePool)
+    public boolean Validate(boolean validateStoragePool, boolean validateCpu)
     {
         getName().ValidateEntity(new IValidation[] {
                 new NotEmptyValidation(),
@@ -825,7 +825,16 @@ public class ClusterModel extends Model
         {
             getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
-        getCPU().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+
+        if (validateCpu)
+        {
+            getCPU().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        }
+        else
+        {
+            getCPU().ValidateSelectedItem(new IValidation[] {});
+        }
+
         getVersion().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         // TODO: async validation for webadmin
