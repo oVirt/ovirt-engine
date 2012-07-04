@@ -213,10 +213,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     // the OVF
                     setVm(vm);
                     for (DiskImage image : getVm().getImages()) {
-                        for (DiskImage p : imageList) {
-                            // copy the new disk volume format/type if provided,
-                            // only if requested by the user
-                            if (getParameters().getCopyCollapse()) {
+                        if (getParameters().getCopyCollapse()) {
+                            for (DiskImage p : imageList) {
+                                // copy the new disk volume format/type if provided,
+                                // only if requested by the user
                                 if (p.getImageId().equals(image.getImageId())) {
                                     if (p.getvolume_format() != null) {
                                         image.setvolume_format(p.getvolume_format());
@@ -225,11 +225,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                                         image.setvolume_type(p.getvolume_type());
                                     }
                                 }
-                            }
-                            if (image.getId().equals(p.getId())
-                                    && !imageToDestinationDomainMap.containsKey(image.getId())) {
-                                imageToDestinationDomainMap.put(image.getId(),
-                                        imageToDestinationDomainMap.get(p.getId()));
                             }
                         }
                         retVal =
