@@ -618,6 +618,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.NETWORK_DETACH_NETWORK_TO_VDS_GROUP, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.NETWORK_DETACH_NETWORK_TO_VDS_GROUP_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.NETWORK_UPDTAE_NETWORK_ON_CLUSTER, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.NETWORK_UPDTAE_NETWORK_ON_CLUSTER_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.NETWORK_UPDATE_DISPLAY_TO_VDS_GROUP, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.NETWORK_UPDATE_DISPLAY_TO_VDS_GROUP_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.NETWORK_UPDATE_NETWORK_TO_VDS_INTERFACE, AuditLogSeverity.NORMAL);

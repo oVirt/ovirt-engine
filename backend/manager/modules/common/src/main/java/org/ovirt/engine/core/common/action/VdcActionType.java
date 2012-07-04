@@ -173,6 +173,7 @@ public enum VdcActionType {
     @Deprecated
     // AttachNetworkToVdsGroup is taking over this functionality
     UpdateDisplayToVdsGroup(710, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false),
+    UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false),
     /**
      * 4.0
      */
