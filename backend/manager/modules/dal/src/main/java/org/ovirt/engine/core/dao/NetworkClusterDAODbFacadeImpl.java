@@ -3,16 +3,16 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+
+import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>NetworkClusterDAODbFacadeImpl</code> provides a concrete implementation of {@link NetworkClusterDAO} based on
- * code refactored from {@link DbFacade}.
- *
- *
+ * {@link org.springframework.jdbc.core.JdbcTemplate}
  */
 public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements NetworkClusterDAO {
 
@@ -30,6 +30,15 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
                     return entity;
                 }
             };
+
+    @Override
+    public network_cluster get(NetworkClusterId id) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", id.getClusterId())
+                .addValue("network_id", id.getNetworkId());
+
+        return getCallsHandler().executeRead("Getnetwork_clusterBycluster_idAndBynetwork_id", mapper, parameterSource);
+    }
 
     @SuppressWarnings("unchecked")
     @Override

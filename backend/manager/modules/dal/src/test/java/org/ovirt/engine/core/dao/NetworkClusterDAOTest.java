@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -44,6 +44,14 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
         newNetworkCluster.setcluster_id(freeCluster.getId());
 
         existingNetworkCluster = dao.getAll().get(0);
+    }
+
+    /**
+     * Ensures that retrieving an instance works as expected.
+     */
+    @Test
+    public void testGet() {
+        assertEquals(existingNetworkCluster, dao.get(existingNetworkCluster.getId()));
     }
 
     /**

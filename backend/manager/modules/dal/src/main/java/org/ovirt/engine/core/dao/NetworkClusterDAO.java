@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -11,6 +12,16 @@ import org.ovirt.engine.core.compat.Guid;
  *
  */
 public interface NetworkClusterDAO extends DAO {
+
+    /**
+     * Retrieves the entity with the given id.
+     *
+     * @param id
+     *            The id to look by (can't be <code>null</code>).
+     * @return The entity instance, or <code>null</code> if not found.
+     */
+    public network_cluster get(NetworkClusterId id);
+
     /**
      * Retrieves all network clusters.
      *

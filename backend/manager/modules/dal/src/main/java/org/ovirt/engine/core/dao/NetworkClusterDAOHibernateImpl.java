@@ -5,7 +5,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
+import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -17,6 +17,11 @@ import org.ovirt.engine.core.compat.Guid;
 public class NetworkClusterDAOHibernateImpl extends BaseDAOHibernateImpl<network_cluster, Guid> implements NetworkClusterDAO {
     public NetworkClusterDAOHibernateImpl() {
         super(network_cluster.class);
+    }
+
+    @Override
+    public network_cluster get(NetworkClusterId id) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
