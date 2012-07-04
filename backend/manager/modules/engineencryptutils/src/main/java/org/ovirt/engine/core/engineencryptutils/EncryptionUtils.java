@@ -141,7 +141,7 @@ public class EncryptionUtils {
                 result = decrypt(source, key);
             }
         } catch (Exception e) {
-            log.error("Failed to decrypt" + e.getMessage());
+            log.error("Failed to decrypt " + e.getMessage());
             log.debug("Failed to decrypt", e);
             throw e;
         }
@@ -216,7 +216,10 @@ public class EncryptionUtils {
             store.load(storeIn, passwd.toCharArray());
             return store;
         } catch (Exception exception) {
-            log.error("Can't load keystore from file \"" + storeFile.getAbsolutePath() + "\".", exception);
+            log.error(String.format("Can't load keystore from file \"%s\". %s: %s",
+                    storeFile.getAbsolutePath(),
+                    exception.getClass().getSimpleName(),
+                    exception.getMessage()));
             throw new RuntimeException(exception);
         }
         finally {
