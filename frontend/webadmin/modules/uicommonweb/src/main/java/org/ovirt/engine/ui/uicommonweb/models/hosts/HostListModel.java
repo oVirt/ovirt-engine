@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -1076,6 +1077,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getName().setEntity(vds.getvds_name());
         model.getHost().setEntity(vds.gethost_name());
         model.getPort().setEntity(vds.getport());
+        model.setPmOptionsMap((HashMap)VdsStatic.PmOptionsStringToMap(vds.getpm_options()).asMap());
 
         if (vds.getstatus() != VDSStatus.InstallFailed)
         {
