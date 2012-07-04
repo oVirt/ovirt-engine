@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config.entity.helper;
 
 import java.util.List;
 
+import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
 public class IntegerValueHelper implements ValueHelper {
@@ -50,6 +51,11 @@ public class IntegerValueHelper implements ValueHelper {
             // invalid number
             return false;
         }
+    }
+
+    @Override
+    public void setParser(EngineConfigCLIParser parser) {
+        // NOP
     }
 
 }

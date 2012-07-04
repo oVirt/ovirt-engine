@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config.entity.helper;
 
 import java.util.StringTokenizer;
 
+import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
 /**
@@ -67,5 +68,10 @@ public class CompositePasswordValueHelper implements ValueHelper {
             }
         }
         return returnValue;
+    }
+
+    @Override
+    public void setParser(EngineConfigCLIParser parser) {
+        // NOP
     }
 }

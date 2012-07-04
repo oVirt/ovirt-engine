@@ -8,6 +8,9 @@ import static org.ovirt.engine.core.common.config.ConfigValues.LDAPProviderTypes
 import static org.ovirt.engine.core.common.config.ConfigValues.LDAPSecurityAuthentication;
 import static org.ovirt.engine.core.common.config.ConfigValues.LdapServers;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.EnumMap;
 
@@ -49,15 +52,32 @@ public class ConfigurationProvider {
         return "";
     }
 
-    public void setConfigValue(ConfigValues enumValue, String value, String loggingValue) throws ManageDomainsResult {
+    public void setConfigValue(ConfigValues enumValue, DomainsConfigurationEntry entry) throws ManageDomainsResult {
+        setConfigValue(enumValue, entry, true);
+    }
 
-        log.info("Setting value for " + enumValue.toString() + " to " + loggingValue);
+    protected String createPassFile(String value) throws IOException {
+        File temp = File.createTempFile("ovirt", ".tmp");
+        String fileName = temp.getName();
+
+        BufferedWriter out = new BufferedWriter(new FileWriter(temp));
+        out.write(value);
+        out.close();
+
+        return fileName;
+    }
+
+    public void setConfigValue(ConfigValues enumValue, DomainsConfigurationEntry entry, boolean passedAsValue)
+            throws ManageDomainsResult {
+
+        log.info("Setting value for " + enumValue.toString() + " to " + entry.getDomainsLoggingEntry());
 
         try {
             Process engineConfigProcess =
                     Runtime.getRuntime().exec(engineConfigExecutable + " -s "
-                            + enumValue.name() + "="
-                            + value + " -p " + engineConfigProperties);
+                            + enumValue.name() + ((passedAsValue) ? "=" + entry.getDomainsConfigurationEntry() :
+                                    " --admin-pass-file " + createPassFile(entry.getDomainsConfigurationEntry()))
+                            + " -p " + engineConfigProperties);
             int retVal = engineConfigProcess.waitFor();
             if (retVal != 0) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION,

@@ -9,6 +9,7 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.EngineConfig;
+import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.helper.StringValueHelper;
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
 
@@ -17,6 +18,7 @@ public class ConfigKeyFactory {
     private HierarchicalConfiguration keysConfig;
     private Map<String, String> alternateKeysMap;
     private static ConfigKeyFactory instance;
+    private EngineConfigCLIParser parser;
 
     static {
         instance = new ConfigKeyFactory();
@@ -25,9 +27,12 @@ public class ConfigKeyFactory {
     private ConfigKeyFactory() {
     }
 
-    public static void init(HierarchicalConfiguration keysConfig, Map<String, String> alternateKeysMap) {
+    public static void init(HierarchicalConfiguration keysConfig,
+            Map<String, String> alternateKeysMap,
+            EngineConfigCLIParser parser) {
         instance.keysConfig = keysConfig;
         instance.alternateKeysMap = alternateKeysMap;
+        instance.parser = parser;
     }
 
     public static ConfigKeyFactory getInstance() {
@@ -60,6 +65,7 @@ public class ConfigKeyFactory {
         boolean reloadable = configurationAt.getBoolean("isReloadable", false);
         ConfigKey configKey = new ConfigKey(type, description, alternateKey, key, "", validValues,
                 "", getHelperByType(type), reloadable);
+        configKey.setParser(parser);
         return configKey;
     }
 

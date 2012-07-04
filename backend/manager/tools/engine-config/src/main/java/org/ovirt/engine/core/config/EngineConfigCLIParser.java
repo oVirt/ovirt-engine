@@ -3,6 +3,7 @@ package org.ovirt.engine.core.config;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.ovirt.engine.core.config.entity.helper.PasswordValueHelper;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 
 /**
@@ -87,9 +88,10 @@ public class EngineConfigCLIParser {
      *
      * @param arg
      */
-    private void parseSecondArgWithoutDash(String arg) {
+    private void parseSecondArgWithoutDash(String arg, boolean passFileExists) {
         int delimiterIndex = arg.indexOf("=");
-        if (getConfigAction().equals(ConfigActionType.ACTION_SET) && delimiterIndex == -1) {
+        if (getConfigAction().equals(ConfigActionType.ACTION_SET) && delimiterIndex == -1 &&
+                 !passFileExists) {
             throw new IllegalArgumentException("Argument for set action must be in format of key=value.");
         }
 
@@ -136,6 +138,13 @@ public class EngineConfigCLIParser {
      */
     private void parseArguments(String[] args) {
         boolean fShouldSkip = true; // So the first arg which is the action will be skipped
+        boolean passFileExists = false;
+        for (String arg : args) {
+            if (arg.startsWith("--admin-pass-file")) {
+                passFileExists = true;
+                break;
+            }
+        }
         for (int currentIndex = 0; currentIndex < args.length; currentIndex++) {
             if (fShouldSkip) {
                 fShouldSkip = false;
@@ -144,7 +153,7 @@ public class EngineConfigCLIParser {
             if (args[currentIndex].startsWith("-")) {
                 fShouldSkip = parseKeyValue(args, currentIndex);
             } else if (currentIndex == 1) {
-                parseSecondArgWithoutDash(args[currentIndex]);
+                parseSecondArgWithoutDash(args[currentIndex], passFileExists);
             } else {
                 log.debug("parseArguments error: Skipping argument " + args[currentIndex] + ".");
             }

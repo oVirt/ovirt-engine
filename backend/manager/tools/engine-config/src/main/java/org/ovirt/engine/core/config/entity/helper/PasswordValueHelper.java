@@ -2,8 +2,11 @@ package org.ovirt.engine.core.config.entity.helper;
 
 import java.security.GeneralSecurityException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.EngineConfig;
+import org.ovirt.engine.core.config.EngineConfigCLIParser;
+import org.ovirt.engine.core.config.EngineConfigLogic;
 import org.ovirt.engine.core.config.db.ConfigDAO;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
@@ -15,6 +18,8 @@ public class PasswordValueHelper implements ValueHelper {
     private static String keyStoreURL;
     private static String keyStorePass;
     private static final Logger log = Logger.getLogger(PasswordValueHelper.class);
+    public static final String INTERACTIVE_MODE = "Interactive";
+    private EngineConfigCLIParser parser;
 
     static {
         try {
@@ -67,12 +72,24 @@ public class PasswordValueHelper implements ValueHelper {
         return returnedValue;
     }
 
+    /**
+     * this method is ignoring the value! if the value is "Interactive" it will open a console input for the password
+     * else it will look for the password from a file
+     *
+     * @return The user's encrypted password
+     */
     @Override
     public String setValue(String value) throws GeneralSecurityException {
         String returnedValue = null;
+        String password = null;
 
         try {
-            returnedValue = encrypt(value);
+            if (StringUtils.isNotBlank(value) && value.equals(INTERACTIVE_MODE)) {
+                password = EngineConfigLogic.startPasswordDialog(null);
+            } else {
+                password = EngineConfigLogic.getPassFromFile(parser.getAdminPassFile());
+            }
+            returnedValue = encrypt(password);
         } catch (Exception e) {
             String msg = "Failed to encrypt the current value";
             Logger.getLogger(EngineConfig.class).debug(msg, e);
@@ -84,7 +101,19 @@ public class PasswordValueHelper implements ValueHelper {
 
     @Override
     public boolean validate(ConfigKey key, String value) {
-        return value == null ? false : !value.isEmpty();
+        // The only valid value is "Interactive"
+        if (StringUtils.isNotBlank(value) && value.equals(INTERACTIVE_MODE)) {
+            return true;
+        }
+        if (parser.getAdminPassFile() != null) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void setParser(EngineConfigCLIParser parser) {
+        this.parser = parser;
     }
 
 }

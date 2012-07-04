@@ -804,32 +804,25 @@ public class ManageDomains {
             DomainsConfigurationEntry ldapProviderTypeEntry) throws ManageDomainsResult {
         // Update the configuration
         configurationProvider.setConfigValue(ConfigValues.AdUserName,
-                adUserNameEntry.getDomainsConfigurationEntry(),
-                adUserNameEntry.getDomainsLoggingEntry());
+                adUserNameEntry);
 
         configurationProvider.setConfigValue(ConfigValues.AdUserPassword,
-                adPasswordEntry.getDomainsConfigurationEntry(),
-                adPasswordEntry.getDomainsLoggingEntry());
+                adPasswordEntry, false);
 
         configurationProvider.setConfigValue(ConfigValues.LdapServers,
-                ldapServersEntry.getDomainsConfigurationEntry(),
-                ldapServersEntry.getDomainsLoggingEntry());
+                ldapServersEntry);
 
         configurationProvider.setConfigValue(ConfigValues.AdUserId,
-                adUserIdEntry.getDomainsConfigurationEntry(),
-                adUserIdEntry.getDomainsLoggingEntry());
+                adUserIdEntry);
 
         configurationProvider.setConfigValue(ConfigValues.LDAPSecurityAuthentication,
-                authModeEntry.getDomainsConfigurationEntry(),
-                authModeEntry.getDomainsLoggingEntry());
+                authModeEntry);
 
         configurationProvider.setConfigValue(ConfigValues.DomainName,
-                domainNameEntry.getDomainsConfigurationEntry(),
-                domainNameEntry.getDomainsLoggingEntry());
+                domainNameEntry);
 
         configurationProvider.setConfigValue(ConfigValues.LDAPProviderTypes,
-                ldapProviderTypeEntry.getDomainsConfigurationEntry(),
-                ldapProviderTypeEntry.getDomainsLoggingEntry());
+                ldapProviderTypeEntry);
     }
 
     public void deleteDomain(String domainName) throws ManageDomainsResult {

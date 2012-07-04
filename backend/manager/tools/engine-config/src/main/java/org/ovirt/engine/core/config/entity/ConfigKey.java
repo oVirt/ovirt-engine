@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
 
 public class ConfigKey {
@@ -100,6 +101,10 @@ public class ConfigKey {
             throw new InvalidParameterException("Cannot set value " + value + "to key " + keyName);
         }
         this.value = valueHelper.setValue(value);
+    }
+
+    public void setParser(EngineConfigCLIParser parser) {
+        valueHelper.setParser(parser);
     }
 
     /**

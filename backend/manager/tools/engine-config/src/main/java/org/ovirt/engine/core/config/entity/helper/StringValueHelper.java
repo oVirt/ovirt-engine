@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config.entity.helper;
 
 import java.util.List;
 
+import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
 public class StringValueHelper implements ValueHelper {
@@ -29,4 +30,8 @@ public class StringValueHelper implements ValueHelper {
         return isValid;
     }
 
+    @Override
+    public void setParser(EngineConfigCLIParser parser) {
+        // NOP
+    }
 }

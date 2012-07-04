@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
 /**
@@ -35,5 +36,10 @@ public class StringMultipleValueHelper implements ValueHelper {
             isValid = CollectionUtils.isSubCollection(Arrays.asList(value.split(",")), validValues);
         }
         return isValid;
+    }
+
+    @Override
+    public void setParser(EngineConfigCLIParser parser) {
+        // NOP
     }
 }

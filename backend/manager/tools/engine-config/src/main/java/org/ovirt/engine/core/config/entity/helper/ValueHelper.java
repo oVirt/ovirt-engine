@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.config.entity.helper;
 
+import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
 public interface ValueHelper {
@@ -10,4 +11,5 @@ public interface ValueHelper {
 
     boolean validate(ConfigKey key, String value);
 
+    void setParser(EngineConfigCLIParser parser);
 }

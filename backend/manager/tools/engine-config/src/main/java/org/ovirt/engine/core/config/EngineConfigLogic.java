@@ -69,7 +69,7 @@ public class EngineConfigLogic {
             }
         }
         populateAlternateKeyMap(keysConfig);
-        ConfigKeyFactory.init(keysConfig, alternateKeysMap);
+        ConfigKeyFactory.init(keysConfig, alternateKeysMap, parser);
         configKeyFactory = ConfigKeyFactory.getInstance();
         try {
             this.configDAO = new ConfigDaoImpl(appConfig);
@@ -156,7 +156,7 @@ public class EngineConfigLogic {
         loginAndReload(user, pass);
     }
 
-    private String getPassFromFile(String passFile) throws IOException {
+    public static String getPassFromFile(String passFile) throws IOException {
         FileReader input = new FileReader(passFile);
         BufferedReader br = new BufferedReader(input);
         String pass = br.readLine();
@@ -196,9 +196,13 @@ public class EngineConfigLogic {
      *
      * @return The user's password
      */
-    private String startPasswordDialog(String user) throws IOException {
+    public static String startPasswordDialog(String user) throws IOException {
         log.debug("starting password dialog.");
-        System.out.printf("Please enter a password for %s: ", user);
+        if (user == null) {
+            System.out.printf("Please enter a password");
+        } else {
+            System.out.printf("Please enter a password for %s: ", user);
+        }
         return new String(System.console().readPassword());
     }
 
