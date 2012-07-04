@@ -279,7 +279,7 @@ public class BackendVmDisksResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Disk", "add", "size");
+             verifyIncompleteException(wae, "Disk", "add", "provisionedSize|size", "format", "interface");
         }
     }
 

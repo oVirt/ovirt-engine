@@ -26,7 +26,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
 
     @Override
     public Response add(Disk disk) {
-        validateParameters(disk, "size", "format", "interface");
+        validateParameters(disk, "provisionedSize|size", "format", "interface");
         AddDiskParameters params = new AddDiskParameters();
         params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, null));
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {

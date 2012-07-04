@@ -33,6 +33,9 @@ public class DiskMapper {
                 engineDisk = new DiskImage();
             }
         }
+        if (disk.isSetName()) {
+            engineDisk.setDiskAlias(disk.getName());
+        }
         if (disk.isSetVm() && disk.getVm().isSetId()) {
             engineDisk.setvm_guid(new Guid(disk.getVm().getId()));
         }

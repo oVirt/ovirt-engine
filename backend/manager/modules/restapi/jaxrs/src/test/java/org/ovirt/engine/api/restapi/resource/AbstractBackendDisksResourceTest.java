@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -117,6 +118,8 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
 
     static Disk getModel(int index) {
         Disk model = new Disk();
+        model.setFormat(DiskFormat.COW.toString());
+        model.setInterface(DiskInterface.VirtIO.toString());
         model.setSparse(true);
         model.setBootable(false);
         model.setShareable(false);

@@ -90,7 +90,7 @@ public class BackendVmDisksResource
 
     @Override
     protected String[] getRequiredAddFields() {
-        return new String[] { "size" };
+        return new String[] { "provisionedSize|size", "format", "interface" };
     }
 
     @Override
