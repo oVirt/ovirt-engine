@@ -111,10 +111,12 @@ public class VdsSelector {
         return returnValue;
     }
 
+    /**
+     * Get the ID of the VDS.
+     * getDestinationVdsId() must not be null.
+     * @return
+     */
     private Guid GetVdsRunOnDestination() {
-        if (getDestinationVdsId() == null) {
-            return Guid.Empty;
-        }
         final VDS target_vds = getVdsDAO().get(getDestinationVdsId());
         log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                 getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
