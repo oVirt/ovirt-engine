@@ -514,6 +514,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_DEDICATE_VM_TO_POWERCLIENT_FAILED, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VM_CLEARED, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.HA_VM_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.HA_VM_RESTART_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initClusterSeverities() {

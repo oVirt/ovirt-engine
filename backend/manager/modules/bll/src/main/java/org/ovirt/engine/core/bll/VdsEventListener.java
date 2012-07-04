@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
@@ -45,6 +46,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.Helper;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.Ticketing;
@@ -295,9 +298,22 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void runFailedAutoStartVM(Guid vmId) {
-        Backend.getInstance().runInternalAction(VdcActionType.RunVm,
+        // We will reuse this because we can generate more than one event:
+        final AuditLogableBase event = new AuditLogableBase();
+        event.setVmId(vmId);
+
+        // Alert that the virtual machine failed:
+        AuditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
+
+        // Try to start it again:
+        final VdcReturnValueBase result = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
                 new RunVmParams(vmId),
                 ExecutionHandler.createInternalJobContext());
+
+        // Alert if the restart fails:
+        if (!result.getSucceeded()) {
+                AuditLogDirector.log(event, AuditLogType.HA_VM_RESTART_FAILED);
+        }
     }
 
     @Override
