@@ -51,6 +51,7 @@
 		<include name="common/businessentities/LUNs.java" />
 		<include name="common/businessentities/LunStatus.java" />
 		<include name="common/businessentities/network_cluster.java" />
+		<include name="common/businessentities/NetworkClusterId.java" />
 		<include name="common/businessentities/Network.java" />
 		<include name="common/businessentities/NetworkBootProtocol.java" />
 		<include name="common/businessentities/NetworkInterface.java" />

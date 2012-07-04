@@ -1,17 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -20,17 +15,10 @@ import org.ovirt.engine.core.compat.Guid;
 @TypeDef(name = "guid", typeClass = GuidType.class)
 @NamedQueries(value = { @NamedQuery(name = "delete_network_cluster",
                                     query = "delete from network_cluster n where n.clusterId = :cluster_id and n.networkId = :network_id") })
-public class network_cluster implements Serializable {
+public class network_cluster implements BusinessEntity<NetworkClusterId> {
     private static final long serialVersionUID = -4900811332744926545L;
 
-    @Id
-    @Column(name = "cluster_id")
-    @Type(type = "guid")
-    private Guid clusterId;
-
-    @Column(name = "network_id")
-    @Type(type = "guid")
-    private Guid networkId;
+    private NetworkClusterId id = new NetworkClusterId();
 
     @Column(name = "status")
     private Integer status = 0;
@@ -52,13 +40,8 @@ public class network_cluster implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((isDisplay == null) ? 0 : isDisplay.hashCode());
-        //FIXME: remove cluster from hashCode calculation - breaks the tests when working in JDBC template mode
-        /*
-        result = prime * result + ((cluster == null) ? 0 : cluster.hashCode());
-         */
         result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((networkId == null) ? 0 : networkId.hashCode());
-        result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (required ? 11 : 13);
         return result;
     }
@@ -82,15 +65,10 @@ public class network_cluster implements Serializable {
                 return false;
         } else if (!status.equals(other.status))
             return false;
-        if (networkId == null) {
-            if (other.networkId != null)
+        if (id == null) {
+            if (other.id != null)
                 return false;
-        } else if (!networkId.equals(other.networkId))
-            return false;
-        if (clusterId == null) {
-            if (other.clusterId != null)
-                return false;
-        } else if (!clusterId.equals(other.clusterId))
+        } else if (!id.equals(other.id))
             return false;
         if (required != other.required) {
             return false;
@@ -100,27 +78,37 @@ public class network_cluster implements Serializable {
 
 
     public network_cluster(Guid cluster_id, Guid network_id, int status, boolean isDisplay, boolean required) {
-        clusterId = cluster_id;
-        networkId = network_id;
+        id.setClusterId(cluster_id);
+        id.setNetworkId(network_id);
         this.status = status;
         this.isDisplay = isDisplay;
         this.required = required;
     }
 
+    @Override
+    public NetworkClusterId getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(NetworkClusterId id) {
+        this.id = id;
+    }
+
     public Guid getcluster_id() {
-        return clusterId;
+        return id.getClusterId();
     }
 
     public void setcluster_id(Guid value) {
-        clusterId = value;
+        id.setClusterId(value);
     }
 
     public Guid getnetwork_id() {
-        return networkId;
+        return id.getNetworkId();
     }
 
     public void setnetwork_id(Guid value) {
-        networkId = value;
+        id.setNetworkId(value);
     }
 
     public int getstatus() {
