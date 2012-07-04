@@ -613,10 +613,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         Map<String, Object> specParams = vmDevice.getSpecParams();
         // validate & set spec params for balloon device
         if (specParams == null) {
-            vmDevice.setSpecParams(new HashMap<String, Object>());
-        } else {
-            specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+            specParams = new HashMap<String, Object>();
+            vmDevice.setSpecParams(specParams);
         }
+        specParams.put(VdsProperties.Model, VdsProperties.Virtio);
         addDevice(struct, vmDevice, null);
     }
 
