@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 @Entity
 @Table(name = "vm_static")
@@ -42,16 +41,8 @@ public class VmStatic extends VmBase {
     @Column(name = "is_initialized")
     private boolean is_initialized;
 
-    @Column(name = "dedicated_vm_for_vds")
-    @Type(type = "guid")
-    private NGuid dedicated_vm_for_vds;
-
     @Column(name = "default_display_type")
     private DisplayType default_display_type = DisplayType.qxl;
-
-    @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
-    @Column(name = "migration_support")
-    private MigrationSupport migrationSupport;
 
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -90,7 +81,6 @@ public class VmStatic extends VmBase {
         setvm_type(VmType.Desktop);
         sethypervisor_type(HypervisorType.KVM);
         setoperation_mode(OperationMode.FullVirtualized);
-        migrationSupport = MigrationSupport.MIGRATABLE;
     }
 
     public VmStatic(VmStatic vmStatic) {
@@ -217,14 +207,6 @@ public class VmStatic extends VmBase {
         return !getis_initialized();
     }
 
-    public MigrationSupport getMigrationSupport() {
-        return migrationSupport;
-    }
-
-    public void setMigrationSupport(MigrationSupport migrationSupport) {
-        this.migrationSupport = migrationSupport;
-    }
-
     public String getvm_name() {
         return this.name;
     }
@@ -251,14 +233,6 @@ public class VmStatic extends VmBase {
 
     public int getnum_of_cpus() {
         return getcpu_per_socket() * getnum_of_sockets();
-    }
-
-    public NGuid getdedicated_vm_for_vds() {
-        return dedicated_vm_for_vds;
-    }
-
-    public void setdedicated_vm_for_vds(NGuid value) {
-        dedicated_vm_for_vds = value;
     }
 
     public DisplayType getdefault_display_type() {
@@ -303,11 +277,9 @@ public class VmStatic extends VmBase {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((dedicated_vm_for_vds == null) ? 0 : dedicated_vm_for_vds.hashCode());
         result = prime * result + ((default_display_type == null) ? 0 : default_display_type.hashCode());
         result = prime * result + (is_initialized ? 1231 : 1237);
         result = prime * result + m_nDiskSize;
-        result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
@@ -327,13 +299,6 @@ public class VmStatic extends VmBase {
             return false;
         }
         VmStatic other = (VmStatic) obj;
-        if (dedicated_vm_for_vds == null) {
-            if (other.dedicated_vm_for_vds != null) {
-                return false;
-            }
-        } else if (!dedicated_vm_for_vds.equals(other.dedicated_vm_for_vds)) {
-            return false;
-        }
         if (default_display_type != other.default_display_type) {
             return false;
         }
@@ -341,9 +306,6 @@ public class VmStatic extends VmBase {
             return false;
         }
         if (m_nDiskSize != other.m_nDiskSize) {
-            return false;
-        }
-        if (migrationSupport != other.migrationSupport) {
             return false;
         }
         if (name == null) {

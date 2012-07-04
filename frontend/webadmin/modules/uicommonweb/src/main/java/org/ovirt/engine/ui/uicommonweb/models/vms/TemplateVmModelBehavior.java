@@ -1,22 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class TemplateVmModelBehavior extends VmModelBehaviorBase
 {
@@ -45,13 +47,23 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                             UnitVmModel model = (UnitVmModel) target;
                             storage_pool dataCenter = (storage_pool) returnValue;
                             model.SetDataCenter(model,
-                                    new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dataCenter})));
+                                    new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dataCenter })));
                             model.getDataCenter().setIsChangable(false);
 
                         }
                     },
                     getModel().getHash()),
                     template.getstorage_pool_id().getValue());
+        }
+
+        switch (template.getMigrationSupport())
+        {
+        case PINNED_TO_HOST:
+            getModel().getRunVMOnSpecificHost().setEntity(true);
+            break;
+        case IMPLICITLY_NON_MIGRATABLE:
+            getModel().getDontMigrateVM().setEntity(true);
+            break;
         }
     }
 
@@ -113,6 +125,23 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     @Override
     public void UpdateMinAllocatedMemory()
     {
+    }
+
+    @Override
+    protected void ChangeDefualtHost() {
+        super.ChangeDefualtHost();
+
+        if (template.getdedicated_vm_for_vds() != null) {
+            Guid vdsId = template.getdedicated_vm_for_vds().getValue();
+            if (getModel().getDefaultHost().getItems() != null) {
+                getModel().getDefaultHost().setSelectedItem(Linq.FirstOrDefault(getModel().getDefaultHost().getItems(),
+                        new Linq.HostPredicate(vdsId)));
+            }
+            getModel().getIsAutoAssign().setEntity(false);
+        }
+        else {
+            getModel().getIsAutoAssign().setEntity(true);
+        }
     }
 
     private void InitTemplate()

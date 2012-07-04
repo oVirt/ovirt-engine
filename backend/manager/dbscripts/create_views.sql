@@ -333,7 +333,9 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.kernel_params as kernel_params,
        vm_templates.quota_id as quota_id,
        quota.quota_name as quota_name,
-       quota.is_default_quota as is_default_quota
+       quota.is_default_quota as is_default_quota,
+       vm_templates.migration_support,
+       vm_templates.dedicated_vm_for_vds
 FROM       vm_static AS vm_templates  INNER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN

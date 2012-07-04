@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
+import org.ovirt.engine.core.compat.NGuid;
 
 public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
@@ -155,6 +157,14 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     /** Transient field for GUI presentation purposes. */
     private QuotaEnforcementTypeEnum quotaEnforcementType;
+
+    @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
+    @Column(name = "migration_support")
+    private MigrationSupport migrationSupport = MigrationSupport.MIGRATABLE;
+
+    @Column(name = "dedicated_vm_for_vds")
+    @Type(type = "guid")
+    private NGuid dedicated_vm_for_vds;
 
     public VmBase(Guid id,
             Guid vds_group_id,
@@ -528,6 +538,8 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
         result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
         result = prime * result + (allowConsoleReconnect ? 1231 : 1237);
+        result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
+        result = prime * result + ((dedicated_vm_for_vds == null) ? 0 : dedicated_vm_for_vds.hashCode());
 
         return result;
     }
@@ -673,6 +685,17 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         if (allowConsoleReconnect != other.allowConsoleReconnect) {
             return false;
         }
+        if (dedicated_vm_for_vds == null) {
+            if (other.dedicated_vm_for_vds != null) {
+                return false;
+            }
+        }
+        if (migrationSupport != other.migrationSupport) {
+            return false;
+        }
+        if (!dedicated_vm_for_vds.equals(other.dedicated_vm_for_vds)) {
+            return false;
+        }
         return true;
     }
 
@@ -706,5 +729,21 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     public void setQuotaEnforcementType(QuotaEnforcementTypeEnum quotaEnforcementType) {
         this.quotaEnforcementType = quotaEnforcementType;
+    }
+
+    public MigrationSupport getMigrationSupport() {
+        return migrationSupport;
+    }
+
+    public void setMigrationSupport(MigrationSupport migrationSupport) {
+        this.migrationSupport = migrationSupport;
+    }
+
+    public NGuid getdedicated_vm_for_vds() {
+        return dedicated_vm_for_vds;
+    }
+
+    public void setdedicated_vm_for_vds(NGuid value) {
+        dedicated_vm_for_vds = value;
     }
 }

@@ -13,8 +13,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -211,6 +213,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                 .templatesResideOnSeveralDcsMakeSureExportedTemplatesResideOnSameDcMsg();
     }
 
+    @Override
     protected VdcQueryType getEntityExportDomain() {
         return VdcQueryType.GetTemplatesFromExportDomain;
     }
@@ -220,6 +223,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         return entity.getstorage_pool_id().getValue();
     }
 
+    @Override
     protected boolean entitiesSelectedOnDifferentDataCenters()
     {
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
@@ -250,6 +254,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                 .templatesAlreadyExistonTargetExportDomain(entities);
     }
 
+    @Override
     protected boolean entititesEqualsNullSafe(VmTemplate e1, VmTemplate e2) {
         return e1.getId().equals(e2.getId());
     }
@@ -526,6 +531,27 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
         template.setpriority((Integer) prioritySelectedItem.getEntity());
 
+        // host migration configuration
+        VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
+        if ((Boolean) model.getIsAutoAssign().getEntity())
+        {
+            template.setdedicated_vm_for_vds(null);
+        }
+        else
+        {
+            template.setdedicated_vm_for_vds(defaultHost.getId());
+        }
+
+        template.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
+        {
+            template.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        }
+        else if ((Boolean) model.getDontMigrateVM().getEntity())
+        {
+            template.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+        }
+
         model.StartProgress(null);
 
         Frontend.RunAction(VdcActionType.UpdateVmTemplate, new UpdateVmTemplateParameters(template),
@@ -699,6 +725,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     @Override
     protected String extractNameFromEntity(VmTemplate entity) {
-        return ((VmTemplate) entity).getname();
+        return entity.getname();
     }
 }

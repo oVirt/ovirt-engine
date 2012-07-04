@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -144,7 +145,9 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("initrd_url", template.getinitrd_url())
                 .addValue("kernel_url", template.getkernel_url())
                 .addValue("kernel_params", template.getkernel_params())
-                .addValue("quota_id", template.getQuotaId());
+                .addValue("quota_id", template.getQuotaId())
+                .addValue("migration_support", template.getMigrationSupport().getValue())
+                .addValue("dedicated_vm_for_vds", template.getdedicated_vm_for_vds());
     }
 
     @Override
@@ -199,6 +202,8 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setIsQuotaDefault(rs.getBoolean("is_default_quota"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+            entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
+            entity.setdedicated_vm_for_vds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
             return entity;
         }
     }

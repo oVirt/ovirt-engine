@@ -157,7 +157,9 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_initrd_url VARCHAR(4000) ,
  v_kernel_url VARCHAR(4000) ,
  v_kernel_params VARCHAR(4000),
- v_quota_id UUID)
+ v_quota_id UUID
+ v_migration_support integer, 
+ v_dedicated_vm_for_vds uuid)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -176,7 +178,8 @@ BEGIN
       default_display_type = v_default_display_type, 
       priority = v_priority,auto_startup = v_auto_startup,is_stateless = v_is_stateless, 
       iso_path = v_iso_path,origin = v_origin,initrd_url = v_initrd_url, 
-      kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP, quota_id = v_quota_id
+      kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP, quota_id = v_quota_id,
+      migration_support = v_migration_support, dedicated_vm_for_vds = v_dedicated_vm_for_vds
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = 'TEMPLATE';
 END; $procedure$
