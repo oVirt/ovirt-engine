@@ -689,11 +689,12 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             if (other.dedicated_vm_for_vds != null) {
                 return false;
             }
+        } else {
+            if (!dedicated_vm_for_vds.equals(other.dedicated_vm_for_vds)) {
+                return false;
+            }
         }
         if (migrationSupport != other.migrationSupport) {
-            return false;
-        }
-        if (!dedicated_vm_for_vds.equals(other.dedicated_vm_for_vds)) {
             return false;
         }
         return true;
