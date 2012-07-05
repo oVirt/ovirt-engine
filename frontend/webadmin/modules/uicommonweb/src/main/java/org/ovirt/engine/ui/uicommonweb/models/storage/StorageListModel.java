@@ -423,8 +423,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 for (Object item : model.getVersion().getItems()) {
 
                     EntityModel itemModel = (EntityModel) item;
-                    if ((itemModel.getEntity() == null && connection.getNfsVersion() == null) || (itemModel.getEntity().equals(connection.getNfsVersion()))) {
+                    boolean noNfsVersion = itemModel.getEntity() == null && connection.getNfsVersion() == null;
+                    boolean foundNfsVersion = itemModel.getEntity() != null &&
+                            itemModel.getEntity().equals(connection.getNfsVersion());
 
+                    if (noNfsVersion || foundNfsVersion) {
                         model.getVersion().setSelectedItem(item);
                         break;
                     }
