@@ -19,10 +19,24 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class BackendResourceTest extends AbstractBackendBaseTest {
     BackendHostResource resource;
 
+    @Override
+    public void setUp() {
+        super.setUp();
+        setUpParentMock(resource.getParent());
+    }
+
+    private void setUpParentMock(BackendHostsResource parent) {
+        parent.setBackend(backend);
+        parent.setMappingLocator(mapperLocator);
+        parent.setSessionHelper(sessionHelper);
+        parent.setMessageBundle(messageBundle);
+        parent.setHttpHeaders(httpHeaders);
+    }
+
     @Test
     public void testQueryWithoutFilter() throws Exception {
         resource.setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(false);
+        setUpGetEntityExpectations(false, true);
         control.replay();
         resource.get();
     }
@@ -34,14 +48,14 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         EasyMock.reset(httpHeaders);
         expect(httpHeaders.getRequestHeader("filter")).andReturn(filterValue);
         resource.setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(true);
+        setUpGetEntityExpectations(true, true);
         control.replay();
         resource.get();
     }
 
     @Test
     public void testActionWithCorrelationId() throws Exception {
-        setUpGetEntityExpectations(false);
+        setUpGetEntityExpectations(false, false);
         expect(httpHeaders.getRequestHeader("Correlation-Id")).andReturn(asList("Some-Correlation-id")).anyTimes();
         resource.setUriInfo((setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
@@ -64,13 +78,27 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         resource.setHttpHeaders(httpHeaders);
     }
 
-    protected void setUpGetEntityExpectations(boolean filter) throws Exception {
+    protected void setUpGetEntityExpectations(boolean filter, boolean getCertInfo) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
                 GetVdsByVdsIdParameters.class,
                 new String[] { "VdsId", "Filtered" },
                 new Object[] { GUIDS[0], filter },
                 getEntity(0));
+
+        if (getCertInfo) {
+            setUpGetCertificateInfo();
+        }
     }
+
+
+    protected void setUpGetCertificateInfo() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVdsId,
+                GetVdsByVdsIdParameters.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                BackendHostsResourceTest.CERTIFICATE_SUBJECT);
+    }
+
 
     protected VDS getEntity(int index) {
         VDS vds = setUpEntityExpectations(control.createMock(VDS.class), index);

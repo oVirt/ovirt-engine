@@ -8,6 +8,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Statistic;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -104,7 +106,9 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     protected Host populate(Host model, VDS entity) {
-        return addStatistics(model, entity, uriInfo, httpHeaders);
+        Host host = addStatistics(model, entity, uriInfo, httpHeaders);
+        addCertificateInfo(host);
+        return host;
     }
 
     Host addStatistics(Host model, VDS entity, UriInfo ui, HttpHeaders httpHeaders) {
@@ -126,6 +130,28 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
             collection.getHosts().add(addLinks(populate(map(entity), entity)));
         }
         return collection;
+    }
+
+    //TODO: REVISIT when backend expose CertificateSubject in vds
+    public Host addCertificateInfo(Host host) {
+        VdcQueryReturnValue result =
+            runQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId,
+                    new GetVdsByVdsIdParameters(asGuid(host.getId())));
+
+        if (result != null
+            && result.getSucceeded()
+            && result.getReturnValue() != null) {
+            String subject = result.getReturnValue().toString();
+            if (subject != null){
+                host.setCertificate(new Certificate());
+                host.getCertificate().setSubject(subject);
+                host.getCertificate().setOrganization(subject.split(",")[0].replace("O=", ""));
+            }
+        }
+        else {
+            LOG.error("Could not fetch certificate info for host " + host.getId());
+        }
+        return host;
     }
 
     private Hosts mapGlusterOnlyCollection(List<VDS> entities) {

@@ -1062,6 +1062,15 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="certificate" type="Certificate"/>
+
+  <xs:complexType name="Certificate">
+    <xs:sequence>
+      <xs:element name="organization" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="subject" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:element name="host" type="Host"/>
 
   <xs:element name="hosts" type="Hosts"/>
@@ -1071,6 +1080,7 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element name="address" type="xs:string" minOccurs="0"/>
+          <xs:element ref="certificate" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="cluster" type="Cluster" minOccurs="0"/>
           <!-- unsigned to avoid issues with port values greater than 32767,

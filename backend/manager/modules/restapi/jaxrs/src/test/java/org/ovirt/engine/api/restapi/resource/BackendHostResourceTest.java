@@ -69,6 +69,16 @@ public class BackendHostResourceTest
         super(new BackendHostResource(GUIDS[0].toString(), new BackendHostsResource()));
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        setUpParentMock();
+    }
+
+    private void setUpParentMock() {
+        initResource(resource.getParent());
+    }
+
     @Test
     public void testBadGuid() throws Exception {
         control.replay();
@@ -185,7 +195,7 @@ public class BackendHostResourceTest
     }
 
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations(1);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
@@ -205,7 +215,7 @@ public class BackendHostResourceTest
     @Test
     public void testConflictedUpdate() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations(1);
         control.replay();
 
         Host model = getModel(1);
@@ -366,7 +376,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testInstall() throws Exception {
-        setUpGetEntityExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations(1);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
@@ -390,7 +400,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testManualFence() throws Exception {
-        setUpGetEntityExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations(1);
 
         setUriInfo(setUpActionExpectations(VdcActionType.FenceVdsManualy,
                                            FenceVdsManualyParameters.class,
@@ -440,7 +450,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testIncompleteInstall() throws Exception {
-        setUpGetEntityExpectations(1);
+        setUpGetEntityWithNoCertificateInfoExpectations(1);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
@@ -503,7 +513,7 @@ public class BackendHostResourceTest
         VdsStatistics stats = control.createMock(VdsStatistics.class);
         VDS entity = control.createMock(VDS.class);
         setUpStatisticalEntityExpectations(entity, stats);
-        setUpGetEntityExpectations(1, false, entity);
+        setUpGetEntityWithNoCertificateInfoExpectations(1, false, entity);
         control.replay();
         return entity;
     }
@@ -557,6 +567,30 @@ public class BackendHostResourceTest
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
         }
+        if (!notFound) {
+            setUpGetCertificateInfo();
+        }
+    }
+
+    private void setUpGetEntityWithNoCertificateInfoExpectations(int times) throws Exception {
+        setUpGetEntityWithNoCertificateInfoExpectations(1, false, getEntity(0));
+    }
+    private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity) throws Exception {
+        while (times-- > 0) {
+            setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
+                                       GetVdsByVdsIdParameters.class,
+                                       new String[] { "VdsId" },
+                                       new Object[] { GUIDS[0] },
+                                       notFound ? null : entity);
+        }
+    }
+
+    protected void setUpGetCertificateInfo() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVdsId,
+                GetVdsByVdsIdParameters.class,
+                new String[] { "VdsId" },
+                new Object[] { GUIDS[0] },
+                BackendHostsResourceTest.CERTIFICATE_SUBJECT);
     }
 
     private void verifyActionResponse(Response r) throws Exception {
