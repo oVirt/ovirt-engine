@@ -53,7 +53,7 @@ public class EngineMonitorService implements Runnable {
     private static final Log log = LogFactory.getLog(EngineMonitorService.class);
     private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
-    private static final String DEFAULT_SERVER_ADDRESS = "localhost:8080";
+    private static final String DEFAULT_SERVER_ADDRESS = "localhost:80";
     private static final String HEALTH_SERVLET_URL = "%s://%s/OvirtEngineWeb/HealthStatus";
     private static final String CERTIFICATION_TYPE = "JKS";
     private static final String DEFAULT_SSL_PROTOCOL = "TLS";

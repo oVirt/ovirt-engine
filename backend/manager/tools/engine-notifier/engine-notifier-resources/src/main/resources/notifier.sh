@@ -181,45 +181,6 @@ if [ "${IS_NONREPEATED_NOTIFICATION+x}" ]; then
     fi
 fi
 
-# DB_CONNECTION_URL if defined can not be empty
-if [ "${DB_CONNECTION_URL+x}" ]; then
-    if [ -z "$DB_CONNECTION_URL" ]; then
-        die_no_propset \$DB_CONNECTION_URL
-    fi
-    # DB_USER_NAME if defined can not be empty
-    if [ "${DB_USER_NAME+x}" ]; then
-        if [ -z "$DB_USER_NAME" ]; then
-            die_no_propset \$DB_USER_NAME
-        fi
-    else
-        die_no_propset \$DB_USER_NAME
-    fi
-    # DB_PASSWORD if defined can not be empty
-    if [ "${DB_PASSWORD+x}" ]; then
-        if [ -z "$DB_PASSWORD" ]; then
-            die_no_propset \$DB_PASSWORD
-        fi
-    else
-        die_no_propset \$DB_PASSWORD
-    fi
-    # DB_JDBC_DRIVER_CLASS if defined can not be empty
-    if [ "${DB_JDBC_DRIVER_CLASS+x}" ]; then
-        if [ -z "$DB_JDBC_DRIVER_CLASS" ]; then
-            die_no_propset \$DB_JDBC_DRIVER_CLASS
-        fi
-    else
-        die_no_propset \$DB_JDBC_DRIVER_CLASS
-    fi
-else
-    # AS_DATA_SOURCE is required!
-    if [ -z "$AS_DATA_SOURCE" ]; then
-        die_no_propset \$AS_DATA_SOURCE
-    fi
-    if [ ! -s $AS_DATA_SOURCE ]; then
-        die "Error: Missing or inaccessible configuration file $AS_DATA_SOURCE ( See \$AS_DATA_SOURCE in $CONF_FILE ).\n" 6
-    fi
-fi
-
 # Configure classpath for engine-notifier
 JAVA_LIB_HOME=/usr/share/java
 #JAVA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8787"
@@ -248,6 +209,7 @@ jar_names='
     ovirt-engine/engine-tools-common
     postgresql-jdbc
     slf4j/api
+    glassfish-jaxb/jaxb-impl
 '
 for jar_name in ${jar_names}
 do
@@ -268,7 +230,6 @@ jar_names='
     hibernate-commons-annotations
     hibernate-core
     hibernate-validator
-    jaxb-impl
     validation-api
 '
 for jar_name in ${jar_names}
