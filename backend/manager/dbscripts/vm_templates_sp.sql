@@ -157,8 +157,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_initrd_url VARCHAR(4000) ,
  v_kernel_url VARCHAR(4000) ,
  v_kernel_params VARCHAR(4000),
- v_quota_id UUID
- v_migration_support integer, 
+ v_quota_id UUID,
+ v_migration_support integer,
  v_dedicated_vm_for_vds uuid)
 RETURNS VOID
 
