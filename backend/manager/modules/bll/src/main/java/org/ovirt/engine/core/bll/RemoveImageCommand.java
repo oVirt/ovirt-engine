@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,7 +15,10 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -23,6 +28,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.ovf.OvfManager;
+import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -91,41 +98,41 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void removeImageFromDB() {
+        final DiskImage diskImage = getDiskImage();
+
+        final List<Snapshot> updatedSnapshots = prepareSnapshotConfigWithoutImage(diskImage.getId());
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
                 new TransactionMethod<Object>() {
                     @Override
                     public Object runInTransaction() {
-                        DiskImage diskImage = getDiskImage();
-                        if (diskImage != null) {
-                            getDiskImageDynamicDAO().remove(diskImage.getImageId());
-                            Guid imageTemplate = diskImage.getit_guid();
-                            Guid currentGuid = diskImage.getImageId();
-                            // next 'while' statement removes snapshots from DB only (the
-                            // 'DeleteImageGroup'
-                            // VDS Command should take care of removing all the snapshots from
-                            // the storage).
-                            while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
-                                RemoveChildren(currentGuid);
+                        getDiskImageDynamicDAO().remove(diskImage.getImageId());
+                        Guid imageTemplate = diskImage.getit_guid();
+                        Guid currentGuid = diskImage.getImageId();
+                        // next 'while' statement removes snapshots from DB only (the
+                        // 'DeleteImageGroup'
+                        // VDS Command should take care of removing all the snapshots from
+                        // the storage).
+                        while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
+                            RemoveChildren(currentGuid);
 
-                                DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
-                                if (image != null) {
-                                    RemoveSnapshot(image);
-                                    currentGuid = image.getParentId();
-                                }
-
-                                else {
-                                    currentGuid = Guid.Empty;
-                                    log.warnFormat(
-                                            "'image' (snapshot of image '{0}') is null, cannot remove it.",
-                                            diskImage.getImageId());
-                                }
+                            DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
+                            if (image != null) {
+                                RemoveSnapshot(image);
+                                currentGuid = image.getParentId();
+                            } else {
+                                currentGuid = Guid.Empty;
+                                log.warnFormat(
+                                        "'image' (snapshot of image '{0}') is null, cannot remove it.",
+                                        diskImage.getImageId());
                             }
-
-                            getBaseDiskDao().remove(diskImage.getId());
-                            getVmDeviceDAO().remove(new VmDeviceId(diskImage.getId(), null));
-                        } else {
-                            log.warn("DiskImage is null, nothing to remove.");
                         }
+
+                        getBaseDiskDao().remove(diskImage.getId());
+                        getVmDeviceDAO().remove(new VmDeviceId(diskImage.getId(), null));
+                        for (Snapshot s : updatedSnapshots) {
+                            getSnapshotDao().update(s);
+                        }
+
                         return null;
                     }
                 });
@@ -149,6 +156,63 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         for (Guid child : children) {
             RemoveSnapshot(getDiskImageDao().getSnapshotById(child));
         }
+    }
+
+    /**
+     * Prepare a {@link List} of {@link Snapshot} objects with the given disk (image group) removed from it.
+     */
+    private List<Snapshot> prepareSnapshotConfigWithoutImage(Guid imageGroupToRemove) {
+        List<Snapshot> result = new LinkedList<Snapshot>();
+        List<DiskImage> snapshotDisks = getDiskImageDao().getAllSnapshotsForImageGroup(imageGroupToRemove);
+        for (DiskImage snapshotDisk : snapshotDisks) {
+            Snapshot updated =
+                    prepareSnapshotConfigWithoutImageSingleImage(snapshotDisk.getvm_snapshot_id().getValue(),
+                            snapshotDisk.getImageId());
+            if (updated != null) {
+                result.add(updated);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Prepare a single {@link Snapshot} object representing a snapshot of a given VM without the give disk.
+     */
+    protected Snapshot prepareSnapshotConfigWithoutImageSingleImage(Guid vmSnapshotId, Guid imageId) {
+        Snapshot snap = null;
+        try {
+            OvfManager ovfManager = new OvfManager();
+            snap = getSnapshotDao().get(vmSnapshotId);
+            String snapConfig = snap.getVmConfiguration();
+
+            if (snap.isVmConfigurationAvailable() && snapConfig != null) {
+                VM vmSnapshot = new VM();
+                ArrayList<DiskImage> snapshotImages = new ArrayList<DiskImage>();
+
+                ovfManager.ImportVm(snapConfig,
+                        vmSnapshot,
+                        snapshotImages,
+                        new ArrayList<VmNetworkInterface>());
+
+                // Remove the image form the disk list
+                Iterator<DiskImage> diskIter = snapshotImages.iterator();
+                while (diskIter.hasNext()) {
+                    DiskImage imageInList = diskIter.next();
+                    if (imageInList.getImageId().equals(imageId)) {
+                        log.debugFormat("Recreating vmSnapshot {0} without the image {1}", vmSnapshotId, imageId);
+                        diskIter.remove();
+                        break;
+                    }
+                }
+
+                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages);
+                snap.setVmConfiguration(newOvf);
+            }
+        } catch (OvfReaderException e) {
+            log.errorFormat("Can't remove image {0} from snapshot {1}", imageId, vmSnapshotId);
+        }
+        return snap;
     }
 
     @Override
