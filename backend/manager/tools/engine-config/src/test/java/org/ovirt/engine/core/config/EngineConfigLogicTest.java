@@ -60,8 +60,8 @@ public class EngineConfigLogicTest {
 
     @Test
     public void testSetStringValue() throws Exception {
-        final String key = "DefaultWorkgroup";
-        final String newValue = "ExampleWorkGroup";
+        final String key = "SysPrepDefaultUser";
+        final String newValue = "ExampleSysPrepDefaultUser";
         String oldValue = getOldValue(key);
 
         log.info(key + " old value: " + oldValue);
