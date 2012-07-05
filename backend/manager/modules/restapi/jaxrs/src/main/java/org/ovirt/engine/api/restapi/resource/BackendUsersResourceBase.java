@@ -13,6 +13,7 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
+import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AdUser;
@@ -71,6 +72,7 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
                    return domain;
                 }
             }
+            throw new WebFaultException(null, "Domain: '" + user.getDomain().getId().toString() + "' does not exist.", Response.Status.BAD_REQUEST);
         }
         else if (user.isSetUserName() && user.getUserName().contains("@")) {
             return user.getUserName().substring(user.getUserName().indexOf("@")+1);
