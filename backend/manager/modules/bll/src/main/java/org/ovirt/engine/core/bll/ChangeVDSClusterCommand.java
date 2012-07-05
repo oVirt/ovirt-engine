@@ -134,4 +134,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         List<PermissionSubject> unmodifiableList = Collections.unmodifiableList(permissionList);
         return unmodifiableList;
     }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+    }
 }
