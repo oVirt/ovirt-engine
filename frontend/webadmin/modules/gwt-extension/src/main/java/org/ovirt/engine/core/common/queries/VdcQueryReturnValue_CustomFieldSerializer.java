@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -12,7 +13,11 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
 public class VdcQueryReturnValue_CustomFieldSerializer {
-	public static void deserialize(SerializationStreamReader streamReader,
+
+    private static final Logger logger =
+            Logger.getLogger(VdcQueryReturnValue_CustomFieldSerializer.class.getName());
+
+    public static void deserialize(SerializationStreamReader streamReader,
 			VdcQueryReturnValue instance) throws SerializationException {
 
 		instance.setSucceeded(streamReader.readBoolean());
@@ -64,7 +69,7 @@ public class VdcQueryReturnValue_CustomFieldSerializer {
 			deserializedAs = "UNKNOWN";
 			if (type != null) {
 				instance.setReturnValue(streamReader.readObject());
-				GWT.log("WARNING: VdcQueryReturnValue of type: "
+				logger.fine("WARNING: VdcQueryReturnValue of type: "
 						+ instance.getReturnValue().getClass().getName()
 						+ "has not casted to a specific type!");
 			}

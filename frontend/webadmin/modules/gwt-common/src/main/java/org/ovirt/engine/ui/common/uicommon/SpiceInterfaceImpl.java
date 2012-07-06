@@ -62,7 +62,7 @@ public class SpiceInterfaceImpl implements ISpice {
     private String spiceBaseURL;
 
     public SpiceInterfaceImpl() {
-        logger.severe("Instantiating GWT Spice Implementation"); //$NON-NLS-1$
+        logger.fine("Instantiating GWT Spice Implementation"); //$NON-NLS-1$
         wanDisableEffects = new ArrayList<WANDisableEffects>();
         wanOptionsEnabled = false;
         wanColorDepth = WanColorDepth.depth16;

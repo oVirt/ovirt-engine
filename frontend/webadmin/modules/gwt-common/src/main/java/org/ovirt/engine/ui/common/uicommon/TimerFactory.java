@@ -16,14 +16,14 @@ public abstract class TimerFactory {
     private static Logger logger = Logger.getLogger(TimerFactory.class.getName());
 
     public static Timer factoryTimer(String timerName, Timer timer) {
-        logger.info("Adding timer '" + timerName + "' to the timers list"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("Adding timer '" + timerName + "' to the timers list"); //$NON-NLS-1$ //$NON-NLS-2$
         timerList.put(timerName, timer);
         return timer;
     }
 
     public static void cancelAllTimers() {
         for (String name : timerList.keySet()) {
-            logger.info("Cancelling the timer '" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+            logger.fine("Cancelling the timer '" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
             timerList.get(name).cancel();
         }
     }
@@ -31,7 +31,7 @@ public abstract class TimerFactory {
     public static void cancelTimer(String timerName) {
         for (String name : timerList.keySet()) {
             if (name.equals(timerName)) {
-                logger.info("Cancelling the timer '" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                logger.fine("Cancelling the timer '" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
                 timerList.get(name).cancel();
             }
         }

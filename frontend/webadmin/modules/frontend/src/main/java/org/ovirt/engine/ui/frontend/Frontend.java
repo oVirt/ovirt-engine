@@ -730,7 +730,7 @@ public class Frontend {
             sb.append("Search type is base or unknown"); //$NON-NLS-1$
         }
 
-        logger.info(sb.toString());
+        logger.fine(sb.toString());
     }
 
     private static void dumpActionDetails(VdcActionType actionType, VdcActionParametersBase parameters) {
@@ -738,7 +738,7 @@ public class Frontend {
         sb.append("actionType Type: '" + actionType + "', ");  //$NON-NLS-1$//$NON-NLS-2$
         sb.append("Params: " + parameters); //$NON-NLS-1$
 
-        logger.info(sb.toString());
+        logger.fine(sb.toString());
     }
 
     private static void handleActionResult(VdcActionType actionType,

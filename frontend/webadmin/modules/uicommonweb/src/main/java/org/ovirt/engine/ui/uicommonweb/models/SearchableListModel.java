@@ -332,7 +332,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
                 @Override
                 public void execute() {
-                    logger.info(SearchableListModel.this.getClass().getName() + ": Executing search"); //$NON-NLS-1$
+                    logger.fine(SearchableListModel.this.getClass().getName() + ": Executing search"); //$NON-NLS-1$
                     if (getIsAsync())
                     {
                         AsyncSearch();

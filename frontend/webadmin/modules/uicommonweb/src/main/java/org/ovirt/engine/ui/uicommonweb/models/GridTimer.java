@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.logging.Logger;
+
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -92,6 +93,8 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
     public static final int DEFAULT_NORMAL_RATE = ((Configurator) TypeResolver.getInstance()
             .Resolve(Configurator.class)).getPollingTimerInterval();
 
+    private static final Logger logger = Logger.getLogger(GridTimer.class.getName());
+
     private int currentRate = 0;
 
     private final SimpleEventBus eventBus;
@@ -127,7 +130,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
      * Speed Up the search interval for a limited number of repetitions.
      */
     public void fastForward() {
-        GWT.log("GridTimer[" + name + "].fastForward()"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("GridTimer[" + name + "].fastForward()"); //$NON-NLS-1$ //$NON-NLS-2$
         if (isFastForwarding()) {
             // there is already a fast forward running - reset to normal and start over
             reset();
@@ -154,13 +157,13 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
 
     @Override
     public final void run() {
-        GWT.log("GridTimer[" + name + "].run() called"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("GridTimer[" + name + "].run() called"); //$NON-NLS-1$ //$NON-NLS-2$
         if (repetitions > 0) {
             repetitions--;
         } else if (repetitions == 0) {
             cycleRate();
         }
-        GWT.log("GridTimer[" + name + "] Executing! Current Rate: " + rateCycle[currentRate] + ":" + getRefreshRate() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        logger.fine("GridTimer[" + name + "] Executing! Current Rate: " + rateCycle[currentRate] + ":" + getRefreshRate() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 + " Reps: " //$NON-NLS-1$
                 + repetitions);
         execute();
@@ -177,27 +180,27 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
             return;
         }
         reset();
-        GWT.log("GridTimer[" + name + "]: Refresh Rate set to: " + interval); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("GridTimer[" + name + "]: Refresh Rate set to: " + interval); //$NON-NLS-1$ //$NON-NLS-2$
         // set the NORMAL interval
         normalInterval = interval;
         start();
     }
 
     public void start() {
-        GWT.log("GridTimer[" + name + "].start()"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("GridTimer[" + name + "].start()"); //$NON-NLS-1$ //$NON-NLS-2$
         active = true;
         scheduleRepeating(getRefreshRate());
         ValueChangeEvent.fire(this, getValue());
     }
 
     public void stop() {
-        GWT.log("GridTimer[" + name + "].stop()"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("GridTimer[" + name + "].stop()"); //$NON-NLS-1$ //$NON-NLS-2$
         active = false;
         doStop();
     }
 
     public void pause() {
-        GWT.log("GridTimer[" + name + "].pause()"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("GridTimer[" + name + "].pause()"); //$NON-NLS-1$ //$NON-NLS-2$
         if (active) {
             paused = true;
             doStop();
@@ -205,7 +208,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
     }
 
     public void resume() {
-        GWT.log("GridTimer[" + name + "].resume()"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("GridTimer[" + name + "].resume()"); //$NON-NLS-1$ //$NON-NLS-2$
         if (active) {
             paused = false;
             start();
@@ -235,7 +238,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
         currentRate = (currentRate + 1) % rateCycle.length;
         RATE rate = rateCycle[currentRate];
         repetitions = rate.getRepetitions();
-        GWT.log("GridTimer[" + name + "] Rate Cycled: Current Rate: " + rate + " Reps: " + repetitions + " Interval: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        logger.fine("GridTimer[" + name + "] Rate Cycled: Current Rate: " + rate + " Reps: " + repetitions + " Interval: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 + rate.getInterval());
         start();
     }
