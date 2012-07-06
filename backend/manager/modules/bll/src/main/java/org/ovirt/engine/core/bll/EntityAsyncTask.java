@@ -152,14 +152,16 @@ public class EntityAsyncTask extends SPMAsyncTask {
         }
 
         finally {
-            handleEndActionResult(entityInfo, vdcReturnValue, context);
+            boolean isTaskGroupSuccess = dbAsyncTask.getaction_parameters().getTaskGroupSuccess();
+            handleEndActionResult(entityInfo, vdcReturnValue, context, isTaskGroupSuccess);
             _endActionsInProgress.decrementAndGet();
         }
     }
 
     private static void handleEndActionResult(EntityMultiAsyncTasks entityInfo,
             VdcReturnValueBase vdcReturnValue,
-            ExecutionContext context) {
+            ExecutionContext context,
+            boolean isTaskGroupSuccess) {
         try {
             if (entityInfo != null) {
                 log.infoFormat(
@@ -185,7 +187,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
                      * The operation will end also the FINALIZING step.
                      */
                     if (context != null) {
-                        ExecutionHandler.endTaskJob(context, vdcReturnValue.getSucceeded());
+                        ExecutionHandler.endTaskJob(context, vdcReturnValue.getSucceeded() && isTaskGroupSuccess);
                     }
 
                     entityInfo.ClearTasks();
