@@ -103,7 +103,6 @@ public class BackendHostNicResource
                                              newNetwork!=null ? newNetwork : oldNetwork ,
                                              new ArrayList<VdsNetworkInterface>(){{add(inter);}});
 
-        params.setOldNetworkName(oldNetwork!=null ? oldNetwork.getname() : null);
         if(nic.isSetName() && inter.getBonded() != null && inter.getBonded()){
             params.setBondName(nic.getName());
         }
