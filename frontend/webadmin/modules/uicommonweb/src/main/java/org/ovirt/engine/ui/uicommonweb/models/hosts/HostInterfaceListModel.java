@@ -1984,10 +1984,9 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                 }
             }
-            // if the selected item is a non-attached or attached to vlan eth, or if the selected item is a bond that
-            // has vlans attached to it,
+            // if the selected item is a non-attached or attached to vlan eth (over bond or not),
             // and the selected network in the dialog is a new vlan, attach selected network.
-            if (((StringHelper.isNullOrEmpty(nic.getNetworkName()) && (nic.getBonded() == null || !nic.getBonded())) && !isUpdateVlan)
+            if ((StringHelper.isNullOrEmpty(nic.getNetworkName()) && !isUpdateVlan)
                     || (bondWithVlans && (!vLanAttached && network.getvlan_id() != null)))
             {
                 parameters = new AttachNetworkToVdsParameters(getEntity().getId(), network, nic);
