@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import com.google.gwt.i18n.client.Messages.DefaultMessage;
 
 
 public interface Constants extends com.google.gwt.i18n.client.Constants {
@@ -13,6 +12,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
 	@DefaultStringValue("Close")
 	String close();
+
+    @DefaultStringValue("N/A")
+    String notAvailableLabel();
 
 	// Titles
     @DefaultStringValue("")

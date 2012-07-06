@@ -1,11 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import java.util.MissingResourceException;
-
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Translator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -32,20 +29,7 @@ public abstract class ImageResourceColumn<T> extends Column<T, ImageResource> {
     }
 
     public void setEnumTitle(Enum<?> enumObj) {
-        String title = ""; //$NON-NLS-1$
-
-        if (enumObj != null) {
-            Translator translator = EnumTranslator.Create(enumObj.getDeclaringClass());
-
-            try {
-                title = translator.get(enumObj);
-            } catch (MissingResourceException e) {
-                // Silently ignore missing resource
-                title = enumObj.name();
-            }
-        }
-
-        setTitle(title);
+        setTitle(EnumTranslator.createAndTranslate(enumObj));
     }
 
     protected CommonApplicationResources getCommonResources() {

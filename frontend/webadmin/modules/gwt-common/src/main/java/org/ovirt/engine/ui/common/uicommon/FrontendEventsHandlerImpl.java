@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Translator;
 
 import com.google.inject.Inject;
 
@@ -45,20 +44,14 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runActionExecutionFailed(VdcActionType action, VdcFault fault) {
-        Translator vdcActionTypeTranslator = EnumTranslator.Create(VdcActionType.class);
-
-        errorPopupManager.show(
-                messages.uiCommonRunActionExecutionFailed(vdcActionTypeTranslator.containsKey(action)
-                        ? vdcActionTypeTranslator.get(action) : action.toString(),
-                                fault.getMessage()));
+        errorPopupManager.show(messages.uiCommonRunActionExecutionFailed(
+                        EnumTranslator.createAndTranslate(action), fault.getMessage()));
     }
 
     @Override
     public void runMultipleActionFailed(VdcActionType action,
             List<VdcReturnValueBase> returnValues, List<VdcFault> faults) {
-        Translator vdcActionTypeTranslator = EnumTranslator.Create(VdcActionType.class);
-        String actionStr = vdcActionTypeTranslator.containsKey(action)
-                ? vdcActionTypeTranslator.get(action) : action.toString();
+        String actionStr = EnumTranslator.createAndTranslate(action);
 
         List<String> errors = new ArrayList<String>();
 

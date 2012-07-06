@@ -1,10 +1,6 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
-import java.util.MissingResourceException;
-import java.util.logging.Logger;
-
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Translator;
 
 import com.google.gwt.text.shared.AbstractRenderer;
 
@@ -16,24 +12,9 @@ import com.google.gwt.text.shared.AbstractRenderer;
  */
 public class EnumRenderer<E extends Enum<E>> extends AbstractRenderer<E> {
 
-    private static final Logger logger = Logger.getLogger(EnumRenderer.class.getName());
-
     @Override
     public String render(E object) {
-        if (object == null) {
-            return "N/A"; //$NON-NLS-1$
-        }
-        Translator translator = EnumTranslator.Create(object.getDeclaringClass());
-        String translation = object.name();
-
-        try {
-            translation = translator.get(object);
-        } catch (MissingResourceException e) {
-            // Silently ignore missing resource
-            logger.info("Missing Enum resource: " + e.getLocalizedMessage()); //$NON-NLS-1$
-        }
-
-        return translation;
+        return EnumTranslator.createAndTranslate(object);
     }
 
 }
