@@ -408,4 +408,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         // return the result
         return nameLengthValid;
     }
+
+    public String getVmsCount() {
+        return Integer.toString(getParameters().getVmsCount());
+    }
 }
