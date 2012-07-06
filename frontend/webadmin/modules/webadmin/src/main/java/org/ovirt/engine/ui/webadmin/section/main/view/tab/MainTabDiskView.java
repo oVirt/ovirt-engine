@@ -44,7 +44,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         initWidget(getTable());
     }
 
-    void initTable(final ApplicationResources resources, ApplicationConstants constants) {
+    void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
         getTable().addColumn(new TextColumnWithTooltip<Disk>() {
             @Override
             public String getValue(Disk object) {
@@ -62,6 +62,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().addColumn(new ImageResourceColumn<Disk>() {
             @Override
             public ImageResource getValue(Disk object) {
+                setEnumTitle(object.getVmEntityType());
                 return object.getVmEntityType() == VmEntityType.VM ? resources.vmsImage() :
                         object.getVmEntityType() == VmEntityType.TEMPLATE ? resources.templatesImage() : null;
             }
@@ -70,6 +71,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().addColumn(new ImageResourceColumn<Disk>() {
             @Override
             public ImageResource getValue(Disk object) {
+                setTitle(object.isBoot() ? constants.bootableDisk() : null);
                 return object.isBoot() ? resources.bootableDiskIcon() : null;
             }
         }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -77,6 +79,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().addColumn(new ImageResourceColumn<Disk>() {
             @Override
             public ImageResource getValue(Disk object) {
+                setTitle(object.isShareable() ? constants.shareable() : null);
                 return object.isShareable() ? resources.shareableDiskIcon() : null;
             }
         }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -84,6 +87,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().addColumn(new ImageResourceColumn<Disk>() {
             @Override
             public ImageResource getValue(Disk object) {
+                setEnumTitle(object.getDiskStorageType());
                 return object.getDiskStorageType() == DiskStorageType.LUN ?
                         resources.externalDiskIcon() : null;
             }
