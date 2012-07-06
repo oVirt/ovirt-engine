@@ -10,13 +10,14 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class StyledImageResourceCell extends ImageResourceCell {
 
     private String style = "line-height: 100%; text-align: center; vertical-align: middle;"; //$NON-NLS-1$
+    private String title = ""; //$NON-NLS-1$
 
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb) {
         if (value != null) {
             SafeHtml html = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(value).getHTML());
 
-            sb.appendHtmlConstant("<div style=\"" + style + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+            sb.appendHtmlConstant("<div title=\"" + title + "\" " + "style=\"" + style + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             sb.append(html);
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
         }
@@ -24,6 +25,10 @@ public class StyledImageResourceCell extends ImageResourceCell {
 
     public void setStyle(String style) {
         this.style = style;
+    }
+
+    public void setTitle(String title) {
+        this.title = title != null ? title : ""; //$NON-NLS-1$
     }
 
 }
