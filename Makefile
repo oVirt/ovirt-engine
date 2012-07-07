@@ -301,66 +301,13 @@ install_misc:
 install_jboss_modules:
 	@echo "*** Deploying JBoss modules"
 
-	# Copy the module definitions:
+	# Create the modules directory:
 	install -dm 755 $(PREFIX)/usr/share/ovirt-engine/modules
-	cp -r deployment/modules/* $(PREFIX)/usr/share/ovirt-engine/modules
-	find $(PREFIX)/usr/share/ovirt-engine/modules -type d -exec chmod 755 {} \;
-	find $(PREFIX)/usr/share/ovirt-engine/modules -type f -exec chmod 644 {} \;
 
 	# PostgreSQL driver:
+	install -dm 755 $(PREFIX)/usr/share/ovirt-engine/modules/org/postgresql/main
+	install -m 644 deployment/modules/org/postgresql/main/module.xml $(PREFIX)/usr/share/ovirt-engine/modules/org/postgresql/main/.
 	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/postgresql/main/.
-
-	# Apache commons-codec module:
-	ln -s /usr/share/java/commons-codec.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/commons/codec/main/.
-
-	# Apache HTTP components module:
-	ln -s /usr/share/java/httpcomponents/httpcore.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/httpcomponents/main/.
-	ln -s /usr/share/java/httpcomponents/httpclient.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/httpcomponents/main/.
-	ln -s /usr/share/java/httpcomponents/httpmime.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/httpcomponents/main/.
-
-	# Scannotation module:
-	ln -s /usr/share/java/scannotation.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/scannotation/scannotation/main/.
-
-	# JAXB module:
-	ln -s /usr/share/java/glassfish-jaxb/jaxb-impl.jar $(PREFIX)/usr/share/ovirt-engine/modules/com/sun/xml/bind/main/.
-	ln -s /usr/share/java/glassfish-jaxb/jaxb-xjc.jar $(PREFIX)/usr/share/ovirt-engine/modules/com/sun/xml/bind/main/.
-	ln -s /usr/share/java/istack-commons-runtime.jar $(PREFIX)/usr/share/ovirt-engine/modules/com/sun/xml/bind/main/.
-
-	# JAX-RS API modules:
-	ln -s /usr/share/java/resteasy/jaxrs-api.jar $(PREFIX)/usr/share/ovirt-engine/modules/javax/ws/rs/api/main/.
-
-	# Resteasy modules:
-	ln -s /usr/share/java/resteasy/resteasy-cdi.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-cdi/main/.
-	ln -s /usr/share/java/resteasy/resteasy-jettison-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jettison-provider/main/.
-	ln -s /usr/share/java/resteasy/resteasy-atom-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-atom-provider/main/.
-	ln -s /usr/share/java/resteasy/resteasy-yaml-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-yaml-provider/main/.
-	ln -s /usr/share/java/resteasy/resteasy-multipart-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-multipart-provider/main/.
-	ln -s /usr/share/java/resteasy/resteasy-jackson-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jackson-provider/main/.
-	ln -s /usr/share/java/resteasy/resteasy-jaxb-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jaxb-provider/main/.
-	ln -s /usr/share/java/resteasy/resteasy-jaxrs.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jaxrs/main/.
-	ln -s /usr/share/java/resteasy/async-http-servlet-3.0.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jaxrs/main/.
-	ln -s /usr/share/java/resteasy/resteasy-jsapi.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jsapi/main/.
-
-	# Jackson modules:
-	ln -s /usr/share/java/jackson/jackson-jaxrs.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jackson/jackson-jaxrs/main/.
-	ln -s /usr/share/java/jackson/jackson-core-asl.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jackson/jackson-core-asl/main/.
-	ln -s /usr/share/java/jackson/jackson-mapper-asl.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jackson/jackson-mapper-asl/main/.
-	ln -s /usr/share/java/jackson/jackson-xc.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jackson/jackson-xc/main/.
-
-	# Hibernate validator module:
-	ln -s /usr/share/java/hibernate-validator.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/hibernate/validator/main/.
-	ln -s /usr/share/java/jtype.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/hibernate/validator/main/.
-
-	# Jettison:
-	ln -s /usr/share/java/jettison.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jettison/main
-
-	# Apache MIME4J:
-	ln -s /usr/share/java/apache-mime4j/core.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/james/mime4j/main/.
-	ln -s /usr/share/java/apache-mime4j/dom.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/james/mime4j/main/.
-	ln -s /usr/share/java/apache-mime4j/storage.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/james/mime4j/main/.
-
-	# Snakeyaml:
-	ln -s /usr/share/java/snakeyaml.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/yaml/snakeyaml/main/.
 
 install_service:
 	@echo "*** Deploying service"
