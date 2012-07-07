@@ -521,6 +521,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___GlusterHostAdd();
 
+	String VdcActionType___ConnectStorageToVds();
+
 	String VdcObjectType___AdElements();
 
 	String VdcObjectType___System();
