@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
@@ -124,4 +125,13 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         return null;
     }
 
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_ATTACH_DISK_TO_VM : AuditLogType.USER_FAILED_ATTACH_DISK_TO_VM;
+    }
+
+    @Override
+    public String getDiskAlias() {
+        return disk.getDiskAlias();
+    }
 }

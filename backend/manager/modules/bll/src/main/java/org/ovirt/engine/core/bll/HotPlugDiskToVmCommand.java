@@ -9,12 +9,9 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@CustomLogFields({ @CustomLogField("DiskAlias") })
 @NonTransactiveCommandAttribute
 public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends AbstractDiskVmCommand<T> {
 
@@ -91,6 +88,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         return getSucceeded() ? AuditLogType.USER_HOTPLUG_DISK : AuditLogType.USER_FAILED_HOTPLUG_DISK;
     }
 
+    @Override
     public String getDiskAlias() {
         return disk.getDiskAlias();
     }

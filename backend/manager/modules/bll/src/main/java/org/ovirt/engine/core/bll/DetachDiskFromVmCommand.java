@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -78,5 +79,15 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
         // update vm device boot order
         VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
         setSucceeded(true);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_DETACH_DISK_FROM_VM : AuditLogType.USER_FAILED_DETACH_DISK_FROM_VM;
+    }
+
+    @Override
+    public String getDiskAlias() {
+        return disk.getDiskAlias();
     }
 }

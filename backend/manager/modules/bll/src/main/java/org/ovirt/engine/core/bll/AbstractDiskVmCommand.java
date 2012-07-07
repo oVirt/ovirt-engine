@@ -24,11 +24,14 @@ import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 
+@CustomLogFields({ @CustomLogField("DiskAlias") })
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBase> extends VmCommand<T> {
 
     private static final long serialVersionUID = -4596432908703489958L;
@@ -168,4 +171,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         return getDbFacade().getStoragePoolIsoMapDAO();
     }
 
+    public String getDiskAlias() {
+        return getParameters().getDiskInfo().getDiskAlias();
+    }
 }

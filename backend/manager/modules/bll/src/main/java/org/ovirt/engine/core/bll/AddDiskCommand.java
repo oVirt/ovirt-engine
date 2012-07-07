@@ -43,8 +43,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -52,7 +50,6 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@CustomLogFields({ @CustomLogField("DiskAlias") })
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmCommand<T> {
 
@@ -440,9 +437,5 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return Collections.singletonMap(getParameters().getVmId().toString(), LockingGroup.VM.name());
         }
         return null;
-    }
-
-    public String getDiskAlias() {
-        return getParameters().getDiskInfo().getDiskAlias();
     }
 }
