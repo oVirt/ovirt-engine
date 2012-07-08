@@ -51,7 +51,7 @@ CURR_DIR=$(shell bach -c "pwd -P")
 all: build_mvn
 
 build_mvn:
-	export MAVEN_OPTS="-XX:MaxPermSize=512m"
+	export MAVEN_OPTS="${MAVEN_OPTS} -XX:MaxPermSize=512m"
 	$(MVN) install $(BUILD_FLAGS) -D skipTests
 	touch $(BUILD_FILE)
 
