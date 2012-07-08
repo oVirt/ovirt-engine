@@ -652,26 +652,6 @@ public class HostGeneralModel extends EntityModel
                 null);
     }
 
-    private Version GetVersionFromOS(String os) {
-
-        try {
-            if (!StringHelper.isNullOrEmpty(os)) {
-
-                String[] parts = os.split("-"); //$NON-NLS-1$
-                if (parts.length == 3) {
-
-                    parts = parts[2].trim().split("\\."); //$NON-NLS-1$
-
-                    return new Version(parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                }
-            }
-        } catch (Exception ex) {
-            // Do nothing.
-        } finally {
-            return new Version(0, 0, 0, 0);
-        }
-    }
-
     public void Install() {
 
         if (getWindow() != null) {
@@ -686,8 +666,7 @@ public class HostGeneralModel extends EntityModel
         model.getRootPassword().setIsAvailable(false);
         model.getOverrideIpTables().setIsAvailable(false);
 
-        final Version hostOsVersion = GetVersionFromOS(getEntity().gethost_os());
-        model.getHostVersion().setEntity(hostOsVersion.getMajor() + "." + hostOsVersion.getMinor()); //$NON-NLS-1$
+        model.getHostVersion().setEntity(getEntity().gethost_os());
         model.getHostVersion().setIsAvailable(false);
 
         getWindow().StartProgress(null);

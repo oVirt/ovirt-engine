@@ -74,7 +74,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
                 // Format string to contain major.minor version only.
                 RpmVersion version = (RpmVersion) object;
 
-                return version.getMajor() + "." + version.getMinor(); //$NON-NLS-1$
+                return version.getRpmName();
             }
         });
     }
