@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -367,6 +368,16 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null
                 : getStoragePoolId().getValue(),
                 VdcObjectType.StoragePool, getActionType().getActionGroup()));
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(),
+                    (getStoragePoolName() == null) ? "" : getStoragePoolName());
+        }
+        return jobProperties;
     }
 
     /* Config methods - for easier testing */
