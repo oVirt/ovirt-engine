@@ -336,4 +336,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         }
         return "";
     }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put("diskalias", getDiskAlias());
+        }
+        return jobProperties;
+    }
+
 }

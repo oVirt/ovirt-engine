@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
@@ -173,5 +174,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
 
     public String getDiskAlias() {
         return getParameters().getDiskInfo().getDiskAlias();
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put("diskalias", getDiskAlias());
+        }
+        return jobProperties;
     }
 }

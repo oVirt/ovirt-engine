@@ -301,4 +301,14 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected Map<String, String> getExclusiveLocks() {
         return exclusiveLockMap;
     }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put("diskalias", getDiskAlias());
+        }
+        return jobProperties;
+    }
+
 }

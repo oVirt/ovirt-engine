@@ -451,6 +451,10 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_ADD_DISK_TO_VM_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_ADD_DISK_TO_VM_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_FAILED_ADD_DISK_TO_VM, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_ADD_DISK, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_ADD_DISK_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_ADD_DISK_FINISHED_FAILURE, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_FAILED_ADD_DISK, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_REMOVE_DISK_FROM_VM, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_REMOVE_DISK_FROM_VM, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_MOVED_VM, AuditLogSeverity.NORMAL);

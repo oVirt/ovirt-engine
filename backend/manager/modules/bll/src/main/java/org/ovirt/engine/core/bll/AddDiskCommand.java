@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -43,6 +44,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -392,14 +395,47 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_ADD_DISK_TO_VM : AuditLogType.USER_FAILED_ADD_DISK_TO_VM;
+            return getExecuteAuditLogTypeValue(getSucceeded());
 
         case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_ADD_DISK_TO_VM_FINISHED_SUCCESS
-                    : AuditLogType.USER_ADD_DISK_TO_VM_FINISHED_FAILURE;
+            return getEndSuccessAuditLogTypeValue(getSucceeded());
 
         default:
-            return AuditLogType.USER_ADD_DISK_TO_VM_FINISHED_FAILURE;
+            return AuditLogType.USER_ADD_DISK_FINISHED_FAILURE;
+        }
+    }
+
+    private AuditLogType getExecuteAuditLogTypeValue(boolean successful) {
+        boolean isVmNameExist = StringUtils.isNotEmpty(getVmName());
+        if (successful) {
+            if (isVmNameExist) {
+                return AuditLogType.USER_ADD_DISK_TO_VM;
+            } else {
+                return AuditLogType.USER_ADD_DISK;
+            }
+        } else {
+            if (isVmNameExist) {
+                return AuditLogType.USER_FAILED_ADD_DISK_TO_VM;
+            } else {
+                return AuditLogType.USER_FAILED_ADD_DISK;
+            }
+        }
+    }
+
+    private AuditLogType getEndSuccessAuditLogTypeValue(boolean successful) {
+        boolean isVmNameExist = StringUtils.isNotEmpty(getVmName());
+        if (successful) {
+            if (isVmNameExist) {
+                return AuditLogType.USER_ADD_DISK_TO_VM_FINISHED_SUCCESS;
+            } else {
+                return AuditLogType.USER_ADD_DISK_FINISHED_SUCCESS;
+            }
+        } else {
+            if (isVmNameExist) {
+                return AuditLogType.USER_ADD_DISK_TO_VM_FINISHED_FAILURE;
+            } else {
+                return AuditLogType.USER_ADD_DISK_FINISHED_FAILURE;
+            }
         }
     }
 
@@ -438,4 +474,5 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
         return null;
     }
+
 }
