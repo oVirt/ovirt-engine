@@ -22,6 +22,7 @@
 # <http://www.apache.org/>.
 
 MVN=$(shell which mvn)
+EXTRA_BUILD_FLAGS=
 BUILD_FLAGS=-P gwt-admin,gwt-user
 DEPLOY_FLAGS=-f deploy.xml
 EAR_DIR=/usr/share/ovirt-engine/engine.ear
@@ -52,15 +53,15 @@ all: build_mvn
 
 build_mvn:
 	export MAVEN_OPTS="${MAVEN_OPTS} -XX:MaxPermSize=512m"
-	$(MVN) install $(BUILD_FLAGS) -D skipTests
+	$(MVN) install $(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS) -D skipTests
 	touch $(BUILD_FILE)
 
 clean:
-	$(MVN) clean
+	$(MVN) clean $(EXTRA_BUILD_FLAGS)
 	rm -rf $(RPMBUILD) $(SPEC_FILE) $(OUTPUT_DIR) $(SRCRPMBUILD) $(BUILD_FILE)
 
 test:
-	$(MVN) install $(BUILD_FLAGS)
+	$(MVN) install $(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
 
 install: \
 	build_mvn \
