@@ -38,7 +38,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCommandBase<P> {
 
-    private AuditLogType error = AuditLogType.forValue(0);
+    private AuditLogType error = AuditLogType.UNASSIGNED;
     private String strippedVdsUniqueId;
     private final AuditLogableBase logable;
 
