@@ -180,9 +180,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new ClusterPolicyModel());
+        list.add(new ClusterNetworkListModel());
         list.add(new ClusterHostListModel());
         list.add(new ClusterVmListModel());
-        list.add(new ClusterNetworkListModel());
         list.add(new PermissionListModel());
         setDetailModels(list);
     }
