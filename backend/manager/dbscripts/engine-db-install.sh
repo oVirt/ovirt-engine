@@ -123,7 +123,7 @@ verifyArgs()
 
 verifyRunPermissions()
 {
-    if [[ ! $USER == "root" ]]
+    if [[ ! $EUID == 0 ]]
     then
         echo "user $USER doesn't have permissions to run the script, please use root only."
         exit 1

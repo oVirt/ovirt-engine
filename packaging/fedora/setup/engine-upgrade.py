@@ -221,8 +221,8 @@ def initLogging():
         raise Exception("Failed to initiate logger")
 
 def _verifyUserPermissions():
-    username = pwd.getpwuid(os.getuid())[0]
-    if (username != 'root'):
+    if (os.geteuid() != 0):
+        username = pwd.getpwuid(os.getuid())[0]
         print MSG_ERROR_USER_NOT_ROOT%(username)
         sys.exit(1)
 
