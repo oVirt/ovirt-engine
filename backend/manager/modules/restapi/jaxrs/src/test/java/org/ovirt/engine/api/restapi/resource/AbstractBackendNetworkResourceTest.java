@@ -27,23 +27,23 @@ public class AbstractBackendNetworkResourceTest<N extends AbstractBackendNetwork
         return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), index);
     }
 
-    protected org.ovirt.engine.core.common.businessentities.Network getEntity(int index, boolean isDisplay) {
-            return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), isDisplay, index);
+    protected org.ovirt.engine.core.common.businessentities.Network getEntity(int index, boolean isDisplay, boolean isRequired) {
+            return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), isDisplay, isRequired, index);
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.Network> getEntityList() {
-        return getEntities(false);
+        return getEntities(false, false);
     }
 
-    protected List<org.ovirt.engine.core.common.businessentities.Network> getEntityList(boolean isDisplay) {
-        return getEntities(isDisplay);
+    protected List<org.ovirt.engine.core.common.businessentities.Network> getEntityList(boolean isDisplay, boolean isRequired) {
+        return getEntities(isDisplay, isRequired);
     }
 
-    private List<org.ovirt.engine.core.common.businessentities.Network> getEntities(boolean isDisplay) {
+    private List<org.ovirt.engine.core.common.businessentities.Network> getEntities(boolean isDisplay, boolean isRequired) {
         List<org.ovirt.engine.core.common.businessentities.Network> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Network>();
         for (int i = 0; i < NAMES.length; i++) {
             if (isDisplay) {
-                entities.add(getEntity(i, isDisplay));
+                entities.add(getEntity(i, isDisplay, isRequired));
             } else {
                 entities.add(getEntity(i));
             }

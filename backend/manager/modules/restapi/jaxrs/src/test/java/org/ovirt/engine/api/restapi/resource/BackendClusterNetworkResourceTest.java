@@ -9,6 +9,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -56,7 +57,7 @@ public class BackendClusterNetworkResourceTest
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(1, false);
+        setUpEntityQueryExpectations(1, false, false);
         control.replay();
 
         verifyModel(resource.get(), 1);
@@ -64,8 +65,8 @@ public class BackendClusterNetworkResourceTest
 
     @Test
     public void testUpdate() throws Exception {
-        setUpEntityQueryExpectations(1, false);
-        setUpEntityQueryExpectations(1, true);
+        setUpEntityQueryExpectations(1, false, false);
+        setUpEntityQueryExpectations(1, true, true);
         setUpVDSGroupExpectations(GUIDS[1]);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetworkOnCluster,
                                            NetworkClusterParameters.class,
@@ -98,16 +99,21 @@ public class BackendClusterNetworkResourceTest
     protected void verifyUpdate(Network model, int index) {
         assertTrue(model.isSetDisplay());
         assertEquals(model.isDisplay(), true);
+        assertTrue(model.isSetUsages());
+        assertNotNull(model.getUsages().getUsages());
+        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DISPLAY.name()));
+        assertTrue(model.isSetRequired());
+        assertEquals(model.isRequired(), true);
    }
 
 
-    protected void setUpEntityQueryExpectations(int times, boolean isDisplay) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isRequired) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
                                          VdsGroupQueryParamenters.class,
                                          new String[] { "VdsGroupId" },
                                          new Object[] { CLUSTER_ID },
-                                         getEntityList(isDisplay));
+                                         getEntityList(isDisplay, isRequired));
         }
     }
 }

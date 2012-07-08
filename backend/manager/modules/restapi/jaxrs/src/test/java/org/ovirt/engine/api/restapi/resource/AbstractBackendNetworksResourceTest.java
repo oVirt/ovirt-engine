@@ -60,16 +60,17 @@ public abstract class AbstractBackendNetworksResourceTest
         return entities;
     }
 
-    protected org.ovirt.engine.core.common.businessentities.Network getEntity(int index, boolean isDisplay) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), isDisplay, index);
+    protected org.ovirt.engine.core.common.businessentities.Network getEntity(int index, boolean isDisplay, boolean isRequired) {
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), isDisplay, isRequired, index);
     }
 
     protected org.ovirt.engine.core.common.businessentities.Network getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), false, index);
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.Network.class), false, false, index);
     }
 
-    static org.ovirt.engine.core.common.businessentities.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.Network entity, boolean isDisplay, int index) {
+    static org.ovirt.engine.core.common.businessentities.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.Network entity, boolean isDisplay, boolean isRequired, int index) {
         expect(entity.getis_display()).andReturn(isDisplay).anyTimes();
+        expect(entity.isRequired()).andReturn(isRequired).anyTimes();
         return setUpEntityExpectations(entity, index);
      }
 
