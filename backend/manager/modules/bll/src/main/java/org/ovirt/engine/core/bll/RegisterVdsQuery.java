@@ -38,11 +38,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCommandBase<P> {
 
-    private AuditLogType _error = AuditLogType.forValue(0);
-    private String _strippedVdsUniqueId;
-    private final AuditLogableBase _logable;
+    private AuditLogType error = AuditLogType.forValue(0);
+    private String strippedVdsUniqueId;
+    private final AuditLogableBase logable;
 
-    private static Object _doubleRegistrationLock = new Object();
+    private static Object doubleRegistrationLock = new Object();
     /**
      * 'z' has the highest ascii value from the acceptable characters, so the bit set size should be initiated to it.
      * the size is 'z'+1 so that each char will be represented in the BitSet with index which equals to it's char value.
@@ -65,11 +65,11 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     public RegisterVdsQuery(P parameters) {
         super(parameters);
-        _logable = new AuditLogableBase(parameters.getVdsId());
+        logable = new AuditLogableBase(parameters.getVdsId());
     }
 
     protected String getStrippedVdsUniqueId() {
-        if (_strippedVdsUniqueId == null) {
+        if (strippedVdsUniqueId == null) {
             // since we use the management IP field, makes sense to remove the
             // illegal characters in advance
             StringBuilder builder = new StringBuilder();
@@ -78,9 +78,9 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     builder.append(ch);
                 }
             }
-            _strippedVdsUniqueId = builder.toString();
+            strippedVdsUniqueId = builder.toString();
         }
-        return _strippedVdsUniqueId;
+        return strippedVdsUniqueId;
     }
 
     private List<VDS> _vdssByUniqueId;
@@ -181,7 +181,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     }
 
     protected void ExecuteRegisterVdsCommand() {
-        synchronized (_doubleRegistrationLock) {
+        synchronized (doubleRegistrationLock) {
             // force to reload vdss by unique ID used later on
             _vdssByUniqueId = null;
             VDS vdsByUniqueId = getVdssByUniqueId().size() != 0 ? getVdssByUniqueId().get(0) : null;
@@ -206,7 +206,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 }
             }
 
-            _logable.AddCustomValue("VdsName1", getParameters().getVdsName());
+            logable.AddCustomValue("VdsName1", getParameters().getVdsName());
 
             Guid vdsGroupId;
             if (getParameters().getVdsGroupId().equals(Guid.Empty)) {
@@ -366,7 +366,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             VdcReturnValueBase rc = RunActionWithinThreadCompat(VdcActionType.UpdateVds, p);
 
             if (rc == null || !rc.getSucceeded()) {
-                _error = AuditLogType.VDS_REGISTER_EXISTING_VDS_UPDATE_FAILED;
+                error = AuditLogType.VDS_REGISTER_EXISTING_VDS_UPDATE_FAILED;
                 if (Config.<Boolean> GetValue(ConfigValues.LogVdsRegistration)) {
                     log.infoFormat(
                             "RegisterVdsQuery::Register - Failed to update existing VDS Name: {0}, Hostname: {1}, Unique: {2}, Port: {3}, IsPending: {4}",
@@ -425,7 +425,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         getParameters().getVdsHostName(),
                         getStrippedVdsUniqueId());
                 CaptureCommandErrorsToLogger(ret, "RegisterVdsQuery::Register");
-                _error = AuditLogType.VDS_REGISTER_FAILED;
+                error = AuditLogType.VDS_REGISTER_FAILED;
             returnValue = false;
             } else {
                 log.infoFormat(
@@ -483,8 +483,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                             VdcReturnValueBase ret = RunActionWithinThreadCompat(VdcActionType.UpdateVds, parameters);
 
                             if (ret == null || !ret.getSucceeded()) {
-                                _error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST;
-                                _logable.AddCustomValue("VdsName2", vds_byHostName.getStaticData().getvds_name());
+                                error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST;
+                                logable.AddCustomValue("VdsName2", vds_byHostName.getStaticData().getvds_name());
                                 log.errorFormat(
                                         "RegisterVdsQuery::HandleOldVdssWithSameHostName - could not update VDS {0}",
                                         vds_byHostName.getStaticData().getvds_name());
@@ -504,7 +504,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                                     vds_byHostName.getvds_name(),
                                     vds_byHostName.getManagmentIp(),
                                     vds_byHostName.gethost_name());
-                            _error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST_ALL_TAKEN;
+                            error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST_ALL_TAKEN;
                             returnValue = false;
                         }
                 }
@@ -564,8 +564,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                                 new UpdateVdsActionParameters(hostToRegister.getStaticData(), "", false);
                         VdcReturnValueBase ret = RunActionWithinThreadCompat(VdcActionType.UpdateVds, parameters);
                         if (ret == null || !ret.getSucceeded()) {
-                            _error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;
-                            _logable.AddCustomValue("VdsName2", newName);
+                            error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;
+                            logable.AddCustomValue("VdsName2", newName);
                             log.errorFormat("could not update VDS {0}", nameToRegister);
                             CaptureCommandErrorsToLogger(ret, "RegisterVdsQuery::HandleOldVdssWithSameName");
                             return false;
@@ -643,7 +643,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         break;
                     }
                 } catch (RuntimeException ex) {
-                    _error = AuditLogType.VDS_REGISTER_AUTO_APPROVE_PATTERN;
+                    error = AuditLogType.VDS_REGISTER_AUTO_APPROVE_PATTERN;
                     log.errorFormat(
                             "RegisterVdsQuery ::CheckAutoApprovalDefinitions(out bool) -  Error in auto approve pattern: {0}-{1}",
                             pattern,
@@ -682,14 +682,14 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     private void WriteToAuditLog() {
         try {
-            AuditLogDirector.log(_logable, getAuditLogTypeValue());
+            AuditLogDirector.log(logable, getAuditLogTypeValue());
         } catch (RuntimeException ex) {
             log.error("RegisterVdsQuery::WriteToAuditLog: An exception has been thrown.", ex);
         }
     }
 
     protected AuditLogType getAuditLogTypeValue() {
-        return getQueryReturnValue().getSucceeded() ? AuditLogType.VDS_REGISTER_SUCCEEDED : _error;
+        return getQueryReturnValue().getSucceeded() ? AuditLogType.VDS_REGISTER_SUCCEEDED : error;
     }
 
     private static Log log = LogFactory.getLog(RegisterVdsQuery.class);
