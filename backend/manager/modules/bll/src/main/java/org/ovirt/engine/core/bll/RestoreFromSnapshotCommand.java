@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -125,7 +126,10 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalTaskIdList().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.RestoreAllSnapshots));
+                        CreateTask(vdsReturnValue.getCreationInfo(),
+                                VdcActionType.RestoreAllSnapshots,
+                                VdcObjectType.Storage,
+                                storageDomainId));
             }
         }
         // Don't throw an exception when cannot destroy image in the VDSM.

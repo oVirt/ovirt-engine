@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -65,7 +66,9 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                                         .toString()));
 
         getReturnValue().getInternalTaskIdList().add(
-                CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmTemplate));
+                CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmTemplate,
+                        VdcObjectType.Storage, getParameters().getStorageDomainId(),
+                        getParameters().getDestinationStorageDomainId()));
 
         newImage.setId(destinationImageGroupID);
         newImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
@@ -131,4 +134,5 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         }
         setSucceeded(true);
     }
+
 }

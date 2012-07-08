@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -34,7 +35,10 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
 
         if (vdsReturnValue.getSucceeded()) {
             getReturnValue().getInternalTaskIdList().add(
-                    CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.RemoveVmTemplate));
+                    CreateTask(vdsReturnValue.getCreationInfo(),
+                            VdcActionType.RemoveVmTemplate,
+                            VdcObjectType.Storage,
+                            getParameters().getStorageDomainId()));
 
             setSucceeded(true);
         }

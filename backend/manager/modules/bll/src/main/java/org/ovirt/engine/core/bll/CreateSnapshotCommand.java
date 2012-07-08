@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -104,7 +105,11 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             if (vdsReturnValue.getSucceeded()) {
                 getParameters().setTaskIds(new java.util.ArrayList<Guid>());
                 getParameters().getTaskIds().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(), getParameters().getParentCommand()));
+                        CreateTask(vdsReturnValue.getCreationInfo(),
+                                getParameters().getParentCommand(),
+                                VdcObjectType.Storage,
+                                getParameters().getStorageDomainId(),
+                                getParameters().getDestinationImageId()));
                 getReturnValue().getInternalTaskIdList().add(getParameters().getTaskIds().get(0));
 
                 // Shouldn't happen anymore:
@@ -135,11 +140,6 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                         getCommandId()));
         p.setEntityId(getParameters().getEntityId());
         return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
-        //
-        // VmId != Guid.Empty ? VmId :
-        // ImageContainerId != Guid.Empty ? ImageContainerId :
-        // DbFacade.Instance.GetVmByImageId(DiskImage.image_guid).vm_guid),
-        //
     }
 
     /**

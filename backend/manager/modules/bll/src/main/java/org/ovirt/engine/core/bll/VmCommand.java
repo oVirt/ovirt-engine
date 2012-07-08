@@ -332,7 +332,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 return false;
             }
 
-            Guid guid1 = CreateTask(vdsRetValue1.getCreationInfo(), parentCommand);
+            Guid guid1 =
+                    CreateTask(vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, imagesList[0]);
             getTaskIdList().add(guid1);
 
             // delete second image

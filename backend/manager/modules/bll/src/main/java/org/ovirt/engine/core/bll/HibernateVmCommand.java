@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -127,7 +128,11 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             if (!ret1.getSucceeded()) {
                 return;
             }
-            Guid guid1 = CreateTask(ret1.getCreationInfo(), VdcActionType.HibernateVm);
+            Guid guid1 =
+                    CreateTask(ret1.getCreationInfo(),
+                            VdcActionType.HibernateVm,
+                            VdcObjectType.Storage,
+                            getStorageDomainId().getValue());
             getReturnValue().getTaskIdList().add(guid1);
 
             // second vol should be 10kb

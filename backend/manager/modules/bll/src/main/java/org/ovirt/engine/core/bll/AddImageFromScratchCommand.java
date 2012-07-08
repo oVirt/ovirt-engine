@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -86,7 +87,10 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setTaskIds(new ArrayList<Guid>());
             getParameters().getTaskIds().add(
-                    CreateTask(vdsReturnValue.getCreationInfo(), getParameters().getParentCommand()));
+                    CreateTask(vdsReturnValue.getCreationInfo(),
+                            getParameters().getParentCommand(),
+                            VdcObjectType.Storage,
+                            getParameters().getStorageDomainId()));
             getReturnValue().getInternalTaskIdList().add(getParameters().getTaskIds().get(0));
 
             return true;

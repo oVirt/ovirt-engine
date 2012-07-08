@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -78,7 +79,9 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalTaskIdList().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmFromTemplate));
+                        CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmFromTemplate,VdcObjectType.Storage,
+                                getParameters().getStorageDomainId(),
+                                getDestinationStorageDomainId()));
             }
         } catch (Exception e) {
             log.errorFormat(

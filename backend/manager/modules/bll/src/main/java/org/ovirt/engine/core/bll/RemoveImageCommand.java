@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -46,7 +47,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         if (getDiskImage() != null) {
             VDSReturnValue vdsReturnValue = performImageVdsmOperation();
             getReturnValue().getInternalTaskIdList().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(), getParameters().getParentCommand()));
+                        CreateTask(vdsReturnValue.getCreationInfo(),
+                                getParameters().getParentCommand(),
+                                VdcObjectType.Storage,
+                                getParameters().getStorageDomainId()));
 
             if (getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
                         && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -108,7 +109,11 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         if (vdsReturnValue.getSucceeded()) {
             AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
             getReturnValue().getInternalTaskIdList().add(
-                    CreateTask(taskCreationInfo, getParameters().getParentCommand()));
+                    CreateTask(taskCreationInfo,
+                            getParameters().getParentCommand(),
+                            VdcObjectType.Storage,
+                            getParameters().getSourceDomainId().getValue(),
+                            getParameters().getStorageDomainId()));
 
             // change storage domain in db only if object moved
             if (getParameters().getOperation() == ImageOperation.Move

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -43,7 +44,10 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
             getReturnValue().getInternalTaskIdList().add(
-                    CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.RemoveSnapshot));
+                    CreateTask(vdsReturnValue.getCreationInfo(),
+                            VdcActionType.RemoveSnapshot,
+                            VdcObjectType.Storage,
+                            storageDomainId));
             setSucceeded(vdsReturnValue.getSucceeded());
         } else {
             setSucceeded(false);
