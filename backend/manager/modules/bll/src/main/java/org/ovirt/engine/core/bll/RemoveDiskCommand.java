@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -80,8 +81,23 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
         retValue =
                 retValue
-                        && (disk.getDiskStorageType() != DiskStorageType.IMAGE || canRemoveDiskBasedOnImageStorageCheck());
+                        && (disk.getDiskStorageType() == DiskStorageType.IMAGE ? canRemoveDiskBasedOnImageStorageCheck()
+                                : canRemoveLunDisk());
         return retValue;
+    }
+
+    private boolean canRemoveLunDisk() {
+        for (VM vm : listVms) {
+            if (vm.getstatus() != VMStatus.Down) {
+                VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getId()));
+                if (vmDevice.getIsPlugged()) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private boolean canRemoveDiskBasedOnImageStorageCheck() {
