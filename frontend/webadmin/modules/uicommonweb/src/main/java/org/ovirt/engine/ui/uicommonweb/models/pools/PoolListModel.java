@@ -375,8 +375,8 @@ public class PoolListModel extends ListWithDetailsModel
                                                         model.getUsbPolicy().setSelectedItem(vm.getusb_policy());
                                                         model.getNumOfMonitors()
                                                                 .setSelectedItem(vm.getnum_of_monitors());
-                                                        model.getNumOfSockets().setEntity(vm.getnum_of_sockets());
-                                                        model.getTotalCPUCores().setEntity(vm.getnum_of_cpus());
+                                                        model.getNumOfSockets().setSelectedItem(vm.getnum_of_sockets());
+                                                        model.getTotalCPUCores().setEntity(Integer.toString(vm.getnum_of_cpus()));
                                                         model.setBootSequence(vm.getdefault_boot_sequence());
 
                                                         model.getKernel_path().setEntity(vm.getkernel_url());
@@ -654,9 +654,9 @@ public class PoolListModel extends ListWithDetailsModel
                                 .getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                                 .getSelectedItem()).getKey()
                                 : ""); //$NON-NLS-1$
-                        desktop.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
-                        desktop.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
-                                / (Integer) model.getNumOfSockets().getEntity());
+                        desktop.setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
+                        desktop.setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+                                / (Integer) model.getNumOfSockets().getSelectedItem());
                         desktop.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
                         desktop.setis_auto_suspend(false);
                         desktop.setis_stateless(false);

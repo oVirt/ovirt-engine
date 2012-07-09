@@ -29,7 +29,7 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
     private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
 
     private TakesValueWithChangeHandlersEditor<Object> editor;
-    private TextBox t;
+    private TextBox textBox;
     private IntegerSlider slider;
     private Label maxValueLabel;
     private Label minValueLabel;
@@ -37,9 +37,8 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
     public EntityModelInputWithSlider(int min, int max) {
         HorizontalPanel panel = new HorizontalPanel();
 
-        t = new TextBox();
-        t.setEnabled(false);
-        t.setVisibleLength(2);
+        textBox = new TextBox();
+        textBox.setVisibleLength(2);
 
         minValueLabel = new Label(Integer.toString(min));
         minValueLabel.setStyleName("gwt-SliderBar-minrange-label"); //$NON-NLS-1$
@@ -72,12 +71,25 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
         slider.addValueChangeHandler(new ValueChangeHandler<Integer>() {
             @Override
             public void onValueChange(ValueChangeEvent<Integer> event) {
-                t.setValue(NumberFormat.getFormat("#").format(event.getValue())); //$NON-NLS-1$
+                textBox.setValue(NumberFormat.getFormat("#").format(event.getValue())); //$NON-NLS-1$
             }
         });
 
-        panel.add(t);
-        panel.setCellVerticalAlignment(t, HasVerticalAlignment.ALIGN_BOTTOM);
+        textBox.addValueChangeHandler(new InputWithSliderInputChangeHandler() {
+            @Override
+            public void onValueChange(final ValueChangeEvent<String> event) {
+                if (isCorrectValue(event.getValue())) {
+                    slider.setValue(Integer.parseInt(event.getValue()));
+                } else {
+                    // fallback when the passed value is not correct
+                    textBox.setValue(Integer.toString(slider.getValue()), true);
+                }
+            }
+
+        });
+
+        panel.add(textBox);
+        panel.setCellVerticalAlignment(textBox, HasVerticalAlignment.ALIGN_BOTTOM);
         panel.add(minValueLabel);
         panel.add(slider);
         panel.setCellWidth(slider, "80%"); //$NON-NLS-1$
@@ -141,6 +153,7 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
     @Override
     public void setEnabled(boolean enabled) {
         asSlider().setEnabled(enabled);
+        textBox.setEnabled(enabled);
     }
 
     @Override
@@ -150,14 +163,114 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
 
     @Override
     public void setValue(Object value) {
-        asSlider().setValue((Integer) value);
-        t.setValue(value.toString());
+        asSlider().setValue(asInt(value));
+        textBox.setValue(Integer.toString(asInt(value)));
+    }
+
+    private int asInt(Object value) {
+        if (value instanceof Integer) {
+            return (Integer) value;
+        } else if (value instanceof String) {
+            return Integer.parseInt((String) value);
+        }
+
+        return 0;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler handler) {
-        return asSlider().addValueChangeHandler(handler);
+        return new CompositeHandleRegistration(
+                textBox.addValueChangeHandler(new SelectiveValueChangeHandlerDecorator(handler)),
+                asSlider().addValueChangeHandler(handler));
+    }
+
+    abstract class InputWithSliderInputChangeHandler implements ValueChangeHandler<String> {
+        /**
+         * Returns true, if the specified string is: <li>a double value <li>bigger or equal than the min value <li>
+         * smaller or equal than the max value <li>reachable from min += stepSize <br>
+         * In other case it returns false
+         */
+        protected boolean isCorrectValue(String newStringValue) {
+            try {
+                double newValue = Double.parseDouble(newStringValue);
+                if (newValue <= slider.getMaxValue() && newValue >= slider.getMinValue()) {
+
+                    // checks if it is an enabled value
+                    for (double i = slider.getMinValue(); i <= newValue; i += slider.getStepSize()) {
+                        if (i == newValue) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                return false;
+            }
+
+        }
+    }
+
+    /**
+     * Calls the onValueChange on the decorated field only if the new value was correct (e.g. it will be preserved so it
+     * makes sense to process it)
+     */
+    @SuppressWarnings("rawtypes")
+    class SelectiveValueChangeHandlerDecorator extends InputWithSliderInputChangeHandler {
+
+        private ValueChangeHandler decorated;
+
+        public SelectiveValueChangeHandlerDecorator(ValueChangeHandler decorated) {
+            this.decorated = decorated;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onValueChange(ValueChangeEvent<String> event) {
+            if (isCorrectValue(event.getValue())) {
+                decorated.onValueChange(new StringToIntConvertingEvent(event, asInt(event.getValue())));
+            }
+        }
+
+    }
+
+    class StringToIntConvertingEvent extends ValueChangeEvent<Integer> {
+
+        private final ValueChangeEvent<String> event;
+
+        protected StringToIntConvertingEvent(ValueChangeEvent<String> event, Integer value) {
+            super(value);
+            this.event = event;
+        }
+
+        @Override
+        public Object getSource() {
+            return event.getSource();
+        }
+
+    }
+
+    class CompositeHandleRegistration implements HandlerRegistration {
+
+        private final HandlerRegistration[] registrations;
+
+        public CompositeHandleRegistration(HandlerRegistration... registrations) {
+            this.registrations = registrations;
+        }
+
+        @Override
+        public void removeHandler() {
+            if (registrations == null) {
+                return;
+            }
+
+            for (HandlerRegistration registration : registrations) {
+                registration.removeHandler();
+            }
+        }
+
     }
 
 }

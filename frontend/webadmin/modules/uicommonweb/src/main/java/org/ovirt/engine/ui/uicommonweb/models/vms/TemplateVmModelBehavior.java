@@ -157,8 +157,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getAllowConsoleReconnect().setEntity(this.template.getAllowConsoleReconnect());
         getModel().setBootSequence(this.template.getdefault_boot_sequence());
         getModel().getIsHighlyAvailable().setEntity(this.template.getauto_startup());
-        getModel().getNumOfSockets().setEntity(this.template.getnum_of_sockets());
-        getModel().getTotalCPUCores().setEntity(this.template.getnum_of_cpus());
+        getModel().getTotalCPUCores().setEntity(Integer.toString(this.template.getnum_of_cpus()));
+        getModel().getNumOfSockets().setSelectedItem(this.template.getnum_of_sockets());
         getModel().getIsStateless().setEntity(this.template.getis_stateless());
 
         getModel().getKernel_parameters().setEntity(this.template.getkernel_params());

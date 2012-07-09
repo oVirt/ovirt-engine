@@ -86,8 +86,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
         {
             // Copy VM parameters from template.
             getModel().getOSType().setSelectedItem(template.getos());
-            getModel().getNumOfSockets().setEntity(template.getnum_of_sockets());
-            getModel().getTotalCPUCores().setEntity(template.getnum_of_cpus());
+            getModel().getTotalCPUCores().setEntity(Integer.toString(template.getnum_of_cpus()));
+            getModel().getNumOfSockets().setSelectedItem(template.getnum_of_sockets());
             getModel().getNumOfMonitors().setSelectedItem(template.getnum_of_monitors());
             getModel().getDomain().setSelectedItem(template.getdomain());
             getModel().getMemSize().setEntity(template.getmem_size_mb());

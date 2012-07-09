@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -27,7 +26,6 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelSliderWithTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
@@ -124,19 +122,24 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @WithElementId("memSize")
     public EntityModelTextBoxEditor memSizeEditor;
 
-    @UiField(provided = true)
-    @Path(value = "totalCPUCores.entity")
-    @WithElementId("totalCPUCores")
-    public EntityModelSliderWithTextBoxEditor totalCPUCoresEditor;
-
     @UiField
     @Ignore
     HTML cpuPinningLabel;
 
-    @UiField(provided = true)
-    @Path(value = "numOfSockets.entity")
+    @UiField
+    @Path(value = "totalCPUCores.entity")
+    @WithElementId("totalCPUCores")
+    public EntityModelTextBoxEditor totalvCPUsEditor;
+
+    @UiField
+    @Path(value = "numOfSockets.selectedItem")
     @WithElementId("numOfSockets")
-    public EntityModelSliderWithTextBoxEditor numOfSocketsEditor;
+    public ListModelListBoxEditor<Object> numOfSocketsEditor;
+
+    @UiField
+    @Path(value = "coresPerSocket.selectedItem")
+    @WithElementId("coresPerSocket")
+    public ListModelListBoxEditor<Object> corePerSocketEditor;
 
     @UiField(provided = true)
     @Path(value = "oSType.selectedItem")
@@ -377,6 +380,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     Panel expanderContent;
 
+    @UiField
+    @Ignore
+    AdvancedParametersExpander generalAdvancedParameterExpander;
+
+    @UiField
+    @Ignore
+    Panel generalAdvancedParameterExpanderContent;
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(CommonApplicationConstants constants) {
         this.constants = constants;
@@ -388,8 +399,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 new MemorySizeRenderer(constants), new MemorySizeParser());
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor(
                 new MemorySizeRenderer(constants), new MemorySizeParser());
-        totalCPUCoresEditor = new EntityModelSliderWithTextBoxEditor(1, 16);
-        numOfSocketsEditor = new EntityModelSliderWithTextBoxEditor(1, 16);
 
         // TODO: How to align right without creating the widget manually?
         runVMOnSpecificHostEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -404,7 +413,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         disksAllocationView = new DisksAllocationView(constants);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+
         expander.initWithContent(expanderContent.getElement());
+        generalAdvancedParameterExpander.initWithContent(generalAdvancedParameterExpanderContent.getElement());
         applyStyles();
 
         poolTab.setVisible(false);
@@ -549,8 +560,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         descriptionEditor.setLabel(constants.descriptionVmPopup());
         templateEditor.setLabel(constants.basedOnTemplateVmPopup());
         memSizeEditor.setLabel(constants.memSizeVmPopup());
-        totalCPUCoresEditor.setLabel(constants.totalCoresVmPopup());
-        numOfSocketsEditor.setLabel(constants.cpuSocketsVmPopup());
+        totalvCPUsEditor.setLabel(constants.numOfVCPUs());
+        corePerSocketEditor.setLabel(constants.coresPerSocket());
+        numOfSocketsEditor.setLabel(constants.numOfSockets());
+
         oSTypeEditor.setLabel(constants.osVmPopup());
         isStatelessEditor.setLabel(constants.statelessVmPopup());
 
@@ -615,7 +628,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         priorityEditor.setRowData(new ArrayList<EntityModel>());
         priorityEditor.edit(object.getPriority());
         Driver.driver.edit(object);
-        initSliders(object);
         initTabAvailabilityListeners(object);
         initListeners(object);
         initCustomPropertySheet(object);
@@ -714,37 +726,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     }
 
     private void addDiskAllocation(UnitVmModel model) {
-        ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) model.getStorageDomain().getItems();
+        // ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) model.getStorageDomain().getItems();
         if (!model.getIsDisksAvailable()) {
             return;
         }
         disksAllocationView.edit(model.getDisksAllocationModel());
         model.getDisksAllocationModel().getStorageDomain().setItems(model.getStorageDomain().getItems());
         model.getDisksAllocationModel().setDisks(model.getDisks());
-    }
-
-    private void initSliders(final UnitVmModel object) {
-        object.getTotalCPUCores().getPropertyChangedEvent()
-                .addListener(new IEventListener() {
-                    @Override
-                    public void eventRaised(Event ev, Object sender,
-                            EventArgs args) {
-                        PropertyChangedEventArgs rangeArgs = (PropertyChangedEventArgs) args;
-                        if (rangeArgs.PropertyName.equalsIgnoreCase("Min")) { //$NON-NLS-1$
-                            totalCPUCoresEditor.setMin(((Double) object
-                                    .getTotalCPUCores().getMin()).intValue());
-                        } else if (rangeArgs.PropertyName
-                                .equalsIgnoreCase("Max")) { //$NON-NLS-1$
-                            totalCPUCoresEditor.setMax(((Double) object
-                                    .getTotalCPUCores().getMax()).intValue());
-                        } else if (rangeArgs.PropertyName
-                                .equalsIgnoreCase("Interval")) { //$NON-NLS-1$
-                            totalCPUCoresEditor.setStepSize(((Double) object
-                                    .getTotalCPUCores().getInterval())
-                                    .intValue());
-                        }
-                    }
-                });
     }
 
     private void initTabAvailabilityListeners(final UnitVmModel vm) {

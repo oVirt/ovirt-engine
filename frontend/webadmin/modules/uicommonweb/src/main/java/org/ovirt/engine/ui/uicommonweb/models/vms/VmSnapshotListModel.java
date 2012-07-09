@@ -634,9 +634,9 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().settime_zone(
                 (model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ?
                         ((Map.Entry<String, String>) model.getTimeZone().getSelectedItem()).getKey() : ""); //$NON-NLS-1$
-        getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
-        getcurrentVm().setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity() /
-                (Integer) model.getNumOfSockets().getEntity());
+        getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
+        getcurrentVm().setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString()) /
+                (Integer) model.getNumOfSockets().getSelectedItem());
         getcurrentVm().setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         getcurrentVm().setis_auto_suspend(false);
         getcurrentVm().setis_stateless((Boolean) model.getIsStateless().getEntity());

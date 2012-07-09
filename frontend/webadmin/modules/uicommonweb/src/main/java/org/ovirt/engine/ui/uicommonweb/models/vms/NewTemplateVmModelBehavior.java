@@ -207,8 +207,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getNumOfMonitors().setSelectedItem(this.vm.getnum_of_monitors());
         getModel().getAllowConsoleReconnect().setEntity(this.vm.getAllowConsoleReconnect());
         getModel().setBootSequence(this.vm.getdefault_boot_sequence());
-        getModel().getNumOfSockets().setEntity(this.vm.getnum_of_sockets());
-        getModel().getTotalCPUCores().setEntity(this.vm.getnum_of_cpus());
+        getModel().getTotalCPUCores().setEntity(Integer.toString(this.vm.getnum_of_cpus()));
+        getModel().getNumOfSockets().setSelectedItem(this.vm.getnum_of_sockets());
         getModel().getIsStateless().setEntity(this.vm.getis_stateless());
 
         if (!StringHelper.isNullOrEmpty(this.vm.gettime_zone()))

@@ -126,14 +126,14 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().setBootSequence(vm.getdefault_boot_sequence());
         getModel().getIsHighlyAvailable().setEntity(vm.getauto_startup());
 
-        getModel().getNumOfSockets().setEntity(vm.getnum_of_sockets());
-        getModel().getNumOfSockets().setIsChangable(!vm.isStatusUp());
-
-        getModel().getTotalCPUCores().setEntity(vm.getnum_of_cpus());
+        getModel().getTotalCPUCores().setEntity(Integer.toString(vm.getnum_of_cpus()));
         getModel().getTotalCPUCores().setIsChangable(!vm.isStatusUp());
 
         getModel().getIsStateless().setEntity(vm.getis_stateless());
         getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
+
+        getModel().getNumOfSockets().setSelectedItem(vm.getnum_of_sockets());
+        getModel().getNumOfSockets().setIsChangable(!vm.isStatusUp());
 
         getModel().getKernel_parameters().setEntity(vm.getkernel_params());
         getModel().getKernel_path().setEntity(vm.getkernel_url());

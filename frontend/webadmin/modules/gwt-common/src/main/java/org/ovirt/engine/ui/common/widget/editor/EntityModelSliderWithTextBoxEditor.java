@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.editor;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.IsEditor;
 
 /**
@@ -40,8 +41,11 @@ public class EntityModelSliderWithTextBoxEditor extends AbstractValidatedWidgetW
     }
 
     @Override
-    protected void applyCommonValidationStyles() {
+    public void markAsValid() {
+        super.markAsValid();
+
         // Needed in order not to have the border in the element style
+        getValidatedWidgetStyle().setBorderWidth(0, Unit.PX);
     }
 
 }

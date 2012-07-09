@@ -148,4 +148,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("No valid Operation for {0} and ")
     String noValidOperation(String name);
+
+    @DefaultMessage("Incorrect number of Total Virtual CPUs. It is not possible to compose this number from the available Virtual Sockets and Cores per Virtual Sockets")
+    String incorrectVCPUNumber();
 }

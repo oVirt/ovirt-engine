@@ -298,6 +298,15 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("CPU Sockets")
     String cpuSocketsVmPopup();
 
+    @DefaultStringValue("Total Virtual CPUs")
+    String numOfVCPUs();
+
+    @DefaultStringValue("Cores per Virtual Socket")
+    String coresPerSocket();
+
+    @DefaultStringValue("Virtual Sockets")
+    String numOfSockets();
+
     @DefaultStringValue("Operating System")
     String osVmPopup();
 

@@ -508,9 +508,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
-        template.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
-        template.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
-                / (Integer) model.getNumOfSockets().getEntity());
+        template.setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
+        template.setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+                / (Integer) model.getNumOfSockets().getSelectedItem());
         template.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         template.setis_auto_suspend(false);
         template.setis_stateless((Boolean) model.getIsStateless().getEntity());

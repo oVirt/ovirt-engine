@@ -134,8 +134,11 @@
 		.cpuPinningStyle {
 		}
 
-		.expanderContent {
+		.expanderContent,.generalExpanderContent {
 			padding-left: 10px;
+		}
+		
+		.expanderContent {
 			float: left;
 		}
 
@@ -174,12 +177,21 @@
                         </g:FlowPanel>
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
                             <e:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
-                            <e:EntityModelSliderWithTextBoxEditor ui:field="totalCPUCoresEditor" />
-							<e:EntityModelSliderWithTextBoxEditor ui:field="numOfSocketsEditor" />
+                            <e:EntityModelTextBoxEditor ui:field="totalvCPUsEditor" />
+						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.sectionPanel}">
+							<d:AdvancedParametersExpander ui:field="generalAdvancedParameterExpander"/>
+							<g:FlowPanel ui:field="generalAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
+								<e:ListModelListBoxEditor ui:field="corePerSocketEditor" />
+								<e:ListModelListBoxEditor ui:field="numOfSocketsEditor" />
+							</g:FlowPanel>
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
 							<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" addStyleNames="{style.checkbox}" />
+						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.sectionPanel}">
+							
 						</g:FlowPanel>
 						<g:Label ui:field="generalWarningMessage" addStyleNames="{style.warningMessageLabel}" />
 					</g:FlowPanel>

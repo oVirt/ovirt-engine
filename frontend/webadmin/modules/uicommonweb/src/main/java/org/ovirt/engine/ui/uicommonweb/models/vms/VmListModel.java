@@ -1622,9 +1622,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
-        tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
-        tempVar.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
-                / (Integer) model.getNumOfSockets().getEntity());
+        tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
+        tempVar.setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+                / (Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         tempVar.setis_auto_suspend(false);
         tempVar.setis_stateless((Boolean) model.getIsStateless().getEntity());
@@ -2178,9 +2178,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
-        getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
-        getcurrentVm().setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
-                / (Integer) model.getNumOfSockets().getEntity());
+        getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
+        getcurrentVm().setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+                / (Integer) model.getNumOfSockets().getSelectedItem());
         getcurrentVm().setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         getcurrentVm().setis_auto_suspend(false);
         getcurrentVm().setis_stateless((Boolean) model.getIsStateless().getEntity());

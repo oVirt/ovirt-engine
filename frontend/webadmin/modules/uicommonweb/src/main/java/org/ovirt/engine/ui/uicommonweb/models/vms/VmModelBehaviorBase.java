@@ -181,7 +181,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         {
             getModel().getTimeZone()
                     .setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(index),
-                    new Linq.TimeZonePredicate(oldTimeZoneKey)));
+                            new Linq.TimeZonePredicate(oldTimeZoneKey)));
         }
         else
         {
@@ -249,15 +249,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void InitPriority(int priority)
     {
-        AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(new Object[] {getModel(), priority},
+        AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(new Object[] { getModel(), priority },
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
-                        Object[] array = (Object[])target;
-                        UnitVmModel model = (UnitVmModel)array[0];
-                        int vmPriority = (Integer)array[1];
-                        cachedMaxPriority = (Integer)returnValue;
+                        Object[] array = (Object[]) target;
+                        UnitVmModel model = (UnitVmModel) array[0];
+                        int vmPriority = (Integer) array[1];
+                        cachedMaxPriority = (Integer) returnValue;
 
                         int value = AsyncDataProvider.GetRoundedPriority(vmPriority, cachedMaxPriority);
                         EntityModel tempVar = new EntityModel();
@@ -434,38 +434,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public int maxCpus = 0;
     public int maxCpusPerSocket = 0;
-
-    protected void UpdateNumOfSockets()
-    {
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
-        if (cluster == null)
-        {
-            return;
-        }
-
-        String version = cluster.getcompatibility_version().toString();
-
-        AsyncDataProvider.GetMaxNumOfVmSockets(new AsyncQuery(new Object[] { this, getModel() },
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        Object[] array = (Object[]) target;
-                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) array[0];
-                        UnitVmModel model = (UnitVmModel) array[1];
-                        model.getNumOfSockets().setMax((Integer) returnValue);
-                        model.getNumOfSockets().setMin(1);
-                        model.getNumOfSockets().setInterval(1);
-                        model.getNumOfSockets().setIsAllValuesSet(true);
-                        if (model.getNumOfSockets().getEntity() == null)
-                        {
-                            model.getNumOfSockets().setEntity(1);
-                        }
-                        behavior.UpdataMaxVmsInPool();
-
-                    }
-                }, getModel().getHash()), version);
-    }
+    public int maxNumOfSockets = 0;
 
     public void UpdataMaxVmsInPool() {
         AsyncDataProvider.GetMaxVmsInPool(new AsyncQuery(this,
@@ -492,7 +461,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.maxCpus = (Integer) returnValue;
                         behavior.PostUpdateNumOfSockets2();
-
                     }
                 }, getModel().getHash()), version);
     }
@@ -509,51 +477,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.maxCpusPerSocket = (Integer) returnValue;
-                        behavior.UpdateTotalCpus();
-
+                        behavior.totalCpuCoresChanged();
                     }
                 }, getModel().getHash()), version);
-    }
-
-    public void UpdateTotalCpus()
-    {
-        int numOfSockets = Integer.parseInt(getModel().getNumOfSockets().getEntity().toString());
-
-        int totalCPUCores =
-                getModel().getTotalCPUCores().getEntity() != null ? Integer.parseInt(getModel().getTotalCPUCores()
-                        .getEntity()
-                        .toString()) : 0;
-
-        int realMaxCpus = maxCpus < numOfSockets * maxCpusPerSocket ? maxCpus : numOfSockets * maxCpusPerSocket;
-
-        if (maxCpus == 0 || maxCpusPerSocket == 0)
-        {
-            return;
-        }
-
-        getModel().getTotalCPUCores().setMax(realMaxCpus - (realMaxCpus % numOfSockets));
-        getModel().getTotalCPUCores().setMin(numOfSockets);
-        getModel().getTotalCPUCores().setInterval(numOfSockets);
-
-        // update value if needed
-        // if the slider in the range but not on tick update it to lowest tick
-        if ((totalCPUCores % numOfSockets != 0) && totalCPUCores < getModel().getTotalCPUCores().getMax()
-                && totalCPUCores > getModel().getTotalCPUCores().getMin())
-        {
-            getModel().getTotalCPUCores().setEntity(totalCPUCores - (totalCPUCores % numOfSockets));
-        }
-        // if the value is lower than range update it to min
-        else if (totalCPUCores < getModel().getTotalCPUCores().getMin())
-        {
-            getModel().getTotalCPUCores().setEntity((int) getModel().getTotalCPUCores().getMin());
-        }
-        // if the value is higher than range update it to max
-        else if (totalCPUCores > getModel().getTotalCPUCores().getMax())
-        {
-            getModel().getTotalCPUCores().setEntity((int) getModel().getTotalCPUCores().getMax());
-        }
-
-        getModel().getTotalCPUCores().setIsAllValuesSet(true);
     }
 
     public void InitDisks()
@@ -762,4 +688,194 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             }
         }
     }
+
+    public void numOfSocketChanged() {
+        int numOfSockets = extractIntFromListModel(getModel().getNumOfSockets());
+        int totalCpuCores = getTotalCpuCores();
+
+        if (numOfSockets == 0 || numOfSockets == 0) {
+            return;
+        }
+
+        getModel().getCoresPerSocket().setSelectedItem(totalCpuCores / numOfSockets);
+    }
+
+    public void coresPerSocketChanged() {
+        int coresPerSocket = extractIntFromListModel(getModel().getCoresPerSocket());
+        int totalCpuCores = getTotalCpuCores();
+
+        if (coresPerSocket == 0 || totalCpuCores == 0) {
+            return;
+        }
+
+        // no need to check, if the new value is in the list of items, because it is filled
+        // only by enabled values
+        getModel().getNumOfSockets().setSelectedItem(totalCpuCores / coresPerSocket);
+    }
+
+    public void totalCpuCoresChanged() {
+        int totalCpuCores = getTotalCpuCores();
+
+        int coresPerSocket = extractIntFromListModel(getModel().getCoresPerSocket());
+        int numOfSockets = extractIntFromListModel(getModel().getNumOfSockets());
+
+        // if incorrect value put - e.g. not an integer
+        getModel().getCoresPerSocket().setIsChangable(totalCpuCores != 0);
+        getModel().getNumOfSockets().setIsChangable(totalCpuCores != 0);
+        if (totalCpuCores == 0) {
+            return;
+        }
+
+        // if has not been yet inited, init to 1
+        if (numOfSockets == 0 || coresPerSocket == 0) {
+            initListToOne(getModel().getCoresPerSocket());
+            initListToOne(getModel().getNumOfSockets());
+            coresPerSocket = 1;
+            numOfSockets = 1;
+        }
+
+        List<Integer> coresPerSocets = findIndependentPossibleValues(maxCpusPerSocket);
+        List<Integer> sockets = findIndependentPossibleValues(maxNumOfSockets);
+
+        getModel().getCoresPerSocket().setItems(filterPossibleValues(coresPerSocets, sockets));
+        getModel().getNumOfSockets().setItems(filterPossibleValues(sockets, coresPerSocets));
+
+        if (totalCpuCores % coresPerSocket == 0) {
+            // the value selected in the coresPerSocket is compatible with the new totalCPUCores,
+            // so keep it and adjust the numOfSockets according to it
+            int newNumOfSockets = totalCpuCores / coresPerSocket;
+            if (newNumOfSockets <= maxNumOfSockets) {
+                getModel().getNumOfSockets().setSelectedItem(newNumOfSockets);
+                getModel().getCoresPerSocket().setSelectedItem(coresPerSocket);
+            } else {
+                // we need to compose it from more cores on the available sockets
+                composeCoresAndSocketsWhenDontFitInto(totalCpuCores);
+            }
+        } else {
+            // the value selected in coresPerSocket is not compatible with the new totalCPUCores,
+            // so erase it to 1 and select the numOfSockets to be the same as the totalCPUCores
+            if (totalCpuCores <= maxNumOfSockets) {
+                getModel().getCoresPerSocket().setSelectedItem(1);
+                getModel().getNumOfSockets().setSelectedItem(totalCpuCores);
+            } else {
+                // we need to compose it from more cores on the available sockets
+                composeCoresAndSocketsWhenDontFitInto(totalCpuCores);
+            }
+        }
+
+        boolean isNumOfVcpusCorrect = isNumOfSocketsCorrect(totalCpuCores);
+
+        getModel().getCoresPerSocket().setIsChangable(isNumOfVcpusCorrect);
+        getModel().getNumOfSockets().setIsChangable(isNumOfVcpusCorrect);
+    }
+
+    public boolean isNumOfSocketsCorrect(int totalCpuCores) {
+        boolean isNumOfVcpusCorrect =
+                (extractIntFromListModel(getModel().getCoresPerSocket()) * extractIntFromListModel(getModel().getNumOfSockets())) == totalCpuCores;
+        return isNumOfVcpusCorrect;
+    }
+
+    /**
+     * The hard way of finding, what the correct combination of the sockets and cores/socket should be (e.g. checking
+     * all possible combinations)
+     */
+    private void composeCoresAndSocketsWhenDontFitInto(int totalCpuCores) {
+        List<Integer> possibleSockets = findIndependentPossibleValues(maxNumOfSockets);
+        List<Integer> possibleCoresPerSocket = findIndependentPossibleValues(maxCpusPerSocket);
+
+        // the more sockets I can use, the better
+        Collections.reverse(possibleSockets);
+
+        for (Integer socket : possibleSockets) {
+            for (Integer coresPerSocket : possibleCoresPerSocket) {
+                if (socket * coresPerSocket == totalCpuCores) {
+                    getModel().getCoresPerSocket().setSelectedItem(coresPerSocket);
+                    getModel().getNumOfSockets().setSelectedItem(socket);
+                    return;
+                }
+            }
+        }
+    }
+
+    protected int getTotalCpuCores() {
+        try {
+            return getModel().getTotalCPUCores().getEntity() != null ? Integer.parseInt(getModel().getTotalCPUCores()
+                    .getEntity()
+                    .toString()) : 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private int extractIntFromListModel(ListModel model) {
+        return model.getSelectedItem() != null ? Integer.parseInt(model
+                .getSelectedItem()
+                .toString())
+                : 0;
+    }
+
+    private void initListToOne(ListModel list) {
+        list.setItems(Arrays.asList(1));
+        list.setSelectedItem(1);
+    }
+
+    protected void UpdateNumOfSockets()
+    {
+        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        if (cluster == null)
+        {
+            return;
+        }
+
+        String version = cluster.getcompatibility_version().toString();
+
+        AsyncDataProvider.GetMaxNumOfVmSockets(new AsyncQuery(new Object[] { this, getModel() },
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+
+                        Object[] array = (Object[]) target;
+                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) array[0];
+                        behavior.maxNumOfSockets = ((Integer) returnValue);
+                        behavior.UpdataMaxVmsInPool();
+
+                    }
+                }, getModel().getHash()), version);
+    }
+
+    /**
+     * Returns a list of integers which can divide the param
+     */
+    private List<Integer> findIndependentPossibleValues(int max) {
+        List<Integer> res = new ArrayList<Integer>();
+        int totalCPUCores = getTotalCpuCores();
+
+        for (int i = 1; i <= Math.min(totalCPUCores, max); i++) {
+            if (totalCPUCores % i == 0) {
+                res.add(i);
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Filters out the values, which can not be used in conjuction with the others to reach the total CPUs
+     */
+    private List<Integer> filterPossibleValues(List<Integer> candidates, List<Integer> others) {
+        List<Integer> res = new ArrayList<Integer>();
+        int currentCpusCores = getTotalCpuCores();
+
+        for (Integer candidate : candidates) {
+            for (Integer other : others) {
+                if (candidate * other == currentCpusCores) {
+                    res.add(candidate);
+                    break;
+                }
+            }
+        }
+
+        return res;
+    }
+
 }

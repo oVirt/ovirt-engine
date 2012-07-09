@@ -644,9 +644,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
-        tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
-        tempVar.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
-                / (Integer) model.getNumOfSockets().getEntity());
+        tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
+        tempVar.setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+                / (Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         tempVar.setis_auto_suspend(false);
         tempVar.setis_stateless((Boolean) model.getIsStateless().getEntity());
@@ -1286,9 +1286,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
                 .getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey() : ""); //$NON-NLS-1$
-        gettempVm().setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
-        gettempVm().setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
-                / (Integer) model.getNumOfSockets().getEntity());
+        gettempVm().setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
+        gettempVm().setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+                / (Integer) model.getNumOfSockets().getSelectedItem());
         gettempVm().setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         gettempVm().setis_auto_suspend(false);
         gettempVm().setis_stateless((Boolean) model.getIsStateless().getEntity());

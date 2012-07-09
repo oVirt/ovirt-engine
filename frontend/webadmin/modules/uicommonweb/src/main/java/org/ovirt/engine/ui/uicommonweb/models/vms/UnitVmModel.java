@@ -36,7 +36,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.RangeEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
@@ -44,12 +43,13 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ByteSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class UnitVmModel extends Model {
 
     public static final int WINDOWS_VM_NAME_MAX_LIMIT = 15;
@@ -463,28 +463,40 @@ public class UnitVmModel extends Model {
         privateTimeZone = value;
     }
 
-    private RangeEntityModel privateNumOfSockets;
+    private ListModel privateNumOfSockets;
 
-    public RangeEntityModel getNumOfSockets()
+    public ListModel getNumOfSockets()
     {
         return privateNumOfSockets;
     }
 
-    private void setNumOfSockets(RangeEntityModel value)
+    private void setNumOfSockets(ListModel value)
     {
         privateNumOfSockets = value;
     }
 
-    private RangeEntityModel privateTotalCPUCores;
+    private EntityModel privateTotalCPUCores;
 
-    public RangeEntityModel getTotalCPUCores()
+    public EntityModel getTotalCPUCores()
     {
         return privateTotalCPUCores;
     }
 
-    private void setTotalCPUCores(RangeEntityModel value)
+    private void setTotalCPUCores(EntityModel value)
     {
         privateTotalCPUCores = value;
+    }
+
+    private ListModel privateCoresPerSocket;
+
+    public ListModel getCoresPerSocket()
+    {
+        return privateCoresPerSocket;
+    }
+
+    private void setCoresPerSocket(ListModel value)
+    {
+        privateCoresPerSocket = value;
     }
 
     private ListModel privateDefaultHost;
@@ -982,7 +994,6 @@ public class UnitVmModel extends Model {
         setDisplayProtocol(new ListModel());
         setSecondBootDevice(new ListModel());
         setPriority(new ListModel());
-        setTotalCPUCores(new RangeEntityModel());
 
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
@@ -1014,8 +1025,14 @@ public class UnitVmModel extends Model {
         setMemSize(new EntityModel());
         getMemSize().getEntityChangedEvent().addListener(this);
 
-        setNumOfSockets(new RangeEntityModel());
-        getNumOfSockets().getEntityChangedEvent().addListener(this);
+        setTotalCPUCores(new EntityModel());
+        getTotalCPUCores().getEntityChangedEvent().addListener(this);
+
+        setNumOfSockets(new ListModel());
+        getNumOfSockets().getSelectedItemChangedEvent().addListener(this);
+
+        setCoresPerSocket(new ListModel());
+        getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
 
         setRunVMOnSpecificHost(new EntityModel());
         getRunVMOnSpecificHost().getEntityChangedEvent().addListener(this);
@@ -1161,6 +1178,14 @@ public class UnitVmModel extends Model {
                 DisplayProtocol_SelectedItemChanged(sender, args);
                 InitUsbPolicy();
             }
+            else if (sender == getNumOfSockets())
+            {
+                NumOfSockets_EntityChanged(sender, args);
+            }
+            else if (sender == getCoresPerSocket())
+            {
+                CoresPerSocket_EntityChanged(sender, args);
+            }
         }
         else if (ev.equals(EntityModel.EntityChangedEventDefinition))
         {
@@ -1168,9 +1193,9 @@ public class UnitVmModel extends Model {
             {
                 MemSize_EntityChanged(sender, args);
             }
-            else if (sender == getNumOfSockets())
+            else if (sender == getTotalCPUCores())
             {
-                NumOfSockets_EntityChanged(sender, args);
+                TotalCPUCores_EntityChanged(sender, args);
             }
             else if (sender == getRunVMOnSpecificHost())
             {
@@ -1526,7 +1551,25 @@ public class UnitVmModel extends Model {
 
     private void NumOfSockets_EntityChanged(Object sender, EventArgs args)
     {
-        behavior.UpdateTotalCpus();
+        behavior.numOfSocketChanged();
+    }
+
+    private void TotalCPUCores_EntityChanged(Object sender, EventArgs args) {
+        // do not listen on changes while the totalCpuCoresChanged is adjusting them
+        getNumOfSockets().getSelectedItemChangedEvent().removeListener(this);
+        getTotalCPUCores().getEntityChangedEvent().removeListener(this);
+        getCoresPerSocket().getSelectedItemChangedEvent().removeListener(this);
+
+        behavior.totalCpuCoresChanged();
+
+        // start listening again
+        getTotalCPUCores().getEntityChangedEvent().addListener(this);
+        getNumOfSockets().getSelectedItemChangedEvent().addListener(this);
+        getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
+    }
+
+    private void CoresPerSocket_EntityChanged(Object sender, EventArgs args) {
+        behavior.coresPerSocketChanged();
     }
 
     private void RunVMOnSpecificHost_EntityChanged(Object sender, EventArgs args)
@@ -1799,6 +1842,11 @@ public class UnitVmModel extends Model {
         getMinAllocatedMemory().ValidateEntity(new IValidation[] { new ByteSizeValidation() });
         getOSType().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
+        getTotalCPUCores().ValidateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new IntegerValidation(1, behavior.maxCpus),
+                new TotalCpuCoresComposableValidation() });
+
         getDescription().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
         if (getOSType().getIsValid())
         {
@@ -1947,6 +1995,22 @@ public class UnitVmModel extends Model {
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
                 && getKernel_path().getIsValid() && behavior.Validate()
                 && customPropertySheetValid;
+    }
+
+    class TotalCpuCoresComposableValidation implements IValidation {
+
+        @Override
+        public ValidationResult Validate(Object value) {
+            boolean isOk = behavior.isNumOfSocketsCorrect(Integer.parseInt(getTotalCPUCores().getEntity().toString()));
+            ValidationResult res = new ValidationResult();
+            res.setSuccess(isOk);
+            res.setReasons(Arrays.asList(ConstantsManager.getInstance()
+                    .getMessages()
+                    .incorrectVCPUNumber()));
+            return res;
+
+        }
+
     }
 
     private void ValidateMemorySize(EntityModel model, int maxMemSize, int minMemSize)

@@ -8,7 +8,6 @@
             border: none;
             padding: 0px;
             margin: 5px;
-            float: left;
         }
 	</ui:style>
 
