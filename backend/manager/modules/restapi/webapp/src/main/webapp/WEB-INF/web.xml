@@ -6,6 +6,12 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
+  <!-- Disable entity expansion in RESTEasy: -->
+  <context-param>
+    <param-name>resteasy.document.expand.entity.references</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
    <!-- <security-constraint>
       <web-resource-collection>
         <web-resource-name>Protected Context</web-resource-name>
