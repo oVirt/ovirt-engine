@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class XmlRpcStruct {
 
-    private Map<String, Object> innerMap;
+    private final Map<String, Object> innerMap;
 
     public XmlRpcStruct(Map<String, Object> innerMap) {
         this.innerMap = innerMap;
@@ -94,6 +94,11 @@ public class XmlRpcStruct {
 
     public Map<String, Object> getInnerMap() {
         return innerMap;
+    }
+
+    @Override
+    public String toString() {
+        return innerMap.toString();
     }
 
 }
