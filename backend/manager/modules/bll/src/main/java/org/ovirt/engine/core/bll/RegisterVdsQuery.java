@@ -120,7 +120,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     return false;
                 }
                 Long otp = getParameters().getOtp();
-                if (otp != null && !isValidOtp(vds, otp)) {
+                if (!isValidOtp(vds, otp)) {
                     returnValue.setExceptionString(String.format("Invalid OTP for host %s", hostName));
                     return false;
                 }
@@ -137,6 +137,12 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return true;
     }
 
+    /**
+     * the method checks if the given otp is valid, will return false for null as well
+     * @param vds
+     * @param otp
+     * @return boolean indicating whether the given otp is valid or not
+     */
     private boolean isValidOtp(VDS vds, Long otp) {
         if (otp != null && otp.longValue() == vds.getOtpValidity()) {
             Integer otpExpiration = Config.<Integer> GetValue(ConfigValues.OtpExpirationInSeconds);
