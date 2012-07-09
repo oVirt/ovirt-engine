@@ -114,6 +114,10 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             volume.disableNFS();
         }
 
+        if (volume.getAccessProtocols().contains(AccessProtocol.CIFS)) {
+            volume.enableCifs();
+        }
+
         VDSReturnValue returnValue = runVdsCommand(
                 VDSCommandType.CreateGlusterVolume,
                 new CreateGlusterVolumeVDSParameters(upServer.getId(), volume));
