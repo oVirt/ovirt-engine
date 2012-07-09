@@ -3,6 +3,12 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import junit.framework.Assert;
+
+import org.apache.commons.collections.MapUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,6 +80,25 @@ public class AuditLogDirectorTest {
 
         AuditLogDirector.log(logableObject1, AuditLogType.VDS_SLOW_STORAGE_RESPONSE_TIME);
         Mockito.verify(auditLogDao, Mockito.times(1)).save(Mockito.any(AuditLog.class));
+    }
+
+    @Test
+    public void testResolveUnknownVariable() {
+        final String message = "This is my ${Variable}";
+        final String expectedResolved = "This is my <UNKNOWN>";
+        Map<String, String> values = MapUtils.EMPTY_MAP;
+        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
+        Assert.assertEquals(expectedResolved, resolvedMessage);
+    }
+
+    @Test
+    public void testResolveKnownVariable() {
+        final String message = "This is my ${Variable}";
+        final String expectedResolved = "This is my value";
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("variable", "value");
+        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
+        Assert.assertEquals(expectedResolved, resolvedMessage);
     }
 
 }

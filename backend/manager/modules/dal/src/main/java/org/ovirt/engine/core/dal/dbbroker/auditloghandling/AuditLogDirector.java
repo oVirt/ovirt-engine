@@ -27,6 +27,7 @@ public final class AuditLogDirector {
     private static final Map<AuditLogType, AuditLogSeverity> mSeverities =
             new EnumMap<AuditLogType, AuditLogSeverity>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
+    private static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
 
     static {
         initMessages();
@@ -856,8 +857,8 @@ public final class AuditLogDirector {
             // get value from value map
             value = values.get(token.toLowerCase());
             if (value == null || value.isEmpty()) {
-                // replace value with token if value not defined
-                value = token;
+                // replace value with UNKNOWN_VARIABLE_VALUE if value not defined
+                value = UNKNOWN_VARIABLE_VALUE;
             }
             matcher.appendReplacement(buffer, Matcher.quoteReplacement(value)); // put the value into message
         }
