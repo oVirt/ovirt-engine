@@ -2181,7 +2181,8 @@ public class HostInterfaceListModel extends SearchableListModel
     public void OnSetupNetworks() {
         final HostSetupNetworksModel model = (HostSetupNetworksModel) getWindow();
 
-        int conectivityTimeout = 60000;
+        // Determines the connectivity timeout in seconds
+        int conectivityTimeout = 120;
 
         SetupNetworksParameters params = new SetupNetworksParameters();
         params.setInterfaces(model.getAllNics());
