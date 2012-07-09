@@ -13,6 +13,7 @@ SELECT     storage_domain_static.id as id,
 			storage_domain_static.storage_domain_type as storage_domain_type,
 			storage_domain_static.storage_type as storage_type,
                         storage_domain_static.storage_domain_format_type as storage_domain_format_type,
+            storage_domain_static.last_time_used_as_master as last_time_used_as_master,
 			storage_pool.name as storage_pool_name
 FROM        storage_domain_static LEFT OUTER JOIN
 storage_pool_iso_map on storage_pool_iso_map.storage_id = storage_domain_static.id
@@ -250,6 +251,7 @@ storage_domain_static.id as id,
 		storage_domain_static.storage_type as storage_type,
 		storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
+        storage_domain_static.last_time_used_as_master as last_time_used_as_master,
         storage_pool_iso_map.owner as owner,
         fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status,
 	storage_domain_static.recoverable as recoverable
@@ -267,6 +269,7 @@ SELECT
 storage_domain_static.id as id, storage_domain_static.storage as storage, storage_domain_static.storage_name as storage_name,
 		storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
+        storage_domain_static.last_time_used_as_master as last_time_used_as_master,
 		null as status, null as owner, null as storage_pool_id, null as storage_pool_name,
 		storage_domain_dynamic.available_disk_size as available_disk_size,
 		storage_domain_dynamic.used_disk_size as used_disk_size,
@@ -841,7 +844,8 @@ SELECT     storage_pool.id as id, storage_pool.name as name, storage_pool.descri
 		   storage_pool._update_date as _update_date, storage_pool_iso_map.storage_id as storage_id, storage_pool_iso_map.storage_pool_id as storage_pool_id,
 		   storage_pool_iso_map.owner as owner, storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                    storage_domain_static.storage_domain_format_type as storage_domain_format_type,
-		   storage_domain_static.storage_name as storage_name, storage_domain_static.storage as storage
+		   storage_domain_static.storage_name as storage_name, storage_domain_static.storage as storage,
+		   storage_domain_static.last_time_used_as_master as last_time_used_as_master
 FROM         storage_pool LEFT OUTER JOIN
 		   storage_pool_iso_map ON storage_pool.id = storage_pool_iso_map.storage_pool_id LEFT OUTER JOIN
 		   storage_domain_static ON storage_pool_iso_map.storage_id = storage_domain_static.id;
@@ -876,6 +880,7 @@ storage_domain_static.id,
 		storage_domain_static.storage_type,
 		storage_domain_static.storage_domain_type,
                 storage_domain_static.storage_domain_format_type,
+        storage_domain_static.last_time_used_as_master as last_time_used_as_master,
 		fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) AS
 		storage_domain_shared_status,
 		vds_groups.vds_group_id,

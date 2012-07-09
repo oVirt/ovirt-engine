@@ -1,18 +1,17 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.persistence.Transient;
 
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 
-public class storage_domains extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
+public class storage_domains extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -6162192446628804305L;
 
     public storage_domains() {
@@ -116,7 +115,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
     public void setstorage_name(String value) {
         if (!StringHelper.EqOp(getStorageStaticData().getstorage_name(), value)) {
             getStorageStaticData().setstorage_name(value);
-            OnPropertyChanged(new PropertyChangedEventArgs("storage_name"));
         }
     }
 
@@ -134,7 +132,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
 
     public void setavailable_disk_size(Integer value) {
         getStorageDynamicData().setavailable_disk_size(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("available_disk_size"));
         UpdateTotalDiskSize();
         UpdateOverCommitPercent();
     }
@@ -153,7 +150,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
 
     public void setstorage_domain_over_commit_percent(int value) {
         _storage_domain_over_commit_percent = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("storage_domain_over_commit_percent"));
     }
 
     private int _committedDiskSize;
@@ -172,9 +168,7 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
     }
 
     public void setused_disk_size(Integer value) {
-
         getStorageDynamicData().setused_disk_size(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("used_disk_size"));
         UpdateTotalDiskSize();
     }
 
@@ -200,7 +194,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         value = (value == null) ? 0 : value;
         if (!totalDiskSize.equals(value)) {
             totalDiskSize = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TotalDiskSize"));
         }
     }
 
@@ -212,7 +205,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         StorageDomainStatus curStatus = getStoragePoolIsoMapData().getstatus();
         if (curStatus == null || curStatus != value) {
             getStoragePoolIsoMapData().setstatus(value);
-            OnPropertyChanged(new PropertyChangedEventArgs("status"));
         }
     }
 
@@ -232,7 +224,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
 
     public void setstorage_pool_name(String value) {
         storage_pool_nameField = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("storage_name"));
     }
 
     public StorageType getstorage_type() {
@@ -250,10 +241,7 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
     }
 
     public void setstorage_domain_shared_status(StorageDomainSharedStatus value) {
-        if (_storageDomainSharedStatus != value) {
-            _storageDomainSharedStatus = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("storage_domain_shared_status"));
-        }
+        _storageDomainSharedStatus = value;
     }
 
     public StorageDomainType getstorage_domain_type() {
@@ -262,7 +250,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
 
     public void setstorage_domain_type(StorageDomainType value) {
         getStorageStaticData().setstorage_domain_type(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("storage_domain_type"));
     }
 
     public StorageFormatType getStorageFormat() {
@@ -282,25 +269,34 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         return vdcQueryableId;
     }
 
-    //this setter is in use only by Frontend project
+    // this setter is in use only by Frontend project
     public void setQueryableId(String value) {
         this.vdcQueryableId = value;
     }
 
-    private static final java.util.ArrayList<String> _spProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "storage_name", "status", "used_disk_size", "available_disk_size",
-                    "committed_disk_size", "storage_domain_type", "storage_domain_shared_status", "storage" }));
-
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return _spProperties;
+    public boolean isAutoRecoverable() {
+        return _staticData.isAutoRecoverable();
     }
 
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        /* if (PropertyChanged != null) */
-        {
-            /* PropertyChanged(this, e); */
-        }
+    public void setAutoRecoverable(boolean autoRecoverable) {
+        _staticData.setAutoRecoverable(autoRecoverable);
+    }
+
+    public long getLastTimeUsedAsMaster() {
+        return _staticData.getLastTimeUsedAsMaster();
+    }
+
+    public void setLastTimeUsedAsMaster(long lastTimeUsedAsMaster) {
+        _staticData.setLastTimeUsedAsMaster(lastTimeUsedAsMaster);
+    }
+
+    private static final ArrayList<String> _spProperties = new ArrayList<String>(
+            Arrays.asList("storage_name", "status", "used_disk_size", "available_disk_size",
+                    "committed_disk_size", "storage_domain_type", "storage_domain_shared_status", "storage"));
+
+    @Override
+    public ArrayList<String> getChangeablePropertiesList() {
+        return _spProperties;
     }
 
     @Override
@@ -355,13 +351,4 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
             return false;
         return true;
     }
-
-    public boolean isAutoRecoverable() {
-        return _staticData.isAutoRecoverable();
-    }
-
-    public void setAutoRecoverable(boolean autoRecoverable) {
-        _staticData.setAutoRecoverable(autoRecoverable);
-    }
-
 }

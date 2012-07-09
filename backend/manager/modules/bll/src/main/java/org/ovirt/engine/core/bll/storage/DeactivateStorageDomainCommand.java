@@ -28,12 +28,12 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
-    protected Guid _newMasterStorageDomainId = new Guid();
+    protected Guid _newMasterStorageDomainId = Guid.Empty;
     private storage_domains _newMaster;
 
-    protected storage_domains getNewMaster() {
-        if (_newMaster == null && _newMasterStorageDomainId.equals(Guid.Empty)) {
-            _newMaster = electNewMaster();
+    protected storage_domains getNewMaster(boolean duringReconstruct) {
+        if (_newMaster == null && Guid.Empty.equals(_newMasterStorageDomainId)) {
+            _newMaster = electNewMaster(duringReconstruct);
         } else if (_newMaster == null) {
             _newMaster = getStorageDomainDAO().get(_newMasterStorageDomainId);
         }
@@ -207,7 +207,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     }
                     getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                     if (!Guid.Empty.equals(_newMasterStorageDomainId)) {
-                        storage_pool_iso_map mapOfNewMaster = getNewMaster().getStoragePoolIsoMapData();
+                        storage_pool_iso_map mapOfNewMaster = getNewMaster(false).getStoragePoolIsoMapData();
                         getCompensationContext().snapshotEntityStatus(mapOfNewMaster, mapOfNewMaster.getstatus());
                         mapOfNewMaster.setstatus(StorageDomainStatus.Active);
                         getStoragePoolIsoMapDAO().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getstatus());
@@ -229,26 +229,28 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      */
     protected void ProceedStorageDomainTreatmentByDomainType(final boolean duringReconstruct) {
         if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
-            if (getNewMaster() != null) {
+            final storage_domains newMaster = getNewMaster(duringReconstruct);
+            if (newMaster != null) {
                 // increase master domain version
                 executeInNewTransaction(new TransactionMethod<Object>() {
 
                     @Override
                     public Object runInTransaction() {
-                        storage_pool_iso_map newMasterMap = getNewMaster().getStoragePoolIsoMapData();
+                        storage_pool_iso_map newMasterMap = newMaster.getStoragePoolIsoMapData();
                         // We do not need to compensate storage pool, it will be committed if run during reconstruct
                         getStoragePool().setmaster_domain_version(getStoragePool().getmaster_domain_version() + 1);
-                        getCompensationContext().snapshotEntity(getNewMaster().getStorageStaticData());
-                        getNewMaster().setstorage_domain_type(StorageDomainType.Master);
-                        _newMasterStorageDomainId = getNewMaster().getId();
+                        newMaster.getStorageStaticData().setLastTimeUsedAsMaster(System.currentTimeMillis());
+                        getCompensationContext().snapshotEntity(newMaster.getStorageStaticData());
+                        newMaster.setstorage_domain_type(StorageDomainType.Master);
+                        _newMasterStorageDomainId = newMaster.getId();
                         if (!duringReconstruct) {
                             getCompensationContext().snapshotEntityStatus(newMasterMap, newMasterMap.getstatus());
-                            getNewMaster().setstatus(StorageDomainStatus.Locked);
+                            newMaster.setstatus(StorageDomainStatus.Locked);
                             getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getstatus());
                         }
                         DbFacade.getInstance()
                                 .getStorageDomainStaticDAO()
-                                .update(getNewMaster().getStorageStaticData());
+                                .update(newMaster.getStorageStaticData());
                         getCompensationContext().snapshotEntity(getStorageDomain().getStorageStaticData());
                         getStorageDomain().setstorage_domain_type(StorageDomainType.Data);
                         DbFacade.getInstance()

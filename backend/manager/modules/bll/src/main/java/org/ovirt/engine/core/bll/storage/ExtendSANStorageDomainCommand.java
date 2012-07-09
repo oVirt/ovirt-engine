@@ -23,7 +23,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
 
     @Override
     protected void executeCommand() {
-        SetStorageDomainStatus(StorageDomainStatus.Locked);
+        SetStorageDomainStatus(StorageDomainStatus.Locked, null);
         for (LUNs lun : getParameters().getLunsList()) {
             proceedLUNInDb(lun, getStorageDomain().getstorage_type());
         }
@@ -34,7 +34,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                         VDSCommandType.ExtendStorageDomain,
                         new ExtendStorageDomainVDSCommandParameters(getStoragePoolId().getValue(), getStorageDomain()
                                 .getId(), getParameters().getLunIds())).getSucceeded()) {
-            SetStorageDomainStatus(StorageDomainStatus.Active);
+            SetStorageDomainStatus(StorageDomainStatus.Active, null);
             setSucceeded(true);
         }
     }

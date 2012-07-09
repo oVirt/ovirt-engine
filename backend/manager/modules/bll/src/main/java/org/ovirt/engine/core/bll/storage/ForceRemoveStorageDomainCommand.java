@@ -66,7 +66,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                                 new IrsBaseVDSCommandParameters(getStoragePool().getId()));
             }
             if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
-                CalcStoragePoolStatusByDomainsStatus();
+                calcStoragePoolStatusByDomainsStatus();
             }
         }
         setSucceeded(true);
@@ -88,7 +88,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
 
         if (returnValue && getStorageDomain().getstorage_domain_type() == StorageDomainType.Master
                 && getStoragePool() != null) {
-            if (electNewMaster() == null) {
+            if (electNewMaster(false) == null) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
             } else if (!InitializeVds()) {

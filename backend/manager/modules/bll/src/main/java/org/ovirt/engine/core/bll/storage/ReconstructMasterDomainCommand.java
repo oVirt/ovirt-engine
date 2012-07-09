@@ -30,14 +30,11 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@SuppressWarnings("serial")
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameters> extends
         DeactivateStorageDomainCommand<T> {
@@ -57,9 +54,6 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     @Override
     protected boolean canDoAction() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RECONSTRUCT_MASTER);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
-
         List<storage_pool_iso_map> poolDomains = DbFacade.getInstance()
                 .getStoragePoolIsoMapDAO().getAllForStoragePool(getStoragePool().getId());
         for (storage_pool_iso_map poolDomain : poolDomains) {
@@ -72,18 +66,31 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         return InitializeVds();
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RECONSTRUCT_MASTER);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+    }
+
     protected void addInvalidSDStatusMessage(StorageDomainStatus status) {
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
         addCanDoActionMessage(String.format("$status %1$s", status));
     }
 
-    protected Boolean reconstructMaster() {
+
+    protected boolean reconstructMaster() {
         ProceedStorageDomainTreatmentByDomainType(true);
 
         // To issue a reconstructMaster you need to set the domain inactive
         if (getParameters().isInactive()) {
-            SetStorageDomainStatus(StorageDomainStatus.InActive);
-            CalcStoragePoolStatusByDomainsStatus();
+            executeInNewTransaction(new TransactionMethod<Void>() {
+                public Void runInTransaction() {
+                    SetStorageDomainStatus(StorageDomainStatus.InActive, getCompensationContext());
+                    calcStoragePoolStatusByDomainsStatus();
+                    getCompensationContext().stateChanged();
+                    return null;
+                }
+            });
         }
 
         if (_isLastMaster) {
@@ -92,20 +99,19 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
         // Pause the timers for the domain error handling
         runVdsCommand(VDSCommandType.MarkPoolInReconstructMode,
-            new MarkPoolInReconstructModeVDSCommandParameters(
-                getStoragePoolId().getValue(), ReconstructMarkAction.ClearJobs));
-
-        Boolean commandSucceeded = stopSpm();
+                new MarkPoolInReconstructModeVDSCommandParameters(
+                        getStoragePoolId().getValue(), ReconstructMarkAction.ClearJobs));
+        boolean commandSucceeded = stopSpm();
 
         final List<String> disconnectPoolFormats = Config.<List<String>> GetValue(
                 ConfigValues.DisconnectPoolOnReconstruct);
 
-        if (disconnectPoolFormats.contains(getNewMaster().getStorageFormat().getValue())) {
-            commandSucceeded = commandSucceeded && runVdsCommand(
+        if (commandSucceeded && disconnectPoolFormats.contains(getNewMaster(true).getStorageFormat().getValue())) {
+            commandSucceeded = runVdsCommand(
                     VDSCommandType.DisconnectStoragePool,
                     new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),
-                        getStoragePool().getId(), getVds().getvds_spm_id())
-                ).getSucceeded();
+                            getStoragePool().getId(), getVds().getvds_spm_id())
+                    ).getSucceeded();
         }
 
         if (!commandSucceeded) {
@@ -113,7 +119,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         }
 
         List<storage_pool_iso_map> domains = getStoragePoolIsoMapDAO()
-                        .getAllForStoragePool(getStoragePool().getId());
+                .getAllForStoragePool(getStoragePool().getId());
 
         for (storage_pool_iso_map domain : domains) {
             if (domain.getstatus() == null
@@ -123,24 +129,24 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 domain.setstatus(StorageDomainStatus.InActive);
             } else if (domain.getstatus() == StorageDomainStatus.Locked) {
                 throw new VdcBLLException(
-                    VdcBllErrors.CANT_RECONSTRUCT_WHEN_A_DOMAIN_IN_POOL_IS_LOCKED,
-                    "Cannot reconstruct master domain when a domain in the " +
-                    "pool is locked.");
+                        VdcBllErrors.CANT_RECONSTRUCT_WHEN_A_DOMAIN_IN_POOL_IS_LOCKED,
+                        "Cannot reconstruct master domain when a domain in the " +
+                                "pool is locked.");
             }
         }
 
         return runVdsCommand(VDSCommandType.ReconstructMaster,
-            new ReconstructMasterVDSCommandParameters(getVds().getId(),
-                getVds().getvds_spm_id(), getStoragePool().getId(),
-                getStoragePool().getname(), _newMasterStorageDomainId, domains,
-                getStoragePool().getmaster_domain_version())
-            ).getSucceeded();
+                new ReconstructMasterVDSCommandParameters(getVds().getId(),
+                        getVds().getvds_spm_id(), getStoragePool().getId(),
+                        getStoragePool().getname(), _newMasterStorageDomainId, domains,
+                        getStoragePool().getmaster_domain_version())).getSucceeded();
+
     }
 
     @Override
     protected void executeCommand() {
         try {
-            Boolean commandSucceeded = reconstructMaster();
+            boolean commandSucceeded = reconstructMaster();
             connectAndRefreshAllUpHosts(commandSucceeded);
 
             if (!_isLastMaster && commandSucceeded) {
@@ -159,12 +165,13 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
             setSucceeded(commandSucceeded);
         } finally {
-            // Reset cache and mark reconstruct for pool as finished
-            Backend.getInstance().getResourceManager().RunVdsCommand(
-                VDSCommandType.MarkPoolInReconstructMode,
-                new MarkPoolInReconstructModeVDSCommandParameters(
-                    getStoragePoolId().getValue(), ReconstructMarkAction.ClearCache)
-            );
+            // reset cache and mark reconstruct for pool as finished
+            Backend.getInstance()
+                    .getResourceManager()
+                    .RunVdsCommand(
+                            VDSCommandType.MarkPoolInReconstructMode,
+                            new MarkPoolInReconstructModeVDSCommandParameters(getStoragePoolId()
+                                    .getValue(), ReconstructMarkAction.ClearCache));
         }
     }
 
@@ -199,59 +206,52 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     private void connectAndRefreshAllUpHosts(final boolean commandSucceeded) {
-        TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        try {
-                            for (VDS vds : getAllRunningVdssInPool()) {
-                                try {
-                                    if (!_isLastMaster && commandSucceeded) {
-                                        VDSReturnValue returnValue = Backend.getInstance()
-                                                .getResourceManager()
-                                                .RunVdsCommand(
-                                                        VDSCommandType.ConnectStoragePool,
-                                                        new ConnectStoragePoolVDSCommandParameters(vds.getId(),
-                                                                getStoragePool().getId(), vds.getvds_spm_id(),
-                                                                getMasterDomainIdFromDb(), getStoragePool()
-                                                                        .getmaster_domain_version()));
-                                        if (returnValue.getSucceeded()) {
-                                            Backend.getInstance()
-                                                    .getResourceManager()
-                                                    .RunVdsCommand(
-                                                            VDSCommandType.RefreshStoragePool,
-                                                            new RefreshStoragePoolVDSCommandParameters(vds.getId(),
-                                                                    getStoragePool().getId(),
-                                                                    _newMasterStorageDomainId,
-                                                                    getStoragePool().getmaster_domain_version()));
-                                        } else {
-                                            log.errorFormat("Post reconstruct actions (connectPool) did not complete on host {0} in the pool. error {1}",
-                                                    vds.getId(),
-                                                    returnValue.getVdsError().getMessage());
-                                        }
-                                    }
-                                    // only if we deactivate the storage domain we want to disconnect from it.
-                                    if (getParameters().isInactive()) {
-                                        StorageHelperDirector.getInstance()
-                                                .getItem(getStorageDomain().getstorage_type())
-                                                .DisconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
-                                    }
-
-                                } catch (Exception e) {
-                                    log.errorFormat("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
-                                            + " did not complete on host {0} in the pool. error {1}",
-                                            vds.getId(),
-                                            e.getMessage());
-                                }
-                            }
-                        } catch (Exception ex) {
-                            log.errorFormat("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
-                                    + " did not complete on all up hosts in the pool. error {0}",
-                                    ex.getMessage());
+        try {
+            for (VDS vds : getAllRunningVdssInPool()) {
+                try {
+                    if (!_isLastMaster && commandSucceeded) {
+                        VDSReturnValue returnValue = Backend.getInstance()
+                                .getResourceManager()
+                                .RunVdsCommand(
+                                        VDSCommandType.ConnectStoragePool,
+                                        new ConnectStoragePoolVDSCommandParameters(vds.getId(),
+                                                getStoragePool().getId(), vds.getvds_spm_id(),
+                                                getMasterDomainIdFromDb(), getStoragePool()
+                                                        .getmaster_domain_version()));
+                        if (returnValue.getSucceeded()) {
+                            Backend.getInstance()
+                                    .getResourceManager()
+                                    .RunVdsCommand(
+                                            VDSCommandType.RefreshStoragePool,
+                                            new RefreshStoragePoolVDSCommandParameters(vds.getId(),
+                                                    getStoragePool().getId(),
+                                                    _newMasterStorageDomainId,
+                                                    getStoragePool().getmaster_domain_version()));
+                        } else {
+                            log.errorFormat("Post reconstruct actions (connectPool) did not complete on host {0} in the pool. error {1}",
+                                    vds.getId(),
+                                    returnValue.getVdsError().getMessage());
                         }
-                        return null;
                     }
-                });
+                    // only if we deactivate the storage domain we want to disconnect from it.
+                    if (getParameters().isInactive()) {
+                        StorageHelperDirector.getInstance()
+                                .getItem(getStorageDomain().getstorage_type())
+                                .DisconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
+                    }
+
+                } catch (Exception e) {
+                    log.errorFormat("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
+                            + " did not complete on host {0} in the pool. error {1}",
+                            vds.getId(),
+                            e.getMessage());
+                }
+            }
+        } catch (Exception ex) {
+            log.errorFormat("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
+                    + " did not complete on all up hosts in the pool. error {0}",
+                    ex.getMessage());
+        }
     }
 
     @Override
@@ -259,6 +259,4 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         return getSucceeded() ? _isLastMaster ? AuditLogType.RECONSTRUCT_MASTER_FAILED_NO_MASTER
                 : AuditLogType.RECONSTRUCT_MASTER_DONE : AuditLogType.RECONSTRUCT_MASTER_FAILED;
     }
-
-    private static Log log = LogFactory.getLog(ReconstructMasterDomainCommand.class);
 }

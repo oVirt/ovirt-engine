@@ -410,9 +410,4 @@ public class ResourceManager {
             ArrayList<VDSDomainsData> vdsDomainData) {
         IrsBrokerCommand.UpdateVdsDomainsData(vdsId, vdsName, storagePoolId, vdsDomainData);
     }
-
-    public boolean isDomainReportedInProblem(Guid storagePoolId, Guid domainId) {
-        return IrsBrokerCommand.isDomainReportedInProblem(storagePoolId, domainId);
-    }
-
 }

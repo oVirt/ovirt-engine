@@ -84,7 +84,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                             map.setstatus(StorageDomainStatus.Maintenance);
                             getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                             if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
-                                CalcStoragePoolStatusByDomainsStatus();
+                                calcStoragePoolStatusByDomainsStatus();
                             }
                             getCompensationContext().stateChanged();
                             return null;

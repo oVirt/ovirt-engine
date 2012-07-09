@@ -253,7 +253,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return true;
     }
 
-    protected void CalcStoragePoolStatusByDomainsStatus() {
+    protected void calcStoragePoolStatusByDomainsStatus() {
         List<storage_domains> domains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
 
         // set masterDomain to the first element of domains with type=master, or null if non have this type.

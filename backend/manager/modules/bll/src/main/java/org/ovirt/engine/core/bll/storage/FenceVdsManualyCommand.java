@@ -155,7 +155,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                         return a.getstorage_domain_type() == StorageDomainType.Master;
                     }
                 });
-        CalcStoragePoolStatusByDomainsStatus();
+        calcStoragePoolStatusByDomainsStatus();
 
         // fence spm if moving from not operational and master domain is active
         if (masterDomain != null

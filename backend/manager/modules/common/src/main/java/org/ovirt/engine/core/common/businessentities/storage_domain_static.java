@@ -46,7 +46,7 @@ public class storage_domain_static implements BusinessEntity<Guid> {
     @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
     @Column(name = "Id")
     @Type(type = "guid")
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.STORAGE_SIZE)
     @Column(name = "storage")
@@ -74,6 +74,9 @@ public class storage_domain_static implements BusinessEntity<Guid> {
 
     @Transient
     private String storagePoolName;
+
+    @Column(name = "last_time_used_as_master")
+    private transient long lastTimeUsedAsMaster;
 
     public storage_domain_static() {
     }
@@ -151,15 +154,32 @@ public class storage_domain_static implements BusinessEntity<Guid> {
         this.storageFormat = storage_format;
     }
 
+    public boolean isAutoRecoverable() {
+        return autoRecoverable;
+    }
+
+    public void setAutoRecoverable(boolean autoRecoverable) {
+        this.autoRecoverable = autoRecoverable;
+    }
+
+    public long getLastTimeUsedAsMaster() {
+        return lastTimeUsedAsMaster;
+    }
+
+    public void setLastTimeUsedAsMaster(long lastTimeUsedAsMaster) {
+        this.lastTimeUsedAsMaster = lastTimeUsedAsMaster;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + (autoRecoverable ? 1231 : 1237);
         result = prime * result + ((connection == null) ? 0 : connection.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((storage == null) ? 0 : storage.hashCode());
         result = prime * result + ((storageFormat == null) ? 0 : storageFormat.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((storagePoolType == null) ? 0 : storagePoolType.hashCode());
         result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
         return result;
@@ -174,6 +194,8 @@ public class storage_domain_static implements BusinessEntity<Guid> {
         if (getClass() != obj.getClass())
             return false;
         storage_domain_static other = (storage_domain_static) obj;
+        if (autoRecoverable != other.autoRecoverable)
+            return false;
         if (connection == null) {
             if (other.connection != null)
                 return false;
@@ -184,6 +206,11 @@ public class storage_domain_static implements BusinessEntity<Guid> {
                 return false;
         } else if (!id.equals(other.id))
             return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
         if (storage == null) {
             if (other.storage != null)
                 return false;
@@ -191,23 +218,10 @@ public class storage_domain_static implements BusinessEntity<Guid> {
             return false;
         if (storageFormat != other.storageFormat)
             return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
         if (storagePoolType != other.storagePoolType)
             return false;
         if (storageType != other.storageType)
             return false;
         return true;
-    }
-
-    public boolean isAutoRecoverable() {
-        return autoRecoverable;
-    }
-
-    public void setAutoRecoverable(boolean autoRecoverable) {
-        this.autoRecoverable = autoRecoverable;
     }
 }

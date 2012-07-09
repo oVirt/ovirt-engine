@@ -61,7 +61,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                     && getStorageDomain().getstatus() == StorageDomainStatus.Active) {
                 addInvalidSDStatusMessage(getStorageDomain().getstatus());
                 returnValue = false;
-            } else if (electNewMaster() != null) {
+            } else if (electNewMaster(false) != null) {
                 getReturnValue().getCanDoActionMessages().add(
                         VdcBllMessages.STORAGE_POOL_REINITIALIZE_WITH_MORE_THAN_ONE_DATA_DOMAIN.toString());
                 returnValue = false;
@@ -99,7 +99,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                 });
         getStoragePool().setstatus(StoragePoolStatus.Problematic);
         if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                .ConnectStorageToDomainByVdsId(getNewMaster(), getVds().getId())) {
+                .ConnectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
             super.executeCommand();
         } else {
             getReturnValue().setFault(new VdcFault(new VdcBLLException(VdcBllErrors.StorageServerConnectionError,

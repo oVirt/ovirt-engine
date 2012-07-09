@@ -83,7 +83,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                     map.setstatus(StorageDomainStatus.Active);
                     DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                     if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
-                        CalcStoragePoolStatusByDomainsStatus();
+                        calcStoragePoolStatusByDomainsStatus();
                     }
                     getCompensationContext().stateChanged();
                     return null;

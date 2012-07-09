@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.common.businessentities.NonOperationalReason
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -39,7 +40,6 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
@@ -218,11 +218,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return returnValue;
     }
 
-    protected void SetStorageDomainStatus(StorageDomainStatus status) {
+    protected void SetStorageDomainStatus(StorageDomainStatus status, CompensationContext context) {
         if (getStorageDomain() != null && getStorageDomain().getstorage_pool_id() != null) {
             storage_pool_iso_map map = getStorageDomain().getStoragePoolIsoMapData();
+            if(context != null) {
+                context.snapshotEntityStatus(map, map.getstatus());
+            }
             getStorageDomain().setstatus(status);
-            getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+            getStoragePoolIsoMapDAO().updateStatus(map.getId(), status);
         }
     }
 
@@ -278,23 +281,20 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
      * will be returned
      * @return an elected master domain or null
      */
-    protected storage_domains electNewMaster() {
+    protected storage_domains electNewMaster(boolean duringReconstruct) {
         storage_domains newMaster = null;
         if (getStoragePool() != null) {
             List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+            Collections.sort(storageDomains, new LastTimeUsedAsMasterComp());
             if (storageDomains.size() > 0) {
                 storage_domains storageDomain = getStorageDomain();
                 for (storage_domains dbStorageDomain : storageDomains) {
-                    if ((storageDomain == null || !dbStorageDomain.getId().equals(storageDomain.getId()))
+                    if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
+                            .equals(storageDomain.getId())))
                             && (dbStorageDomain.getstatus() == StorageDomainStatus.Active || dbStorageDomain.getstatus() == StorageDomainStatus.Unknown)
                             && dbStorageDomain.getstorage_domain_type() == StorageDomainType.Data) {
-                        if (!ResourceManager.getInstance().isDomainReportedInProblem(getStoragePool().getId(),
-                                dbStorageDomain.getId())) {
-                            newMaster = dbStorageDomain;
-                            break;
-                        } else if (newMaster == null) {
-                            newMaster = dbStorageDomain;
-                        }
+                        newMaster = dbStorageDomain;
+                        break;
                     }
                 }
             }
@@ -362,5 +362,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected void executeInNewTransaction(TransactionMethod<?> method) {
         TransactionSupport.executeInNewTransaction(method);
+    }
+
+    private static final class LastTimeUsedAsMasterComp implements Comparator<storage_domains> {
+        @Override
+        public int compare(storage_domains o1, storage_domains o2) {
+            return Long.compare(o1.getLastTimeUsedAsMaster(), o2.getLastTimeUsedAsMaster());
+        }
     }
 }

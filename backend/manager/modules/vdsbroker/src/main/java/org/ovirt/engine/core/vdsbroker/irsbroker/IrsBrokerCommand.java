@@ -87,14 +87,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
     }
 
-    public static boolean isDomainReportedInProblem(Guid storagePoolId, Guid domainId) {
-        IrsProxyData proxy = _irsProxyData.get(storagePoolId);
-        if (proxy != null) {
-            return proxy.isDomainReportedInProblem(domainId);
-        }
-        return false;
-    }
-
     public static void lockDbSave(Guid storagePoolId) {
         IrsProxyData proxy = _irsProxyData.get(storagePoolId);
         if (proxy != null) {
@@ -1059,13 +1051,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             if (_lockObjForDbSave.isHeldByCurrentThread()) {
                 _lockObjForDbSave.unlock();
             }
-        }
-
-        public boolean isDomainReportedInProblem(Guid domainId) {
-            if (_domainsInProblem.containsKey(domainId)) {
-                return true;
-            }
-            return false;
         }
 
         public void UpdateVdsDomainsData(final Guid vdsId, final String vdsName,

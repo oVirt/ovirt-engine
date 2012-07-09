@@ -88,7 +88,8 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
                 .addValue("storage_type", domain.getstorage_type())
                 .addValue("storage_domain_type",
                         domain.getstorage_domain_type())
-                .addValue("storage_domain_format_type", domain.getStorageFormat());
+                .addValue("storage_domain_format_type", domain.getStorageFormat())
+                .addValue("last_time_used_as_master", domain.getLastTimeUsedAsMaster());
     }
 
     @Override
@@ -112,6 +113,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
                     .getInt("storage_domain_type")));
             entity.setStorageFormat(StorageFormatType.forValue(rs
                     .getString("storage_domain_format_type")));
+            entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
             return entity;
         }
     }
