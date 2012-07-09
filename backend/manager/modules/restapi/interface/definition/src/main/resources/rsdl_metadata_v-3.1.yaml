@@ -595,6 +595,8 @@ actions:
       parameterType: null
       signatures: []
     urlparams:
+      search: {context: query, type: 'xs:string', value: query, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {filter: true|false}
 - name: /api/storagedomains/{storagedomain:id}|rel=get
