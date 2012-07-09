@@ -1033,43 +1033,42 @@ def _updateVDCOptions():
     #1st we update the keystore and CA related paths, only then we can set the passwords and the rest options
     options = (
         {
-            "CABaseDirectory":"/etc/pki/ovirt-engine",
-            "keystoreUrl":"/etc/pki/ovirt-engine/.keystore",
-            "CertificateFileName":"/etc/pki/ovirt-engine/certs/engine.cer",
-            "CAEngineKey":"/etc/pki/ovirt-engine/private/ca.pem",
-            "TruststoreUrl":"/etc/pki/ovirt-engine/.keystore",
-            "ENGINEEARLib":"%s/standalone/deployments/engine.ear" %(basedefs.DIR_JBOSS),
-            "CACertificatePath":"/etc/pki/ovirt-engine/ca.pem",
-            "CertAlias":"engine",
+            "CABaseDirectory":["/etc/pki/ovirt-engine", 'text'],
+            "keystoreUrl":["/etc/pki/ovirt-engine/.keystore", 'text'],
+            "CertificateFileName":["/etc/pki/ovirt-engine/certs/engine.cer", 'text'],
+            "CAEngineKey":["/etc/pki/ovirt-engine/private/ca.pem", 'text'],
+            "TruststoreUrl":["/etc/pki/ovirt-engine/.keystore", 'text'],
+            "ENGINEEARLib":["%s/standalone/deployments/engine.ear" %(basedefs.DIR_JBOSS), 'text'],
+            "CACertificatePath":["/etc/pki/ovirt-engine/ca.pem", 'text'],
+            "CertAlias":["engine", 'text'],
         },
         {
-            "TruststorePass":basedefs.CONST_CA_PASS,
-            "keystorePass":basedefs.CONST_CA_PASS,
-            "CertificatePassword":basedefs.CONST_CA_PASS,
-            "LocalAdminPassword":controller.CONF["AUTH_PASS"],
-            "SSLEnabled": "true",
-            "UseSecureConnectionWithServers": "true",
-            "ScriptsPath":"/usr/share/ovirt-engine",
-            "VdcBootStrapUrl":"http://" + controller.CONF["HOST_FQDN"] + ":" + controller.CONF["HTTP_PORT"] + "/Components/vds/",
-            "AsyncPollingCyclesBeforeCallbackCleanup":"30",
-            "SysPrepXPPath":"/etc/ovirt-engine/sysprep/sysprep.xp",
-            "SysPrep2K3Path":"/etc/ovirt-engine/sysprep/sysprep.2k3",
-            "SysPrep2K8Path":"/etc/ovirt-engine/sysprep/sysprep.2k8x86",
-            "SysPrep2K8x64Path":"/etc/ovirt-engine/sysprep/sysprep.2k8",
-            "SysPrep2K8R2Path":"/etc/ovirt-engine/sysprep/sysprep.2k8",
-            "SysPrepWindows7Path":"/etc/ovirt-engine/sysprep/sysprep.w7",
-            "SysPrepWindows7x64Path":"/etc/ovirt-engine/sysprep/sysprep.w7x64",
-            "MacPoolRanges":controller.CONF["MAC_RANGE"],
-            "InstallVds":"true",
-            "ConfigDir":"/etc/ovirt-engine",
-            "DataDir":"/usr/share/ovirt-engine",
-            "SignScriptName":"SignReq.sh",
-            "BootstrapInstallerFileName":"/usr/share/ovirt-engine/scripts/vds_installer.py",
-            "PublicURLPort":controller.CONF["HTTP_PORT"],
-            "VirtualMachineDomainName":controller.CONF["HOST_FQDN"],
-            "OrganizationName":controller.CONF["ORG_NAME"],
-            "ProductRPMVersion":utils.getRpmVersion(basedefs.ENGINE_RPM_NAME),
-            "AdminPassword":controller.CONF["AUTH_PASS"]
+            "TruststorePass":[basedefs.CONST_CA_PASS, 'text'],
+            "keystorePass":[basedefs.CONST_CA_PASS, 'text'],
+            "CertificatePassword":[basedefs.CONST_CA_PASS, 'pass'],
+            "LocalAdminPassword":[controller.CONF["AUTH_PASS"], 'pass'],
+            "SSLEnabled":[ "true", 'text'],
+            "UseSecureConnectionWithServers":[ "true", 'text'],
+            "ScriptsPath":["/usr/share/ovirt-engine", 'text'],
+            "VdcBootStrapUrl":["http://" + controller.CONF["HOST_FQDN"] + ":" + controller.CONF["HTTP_PORT"] + "/Components/vds/", 'text'],
+            "AsyncPollingCyclesBeforeCallbackCleanup":["30", 'text'],
+            "SysPrepXPPath":["/etc/ovirt-engine/sysprep/sysprep.xp", 'text'],
+            "SysPrep2K3Path":["/etc/ovirt-engine/sysprep/sysprep.2k3", 'text'],
+            "SysPrep2K8Path":["/etc/ovirt-engine/sysprep/sysprep.2k8x86", 'text'],
+            "SysPrep2K8x64Path":["/etc/ovirt-engine/sysprep/sysprep.2k8", 'text'],
+            "SysPrep2K8R2Path":["/etc/ovirt-engine/sysprep/sysprep.2k8", 'text'],
+            "SysPrepWindows7Path":["/etc/ovirt-engine/sysprep/sysprep.w7", 'text'],
+            "SysPrepWindows7x64Path":["/etc/ovirt-engine/sysprep/sysprep.w7x64", 'text'],
+            "MacPoolRanges":[controller.CONF["MAC_RANGE"], 'text'],
+            "InstallVds":["true", 'text'],
+            "ConfigDir":["/etc/ovirt-engine", 'text'],
+            "DataDir":["/usr/share/ovirt-engine", 'text'],
+            "SignScriptName":["SignReq.sh", 'text'],
+            "BootstrapInstallerFileName":["/usr/share/ovirt-engine/scripts/vds_installer.py", 'text'],
+            "PublicURLPort":[controller.CONF["HTTP_PORT"], 'text'],
+            "OrganizationName":[controller.CONF["ORG_NAME"], 'text'],
+            "ProductRPMVersion":[utils.getRpmVersion(basedefs.ENGINE_RPM_NAME), 'text'],
+            "AdminPassword":[controller.CONF["AUTH_PASS"], 'pass']
         }
     )
 
@@ -1079,7 +1078,8 @@ def _updateVDCOptions():
                 #1st iterate on the CA related options
                 for subDict in options:
                     for key in subDict:
-                        utils.updateVDCOption(key, subDict[key], masked_value_set)
+                        value, keyType = subDict[key]
+                        utils.updateVDCOption(key, value, masked_value_set, keyType)
 
                 logging.debug("finished updating vdc options")
             else:

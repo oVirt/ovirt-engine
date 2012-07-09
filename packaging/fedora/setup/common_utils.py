@@ -687,13 +687,15 @@ def renameDB(oldname, newname):
                                basedefs.DB_POSTGRES, sqlQuery, True,
                                output_messages.ERR_DB_RENAME % (oldname, newname))
 
-def updateVDCOption(key, value, maskList=[]):
+def updateVDCOption(key, value, maskList=[], keyType='text'):
     """
     Update vdc_option value in db
     using rhevm-config
 
     maskList is received to allow
     masking passwords in logging
+
+    keyType can be 'text' or 'pass' for password
     """
 
     # Mask passwords
@@ -701,16 +703,48 @@ def updateVDCOption(key, value, maskList=[]):
     logging.debug("updating vdc option %s to: %s"%(key, logValue))
     msg = output_messages.ERR_EXP_UPD_VDC_OPTION%(key, logValue)
 
-    # Running rhevm-config to update values
+    # The first part of the command is really simple:
     cmd = [
         basedefs.FILE_RHEVM_CONFIG_BIN,
-        '-s',
-        key + '=' + value,
+    ]
+
+    # For text options we just provide the name of the option and the value in
+    # the command line, but for password options we have to put the password in
+    # an external file and provide the name of that file:
+    passFile = None
+    if keyType == 'pass':
+        passFile = mkTempPassFile(value)
+        cmd.extend([
+            '-s',
+            key,
+            '--admin-pass-file=%s' % passFile,
+        ])
+    else:
+        cmd.extend([
+            '-s',
+            '%s=%s' % (key, value),
+        ])
+
+    # The rest of the arguments for engine-config are the same for all kind of
+    # options:
+    cmd.extend([
         '--cver=' + basedefs.VDC_OPTION_CVER,
         '-p',
         basedefs.FILE_RHEVM_EXTENDED_CONF,
-    ]
-    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=msg, maskList=maskList)
+    ])
+
+    # Execute the command, and always remember to remove the password file:
+    try:
+        output, rc = execCmd(cmdList=cmd, failOnError=True, msg=msg, maskList=maskList)
+    finally:
+        if passFile:
+            os.remove(passFile)
+
+def mkTempPassFile(value):
+    t = tempfile.NamedTemporaryFile(delete=False)
+    t.file.write(value)
+    t.file.close()
+    return t.name
 
 def _maskString(string, maskList=[]):
     """
