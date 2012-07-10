@@ -549,7 +549,7 @@ public class VmDiskListModel extends SearchableListModel
         model.setHashName("remove_disk"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().disksMsg());
 
-        model.getLatch().setEntity(true);
+        model.getLatch().setEntity(false);
 
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
