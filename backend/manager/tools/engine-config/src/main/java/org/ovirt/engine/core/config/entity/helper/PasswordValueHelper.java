@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.config.entity.helper;
 
+import java.io.File;
 import java.security.GeneralSecurityException;
 
 import org.apache.commons.lang.StringUtils;
@@ -84,10 +85,12 @@ public class PasswordValueHelper implements ValueHelper {
         String password = null;
 
         try {
-            if (StringUtils.isNotBlank(value) && value.equals(INTERACTIVE_MODE)) {
+            if (StringUtils.isNotBlank(value) && value.equalsIgnoreCase(INTERACTIVE_MODE)) {
                 password = EngineConfigLogic.startPasswordDialog(null);
             } else {
-                password = EngineConfigLogic.getPassFromFile(parser.getAdminPassFile());
+                password =
+                        EngineConfigLogic.getPassFromFile((StringUtils.isNotBlank(value)) ? value
+                                : parser.getAdminPassFile());
             }
             returnedValue = encrypt(password);
         } catch (Exception e) {
@@ -101,11 +104,16 @@ public class PasswordValueHelper implements ValueHelper {
 
     @Override
     public boolean validate(ConfigKey key, String value) {
-        // The only valid value is "Interactive"
-        if (StringUtils.isNotBlank(value) && value.equals(INTERACTIVE_MODE)) {
+        // check if value is file path
+        if (StringUtils.isNotBlank(value) && new File(value).exists()) {
             return true;
         }
-        if (parser.getAdminPassFile() != null) {
+        // The only valid value is "Interactive"
+        if (StringUtils.isNotBlank(value) && value.equalsIgnoreCase(INTERACTIVE_MODE)) {
+            return true;
+        }
+        // or if we have the password in --admin-pass-file
+        if (StringUtils.isNotBlank(parser.getAdminPassFile()) && new File(parser.getAdminPassFile()).exists()) {
             return true;
         }
         return false;

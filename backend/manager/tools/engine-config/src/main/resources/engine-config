@@ -33,9 +33,15 @@ usage () {
         printf "\t-h, --help\n"
         printf "\t\tdisplay this help and exit.\n"
         printf "\n"
-        printf "### Note: In order for your change(s) to take effect,\n"
-        printf "### restart the oVirt engine service (using: 'service ovirt-engine restart').\n"
-        printf "#############################################################################\n"
+        printf "### Notes: \n"
+        printf "### 1. Passwords: password can be set in interacetive mode ie:\n"
+        printf "###        engine-config -s PasswordEntry=interactive\n"
+        printf "###    or via file with one of the following options:\n"
+        printf "###        engine-config -s PasswordEntry --admin-pass-file=/tmp/mypass\n"
+        printf "###        engine-config -s PasswordEntry=/tmp/mypass\n"
+        printf "### 2. In order for your change(s) to take effect,\n"
+        printf "###    restart the oVirt engine service (using: 'service ovirt-engine restart').\n"
+        printf "################################################################################\n"
 
         return 0
 }

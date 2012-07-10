@@ -56,27 +56,43 @@ public class ConfigurationProvider {
         setConfigValue(enumValue, entry, true);
     }
 
-    protected String createPassFile(String value) throws IOException {
+    protected File createPassFile(String value) throws IOException {
         File temp = File.createTempFile("ovirt", ".tmp");
-        String fileName = temp.getName();
+        String filePath = temp.getAbsolutePath();
+
+        File chmodFile = new File("/usr/bin/chmod");
+        if (!chmodFile.exists()) {
+            throw new IOException("Can't find the chmod command in order to change the permissions of file \"" + filePath + "\".");
+        }
+        Process chmodProcess = Runtime.getRuntime().exec(chmodFile.getAbsolutePath() + " 600 " + filePath);
+        try {
+            int chmodExitCode = chmodProcess.waitFor();
+            if (chmodExitCode != 0) {
+                throw new IOException("Failed to change permissions for file \"" + filePath + "\", the chmod command returns exit code " + chmodExitCode + "\".");
+            }
+        } catch (InterruptedException ie) {
+            throw new IOException("Failed to change permissions for file \"" + filePath + "\"", ie);
+        }
 
         BufferedWriter out = new BufferedWriter(new FileWriter(temp));
         out.write(value);
-        out.close();
+        out.flush();
 
-        return fileName;
+        return temp;
     }
 
     public void setConfigValue(ConfigValues enumValue, DomainsConfigurationEntry entry, boolean passedAsValue)
             throws ManageDomainsResult {
 
         log.info("Setting value for " + enumValue.toString() + " to " + entry.getDomainsLoggingEntry());
+        File passFile = null;
 
         try {
+            passFile = createPassFile(entry.getDomainsConfigurationEntry());
             Process engineConfigProcess =
                     Runtime.getRuntime().exec(engineConfigExecutable + " -s "
                             + enumValue.name() + ((passedAsValue) ? "=" + entry.getDomainsConfigurationEntry() :
-                                    " --admin-pass-file " + createPassFile(entry.getDomainsConfigurationEntry()))
+                                    " --admin-pass-file " + passFile.getAbsolutePath())
                             + " -p " + engineConfigProperties);
             int retVal = engineConfigProcess.waitFor();
             if (retVal != 0) {
@@ -90,6 +106,16 @@ public class ConfigurationProvider {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,
                     new String[] { enumValue.name(), e.getMessage() });
         }
+        finally {
+            disposePassFile(passFile);
+        }
+    }
 
+    protected void disposePassFile(File file) {
+        if (file != null) {
+            if (file.exists()) {
+                file.delete();
+            }
+        }
     }
 }
