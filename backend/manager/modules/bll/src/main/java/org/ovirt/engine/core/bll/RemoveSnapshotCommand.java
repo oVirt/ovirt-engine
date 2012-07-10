@@ -41,7 +41,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
     }
 
-    private List<DiskImage> getSourceImages() {
+    /**
+     * @return The image snapshots associated with the VM snapshot.
+     * Note that the first time this method is run it issues DAO call.
+     */
+    protected List<DiskImage> getSourceImages() {
         if (_sourceImages == null) {
             _sourceImages = getDiskImageDAO().getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
         }
@@ -53,6 +57,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         if (getVm().getstatus() != VMStatus.Down) {
             log.error("Cannot remove VM snapshot. Vm is not Down");
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+        }
+
+        // If the VM hasn't got any images - simply remove the snapshot.
+        // No need for locking, VDSM tasks, and all that jazz.
+        if (!hasImages()) {
+            getSnapshotDao().remove(getParameters().getSnapshotId());
+            setSucceeded(true);
+            return;
         }
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -131,23 +143,25 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             return false;
         }
 
-        if (!validateImages()) {
+        if (!validateImagesAndVMStates()) {
             handleCanDoActionFailure();
             return false;
         }
 
-        // check that we are not deleting the template
-        if (!validateImageNotInTemplate()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
-            handleCanDoActionFailure();
-            return false;
-        }
+        if (hasImages()) {
+            // check that we are not deleting the template
+            if (!validateImageNotInTemplate()) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
+                handleCanDoActionFailure();
+                return false;
+            }
 
-        // check that we are not deleting the vm working snapshot
-        if (!validateImageNotActive()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
-            handleCanDoActionFailure();
-            return false;
+            // check that we are not deleting the vm working snapshot
+            if (!validateImageNotActive()) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
+                handleCanDoActionFailure();
+                return false;
+            }
         }
 
         getReturnValue().setCanDoAction(true);
@@ -168,18 +182,28 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return validate(createSnapshotValidator().snapshotExists(getVmId(), getParameters().getSnapshotId()));
     }
 
-    protected boolean validateImages() {
+    // TODO: this is a temporary method used until ImagesHandler.PerformImagesChecks will get decoupeld to several tests
+    // Until then, this method is called and passes hasImages() onwards so the VM validations are done even for diskless VMs
+    protected boolean validateImagesAndVMStates() {
         return ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
-                getVm().getstorage_pool_id(), Guid.Empty, true, true,
-                true, true, true, true, true, true, null);
+                getVm().getstorage_pool_id(), Guid.Empty,
+                hasImages(), hasImages(), hasImages(), hasImages(), true, true, true, true, null);
     }
 
     protected boolean validateImageNotInTemplate() {
-        return getVmTemplateDAO().get(getSourceImages().get(0).getImageId()) == null;
+        return getVmTemplateDAO().get(getRepresentativeSourceImageId()) == null;
     }
 
     protected boolean validateImageNotActive() {
-        return getDiskImageDAO().get(getSourceImages().get(0).getImageId()) == null;
+        return getDiskImageDAO().get(getRepresentativeSourceImageId()) == null;
+    }
+
+    private boolean hasImages() {
+        return !getSourceImages().isEmpty();
+    }
+
+    private Guid getRepresentativeSourceImageId() {
+        return getSourceImages().get(0).getImageId();
     }
 
     protected SnapshotsValidator createSnapshotValidator() {
