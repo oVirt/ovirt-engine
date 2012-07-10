@@ -823,7 +823,7 @@ public class VmDiskListModel extends SearchableListModel
         boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
                 ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
 
-        getNewCommand().setIsExecutionAllowed(isVmDown());
+        getNewCommand().setIsExecutionAllowed(true);
 
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
                 && getSelectedItems().size() == 1 && isVmDown() && !isDiskLocked);

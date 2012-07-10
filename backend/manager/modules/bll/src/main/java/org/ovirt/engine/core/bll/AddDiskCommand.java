@@ -75,9 +75,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected boolean canDoAction() {
         boolean returnValue = isVmExist() && acquireLockInternal();
         VM vm = getVm();
-        if (returnValue && (vm != null && vm.getstatus() != VMStatus.Down)) {
+        if (returnValue && (vm != null && vm.getstatus() == VMStatus.ImageLocked)) {
             returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED);
         } else {
             // if user sent drive check that its not in use
             returnValue = returnValue && (vm == null || isDiskCanBeAddedToVm(getParameters().getDiskInfo()));
@@ -320,7 +320,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                             VmDeviceType.DISK,
                             VmDeviceType.DISK,
                             null,
-                            true,
+                            getVm().getstatus() == VMStatus.Down,
                             false);
                 }
                 return null;
@@ -350,7 +350,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     VmDeviceType.DISK,
                     VmDeviceType.DISK,
                     null,
-                    true,
+                    getVm().getstatus() == VMStatus.Down,
                     false));
             getCompensationContext().stateChanged();
         }
