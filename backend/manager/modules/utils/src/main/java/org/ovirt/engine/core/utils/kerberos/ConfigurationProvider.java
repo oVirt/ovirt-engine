@@ -56,15 +56,12 @@ public class ConfigurationProvider {
         setConfigValue(enumValue, entry, true);
     }
 
+
     protected File createPassFile(String value) throws IOException {
         File temp = File.createTempFile("ovirt", ".tmp");
         String filePath = temp.getAbsolutePath();
 
-        File chmodFile = new File("/usr/bin/chmod");
-        if (!chmodFile.exists()) {
-            throw new IOException("Can't find the chmod command in order to change the permissions of file \"" + filePath + "\".");
-        }
-        Process chmodProcess = Runtime.getRuntime().exec(chmodFile.getAbsolutePath() + " 600 " + filePath);
+        Process chmodProcess = Runtime.getRuntime().exec("chmod 600 " + filePath);
         try {
             int chmodExitCode = chmodProcess.waitFor();
             if (chmodExitCode != 0) {
@@ -74,10 +71,19 @@ public class ConfigurationProvider {
             throw new IOException("Failed to change permissions for file \"" + filePath + "\"", ie);
         }
 
-        BufferedWriter out = new BufferedWriter(new FileWriter(temp));
-        out.write(value);
-        out.flush();
-
+        BufferedWriter out = null;
+        try {
+            out = new BufferedWriter(new FileWriter(temp));
+            out.write(value);
+            out.flush();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                }
+            }
+        }
         return temp;
     }
 
