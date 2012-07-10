@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.TransportType;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 
 public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<GlusterVolume, GlusterVolumeEntity, GlusterVolumeEntity> {
 
@@ -23,16 +23,16 @@ public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<Glust
         // The model is pre-populated with randomly generated values.
         // This won't work for enum fields like volume type since it
         // must be a valid value from corresponding enum
-        model.setVolumeType(GlusterVolumeType.DISTRIBUTE.name());
+        model.setVolumeType(GlusterVolumeType.DISTRIBUTE.name().toLowerCase());
 
         List<String> transportTypes = model.getTransportTypes().getTransportTypes();
         transportTypes.clear();
-        transportTypes.add(TransportType.TCP.name());
+        transportTypes.add(TransportType.TCP.name().toLowerCase());
 
         List<String> accessProtocols = model.getAccessProtocols().getAccessProtocols();
         accessProtocols.clear();
-        accessProtocols.add(AccessProtocol.GLUSTER.name());
-        accessProtocols.add(AccessProtocol.NFS.name());
+        accessProtocols.add(AccessProtocol.GLUSTER.name().toLowerCase());
+        accessProtocols.add(AccessProtocol.NFS.name().toLowerCase());
 
         model.getAccessControlList().getAccessControlList().add("*");
 
@@ -79,7 +79,7 @@ public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<Glust
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setStatus(backendStatus);
         GlusterVolume restVolume = GlusterVolumeMapper.map(volume, null);
-        assertEquals(restVolume.getState(), restStatus.value());
+        assertEquals(restVolume.getStatus().getState(), restStatus.value());
     }
 
     private boolean containsOption(GlusterVolume volume, Option expectedOption) {

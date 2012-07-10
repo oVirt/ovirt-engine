@@ -187,7 +187,8 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
     protected void verifyModel(GlusterVolume model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index], model.getName());
-        assertEquals(org.ovirt.engine.api.model.GlusterVolumeType.DISTRIBUTE.toString(), model.getVolumeType());
+        assertEquals(org.ovirt.engine.api.model.GlusterVolumeType.DISTRIBUTE.name().toLowerCase(),
+                model.getVolumeType());
         assertEquals(clusterId.toString(), model.getCluster().getId());
         verifyLinks(model);
     }

@@ -100,17 +100,28 @@ public class BackendGlusterVolumesResource
     }
 
     private void validateEnumParameters(GlusterVolume volume) {
-        validateEnum(GlusterVolumeType.class, volume.getVolumeType());
+        validateEnum(GlusterVolumeType.class, volume.getVolumeType().toUpperCase());
 
         if (volume.isSetTransportTypes())
         {
-            validateEnumValues(TransportType.class, volume.getTransportTypes().getTransportTypes());
+            validateEnumValues(TransportType.class, convertToUppercase(volume.getTransportTypes().getTransportTypes()));
         }
 
         if (volume.isSetAccessProtocols())
         {
-            validateEnumValues(AccessProtocol.class, volume.getAccessProtocols().getAccessProtocols());
+            validateEnumValues(AccessProtocol.class, convertToUppercase(volume.getAccessProtocols()
+                    .getAccessProtocols()));
         }
+    }
+
+    public static List<String> convertToUppercase(List<String> list)
+    {
+        ArrayList<String> result = new ArrayList<String>();
+        for (String string : list)
+        {
+            result.add(string.toUpperCase());
+        }
+        return result;
     }
 
     private void validateAccessControl(GlusterVolume volume) {

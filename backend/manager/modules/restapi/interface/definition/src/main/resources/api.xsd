@@ -2647,7 +2647,7 @@
           <xs:element ref="access_protocols" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="access_control_list" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="options" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2748,7 +2748,7 @@
           <xs:element ref="gluster_volume" minOccurs="0" maxOccurs="1"/>
           <xs:element name="server_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="brick_dir" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

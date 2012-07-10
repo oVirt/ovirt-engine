@@ -1,21 +1,23 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AccessControlList;
+import org.ovirt.engine.api.model.AccessProtocol;
 import org.ovirt.engine.api.model.AccessProtocols;
+import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
+import org.ovirt.engine.api.model.TransportType;
 import org.ovirt.engine.api.model.TransportTypes;
-import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterVolumeMapper {
@@ -33,18 +35,27 @@ public class GlusterVolumeMapper {
         }
 
         if(fromVolume.isSetVolumeType()) {
-            volume.setVolumeType(GlusterVolumeType.valueOf(fromVolume.getVolumeType()));
+            GlusterVolumeType volumeType = GlusterVolumeType.fromValue(fromVolume.getVolumeType().toUpperCase());
+            if (volumeType != null) {
+                volume.setVolumeType(map(volumeType, null));
+            }
         }
 
         if(fromVolume.isSetTransportTypes()) {
-            for(String transportType : fromVolume.getTransportTypes().getTransportTypes()) {
-                volume.addTransportType(TransportType.valueOf(transportType));
+            for (String transportTypeStr : fromVolume.getTransportTypes().getTransportTypes()) {
+                TransportType transportType = TransportType.fromValue(transportTypeStr.toUpperCase());
+                if (transportType != null) {
+                    volume.addTransportType(map(transportType, null));
+                }
             }
         }
 
         if(fromVolume.isSetAccessProtocols()) {
-            for(String accessProtocol : fromVolume.getAccessProtocols().getAccessProtocols()) {
-                volume.addAccessProtocol(AccessProtocol.valueOf(accessProtocol));
+            for (String accessProtocolStr : fromVolume.getAccessProtocols().getAccessProtocols()) {
+                AccessProtocol accessProtocol = AccessProtocol.fromValue(accessProtocolStr.toUpperCase());
+                if (accessProtocol != null) {
+                    volume.addAccessProtocol(map(accessProtocol, null));
+                }
             }
         }
 
@@ -88,21 +99,29 @@ public class GlusterVolumeMapper {
         }
 
         if(fromVolume.getVolumeType() != null) {
-            volume.setVolumeType(fromVolume.getVolumeType().name());
+            volume.setVolumeType(map(fromVolume.getVolumeType(), null));
         }
 
         if (fromVolume.getTransportTypes() != null) {
+            ArrayList<String> transportTypeList = new ArrayList<String>();
+            for (org.ovirt.engine.core.common.businessentities.gluster.TransportType transportType : fromVolume.getTransportTypes()) {
+                transportTypeList.add(map(transportType, null));
+            }
             volume.setTransportTypes(new TransportTypes());
             volume.getTransportTypes()
                     .getTransportTypes()
-                    .addAll(EnumUtils.enumCollectionToStringList(fromVolume.getTransportTypes()));
+                    .addAll(transportTypeList);
         }
 
         if (fromVolume.getAccessProtocols() != null) {
+            ArrayList<String> accessProtocolList = new ArrayList<String>();
+            for (org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol accessProtocol : fromVolume.getAccessProtocols()) {
+                accessProtocolList.add(map(accessProtocol, null));
+            }
             volume.setAccessProtocols(new AccessProtocols());
             volume.getAccessProtocols()
                     .getAccessProtocols()
-                    .addAll(EnumUtils.enumCollectionToStringList(fromVolume.getAccessProtocols()));
+                    .addAll(accessProtocolList);
         }
 
         if(fromVolume.getAccessControlList() != null) {
@@ -116,7 +135,7 @@ public class GlusterVolumeMapper {
         volume.setStripeCount(fromVolume.getStripeCount());
 
         if(fromVolume.getStatus() != null) {
-            volume.setState(fromVolume.getStatus().name());
+            volume.setStatus(StatusUtils.create(map(fromVolume.getStatus(), null)));
         }
 
         if (fromVolume.getOptions() != null) {
@@ -137,5 +156,115 @@ public class GlusterVolumeMapper {
         option.setValue(fromOption.getValue());
 
         return option;
+    }
+
+    @Mapping(from = GlusterVolumeType.class, to = org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.class)
+    public static org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType map(
+            GlusterVolumeType glusterVolumeType,
+            org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType template) {
+        switch (glusterVolumeType) {
+        case DISTRIBUTE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTE;
+        case REPLICATE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.REPLICATE;
+        case DISTRIBUTED_REPLICATE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_REPLICATE;
+        case STRIPE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.STRIPE;
+        case DISTRIBUTED_STRIPE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_STRIPE;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType glusterVolumeType,
+            String template) {
+        switch (glusterVolumeType) {
+        case DISTRIBUTE:
+            return GlusterVolumeType.DISTRIBUTE.value();
+        case REPLICATE:
+            return GlusterVolumeType.REPLICATE.value();
+        case DISTRIBUTED_REPLICATE:
+            return GlusterVolumeType.DISTRIBUTED_REPLICATE.value();
+        case STRIPE:
+            return GlusterVolumeType.STRIPE.value();
+        case DISTRIBUTED_STRIPE:
+            return GlusterVolumeType.DISTRIBUTED_STRIPE.value();
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = GlusterVolumeType.class, to = org.ovirt.engine.core.common.businessentities.gluster.TransportType.class)
+    public static org.ovirt.engine.core.common.businessentities.gluster.TransportType map(
+            TransportType transportType,
+            org.ovirt.engine.core.common.businessentities.gluster.TransportType template) {
+        switch (transportType) {
+        case TCP:
+            return org.ovirt.engine.core.common.businessentities.gluster.TransportType.TCP;
+        case RDMA:
+            return org.ovirt.engine.core.common.businessentities.gluster.TransportType.RDMA;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.TransportType.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.gluster.TransportType transportType,
+            String template) {
+        switch (transportType) {
+        case TCP:
+            return TransportType.TCP.value();
+        case RDMA:
+            return TransportType.RDMA.value();
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = GlusterVolumeType.class, to = org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.class)
+    public static org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol map(
+            AccessProtocol accessProtocol,
+            org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol template) {
+        switch (accessProtocol) {
+        case GLUSTER:
+            return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.GLUSTER;
+        case NFS:
+            return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.NFS;
+        case CIFS:
+            return org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.CIFS;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol accessProtocol,
+            String template) {
+        switch (accessProtocol) {
+        case GLUSTER:
+            return AccessProtocol.GLUSTER.value();
+        case NFS:
+            return AccessProtocol.NFS.value();
+        case CIFS:
+            return AccessProtocol.CIFS.value();
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus.class, to = GlusterState.class)
+    public static GlusterState map(org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus glusterVolumeStatus,
+            String template) {
+        switch (glusterVolumeStatus) {
+        case UP:
+            return GlusterState.UP;
+        case DOWN:
+            return GlusterState.DOWN;
+        default:
+            return null;
+        }
     }
 }

@@ -6,11 +6,14 @@ public enum GlusterState {
     DOWN;
 
     public String value() {
-        return name();
+        return name().toLowerCase();
     }
 
     public static GlusterState fromValue(String v) {
-        return valueOf(v);
+        try {
+            return valueOf(v.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
-
 }

@@ -7,11 +7,15 @@ public enum AccessProtocol {
     CIFS;
 
     public String value() {
-        return name();
+        return name().toLowerCase();
     }
 
     public static AccessProtocol fromValue(String v) {
-        return valueOf(v);
+        try {
+            return valueOf(v.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
 }

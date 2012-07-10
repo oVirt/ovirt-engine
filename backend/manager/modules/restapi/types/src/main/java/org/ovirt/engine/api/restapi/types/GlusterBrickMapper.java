@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.GlusterBrick;
+import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -48,7 +50,7 @@ public class GlusterBrickMapper {
         }
 
         if(fromBrick.getStatus() != null) {
-            brick.setState(fromBrick.getStatus().name());
+            brick.setStatus(StatusUtils.create(map(fromBrick.getStatus(), null)));
         }
 
         if(fromBrick.getVolumeId() != null) {
@@ -56,5 +58,18 @@ public class GlusterBrickMapper {
             brick.getGlusterVolume().setId(fromBrick.getVolumeId().toString());
         }
         return brick;
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus.class, to = GlusterState.class)
+    public static GlusterState map(org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus glusterVolumeStatus,
+            String template) {
+        switch (glusterVolumeStatus) {
+        case UP:
+            return GlusterState.UP;
+        case DOWN:
+            return GlusterState.DOWN;
+        default:
+            return null;
+        }
     }
 }

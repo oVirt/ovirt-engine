@@ -37,6 +37,6 @@ public class GlusterBrickMapperTest extends AbstractInvertibleMappingTest<Gluste
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setStatus(backendStatus);
         GlusterBrick restVolume = GlusterBrickMapper.map(brick, null);
-        assertEquals(restVolume.getState(), restStatus.value());
+        assertEquals(restVolume.getStatus().getState(), restStatus.value());
     }
 }
