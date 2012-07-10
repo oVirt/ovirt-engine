@@ -7,7 +7,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 /**
- * Default popup presenter widget for handling UiCommon {@link ConfirmationModel} dialogs.
+ * Implements the default confirmation dialog bound to UiCommon {@link ConfirmationModel}.
  */
 public class DefaultConfirmationPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<ConfirmationModel, DefaultConfirmationPopupPresenterWidget.ViewDef> {
 

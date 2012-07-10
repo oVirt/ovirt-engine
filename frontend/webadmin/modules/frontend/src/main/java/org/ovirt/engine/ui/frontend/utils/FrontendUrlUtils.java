@@ -5,13 +5,13 @@ import com.google.gwt.core.client.GWT;
 public class FrontendUrlUtils {
 
     /**
-     * Calculates the root URL of the server from where the application was served, based on
+     * Returns the root URL of the server from where the application was served, based on
      * {@linkplain GWT#getModuleBaseURL GWT module base URL}.
      * <p>
      * For example, if the application was served from <code>http://www.example.com/foo/bar</code>, it will return
      * <code>http://www.example.com/</code>.
      *
-     * @return The root URL of the server, including the trailing slash.
+     * @return Root URL of the server, including the trailing slash.
      */
     public static String getRootURL() {
         String moduleURL = GWT.getModuleBaseURL();
@@ -24,5 +24,27 @@ public class FrontendUrlUtils {
         }
         return result;
     }
+
+    /**
+     * Returns the current page URL without hash fragment and query part, based on current window location.
+     * <p>
+     * For example, if the current window location is <code>http://www.example.com/page?query#hash</code>, it will
+     * return <code>http://www.example.com/page</code>.
+     *
+     * @return Current page URL without hash fragment and query part.
+     */
+    public static native String getCurrentPageURL() /*-{
+        var url = $wnd.location.href;
+
+        // Pull off hash fragment part
+        var i = url.indexOf('#');
+        url = (i != -1) ? url.substring(0, i) : url;
+
+        // Pull off query part
+        i = url.indexOf('?');
+        url = (i != -1) ? url.substring(0, i) : url;
+
+        return url;
+    }-*/;
 
 }

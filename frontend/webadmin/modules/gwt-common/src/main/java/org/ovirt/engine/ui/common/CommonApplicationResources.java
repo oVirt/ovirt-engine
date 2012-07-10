@@ -111,6 +111,15 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/icon_help_rollover.png")
     ImageResource dialogIconHelpRollover();
 
+    @Source("images/but_close.png")
+    ImageResource dialogIconClose();
+
+    @Source("images/but_close_down.png")
+    ImageResource dialogIconCloseDown();
+
+    @Source("images/but_close_over.png")
+    ImageResource dialogIconCloseRollover();
+
     // Table image columns
 
     @Source("images/log_normal.gif")

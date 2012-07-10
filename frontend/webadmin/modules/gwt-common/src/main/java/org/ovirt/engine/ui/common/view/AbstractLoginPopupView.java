@@ -2,29 +2,33 @@ package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.common.widget.dialog.DialogBoxWithKeyHandlers;
+import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
 /**
- * Base implementation of the LoginPopupView. Currently adds only the setAutoHideOnNavigationEventEnabled() to
- * initWidget. TODO: check if bigger portion of the LoginPopupView can not be moved to this class
+ * Base implementation of the login dialog.
+ * <p>
+ * TODO: check if bigger portion of the LoginPopupView can not be moved to this class
  */
-public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPanel> {
+public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBoxWithKeyHandlers> {
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     @Ignore
     public ListBox localeBox;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     @Ignore
     public Label selectedLocale;
 
@@ -34,30 +38,29 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
     }
 
     @Override
-    protected void initWidget(DecoratedPopupPanel widget) {
+    protected void initWidget(DialogBoxWithKeyHandlers widget) {
         super.initWidget(widget);
-
         setAutoHideOnNavigationEventEnabled(true);
     }
 
-    private void initLocalizationEditor(){
+    private void initLocalizationEditor() {
         localeBox = new ListBox();
-        selectedLocale= new Label();
+        selectedLocale = new Label();
 
         // Add the option to change the locale
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
         String[] localeNames = LocaleInfo.getAvailableLocaleNames();
+
         for (String localeName : localeNames) {
             String nativeName = LocaleInfo.getLocaleNativeDisplayName(localeName);
-
             if (localeName.equals("default")) { //$NON-NLS-1$
                 nativeName = "English"; //$NON-NLS-1$
             }
 
             localeBox.addItem(nativeName, localeName);
             if (localeName.equals(currentLocale)) {
-              localeBox.setSelectedIndex(localeBox.getItemCount() - 1);
-              selectedLocale.setText(localeBox.getItemText(localeBox.getSelectedIndex()));
+                localeBox.setSelectedIndex(localeBox.getItemCount() - 1);
+                selectedLocale.setText(localeBox.getItemText(localeBox.getSelectedIndex()));
             }
         }
 
@@ -67,40 +70,32 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
         }
 
         localeBox.addChangeHandler(new ChangeHandler() {
-          @Override
-        public void onChange(ChangeEvent event) {
-            String localeName = localeBox.getValue(localeBox.getSelectedIndex());
-            String localeString = ""; //$NON-NLS-1$
+            @Override
+            public void onChange(ChangeEvent event) {
+                String localeName = localeBox.getValue(localeBox.getSelectedIndex());
+                String localeString = ""; //$NON-NLS-1$
 
-            if (!localeName.equals("default")){ //$NON-NLS-1$
-                localeString = "?locale=" + localeName; //$NON-NLS-1$
+                if (!localeName.equals("default")) { //$NON-NLS-1$
+                    localeString = "?locale=" + localeName; //$NON-NLS-1$
+                }
+                Window.open(FrontendUrlUtils.getCurrentPageURL() + localeString, "_self", ""); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            Window.open(getHostPageLocation() + localeString, "_self", //$NON-NLS-1$
-                ""); //$NON-NLS-1$
-          }
         });
     }
 
-    /**
-     * Get the URL of the page, without an hash of query string.
-     *
-     * @return the location of the page
-     */
-    private static native String getHostPageLocation()
-    /*-{
-      var s = $doc.location.href;
+    @Override
+    public HasClickHandlers getCloseButton() {
+        return null;
+    }
 
-      // Pull off any hash.
-      var i = s.indexOf('#');
-      if (i != -1)
-        s = s.substring(0, i);
+    @Override
+    public HasClickHandlers getCloseIconButton() {
+        return null;
+    }
 
-      // Pull off any query string.
-      i = s.indexOf('?');
-      if (i != -1)
-        s = s.substring(0, i);
+    @Override
+    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler) {
+        asWidget().setKeyPressHandler(keyPressHandler);
+    }
 
-      // Ensure a final slash if non-empty.
-      return s;
-    }-*/;
 }

@@ -73,13 +73,25 @@
 			position: absolute;
 		}
 
-		.helpButton {
+		.helpIconButton {
 			position: absolute;
 			background: transparent;
 			border: 1px solid transparent;
-			width: 18px;
-			height: 18px;
 			line-height: 32px;
+			vertical-align: middle;
+			top: 0px;
+			right: 28px;
+			padding: 1px;
+			cursor: hand;
+			cursor: pointer;
+			z-index: 1;
+		}
+
+		.closeIconButton {
+			position: absolute;
+			background: transparent;
+			border: 1px solid transparent;
+			line-height: 30px;
 			vertical-align: middle;
 			top: 0px;
 			right: 6px;
@@ -99,11 +111,16 @@
 			<g:SimplePanel ui:field="headerRightPanel" addStyleNames="{style.headerRightPanel}">
 				<g:FlowPanel>
 					<g:Image resource='{resources.dialogHeaderImage}' />
-					<g:PushButton ui:field='helpButton' addStyleNames="{style.helpButton}" visible="false">
-					   <g:upFace image='{resources.dialogIconHelp}'/>
-					   <g:downFace image='{resources.dialogIconHelpDown}'/>
-					   <g:upHoveringFace image='{resources.dialogIconHelpRollover}'/>
-					 </g:PushButton>
+					<g:PushButton ui:field='helpIconButton' addStyleNames="{style.helpIconButton}" visible="false">
+						<g:upFace image='{resources.dialogIconHelp}' />
+						<g:downFace image='{resources.dialogIconHelpDown}' />
+						<g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
+					</g:PushButton>
+					<g:PushButton ui:field='closeIconButton' addStyleNames="{style.closeIconButton}">
+						<g:upFace image='{resources.dialogIconClose}' />
+						<g:downFace image='{resources.dialogIconCloseDown}' />
+						<g:upHoveringFace image='{resources.dialogIconCloseRollover}' />
+					</g:PushButton>
 				</g:FlowPanel>
 			</g:SimplePanel>
 		</g:FlowPanel>
@@ -112,7 +129,7 @@
 
 		<g:HTMLPanel addStyleNames="{style.footer}">
 			<g:FlowPanel ui:field="footerButtonPanel" />
-			<g:FlowPanel ui:field="footerStatusPanel"/>
+			<g:FlowPanel ui:field="footerStatusPanel" />
 			<div style="clear: both;" />
 		</g:HTMLPanel>
 	</g:HTMLPanel>

@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractLoginPopupView;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
-import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.widget.dialog.DialogBoxWithKeyHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.SimplePopupPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -21,7 +21,6 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.inject.Inject;
@@ -32,7 +31,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         Driver driver = GWT.create(Driver.class);
     }
 
-    interface ViewUiBinder extends UiBinder<DecoratedPopupPanel, LoginPopupView> {
+    interface ViewUiBinder extends UiBinder<DialogBoxWithKeyHandlers, LoginPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -174,11 +173,6 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Override
     public HasUiCommandClickHandlers getLoginButton() {
         return loginButton;
-    }
-
-    @Override
-    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler) {
-        popup.setKeyPressHandler(keyPressHandler);
     }
 
 }

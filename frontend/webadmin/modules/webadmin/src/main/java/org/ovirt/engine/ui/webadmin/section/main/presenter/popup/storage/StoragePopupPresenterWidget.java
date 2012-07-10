@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -19,9 +18,9 @@ public class StoragePopupPresenterWidget extends AbstractModelBoundPopupPresente
     }
 
     @Override
-    protected void handleEnterKey(DeferredModelCommandInvoker commandInvoker) {
+    protected void handleEnterKey() {
         if (!getView().handleEnterKeyDisabled()) {
-            super.handleEnterKey(commandInvoker);
+            super.handleEnterKey();
         }
     }
 

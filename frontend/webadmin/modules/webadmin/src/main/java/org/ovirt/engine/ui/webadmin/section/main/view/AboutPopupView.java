@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
-import org.ovirt.engine.ui.common.widget.dialog.DialogBoxWithKeyHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
@@ -17,9 +17,9 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class AboutPopupView extends AbstractPopupView<DialogBoxWithKeyHandlers> implements AboutPopupPresenterWidget.ViewDef {
+public class AboutPopupView extends AbstractPopupView<SimpleDialogPanel> implements AboutPopupPresenterWidget.ViewDef {
 
-    interface ViewUiBinder extends UiBinder<DialogBoxWithKeyHandlers, AboutPopupView> {
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AboutPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -59,7 +59,13 @@ public class AboutPopupView extends AbstractPopupView<DialogBoxWithKeyHandlers> 
     }
 
     @Override
+    public HasClickHandlers getCloseIconButton() {
+        return asWidget().getCloseIconButton();
+    }
+
+    @Override
     public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
         asWidget().setKeyPressHandler(handler);
     }
+
 }

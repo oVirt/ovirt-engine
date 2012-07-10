@@ -3,37 +3,35 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
-	<ui:style>
-		
-	</ui:style>
+	<d:SimpleDialogPanel height="600px" width="1000px">
+		<d:header>
+			<g:Label ui:field="titleLabel" />
+		</d:header>
 
-	<d:SimpleDialogPanel  height="600px" width="1000px">
-	<d:header>
-		<g:Label ui:field="titleLabel" />
-	</d:header>
-	<d:content>
-		<t:DialogTabPanel height="450px" width="900px">
-			<t:tab>
-				<t:DialogTab ui:field="rolesTab">
-					<t:content>
-						<g:SimplePanel width="750px"  ui:field="rolesTabPanel"/>
-					</t:content>
-				</t:DialogTab>
-			</t:tab>
-			<t:tab>
-				<t:DialogTab ui:field="systemPermissionsTab">
-					<t:content>
-						<g:FlowPanel>
-							<g:SimplePanel width="750px"  ui:field="systemPermissionTabPanel"/>
-						</g:FlowPanel>
-					</t:content>
-				</t:DialogTab>
-			</t:tab>
-		</t:DialogTabPanel>
-	</d:content>
-	<d:footerButton>
-		<g:PushButton ui:field="closeButton" />
-	</d:footerButton>
-</d:SimpleDialogPanel>
+		<d:content>
+			<t:DialogTabPanel height="450px" width="900px">
+				<t:tab>
+					<t:DialogTab ui:field="rolesTab">
+						<t:content>
+							<g:SimplePanel width="750px" ui:field="rolesTabPanel" />
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
+				<t:tab>
+					<t:DialogTab ui:field="systemPermissionsTab">
+						<t:content>
+							<g:FlowPanel>
+								<g:SimplePanel width="750px" ui:field="systemPermissionTabPanel" />
+							</g:FlowPanel>
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
+			</t:DialogTabPanel>
+		</d:content>
+
+		<d:footerButton>
+			<g:PushButton ui:field="closeButton" />
+		</d:footerButton>
+	</d:SimpleDialogPanel>
 
 </ui:UiBinder>

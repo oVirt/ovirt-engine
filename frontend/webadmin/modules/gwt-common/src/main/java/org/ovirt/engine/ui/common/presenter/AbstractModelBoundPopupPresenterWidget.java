@@ -13,20 +13,15 @@ import org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupResolver;
 import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
-import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Provider;
-import com.gwtplatform.mvp.client.PopupView;
-import com.gwtplatform.mvp.client.PresenterWidget;
 
 /**
  * Base class for popup presenter widgets bound to a UiCommon Window model.
@@ -38,9 +33,10 @@ import com.gwtplatform.mvp.client.PresenterWidget;
  * @param <V>
  *            View type.
  */
-public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V extends AbstractModelBoundPopupPresenterWidget.ViewDef<T>> extends PresenterWidget<V> implements ModelBoundPopupResolver<T> {
+public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V extends AbstractModelBoundPopupPresenterWidget.ViewDef<T>>
+        extends AbstractPopupPresenterWidget<V> implements ModelBoundPopupResolver<T> {
 
-    public interface ViewDef<T extends Model> extends PopupView, HasEditorDriver<T> {
+    public interface ViewDef<T extends Model> extends AbstractPopupPresenterWidget.ViewDef, HasEditorDriver<T> {
 
         void setTitle(String title);
 
@@ -62,8 +58,6 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         void focusInput();
 
-        void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
-
     }
 
     // Indicates whether the popup has been disposed
@@ -72,6 +66,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     private final ModelBoundPopupHandler<T> popupHandler;
 
     private T model;
+    private DeferredModelCommandInvoker modelCommandInvoker;
 
     public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view) {
         super(eventBus, view);
@@ -133,6 +128,28 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
      */
     public void init(final T model) {
         this.model = model;
+
+        // Set up model command invoker
+        this.modelCommandInvoker = new DeferredModelCommandInvoker(model) {
+            @Override
+            protected void commandFailed(UICommand command) {
+                // Clear Window and ConfirmWindow models when "Cancel" command execution fails
+                if (command.getIsCancel() && command.getTarget() instanceof Model) {
+                    Model source = (Model) command.getTarget();
+                    source.setWindow(null);
+                    source.setConfirmWindow(null);
+                }
+            }
+
+            @Override
+            protected void commandFinished(UICommand command) {
+                // Enforce popup close after executing "Cancel" command
+                if (command.getIsCancel()) {
+                    hideAndUnbind();
+                }
+            }
+        };
+
         // Set common popup properties
         updateTitle(model);
         updateMessage(model);
@@ -170,37 +187,6 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
             });
         }
 
-        // Add popup key handlers
-        final DeferredModelCommandInvoker commandInvoker = new DeferredModelCommandInvoker(model) {
-            @Override
-            protected void commandFailed(UICommand command) {
-                // Clear Window and ConfirmWindow models when "Cancel" command execution fails
-                if (command.getIsCancel() && command.getTarget() instanceof Model) {
-                    Model source = (Model) command.getTarget();
-                    source.setWindow(null);
-                    source.setConfirmWindow(null);
-                }
-            }
-
-            @Override
-            protected void commandFinished(UICommand command) {
-                // Enforce popup close after executing "Cancel" command
-                if (command.getIsCancel()) {
-                    hideAndUnbind();
-                }
-            }
-        };
-        getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
-            @Override
-            public void onKeyPress(NativeEvent event) {
-                if (KeyCodes.KEY_ENTER == event.getKeyCode()) {
-                    handleEnterKey(commandInvoker);
-                } else if (KeyCodes.KEY_ESCAPE == event.getKeyCode()) {
-                    handleEscapeKey(commandInvoker);
-                }
-            }
-        });
-
         // Register dialog model property change listener
         popupHandler.addDialogModelListener(model);
 
@@ -208,20 +194,29 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         getView().edit(model);
     }
 
+    @Override
+    protected void onClose() {
+        // Close button behaves as if the user pressed the Escape key
+        handleEscapeKey();
+    }
+
+    @Override
+    protected void handleEnterKey() {
+        beforeCommandExecuted(model.getDefaultCommand());
+        modelCommandInvoker.invokeDefaultCommand();
+    }
+
+    @Override
+    protected void handleEscapeKey() {
+        beforeCommandExecuted(model.getCancelCommand());
+        modelCommandInvoker.invokeCancelCommand();
+    }
+
     /**
      * Callback right before any command is executed on the popup.
      */
     protected void beforeCommandExecuted(UICommand command) {
-    }
-
-    protected void handleEnterKey(DeferredModelCommandInvoker commandInvoker) {
-        beforeCommandExecuted(model.getDefaultCommand());
-        commandInvoker.invokeDefaultCommand();
-    }
-
-    protected void handleEscapeKey(DeferredModelCommandInvoker commandInvoker) {
-        beforeCommandExecuted(model.getCancelCommand());
-        commandInvoker.invokeCancelCommand();
+        // No-op, override as necessary
     }
 
     @Override

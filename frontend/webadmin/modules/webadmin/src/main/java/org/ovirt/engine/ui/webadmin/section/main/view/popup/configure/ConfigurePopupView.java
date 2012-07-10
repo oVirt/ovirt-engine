@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
-import org.ovirt.engine.ui.common.widget.dialog.DialogBoxWithKeyHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -19,7 +19,11 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
-public class ConfigurePopupView extends AbstractPopupView<DialogBoxWithKeyHandlers> implements ConfigurePopupPresenterWidget.ViewDef {
+public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> implements ConfigurePopupPresenterWidget.ViewDef {
+
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ConfigurePopupView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
 
     @UiField
     Label titleLabel;
@@ -47,7 +51,6 @@ public class ConfigurePopupView extends AbstractPopupView<DialogBoxWithKeyHandle
             RoleView roleView,
             SystemPermissionView systemPermissionView) {
         super(eventBus, resources);
-
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         roleView.setWidth("95%"); //$NON-NLS-1$
@@ -56,16 +59,12 @@ public class ConfigurePopupView extends AbstractPopupView<DialogBoxWithKeyHandle
         systemPermissionTabPanel.add(systemPermissionView);
     }
 
-    private void localize(ApplicationConstants constants) {
+    void localize(ApplicationConstants constants) {
         titleLabel.setText(constants.configurePopupTitle());
         closeButton.setText(constants.closeButtonLabel());
 
         rolesTab.setLabel(constants.configureRoleTabLabel());
         systemPermissionsTab.setLabel(constants.configureSystemPermissionTabLabel());
-    }
-
-    interface ViewUiBinder extends UiBinder<DialogBoxWithKeyHandlers, ConfigurePopupView> {
-        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     @Override
@@ -74,7 +73,13 @@ public class ConfigurePopupView extends AbstractPopupView<DialogBoxWithKeyHandle
     }
 
     @Override
+    public HasClickHandlers getCloseIconButton() {
+        return asWidget().getCloseIconButton();
+    }
+
+    @Override
     public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
         asWidget().setKeyPressHandler(handler);
     }
+
 }

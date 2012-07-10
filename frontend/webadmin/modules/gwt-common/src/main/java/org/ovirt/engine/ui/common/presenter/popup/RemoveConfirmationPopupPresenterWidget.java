@@ -6,6 +6,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
+/**
+ * Implements the remove confirmation dialog bound to UiCommon {@link ConfirmationModel}.
+ */
 public class RemoveConfirmationPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<ConfirmationModel, RemoveConfirmationPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ConfirmationModel> {

@@ -1,26 +1,20 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure;
 
-import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 
-import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.PopupView;
-import com.gwtplatform.mvp.client.PresenterWidget;
 
-public class ConfigurePopupPresenterWidget extends PresenterWidget<ConfigurePopupPresenterWidget.ViewDef> {
+/**
+ * Implements the WebAdmin configure dialog.
+ */
+public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<ConfigurePopupPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends PopupView {
-        HasClickHandlers getCloseButton();
-        void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
+    public interface ViewDef extends AbstractPopupPresenterWidget.ViewDef {
     }
 
     private RoleModelProvider roleModelProvider;
@@ -42,24 +36,8 @@ public class ConfigurePopupPresenterWidget extends PresenterWidget<ConfigurePopu
     @Override
     protected void onBind() {
         super.onBind();
-
         roleModelProvider.getModel().Search();
         systemPermissionModelProvider.getModel().Search();
-        registerHandler(getView().getCloseButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().hide();
-            }
-        }));
-
-        getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
-            @Override
-            public void onKeyPress(NativeEvent event) {
-                if (KeyCodes.KEY_ESCAPE == event.getKeyCode()) {
-                    getView().hide();
-                }
-            }
-        });
     }
 
     @Override
@@ -69,4 +47,5 @@ public class ConfigurePopupPresenterWidget extends PresenterWidget<ConfigurePopu
         permissionModelProvider.getModel().EnsureAsyncSearchStopped();
         systemPermissionModelProvider.getModel().EnsureAsyncSearchStopped();
     }
+
 }

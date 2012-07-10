@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -14,7 +15,7 @@ import com.gwtplatform.mvp.client.PopupViewImpl;
  * @param <T>
  *            Popup view widget type.
  */
-public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewImpl {
+public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewImpl implements AbstractPopupPresenterWidget.ViewDef {
 
     private final CommonApplicationResources resources;
 

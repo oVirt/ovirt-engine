@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
@@ -43,7 +44,10 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     FlowPanel footerStatusPanel;
 
     @UiField
-    ButtonBase helpButton;
+    ButtonBase helpIconButton;
+
+    @UiField
+    ButtonBase closeIconButton;
 
     @UiField
     Style style;
@@ -107,7 +111,7 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     }
 
     private void addHelpButtonHandler() {
-        helpButton.addClickHandler(new ClickHandler() {
+        helpIconButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 helpCommand.Execute();
@@ -118,16 +122,23 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     @Override
     public void setHelpCommand(UICommand command) {
         helpCommand = command;
-        helpButton.setVisible(command != null);
+        helpIconButton.setVisible(command != null);
     }
 
+    @Override
+    public HasClickHandlers getCloseIconButton() {
+        return closeIconButton;
+    }
+
+    @Override
     public int setTabIndexes(int nextTabIndex) {
         int nbWidgets = footerButtonPanel.getWidgetCount();
-        for (int i=nbWidgets-1; i>=0; --i) {
+        for (int i = nbWidgets - 1; i >= 0; --i) {
             Widget iWidget = footerButtonPanel.getWidget(i);
             if (iWidget instanceof FocusableComponentsContainer)
                 nextTabIndex = ((FocusableComponentsContainer) iWidget).setTabIndexes(nextTabIndex);
         }
         return nextTabIndex;
     }
+
 }

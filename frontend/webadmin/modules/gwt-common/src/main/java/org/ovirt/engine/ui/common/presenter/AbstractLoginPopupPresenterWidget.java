@@ -11,17 +11,12 @@ import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
-import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
-import com.gwtplatform.mvp.client.PopupView;
-import com.gwtplatform.mvp.client.PresenterWidget;
 
 /**
  * Base class for login popup presenter widgets.
@@ -31,9 +26,9 @@ import com.gwtplatform.mvp.client.PresenterWidget;
  * @param <V>
  *            View type.
  */
-public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V extends AbstractLoginPopupPresenterWidget.ViewDef<T>> extends PresenterWidget<V> {
+public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V extends AbstractLoginPopupPresenterWidget.ViewDef<T>> extends AbstractPopupPresenterWidget<V> {
 
-    public interface ViewDef<T extends LoginModel> extends PopupView, HasEditorDriver<T> {
+    public interface ViewDef<T extends LoginModel> extends AbstractPopupPresenterWidget.ViewDef, HasEditorDriver<T> {
 
         void resetAndFocus();
 
@@ -43,14 +38,14 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
 
         HasUiCommandClickHandlers getLoginButton();
 
-        void setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler);
-
     }
 
     private static final Logger logger = Logger.getLogger(AbstractLoginPopupPresenterWidget.class.getName());
 
     private final ClientStorage clientStorage;
     private final LockInteractionManager lockInteractionManager;
+
+    private DeferredModelCommandInvoker modelCommandInvoker;
 
     public AbstractLoginPopupPresenterWidget(EventBus eventBus, V view, T loginModel,
             ClientStorage clientStorage, LockInteractionManager lockInteractionManager) {
@@ -66,7 +61,8 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
 
         final T loginModel = getView().flush();
 
-        final DeferredModelCommandInvoker commandInvoker = new DeferredModelCommandInvoker(loginModel) {
+        // Set up model command invoker
+        this.modelCommandInvoker = new DeferredModelCommandInvoker(loginModel) {
             @Override
             protected void executeCommand(UICommand command) {
                 if (command == loginModel.getLoginCommand()) {
@@ -96,18 +92,9 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
         registerHandler(getView().getLoginButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                commandInvoker.invokeDefaultCommand();
+                modelCommandInvoker.invokeDefaultCommand();
             }
         }));
-
-        getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
-            @Override
-            public void onKeyPress(NativeEvent event) {
-                if (KeyCodes.KEY_ENTER == event.getKeyCode()) {
-                    commandInvoker.invokeDefaultCommand();
-                }
-            }
-        });
 
         // Update selected domain after domain items have been set
         loginModel.getDomain().getPropertyChangedEvent().addListener(new IEventListener() {
@@ -131,6 +118,16 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
                 }
             }
         });
+    }
+
+    @Override
+    protected void handleEnterKey() {
+        modelCommandInvoker.invokeDefaultCommand();
+    }
+
+    @Override
+    protected void handleEscapeKey() {
+        // No-op, login popup cannot be closed
     }
 
     /**
