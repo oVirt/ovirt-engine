@@ -1873,6 +1873,15 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
+- name: /api/templates/{template:id}/nics|rel=add
+  request:
+    body:
+      parameterType: NIC
+      signatures:
+      - mandatoryArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string'}
+        optionalArguments: {nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/templates/{template:id}/nics/{nic:id}|rel=get
   request:
     body:
