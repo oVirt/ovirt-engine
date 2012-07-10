@@ -39,7 +39,6 @@ public class NotificationServiceTest {
         }
         assertNotNull(notificationService);
         notificationService.run();
-        notificationService.shutdown();
     }
 
     /**

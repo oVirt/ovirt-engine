@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.notifier;
 
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -23,12 +26,11 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.notifier.methods.EventMethodFiller;
 import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder;
 import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder.NotificationMethodFactoryMapper;
-import org.ovirt.engine.core.notifier.utils.ConnectionHelper;
-import org.ovirt.engine.core.notifier.utils.ConnectionHelper.NaiveConnectionHelperException;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
 import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
+import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 
 /**
  * Responsible for an execution of the service for the current events in the system which should be notified to the
@@ -38,7 +40,7 @@ public class NotificationService implements Runnable {
 
     private static final Log log = LogFactory.getLog(NotificationService.class);
 
-    private ConnectionHelper connectionHelper = null;
+    private DataSource ds;
     private Map<String, String> prop = null;
     private NotificationMethodFactoryMapper methodsMapper = null;
     private boolean shouldDeleteHistory = false;
@@ -99,12 +101,6 @@ public class NotificationService implements Runnable {
             if (!Thread.interrupted()) {
                 log.error(String.format("Failed to run the service: [%s]", e.getMessage()), e);
             }
-            // since notification service uses same instance to recurrent notification process -
-            // only upon an exception the DB connection will be closed and will be reopened the next
-            // time the service will start to run by calling ConnectionHelper.getConnection()
-            // the connection won't be closed in a finally block since the service is planned to work constantly
-            // against the DB and same connection could be served for a long period.
-            shutdown();
         }
     }
 
@@ -115,41 +111,33 @@ public class NotificationService implements Runnable {
      */
     private void startup() throws NotificationServiceException {
         try {
-            if (connectionHelper == null) {
-                connectionHelper = new ConnectionHelper(prop);
-            } else {
-                connectionHelper.getConnection();
-            }
-        } catch (NaiveConnectionHelperException e) {
-            throw new NotificationServiceException("Failed to initialize the connection helper", e);
+            ds = new StandaloneDataSource();
         }
-    }
-
-    /**
-     * Releases any resources which is held by the service:<br>
-     * <li>Close open DB connection
-     */
-    public void shutdown() {
-        if (connectionHelper != null) {
-            connectionHelper.closeConnection();
+        catch (SQLException exception) {
+            throw new NotificationServiceException("Failed to initialize the connection helper", exception);
         }
     }
 
     // TODO: Consider adding deleteObseleteHistoryData() as a separate scheduled thread run on a daily basis
-    private void deleteObseleteHistoryData() throws SQLException, NaiveConnectionHelperException {
+    private void deleteObseleteHistoryData() throws SQLException {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, daysToKeepHistory);
         java.sql.Timestamp startDeleteFrom = new java.sql.Timestamp(cal.getTimeInMillis());
+        Connection connection = null;
         PreparedStatement deleteStmt = null;
         int deletedRecords;
         try {
-            deleteStmt = connectionHelper.getConnection().prepareStatement("delete from event_notification_hist where sent_at < ?");
+            connection = ds.getConnection();
+            deleteStmt = connection.prepareStatement("delete from event_notification_hist where sent_at < ?");
             deleteStmt.setTimestamp(1, startDeleteFrom);
             deletedRecords = deleteStmt.executeUpdate();
         } finally {
             if (deleteStmt != null) {
                 deleteStmt.close();
+            }
+            if (connection != null) {
+                connection.close();
             }
         }
 
@@ -160,10 +148,22 @@ public class NotificationService implements Runnable {
 
     private void initMethodMapper() throws NotificationServiceException {
         EventMethodFiller methodFiller = new EventMethodFiller();
+        Connection connection = null;
         try {
-            methodFiller.fillEventNotificationMethods(connectionHelper.getConnection());
+            connection = ds.getConnection();
+            methodFiller.fillEventNotificationMethods(connection);
         } catch (Exception e) {
             throw new NotificationServiceException("Failed to initialize method mapper", e);
+        }
+        finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                }
+                catch (SQLException exception) {
+                    log.error("Failed to release connection", exception);
+                }
+            }
         }
 
         List<event_notification_methods> eventNotificationMethods = methodFiller.getEventNotificationMethods();
@@ -172,19 +172,21 @@ public class NotificationService implements Runnable {
 
     private void initConnectivity() throws NotificationServiceException {
         try {
-            connectionHelper = new ConnectionHelper(prop);
-        } catch (NaiveConnectionHelperException e) {
+            ds = new StandaloneDataSource();
+        } catch (SQLException e) {
             throw new NotificationServiceException("Failed to obtain database connectivity", e);
         }
     }
 
-    private void processEvents() throws SQLException, NaiveConnectionHelperException {
+    private void processEvents() throws SQLException {
+        Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
+            connection = ds.getConnection();
             ps =
-                    connectionHelper.getConnection()
+                    connection
                             .prepareStatement("select * from event_audit_log_subscriber_view " +
                                     "where audit_log_id <= (select max(audit_log_id) from audit_log)");
             rs = ps.executeQuery();
@@ -233,13 +235,12 @@ public class NotificationService implements Runnable {
         }
     }
 
-    private void updateAuditLogEventProcessed(event_audit_log_subscriber eventSubscriber) throws SQLException,
-            NaiveConnectionHelperException {
+    private void updateAuditLogEventProcessed(event_audit_log_subscriber eventSubscriber) throws SQLException {
+        Connection connection = null;
         PreparedStatement ps = null;
         try {
-            ps =
-                    connectionHelper.getConnection()
-                            .prepareStatement("update audit_log set processed = 'true' where audit_log_id = ?");
+            connection = ds.getConnection();
+            ps = connection.prepareStatement("update audit_log set processed = 'true' where audit_log_id = ?");
             ps.setLong(1, eventSubscriber.getaudit_log_id());
             int updated = ps.executeUpdate();
             if (updated != 1) {
@@ -254,11 +255,13 @@ public class NotificationService implements Runnable {
     }
 
     private void addEventNotificationHistory(event_notification_hist eventHistory)
-            throws SQLException, NaiveConnectionHelperException {
+            throws SQLException {
 
+        Connection connection = null;
         CallableStatement cs = null;
         try {
-            cs = connectionHelper.getConnection().prepareCall("{call Insertevent_notification_hist(?,?,?,?,?,?,?)}");
+            connection = ds.getConnection();
+            cs = connection.prepareCall("{call Insertevent_notification_hist(?,?,?,?,?,?,?)}");
             cs.setLong(1, eventHistory.getaudit_log_id());
             cs.setString(2, eventHistory.getevent_name());
             cs.setString(3, eventHistory.getmethod_type());
@@ -270,6 +273,9 @@ public class NotificationService implements Runnable {
         } finally {
             if (cs != null) {
                 cs.close();
+            }
+            if (connection != null) {
+                connection.close();
             }
         }
     }
@@ -288,16 +294,18 @@ public class NotificationService implements Runnable {
         return eventHistory;
     }
 
-    private DbUser getUserByUserId(Guid userId) throws SQLException, NaiveConnectionHelperException {
+    private DbUser getUserByUserId(Guid userId) throws SQLException {
         // Using preparedStatement instead of STP GetUserByUserId to skip handling supporting dialects
         // for MSSQL and PG. PG doesn't support parameter name which matches a column name. This is supported
         // by the backend, since using a plan JDBC, bypassing this issue by prepared statement.
         // in additional, required only partial email field of the DbUser
+        Connection connection = null;
         Statement ps = null;
         ResultSet rs = null;
         DbUser dbUser = null;
         try {
-            ps = connectionHelper.getConnection().createStatement();
+            connection = ds.getConnection();
+            ps = connection.createStatement();
             rs = ps.executeQuery(String.format("SELECT email FROM users WHERE user_id = '%s'", userId.toString()));
             if (rs.next()) {
                 dbUser = new DbUser();
@@ -314,6 +322,9 @@ public class NotificationService implements Runnable {
             }
             if (ps != null) {
                 ps.close();
+            }
+            if (connection != null) {
+                connection.close();
             }
         }
         return dbUser;

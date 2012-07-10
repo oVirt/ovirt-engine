@@ -7,6 +7,7 @@ import java.net.URL;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -35,10 +37,9 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
-import org.ovirt.engine.core.notifier.utils.ConnectionHelper;
-import org.ovirt.engine.core.notifier.utils.ConnectionHelper.NaiveConnectionHelperException;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
+import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 
 /**
  * Class uses to monitor the oVirt Engineanager service by sampling its health servlet. Upon response other than code 200,
@@ -58,7 +59,7 @@ public class EngineMonitorService implements Runnable {
     private static final String DEFAULT_SSL_PROTOCOL = "TLS";
     private static final long DEFAULT_SERVER_MONITOR_TIMEOUT_IN_SECONDS = 30;
     private static final int DEFAULT_SERVER_MONITOR_RETRIES = 3;
-    private ConnectionHelper connectionHelper = null;
+    private DataSource ds;
     private Map<String, String> prop = null;
     private long serverMonitorTimeout;
     private String serverUrl;
@@ -288,8 +289,6 @@ public class EngineMonitorService implements Runnable {
             }
             // initialize server status if a dispatch failed to treat as new check for next iteration
             isServerUp = true;
-        } finally {
-            connectionHelper.closeConnection();
         }
     }
 
@@ -443,13 +442,12 @@ public class EngineMonitorService implements Runnable {
      * @throws NaiveConnectionHelperException
      */
     private void insertEventIntoAuditLog(String eventType, int eventId, int severity, String message)
-            throws SQLException,
-            NaiveConnectionHelperException {
+            throws SQLException {
+        Connection connection = null;
         PreparedStatement ps = null;
         try {
-            ps =
-                    connectionHelper.getConnection()
-                            .prepareStatement("insert into audit_log(log_time, log_type_name , log_type, severity, message) values (?,?,?,?,?)");
+            connection = ds.getConnection();
+            ps = connection.prepareStatement("insert into audit_log(log_time, log_type_name , log_type, severity, message) values (?,?,?,?,?)");
             ps.setTimestamp(1,(new Timestamp(new Date().getTime())));
             ps.setString(2, eventType);
             ps.setInt(3, eventId);
@@ -460,14 +458,18 @@ public class EngineMonitorService implements Runnable {
             if (ps != null) {
                 ps.close();
             }
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 
     private void initConnectivity() throws NotificationServiceException {
         try {
-            connectionHelper = new ConnectionHelper(prop);
-        } catch (NaiveConnectionHelperException e) {
-            throw new NotificationServiceException("Failed to obtain database connectivity", e);
+            ds = new StandaloneDataSource();
+        }
+        catch (SQLException exception) {
+            throw new NotificationServiceException("Failed to obtain database connectivity", exception);
         }
     }
 
@@ -482,6 +484,7 @@ public class EngineMonitorService implements Runnable {
     private String getConfigurationProperty(String propertyName, String propertyVersion) {
         final String GET_CONFIGURATION_PROPERTY_SQL =
                 "select option_value from vdc_options where option_name = ? and version = ?";
+        Connection connection = null;
         PreparedStatement pStmt = null;
         String propertyValue = null;
         ResultSet rs = null;
@@ -491,7 +494,8 @@ public class EngineMonitorService implements Runnable {
         }
 
         try {
-            pStmt = connectionHelper.getConnection().prepareStatement(GET_CONFIGURATION_PROPERTY_SQL);
+            connection = ds.getConnection();
+            pStmt = connection.prepareStatement(GET_CONFIGURATION_PROPERTY_SQL);
             pStmt.setString(1, propertyName);
             pStmt.setString(2, propertyVersion);
             rs = pStmt.executeQuery();
@@ -525,6 +529,13 @@ public class EngineMonitorService implements Runnable {
                     pStmt.close();
                 } catch (SQLException e1) {
                     log.error("Failed to release statement of vdc_options", e1);
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e1) {
+                    log.error("Failed to release connection of vdc_options", e1);
                 }
             }
         }

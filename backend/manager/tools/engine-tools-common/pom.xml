@@ -10,10 +10,6 @@
   <packaging>jar</packaging>
   <name>oVirt Tools Common Library</name>
 
-  <properties>
-    <engine.db>mssql</engine.db>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
@@ -47,10 +43,6 @@
   <build>
     <testResources>
       <testResource>
-        <directory>src/test/resources/filters</directory>
-        <filtering>true</filtering>
-      </testResource>
-      <testResource>
         <directory>src/test/resources</directory>
         <includes>
             <include>log4j.xml</include>
@@ -59,12 +51,4 @@
     </testResources>
   </build>
 
-  <profiles>
-    <profile>
-      <id>postgres</id>
-      <properties>
-        <engine.db>pgsql</engine.db>
-      </properties>
-    </profile>
-  </profiles>
 </project>

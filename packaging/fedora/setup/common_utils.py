@@ -945,9 +945,9 @@ def chown(target,uid, gid):
     logging.debug("chown %s to %s:%s" % (target, uid, gid))
     os.chown(target, uid, gid)
 
-def chownToJboss(target):
-    uid = getUsernameId(basedefs.JBOSS_USER_NAME)
-    gid = getGroupId(basedefs.JBOSS_GROUP_NAME)
+def chownToEngine(target):
+    uid = getUsernameId(basedefs.ENGINE_USER_NAME)
+    gid = getGroupId(basedefs.ENGINE_GROUP_NAME)
     chown(target, uid, gid)
 
 def installed(rpm):

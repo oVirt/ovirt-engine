@@ -112,6 +112,7 @@ Requires: openssl
 Requires: policycoreutils-python
 Requires: postgresql-jdbc
 Requires: python-configobj
+Requires: python-cheetah
 Requires: vdsm-bootstrap
 Requires: yum-plugin-versionlock
 
@@ -593,7 +594,6 @@ fi
 
 # Files needed by the service:
 %config(noreplace) %{_sysconfdir}/sysconfig/%{engine_name}
-%config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine-service.xml
 %config(noreplace) %{_sysconfdir}/security/limits.d/10-ovirt-engine.conf
 %{engine_usr}/service
 %{_bindir}/engine-service

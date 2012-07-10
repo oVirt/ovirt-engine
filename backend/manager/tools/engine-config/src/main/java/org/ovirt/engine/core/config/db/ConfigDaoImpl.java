@@ -9,30 +9,28 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
-import org.ovirt.engine.core.tools.common.db.ConnectionFactory;
-import org.ovirt.engine.core.tools.common.db.JbossConnectionFactory;
+import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 
 public class ConfigDaoImpl implements ConfigDAO {
 
     private String updateSql;
     private String selectSql;
     private String selectKeysForNameSql;
-    private final Configuration appConfig;
     private String configTable;
     private String nameColumn;
     private String valueColumn;
     private String versionColumn;
-    private Connection connection;
+    private DataSource ds;
 
     public ConfigDaoImpl(Configuration appConfig) throws ClassNotFoundException, SQLException, ConfigurationException,
             ConnectException, XPathExpressionException {
-        this.appConfig = appConfig;
         valueColumn = appConfig.getString("configColumnValue");
         configTable = appConfig.getString("configTable");
         nameColumn = appConfig.getString("configColumnName");
@@ -53,14 +51,16 @@ public class ConfigDaoImpl implements ConfigDAO {
                 MessageFormat.format("select * from {0} where {1}=? ",
                         configTable,
                         nameColumn);
-        connection = getDbConnection();
+        ds = new StandaloneDataSource();
     }
 
     @Override
     public int updateKey(ConfigKey configKey) throws SQLException {
+        Connection connection = null;
         PreparedStatement prepareStatement = null;
         int executeUpdate;
         try {
+            connection = ds.getConnection();
             prepareStatement = connection.prepareStatement(updateSql);
             prepareStatement.setString(1, configKey.getValue());
             prepareStatement.setString(2, configKey.getKey());
@@ -70,15 +70,20 @@ public class ConfigDaoImpl implements ConfigDAO {
             if (prepareStatement != null) {
                 prepareStatement.close();
             }
+            if (connection != null) {
+                connection.close();
+            }
         }
         return executeUpdate;
     }
 
     @Override
     public ConfigKey getKey(ConfigKey key) throws SQLException {
+        Connection connection = null;
         PreparedStatement prepareStatement = null;
         ConfigKey ckReturn = null;
         try {
+            connection = ds.getConnection();
             prepareStatement = connection.prepareStatement(selectSql);
             prepareStatement.setString(1, key.getKey());
             prepareStatement.setString(2, key.getVersion());
@@ -94,22 +99,20 @@ public class ConfigDaoImpl implements ConfigDAO {
             if (prepareStatement != null) {
                 prepareStatement.close();
             }
+            if (connection != null) {
+                connection.close();
+            }
         }
         return ckReturn;
     }
 
-    private Connection getDbConnection() throws ClassNotFoundException, SQLException, ConfigurationException, ConnectException, XPathExpressionException {
-        ConnectionFactory factory =
-                new JbossConnectionFactory(appConfig.getString("jbossDataSourceFile"),
-                        appConfig.getString("jbossLoginConfigFile"));
-        return factory.getConnection();
-    }
-
     @Override
     public List<ConfigKey> getKeysForName(String name) throws SQLException {
+        Connection connection = null;
         PreparedStatement prepareStatement = null;
         List<ConfigKey> keys = new ArrayList<ConfigKey>();
         try {
+            connection = ds.getConnection();
             prepareStatement = connection.prepareStatement(selectKeysForNameSql);
             prepareStatement.setString(1, name);
             ResultSet resultSet = prepareStatement.executeQuery();
@@ -125,14 +128,11 @@ public class ConfigDaoImpl implements ConfigDAO {
             if (prepareStatement != null) {
                 prepareStatement.close();
             }
+            if (connection != null) {
+                connection.close();
+            }
         }
 
         return keys;
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        connection.close();
     }
 }

@@ -36,6 +36,8 @@ import syslog
 import time
 import traceback
 
+from Cheetah.Template import Template
+
 
 # The name of the engine:
 engineName = "engine-service"
@@ -44,6 +46,8 @@ engineName = "engine-service"
 engineSysconfig = None
 
 # The name of the user and group that should run the service:
+engineUser = None
+engineGroup = None
 engineUid = 0
 engineGid = 0
 
@@ -67,6 +71,7 @@ engineEarDir = None
 # Engine files:
 enginePidFile = None
 engineLoggingFile = None
+engineConfigTemplateFile = None
 engineConfigFile = None
 engineLogFile = None
 engineBootLogFile = None
@@ -83,16 +88,18 @@ def loadSysconfig():
     engineSysconfig = configobj.ConfigObj(engineSysconfigFile)
 
     # Get the id of the engine user:
-    engineUser = getSysconfig("ENGINE_USER", "ovirt")
+    global engineUser
     global engineUid
+    engineUser = getSysconfig("ENGINE_USER", "ovirt")
     try:
         engineUid = pwd.getpwnam(engineUser).pw_uid
     except:
         raise Exception("The engine user \"%s\" doesn't exist." % engineUser)
 
     # Get id of the engine group:
-    engineGroup = getSysconfig("ENGINE_GROUP", "ovirt")
+    global engineGroup
     global engineGid
+    engineGroup = getSysconfig("ENGINE_GROUP", "ovirt")
     try:
         engineGid = grp.getgrnam(engineGroup).gr_gid
     except:
@@ -131,6 +138,7 @@ def loadSysconfig():
     # Engine files:
     global enginePidFile
     global engineLoggingFile
+    global engineConfigTemplateFile
     global engineConfigFile
     global engineLogFile
     global engineBootLogFile
@@ -138,7 +146,8 @@ def loadSysconfig():
     global engineServerLogFile
     enginePidFile = getSysconfig("ENGINE_PID", "/var/run/ovirt-engine.pid")
     engineLoggingFile = os.path.join(engineServiceDir, "engine-service-logging.properties")
-    engineConfigFile = os.path.join(engineEtcDir, "engine-service.xml")
+    engineConfigTemplateFile = os.path.join(engineServiceDir, "engine-service.xml.in")
+    engineConfigFile = os.path.join(engineTmpDir, "engine-service.xml")
     engineLogFile = os.path.join(engineLogDir, "engine.log")
     engineBootLogFile = os.path.join(engineLogDir, "boot.log")
     engineConsoleLogFile = os.path.join(engineLogDir, "console.log")
@@ -223,7 +232,7 @@ def checkInstallation():
     checkDirectory(engineTmpDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineEarDir, uid=0, gid=0)
     checkFile(engineLoggingFile)
-    checkFile(engineConfigFile)
+    checkFile(engineConfigTemplateFile)
 
     # Check that log files are owned by the engine user, if they exist:
     checkLog(engineLogFile)
@@ -282,6 +291,15 @@ def startEngine():
         markerFd.close()
     except:
         raise Exception("Can't create deployment marker file \"%s\"." % markerFile)
+
+    # Generate the main configuration from the template and copy it to the
+    # configuration directory making sure that the application server will be
+    # able to write to it:
+    engineConfigTemplate = Template(file=engineConfigTemplateFile, searchList=[engineSysconfig])
+    engineConfigText = str(engineConfigTemplate)
+    with open(engineConfigFile, "w") as engineConfigFd:
+        engineConfigFd.write(engineConfigText)
+        os.chown(engineConfigFile, engineUid, engineGid)
 
     # Get heap configuration parameters from the environment or use defaults if
     # they are not provided:
@@ -349,7 +367,7 @@ def startEngine():
         "-Djboss.server.default.config=engine-service",
         "-Djboss.home.dir=%s" % jbossHomeDir,
         "-Djboss.server.base.dir=%s" % engineUsrDir,
-        "-Djboss.server.config.dir=%s" % engineEtcDir,
+        "-Djboss.server.config.dir=%s" % engineTmpDir,
         "-Djboss.server.data.dir=%s" % engineVarDir,
         "-Djboss.server.log.dir=%s" % engineLogDir,
         "-Djboss.server.temp.dir=%s" % engineTmpDir,
@@ -391,8 +409,20 @@ def startEngine():
     os.dup2(engineConsoleFd, 2)
     os.close(engineConsoleFd)
 
+    # Prepare a clean environment:
+    engineEnv = {
+        "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin",
+        "LANG": "en_US.UTF-8",
+        "ENGINE_ETC": engineEtcDir,
+        "ENGINE_LOG": engineLogDir,
+        "ENGINE_TMP": engineTmpDir,
+        "ENGINE_USR": engineUsrDir,
+        "ENGINE_VAR": engineVarDir,
+        "ENGINE_LOCK": engineLockDir,
+    }
+
     # Finally execute the java virtual machine:
-    os.execvp("java", engineArgs)
+    os.execvpe("java", engineArgs, engineEnv)
 
 
 def stopEngine():

@@ -1,26 +1,37 @@
+#
+# Please note that the engine installation tool engine-setup will
+# append the modified parameters to the end of this file. If you
+# decide to modify anything manually remember to update those
+# lines accordingly.
+#
+
+#
 # The names of the user and group that will execute the java
 # virtual machine of the engine:
 #
 #ENGINE_USER=ovirt
 #ENGINE_GROUP=ovirt
 
+#
 # These variables control the amount of memory used by the java
-# virtual machine where the engine runs (the default is shown in
-# the example below):
+# virtual machine where the engine runs:
 #
 #ENGINE_MIN_HEAP=1g
 #ENGINE_MAX_HEAP=1g
 
+#
 # Uncomment this if you want to enable remote debugging of the
 # engine java virtual machine (useful mainly for developers):
 #
 #ENGINE_DEBUG_ADDRESS=localhost:8787
 
+#
 # Uncomment the following if you want to enable garbage collection
 # debug information (will be sent to the console.log file):
 #
 #ENGINE_VERBOSE_GC=true
 
+#
 # Extra system properties to be added to the java virtual machine
 # of the engine. Properties can be specified using the typical
 # java syntax:
@@ -40,3 +51,25 @@
 #   -Dmy.param=my.value -Dmy.flag -Dyour.param=your.value
 #
 #ENGINE_PROPERTIES=
+
+#
+# Ports used by the web container:
+#
+#ENGINE_HTTP_PORT=8080
+#ENGINE_HTTPS_PORT=8443
+#ENGINE_AJP_PORT=8009
+
+#
+# Database connection details (note that the password is
+# encrypted):
+#
+#ENGINE_DB_DRIVER=org.postgresql.Driver
+#ENGINE_DB_URL=jdbc:postgresql://localhost/engine
+#ENGINE_DB_SSL=false
+#ENGINE_DB_USER=engine
+#ENGINE_DB_PASSWORD=-2361e09b066a8cd65e09a31f95885cc4
+
+#
+# Parameters modified by engine-setup will be appended after this
+# line:
+#

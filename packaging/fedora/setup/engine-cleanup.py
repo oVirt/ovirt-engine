@@ -48,7 +48,7 @@ MSG_ERR_CANT_FIND_PGPASS_FILE="Could not find DB password file %s. Skipping DB c
 
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
-MSG_INFO_STOP_JBOSS = "Stopping %s service" % basedefs.JBOSS_SERVICE_NAME
+MSG_INFO_STOP_JBOSS = "Stopping %s service" % basedefs.ENGINE_SERVICE_NAME
 MSG_INFO_STOP_NOTIFIERD = "Stopping engine-notifierd service"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_REMOVE_DB = "Removing Database"
@@ -86,10 +86,6 @@ def getOptions():
     parser.add_option("-c", "--dont-remove-ca",
                       action="store_false", dest="remove_ca", default=True,
                       help="Don't remove CA")
-
-    parser.add_option("-l", "--dont-unlink-ear",
-                      action="store_false", dest="unlink_ear", default=True,
-                      help="Don't unlink ear")
 
     #parser.add_option("-s", "--dont-remove-profile",
     #                  action="store_false", dest="remove_slimmed", default=True,
@@ -315,10 +311,10 @@ class DB():
         return True
 
 def stopJboss():
-    logging.debug("stoping %s service." % basedefs.JBOSS_SERVICE_NAME)
+    logging.debug("stoping %s service." % basedefs.ENGINE_SERVICE_NAME)
 
     cmd = [
-        basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop",
+        basedefs.EXEC_SERVICE, basedefs.ENGINE_SERVICE_NAME, "stop",
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STP_JBOSS_SERVICE)
 
@@ -355,13 +351,6 @@ def _printErrlMessages():
         logging.info('%s'%(msg))
         print ('%s'%(msg))
 
-def unlinkEar():
-    links = [os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear")]
-
-    for link in links:
-        if os.path.exists(link):
-            os.unlink(link)
-
 def main(options):
     db = DB()
     ca = CA()
@@ -384,10 +373,6 @@ def main(options):
     # Remove CA
     if ca.exists() and options.remove_ca:
         runFunc([ca.backup, ca.remove], MSG_INFO_REMOVE_CA)
-
-    # Unlink ear link in JBoss
-    if options.unlink_ear:
-        runFunc([unlinkEar], MSG_INFO_UNLINK_EAR)
 
     # Stop notifierd service
     runFunc(stopNotifier, MSG_INFO_STOP_NOTIFIERD)

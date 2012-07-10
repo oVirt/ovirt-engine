@@ -99,7 +99,7 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
                                               { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
-                                                'functions' : [configJbossXml, _editWebConf] },
+                                                'functions' : [editSysconfig, _editWebConf] },
                                               { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
                                                 'functions' : [_updatePgPassFile]}]
                        },
@@ -850,7 +850,7 @@ def _changeCaPermissions(pkiDir):
                     os.path.join(pkiDir,".truststore")
                     ]
     for item in changeList:
-        utils.chownToJboss(item)
+        utils.chownToEngine(item)
         logging.debug("changing file permissions for %s to 0750" % (item))
         os.chmod(item, 0750)
 
@@ -1041,7 +1041,7 @@ def _updateVDCOptions():
             "CertificateFileName":["/etc/pki/ovirt-engine/certs/engine.cer", 'text'],
             "CAEngineKey":["/etc/pki/ovirt-engine/private/ca.pem", 'text'],
             "TruststoreUrl":["/etc/pki/ovirt-engine/.keystore", 'text'],
-            "ENGINEEARLib":["%s/standalone/deployments/engine.ear" %(basedefs.DIR_JBOSS), 'text'],
+            "ENGINEEARLib":["%s/engine.ear" %(basedefs.DIR_ENGINE), 'text'],
             "CACertificatePath":["/etc/pki/ovirt-engine/ca.pem", 'text'],
             "CertAlias":["engine", 'text'],
         },
@@ -1239,7 +1239,7 @@ def _encryptDBPass():
 
         # The encrypt tool needs the jboss home env set
         # Since we cant use the bash way, we need to set it as environ
-        os.environ["JBOSS_HOME"] = basedefs.DIR_JBOSS
+        os.environ["JBOSS_HOME"] = basedefs.DIR_ENGINE
         output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_ENCRYPT_PASS, maskList=masked_value_set)
 
         #parse the encrypted password from the tool
@@ -1558,8 +1558,8 @@ def _startHttpd():
 
 
 def _startJboss():
-    logging.debug("using chkconfig to enable jboss to load on system startup.")
-    srv = utils.Service(basedefs.JBOSS_SERVICE_NAME)
+    logging.debug("using chkconfig to enable engine to load on system startup.")
+    srv = utils.Service(basedefs.ENGINE_SERVICE_NAME)
     srv.autoStart(True)
     srv.stop(True)
     srv.start(True)
@@ -1685,13 +1685,13 @@ def _addFinalInfoMsg():
     controller.MESSAGES.append(output_messages.INFO_RHEVM_URL % controller.CONF["HTTP_URL"])
 
 def _checkJbossService(configFile):
-    logging.debug("checking the status of jboss")
-    jservice = utils.Service(basedefs.JBOSS_SERVICE_NAME)
+    logging.debug("checking the status of engine")
+    jservice = utils.Service(basedefs.ENGINE_SERVICE_NAME)
     output, rc = jservice.status()
     if 0 == rc:
-        logging.debug("jboss is up and running")
+        logging.debug("engine is up and running")
 
-        #if we don't use an answer file, we need to ask the user if to stop jboss
+        #if we don't use an answer file, we need to ask the user if to stop engine
         if not configFile:
             print output_messages.INFO_NEED_STOP_JBOSS
             answer = _askYesNo(output_messages.INFO_Q_STOP_JBOSS)
@@ -1699,7 +1699,7 @@ def _checkJbossService(configFile):
                 print output_messages.INFO_STOP_JBOSS,
                 jservice.stop(True)
             else:
-                logging.debug("User chose not to stop jboss")
+                logging.debug("User chose not to stop engine")
                 return False
         else:
             #we stop the jboss service on a silent install
@@ -1834,278 +1834,47 @@ def stopRhevmDbRelatedServices():
 
 def configEncryptedPass():
     """
-    push the encrypted password into standalone.xml
+    Push the encrypted password into the local configuration file.
     """
-    editFile = None
-    backupFile = None
     try:
-        #1. Backup standalone xml file
-        editFile = "%s.%s.%i" % (basedefs.FILE_JBOSS_STANDALONE, "EDIT", random.randint(1000000,9999999))
-        logging.debug("Backing up %s into %s", basedefs.FILE_JBOSS_STANDALONE, backupFile)
-        utils.copyFile(basedefs.FILE_JBOSS_STANDALONE, editFile)
-
-        #2. Configure the xml file
-        logging.debug("loading xml file handler")
-        xmlObj = utils.XMLConfigFileHandler(editFile)
-        xmlObj.open()
-
-        xmlObj.registerNs('security', xmlObj.getNs('urn:jboss:domain:security'))
-
-        configJbossSecurity(xmlObj)
-
-        xmlObj.close()
-
-        shutil.move(editFile, basedefs.FILE_JBOSS_STANDALONE)
-        utils.chownToJboss(basedefs.FILE_JBOSS_STANDALONE)
-        logging.debug("Jboss configuration has been saved")
-
+        logging.debug("Encrypting database password.")
+        handler = utils.TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
+        handler.open()
+        handler.editParam("ENGINE_DB_USER", getDbUser())
+        handler.editParam("ENGINE_DB_PASSWORD", controller.CONF["ENCRYPTED_DB_PASS"])
+        handler.close()
     except:
-        logging.error("ERROR Editing jboss's configuration file")
+        logging.error("ERROR Editing engine local configuration file.")
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_JBOSS)
 
-def configJbossXml():
+def editSysconfig():
     """
-    configure JBoss stadnalone.xml
+    Update the local configuration file.
     """
-    editFile = None
-    backupFile = None
-    try:
-        #1. Backup standalone xml file
-        backupFile = "%s.%s.%i" % (basedefs.FILE_JBOSS_STANDALONE, "BACKUP", random.randint(1000000,9999999))
-        editFile = "%s.%s.%i" % (basedefs.FILE_JBOSS_STANDALONE, "EDIT", random.randint(1000000,9999999))
-        logging.debug("Backing up %s into %s", basedefs.FILE_JBOSS_STANDALONE, backupFile)
-        utils.copyFile(basedefs.FILE_JBOSS_STANDALONE, backupFile)
-        utils.copyFile(basedefs.FILE_JBOSS_STANDALONE, editFile)
+    # Load the file:
+    logging.debug("Loading text file handler")
+    handler = utils.TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
+    handler.open()
 
-        #2. Configure the xml file
-        logging.debug("loading xml file handler")
-        xmlObj = utils.XMLConfigFileHandler(editFile)
-        xmlObj.open()
-
-        #2a. Register the main domain Namespace
-        xmlObj.registerNs('domain', xmlObj.getNs('urn:jboss:domain'))
-
-        logging.debug("Configuring Jboss")
-        configJbossDatasource(xmlObj)
-        configJbossNetwork(xmlObj)
-        configJbossSSL(xmlObj)
-        isProxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
-        if isProxyEnabled:
-            configJbossAjpConnector(xmlObj)
-        configRewriteRules(xmlObj)
-        logging.debug("Jboss has been configured")
-
-        xmlObj.close()
-
-        shutil.move(editFile, basedefs.FILE_JBOSS_STANDALONE)
-        utils.chownToJboss(basedefs.FILE_JBOSS_STANDALONE)
-        logging.debug("Jboss configuration has been saved")
-
-    except:
-        logging.error("ERROR Editing jboss's configuration file")
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_JBOSS)
-
-def configJbossAjpConnector(xmlObj):
-    """
-    Configure AJP connector for jboss
-    """
-    logging.debug("Configuring ajp connector")
-    xmlObj.registerNs('web', xmlObj.getNs('urn:jboss:domain:web'))
-    ajpConnectorStr='<connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp"/>'
-    xmlObj.removeNodes("//web:subsystem/web:connector[@name='ajp']")
-    xmlObj.addNodes("//web:subsystem", ajpConnectorStr)
-
-    logging.debug("Configuring ajp socket")
-    xmlObj.registerNs('domain', xmlObj.getNs('urn:jboss:domain'))
-    ajpSocketStr='<socket-binding name="ajp" port="%s"/>'%(basedefs.JBOSS_AJP_PORT)
-    xmlObj.removeNodes("//domain:socket-binding-group/domain:socket-binding[@name='ajp']")
-    xmlObj.addNodes("//domain:socket-binding-group", ajpSocketStr)
-
-    logging.debug("AJP has been configured for jboss")
-
-def configJbossDatasource(xmlObj):
-    """
-    configure the datasource for jboss
-    """
-    logging.debug("Configuring logging for jboss")
-
-    logging.debug("Registering datasource namespaces")
-    xmlObj.registerNs('datasource', xmlObj.getNs('urn:jboss:domain:datasources'))
-
-    logging.debug("looking for ENGINEDatasource datasource")
-
-    # removeNodes will remove the node if it exists and will do nothing if it does not exist
-    xmlObj.removeNodes("//datasource:subsystem/datasource:datasources/datasource:datasource[@jndi-name='java:/ENGINEDataSource']")
-
-    secure_conn = ''
+    # Database connection details:
+    dbUrl = "jdbc:postgresql://" + getDbHostName() + ":" + getDbPort() + "/" + basedefs.DB_NAME
     if "DB_SECURE_CONNECTION" in controller.CONF.keys() and controller.CONF["DB_SECURE_CONNECTION"] == "yes":
-        secure_conn = '''
-            <connection-property name="ssl">
-                 true
-            </connection-property>
-            <connection-property name="sslfactory">
-                 org.postgresql.ssl.NonValidatingFactory
-            </connection-property>
-       '''
+        dbUrl = dbUrl + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+    handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
+    handler.editParam("ENGINE_DB_URL", dbUrl) 
+    handler.editParam("ENGINE_DB_USER", getDbUser())
 
-    datasourceStr = '''
-        <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true">
-        <connection-url>
-            jdbc:postgresql://%s:%s/engine
-        </connection-url>
-        %s
-        <driver>
-            postgresql
-        </driver>
-        <transaction-isolation>
-            TRANSACTION_READ_COMMITTED
-        </transaction-isolation>
-        <pool>
-            <min-pool-size>
-                1
-            </min-pool-size>
-            <max-pool-size>
-                100
-            </max-pool-size>
-            <prefill>
-                true
-            </prefill>
-        </pool>
-        <security>
-            <user-name>
-                %s
-            </user-name>
-            <security-domain>
-                EncryptDBPassword
-            </security-domain>
-        </security>
-        <statement>
-            <prepared-statement-cache-size>
-                100
-            </prepared-statement-cache-size>
-        </statement>
-    </datasource>
-''' % (getDbHostName(), getDbPort(), secure_conn, getDbUser())
-    logging.debug("Adding ENGINE datasource")
-    xmlObj.addNodes("//datasource:subsystem/datasource:datasources", datasourceStr)
+    # Ports:
+    handler.editParam("ENGINE_HTTP_PORT", basedefs.JBOSS_HTTP_PORT)
+    handler.editParam("ENGINE_HTTPS_PORT", basedefs.JBOSS_HTTPS_PORT)
+    isProxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
+    if isProxyEnabled:
+        handler.editParam("ENGINE_AJP_PORT", basedefs.JBOSS_AJP_PORT)
 
-    logging.debug("Adding drivers to datasource")
-    xmlObj.removeNodes("//datasource:subsystem/datasource:datasources/datasource:drivers/datasource:driver[@name='postgresql']")
-    driversStr='''
-    <drivers>
-        <driver name="postgresql" module="org.postgresql">
-            <xa-datasource-class>
-                org.postgresql.xa.PGXADataSource
-            </xa-datasource-class>
-        </driver>
-    </drivers>
-'''
-    xmlObj.addNodes("//datasource:subsystem/datasource:datasources", driversStr)
-
-    logging.debug("Datasource has been added into jboss's configuration")
-
-def configJbossSecurity(xmlObj):
-    """
-    configure security for jboss
-    """
-    logging.debug("Configuring security for jboss")
-
-    logging.debug("Registering security namespaces")
-    xmlObj.registerNs('security', xmlObj.getNs('urn:jboss:domain:security'))
-
-    xmlObj.removeNodes("//security:subsystem/security:security-domains/security:security-domain[@name='EngineKerberosAuth']")
-    securityKerbStr='''
-        <security-domain name="EngineKerberosAuth">
-            <authentication>
-                <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required"/>
-            </authentication>
-        </security-domain>
-'''
-    xmlObj.addNodes("//security:subsystem/security:security-domains", securityKerbStr)
-
-    xmlObj.removeNodes("//security:subsystem/security:security-domains/security:security-domain[@name='EncryptDBPassword']")
-    securityPassStr='''
-        <security-domain name="EncryptDBPassword">
-            <authentication>
-                <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
-                    <module-option name="username" value="'''+getDbUser()+'''"/>
-                    <module-option name="password" value="'''+ controller.CONF["ENCRYPTED_DB_PASS"] +'''"/>
-                    <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
-                </login-module>
-            </authentication>
-        </security-domain>
-'''
-    xmlObj.addNodes("//security:subsystem/security:security-domains", securityPassStr)
-
-#    node = xmlObj.xpathEval("//security:subsystem/security:security-domains/security:security-domain[@name='EncryptDBPassword']/security:authentication/security:login-module/security:module-option[@name='password']")[0]
-#    node.setProp('value', controller.CONF["ENCRYPTED_DB_PASS"])
-
-    logging.debug("Security has been configured for jboss")
-
-def configJbossNetwork(xmlObj):
-    """
-    configure access for the public interface on jboss
-    and set the ports for HTTP/S
-    """
-    logging.debug("Configuring Jboss's network")
-
-    logging.debug("Removing all interfaces from the public interface")
-    xmlObj.removeNodes("//domain:server/domain:interfaces/domain:interface[@name='public']/*")
-
-    logging.debug("Adding access to public interface")
-    xmlObj.addNodes("//domain:server/domain:interfaces/domain:interface[@name='public']", "<any-address/>")
-
-    logging.debug("Setting ports")
-    httpNode = xmlObj.xpathEval("//domain:server/domain:socket-binding-group[@name='standard-sockets']/domain:socket-binding[@name='http']")[0]
-    httpNode.setProp("port", "%s" %(basedefs.JBOSS_HTTP_PORT))
-
-    httpsNode = xmlObj.xpathEval("//domain:server/domain:socket-binding-group[@name='standard-sockets']/domain:socket-binding[@name='https']")[0]
-    httpsNode.setProp("port", "%s" %(basedefs.JBOSS_HTTPS_PORT))
-
-    logging.debug("Network has been configured for jboss")
-
-def configJbossSSL(xmlObj):
-    """
-    configure SSL for jboss
-    """
-    logging.debug("Configuring SSL for jboss")
-
-    logging.debug("Registering web namespaces")
-    xmlObj.registerNs('web', xmlObj.getNs('urn:jboss:domain:web'))
-    sslConnectorStr='''
-    <connector name="https" protocol="HTTP/1.1" socket-binding="https" scheme="https" enable-lookups="false" secure="true">
-        <ssl name="ssl" password="mypass"
-certificate-key-file="/etc/pki/ovirt-engine/.keystore" key-alias="engine" protocol="TLSv1" verify-client="false"/>
-    </connector>
-'''
-    xmlObj.removeNodes("//web:subsystem/web:connector[@name='https']")
-    xmlObj.addNodes("//web:subsystem", sslConnectorStr)
-
-    logging.debug("Disabling default welcome-content")
-    node = xmlObj.xpathEval("//web:subsystem/web:virtual-server[@name='default-host']")[0]
-    node.setProp("enable-welcome-root", "false")
-
-    logging.debug("SSL has been configured for jboss")
-
-
-def configRewriteRules(xmlObj):
-    """
-    config rewrite rules for backward comptability of old rhev-h
-    """
-
-    logging.debug("Configuring rewrite rules for jboss")
-    logging.debug("Registering web namespaces")
-    xmlObj.registerNs('web', xmlObj.getNs('urn:jboss:domain:web'))
-
-    rewriteNode = '''<rewrite pattern="^/RHEVManager(.*)$" substitution="/OvirtEngine$1" flags="last"/>'''
-    virtualServerPath = '//web:subsystem/web:virtual-server'
-
-    xmlObj.removeNodes(virtualServerPath + '/web:rewrite')
-    xmlObj.addNodes(virtualServerPath, rewriteNode)
-
-    logging.debug("rewrite rules have been configured for jboss")
+    # Save and close the file:
+    logging.debug("Engine has been configured")
+    handler.close()
 
 def startRhevmDbRelatedServices():
     """
@@ -2125,13 +1894,9 @@ def startRhevmDbRelatedServices():
 
 def isSecondRun():
     keystore = os.path.join(basedefs.DIR_OVIRT_PKI, ".keystore")
-    engineLink = os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear")
 
     if os.path.exists(keystore):
         logging.debug("%s exists, second run detected", keystore)
-        return True
-    elif os.path.exists(engineLink):
-        logging.debug("%s exists, second run detected", engineLink)
         return True
     else:
         return False

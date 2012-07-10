@@ -676,8 +676,8 @@ def main(options):
     try:
         # We ask the user before stoping jboss or take command line option
         if options.unattended_upgrade or checkJbossService():
-            # Stopping jboss
-            runFunc([stopJboss], MSG_INFO_STOP_JBOSS)
+            # Stopping engine
+            runFunc([stopEngine], MSG_INFO_STOP_JBOSS)
         else:
             # This means that user chose not to stop jboss
             logging.debug("exiting gracefully")
@@ -738,7 +738,7 @@ def main(options):
 
     finally:
         # start jboss
-        runFunc([startJboss], MSG_INFO_START_JBOSS)
+        runFunc([startEngine], MSG_INFO_START_JBOSS)
 
     # Print log location on success
     addAdditionalMessages(etlService.isServiceAvailable())

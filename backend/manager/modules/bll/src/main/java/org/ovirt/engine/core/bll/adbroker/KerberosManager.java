@@ -68,8 +68,11 @@ public class KerberosManager implements KerberosManagerSericeManagmentMBean {
         if (!isKerberosAuth()) {
             return;
         }
-        String serverHomeDir = System.getProperty("jboss.server.config.dir");
-        File krb5File = new File(serverHomeDir, "krb5.conf");
+        String engineEtc = System.getenv("ENGINE_ETC");
+        if (engineEtc == null) {
+            engineEtc = "/etc/ovirt-engine";
+        }
+        File krb5File = new File(engineEtc, "krb5.conf");
         if (krb5File.exists()) {
             if (log.isDebugEnabled()) {
                 log.debug("Loading kerberos settings from " + krb5File.getAbsolutePath());

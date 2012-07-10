@@ -302,7 +302,7 @@ install_service:
 	@echo "*** Deploying service"
 
 	# Install the files:
-	install -m 644 packaging/fedora/engine-service.xml $(PREFIX)/etc/ovirt-engine
+	install -m 644 packaging/fedora/engine-service.xml.in $(PREFIX)/usr/share/ovirt-engine/service
 	install -m 644 packaging/fedora/engine-service-logging.properties $(PREFIX)/usr/share/ovirt-engine/service
 	install -m 644 packaging/fedora/engine-service.sysconfig $(PREFIX)/etc/sysconfig/ovirt-engine
 	install -m 644 packaging/fedora/engine-service.limits $(PREFIX)/etc/security/limits.d/10-ovirt-engine.conf

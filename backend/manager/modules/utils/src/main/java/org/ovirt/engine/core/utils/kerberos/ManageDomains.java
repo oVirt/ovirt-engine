@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -16,8 +15,6 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
-
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
@@ -127,16 +124,8 @@ public class ManageDomains {
         }
 
         try {
-            daoImpl = new ManageDomainsDAOImpl(utilityConfiguration);
-        } catch (ConfigurationException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
-        } catch (ConnectException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
-        } catch (ClassNotFoundException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
+            daoImpl = new ManageDomainsDAOImpl();
         } catch (SQLException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
-        } catch (XPathExpressionException e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
         }
     }
