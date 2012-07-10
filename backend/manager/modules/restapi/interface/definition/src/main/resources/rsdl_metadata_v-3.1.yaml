@@ -1578,16 +1578,10 @@ actions:
     body:
       parameterType: HostNIC
       signatures:
-      - mandatoryArguments: {hostnic.network.id|name: 'xs:string', hostnic.name: 'xs:string'}
+      - mandatoryArguments: {hostnic.network.id|name: 'xs:string', hostnic.name: 'xs:string', hostnic.bonding.slaves.host_nic--COLLECTION: {host_nic.id|name: 'xs:string'}}
         optionalArguments:
-          hostnic.bonding.slaves.host_nic--COLLECTION: {host_nic.id|name: 'xs:string'}
           hostnic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string',
             type: 'xs:string'}
-          hostnic.ip.gateway: xs:string
-          hostnic.boot_protocol: xs:string
-          hostnic.mac: xs:string
-          hostnic.ip.address: xs:string
-          hostnic.ip.netmask: xs:string
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
