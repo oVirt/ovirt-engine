@@ -30,7 +30,6 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
      */
     private static final UICommand EMPTY_COMMAND = new UICommand("Empty", null) { //$NON-NLS-1$
         {
-            setIsAvailable(false);
             setIsExecutionAllowed(false);
         }
     };
