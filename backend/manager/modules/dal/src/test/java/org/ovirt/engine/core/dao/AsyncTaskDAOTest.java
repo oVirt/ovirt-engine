@@ -3,11 +3,13 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -36,7 +38,6 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         super.setUp();
 
         dao = prepareDAO(dbFacade.getAsyncTaskDAO());
-
         params = new VdcActionParametersBase();
         params.setSessionId("ASESSIONID");
         params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
@@ -63,6 +64,19 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         assertNull(result);
     }
 
+    @Test
+    public void testGetAsyncTaskIdsByEntity() {
+        List<Guid> guids = dao.getAsyncTaskIdsByEntity(FixturesTool.ENTITY_WITH_TASKS_ID);
+        assertNotNull(guids);
+        assertEquals(guids.size(), 1);
+    }
+
+    @Test
+    public void testGetAsyncTaskIdsByInvalidEntity() {
+        List<Guid> guids = dao.getAsyncTaskIdsByEntity(Guid.NewGuid());
+        assertNotNull(guids);
+        assertTrue(guids.isEmpty());
+    }
     /**
      * Ensures that, if the id is valid, then retrieving a AsyncTask works as expected.
      */
@@ -99,6 +113,19 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that saving a ad_group works as expected.
+     */
+    @Test
+    public void testSaveWithEntities() {
+        Guid storageId = Guid.NewGuid();
+        dao.save(newAsyncTask, VdcObjectType.Storage, storageId);
+        List<Guid> asyncTasks = dao.getAsyncTaskIdsByEntity(storageId);
+        assertNotNull(asyncTasks);
+        assertEquals(asyncTasks.size(),1);
+        assertEquals(asyncTasks.get(0),newAsyncTask.gettask_id());
+    }
+
+    /**
      * Ensures that updating a ad_group works as expected.
      */
     @Test
@@ -122,15 +149,18 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     @Test
     public void testRemove() {
         async_tasks result = dao.get(existingAsyncTask.gettask_id());
-
         assertNotNull(result);
 
         assertEquals(dao.remove(existingAsyncTask.gettask_id()), 1);
-
         result = dao.get(existingAsyncTask.gettask_id());
 
         assertNull(result);
-
         assertEquals(dao.remove(existingAsyncTask.gettask_id()), 0);
+
+        // The removed task is associated with an entity, try to fetch
+        // tasks for the entity, and see no task is returned
+        List<Guid> taskIds = dao.getAsyncTaskIdsByEntity(FixturesTool.ENTITY_WITH_TASKS_ID);
+        assertNotNull(taskIds);
+        assertTrue(taskIds.isEmpty());
     }
 }

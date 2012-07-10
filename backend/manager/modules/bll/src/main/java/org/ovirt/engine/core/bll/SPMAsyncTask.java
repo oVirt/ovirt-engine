@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.ovirt.engine.core.common.config.ConfigValues.UknownTaskPrePollingLapse;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -21,10 +22,28 @@ public class SPMAsyncTask {
     public SPMAsyncTask(AsyncTaskParameters parameters) {
         setParameters(parameters);
         setState(AsyncTaskState.Initializing);
-        AddOrUpdateTaskInDB();
     }
 
     private AsyncTaskParameters privateParameters;
+    private Guid[] associatedEntities;
+    private VdcObjectType entityType;
+
+    public void setAssociatedEntities(Guid[] associatedEntities) {
+        this.associatedEntities = associatedEntities;
+    }
+
+    public Guid[] getAssociatedEntities() {
+        return associatedEntities;
+    }
+
+    public VdcObjectType getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(VdcObjectType entityType) {
+        this.entityType = entityType;
+    }
+
 
     public AsyncTaskParameters getParameters() {
         return privateParameters;
@@ -97,27 +116,6 @@ public class SPMAsyncTask {
 
     public Object getContainerId() {
         return getParameters().getEntityId();
-    }
-
-    private void AddOrUpdateTaskInDB() {
-        try {
-            if (getParameters().getDbAsyncTask() != null) {
-                if (DbFacade.getInstance().getAsyncTaskDAO().get(getTaskID()) == null) {
-                    log.infoFormat("BaseAsyncTask::AddOrUpdateTaskInDB: Adding task {0} to DataBase", getTaskID());
-                    DbFacade.getInstance().getAsyncTaskDAO().save(getParameters().getDbAsyncTask());
-                } else {
-                    DbFacade.getInstance().getAsyncTaskDAO().update(getParameters().getDbAsyncTask());
-                }
-            }
-        } catch (RuntimeException e) {
-            log.error(String.format(
-                    "BaseAsyncTask::AddOrUpdateTaskInDB: Adding/Updating task %1$s to DataBase threw an exception.",
-                    getTaskID()), e);
-        }
-    }
-
-    public void UpdateAsyncTask() {
-        AddOrUpdateTaskInDB();
     }
 
     public void StartPollingTask() {

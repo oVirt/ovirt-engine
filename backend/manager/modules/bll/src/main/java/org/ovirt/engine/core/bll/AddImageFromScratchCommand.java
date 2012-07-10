@@ -96,15 +96,13 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     @Override
-    protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 parametersForTask, asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
-
-        return ret;
+        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
     }
 
     @Override

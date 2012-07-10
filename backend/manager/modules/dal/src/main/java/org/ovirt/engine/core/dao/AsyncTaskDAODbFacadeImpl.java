@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
@@ -25,8 +27,18 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  * {@code DbFacade}.
  */
 public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTaskDAO {
+    private static final Guid[] EMPTY_GUIDS_ARRAY = new Guid[0];
     private static Log log = LogFactory
                                             .getLog(AsyncTaskDAODbFacadeImpl.class);
+
+    private static class IdRowMapper implements ParameterizedRowMapper<Guid> {
+
+        @Override
+        public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return Guid.createGuidFromString(rs.getString("id"));
+        }
+
+    }
 
     private static class AsyncTaskRowMapper implements ParameterizedRowMapper<async_tasks> {
 
@@ -103,9 +115,16 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     @Override
-    public void save(async_tasks task) {
+    public void save(async_tasks task, VdcObjectType entityType, Guid... entityIds) {
         AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
+        parameterSource.addValue("entity_type", (entityType != null) ? entityType.toString() : null);
+        parameterSource.addValue("entity_ids", StringUtils.join(entityIds, ","));
         getCallsHandler().executeModification("Insertasync_tasks", parameterSource);
+    }
+
+    @Override
+    public void save(async_tasks task) {
+        save(task, null, EMPTY_GUIDS_ARRAY);
     }
 
 
@@ -139,4 +158,13 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
 
         return getCallsHandler().executeModificationRowsAffected("Deleteasync_tasks", parameterSource);
     }
+
+    @Override
+    public List<Guid> getAsyncTaskIdsByEntity(Guid entityId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        parameterSource.addValue("entity_id", entityId);
+        ParameterizedRowMapper<Guid> mapper = new IdRowMapper();
+        return getCallsHandler().executeReadList("GetAsyncTasksByEntityId", mapper, parameterSource);
+    }
+
 }

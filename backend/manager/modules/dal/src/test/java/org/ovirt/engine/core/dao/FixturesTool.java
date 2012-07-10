@@ -173,4 +173,10 @@ public class FixturesTool {
      * Predefined floating lun for testing.
      */
     protected static final Guid FLOATING_LUN_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a37");
+
+    /**
+     * Predefined entity that has associated tasks.
+     */
+    protected static final Guid ENTITY_WITH_TASKS_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+
 }

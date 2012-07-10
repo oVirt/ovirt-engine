@@ -365,14 +365,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     @Override
-    protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 getParameters(), asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid taskID = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p);
-
-        return taskID;
+        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p);
     }
 
     @Override

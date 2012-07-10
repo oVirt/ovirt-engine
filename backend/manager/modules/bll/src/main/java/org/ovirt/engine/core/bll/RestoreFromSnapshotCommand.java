@@ -67,15 +67,13 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     }
 
     @Override
-    protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         VdcActionParametersBase commandParams = getParametersForTask(parentCommand, getParameters());
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 commandParams, asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteVolume, p);
-
-        return ret;
+        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteVolume, p);
     }
 
     @Override

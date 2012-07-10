@@ -90,13 +90,11 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     }
 
     @Override
-    protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 getParameters(), asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.copyImage, p);
-
-        return ret;
+        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.copyImage, p);
     }
 }

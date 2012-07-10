@@ -181,14 +181,12 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     }
 
     @Override
-    protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
                 getParameters(), asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid taskID = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
-
-        return taskID;
+        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
     }
 
     protected HibernateVmParameters getHibernateVmParams() {

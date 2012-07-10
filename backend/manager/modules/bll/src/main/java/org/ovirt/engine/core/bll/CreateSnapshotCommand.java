@@ -123,7 +123,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     @Override
-    protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
         AsyncTaskParameters p =
                 new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
@@ -134,14 +134,12 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                         asyncTaskCreationInfo.getStepId(),
                         getCommandId()));
         p.setEntityId(getParameters().getEntityId());
-        Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
+        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
         //
         // VmId != Guid.Empty ? VmId :
         // ImageContainerId != Guid.Empty ? ImageContainerId :
         // DbFacade.Instance.GetVmByImageId(DiskImage.image_guid).vm_guid),
         //
-
-        return ret;
     }
 
     /**

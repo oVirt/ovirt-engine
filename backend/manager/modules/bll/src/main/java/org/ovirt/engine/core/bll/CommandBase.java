@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -87,6 +88,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * Multiplier used to convert GB to bytes or vice versa.
      */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
+    private static final Guid[] EMPTY_GUID_ARRAY = new Guid[0];
     private T _parameters;
     private VdcReturnValueBase _returnValue;
     private CommandActionState _actionState = CommandActionState.EXECUTE;
@@ -1007,37 +1009,64 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Use this method in order to create task in the AsyncTaskManager in a safe
-     * way. If you use this method within a certain command, make sure that the
-     * command implemented the ConcreteCreateTask method.
+     * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
+     * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
      * @param asyncTaskCreationInfo
      *            info to send to AsyncTaskManager when creating the task.
      * @param parentCommand
-     *            VdcActionType of the command that its EndAction we want to
-     *            invoke when tasks are finished.
-     * @return Guid of the created task.
-     */
-    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        return CreateTask(asyncTaskCreationInfo, parentCommand, null);
-    }
-
-    /**
-     * Use this method in order to create task in the AsyncTaskManager in a safe
-     * way. If you use this method within a certain command, make sure that the
-     * command implemented the ConcreteCreateTask method.
-     *
-     * @param asyncTaskCreationInfo
-     *            info to send to AsyncTaskManager when creating the task.
-     * @param parentCommand
-     *            VdcActionType of the command that its EndAction we want to
-     *            invoke when tasks are finished.
-     * @param description A message which describes the task
+     *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
+     * @param entityType
+     *            type of entities that are associated with the task
+     * @param entityIds
+     *            Ids of entities to be associated with task
      * @return Guid of the created task.
      */
     protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
-            String description) {
+            VdcObjectType entityType,
+            Guid... entityIds) {
+        return CreateTask(asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
+    }
+
+    /**
+     * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
+     * certain command, make sure that the command implemented the ConcreteCreateTask method.
+     *
+     * @param asyncTaskCreationInfo
+     *            info to send to AsyncTaskManager when creating the task.
+     * @param parentCommand
+     *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
+     * @param entityType
+     *            type of entities that are associated with the task
+     * @param entityIds
+     *            Ids of entities to be associated with task
+     * @return Guid of the created task.
+     */
+    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand) {
+        return CreateTask(asyncTaskCreationInfo, parentCommand, null, null, EMPTY_GUID_ARRAY);
+    }
+
+    /**
+     * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
+     * certain command, make sure that the command implemented the ConcreteCreateTask method.
+     *
+     * @param asyncTaskCreationInfo
+     *            info to send to AsyncTaskManager when creating the task.
+     * @param parentCommand
+     *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
+     * @param description
+     *            A message which describes the task
+     * @param entityType
+     *            type of entities that are associated with the task
+     * @param entityIds
+     *            Ids of entities to be associated with task
+     * @return Guid of the created task.
+     */
+    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
+            String description, VdcObjectType entityType, Guid... entityIds) {
         Guid retValue = Guid.Empty;
 
         Transaction transaction = TransactionSupport.suspend();
@@ -1050,7 +1079,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (taskStep != null) {
                 asyncTaskCreationInfo.setStepId(taskStep.getId());
             }
-            retValue = ConcreteCreateTask(asyncTaskCreationInfo, parentCommand);
+            SPMAsyncTask task = ConcreteCreateTask(asyncTaskCreationInfo, parentCommand);
+            retValue = task.getTaskID();
+            if (task != null) {
+                task.setEntityType(entityType);
+                task.setAssociatedEntities(entityIds);
+                AsyncTaskUtils.addOrUpdateTaskInDB(task);
+                AsyncTaskManager.getInstance().lockAndAddTaskToManager(task);
+                retValue = task.getTaskID();
+            }
             ExecutionHandler.updateStepExternalId(taskStep, retValue, ExternalSystemType.VDSM);
         } catch (RuntimeException ex) {
             log.errorFormat("Error during CreateTask for command: {0}. Exception {1}", getClass().getName(), ex);
@@ -1061,7 +1098,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return retValue;
     }
 
-    protected Guid ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
         throw new NotImplementedException();
     }
 

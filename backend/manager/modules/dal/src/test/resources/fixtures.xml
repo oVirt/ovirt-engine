@@ -30,6 +30,44 @@
         </row>
     </table>
 
+
+    <table name="async_tasks">
+        <column>task_id</column>
+        <column>action_type</column>
+        <column>status</column>
+        <column>result</column>
+        <column>action_parameters</column>
+        <column>command_id</column>
+        <row>
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0aa</value>
+            <value>1</value> <!--  Add VM -->
+            <value>2</value> <!--  Running -->
+            <value>0</value> <!--  Success -->
+            <null />
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0aa</value>
+        </row>
+        <row>
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0ab</value>
+            <value>1</value> <!--  Add VM -->
+            <value>2</value> <!--  Running -->
+            <value>0</value> <!--  Success -->
+            <null />
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0ab</value>
+        </row>
+    </table>
+
+    <table name="async_tasks_entities">
+        <column>async_task_id</column>
+        <column>entity_id</column>
+        <column>entity_type</column>
+        <row>
+            <value>340fd52b-3400-4cdd-8d3f-c9d03704b0aa</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>Storage</value>
+        </row>
+    </table>
+
+
     <table name="storage_server_connections">
         <column>id</column>
         <column>connection</column>
@@ -2557,30 +2595,6 @@
         </row>
     </table>
 
-    <table name="async_tasks">
-        <column>task_id</column>
-        <column>action_type</column>
-        <column>status</column>
-        <column>result</column>
-        <column>action_parameters</column>
-        <column>command_id</column>
-        <row>
-            <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AA</value>
-            <value>1</value> <!--  Add VM -->
-            <value>2</value> <!--  Running -->
-            <value>0</value> <!--  Success -->
-            <null />
-            <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AA</value>
-        </row>
-        <row>
-            <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AB</value>
-            <value>1</value> <!--  Add VM -->
-            <value>2</value> <!--  Running -->
-            <value>0</value> <!--  Success -->
-            <null />
-            <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AB</value>
-        </row>
-    </table>
     <table name="quota">
         <column>id</column>
         <column>storage_pool_id</column>
