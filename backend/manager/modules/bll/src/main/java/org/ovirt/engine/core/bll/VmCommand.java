@@ -44,6 +44,7 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
@@ -122,10 +123,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         int pciInUse = monitorsNumber;
 
         for (VmNetworkInterface a : interfaces) {
-            if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.rtl8139_pv)
+            if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.rtl8139_pv) {
                 pciInUse += 2;
-            else
+            } else {
                 pciInUse += 1;
+            }
         }
 
         pciInUse += LinqUtils.filter(disks, new Predicate<T>() {
@@ -502,6 +504,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected DiskDao getDiskDAO() {
         return getDbFacade().getDiskDao();
+    }
+
+    protected DiskImageDAO getDiskImageDAO() {
+        return getDbFacade().getDiskImageDAO();
     }
 
     protected boolean checkPayload(VmPayload payload, String isoPath) {

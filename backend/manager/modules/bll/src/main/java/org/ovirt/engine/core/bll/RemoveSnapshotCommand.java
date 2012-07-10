@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -44,11 +43,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     private List<DiskImage> getSourceImages() {
         if (_sourceImages == null) {
-            _sourceImages = DbFacade
-                    .getInstance()
-                    .getDiskImageDAO()
-                    .getAllSnapshotsForVmSnapshot(
-                            getParameters().getSnapshotId());
+            _sourceImages = getDiskImageDAO().getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
         }
         return _sourceImages;
     }
@@ -81,14 +76,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             // candoaction that the vm
             // is not a template and the vm is not in preview mode and that
             // this is not the active snapshot.
-            DiskImage dest = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(source.getImageId()).get(0);
+            DiskImage dest = getDiskImageDAO().getAllSnapshotsForParent(source.getImageId()).get(0);
 
             ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(source.getImageId(),
                     getVmId());
             tempVar.setDestinationImageId(dest.getImageId());
             tempVar.setEntityId(getParameters().getEntityId());
             ImagesContainterParametersBase p = tempVar;
-            VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
+            VdcReturnValueBase vdcReturnValue = getBackend().runInternalAction(
                     VdcActionType.RemoveSnapshotSingleDisk,
                     p,
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
@@ -125,40 +120,70 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     protected boolean canDoAction() {
         initializeObjectState();
-        // Since 'VmId' is overriden, 'Vm' should be retrieved manually.
-        setVm(DbFacade.getInstance().getVmDAO().get(getVmId()));
 
-        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
-        getReturnValue().setCanDoAction(validate(snapshotsValidator.vmNotDuringSnapshot(getVmId())));
-
-        if (!validate(snapshotsValidator.snapshotExists(getVmId(), getParameters().getSnapshotId()))) {
-            getReturnValue().setCanDoAction(false);
+        if (!validateVmNotDuringSnapshot()) {
+            handleCanDoActionFailure();
+            return false;
         }
 
-        if (!ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
-                getVm().getstorage_pool_id(), Guid.Empty, true, true,
-                true, true, true, true, true, true, null)) {
-            getReturnValue().setCanDoAction(false);
+        if (!validateSnapshotExists()) {
+            handleCanDoActionFailure();
+            return false;
+        }
+
+        if (!validateImages()) {
+            handleCanDoActionFailure();
+            return false;
         }
 
         // check that we are not deleting the template
-        if (DbFacade.getInstance().getVmTemplateDAO().get(getSourceImages().get(0).getImageId()) != null) {
+        if (!validateImageNotInTemplate()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
-            getReturnValue().setCanDoAction(false);
+            handleCanDoActionFailure();
+            return false;
         }
 
         // check that we are not deleting the vm working snapshot
-        if (DbFacade.getInstance().getDiskImageDAO().get(getSourceImages().get(0).getImageId()) != null) {
+        if (!validateImageNotActive()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
-            getReturnValue().setCanDoAction(false);
+            handleCanDoActionFailure();
+            return false;
         }
 
-        if (!getReturnValue().getCanDoAction()) {
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        }
+        getReturnValue().setCanDoAction(true);
+        return true;
+    }
 
-        return getReturnValue().getCanDoAction();
+    private void handleCanDoActionFailure() {
+        getReturnValue().setCanDoAction(false);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+    }
+
+    protected boolean validateVmNotDuringSnapshot() {
+        return validate(createSnapshotValidator().vmNotDuringSnapshot(getVmId()));
+    }
+
+    protected boolean validateSnapshotExists() {
+        return validate(createSnapshotValidator().snapshotExists(getVmId(), getParameters().getSnapshotId()));
+    }
+
+    protected boolean validateImages() {
+        return ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
+                getVm().getstorage_pool_id(), Guid.Empty, true, true,
+                true, true, true, true, true, true, null);
+    }
+
+    protected boolean validateImageNotInTemplate() {
+        return getVmTemplateDAO().get(getSourceImages().get(0).getImageId()) == null;
+    }
+
+    protected boolean validateImageNotActive() {
+        return getDiskImageDAO().get(getSourceImages().get(0).getImageId()) == null;
+    }
+
+    protected SnapshotsValidator createSnapshotValidator() {
+        return new SnapshotsValidator();
     }
 
     @Override
@@ -186,7 +211,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
     }
 
-    private SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
+    protected SnapshotDao getSnapshotDao() {
+        return getDbFacade().getSnapshotDao();
     }
 }

@@ -26,8 +26,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
@@ -249,14 +247,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
             }
         }
-    }
-
-    protected DiskImageDAO getDiskImageDAO() {
-        return getDbFacade().getDiskImageDAO();
-    }
-
-    protected DiskDao getDiskDAO() {
-        return getDbFacade().getDiskDao();
     }
 
     protected SnapshotDao getSnapshotDao() {
