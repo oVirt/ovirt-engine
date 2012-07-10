@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -14,17 +12,15 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -104,24 +100,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_RUNNING_VMS);
             return false;
         }
-        try {
-            if (getStoragePool().getspm_vds_id() != null
+        if (getStoragePool().getspm_vds_id() != null
                     && getStorageDomain().getstorage_domain_type() != StorageDomainType.ISO
-                    && !((Map<Guid, AsyncTaskStatus>) getBackend()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                                    new VdsIdVDSCommandParametersBase(getStoragePool().getspm_vds_id().getValue()))
-                            .getReturnValue()).isEmpty()) {
+                    && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
                 return false;
-            }
-        } catch (VdcBLLException e) {
-            if (e.getErrorCode() == VdcBllErrors.VDS_NETWORK_ERROR) {
-                addCanDoActionMessage(VdcBllMessages.STORAGE_OPERATION_FAILED_SPM_NETWORK_PROBLEMS);
-            } else {
-                throw e;
-            }
-            return false;
         }
         return true;
     }
@@ -280,6 +263,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             }
             updateStoragePoolInDiffTransaction();
         }
+    }
+
+    AsyncTaskDAO getAsyncTaskDao() {
+        return DbFacade.getInstance().getAsyncTaskDAO();
     }
 
     @Override
