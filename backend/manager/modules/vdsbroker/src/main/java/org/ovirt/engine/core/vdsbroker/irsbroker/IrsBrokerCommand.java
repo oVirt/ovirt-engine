@@ -299,7 +299,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     // if recovered from network exception set back to up
                     DbFacade.getInstance().getStoragePoolDAO().updateStatus(storagePool.getId(),StoragePoolStatus.Up);
                     storagePool.setstatus(StoragePoolStatus.Up);
-                    ResourceManager.getInstance()
+                    ResourceManager.getInstance().getEventListener()
                             .storagePoolStatusChanged(storagePool.getId(), storagePool.getstatus());
                 }
                 GetStoragePoolInfoVDSCommandParameters tempVar = new GetStoragePoolInfoVDSCommandParameters(
@@ -767,7 +767,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     storagePool.setstatus(StoragePoolStatus.Up);
                 }
                 DbFacade.getInstance().getStoragePoolDAO().update(storagePool);
-                ResourceManager.getInstance().storagePoolStatusChanged(storagePool.getId(), storagePool.getstatus());
+                ResourceManager.getInstance()
+                        .getEventListener()
+                        .storagePoolStatusChanged(storagePool.getId(), storagePool.getstatus());
 
                 returnValue = selectedVds.argvalue.gethost_name();
                 log.infoFormat("Initialize Irs proxy from vds: {0}", returnValue);

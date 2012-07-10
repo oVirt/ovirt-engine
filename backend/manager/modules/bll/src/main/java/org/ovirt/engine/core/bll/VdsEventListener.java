@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
@@ -43,7 +44,6 @@ import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -198,7 +198,7 @@ public class VdsEventListener implements IVdsEventListener {
         // client is local or remote to adjust compression and migration aspects
         // we first check if we need to disable/enable compression for power
         // clients, so we won't need to handle migration errors
-        if (!StringHelper.isNullOrEmpty(vmDynamic.getclient_ip())) {
+        if (StringUtils.isNotEmpty(vmDynamic.getclient_ip())) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
@@ -44,7 +44,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
      * @return The result (if no exception was thrown).
      */
     private VDSReturnValue handleVdsResult(VDSReturnValue result) {
-        if (!StringHelper.isNullOrEmpty(result.getExceptionString())) {
+        if (StringUtils.isNotEmpty(result.getExceptionString())) {
             VdcBLLException exp;
             if (result.getVdsError() != null) {
                 exp = new VdcBLLException(result.getVdsError().getCode(), result.getExceptionString());

@@ -49,12 +49,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             ResourceManager.getInstance().InternalSetVmStatus(vm, retval);
             if (retval == VMStatus.MigratingFrom) {
                 vm.setmigrating_to_vds(parameters.getDstVdsId());
-
-                // get vdsEventListener from callback channel (if wcf-user backend) or resource manager
-                if (ResourceManager.getInstance().getBackendCallback() != null) {
-                    ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId(),
-                            ResourceManager.getInstance().getBackendCallback());
-                }
+                ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
             }
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

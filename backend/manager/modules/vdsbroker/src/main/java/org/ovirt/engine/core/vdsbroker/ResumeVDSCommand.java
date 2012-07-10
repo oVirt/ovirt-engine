@@ -22,12 +22,7 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsI
             command.Execute();
             if (command.getVDSReturnValue().getSucceeded()) {
                 retval = VMStatus.PoweringUp;
-                // get vdsEventListener from callback channel (if wcf-user
-                // backend) or resource manager
-                if (ResourceManager.getInstance().getBackendCallback() != null) {
-                    ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId(),
-                            ResourceManager.getInstance().getBackendCallback());
-                }
+                ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
             } else if (command.getVDSReturnValue().getExceptionObject() != null) {
                 log.errorFormat("VDS::pause Failed resume vm '{0}' in vds = {1} : {2}, error = {3}", parameters
                         .getVmId(), getVds().getId(), getVds().getvds_name(), command.getVDSReturnValue()

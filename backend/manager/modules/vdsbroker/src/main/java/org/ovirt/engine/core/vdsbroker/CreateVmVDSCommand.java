@@ -38,12 +38,8 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             if (_vdsManager != null) {
                 final VM vm = getParameters().getVm();
                 if (CanExecute()) {
-                    boolean canExecute = true;
-                    if (ResourceManager.getInstance().getBackendCallback() != null) {
-                        canExecute = ResourceManager.getInstance().AddAsyncRunningVm(
-                                vm.getId(),
-                                ResourceManager.getInstance().getBackendCallback());
-                    }
+                    boolean canExecute = ResourceManager.getInstance().AddAsyncRunningVm(
+                                vm.getId());
                     if (canExecute) {
                         if (isSysprepUsed(vm)) {
                             // use answer file to run after sysprep.

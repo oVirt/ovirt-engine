@@ -12,8 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NetworkStatistics;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -24,10 +22,8 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -35,7 +31,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -50,7 +45,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 
-public class ResourceManager implements IVdsEventListener {
+public class ResourceManager {
     private static Log log = LogFactory.getLog(ResourceManager.class);
     private static ResourceManager _Instance = new ResourceManager();
 
@@ -112,12 +107,12 @@ public class ResourceManager implements IVdsEventListener {
 
     private final HashMap<Guid, HashSet<Guid>> _vdsAndVmsList = new HashMap<Guid, HashSet<Guid>>();
     private final Map<Guid, VdsManager> _vdsManagersDict = new ConcurrentHashMap<Guid, VdsManager>();
-    private final ConcurrentHashMap<Guid, IVdsEventListener> _asyncRunningVms =
-            new ConcurrentHashMap<Guid, IVdsEventListener>();
+    private final ConcurrentHashMap<Guid, Boolean> _asyncRunningVms =
+            new ConcurrentHashMap<Guid, Boolean>();
 
-    public boolean AddAsyncRunningVm(Guid vmId, IVdsEventListener listener) {
+    public boolean AddAsyncRunningVm(Guid vmId) {
         boolean returnValue = false;
-        if (_asyncRunningVms.putIfAbsent(vmId, listener) == null) {
+        if (_asyncRunningVms.putIfAbsent(vmId, Boolean.TRUE) == null) {
             returnValue = true;
         }
         return returnValue;
@@ -129,23 +124,21 @@ public class ResourceManager implements IVdsEventListener {
     }
 
     public void SuccededToRunVm(Guid vmId, Guid vdsId) {
-        IVdsEventListener listener = _asyncRunningVms.get(vmId);
-        if (listener != null) {
-            listener.runningSucceded(vmId);
+        if (_asyncRunningVms.contains(vmId)) {
+            getEventListener().runningSucceded(vmId);
         }
         RemoveAsyncRunningVm(vmId);
     }
 
     /**
      * Initiate rerun event when vm failed to run
-     *
      * @param vmId
      */
     public void RerunFailedCommand(Guid vmId, Guid vdsId) {
-        IVdsEventListener listener = _asyncRunningVms.remove(vmId);
+        Boolean value = _asyncRunningVms.remove(vmId);
         // remove async record from broker only
-        if (listener != null) {
-            listener.rerun(vmId);
+        if (value != null) {
+            getEventListener().rerun(vmId);
         }
     }
 
@@ -171,21 +164,8 @@ public class ResourceManager implements IVdsEventListener {
         }
     }
 
-    // if no event listener, return this (no implementation)
     public IVdsEventListener getEventListener() {
-        IVdsEventListener eventListener = EjbUtils.findBean(BeanType.VDS_EVENT_LISTENER, BeanProxyType.LOCAL);
-        if (eventListener != null) {
-            return eventListener;
-        } else {
-            return this;
-        }
-    }
-
-    /**
-     * This will return the EventListener from WCF Callback Channel if exists or the EventListener if not
-     */
-    public IVdsEventListener getBackendCallback() {
-        return getEventListener();
+        return EjbUtils.findBean(BeanType.VDS_EVENT_LISTENER, BeanProxyType.LOCAL);
     }
 
     public void AddVds(VDS vds, boolean isInternal) {
@@ -236,7 +216,6 @@ public class ResourceManager implements IVdsEventListener {
 
     /**
      * Set vm status to DOWN and save to DB.
-     *
      * @param vm
      */
     public void SetVmUnknown(VM vm) {
@@ -276,7 +255,6 @@ public class ResourceManager implements IVdsEventListener {
 
     /**
      * Set vm status without saving to DB
-     *
      * @param vm
      * @param status
      */
@@ -302,9 +280,9 @@ public class ResourceManager implements IVdsEventListener {
      */
     private void resetVmAttributes(VM vm) {
         vm.setusage_network_percent(0);
-        vm.setelapsed_time(Double.valueOf(0));
-        vm.setcpu_sys(new Double(0));
-        vm.setcpu_user(new Double(0));
+        vm.setelapsed_time(0D);
+        vm.setcpu_sys(0D);
+        vm.setcpu_user(0D);
         vm.setusage_cpu_percent(0);
         vm.setusage_mem_percent(0);
         vm.setmigrating_to_vds(null);
@@ -317,10 +295,10 @@ public class ResourceManager implements IVdsEventListener {
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         for (VmNetworkInterface ifc : interfaces) {
             NetworkStatistics statistics = ifc.getStatistics();
-            statistics.setTransmitDropRate(new Double(0));
-            statistics.setTransmitRate(new Double(0));
-            statistics.setReceiveRate(new Double(0));
-            statistics.setReceiveDropRate(new Double(0));
+            statistics.setTransmitDropRate(0D);
+            statistics.setTransmitRate(0D);
+            statistics.setReceiveRate(0D);
+            statistics.setReceiveDropRate(0D);
         }
     }
 
@@ -348,7 +326,6 @@ public class ResourceManager implements IVdsEventListener {
 
     /**
      * Create the command which needs to run.
-     *
      * @param <P>
      * @param commandType
      * @param parameters
@@ -429,118 +406,6 @@ public class ResourceManager implements IVdsEventListener {
         return null;
     }
 
-    /**
-     * implement this interface with blank methods just in case no event listener is sent from frontend
-     *
-     * @param vds
-     */
-
-    @Override
-    public void vdsNotResponding(VDS vds) {
-        log.info("ResourceManager:vdsNotResponding - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
-            Guid domainId) {
-        log.info("ResourceManager:vdsMaintanance - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
-            Guid domainId,
-            Map<String, String> customLogValues) {
-        log.info("ResourceManager:vdsMaintanance - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void vdsMovedToMaintanance(Guid vdsId) {
-        log.info("ResourceManager:VdsMovedToMaintanance - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
-        log.info("ResourceManager:StorageDomainOperational - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
-        log.info("ResourceManager:MasterDomainNotOperational - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void processOnVmStop(Guid vmId) {
-        log.info("ResourceManager:ProcessOnVmStop - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void vdsUpEvent(Guid vdsId) {
-        log.info("ResourceManager:RunDedicatedVm - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void processOnClientIpChange(VDS vds, Guid vmId) {
-        log.info("ResourceManager:ProcessOnClientIpChange - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void processOnCpuFlagsChange(Guid vdsId) {
-        log.info("ResourceManager:ProcessOnCpuFlagsChange - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void rerun(Guid VmId) {
-        log.info("ResourceManager:Rerun - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void runningSucceded(Guid vmId) {
-        log.info("ResourceManager:RunningSucceded - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port) {
-        log.info("ResourceManager:ProcessOnVmPoweringUp - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void removeAsyncRunningCommand(Guid vmId) {
-        log.info("ResourceManager:RemoveAsyncRunningCommand - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void storagePoolUpEvent(storage_pool storagePool, boolean isSpmStarted) {
-        log.info("ResourceManager:StoragePoolUpEvent - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
-            VdcBllErrors error, TransactionScopeOption transactionScopeOption) {
-        log.info("ResourceManager:StoragePoolStatusChange - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,
-            VdcBllErrors error) {
-        log.info("ResourceManager:StoragePoolStatusChange - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status) {
-        log.info("ResourceManager:StoragePoolStatusChange - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public void runFailedAutoStartVM(Guid vmId) {
-        log.info("ResourceManager:RunFailedAutoStartVM - no event listener defined, nothing done.");
-    }
-
-    @Override
-    public boolean restartVds(Guid vdsId) {
-        log.info("ResourceManager:RestartVds - no event listener defined, nothing done.");
-        return false;
-    }
-
     public void UpdateVdsDomainsData(Guid vdsId, String vdsName, Guid storagePoolId,
             ArrayList<VDSDomainsData> vdsDomainData) {
         IrsBrokerCommand.UpdateVdsDomainsData(vdsId, vdsName, storagePoolId, vdsDomainData);
@@ -550,8 +415,4 @@ public class ResourceManager implements IVdsEventListener {
         return IrsBrokerCommand.isDomainReportedInProblem(storagePoolId, domainId);
     }
 
-    @Override
-    public void handleVdsVersion(Guid vdsId) {
-        log.info("handleVdsVersion - no event listener defined, nothing done.");
-    }
 }
