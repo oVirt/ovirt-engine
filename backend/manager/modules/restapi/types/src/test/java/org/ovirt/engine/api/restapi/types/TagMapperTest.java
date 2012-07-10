@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.tags;
 
 public class TagMapperTest extends AbstractInvertibleMappingTest<Tag, tags, tags> {
 
-    protected TagMapperTest() {
+    public TagMapperTest() {
         super(Tag.class, tags.class, tags.class);
     }
 

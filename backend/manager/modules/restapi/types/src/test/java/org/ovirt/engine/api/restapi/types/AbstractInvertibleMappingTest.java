@@ -1,20 +1,12 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.core.common.config.Config;
+import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
-
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * Test invertible mappings, by mapping the outward followed by the inverse
@@ -29,9 +21,10 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
  *            inverse type (may be identical to T)
  */
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class })
 public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule();
 
     private MappingLocator mappingLocator;
     private Class<F> fromClass;
@@ -52,9 +45,7 @@ public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
 
     @Test
     public void testRoundtrip() throws Exception {
-        mockStatic(Config.class);
         setUpConfigExpectations();
-        replayAll();
 
         F model = fromClass.cast(populate(fromClass));
         model = postPopulate(model);
@@ -64,7 +55,6 @@ public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
         I inverse = getInverse(to);
         F transform = back.map(inverse, null);
         verify(model, transform);
-        verifyAll();
     }
 
     protected void setUpConfigExpectations() {

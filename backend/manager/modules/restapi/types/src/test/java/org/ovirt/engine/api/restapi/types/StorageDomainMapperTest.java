@@ -1,20 +1,18 @@
 package org.ovirt.engine.api.restapi.types;
 
-
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 
 public class StorageDomainMapperTest extends
         AbstractInvertibleMappingTest<StorageDomain, storage_domain_static, storage_domains> {
 
-    protected StorageDomainMapperTest() {
+    public StorageDomainMapperTest() {
         super(StorageDomain.class, storage_domain_static.class, storage_domains.class);
     }
 
@@ -56,13 +54,13 @@ public class StorageDomainMapperTest extends
         entity.setavailable_disk_size(3);
         entity.setused_disk_size(4);
         entity.setcommitted_disk_size(5);
-        StorageDomain model = StorageDomainMapper.map(entity, (StorageDomain)null);
+        StorageDomain model = StorageDomainMapper.map(entity, (StorageDomain) null);
         assertEquals(model.getAvailable(), Long.valueOf(3221225472L));
         assertEquals(model.getUsed(), Long.valueOf(4294967296L));
         assertEquals(model.getCommitted(), Long.valueOf(5368709120L));
     }
 
-     @Test
+    @Test
     public void storageDomainMappings() {
         assertEquals(StorageDomainStatus.ACTIVE, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.StorageDomainStatus.Active, null));
@@ -71,13 +69,13 @@ public class StorageDomainMapperTest extends
         assertEquals(StorageDomainStatus.LOCKED, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.StorageDomainStatus.Locked, null));
         assertEquals(StorageDomainStatus.UNATTACHED, StorageDomainMapper.map(org.ovirt.engine.core.common
-              .businessentities.StorageDomainStatus.Unattached, null));
+                .businessentities.StorageDomainStatus.Unattached, null));
         assertEquals(StorageDomainStatus.UNKNOWN, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.StorageDomainStatus.Unknown, null));
         assertTrue(StorageDomainMapper.map(org.ovirt.engine.core.common
-              .businessentities.StorageDomainStatus.Uninitialized, null) == null);
+                .businessentities.StorageDomainStatus.Uninitialized, null) == null);
         assertEquals(StorageDomainStatus.MAINTENANCE, StorageDomainMapper.map(org.ovirt.engine.core.common
-              .businessentities.StorageDomainStatus.Maintenance, null));
+                .businessentities.StorageDomainStatus.Maintenance, null));
     }
 
 }

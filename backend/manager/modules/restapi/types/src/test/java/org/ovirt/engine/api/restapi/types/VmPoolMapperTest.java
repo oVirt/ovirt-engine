@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.vm_pools;
 
 public class VmPoolMapperTest extends AbstractInvertibleMappingTest<VmPool, vm_pools, vm_pools> {
 
-    protected VmPoolMapperTest() {
+    public VmPoolMapperTest() {
         super(VmPool.class, vm_pools.class, vm_pools.class);
     }
 

@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 
 public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNIC, VdsNetworkInterface, VdsNetworkInterface> {
 
-    protected HostNicMapperTest() {
+    public HostNicMapperTest() {
         super(HostNIC.class, VdsNetworkInterface.class, VdsNetworkInterface.class);
     }
 
@@ -23,10 +23,21 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNIC, Vd
         assertNotNull(transform.getMac());
         assertEquals(model.getMac().getAddress(), transform.getMac().getAddress());
         assertNotNull(model.getBonding());
-        assertEquals(model.getBonding().getOptions().getOptions().size(), transform.getBonding().getOptions().getOptions().size());
-        for(int i = 0; i < model.getBonding().getOptions().getOptions().size(); i++){
-            assertEquals(model.getBonding().getOptions().getOptions().get(i).getName(), transform.getBonding().getOptions().getOptions().get(i).getName());
-            assertEquals(model.getBonding().getOptions().getOptions().get(i).getValue(), transform.getBonding().getOptions().getOptions().get(i).getValue());
+        assertEquals(model.getBonding().getOptions().getOptions().size(), transform.getBonding()
+                .getOptions()
+                .getOptions()
+                .size());
+        for (int i = 0; i < model.getBonding().getOptions().getOptions().size(); i++) {
+            assertEquals(model.getBonding().getOptions().getOptions().get(i).getName(), transform.getBonding()
+                    .getOptions()
+                    .getOptions()
+                    .get(i)
+                    .getName());
+            assertEquals(model.getBonding().getOptions().getOptions().get(i).getValue(), transform.getBonding()
+                    .getOptions()
+                    .getOptions()
+                    .get(i)
+                    .getValue());
         }
 
     }

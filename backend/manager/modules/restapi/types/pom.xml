@@ -11,10 +11,6 @@
   <packaging>jar</packaging>
   <name>oVirt RESTful API Backend Integration Type Mappers</name>
 
-  <properties>
-    <engine.powermock.fork>always</engine.powermock.fork>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
@@ -32,20 +28,6 @@
       <groupId>org.easymock</groupId>
       <artifactId>easymockclassextension</artifactId>
       <version>${easymock.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <version>${powermock.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-easymock</artifactId>
-      <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -68,23 +50,14 @@
       <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
+
+   <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <type>test-jar</type>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-           <!--
-                since powermock produces memory leaks in tests, the tests can not pass without
-                forking them always (for each test)
-                this setting should be removed as soon as powermock is fixed completely
-                or powermock dependency is removed.
-           -->
-          <forkMode>${engine.powermock.fork}</forkMode>
-        </configuration>
-       </plugin>
-     </plugins>
-  </build>
-
 </project>

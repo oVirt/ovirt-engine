@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 public class DataCenterMapperTest extends
         AbstractInvertibleMappingTest<DataCenter, storage_pool, storage_pool> {
 
-    protected DataCenterMapperTest() {
+    public DataCenterMapperTest() {
         super(DataCenter.class, storage_pool.class, storage_pool.class);
     }
 

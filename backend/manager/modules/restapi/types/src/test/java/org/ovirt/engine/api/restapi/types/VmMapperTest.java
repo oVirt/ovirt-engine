@@ -3,27 +3,21 @@ package org.ovirt.engine.api.restapi.types;
 import junit.framework.Assert;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.VCpuPin;
-import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-
-import static org.ovirt.engine.api.restapi.types.MappingTestHelper.rand;
-
-import static org.easymock.classextension.EasyMock.expect;
 
 public class VmMapperTest extends
         AbstractInvertibleMappingTest<VM, VmStatic, org.ovirt.engine.core.common.businessentities.VM> {
@@ -34,8 +28,7 @@ public class VmMapperTest extends
 
     @Override
     protected void setUpConfigExpectations() {
-        expect(Config.<Integer> GetValue(ConfigValues.NumberVmRefreshesBeforeSave)).andReturn(
-                rand(10)).anyTimes();
+        mcr.mockConfigValue(ConfigValues.NumberVmRefreshesBeforeSave, 10);
     }
 
     @Override

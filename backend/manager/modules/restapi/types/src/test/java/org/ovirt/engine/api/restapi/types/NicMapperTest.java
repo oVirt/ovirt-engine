@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkInterface, VmNetworkInterface> {
 
-    protected NicMapperTest() {
+    public NicMapperTest() {
         super(NIC.class, VmNetworkInterface.class, VmNetworkInterface.class);
     }
 

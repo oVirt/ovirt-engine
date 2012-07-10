@@ -3,16 +3,14 @@ package org.ovirt.engine.api.restapi.types;
 import java.math.BigDecimal;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Host;
-
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStatic, VDS> {
 
-    protected HostMapperTest() {
+    public HostMapperTest() {
         super(Host.class, VdsStatic.class, VDS.class);
     }
 
@@ -57,7 +55,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setcpu_sockets(3);
         vds.setcpu_model("some cpu model");
         vds.setcpu_speed_mh(5.5);
-        Host host = HostMapper.map(vds, (Host)null);
+        Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getCpu());
         assertEquals(new Integer(host.getCpu().getTopology().getCores()), new Integer(2));
         assertEquals(new Integer(host.getCpu().getTopology().getSockets()), new Integer(3));
@@ -72,7 +70,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setvm_count(2);
         vds.setvm_active(1);
         vds.setvm_migrating(1);
-        Host host = HostMapper.map(vds, (Host)null);
+        Host host = HostMapper.map(vds, (Host) null);
         assertEquals(host.getSummary().getTotal(), new Integer(2));
         assertEquals(host.getSummary().getActive(), new Integer(1));
         assertEquals(host.getSummary().getMigrating(), new Integer(1));
@@ -83,7 +81,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
         vds.setphysical_mem_mb(4000);
-        Host host = HostMapper.map(vds, (Host)null);
+        Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getMemory());
         assertEquals(new Long(host.getMemory()), new Long(4194304000L));
     }

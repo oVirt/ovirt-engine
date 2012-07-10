@@ -1,19 +1,18 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
-
-import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VDSGroup, VDSGroup> {
 
-    protected ClusterMapperTest() {
+    public ClusterMapperTest() {
         super(Cluster.class, VDSGroup.class, VDSGroup.class);
     }
 
@@ -44,7 +43,9 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         assertEquals(model.getErrorHandling().getOnError(), transform.getErrorHandling().getOnError());
         assertNotNull(transform.getMemoryPolicy());
         assertNotNull(transform.getMemoryPolicy().getTransparentHugepages());
-        assertEquals(transform.getMemoryPolicy().getTransparentHugepages().isEnabled(), transform.getMemoryPolicy().getTransparentHugepages().isEnabled());
+        assertEquals(transform.getMemoryPolicy().getTransparentHugepages().isEnabled(), transform.getMemoryPolicy()
+                .getTransparentHugepages()
+                .isEnabled());
         assertEquals(model.isVirtService(), transform.isVirtService());
         assertEquals(model.isGlusterService(), transform.isGlusterService());
     }
@@ -58,7 +59,12 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
     @Test
     public void thpDefaultFalseTest() {
         Cluster cluster = new Cluster();
-        cluster.setVersion(new org.ovirt.engine.api.model.Version(){{setMajor(2);setMinor(0);}});
+        cluster.setVersion(new org.ovirt.engine.api.model.Version() {
+            {
+                setMajor(2);
+                setMinor(0);
+            }
+        });
         VDSGroup transform = getMapper().map(cluster, null);
         assertEquals(transform.getTransparentHugepages(), false);
     }
@@ -66,7 +72,12 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
     @Test
     public void thpDefaultTrueTest() {
         Cluster cluster = new Cluster();
-        cluster.setVersion(new org.ovirt.engine.api.model.Version(){{setMajor(3);setMinor(0);}});
+        cluster.setVersion(new org.ovirt.engine.api.model.Version() {
+            {
+                setMajor(3);
+                setMinor(0);
+            }
+        });
         VDSGroup transform = getMapper().map(cluster, null);
         assertEquals(transform.getTransparentHugepages(), true);
     }
