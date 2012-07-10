@@ -1,26 +1,25 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import org.easymock.classextension.EasyMock;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.After;
+import org.easymock.classextension.EasyMock;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.BootDevice;
-import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.CPU;
+import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
@@ -28,43 +27,36 @@ import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.ErrorHandlingOptions;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.NicInterface;
+import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.PowerManagement;
-import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmAffinities;
 import org.ovirt.engine.api.model.VmType;
-import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.api.restapi.utils.VersionUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.easymock.EasyMock.expect;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { Config.class })
 public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
 
     BackendCapabilitiesResource parent;
     BackendCapabilityResource resource;
 
-    private static final Version VERSION_2_3 = new Version() {{ major = 2; minor = 3; }};
+    private static final Version VERSION_2_3 = new Version() {
+        {
+            major = 2;
+            minor = 3;
+        }
+    };
 
     public BackendCapabilityResourceTest() {
         parent = new BackendCapabilitiesResource();
@@ -79,26 +71,19 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         parent.setUriInfo(uriInfo);
     }
 
-    @After
-    public void tearDown() {
-        verifyAll();
-    }
-
     @Ignore
     @Test
     public void testGet() throws Exception {
-        mockStatic(Config.class);
-
         HashSet<org.ovirt.engine.core.compat.Version> supportedVersions =
-            new HashSet<org.ovirt.engine.core.compat.Version>();
+                new HashSet<org.ovirt.engine.core.compat.Version>();
         supportedVersions.add(new org.ovirt.engine.core.compat.Version(1, 5));
         supportedVersions.add(new org.ovirt.engine.core.compat.Version(10, 3));
 
         //expect(Config.GetValue(ConfigValues.SupportedClusterLevels)).andReturn(supportedVersions);
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
-                new String[] { "ConfigValue"},
-                new Object[] { ConfigurationValues.SupportedClusterLevels},
+                new String[] { "ConfigValue" },
+                new Object[] { ConfigurationValues.SupportedClusterLevels },
                 supportedVersions);
 
         //expect(Config.GetValue(ConfigValues.ServerCPUList, "1.5")).andReturn("0:bar:0:foo");
@@ -185,21 +170,27 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
                 new Object[] { "10.3", ConfigurationValues.UserDefinedVMProperties },
                 "bar=[a-z]");
 
-        replayAll();
-
         verifyCapabilities(resource.get());
     }
 
     private void verifyCapabilities(VersionCaps capabilities) {
         assertNotNull(capabilities);
-//        assertEquals(2, capabilities.getVersions().size());
-//        verifyVersion(capabilities.getVersions().get(0), 1, 5, false, "bar", 0, false, false, false);
-//        verifyVersion(capabilities.getVersions().get(1), 10, 3, true, "foo", 15, true, true, true);
-//        verifyPermits(capabilities);
-//        verifySchedulingPolicies(capabilities);
+        //        assertEquals(2, capabilities.getVersions().size());
+        //        verifyVersion(capabilities.getVersions().get(0), 1, 5, false, "bar", 0, false, false, false);
+        //        verifyVersion(capabilities.getVersions().get(1), 10, 3, true, "foo", 15, true, true, true);
+        //        verifyPermits(capabilities);
+        //        verifySchedulingPolicies(capabilities);
     }
 
-    private void verifyVersion(VersionCaps version, int major, int minor, boolean current, String cpuName, int cpuLevel, boolean localStorage, boolean hooks, boolean thp) {
+    private void verifyVersion(VersionCaps version,
+            int major,
+            int minor,
+            boolean current,
+            String cpuName,
+            int cpuLevel,
+            boolean localStorage,
+            boolean hooks,
+            boolean thp) {
         assertEquals(major, version.getMajor().intValue());
         assertEquals(minor, version.getMinor().intValue());
         assertEquals(current, version.isCurrent());
@@ -218,7 +209,7 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         verifyNicTypes(version.getNicInterfaces().getNicInterfaces());
         verifyDiskFormats(version.getDiskFormats().getDiskFormats());
         verifyDiskInterfaces(version.getDiskInterfaces().getDiskInterfaces());
-        verifyVmAffinities(version,version.getVmAffinities());
+        verifyVmAffinities(version, version.getVmAffinities());
         verifyMigrateOnErrorOptions(version, version.getErrorHandling());
         verifyOsTypes(version.getOsTypes().getOsTypes());
 
@@ -239,9 +230,14 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
     }
 
     private void verifyVmAffinities(final VersionCaps version, VmAffinities vmAffinities) {
-        if(VersionUtils.greaterOrEqual(
-                new Version(){{major=version.getMajor();minor=version.getMinor();}},
-                VERSION_2_3)){
+        if (VersionUtils.greaterOrEqual(
+                new Version() {
+                    {
+                        major = version.getMajor();
+                        minor = version.getMinor();
+                    }
+                },
+                VERSION_2_3)) {
             assertNotNull(vmAffinities);
         }
         else {
@@ -250,9 +246,14 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
     }
 
     private void verifyMigrateOnErrorOptions(final VersionCaps version, ErrorHandlingOptions errorHandling) {
-        if(greaterOrEqual(
-                new Version(){{major=version.getMajor();minor=version.getMinor();}},
-                VERSION_2_3)){
+        if (greaterOrEqual(
+                new Version() {
+                    {
+                        major = version.getMajor();
+                        minor = version.getMinor();
+                    }
+                },
+                VERSION_2_3)) {
             assertNotNull(errorHandling);
         }
         else {
@@ -398,6 +399,7 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         resource.setHttpHeaders(httpHeaders);
     }
 
+    @Override
     @Before
     public void setUp() {
         control = EasyMock.createNiceControl();
