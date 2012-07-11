@@ -124,7 +124,7 @@ public class ResourceManager {
     }
 
     public void SuccededToRunVm(Guid vmId, Guid vdsId) {
-        if (_asyncRunningVms.contains(vmId)) {
+        if (_asyncRunningVms.containsKey(vmId)) {
             getEventListener().runningSucceded(vmId);
         }
         RemoveAsyncRunningVm(vmId);
