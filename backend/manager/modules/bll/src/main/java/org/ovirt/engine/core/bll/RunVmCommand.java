@@ -363,7 +363,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     private void removeVmStatlessImages() {
         isFailedStatlessSnapshot = true;
-        VmPoolHandler.removeVmStatelessImages(getVm().getId(), new CommandContext(getExecutionContext()));
+        VmPoolHandler.removeVmStatelessImages(getVm().getId(), new CommandContext(getExecutionContext(), getLock()));
+        // setting lock to null in order not to release lock twice
+        setLock(null);
         setSucceeded(true);
     }
 
