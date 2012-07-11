@@ -71,4 +71,10 @@ public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> e
         };
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage((getParameters().getAction() == PlugAction.PLUG) ?
+                VdcBllMessages.VAR__ACTION__ACTIVATE : VdcBllMessages.VAR__ACTION__DEACTIVATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
+    }
 }
