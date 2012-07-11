@@ -259,7 +259,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         Step validatingStep = ExecutionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
 
         try {
-            actionAllowed = acquireLock() && (getReturnValue().getCanDoAction() || InternalCanDoAction());
+            actionAllowed = getReturnValue().getCanDoAction() || InternalCanDoAction();
             ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
 
             if (actionAllowed) {
@@ -485,7 +485,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             Transaction transaction = TransactionSupport.suspend();
             try {
                 returnValue =
-                        IsUserAutorizedToRunAction() && IsBackwardsCompatible() && validateInputs() && canDoAction()
+                        IsUserAutorizedToRunAction() && IsBackwardsCompatible() && validateInputs() && acquireLock()
+                                && canDoAction()
                                 && validateQuota();
                 if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
                     log.warnFormat("CanDoAction of action {0} failed. Reasons:{1}", getActionType(),
