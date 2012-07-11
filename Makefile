@@ -126,9 +126,9 @@ rpm: $(SRPM)
 create_dirs:
 	@echo "*** Creating Directories"
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/{kerberos,scripts,engine.ear,conf,dbscripts,resources,ovirt-isos,db-backups,engine.ear}
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-config/lib
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/notifier/lib
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib
+	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-config
+	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/notifier
+	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/service
 	@install -dm 755 $(PREFIX)/usr/share/java
@@ -231,14 +231,6 @@ install_config:
 	install -m 644 backend/manager/tools/engine-config/src/main/resources/engine-config.*properties $(PREFIX)/etc/ovirt-engine/engine-config/
 	install -m 644 backend/manager/tools/engine-config/src/main/resources/log4j.xml $(PREFIX)/etc/ovirt-engine/engine-config/
 
-	# Jar files for the configuration tool:
-	# XXX: Should replace with links to the actual locations
-	# of the jar files, or fix the scripts to use that.
-	install -m 644 $(SOURCE_DIR)/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/
-	ln -s /usr/share/ovirt-engine/engine-config/lib/engine-config-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-config.jar
-	install -m 644 $(SOURCE_DIR)/engineencryptutils-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-encryptutils.jar
-	install -m 644 $(SOURCE_DIR)/compat-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-config/lib/engine-compat.jar
-
 	# Main program for the configuration tool:
 	install -m 750 backend/manager/tools/engine-config/src/main/resources/engine-config $(PREFIX)/usr/share/ovirt-engine/engine-config/
 	ln -s /usr/share/ovirt-engine/engine-config/engine-config $(PREFIX)/usr/bin/engine-config
@@ -246,11 +238,6 @@ install_config:
 	# Configuration files for the domain management tool:
 	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains.conf $(PREFIX)/etc/ovirt-engine/engine-manage-domains/
 	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains/log4j.xml $(PREFIX)/etc/ovirt-engine/engine-manage-domains/
-
-	# Jar files for the domain management tool:
-	# XXX: Should replace with links to the actual locations
-	# of the jar files, or fix the scripts to use that.
-	install -m 644 $(SOURCE_DIR)/compat-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib/engine-compat.jar
 
 	# Main program for the domain management tool:
 	install -m 750 backend/manager/conf/kerberos/engine-manage-domains $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/
@@ -266,11 +253,6 @@ install_notification_service:
 	# Configuration files:
 	install -m 644 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/log4j.xml $(PREFIX)/etc/ovirt-engine/notifier/
 	install -m 640 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.conf $(PREFIX)/etc/ovirt-engine/notifier/
-
-	# Jar files:
-	# XXX: Should replace with links to the actual locations
-	# of the jar files, or fix the scripts to use that.
-	install -m 644 $(SOURCE_DIR)/engine-notifier-service-$(APP_VERSION).jar $(PREFIX)/usr/share/ovirt-engine/notifier/engine-notifier.jar
 
 	# Main program:
 	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.sh $(PREFIX)/usr/share/ovirt-engine/notifier/
