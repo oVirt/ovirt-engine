@@ -343,6 +343,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         if (localStorageEnabled(version)) {
             ret.add(StorageType.LOCALFS);
         }
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
+            ret.add(StorageType.POSIXFS);
+        }
         return ret;
     }
 
