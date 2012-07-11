@@ -1593,7 +1593,7 @@ actions:
       parameterType: Network
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {network.description: 'xs:string', network.vlan.id: 'xs:string',
+        optionalArguments: {network.name: 'xs:string', network.description: 'xs:string', network.vlan.id: 'xs:string',
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
           network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int'}
     urlparams: {}
