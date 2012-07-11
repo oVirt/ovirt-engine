@@ -70,7 +70,7 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
 
     @Override
     protected void ExecuteVmCommand() {
-        if (Boolean.TRUE.equals(getParameters().isPlugUnPlug() && getVm().getstatus() != VMStatus.Down)) {
+        if (diskShouldBeUnPlugged()) {
             performPlugCommnad(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
         }
         getVmDeviceDao().remove(vmDevice.getId());
@@ -79,6 +79,11 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
         // update vm device boot order
         VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
         setSucceeded(true);
+    }
+
+    private boolean diskShouldBeUnPlugged() {
+        return Boolean.TRUE.equals(getParameters().isPlugUnPlug() && vmDevice.getIsPlugged()
+                && getVm().getstatus() != VMStatus.Down);
     }
 
     @Override
