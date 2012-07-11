@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -219,19 +220,15 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVmStatus,
                             new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
-            // Write that this VM was shut down by host rebbot or manual fence
+            // Write that this VM was shut down by host reboot or manual fence
             if (returnValue != null && returnValue.getSucceeded()) {
                 LogSettingVmToDown(getVds().getId(), vm.getId());
             }
-            // ResourceManager.Instance.removeRunningVm(vm.vm_guid, VdsId);
             setVmId(vm.getId());
             setVmName(vm.getvm_name());
             setVm(vm);
-            // EINAV: TODO: The next commented line of code is performing an
-            // asynchronous task
-            // (RestoreAllSnapshots) in case of a stateless VM. need to take
-            // care of that case.
-            // VmPoolHandler.ProcessVmPoolOnStopVm(VmId);
+            VmPoolHandler.ProcessVmPoolOnStopVm(vm.getId(),
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
             // Handle highly available VMs
             if (vm.getauto_startup()) {

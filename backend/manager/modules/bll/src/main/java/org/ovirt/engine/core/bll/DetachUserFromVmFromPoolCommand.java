@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameters> extends
@@ -61,9 +62,13 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     private void RestoreVmFromBaseSnapshot(VM vm) {
         if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
             log.infoFormat("Deleting snapshots for stateless vm {0}", vm.getId());
-            Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm,
-                    new VmOperationParameterBase(vm.getId()),
-                    new CommandContext(getCompensationContext()));
+            VmOperationParameterBase restoreParams = new VmOperationParameterBase(vm.getId());
+
+            // setting RestoreStatelessVm to run in new transaction so it could rollback internaly if needed,
+            // but still not affect this command, in order to keep permissions changes even on restore failure
+            restoreParams.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+            Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm, restoreParams,
+                    new CommandContext(getExecutionContext(), getLock()));
         }
     }
 
