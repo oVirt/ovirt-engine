@@ -41,10 +41,10 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
                 // migrate vms according to cluster migrateOnError option
                 switch (getVdsGroup().getMigrateOnError()) {
                     case YES:
-                        MigrateAllVms();
+                        MigrateAllVms(getExecutionContext());
                         break;
                     case HA_ONLY:
-                        MigrateAllVms(true);
+                        MigrateAllVms(getExecutionContext(),true);
                         break;
                 }
             }

@@ -54,7 +54,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             // nothing to do
             setSucceeded(true);
         } else {
-            setSucceeded(MigrateAllVms());
+            setSucceeded(MigrateAllVms(getExecutionContext()));
 
             /**
              * if non responsive move directly to maintenance
@@ -78,11 +78,11 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
     }
 
-    protected boolean MigrateAllVms() {
-        return MigrateAllVms(false);
+    protected boolean MigrateAllVms(ExecutionContext parentContext) {
+        return MigrateAllVms(parentContext, false);
     }
 
-    protected boolean MigrateAllVms(boolean HAOnly) {
+    protected boolean MigrateAllVms(ExecutionContext parentContext, boolean HAOnly) {
         orderListOfRunningVmsOnVds(getVdsId());
 
         boolean succeeded = true;
@@ -93,7 +93,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             if (vm.getstatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.getauto_startup()))) {
                 MigrateVmParameters tempVar = new MigrateVmParameters(false, vm.getId());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-                ExecutionContext ctx = createMigrateVmContext(vm);
+                ExecutionContext ctx = createMigrateVmContext(parentContext, vm);
                 VdcReturnValueBase result =
                         Backend.getInstance().runInternalAction(VdcActionType.InternalMigrateVm,
                                 tempVar,
@@ -108,20 +108,20 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         return succeeded;
     }
 
-    private ExecutionContext createMigrateVmContext(VM vm) {
+    private ExecutionContext createMigrateVmContext(ExecutionContext parentContext,VM vm) {
         ExecutionContext ctx = new ExecutionContext();
         try {
             Map<String, String> values = new HashMap<String, String>();
             values.put(VdcObjectType.VM.name().toLowerCase(), vm.getvm_name());
             values.put(VdcObjectType.VDS.name().toLowerCase(), vm.getrun_on_vds_name());
             Step step = ExecutionHandler.addSubStep(getExecutionContext(),
-                    getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                    parentContext.getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.MIGRATE_VM,
                     ExecutionMessageDirector.resolveStepMessage(StepEnum.MIGRATE_VM, values));
             ctx.setStep(step);
             ctx.setMonitored(true);
         } catch (RuntimeException e) {
-            log.error(e);
+            log.error("Failed to create ExecutionContext for MigrateVmCommand", e);
         }
         return ctx;
     }

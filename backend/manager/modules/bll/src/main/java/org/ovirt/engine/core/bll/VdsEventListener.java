@@ -107,11 +107,11 @@ public class VdsEventListener implements IVdsEventListener {
             Map<String, String> customLogValues) {
         ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, false);
         SetNonOperationalVdsParameters tempVar =
-                new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
+            new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
         tempVar.setSaveToDb(saveToDb);
         tempVar.setStorageDomainId(domainId);
         tempVar.setShouldBeLogged(logCommand);
-        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
+        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar, ExecutionHandler.createInternalJobContext());
     }
 
     @Override
