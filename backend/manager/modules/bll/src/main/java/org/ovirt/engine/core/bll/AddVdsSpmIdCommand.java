@@ -6,6 +6,10 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -13,8 +17,9 @@ import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 @InternalCommandAttribute
-@LockIdNameAttribute(isWait=true)
+@LockIdNameAttribute(isWait = true)
 public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+    private List<vds_spm_id_map> vds_spm_id_mapList;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -32,17 +37,29 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     protected boolean canDoAction() {
         // check if vds already has vds spm id and storage pool exists
-        return !Guid.Empty.equals(getVds().getstorage_pool_id())
-                && DbFacade.getInstance().getVdsSpmIdMapDao().get(getVdsId()) == null;
+        if (Guid.Empty.equals(getVds().getstorage_pool_id())
+                || DbFacade.getInstance().getVdsSpmIdMapDao().get(getVdsId()) != null) {
+            return false;
+        }
+        vds_spm_id_mapList = DbFacade.getInstance().getVdsSpmIdMapDao().getAll(
+                getVds().getstorage_pool_id());
+        if (vds_spm_id_mapList.size() >= Config.<Integer> GetValue(ConfigValues.MaxNumberOfHostsInStoragePool)) {
+            VdcFault fault = new VdcFault();
+            fault.setError(VdcBllErrors.ReachedMaxNumberOfHostsInDC);
+            fault.setMessage(Backend.getInstance()
+                    .getVdsErrorsTranslator()
+                    .TranslateErrorTextSingle(fault.getError().toString()));
+            getReturnValue().setFault(fault);
+            return false;
+        }
+        return true;
     }
 
     @Override
     protected void executeCommand() {
         // according to shaharf the first id is 1
         int selectedId = 1;
-        List<vds_spm_id_map> list = DbFacade.getInstance().getVdsSpmIdMapDao().getAll(
-                getVds().getstorage_pool_id());
-        List<Integer> map = LinqUtils.foreach(list, new Function<vds_spm_id_map, Integer>() {
+        List<Integer> map = LinqUtils.foreach(vds_spm_id_mapList, new Function<vds_spm_id_map, Integer>() {
             @Override
             public Integer eval(vds_spm_id_map vds_spm_id_map) {
                 return vds_spm_id_map.getvds_spm_id();
