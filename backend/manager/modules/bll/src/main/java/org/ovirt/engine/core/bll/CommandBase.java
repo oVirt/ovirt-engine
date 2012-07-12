@@ -1135,18 +1135,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 @Override
                 public void run() {
                     log.infoFormat("Rollback for command: {0}.", CommandBase.this.getClass().getName());
-                    TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            try {
-                                AsyncTaskManager.getInstance().CancelTasks(getReturnValue().getTaskIdList());
-                            } catch (Exception e) {
-                                log.errorFormat("Failed to cancel tasks for command: {0}.",
-                                        CommandBase.this.getClass().getName());
-                            }
-                            return null;
-                        }
-                    });
+                    try {
+                        AsyncTaskManager.getInstance().CancelTasks(getReturnValue().getTaskIdList());
+                    } catch (Exception e) {
+                        log.errorFormat("Failed to cancel tasks for command: {0}.",
+                                CommandBase.this.getClass().getName());
+                    }
                 }
             });
         }
