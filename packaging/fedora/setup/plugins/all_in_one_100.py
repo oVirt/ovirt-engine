@@ -278,7 +278,7 @@ def addStorageDomain():
         logging.info("Creating local storage domain")
         sdParams = params.StorageDomain(name=LOCAL_STORAGE,
                                     data_center=controller.CONF["API_OBJECT"].datacenters.get(LOCAL_DATA_CENTER),
-                                    storage_format='v1',
+                                    storage_format='v3',
                                     host=controller.CONF["API_OBJECT"].hosts.get(LOCAL_HOST),
                                     storage=stParams)
         sdParams.set_type('data')
