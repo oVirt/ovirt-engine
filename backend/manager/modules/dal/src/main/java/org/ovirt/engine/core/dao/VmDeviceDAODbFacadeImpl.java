@@ -166,4 +166,13 @@ public class VmDeviceDAODbFacadeImpl extends
             save(vmDevice);
         }
     }
+
+    @Override
+    public void clearDeviceAddress(Guid deviceId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("device_id", deviceId);
+
+        getCallsHandler().executeModification("clearVmDeviceAddress", parameterSource);
+
+    }
 }

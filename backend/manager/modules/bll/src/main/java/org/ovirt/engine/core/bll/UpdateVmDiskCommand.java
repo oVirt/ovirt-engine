@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -258,6 +259,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
+                clearAddressOnInterfaceChange();
                 _oldDisk.setBoot(getParameters().getDiskInfo().isBoot());
                 _oldDisk.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
                 _oldDisk.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
@@ -275,9 +277,18 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 VmHandler.updateDisksFromDb(getVm());
                 // update vm device boot order
                 VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
+
                 setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),
                         Arrays.asList(getVm())));
                 return null;
+            }
+
+            private void clearAddressOnInterfaceChange() {
+                // clear the disk address if the type has changed
+                if (_oldDisk.getDiskInterface() != getParameters().getDiskInfo().getDiskInterface()) {
+                    getVmDeviceDao().clearDeviceAddress(getVmDeviceDao().get(new VmDeviceId(_oldDisk.getId(), getVmId()))
+                            .getDeviceId());
+                }
             }
         });
     }

@@ -7,6 +7,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.List;
 
+import junit.framework.Assert;
+
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -126,5 +129,21 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                         VmDeviceType.BALLOON.getName(),
                         VmDeviceType.MEMBALLOON.getName());
         assertTrue((queryRes && !devices.isEmpty()) || (!queryRes && devices.isEmpty()));
+    }
+
+    /**
+     * Test clearing a device address
+     * @param result
+     */
+    @Test
+    public void clearDeviceAddress() {
+        // before: check we have a device with a non-blank address
+        VmDevice vmDevice = dao.get(getExistingEntityId());
+        Assert.assertTrue(StringUtils.isNotBlank(vmDevice.getAddress()));
+
+        // clear the address and check its really cleared
+        dao.clearDeviceAddress(getExistingEntityId().getDeviceId());
+        Assert.assertTrue(StringUtils.isBlank(dao.get(getExistingEntityId()).getAddress()));
+
     }
 }

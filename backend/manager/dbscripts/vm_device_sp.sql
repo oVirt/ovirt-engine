@@ -170,4 +170,12 @@ end;
 $BODY$
 LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION clearVmDeviceAddress(v_device_id UUID)
+  RETURNS VOID AS
+$BODY$
+begin
+    update vm_device set address = '' where device_id = v_device_id;
+end;
+$BODY$
+LANGUAGE 'plpgsql';
 
