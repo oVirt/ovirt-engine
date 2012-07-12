@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.HotPlugUnplugVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -54,6 +55,7 @@ public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> e
                             vmDevice));
         }
         TransactionSupport.executeInNewTransaction(updateDevice());
+        VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
         setSucceeded(true);
     }
 
