@@ -216,7 +216,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                         VDSCommandType.ConnectStoragePool,
                                         new ConnectStoragePoolVDSCommandParameters(vds.getId(),
                                                 getStoragePool().getId(), vds.getvds_spm_id(),
-                                                getMasterDomainIdFromDb(), getStoragePool()
+                                                _newMasterStorageDomainId, getStoragePool()
                                                         .getmaster_domain_version()));
                         if (returnValue.getSucceeded()) {
                             Backend.getInstance()
