@@ -20,4 +20,10 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         setupTemplate(pool, model);
     }
 
+    @Override
+    public void Template_SelectedItemChanged() {
+        super.Template_SelectedItemChanged();
+        getModel().setIsDisksAvailable(true);
+    }
+
 }

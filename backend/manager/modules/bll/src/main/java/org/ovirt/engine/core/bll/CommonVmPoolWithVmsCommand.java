@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -39,7 +38,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -81,16 +79,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
         }
-    }
-
-    @Override
-    public storage_pool getStoragePool() {
-        if (super.getStoragePool() == null) {
-            setStoragePool(DbFacade.getInstance()
-                    .getStoragePoolDAO()
-                    .getForVdsGroup(getParameters().getVmStaticData().getvds_group_id()));
-        }
-        return super.getStoragePool();
     }
 
     protected void initTemplate() {
@@ -225,6 +213,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (!verifyAddVM(grp.getstorage_pool_id().getValue())) {
             return false;
         }
+        setStoragePoolId(grp.getstorage_pool_id().getValue());
 
         if (!ensureDestinationImageMap()) {
             return false;

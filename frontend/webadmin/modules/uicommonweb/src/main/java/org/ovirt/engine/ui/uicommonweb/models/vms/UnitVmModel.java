@@ -1281,7 +1281,6 @@ public class UnitVmModel extends Model {
             }
         });
 
-
         getOSType().setItems(osList);
         getOSType().setSelectedItem(VmOsType.Unassigned);
     }
@@ -1650,6 +1649,12 @@ public class UnitVmModel extends Model {
             case DataCenter:
                 storage_pool selectDataCenter =
                         (storage_pool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
+                for (storage_pool dc : list) {
+                    if (selectDataCenter.getId().equals(dc.getId())) {
+                        selectDataCenter = dc;
+                        break;
+                    }
+                }
                 model.getDataCenter()
                         .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
                 model.getDataCenter().setSelectedItem(selectDataCenter);
@@ -1812,12 +1817,12 @@ public class UnitVmModel extends Model {
             {
                 nameExpr += NON_WINDOWS_VM_NAME_MAX_LIMIT;
                 nameMsg =
-                    ConstantsManager.getInstance()
-                            .getMessages()
-                            .nameMustConataionOnlyAlphanumericChars(NON_WINDOWS_VM_NAME_MAX_LIMIT);
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .nameMustConataionOnlyAlphanumericChars(NON_WINDOWS_VM_NAME_MAX_LIMIT);
             }
 
-            nameExpr +=  "}$"; //$NON-NLS-1$
+            nameExpr += "}$"; //$NON-NLS-1$
 
             getName().ValidateEntity(
                     new IValidation[] {

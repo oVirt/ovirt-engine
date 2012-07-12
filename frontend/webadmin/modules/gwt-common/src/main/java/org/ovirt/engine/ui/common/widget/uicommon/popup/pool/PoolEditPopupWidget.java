@@ -30,6 +30,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         descriptionEditor.setEnabled(true);
         numOfDesktopsEditor.setEnabled(true);
         prestartedVmsEditor.setEnabled(true);
+        quotaEditor.setEnabled(true);
     }
 
     private void disableAllTabs() {

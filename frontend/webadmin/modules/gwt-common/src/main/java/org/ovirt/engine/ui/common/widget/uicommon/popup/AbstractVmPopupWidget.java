@@ -97,7 +97,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
-    ListModelListBoxEditor<Object> quotaEditor;
+    protected ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField
     @Path(value = "name.entity")

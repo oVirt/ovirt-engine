@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -669,6 +670,9 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setkernel_url((String) model.getKernel_path().getEntity());
         getcurrentVm().setkernel_params((String) model.getKernel_parameters().getEntity());
         getcurrentVm().setCustomProperties((String) model.getCustomProperties().getEntity());
+        if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
+            getcurrentVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+        }
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
         getcurrentVm().setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
