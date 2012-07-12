@@ -10,6 +10,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
@@ -27,7 +29,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T> {
+public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T>
+        implements Quotable {
 
     private List<DiskImage> imageTemplates;
     private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
@@ -36,6 +39,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         super(parameters);
         super.setVmTemplateId(parameters.getVmTemplateId());
         parameters.setEntityId(getVmTemplateId());
+        setStoragePoolId(getVmTemplate().getstorage_pool_id());
     }
 
     public RemoveVmTemplateCommand(Guid vmTemplateId) {
@@ -234,6 +238,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     protected void EndWithFailure() {
+        rollbackQuota();
         HandleEndAction();
     }
 
@@ -251,5 +256,33 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             getReturnValue().setEndActionTryAgain(false);
             log.errorFormat("Encounter a problem removing template from DB, Setting the action, not to try again.");
         }
+    }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        rollbackDisksQuota();
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        rollbackDisksQuota();
+    }
+
+    private void rollbackDisksQuota() {
+        List<Guid> quotaList = new ArrayList<Guid>();
+        for (DiskImage image : imageTemplates) {
+            quotaList.add(image.getQuotaId());
+        }
+        getQuotaManager().rollbackQuota(getStoragePool(), quotaList);
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return null;
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
     }
 }

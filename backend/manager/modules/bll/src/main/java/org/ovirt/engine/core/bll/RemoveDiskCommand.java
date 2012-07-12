@@ -9,10 +9,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -45,7 +47,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @CustomLogFields({ @CustomLogField("DiskAlias") })
 @NonTransactiveCommandAttribute
-public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T> {
+public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T>
+        implements Quotable {
 
     private static final long serialVersionUID = -4520874214339816607L;
     private final Disk disk;
@@ -290,6 +293,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     @Override
     protected void EndWithFailure() {
         endCommand();
+        rollbackQuota();
     }
 
     private void endCommand() {
@@ -346,6 +350,45 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             jobProperties.put("diskalias", getDiskAlias());
         }
         return jobProperties;
+    }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        if (disk != null
+                && DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+            getQuotaManager().decreaseStorageQuota(getStoragePool(), getStorageQuotaParameters());
+        }
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        if (disk != null
+                && DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+            getQuotaManager().rollbackQuota(getStoragePool(),
+                    getQuotaManager().getQuotaListFromParameters(getStorageQuotaParameters()));
+        }
+    }
+
+    private List<StorageQuotaValidationParameter> getStorageQuotaParameters() {
+        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
+        list.add(new StorageQuotaValidationParameter(getQuotaId(),
+                getStorageDomainId().getValue(),
+                ((DiskImage) disk).getSizeInGigabytes()));
+        return list;
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        if (disk != null
+                && DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+            return ((DiskImage) disk).getQuotaId();
+        }
+        return null;
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
     }
 
 }

@@ -3,24 +3,23 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<T> {
+public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
     /**
      * Generated serialization UUID.
      */
     private static final long serialVersionUID = 8037593564997497667L;
 
-    public RemoveQuotaCommand(T parameters) {
+    public RemoveQuotaCommand(QuotaCRUDParameters parameters) {
         super(parameters);
-        setQuotaId(getParameters().getQuotaId());
     }
 
     @Override
@@ -33,11 +32,6 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
         Quota quota = getQuota();
         if (quota == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
-            return false;
-        }
-
-        // Check if there is attempt to delete the default quota while storage pool enforcement type is disabled.
-        if (!validDefaultQuota(quota)) {
             return false;
         }
 
@@ -57,31 +51,17 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
         return true;
     }
 
-    /**
-     * Validate storage pool is not disabled when user attempt to remove default quota.
-     * @param quota - The quota to be removed
-     * @return - Boolean indication whether the operation is permitted or not.
-     */
-    protected boolean validDefaultQuota(Quota quota) {
-        if (getStoragePoolDAO().get(quota.getStoragePoolId()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
-                && quota.getIsDefaultQuota()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_WITH_DEFAULT_INDICATION_CAN_NOT_BE_REMOVED);
-            return false;
-        }
-        return true;
-    }
-
     @Override
     protected void executeCommand() {
-        setQuota(getQuotaDAO().getById(getParameters().getQuotaId()));
+        QuotaManager.getInstance().removeQuotaFromCache(getQuota().getStoragePoolId(), getParameters().getQuotaId());
         getQuotaDAO().remove(getParameters().getQuotaId());
         getReturnValue().setSucceeded(true);
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getQuotaId() == null ? null
-                : getQuotaId().getValue(),
+        return Collections.singletonList(new PermissionSubject(getParameters().getQuotaId() == null ? null
+                : getParameters().getQuotaId().getValue(),
                 VdcObjectType.Quota, getActionType().getActionGroup()));
     }
 

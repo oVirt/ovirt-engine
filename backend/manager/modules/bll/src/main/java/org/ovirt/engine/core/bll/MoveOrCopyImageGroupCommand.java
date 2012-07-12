@@ -132,6 +132,11 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                         (new image_storage_domain_map(getParameters().getImageId(),
                                 getParameters().getStorageDomainId()));
             }
+            //update qutoa
+            if (getParameters().getQuotaId() != null) {
+                getImage().setQuotaId(getParameters().getQuotaId());
+                getImageDao().update(getImage().getImage());
+            }
 
             setSucceeded(true);
         }

@@ -5,12 +5,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
@@ -25,17 +22,13 @@ import org.ovirt.engine.core.dao.QuotaDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class AddQuotaCommandTest {
     @Mock
-    private QuotaHelper quotaHelper;
-
-    @Mock
     private QuotaDAO quotaDAO;
 
     /**
      * The command under test.
      */
-    private AddQuotaCommand<QuotaCRUDParameters> command;
+    private AddQuotaCommand command;
 
-    private Guid storagePoolUUID = Guid.NewGuid();
     storage_pool storagePool = new storage_pool();
     storage_domains firstStorageDomains = new storage_domains();
     storage_domains secondStorageDomains = new storage_domains();
@@ -43,12 +36,6 @@ public class AddQuotaCommandTest {
     @Before
     public void testSetup() {
         mockQuotaDAO();
-        mockQuotaHelper();
-    }
-
-    @SuppressWarnings("unchecked")
-    private void mockQuotaHelper() {
-        when(quotaHelper.checkQuotaValidationForAdd(Matchers.any(Quota.class), Matchers.any(ArrayList.class))).thenReturn(true);
     }
 
     private void mockQuotaDAO() {
@@ -57,21 +44,20 @@ public class AddQuotaCommandTest {
 
     @Test
     public void testExecuteCommand() throws Exception {
-        AddQuotaCommand<QuotaCRUDParameters> addQuotaCommand = createCommand();
+        AddQuotaCommand addQuotaCommand = createCommand();
         addQuotaCommand.executeCommand();
     }
 
     @Test
-    public void testCanDoiActionCommand() throws Exception {
-        AddQuotaCommand<QuotaCRUDParameters> addQuotaCommand = createCommand();
+    public void testCanDoActionCommand() throws Exception {
+        AddQuotaCommand addQuotaCommand = createCommand();
         addQuotaCommand.canDoAction();
     }
 
-    private AddQuotaCommand<QuotaCRUDParameters> createCommand() {
+    private AddQuotaCommand createCommand() {
         QuotaCRUDParameters param = new QuotaCRUDParameters(mockGeneralStorageQuota());
-        command = spy(new AddQuotaCommand<QuotaCRUDParameters>(param));
+        command = spy(new AddQuotaCommand(param));
         doReturn(quotaDAO).when(command).getQuotaDAO();
-        doReturn(quotaHelper).when(command).getQuotaHelper();
 
         return command;
     }
@@ -93,7 +79,7 @@ public class AddQuotaCommandTest {
         generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
 
         generalQuota.setId(Guid.NewGuid());
-        generalQuota.setStoragePoolId(storagePoolUUID);
+        generalQuota.setStoragePoolId(Guid.NewGuid());
         return generalQuota;
     }
 }

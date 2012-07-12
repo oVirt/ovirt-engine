@@ -13,22 +13,30 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-public class AddQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<T> {
+public class AddQuotaCommand extends QuotaCRUDCommand {
 
     /**
      * Generated serialization UUID.
      */
     private static final long serialVersionUID = 8037593564997496657L;
 
-    public AddQuotaCommand(T parameters) {
+    public AddQuotaCommand(QuotaCRUDParameters parameters) {
         super(parameters);
         setStoragePoolId(getParameters().getQuota() != null ? getParameters().getQuota().getStoragePoolId() : null);
     }
 
     @Override
     protected boolean canDoAction() {
-        return (getQuotaHelper().checkQuotaValidationForAdd(getParameters().getQuota(),
+        return (checkQuotaValidationForAdd(getParameters().getQuota(),
                 getReturnValue().getCanDoActionMessages()));
+    }
+
+    public boolean checkQuotaValidationForAdd(Quota quota, List<String> messages) {
+        if (!checkQuotaValidationCommon(quota, messages)) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -62,16 +70,15 @@ public class AddQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<
         Quota quotaParameter = getParameters().getQuota();
         quotaParameter.setId(Guid.NewGuid());
         setStoragePoolId(quotaParameter.getStoragePoolId());
-        setQuotaName(quotaParameter.getQuotaName());
         if (quotaParameter.getQuotaStorages() != null) {
             for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
-                quotaStorage.setQuotaId(getQuotaId());
+                quotaStorage.setQuotaId(quotaParameter.getId());
                 quotaStorage.setQuotaStorageId(Guid.NewGuid());
             }
         }
         if (quotaParameter.getQuotaVdsGroups() != null) {
             for (QuotaVdsGroup quotaVdsGroup : quotaParameter.getQuotaVdsGroups()) {
-                quotaVdsGroup.setQuotaId(getQuotaId());
+                quotaVdsGroup.setQuotaId(quotaParameter.getId());
                 quotaVdsGroup.setQuotaVdsGroupId(Guid.NewGuid());
             }
         }
@@ -81,9 +88,5 @@ public class AddQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_ADD_QUOTA : AuditLogType.USER_FAILED_ADD_QUOTA;
-    }
-
-    protected QuotaHelper getQuotaHelper() {
-        return QuotaHelper.getInstance();
     }
 }

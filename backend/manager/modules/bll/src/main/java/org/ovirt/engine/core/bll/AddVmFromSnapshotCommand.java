@@ -89,9 +89,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         permissionList.add(new PermissionSubject(getVmIdFromSnapshot(),
                 VdcObjectType.VM,
                 getActionType().getActionGroup()));
-        permissionList =
-                QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
-
         addPermissionSubjectForCustomProperties(permissionList);
         return permissionList;
     }
@@ -339,25 +336,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
-    protected boolean validateQuota() {
-        // Set default quota id if storage pool enforcement is disabled.
-        setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaIdFromSourceVmEntity(),
-                getStoragePool()));
-        for (DiskImage img : getImagesForQuotaValidation()) {
-            img.setQuotaId(QuotaHelper.getInstance()
-                    .getQuotaIdToConsume(getQuotaId(),
-                            getStoragePool()));
-        }
-        if (!isInternalExecution()) {
-            return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
-                    getQuotaConsumeMap(getImagesForQuotaValidation()),
-                    getCommandId(),
-                    getReturnValue().getCanDoActionMessages());
-        }
-        return true;
-    }
-
-    @Override
     protected boolean checkImageConfiguration(DiskImage diskImage) {
         return ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(diskImage.getId())
                 .getstorage_ids()
@@ -365,15 +343,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 .getStorageStaticData(),
                 diskImage,
                 getReturnValue().getCanDoActionMessages());
-    }
-
-    protected Collection<DiskImage> getImagesForQuotaValidation() {
-        return diskInfoDestinationMap.values();
-    }
-
-    protected Guid getQuotaIdFromSourceVmEntity() {
-        getSourceVmFromDb();
-        return (getSourceVmFromDb() != null) ? getSourceVmFromDb().getQuotaId() : null;
     }
 
     protected VM getSourceVmFromDb() {
@@ -387,15 +356,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         // Assumption - this is last DB change of command, no need for compensation here
         getSnapshotDao().updateStatus(sourceSnapshotId, SnapshotStatus.OK);
         getVmDynamicDao().updateStatus(getVmId(), VMStatus.Down);
-    }
-
-    @Override
-    protected void removeQuotaCommandLeftOver() {
-        if (!isInternalExecution()) {
-            QuotaManager.removeMultiStorageDeltaQuotaCommand(getQuotaConsumeMap(getImagesForQuotaValidation()),
-                    getStoragePool().getQuotaEnforcementType(),
-                    getCommandId());
-        }
     }
 
     @Override

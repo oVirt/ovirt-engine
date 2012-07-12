@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -202,14 +201,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         tempVar.setStorageDomainId(storageDomainId);
         return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.UpdateVM, tempVar)
                 .getSucceeded();
-    }
-
-    protected Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap(Collection<DiskImage> diskInfoList) {
-        if (quotaForStorageConsumption == null) {
-            quotaForStorageConsumption =
-                    QuotaHelper.getInstance().getQuotaConsumeMap(diskInfoList);
-        }
-        return quotaForStorageConsumption;
     }
 
     protected boolean RemoveVmInSpm(Guid storagePoolId, Guid vmID) {

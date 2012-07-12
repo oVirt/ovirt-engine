@@ -4,7 +4,11 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,7 +16,9 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T> {
+
+public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
+        implements Quotable {
     private VmTemplate mOldTemplate;
 
     public UpdateVmTemplateCommand(T parameters) {
@@ -73,27 +79,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     @Override
-    protected boolean validateQuota() {
-        Guid quotaId = getVmTemplate().getQuotaId();
-        if (quotaId == null) {
-            // Set default quota id if storage pool enforcement is disabled.
-            getVmTemplate().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(quotaId,
-                    getStoragePool()));
-        }
-        return true;
-    }
-
-    @Override
-    public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-        permissionList =
-                QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList,
-                        getStoragePool(),
-                        getVmTemplate().getQuotaId());
-        return permissionList;
-    }
-
-    @Override
     protected void executeCommand() {
         if (getVmTemplate() != null) {
             UpdateVmTemplate();
@@ -128,4 +113,31 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
     }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        return getQuotaManager().validateQuotaForStoragePool(getStoragePool(),
+                getVdsGroupId(),
+                getQuotaId(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    @Override
+    public void rollbackQuota() {
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return getParameters().getVmTemplateData().getQuotaId();
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        if (getStoragePool() != null &&
+                getQuotaId() != null &&
+                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
+            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+        }
+    }
+
 }

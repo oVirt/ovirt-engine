@@ -8,7 +8,6 @@ import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
 import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
-import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
 import org.ovirt.engine.core.dao.RoleGroupMapDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -56,9 +54,6 @@ public class AuditLogableBase extends TimeoutBase {
     private NGuid mVmTemplateId;
     private String mVmTemplateName;
     private VDS mVds;
-    private Quota quota;
-    private Guid quotaId;
-    private String quotaName;
     private VM mVm;
     private VmTemplate mVmTemplate;
     private NGuid _storageDomainId;
@@ -206,32 +201,6 @@ public class AuditLogableBase extends TimeoutBase {
         mVdsName = value;
     }
 
-    public Guid getQuotaId() {
-        return getQuotaIdRef() != null ? getQuotaIdRef().getValue() : Guid.Empty;
-    }
-
-    public Guid getQuotaIdRef() {
-        if (quotaId == null && getQuota() != null) {
-            quotaId = getQuota().getId();
-        }
-        return quotaId;
-    }
-
-    public void setQuotaId(final Guid value) {
-        quotaId = value;
-    }
-
-    public String getQuotaName() {
-        if (quotaName == null && getQuota() != null) {
-            quotaName = getQuota().getQuotaName();
-        }
-        return quotaName;
-    }
-
-    protected void setQuotaName(final String value) {
-        quotaName = value;
-    }
-
     private storage_domains _storageDomain;
 
     public storage_domains getStorageDomain() {
@@ -317,22 +286,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public AuditLogType getAuditLogTypeValue() {
         return AuditLogType.UNASSIGNED;
-    }
-
-    protected Quota getQuota() {
-        if (quota == null && quotaId != null) {
-            try {
-                quota = getQuotaDAO().getById(getQuotaId());
-            } catch (final RuntimeException e) {
-                log.infoFormat("Failed to get quota {0}\n{1}", quotaId, e.getMessage());
-            }
-        }
-        return quota;
-    }
-
-    protected void setQuota(final Quota value) {
-        quota = value;
-        quotaName = null;
     }
 
     protected VDS getVds() {
@@ -546,10 +499,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VdsDAO getVdsDAO() {
         return getDbFacade().getVdsDAO();
-    }
-
-    public QuotaDAO getQuotaDAO() {
-        return getDbFacade().getQuotaDAO();
     }
 
     public VmTemplateDAO getVmTemplateDAO() {

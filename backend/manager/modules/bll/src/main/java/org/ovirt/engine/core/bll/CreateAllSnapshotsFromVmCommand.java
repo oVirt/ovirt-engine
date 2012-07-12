@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -7,10 +8,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -36,8 +39,9 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+
 @LockIdNameAttribute
-public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> {
+public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements Quotable {
 
     private static final long serialVersionUID = -2407757772735253053L;
     List<DiskImage> selectedActiveDisks;
@@ -50,7 +54,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         super(parameters);
         parameters.setEntityId(getVmId());
         setSnapshotName(parameters.getDescription());
-        setQuotaId(parameters.getQuotaId());
         setStoragePoolId(getVm().getstorage_pool_id());
     }
 
@@ -200,28 +203,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    protected boolean validateQuota() {
-        // Set default quota id if storage pool enforcement is disabled.
-        setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
-                getStoragePool()));
-
-        return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
-                getQuotaConsumeMap(getDisksList()),
-               getCommandId(),
-               getReturnValue().getCanDoActionMessages());
-    }
-
-    @Override
-    protected void removeQuotaCommandLeftOver() {
-        if (!isInternalExecution() && getDisksList().size() > 0) {
-            QuotaManager.removeStorageDeltaQuotaCommand(getQuotaId(),
-                    getDisksList().get(0).getstorage_ids().get(0).getValue(),
-                    getStoragePool().getQuotaEnforcementType(),
-                    getCommandId());
-        }
-    }
-
-    @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
@@ -294,15 +275,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-        permissionList.addAll(QuotaHelper.getInstance().getPermissionsForDiskImagesList(getDisksList(),
-                getStoragePool()));
-        return permissionList;
-    }
-
-
-    @Override
     protected VdcActionType getChildActionType() {
         return VdcActionType.CreateSnapshot;
     }
@@ -316,6 +288,41 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     @Override
     protected Map<String, String> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
+    }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
+                getStorageQuotaListParameters(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    @Override
+    public void rollbackQuota() {
+        getQuotaManager().rollbackQuota(getStoragePool(),
+                getQuotaManager().getQuotaListFromParameters(getStorageQuotaListParameters()));
+    }
+
+    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
+        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
+        for (DiskImage disk : getDisksList()) {
+            list.add(new StorageQuotaValidationParameter(disk.getQuotaId() != null ? disk.getQuotaId()
+                    : getVm().getQuotaId(),
+                    //TODO: shared disk?
+                    disk.getstorage_ids().get(0),
+                    disk.getSizeInGigabytes()));
+        }
+        return list;
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return null;
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        // no need to check permissions for snapshots, it is inherited from the disk
     }
 
 }

@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateQuotaCommandTest {
     /** The command to test */
-    private UpdateQuotaCommand<QuotaCRUDParameters> command;
+    private UpdateQuotaCommand command;
 
     /** The parameters to test the command with */
     private QuotaCRUDParameters params;
@@ -44,13 +44,13 @@ public class UpdateQuotaCommandTest {
     public void setUp() {
         setUpQuota();
         params = new QuotaCRUDParameters(quota);
-        command = spy(new UpdateQuotaCommand<QuotaCRUDParameters>(params));
+        command = spy(new UpdateQuotaCommand(params));
         doReturn(quotaDAO).when(command).getQuotaDAO();
+        doNothing().when(command).removeQuotaFromCache();
     }
 
     private void setUpQuota() {
         quota = new Quota();
-        quota.setIsDefaultQuota(true);
         quota.setId(Guid.NewGuid());
 
         int numQutoaVdsGroups = RandomUtils.instance().nextInt(10);
@@ -74,9 +74,6 @@ public class UpdateQuotaCommandTest {
     public void testExecuteCommand() {
         // Execute the command
         command.executeCommand();
-
-        // Assert that the quota was modified correctly
-        assertFalse("Quota should not be default after updating", quota.getIsDefaultQuota());
 
         Guid quotaId = quota.getId();
         for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {

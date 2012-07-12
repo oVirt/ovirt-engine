@@ -8,12 +8,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -52,7 +55,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmCommand<T> {
+public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmCommand<T>
+        implements Quotable {
 
     private static final long serialVersionUID = 4499428315430159917L;
 
@@ -247,24 +251,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     @Override
-    protected boolean validateQuota() {
-        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
-            // Set default quota id if storage pool enforcement is disabled.
-            getParameters().setQuotaId(QuotaHelper.getInstance()
-                    .getQuotaIdToConsume(getDiskImageInfo().getQuotaId(),
-                            getStoragePool()));
-
-            return (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
-                    getParameters().getQuotaId(),
-                    getStoragePool().getQuotaEnforcementType(),
-                    new Double(getRequestDiskSpace()),
-                    getCommandId(),
-                    getReturnValue().getCanDoActionMessages()));
-        }
-        return true;
-    }
-
-    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> listPermissionSubjects;
         if (getParameters().getVmId() == null) {
@@ -275,10 +261,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         listPermissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
                 VdcObjectType.Storage,
                 ActionGroup.CREATE_DISK));
-        listPermissionSubjects =
-                QuotaHelper.getInstance().addQuotaPermissionSubject(listPermissionSubjects,
-                        getStoragePool(),
-                        getQuotaId());
         return listPermissionSubjects;
     }
 
@@ -326,7 +308,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 new AddImageFromScratchParameters(Guid.Empty,
                         getParameters().getVmId(),
                         getDiskImageInfo());
-        parameters.setQuotaId(getParameters().getQuotaId());
+        parameters.setQuotaId(getQuotaId());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
         parameters.setParentCommand(VdcActionType.AddDisk);
         parameters.setEntityId(getParameters().getEntityId());
@@ -429,14 +411,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     @Override
-    protected void removeQuotaCommandLeftOver() {
-        QuotaManager.removeStorageDeltaQuotaCommand(getQuotaId(),
-                getStorageDomainId().getValue(),
-                getStoragePool().getQuotaEnforcementType(),
-                getCommandId());
-    }
-
-    @Override
     protected VdcActionType getChildActionType() {
         return VdcActionType.AddImageFromScratch;
     }
@@ -462,6 +436,50 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return Collections.singletonMap(getParameters().getVmId().toString(), LockingGroup.VM.name());
         }
         return null;
+    }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+            return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
+                    getStorageQuotaListParameters(),
+                    getReturnValue().getCanDoActionMessages());
+        }
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+            getQuotaManager().rollbackQuota(getStoragePool(),
+                    getQuotaManager().getQuotaListFromParameters(getStorageQuotaListParameters()));
+        }
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        if (getParameters().getDiskInfo() != null
+                && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
+            return ((DiskImage) getParameters().getDiskInfo()).getQuotaId();
+        }
+        return null;
+    }
+
+    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
+        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
+        list.add(new StorageQuotaValidationParameter(getQuotaId(),
+                getStorageDomainId().getValue(),
+                getRequestDiskSpace()));
+        return list;
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        if (getStoragePool() != null &&
+                getQuotaId() != null &&
+                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
+            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+        }
     }
 
 }

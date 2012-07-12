@@ -115,11 +115,6 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Busi
     private List<QuotaStorage> quotaStorageList;
 
     /**
-     * Indication if the <code>quota</code> is the default for the DC.
-     */
-    private boolean isDefaultQuota;
-
-    /**
      * Default constructor of Quota, which initialize empty lists for specific limitations, and no user assigned.
      */
     public Quota() {
@@ -313,22 +308,6 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Busi
     }
 
     /**
-     * @return If this quota is default for the DC
-     */
-    public boolean getIsDefaultQuota() {
-        return isDefaultQuota;
-    }
-
-    /**
-     * Set the quota to be the default for the DC.
-     *
-     * @param value
-     */
-    public void setIsDefaultQuota(boolean value) {
-        isDefaultQuota = value;
-    }
-
-    /**
      * @return If this there is a global storage limitation in the quota, returns true.
      */
     public boolean isGlobalStorageQuota() {
@@ -366,7 +345,6 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Busi
         result = prime * result + graceStoragePercentage;
         result = prime * result + graceVdsGroupPercentage;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (isDefaultQuota ? 1231 : 1237);
         result = prime * result + ((quotaName == null) ? 0 : quotaName.hashCode());
         result = prime * result + ((quotaStorageList == null) ? 0 : quotaStorageList.hashCode());
         result = prime * result + ((quotaVdsGroupList == null) ? 0 : quotaVdsGroupList.hashCode());
@@ -409,8 +387,6 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Busi
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (isDefaultQuota != other.isDefaultQuota)
             return false;
         if (quotaName == null) {
             if (other.quotaName != null)

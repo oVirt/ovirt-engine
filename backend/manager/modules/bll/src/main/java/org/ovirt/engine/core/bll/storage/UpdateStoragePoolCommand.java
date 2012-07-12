@@ -3,13 +3,10 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.QuotaHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -29,7 +26,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -54,8 +50,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     protected void executeCommand() {
-        updateDefaultQuota();
-
+        updateQuotaCache();
         if (_oldStoragePool.getstatus() == StoragePoolStatus.Up) {
             if (!StringHelper.EqOp(_oldStoragePool.getname(), getStoragePool().getname())) {
                 runVdsCommand(VDSCommandType.SetStoragePoolDescription,
@@ -70,24 +65,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         setSucceeded(true);
     }
 
-    /**
-     * If the storage pool enforcement type has been changed to disable, make sure there is a default quota for it.
-     */
-    private void updateDefaultQuota() {
-        if (wasQuotaEnforcementDisabled()) {
-            Pair<Quota, Boolean> defaultQuotaPair = getQutoaHelper().getUnlimitedQuota(getStoragePool(), true, true);
-            Quota defaultQuota = defaultQuotaPair.getFirst();
-            boolean isQuotaReused = defaultQuotaPair.getSecond();
-            if (isQuotaReused) {
-                log.debugFormat("Reusing quota {0} as the default quota for Storage Pool {1}",
-                        defaultQuota.getId(),
-                        defaultQuota.getStoragePoolId());
-            } else {
-                defaultQuota.setQuotaName(getQutoaHelper().generateDefaultQuotaName(getStoragePool()));
-            }
-            getQutoaHelper().saveOrUpdateQuotaForUser(defaultQuota,
-                    MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
-                    isQuotaReused);
+    private void updateQuotaCache() {
+        if(wasQuotaEnforcementDisabled()){
+            getQuotaManager().removeStoragePoolFromCache(getStoragePool().getId());
         }
     }
 
@@ -240,10 +220,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected VDSBrokerFrontend getResourceManager() {
         return Backend.getInstance().getResourceManager();
-    }
-
-    protected QuotaHelper getQutoaHelper() {
-        return QuotaHelper.getInstance();
     }
 
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {

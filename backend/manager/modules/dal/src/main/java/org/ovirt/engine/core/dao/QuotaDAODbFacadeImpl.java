@@ -214,17 +214,6 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
     @Override
-    public Quota getDefaultQuotaByStoragePoolId(Guid storagePoolId) {
-        MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
-        quotaParameterSource.addValue("storage_pool_id", storagePoolId);
-        Quota quotaEntity =
-                getCallsHandler().executeRead("getDefaultQuotaByStoragePoolId",
-                        getQuotaFromResultSet(),
-                        quotaParameterSource);
-        return quotaEntity;
-    }
-
-    @Override
     public List<Quota> getAllRelevantQuotasForStorage(Guid storageId) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
         quotaParameterSource.addValue("storage_id", storageId);
@@ -380,7 +369,6 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         entity.setGraceVdsGroupPercentage((Integer) rs.getObject("grace_vds_group_percentage"));
         entity.setGraceStoragePercentage((Integer) rs.getObject("grace_storage_percentage"));
         entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-        entity.setIsDefaultQuota(rs.getBoolean("is_default_quota"));
         return entity;
     }
 
@@ -465,8 +453,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 .addValue("threshold_vds_group_percentage", quota.getThresholdVdsGroupPercentage())
                 .addValue("threshold_storage_percentage", quota.getThresholdStoragePercentage())
                 .addValue("grace_vds_group_percentage", quota.getGraceVdsGroupPercentage())
-                .addValue("grace_storage_percentage", quota.getGraceStoragePercentage())
-                .addValue("is_default_quota", quota.getIsDefaultQuota());
+                .addValue("grace_storage_percentage", quota.getGraceStoragePercentage());
     }
 
     private void saveGlobalQuota(Quota quota) {
@@ -495,18 +482,4 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, getQuotaMetaDataFromResultSet());
     }
 
-    @Override
-    public String getDefaultQuotaName(String quotaName) {
-        MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
-        quotaParameterSource.addValue("quota_name", quotaName);
-        return getCallsHandler().executeRead("generate_quota_default_name",
-                new ParameterizedRowMapper<String>() {
-
-                    @Override
-                    public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        return rs.getString(1);
-                    }
-                },
-                        quotaParameterSource);
-    }
 }

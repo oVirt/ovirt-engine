@@ -51,15 +51,18 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
-            for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
-                DiskImageBase diskInfo = getParameters().getDiskInfoDestinationMap().get(dit.getId());
-                CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(dit.getImageId(),
+            for (DiskImage disk : getVmTemplate().getDiskMap().values()) {
+                DiskImageBase diskInfo = getParameters().getDiskInfoDestinationMap().get(disk.getId());
+                CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(disk.getImageId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
-                p.setStorageDomainId(dit.getstorage_ids().get(0));
-                p.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0));
+                p.setStorageDomainId(disk.getstorage_ids().get(0));
+                p.setDestStorageDomainId(diskInfoDestinationMap.get(disk.getId()).getstorage_ids().get(0));
                 p.setVmSnapshotId(getVmSnapshotId());
                 p.setParentCommand(VdcActionType.AddVmFromTemplate);
                 p.setEntityId(getParameters().getEntityId());
+                p.setQuotaId(diskInfoDestinationMap.get(disk.getId()).getQuotaId() != null ? diskInfoDestinationMap.get(disk.getId())
+                        .getQuotaId()
+                        : null);
                 VdcReturnValueBase result = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateCloneOfTemplate,
                                 p,

@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
@@ -39,9 +38,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
 
     public AbstractDiskVmCommand(T parameters) {
         super(parameters);
-        if (parameters.getDiskInfo() != null && DiskStorageType.IMAGE == parameters.getDiskInfo().getDiskStorageType()) {
-            setQuotaId(((DiskImage) parameters.getDiskInfo()).getQuotaId());
-        }
     }
 
     protected AbstractDiskVmCommand(Guid commandId) {
@@ -184,4 +180,5 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         }
         return jobProperties;
     }
+
 }

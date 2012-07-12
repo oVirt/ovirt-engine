@@ -54,7 +54,6 @@ SELECT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     base_disks.boot as boot,
     images.quota_id as quota_id,
     quota.quota_name as quota_name,
-    quota.is_default_quota as is_default_quota,
     storage_pool.quota_enforcement_type,
     disk_image_dynamic.actual_size as actual_size,
     disk_image_dynamic.read_rate as read_rate,
@@ -110,7 +109,7 @@ SELECT     array_to_string(array_agg(storage_id), ',') as storage_id, array_to_s
                       images_storage_domain_view.active as active, images_storage_domain_view.volume_format as volume_format,
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,
                       images_storage_domain_view.entity_type as entity_type,
-                      images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, images_storage_domain_view.is_default_quota as is_default_quota, images_storage_domain_view.quota_enforcement_type,
+                      images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, images_storage_domain_view.quota_enforcement_type,
                       images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable
 FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
@@ -121,7 +120,7 @@ disk_image_dynamic.read_latency_seconds, disk_image_dynamic.write_latency_second
 disk_image_dynamic.flush_latency_seconds,disk_image_dynamic.write_rate,size,
 it_guid,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,
 image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,
-entity_type,quota_id,quota_name,is_default_quota,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable;
+entity_type,quota_id,quota_name,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable;
 
 
 
@@ -171,7 +170,6 @@ FROM
            quota_id, -- Quota fields
            quota_name,
            quota_enforcement_type,
-           is_default_quota,
            null AS lun_id, -- LUN fields
            null AS physical_volume_id,
            null AS volume_group_id,
@@ -182,7 +180,7 @@ FROM
            null AS device_size
     FROM images_storage_domain_view
     WHERE active = TRUE
-    GROUP BY storage_pool_id,image_guid,creation_date,actual_size,read_rate,write_rate,read_latency_seconds,write_latency_seconds,flush_latency_seconds,size,it_guid,imageStatus,lastModified,volume_type,volume_format,image_group_id,boot,description,ParentId,app_list,vm_snapshot_id,active,vm_guid,entity_type,quota_id,quota_name,quota_enforcement_type,is_default_quota
+    GROUP BY storage_pool_id,image_guid,creation_date,actual_size,read_rate,write_rate,read_latency_seconds,write_latency_seconds,flush_latency_seconds,size,it_guid,imageStatus,lastModified,volume_type,volume_format,image_group_id,boot,description,ParentId,app_list,vm_snapshot_id,active,vm_guid,entity_type,quota_id,quota_name,quota_enforcement_type
     UNION
     SELECT 1 AS disk_storage_type,
            null AS storage_id, -- Storage domain fields
@@ -214,7 +212,6 @@ FROM
            null AS quota_id, -- Quota fields
            null AS quota_name,
            null AS quota_enforcement_type,
-           null AS is_default_quota,
            l.lun_id, -- LUN fields
            l.physical_volume_id,
            l.volume_group_id,
@@ -334,7 +331,6 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.kernel_params as kernel_params,
        vm_templates.quota_id as quota_id,
        quota.quota_name as quota_name,
-       quota.is_default_quota as is_default_quota,
        vm_templates.migration_support,
        vm_templates.dedicated_vm_for_vds
 FROM       vm_static AS vm_templates  INNER JOIN
@@ -498,7 +494,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_pool_map_view.vm_pool_name as vm_pool_name, vm_pool_map_view.vm_pool_id as vm_pool_id, vm_static.vm_guid as vm_guid, vm_static.num_of_monitors as num_of_monitors, vm_static.allow_console_reconnect as allow_console_reconnect, vm_static.is_initialized as is_initialized,
                       vm_static.is_auto_suspend as is_auto_suspend, vm_static.num_of_sockets as num_of_sockets, vm_static.cpu_per_socket as cpu_per_socket, vm_static.usb_policy as usb_policy, vm_dynamic.acpi_enable as acpi_enable, vm_dynamic.session as session,
                       vm_static.num_of_sockets*vm_static.cpu_per_socket as num_of_cpus,
-                      vm_static.quota_id as quota_id, quota.quota_name as quota_name, quota.is_default_quota as is_default_quota, storage_pool.quota_enforcement_type as quota_enforcement_type,
+                      vm_static.quota_id as quota_id, quota.quota_name as quota_name, storage_pool.quota_enforcement_type as quota_enforcement_type,
                       vm_dynamic.display_ip as display_ip, vm_dynamic.display_type as display_type, vm_dynamic.kvm_enable as kvm_enable, vm_dynamic.boot_sequence as boot_sequence,
                       vm_dynamic.display_secure_port as display_secure_port, vm_dynamic.utc_diff as utc_diff, vm_dynamic.last_vds_run_on as last_vds_run_on,
 					  vm_dynamic.client_ip as client_ip,vm_dynamic.guest_requested_memory as guest_requested_memory, vm_static.time_zone as time_zone, vm_statistics.cpu_user as cpu_user, vm_statistics.cpu_sys as cpu_sys,
@@ -915,8 +911,7 @@ SELECT q.id as quota_id,
     q.threshold_storage_percentage as threshold_storage_percentage,
     q.grace_vds_group_percentage as grace_vds_group_percentage,
     q.grace_storage_percentage as grace_storage_percentage,
-    storage_pool.quota_enforcement_type as quota_enforcement_type,
-    is_default_quota
+    storage_pool.quota_enforcement_type as quota_enforcement_type
 FROM  storage_pool, quota q
 WHERE storage_pool.id = q.storage_pool_id;
 
@@ -938,8 +933,7 @@ SELECT q_limit.quota_id as quota_id,
     (CalculateVdsGroupUsage(quota_id,null)).mem_size_mb_usage,
     storage_size_gb,
     CalculateStorageUsage(quota_id,null) as storage_size_gb_usage,
-    storage_pool.quota_enforcement_type as quota_enforcement_type,
-    is_default_quota
+    storage_pool.quota_enforcement_type as quota_enforcement_type
 FROM  storage_pool, quota q LEFT OUTER JOIN
 quota_limitation q_limit on q_limit.quota_id = q.id
 WHERE storage_pool.id = q.storage_pool_id
@@ -961,7 +955,6 @@ SELECT q_limit.quota_id as quota_id,
     mem_size_mb,
     storage_size_gb,
     storage_pool.quota_enforcement_type as quota_enforcement_type,
-    is_default_quota,
     vds_group_id,
     storage_id,
     (COALESCE(vds_group_id, storage_id) IS NULL ) AS is_global,
@@ -978,8 +971,7 @@ SELECT q_limit.id as quota_storage_id,
     storage_id,
     storage_domain_static.storage_name as storage_name,
     storage_size_gb,
-    CalculateStorageUsage(quota_id,storage_id) as storage_size_gb_usage,
-    is_default_quota
+    CalculateStorageUsage(quota_id,storage_id) as storage_size_gb_usage
 FROM   quota_limitation q_limit, quota q, storage_domain_static
 WHERE  q_limit.quota_id = q.id
 AND  q_limit.vds_group_id IS NULL
@@ -996,8 +988,7 @@ SELECT q_limit.id as quota_vds_group_id,
     virtual_cpu,
     (CalculateVdsGroupUsage(quota_id,q_limit.vds_group_id)).virtual_cpu_usage as virtual_cpu_usage,
     mem_size_mb,
-    (CalculateVdsGroupUsage(quota_id,q_limit.vds_group_id)).mem_size_mb_usage as mem_size_mb_usage,
-    is_default_quota
+    (CalculateVdsGroupUsage(quota_id,q_limit.vds_group_id)).mem_size_mb_usage as mem_size_mb_usage
 FROM   quota_limitation q_limit, quota q, vds_groups
 WHERE  q_limit.quota_id = q.id
 AND  q_limit.vds_group_id IS NOT NULL

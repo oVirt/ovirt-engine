@@ -22,9 +22,11 @@ import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecutionReason;
@@ -80,6 +82,7 @@ import org.ovirt.engine.core.utils.transaction.RollbackHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.dao.DataAccessException;
+
 
 @SuppressWarnings("serial")
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
@@ -304,6 +307,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     @SuppressWarnings({ "unchecked", "synthetic-access" })
     protected void compensate() {
+        if (this instanceof Quotable) {
+            ((Quotable) this).rollbackQuota();
+        }
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
@@ -490,8 +496,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             try {
                 returnValue =
                         IsUserAutorizedToRunAction() && IsBackwardsCompatible() && validateInputs() && acquireLock()
-                                && canDoAction()
-                                && validateQuota();
+                                && canDoAction();
+                if (this instanceof Quotable) {
+                    returnValue &= ((Quotable) this).validateAndSetQuota();
+                }
                 if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
                     log.warnFormat("CanDoAction of action {0} failed. Reasons:{1}", getActionType(),
                             StringUtils.join(getReturnValue().getCanDoActionMessages(), ','));
@@ -511,9 +519,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         }
         return returnValue;
-    }
-
-    protected void removeQuotaCommandLeftOver() {
     }
 
     /**
@@ -733,10 +738,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return true;
     }
 
-    protected boolean validateQuota() {
-        return true;
-    }
-
     /**
      * Factory to determine the type of the ReturnValue field
      *
@@ -840,7 +841,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             } else {
                 cleanUpCompensationData();
             }
-            removeQuotaCommandLeftOver();
         }
         return functionReturnValue;
     }
@@ -1128,6 +1128,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     @Override
     public void Rollback() {
         log.errorFormat("Transaction rolled-back for command: {0}.", CommandBase.this.getClass().getName());
+        if (this instanceof Quotable) {
+            ((Quotable) this).rollbackQuota();
+        }
         cancelTasks();
     }
 
@@ -1324,6 +1327,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (jobProperties == null) {
             jobProperties = new HashMap<String, String>();
             List<PermissionSubject> subjects = getPermissionCheckSubjects();
+            if (this instanceof Quotable) {
+                if (subjects == null) {
+                    subjects = new ArrayList<PermissionSubject>();
+                }
+                ((Quotable) this).addQuotaPermissionSubject(subjects);
+            }
             if (!subjects.isEmpty()) {
                 VdcObjectType entityType;
                 Guid entityId;
@@ -1432,6 +1441,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected Step addSubStep(StepEnum parentStep, StepEnum newStep, Map<String, String> valuesMap) {
         return addSubStep(parentStep, newStep, ExecutionMessageDirector.resolveStepMessage(newStep, valuesMap));
+    }
+
+    protected QuotaManager getQuotaManager() {
+        return QuotaManager.getInstance();
     }
 
 }

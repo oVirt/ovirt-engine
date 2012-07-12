@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +9,18 @@ import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
@@ -35,12 +39,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.utils.Pair;
+
 
 /**
  * This class responsible to create vmpool with vms within. This class not transactive, that mean that function Execute
@@ -52,10 +57,10 @@ import org.ovirt.engine.core.utils.Pair;
  */
 
 @CustomLogFields({ @CustomLogField("VmsCount") })
-public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends AddVmPoolCommand<T> {
+public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends AddVmPoolCommand<T>
+        implements Quotable {
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
-    private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected Map<Guid, storage_domains> destStorages = new HashMap<Guid, storage_domains>();
     private boolean _addVmsSucceded = true;
@@ -71,7 +76,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     public CommonVmPoolWithVmsCommand(T parameters) {
         super(parameters);
         setVmTemplateId(getParameters().getVmStaticData().getvmt_guid());
-        setQuotaId(getParameters().getVmStaticData().getQuotaId());
         initTemplate();
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
@@ -79,39 +83,20 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
     }
 
+    @Override
+    public storage_pool getStoragePool() {
+        if (super.getStoragePool() == null) {
+            setStoragePool(DbFacade.getInstance()
+                    .getStoragePoolDAO()
+                    .getForVdsGroup(getParameters().getVmStaticData().getvds_group_id()));
+        }
+        return super.getStoragePool();
+    }
+
     protected void initTemplate() {
         if (getVmTemplate() != null) {
             VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
         }
-    }
-
-    @Override
-    protected boolean validateQuota() {
-        storage_pool storagePool = getStoragePoolDAO().get(getVmTemplate().getstorage_pool_id().getValue());
-        // Set default quota id if storage pool enforcement is disabled.
-        setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
-                storagePool));
-
-        // Set quota for each disk.
-        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-            diskImage.setQuotaId(QuotaHelper.getInstance()
-                    .getQuotaIdToConsume(diskImage.getQuotaId(), storagePool));
-        }
-
-        return QuotaManager.validateMultiStorageQuota(storagePool.getQuotaEnforcementType(),
-                getQuotaConsumeMap(diskInfoDestinationMap.values()),
-                getCommandId(),
-                getReturnValue().getCanDoActionMessages());
-    }
-
-    private Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap(Collection<DiskImage> diskInfoList) {
-        if (quotaForStorageConsumption == null) {
-            quotaForStorageConsumption =
-                    QuotaHelper.getInstance().getQuotaConsumeMapForVmPool(diskInfoList,
-                            getParameters().getVmsCount(),
-                            getBlockSparseInitSizeInGB());
-        }
-        return quotaForStorageConsumption;
     }
 
     protected abstract Guid GetPoolId();
@@ -412,4 +397,63 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     public String getVmsCount() {
         return Integer.toString(getParameters().getVmsCount());
     }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        if (getStoragePool() == null) {
+            setStoragePool(getStoragePoolDAO().getForVdsGroup(getParameters().getVmStaticData().getvds_group_id()));
+        }
+        if (getQuotaManager().validateQuotaForStoragePool(getStoragePool(),
+                getParameters().getVmStaticData().getvds_group_id(),
+                getQuotaId(),
+                getReturnValue().getCanDoActionMessages())) {
+            return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
+                    getStorageQuotaListParameters(),
+                    getReturnValue().getCanDoActionMessages());
+        }
+        return false;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        getQuotaManager().rollbackQuota(getStoragePool(),
+                getQuotaManager().getQuotaListFromParameters(getStorageQuotaListParameters()));
+    }
+
+    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
+        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
+        for (DiskImage disk : diskInfoDestinationMap.values()) {
+            list.add(new StorageQuotaValidationParameter(disk.getQuotaId() != null ? disk.getQuotaId()
+                    : null,
+                    disk.getstorage_ids().get(0),
+                    disk.getSizeInGigabytes() * getParameters().getVmsCount()
+                            * getBlockSparseInitSizeInGB()));
+        }
+        return list;
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return getParameters().getVmStaticData().getQuotaId();
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        if (getStoragePool() != null &&
+                getQuotaId() != null &&
+                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
+            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+            Map<Guid, Guid> quotaMap = new HashMap<Guid, Guid>();
+            quotaMap.put(getQuotaId(), getQuotaId());
+            for (DiskImage disk : diskInfoDestinationMap.values()) {
+                if (disk.getQuotaId() != null && !quotaMap.containsKey(disk.getQuotaId())) {
+                    quotaPermissionList.add(new PermissionSubject(disk.getQuotaId(),
+                            VdcObjectType.Quota,
+                            ActionGroup.CONSUME_QUOTA));
+                    quotaMap.put(disk.getQuotaId(), disk.getQuotaId());
+                }
+            }
+        }
+    }
+
 }

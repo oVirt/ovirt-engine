@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -65,9 +67,11 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
+
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute
-public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
+public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
+        implements Quotable {
 
     private static final long serialVersionUID = 3317745769686161108L;
     private String _cdImagePath = "";
@@ -84,9 +88,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         super(runVmParams);
         getParameters().setEntityId(runVmParams.getVmId());
         setStoragePoolId(getVm() != null ? getVm().getstorage_pool_id() : null);
-        if (getVm() != null && getVm().getStaticData() != null) {
-            setQuotaId(getVm().getStaticData().getQuotaId());
-        }
         InitRunVmCommand();
     }
 
@@ -401,17 +402,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         }
     }
 
-    @Override
-    protected boolean validateQuota() {
-        return (QuotaManager.validateVdsGroupQuota(getVm().getvds_group_id(),
-                getVm().getStaticData().getQuotaId(),
-                getStoragePool().getQuotaEnforcementType(),
-                getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
-                new Double(getVm().getmem_size_mb()),
-                getCommandId(),
-                getReturnValue().getCanDoActionMessages()));
-    }
-
     protected VMStatus CreateVm() {
 
         // reevaluate boot parameters if VM was executed with 'run once'
@@ -431,7 +421,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 .RunAsyncVdsCommand(VDSCommandType.CreateVm, initVdsCreateVmParams(), this).getReturnValue();
 
         // After VM was create (or not), we can remove the quota vds group memory.
-        removeQuotaCommandLeftOver();
         return vmStatus;
     }
 
@@ -747,7 +736,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     @Override
     protected void EndWithFailure() {
         SetIsVmRunningStateless();
-
+        rollbackQuota();
         if (_isVmRunningStateless) {
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext()));
@@ -764,13 +753,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     private void SetIsVmRunningStateless() {
         _isVmRunningStateless = statelessSnapshotExistsForVm();
-    }
-
-    @Override
-    protected void removeQuotaCommandLeftOver() {
-        QuotaManager.removeVdsGroupDeltaQuotaCommand(getQuotaId(),
-                getVm().getvds_group_id(),
-                getCommandId());
     }
 
     /**
@@ -870,4 +852,31 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     private static final Log log = LogFactory.getLog(RunVmCommand.class);
+
+    @Override
+    public boolean validateAndSetQuota() {
+        return getQuotaManager().validateAndSetClusterQuota(getStoragePool(),
+                getVm().getvds_group_id(),
+                getQuotaId(),
+                getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
+                getVm().getmem_size_mb(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    @Override
+    public void rollbackQuota() {
+        List<Guid> list = new ArrayList<Guid>();
+        list.add(getQuotaId());
+        getQuotaManager().rollbackQuota(getStoragePool(),
+                list);
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return getVm().getQuotaId();
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+    }
 }

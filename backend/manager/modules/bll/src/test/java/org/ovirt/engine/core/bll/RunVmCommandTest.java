@@ -9,7 +9,6 @@ import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -84,7 +83,7 @@ public class RunVmCommandTest {
     private VmDAO vmDAO;
 
     @Spy
-    private VmRunHandler vmRunHandler = VmRunHandler.getInstance();
+    private final VmRunHandler vmRunHandler = VmRunHandler.getInstance();
 
     @Mock
     private BackendInternal backend;
@@ -315,7 +314,6 @@ public class RunVmCommandTest {
     public void createCommand() {
         RunVmParams param = new RunVmParams(Guid.NewGuid());
         command = spy(new RunVmCommand<RunVmParams>(param));
-        doNothing().when(command).removeQuotaCommandLeftOver();
 
         mockVmRunHandler();
         mockSuccessfulSnapshotValidator();

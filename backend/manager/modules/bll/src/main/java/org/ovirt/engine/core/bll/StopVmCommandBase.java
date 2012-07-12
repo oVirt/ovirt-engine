@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -12,13 +15,14 @@ import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
-public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
+public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T>
+        implements Quotable {
     private boolean privateSuspendedVm;
 
     public StopVmCommandBase(T parameters) {
@@ -165,4 +169,33 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     }
 
     private static Log log = LogFactory.getLog(StopVmCommandBase.class);
+
+    @Override
+    public boolean validateAndSetQuota() {
+        if (getStoragePool() == null) {
+            setStoragePoolId(getVm().getstorage_pool_id());
+        }
+        List<Guid> list = new ArrayList<Guid>();
+        list.add(getQuotaId());
+        getQuotaManager().rollbackQuota(getStoragePool(),
+                list);
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        List<Guid> list = new ArrayList<Guid>();
+        list.add(getQuotaId());
+        getQuotaManager().rollbackQuota(getStoragePool(),
+                list);
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return getVm().getQuotaId();
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+    }
 }

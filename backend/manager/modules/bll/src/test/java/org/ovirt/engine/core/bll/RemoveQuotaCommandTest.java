@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -47,7 +45,7 @@ public class RemoveQuotaCommandTest {
     /**
      * The command under test.
      */
-    private RemoveQuotaCommand<QuotaCRUDParameters> command;
+    private RemoveQuotaCommand command;
 
     @Before
     public void testSetup() {
@@ -76,55 +74,20 @@ public class RemoveQuotaCommandTest {
 
     @Test
     public void testExecuteCommand() throws Exception {
-        RemoveQuotaCommand<QuotaCRUDParameters> removeQuotaCommand = createCommand();
+        RemoveQuotaCommand removeQuotaCommand = createCommand();
         removeQuotaCommand.executeCommand();
     }
 
     @Test
     public void testCanDoActionCommand() throws Exception {
-        RemoveQuotaCommand<QuotaCRUDParameters> removeQuotaCommand = createCommand();
+        RemoveQuotaCommand removeQuotaCommand = createCommand();
         assertTrue(removeQuotaCommand.canDoAction());
     }
 
-    @Test
-    public void testCanRemoveQuotaWithEnforcedDC() throws Exception {
-        storage_pool storagePool = mockStoragePool();
-        storagePool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT);
-        when(storagePoolDAO.get(any(Guid.class))).thenReturn(storagePool);
-        RemoveQuotaCommand<QuotaCRUDParameters> removeQuotaCommand = createCommand();
-        assertTrue(removeQuotaCommand.validDefaultQuota(mockGeneralStorageQuota()));
-    }
-
-    @Test
-    public void testCanRemoveDefaultQuotaWithEnforcedDC() throws Exception {
-        storage_pool storagePool = mockStoragePool();
-        storagePool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT);
-        when(storagePoolDAO.get(any(Guid.class))).thenReturn(storagePool);
-        RemoveQuotaCommand<QuotaCRUDParameters> removeQuotaCommand = createCommand();
-        Quota quota = mockGeneralStorageQuota();
-        quota.setIsDefaultQuota(true);
-        assertTrue(removeQuotaCommand.validDefaultQuota(quota));
-    }
-
-    @Test
-    public void testCanRemoveDefaultQuotaWithDisabledDC() throws Exception {
-        storage_pool storagePool = mockStoragePool();
-        storagePool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.DISABLED);
-        when(storagePoolDAO.get(any(Guid.class))).thenReturn(storagePool);
-        RemoveQuotaCommand<QuotaCRUDParameters> removeQuotaCommand = createCommand();
-        Quota quota = mockGeneralStorageQuota();
-        quota.setIsDefaultQuota(true);
-        assertFalse(removeQuotaCommand.validDefaultQuota(quota));
-        assertTrue("canDoAction failed since default quota can not be removed from storage pool with disabled quota enforcement.",
-                removeQuotaCommand.getReturnValue()
-                        .getCanDoActionMessages()
-                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_WITH_DEFAULT_INDICATION_CAN_NOT_BE_REMOVED.toString()));
-    }
-
-    private RemoveQuotaCommand<QuotaCRUDParameters> createCommand() {
+    private RemoveQuotaCommand createCommand() {
         QuotaCRUDParameters param = new QuotaCRUDParameters();
         param.setQuotaId(generalGuidQuota);
-        command = spy(new RemoveQuotaCommand<QuotaCRUDParameters>(param));
+        command = spy(new RemoveQuotaCommand(param));
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(quotaDAO).when(command).getQuotaDAO();
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);

@@ -10,18 +10,22 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -40,15 +44,15 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T> {
+public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T>
+        implements Quotable {
 
     private final List<DiskImage> mImages = new ArrayList<DiskImage>();
-    private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
 
@@ -73,7 +77,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (parameterMasterVm != null) {
             super.setVmId(parameterMasterVm.getId());
             setVdsGroupId(parameterMasterVm.getvds_group_id());
-            setQuotaId(parameterMasterVm.getQuotaId());
         }
         if (getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
@@ -136,46 +139,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         });
 
-    }
-
-    @Override
-    protected boolean validateQuota() {
-        // Set default quota id if storage pool enforcement is disabled.
-        setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
-                getStoragePool()));
-        for (DiskImage diskImage : mImages) {
-            DiskImage diskImageForQuota = diskInfoDestinationMap.get(diskImage.getId());
-            if (diskImageForQuota != null) {
-                diskImage.setQuotaId(QuotaHelper.getInstance()
-                        .getQuotaIdToConsume(diskImageForQuota.getQuotaId(),
-                                getStoragePool()));
-            }
-        }
-
-        if (!isInternalExecution()) {
-            return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
-                    getQuotaConsumeMap(),
-                    getCommandId(),
-                    getReturnValue().getCanDoActionMessages());
-        }
-        return true;
-    }
-
-    private Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap() {
-        if (quotaForStorageConsumption == null) {
-            quotaForStorageConsumption =
-                    QuotaHelper.getInstance().getQuotaConsumeMap(mImages);
-        }
-        return quotaForStorageConsumption;
-    }
-
-    @Override
-    protected void removeQuotaCommandLeftOver() {
-        if (!isInternalExecution()) {
-            QuotaManager.removeMultiStorageDeltaQuotaCommand(getQuotaConsumeMap(),
-                    getStoragePool().getQuotaEnforcementType(),
-                    getCommandId());
-        }
     }
 
     @Override
@@ -370,7 +333,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     .getstorage_ids()
                     .get(0));
             createParams.setParentParemeters(getParameters());
-            createParams.setQuotaId(diskImage.getQuotaId());
+            if (getParameters().getDiskInfoDestinationMap() != null
+                    && getParameters().getDiskInfoDestinationMap().get(diskImage.getId()) != null) {
+            createParams.setQuotaId(getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId() != null
+                    ? getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId() : null);
+            }
             getParameters().getImagesParameters().add(createParams);
             // The return value of this action is the 'copyImage' task GUID:
             VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
@@ -420,7 +387,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // statement.
         // (a template without images doesn't exist in the 'vm_template_view').
         setVmTemplateId(getParameters().getVmTemplateId());
-
+        rollbackQuota();
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().EndAction(VdcActionType.CreateImageTemplate, p);
         }
@@ -451,8 +418,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             permissionCheckSubject.add(new PermissionSubject(storagePoolId,
                     VdcObjectType.StoragePool,
                     getActionType().getActionGroup()));
-            permissionCheckSubject.addAll(QuotaHelper.getInstance()
-                    .getPermissionsForDiskImagesList(diskInfoDestinationMap.values(), getStoragePool()));
         }
         return permissionCheckSubject;
     }
@@ -485,4 +450,67 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
     }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        if (!isInternalExecution()) {
+            if (getQuotaManager().validateQuotaForStoragePool(getStoragePool(),
+                    getVdsGroupId(),
+                    getQuotaId(),
+                    getReturnValue().getCanDoActionMessages())) {
+                return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
+                        getStorageQuotaListParameters(),
+                        getReturnValue().getCanDoActionMessages());
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        if (!isInternalExecution()) {
+            getQuotaManager().rollbackQuota(getStoragePool(),
+                    getQuotaManager()
+                            .getQuotaListFromParameters(getStorageQuotaListParameters()));
+        }
+    }
+
+    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
+        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
+        for (DiskImage diskImage : mImages) {
+            DiskImage disk = diskInfoDestinationMap.get(diskImage.getId());
+            list.add(new StorageQuotaValidationParameter(disk.getQuotaId() != null ? disk.getQuotaId()
+                    : getParameters().getMasterVm().getQuotaId(),
+                    disk.getstorage_ids().get(0),
+                    //TODO: not sure if this is good
+                    disk.getSizeInGigabytes()));
+        }
+        return list;
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return getParameters().getMasterVm().getQuotaId();
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        if (getStoragePool() != null &&
+                getQuotaId() != null &&
+                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
+            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+            Map<Guid, Guid> quotaMap = new HashMap<Guid, Guid>();
+            quotaMap.put(getQuotaId(), getQuotaId());
+            for (DiskImage disk : diskInfoDestinationMap.values()) {
+                if (disk.getQuotaId() != null && !quotaMap.containsKey(disk.getQuotaId())) {
+                    quotaPermissionList.add(new PermissionSubject(disk.getQuotaId(),
+                            VdcObjectType.Quota,
+                            ActionGroup.CONSUME_QUOTA));
+                    quotaMap.put(disk.getQuotaId(), disk.getQuotaId());
+                }
+            }
+        }
+    }
+
 }

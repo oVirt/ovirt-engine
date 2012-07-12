@@ -1,9 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,13 +52,5 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     public AuditLogType getAuditLogTypeValue() {
         return getAddVmsSucceded() ? AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS
                 : AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS_FAILED;
-    }
-
-    @Override
-    public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionSubject = super.getPermissionCheckSubjects();
-        permissionSubject.addAll(QuotaHelper.getInstance()
-                .getPermissionsForDiskImagesList(diskInfoDestinationMap.values(), getStoragePool()));
-        return permissionSubject;
     }
 }

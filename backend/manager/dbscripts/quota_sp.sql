@@ -1,9 +1,9 @@
-Create or replace FUNCTION InsertQuota(v_id UUID, v_storage_pool_id UUID, v_quota_name VARCHAR(50), v_description VARCHAR(500), v_threshold_vds_group_percentage INTEGER, v_threshold_storage_percentage INTEGER, v_grace_vds_group_percentage INTEGER, v_grace_storage_percentage INTEGER, v_is_default_quota BOOLEAN)
+Create or replace FUNCTION InsertQuota(v_id UUID, v_storage_pool_id UUID, v_quota_name VARCHAR(50), v_description VARCHAR(500), v_threshold_vds_group_percentage INTEGER, v_threshold_storage_percentage INTEGER, v_grace_vds_group_percentage INTEGER, v_grace_storage_percentage INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO quota(id, storage_pool_id, quota_name, description, threshold_vds_group_percentage, threshold_storage_percentage, grace_vds_group_percentage, grace_storage_percentage, is_default_quota)
-   VALUES(v_id,  v_storage_pool_id, v_quota_name,  v_description,  v_threshold_vds_group_percentage ,  v_threshold_storage_percentage,  v_grace_vds_group_percentage,  v_grace_storage_percentage, v_is_default_quota);
+INSERT INTO quota(id, storage_pool_id, quota_name, description, threshold_vds_group_percentage, threshold_storage_percentage, grace_vds_group_percentage, grace_storage_percentage)
+   VALUES(v_id,  v_storage_pool_id, v_quota_name,  v_description,  v_threshold_vds_group_percentage ,  v_threshold_storage_percentage,  v_grace_vds_group_percentage,  v_grace_storage_percentage);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -32,8 +32,7 @@ BEGIN
             q_storage_view.storage_id,
             q_storage_view.storage_name,
             COALESCE(q_storage_view.storage_size_gb, q_g_view.storage_size_gb) as storage_size_gb,
-            COALESCE(q_storage_view.storage_size_gb_usage, q_g_view.storage_size_gb_usage) as storage_size_gb_usage,
-            q_g_view.is_default_quota
+            COALESCE(q_storage_view.storage_size_gb_usage, q_g_view.storage_size_gb_usage) as storage_size_gb_usage
     FROM  quota_global_view q_g_view 
     LEFT OUTER JOIN quota_storage_view q_storage_view ON q_g_view.quota_id = q_storage_view.quota_id
     AND  (v_storage_id = q_storage_view.storage_id OR v_storage_id IS NULL)
@@ -82,8 +81,7 @@ BEGIN
                 COALESCE(q_vds_view.virtual_cpu,q_g_view.virtual_cpu) as virtual_cpu,
                 COALESCE(q_vds_view.virtual_cpu_usage, q_g_view.virtual_cpu_usage) as virtual_cpu_usage,
                 COALESCE(q_vds_view.mem_size_mb,q_g_view.mem_size_mb) as mem_size_mb,
-                COALESCE(q_vds_view.mem_size_mb_usage, q_g_view.mem_size_mb_usage) as mem_size_mb_usage,
-                q_g_view.is_default_quota
+                COALESCE(q_vds_view.mem_size_mb_usage, q_g_view.mem_size_mb_usage) as mem_size_mb_usage
          FROM   quota_global_view q_g_view 
          LEFT OUTER JOIN quota_vds_group_view q_vds_view ON q_g_view.quota_id = q_vds_view.quota_id
          AND   (v_vds_group_id = q_vds_view.vds_group_id OR v_vds_group_id IS NULL)
@@ -124,7 +122,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION UpdateQuotaMetaData(v_id UUID, v_storage_pool_id UUID, v_quota_name VARCHAR(50), v_description VARCHAR(500), v_threshold_vds_group_percentage INTEGER, v_threshold_storage_percentage INTEGER, v_grace_vds_group_percentage INTEGER, v_grace_storage_percentage INTEGER, v_is_default_quota BOOLEAN)
+Create or replace FUNCTION UpdateQuotaMetaData(v_id UUID, v_storage_pool_id UUID, v_quota_name VARCHAR(50), v_description VARCHAR(500), v_threshold_vds_group_percentage INTEGER, v_threshold_storage_percentage INTEGER, v_grace_vds_group_percentage INTEGER, v_grace_storage_percentage INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
@@ -136,8 +134,7 @@ UPDATE quota
    threshold_vds_group_percentage = v_threshold_vds_group_percentage,
    threshold_storage_percentage = v_threshold_storage_percentage,
    grace_vds_group_percentage = v_grace_vds_group_percentage,
-   grace_storage_percentage = v_grace_storage_percentage,
-   is_default_quota = v_is_default_quota
+   grace_storage_percentage = v_grace_storage_percentage
    WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -175,19 +172,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-Create or replace FUNCTION GetDefaultQuotaByStoragePoolId(v_storage_pool_id UUID)
-RETURNS SETOF quota_global_view
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM quota_global_view
-   WHERE storage_pool_id = v_storage_pool_id
-     and is_default_quota = true;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
 Create or replace FUNCTION GetAllThinQuotasByStorageId(v_storage_id UUID)
 RETURNS SETOF quota_view
    AS $procedure$
@@ -202,8 +186,7 @@ BEGIN
     threshold_storage_percentage,
     grace_vds_group_percentage,
     grace_storage_percentage,
-    quota_enforcement_type,
-    is_default_quota
+    quota_enforcement_type
    FROM   quota_limitations_view
    WHERE  storage_id = v_storage_id
    OR     (is_global AND NOT is_empty AND storage_pool_id IN (SELECT storage_pool_id
@@ -227,32 +210,12 @@ BEGIN
     threshold_storage_percentage,
     grace_vds_group_percentage,
     grace_storage_percentage,
-    quota_enforcement_type,
-    is_default_quota
+    quota_enforcement_type
    FROM   quota_limitations_view
    WHERE  vds_group_id = v_vds_group_id
    OR     (is_global AND NOT is_empty AND storage_pool_id IN (SELECT storage_pool_id
                                                               FROM   vds_groups
                                                               WHERE  vds_group_id = v_vds_group_id));
 END; $procedure$
-LANGUAGE plpgsql;
-
-Create or replace FUNCTION generate_quota_default_name(v_quota_name varchar)
-RETURNS varchar
-    AS $function$
-    DECLARE
-    v_name varchar;
-BEGIN
-    SELECT v_quota_name || coalesce (cast(max(cast (CASE WHEN length(suffix) > 0 THEN suffix ELSE '0' END AS integer)) + 1 AS varchar), '')
-    INTO v_name
-    from (
-        SELECT replace(quota_name, v_quota_name,'') AS suffix
-        FROM quota
-        WHERE quota_name LIKE v_quota_name || '%'
-    ) AS inner_quota_query;
-
-return v_name;
-
-END; $function$
 LANGUAGE plpgsql;
 

@@ -5,21 +5,18 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.AddVdsGroupCommand;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
-import org.ovirt.engine.core.bll.QuotaHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.NetworkDAO;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
@@ -30,14 +27,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     protected void AddStoragePoolToDb() {
         getStoragePool().setId(Guid.NewGuid());
         getStoragePool().setstatus(StoragePoolStatus.Uninitialized);
-        Quota defaultStoragePoolQuota = generateQuotaForNewStoragePool();
         getStoragePoolDAO().save(getStoragePool());
-        getQuotaHelper().saveQuotaForUser(defaultStoragePoolQuota,
-                MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID);
-    }
-
-    private Quota generateQuotaForNewStoragePool() {
-        return getQuotaHelper().getUnlimitedQuota(getStoragePool(), true);
     }
 
     @Override
@@ -94,13 +84,4 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
                 getActionType().getActionGroup()));
     }
 
-    /* Getters for util classes */
-
-    protected NetworkDAO getNetworkDAO() {
-        return DbFacade.getInstance().getNetworkDAO();
-    }
-
-    protected QuotaHelper getQuotaHelper() {
-        return QuotaHelper.getInstance();
-    }
 }

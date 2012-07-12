@@ -12,12 +12,14 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -42,8 +44,10 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
+
 @LockIdNameAttribute
-public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T> {
+public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
+        implements Quotable {
     private static final long serialVersionUID = -2444359305003244168L;
 
     public UpdateVmCommand(T parameters) {
@@ -302,24 +306,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     @Override
-    protected boolean validateQuota() {
-        Guid quotaId = getParameters().getVmStaticData().getQuotaId();
-        if (quotaId == null) {
-            // Set default quota id if storage pool enforcement is disabled.
-            getParameters().getVmStaticData().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(quotaId,
-                    getStoragePool()));
-        }
-        return true;
-    }
-
-    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-        permissionList =
-                QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList,
-                        getStoragePool(),
-                        getParameters().getVmStaticData().getQuotaId());
-
         // user need specific permission to change custom properties
         if (isVmExist()
                 &&
@@ -359,4 +347,33 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         return null;
     }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        return getQuotaManager().validateQuotaForStoragePool(getStoragePool(),
+                getVdsGroupId(),
+                getQuotaId(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    @Override
+    public void rollbackQuota() {
+        // In update vm, we don't omit resources from quota, just
+        // assign the vm to the quota, so there's nothing to rollback.
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return getParameters().getVmStaticData().getQuotaId();
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        if (getStoragePool() != null &&
+                getQuotaId() != null &&
+                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
+            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+        }
+    }
+
 }

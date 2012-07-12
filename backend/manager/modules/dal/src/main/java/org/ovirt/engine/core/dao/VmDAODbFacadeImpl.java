@@ -244,7 +244,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setvm_name(rs.getString("vm_name"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));
-            entity.setIsQuotaDefault(rs.getBoolean("is_default_quota"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setvm_mem_size_mb(rs.getInt("vm_mem_size_mb"));
             entity.setvmt_guid(Guid.createGuidFromString(rs.getString("vmt_guid")));

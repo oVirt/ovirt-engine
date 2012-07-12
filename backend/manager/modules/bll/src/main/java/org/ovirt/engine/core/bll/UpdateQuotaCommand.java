@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -14,14 +15,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
-public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<T> {
+public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
     /**
      * Generated serialization UUID.
      */
     private static final long serialVersionUID = 8037593564998496651L;
 
-    public UpdateQuotaCommand(T parameters) {
+    public UpdateQuotaCommand(QuotaCRUDParameters parameters) {
         super(parameters);
         setStoragePoolId(getParameters().getQuota() != null ? getParameters().getQuota().getStoragePoolId() : null);
         setQuota(getParameters().getQuota());
@@ -29,7 +30,7 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
 
     @Override
     protected boolean canDoAction() {
-        if (!QuotaHelper.getInstance().checkQuotaValidationForEdit(getParameters().getQuota(),
+        if (!checkQuotaValidationCommon(getParameters().getQuota(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         } else if (getParameters().getQuota().getId() == null) {
@@ -44,16 +45,21 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
+        removeQuotaFromCache();
         setQuotaParameter();
         QuotaDAO dao = getQuotaDAO();
         dao.update(getParameters().getQuota());
         getReturnValue().setSucceeded(true);
     }
 
+    protected void removeQuotaFromCache() {
+        QuotaManager.getInstance().removeQuotaFromCache(getQuota().getStoragePoolId(), getQuota().getId());
+    }
+
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getQuotaId() == null ? null
-                : getQuotaId().getValue(),
+        return Collections.singletonList(new PermissionSubject(getQuota().getId() == null ? null
+                : getQuota().getId().getValue(),
                 VdcObjectType.Quota, getActionType().getActionGroup()));
     }
 
@@ -77,8 +83,6 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
     private void setQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();
         setStoragePoolId(quotaParameter.getStoragePoolId());
-        setQuotaName(quotaParameter.getQuotaName());
-        quotaParameter.setIsDefaultQuota(false);
         if (!quotaParameter.isEmptyStorageQuota()) {
             for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
                 quotaStorage.setQuotaId(getQuotaId());

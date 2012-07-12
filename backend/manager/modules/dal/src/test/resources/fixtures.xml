@@ -2609,7 +2609,6 @@
         <column>threshold_storage_percentage</column>
         <column>grace_vds_group_percentage</column>
         <column>grace_storage_percentage</column>
-        <column>is_default_quota</column>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
@@ -2621,7 +2620,6 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
-            <value>false</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4404</value>
@@ -2634,7 +2632,6 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
-            <value>true</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4400</value>
@@ -2647,7 +2644,6 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
-            <value>false</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
@@ -2660,7 +2656,6 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
-            <value>false</value>
         </row>
         <row>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4405</value>
@@ -2673,7 +2668,6 @@
             <value>80</value>
             <value>20</value>
             <value>20</value>
-            <value>false</value>
         </row>
     </table>
 
