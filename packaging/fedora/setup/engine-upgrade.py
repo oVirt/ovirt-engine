@@ -338,6 +338,37 @@ class MYum():
         else:
             return False
 
+    def packageAvailable(self, pkg):
+        pkglist = self.yumbase.doPackageLists(patterns=[pkg]).available
+        return len(pkglist) > 0
+
+    def packageInstalled(self, pkg):
+        pkglist = self.yumbase.doPackageLists(patterns=[pkg]).installed
+        return len(pkglist) > 0
+
+    def depListForRemoval(self, pkgs):
+
+        deplist = []
+
+        # Create list of all packages to remove
+        pkgs = self.yumbase.doPackageLists(patterns=pkgs).installed
+        for pkg in pkgs:
+            self.yumbase.remove(name=pkg.name)
+
+        # Resolve dependencies for removing packages
+        self.yumbase.resolveDeps()
+
+        # Create a list of deps packages
+        for pkg in self.yumbase.tsInfo.getMembers():
+            if pkg.isDep:
+                deplist.append(pkg.name)
+
+        # Clear transactions from the 'self' object
+        self.yumbase.closeRpmDB()
+
+        # Return the list of dependencies
+        return deplist
+
     def rollbackAvailable(self):
         logging.debug("Yum rollback-avail started")
 
