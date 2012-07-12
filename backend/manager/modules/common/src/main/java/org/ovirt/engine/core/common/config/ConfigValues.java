@@ -1382,6 +1382,10 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     DisconnectPoolOnReconstruct(368),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("120")
+    NetworkConnectivityCheckTimeoutInSeconds(369),
+
     Invalid(65535);
 
     private int intValue;

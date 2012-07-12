@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 
 
 public class SetupNetworksParameters extends VdsActionParameters {
@@ -18,8 +19,9 @@ public class SetupNetworksParameters extends VdsActionParameters {
 
     private boolean checkConnectivity;
 
-    @Min(value = 0, message = "NETWORK_CONNECTIVITY_TIMEOUT_NEGATIVE")
-    private int conectivityTimeout;
+    @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.NetworkConnectivityCheckTimeoutInSeconds,
+            message = "VALIDATION.CONNECTIVITY.TIMEOUT.INVALID")
+    private Integer conectivityTimeout;
 
     /**
      * @param interfaces Interfaces that are connected to a network or bond
@@ -44,7 +46,7 @@ public class SetupNetworksParameters extends VdsActionParameters {
         return checkConnectivity;
     }
 
-    public int getConectivityTimeout() {
+    public Integer getConectivityTimeout() {
         return conectivityTimeout;
     }
 
@@ -56,7 +58,7 @@ public class SetupNetworksParameters extends VdsActionParameters {
         this.checkConnectivity = checkConnectivity;
     }
 
-    public void setConectivityTimeout(int conectivityTimeout) {
+    public void setConectivityTimeout(Integer conectivityTimeout) {
         this.conectivityTimeout = conectivityTimeout;
     }
 }

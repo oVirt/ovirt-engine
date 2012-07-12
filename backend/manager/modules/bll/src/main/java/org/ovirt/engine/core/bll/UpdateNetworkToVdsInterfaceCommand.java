@@ -10,6 +10,8 @@ import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
@@ -75,7 +77,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         parameters.setVmNetwork(getParameters().getNetwork().isVmNetwork());
         parameters.setOldNetworkName(oldNetworkName);
-        parameters.setConnectionTimeout(120);
+        parameters.setConnectionTimeout(Config.<Integer> GetValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds));
         parameters.setCheckConnectivity(getParameters().getCheckConnectivity());
 
         IPAddress[] adresses = Dns.GetHostAddresses(NetworkUtils.OS_REFERENCE_TO_MACHINE_NAME);

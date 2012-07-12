@@ -1485,6 +1485,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Interface name is required.")
     String VALIDATION_VM_NETWORK_NAME_NOT_NULL();
 
+    @DefaultStringValue("Connectivity timeout is not valid. Timeout must be between 1 and 120.")
+    String VALIDATION_CONNECTIVITY_TIMEOUT_INVALID();
+
     @DefaultStringValue("Invalid ISO image path")
     String ERROR_CANNOT_FIND_ISO_IMAGE_PATH();
 

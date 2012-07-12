@@ -105,7 +105,8 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
         options.add(VdsProperties.connectivityCheck, Boolean.toString(getParameters().isCheckConnectivity()));
 
-        if (getParameters().getConectivityTimeout() >= 0) {
+        // VDSM uses the connectivity timeout only if 'connectivityCheck' is set to true
+        if (getParameters().isCheckConnectivity()) {
             options.add(VdsProperties.connectivityTimeout, getParameters().getConectivityTimeout());
         }
         return options;

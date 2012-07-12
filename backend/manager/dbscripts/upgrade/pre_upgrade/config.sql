@@ -446,6 +446,8 @@ select fn_db_add_config_value('VmPriorityMaxValue','100','general');
 --Handling Keyboard Layout configuration for VNC
 select fn_db_add_config_value('VncKeyboardLayout','en-us','general');
 select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
+--The default network connectivity check timeout
+select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section

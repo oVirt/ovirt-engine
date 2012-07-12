@@ -7,10 +7,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
@@ -87,7 +87,11 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 getInterfaces());
         vdsCmdParams.setForce(bckndCmdParams.isForce());
         vdsCmdParams.setCheckConnectivity(bckndCmdParams.isCheckConnectivity());
-        vdsCmdParams.setConectivityTimeout(bckndCmdParams.getConectivityTimeout());
+
+        int timeout =
+                bckndCmdParams.getConectivityTimeout() != null ? bckndCmdParams.getConectivityTimeout()
+                        : Config.<Integer> GetValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds);
+        vdsCmdParams.setConectivityTimeout(timeout);
 
         FutureVDSCall<VDSReturnValue> setupNetworksTask = createFutureTask(vdsCmdParams);
 
@@ -95,9 +99,6 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             pollInterruptively(setupNetworksTask);
         }
 
-        long timeout =
-                bckndCmdParams.getConectivityTimeout() > 0 ? bckndCmdParams.getConectivityTimeout()
-                        : Config.<Integer> GetValue(ConfigValues.vdsTimeout);
         try {
             VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
             if (retVal != null && retVal.getSucceeded()) {
