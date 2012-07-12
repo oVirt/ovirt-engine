@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.Usages;
 import org.ovirt.engine.api.model.VLAN;
+import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkMapper {
@@ -17,6 +18,7 @@ public class NetworkMapper {
     @Mapping(from = Network.class, to = org.ovirt.engine.core.common.businessentities.Network.class)
     public static org.ovirt.engine.core.common.businessentities.Network map(Network model, org.ovirt.engine.core.common.businessentities.Network template) {
         org.ovirt.engine.core.common.businessentities.Network entity = template != null ? template : new org.ovirt.engine.core.common.businessentities.Network();
+        entity.setCluster(template != null && template.getCluster() != null ? template.getCluster() : new network_cluster());
         if (model.isSetId()) {
             entity.setId(new Guid(model.getId()));
         }
