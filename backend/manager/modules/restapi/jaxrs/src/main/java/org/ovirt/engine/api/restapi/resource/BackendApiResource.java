@@ -188,8 +188,25 @@ public class BackendApiResource
     }
 
     public List<String> getRels() {
+        appMode = getCurrent().get(ApplicationMode.class);
+        if (appMode == ApplicationMode.GlusterOnly)
+        {
+            return getGlusterRels();
+        }
+        return getAllRels();
+    }
+
+    public List<String> getAllRels() {
         List<String> rels = new ArrayList<String>();
         for (Link link : getLinks()) {
+            rels.add(link.getRel());
+        }
+        return rels;
+    }
+
+    public List<String> getGlusterRels() {
+        List<String> rels = new ArrayList<String>();
+        for (Link link : getGlusterLinks()) {
             rels.add(link.getRel());
         }
         return rels;
