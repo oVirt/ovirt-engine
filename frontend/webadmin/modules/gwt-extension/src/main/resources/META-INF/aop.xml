@@ -10,7 +10,8 @@
 
   <!-- TODO: Disable verbose in the near future -->
   <weaver options="-verbose">
+    <include within="org.ovirt.engine.ui.gwtextension.DontPrune"/>
     <include within="com.google.gwt.dev.jjs.impl.ControlFlowAnalyzer"/>
-  </weaver> 
+  </weaver>
 
-</aspectj> 
+</aspectj>
