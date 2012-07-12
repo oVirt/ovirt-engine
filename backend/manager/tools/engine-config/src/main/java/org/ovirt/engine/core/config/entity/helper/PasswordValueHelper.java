@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.config.entity.helper;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import org.apache.commons.lang.StringUtils;
@@ -85,21 +86,27 @@ public class PasswordValueHelper implements ValueHelper {
         String password = null;
 
         try {
-            if (StringUtils.isNotBlank(value) && value.equalsIgnoreCase(INTERACTIVE_MODE)) {
-                password = EngineConfigLogic.startPasswordDialog(null);
-            } else {
-                password =
-                        EngineConfigLogic.getPassFromFile((StringUtils.isNotBlank(value)) ? value
-                                : parser.getAdminPassFile());
-            }
+            password = extractPasswordValue(value);
             returnedValue = encrypt(password);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             String msg = "Failed to encrypt the current value";
             Logger.getLogger(EngineConfig.class).debug(msg, e);
             throw new GeneralSecurityException(msg);
         }
 
         return returnedValue;
+    }
+
+    public String extractPasswordValue(String value) throws IOException {
+        String password = null;
+        if (StringUtils.isNotBlank(value) && value.equalsIgnoreCase(INTERACTIVE_MODE)) {
+            password = EngineConfigLogic.startPasswordDialog(null);
+        } else {
+            password =
+                    EngineConfigLogic.getPassFromFile((StringUtils.isNotBlank(value)) ? value
+                            : parser.getAdminPassFile());
+        }
+        return password;
     }
 
     @Override
