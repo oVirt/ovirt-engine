@@ -59,6 +59,18 @@ public class HostSetupNetworksModel extends EntityModel {
         privateCheckConnectivity = value;
     }
 
+    private EntityModel connectivityTimeout;
+
+    public EntityModel getConnectivityTimeout()
+    {
+        return connectivityTimeout;
+    }
+
+    private void setConnectivityTimeout(EntityModel value)
+    {
+        connectivityTimeout = value;
+    }
+
     private EntityModel privateCommitChanges;
 
     public EntityModel getCommitChanges()
@@ -114,6 +126,7 @@ public class HostSetupNetworksModel extends EntityModel {
         setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
         setCheckConnectivity(new EntityModel());
         getCheckConnectivity().setEntity(true);
+        setConnectivityTimeout(new EntityModel());
         setCommitChanges(new EntityModel());
         getCommitChanges().setEntity(false);
 

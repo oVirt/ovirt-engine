@@ -76,7 +76,8 @@ public enum ConfigurationValues {
     DirectLUNDiskEnabled(ConfigAuthType.User),
     WANDisableEffects(ConfigAuthType.User),
     WANColorDepth(ConfigAuthType.User),
-    SupportForceCreateVG;
+    SupportForceCreateVG,
+    NetworkConnectivityCheckTimeoutInSeconds;
 
     public static enum ConfigAuthType {
         Admin,

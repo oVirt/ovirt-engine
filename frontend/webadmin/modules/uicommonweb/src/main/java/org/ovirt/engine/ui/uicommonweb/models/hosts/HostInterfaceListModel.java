@@ -2190,15 +2190,26 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     public void OnSetupNetworks() {
-        final HostSetupNetworksModel model = (HostSetupNetworksModel) getWindow();
-
         // Determines the connectivity timeout in seconds
-        int conectivityTimeout = 120;
+        AsyncDataProvider.GetNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                HostInterfaceListModel listModel = (HostInterfaceListModel) target;
+                HostSetupNetworksModel model = (HostSetupNetworksModel) listModel.getWindow();
+
+                model.getConnectivityTimeout().setEntity(returnValue);
+                listModel.PostOnSetupNetworks();
+            }
+        }));
+    }
+
+    public void PostOnSetupNetworks() {
+        final HostSetupNetworksModel model = (HostSetupNetworksModel) getWindow();
 
         SetupNetworksParameters params = new SetupNetworksParameters();
         params.setInterfaces(model.getAllNics());
         params.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
-        params.setConectivityTimeout(conectivityTimeout);
+        params.setConectivityTimeout((Integer) model.getConnectivityTimeout().getEntity());
         params.setVdsId(getEntity().getId());
         IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
 

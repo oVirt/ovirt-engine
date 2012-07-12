@@ -1539,6 +1539,20 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void GetNetworkConnectivityCheckTimeoutInSeconds(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? ((Integer) source).intValue() : 120;
+            }
+        };
+        GetConfigFromCache(
+                new GetConfigurationValueParameters(ConfigurationValues.NetworkConnectivityCheckTimeoutInSeconds,
+                        Config.DefaultConfigurationVersion),
+                aQuery);
+    }
+
     public static void GetMaxSpmPriority(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
