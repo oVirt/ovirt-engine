@@ -74,9 +74,9 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
     private NGuid storage_pool_id;
 
     @ManyToOne
-@JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
+    @JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
     inverseJoinColumns = @JoinColumn(name = "cluster_id"))
-private network_cluster cluster = new network_cluster();
+    private network_cluster cluster;
 
     private boolean vmNetwork = true;
 
@@ -182,7 +182,7 @@ private network_cluster cluster = new network_cluster();
     }
 
     public NetworkStatus getStatus() {
-        return NetworkStatus.forValue(cluster.getstatus());
+        return cluster == null ? null : NetworkStatus.forValue(cluster.getstatus());
     }
 
     public void setStatus(NetworkStatus value) {
@@ -206,7 +206,7 @@ private network_cluster cluster = new network_cluster();
     }
 
     public Boolean getis_display() {
-        return cluster.getis_display();
+        return cluster == null ? null : cluster.getis_display();
     }
 
     public void setis_display(Boolean value) {
@@ -217,7 +217,7 @@ private network_cluster cluster = new network_cluster();
     }
 
     public Boolean isRequired() {
-        return cluster.isRequired();
+        return cluster == null ? null : cluster.isRequired();
     }
 
     public void setRequired(boolean value) {
