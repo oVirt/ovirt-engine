@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.BrokerUtils;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.user_sessions;
@@ -102,7 +102,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
      *            The ad user.
      */
     protected void HandleUserSession(AdUser adUser) {
-        if (!StringHelper.isNullOrEmpty(getParameters().getHttpSessionId())) {
+        if (!StringUtils.isEmpty(getParameters().getHttpSessionId())) {
             user_sessions user_sessions = new user_sessions("", "", new Date(), "", getParameters()
                     .getHttpSessionId(), adUser.getUserId());
             DbFacade.getInstance().getDbUserDAO().saveSession(user_sessions);
@@ -148,7 +148,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected boolean attachUserToSession() {
         boolean authenticated = true;
-        if (!StringHelper.isNullOrEmpty(getParameters().getSessionId())) {
+        if (!StringUtils.isEmpty(getParameters().getSessionId())) {
             SessionDataContainer.getInstance().setUser(getParameters().getSessionId(), getCurrentUser());
         } else if (!SessionDataContainer.getInstance().setUser(getCurrentUser())) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
@@ -164,7 +164,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             boolean domainFound = false;
             List<String> vdcDomains = LdapBrokerUtils.getDomainsList();
             for (String domain : vdcDomains) {
-                if (StringHelper.EqOp(domain.toLowerCase(), getDomain().toLowerCase())) {
+                if (StringUtils.equals(domain.toLowerCase(), getDomain().toLowerCase())) {
                     domainFound = true;
                     break;
                 }
