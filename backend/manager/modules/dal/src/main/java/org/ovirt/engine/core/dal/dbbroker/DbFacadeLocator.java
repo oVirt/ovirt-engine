@@ -69,7 +69,7 @@ public class DbFacadeLocator {
 
     public static void loadDbFacadeConfig() throws Exception {
         boolean configSucceeded = false;
-        final String ENGINE_CONF_FILE = "/etc/engine/engine.conf";
+        final String ENGINE_CONF_FILE = "/etc/ovirt-engine/engine.conf";
         final String ON_START_CONNECTION_TIMEOUT = "OnStartConnectionTimeout";
         final String CONNECTION_CHECK_INTERVAL = "ConnectionCheckInterval";
         final String DEFAULT_TIMEOUT_VALUE = "300000";
@@ -80,7 +80,7 @@ public class DbFacadeLocator {
             String connectionCheckInterval = null;
             Properties props = new Properties();
             if (FileUtil.fileExists(ENGINE_CONF_FILE)) {
-                // File exists, load /etc/engine.conf and set values in DbFacade
+                // File exists, load /etc/ovirt-engine/engine.conf and set values in DbFacade
                 inputStream = new FileInputStream(ENGINE_CONF_FILE);
                 props.load(inputStream);
                 onStartConnectionTimeout = props.getProperty(ON_START_CONNECTION_TIMEOUT);
