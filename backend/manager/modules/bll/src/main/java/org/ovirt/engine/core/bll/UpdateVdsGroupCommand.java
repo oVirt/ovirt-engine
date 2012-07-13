@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -18,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -28,7 +29,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -84,7 +84,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         boolean exists = false;
         String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
         for (Network net : networks) {
-            if (StringHelper.EqOp(net.getname(), managementNetwork)) {
+            if (StringUtils.equals(net.getname(), managementNetwork)) {
                 exists = true;
             }
         }
@@ -96,7 +96,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                                         getVdsGroup().getstorage_pool_id()
                                                 .getValue());
                 for (Network net : storagePoolNets) {
-                    if (StringHelper.EqOp(net.getname(), managementNetwork)) {
+                    if (StringUtils.equals(net.getname(), managementNetwork)) {
                         getNetworkClusterDAO().save(new network_cluster(getVdsGroup().getId(), net.getId(),
                                 NetworkStatus.Operational.getValue(), true, true));
                     }
@@ -128,7 +128,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         VDSGroup oldGroup = getVdsGroupDAO().get(getVdsGroup().getId());
         // check that if name was changed, it was done to the same cluster
         VDSGroup groupWithName = getVdsGroupDAO().getByName(getVdsGroup().getname());
-        if (oldGroup != null && !StringHelper.EqOp(oldGroup.getname(), getVdsGroup().getname())) {
+        if (oldGroup != null && !StringUtils.equals(oldGroup.getname(), getVdsGroup().getname())) {
             if (groupWithName != null && !groupWithName.getId().equals(getVdsGroup().getId())) {
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
                 result = false;
@@ -149,7 +149,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             } else {
                 // if cpu changed from intel to amd (or backwards) and there are
                 // vds in this cluster, cannot update
-                if (!StringHelper.isNullOrEmpty(oldGroup.getcpu_name())
+                if (!StringUtils.isEmpty(oldGroup.getcpu_name())
                         && !checkIfCpusSameManufacture(oldGroup)
                         && getVdsStaticDAO().getAllForVdsGroup(getVdsGroup().getId()).size() > 0) {
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
@@ -235,7 +235,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 result = false;
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_RUNNING_VMS);
             }
-            boolean sameCpuNames = StringHelper.EqOp(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
+            boolean sameCpuNames = StringUtils.equals(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
             if (result && !sameCpuNames) {
                 if (suspendedVms > 0) {
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS);
