@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -300,7 +299,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                     returnValue = false;
                 } else if (!getParameters().getAddPending()
-                        && StringHelper.isNullOrEmpty(getParameters().getRootPassword())) {
+                        && StringUtils.isEmpty(getParameters().getRootPassword())) {
                     // We block vds installations if it's not a RHEV-H and password is empty
                     // Note that this may override local host SSH policy. See BZ#688718.
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
