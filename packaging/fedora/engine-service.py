@@ -87,9 +87,9 @@ engineServerLogFile = None
 
 def loadSysconfig():
     # Load the configuration file:
-    engineSysconfigFile = "/etc/sysconfig/ovirt-engine"
+    engineSysconfigFile = os.getenv("ENGINE_VARS", "/etc/sysconfig/ovirt-engine")
     if not os.path.exists(engineSysconfigFile):
-        raise Exception("The engine sysconfig file \"%s\" doesn't exist." % engineSysconfigFile)
+        raise Exception("The engine configuration file \"%s\" doesn't exist." % engineSysconfigFile)
     global engineSysconfig
     engineSysconfig = configobj.ConfigObj(engineSysconfigFile)
 

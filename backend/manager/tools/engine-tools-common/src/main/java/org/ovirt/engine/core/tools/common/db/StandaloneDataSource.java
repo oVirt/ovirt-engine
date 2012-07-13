@@ -42,7 +42,11 @@ public class StandaloneDataSource implements DataSource {
 
     public StandaloneDataSource() throws SQLException {
         // Load the service configuration file:
-        File configFile = new File("/etc/sysconfig/ovirt-engine");
+        String configPath = System.getenv("ENGINE_VARS");
+        if (configPath == null) {
+            configPath = "/etc/sysconfig/ovirt-engine";
+        }
+        File configFile = new File(configPath);
         if (!configFile.exists()) {
             throw new SQLException("Can't find engine configuration file \"" + configFile.getAbsolutePath() + "\".");
         }
