@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -117,7 +116,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             return;
         }
 
-        if (!vdsStatic.getpm_enabled() || StringHelper.isNullOrEmpty(vdsStatic.getpm_type())) {
+        if (!vdsStatic.getpm_enabled() || StringUtils.isEmpty(vdsStatic.getpm_type())) {
             Alert(AuditLogType.VDS_ALERT_FENCING_IS_NOT_CONFIGURED);
             // remove any test failure alerts
             AlertDirector.RemoveVdsAlert(vdsStatic.getId(),
