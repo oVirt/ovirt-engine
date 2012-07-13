@@ -25,7 +25,8 @@
 %global make_common_opts \\\
 	-j1 \\\
 	PREFIX=%{buildroot} \\\
-	SOURCE_DIR=%{_sourcedir} \\\
+	JAVA_DIR=%{_javadir} \\\
+	MAVENPOM_DIR=%{_mavenpomdir} \\\
 	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
@@ -308,7 +309,7 @@ All-in-one plugin for oVirt Engine's setup
 
 %build
 
-make %{make_common_opts} build_mvn
+make %{make_common_opts}
 
 %install
 
@@ -317,53 +318,21 @@ make %{make_common_opts} build_mvn
 # locations:
 make %{make_common_opts} install
 
-# Create the directories required for jar and POM files:
-install -d -m 755 %{buildroot}%{engine_jar}
-install -d -m 755 %{buildroot}%{_mavenpomdir}
-install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
-
-# Jar and POM files:
-while read module_path artifact_id
+# Register poms
+for pom in %{buildroot}%{_mavenpomdir}/*.pom
 do
-  pom_file="${module_path}/pom.xml"
-  jar_file="${module_path}/target/${artifact_id}-%{version}.jar"
-  install -p -m 644 ${pom_file} %{buildroot}%{_mavenpomdir}/JPP.%{name}-${artifact_id}.pom
-  if [ -f "${jar_file}" ]
+  pomdir=`dirname "${pom}"`
+  pom=`basename "${pom}"`
+  jpppom="JPP.`echo "${pom}" | sed 's/^%{engine_name}-/%{name}-/'`"
+  mv "${pomdir}/${pom}" "${pomdir}/${jpppom}"
+  artifact_id=`echo "${pom}" | sed -e 's/^%{name}-//' -e 's/\.pom//'`
+  if [ -f "%{buildroot}%{engine_jar}/${artifact_id}.jar" ]
   then
-    install -p -m 644 ${jar_file} %{buildroot}%{engine_jar}/${artifact_id}.jar
-    %add_maven_depmap JPP.%{name}-${artifact_id}.pom %{name}/${artifact_id}.jar
+    %add_maven_depmap "${jpppom}" "%{engine_name}/${artifact_id}.jar"
   else
-    %add_maven_depmap JPP.%{name}-${artifact_id}.pom
+    %add_maven_depmap "${jpppom}"
   fi
-done <<'.'
-. parent
-backend backend
-backend/manager manager
-backend/manager/modules manager-modules
-backend/manager/modules/compat compat
-backend/manager/modules/engineencryptutils engineencryptutils
-backend/manager/modules/common common
-backend/manager/modules/utils utils
-backend/manager/modules/dal dal
-backend/manager/modules/vdsbroker vdsbroker
-backend/manager/modules/searchbackend searchbackend
-backend/manager/modules/beans manager-beans
-backend/manager/modules/beans/scheduler scheduler
-backend/manager/modules/bll bll
-backend/manager/modules/restapi restapi-parent
-backend/manager/modules/restapi/interface restapi-interface
-backend/manager/modules/restapi/interface/definition restapi-definition
-backend/manager/modules/restapi/interface/common/jaxrs interface-common-jaxrs
-backend/manager/modules/restapi/types restapi-types
-backend/manager/modules/restapi/jaxrs restapi-jaxrs
-backend/manager/tools manager-tools
-backend/manager/tools/engine-tools-common engine-tools-common
-backend/manager/tools/engine-config engine-config
-backend/manager/tools/engine-notifier engine-notifier
-backend/manager/tools/engine-notifier/engine-notifier-service engine-notifier-service
-backend/manager/tools/engine-notifier/engine-notifier-resources engine-notifier-resources
-frontend/api/genericapi genericapi
-.
+done
 
 # Replace jar files in the ear with links to their actuals
 # locations, first for jar files from this package, as for these
@@ -611,7 +580,7 @@ fi
 
 # POM files:
 %{_mavendepmapfragdir}/%{name}
-%{_mavenpomdir}/JPP.%{name}-parent.pom
+%{_mavenpomdir}/JPP.%{name}-root.pom
 %{_mavenpomdir}/JPP.%{name}-common.pom
 %{_mavenpomdir}/JPP.%{name}-compat.pom
 %{_mavenpomdir}/JPP.%{name}-utils.pom
@@ -634,7 +603,6 @@ fi
 # POM files:
 %{_mavenpomdir}/JPP.%{name}-backend.pom
 %{_mavenpomdir}/JPP.%{name}-manager.pom
-%{_mavenpomdir}/JPP.%{name}-manager-beans.pom
 %{_mavenpomdir}/JPP.%{name}-manager-modules.pom
 %{_mavenpomdir}/JPP.%{name}-manager-tools.pom
 %{_mavenpomdir}/JPP.%{name}-bll.pom
@@ -740,7 +708,6 @@ fi
 # POM files:
 %{_mavenpomdir}/JPP.%{name}-interface-common-jaxrs.pom
 %{_mavenpomdir}/JPP.%{name}-restapi-definition.pom
-%{_mavenpomdir}/JPP.%{name}-restapi-interface.pom
 %{_mavenpomdir}/JPP.%{name}-restapi-jaxrs.pom
 %{_mavenpomdir}/JPP.%{name}-restapi-parent.pom
 %{_mavenpomdir}/JPP.%{name}-restapi-types.pom

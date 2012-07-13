@@ -24,7 +24,9 @@
 MVN=$(shell which mvn)
 EXTRA_BUILD_FLAGS=
 BUILD_FLAGS=-P gwt-admin,gwt-user
-DEPLOY_FLAGS=-f deploy.xml
+MAVENPOM_DIR=/usr/share/maven-poms
+JAVA_DIR=/usr/share/java
+
 EAR_DIR=/usr/share/ovirt-engine/engine.ear
 EAR_SRC_DIR=ear/target/engine
 PY_SITE_PKGS:=$(shell python -c "from distutils.sysconfig import get_python_lib as f;print f()")
@@ -45,37 +47,63 @@ OUTPUT_DIR=output
 TARBALL=ovirt-engine-$(RPM_VERSION).tar.gz
 SRPM=$(OUTPUT_DIR)/ovirt-engine-$(RPM_VERSION)*.src.rpm
 ARCH=noarch
-BUILD_FILE=$(shell bash -c "pwd -P")/build_mvn
-SOURCE_DIR=$(OUTPUT_RPMBUILD)/SOURCES
+BUILD_FILE=tmp.built
+MAVEN_OUTPUT_DIR_DEFAULT=$(shell pwd -P)/tmp.repos
+MAVEN_OUTPUT_DIR=$(MAVEN_OUTPUT_DIR_DEFAULT)
 
-CURR_DIR=$(shell bach -c "pwd -P")
-all: build_mvn
+ARTIFACTS = \
+	backend bll \
+	common \
+	compat \
+	dal \
+	engine-config \
+	engine-notifier \
+	engine-notifier-resources \
+	engine-notifier-service \
+	engine-tools-common \
+	engineencryptutils \
+	genericapi \
+	interface-common-jaxrs \
+	manager \
+	manager-modules \
+	manager-tools \
+	restapi-definition \
+	restapi-jaxrs \
+	restapi-parent \
+	restapi-types \
+	root \
+	scheduler \
+	searchbackend \
+	utils \
+	vdsbroker
 
-build_mvn:
+all: $(BUILD_FILE)
+
+$(BUILD_FILE):
 	export MAVEN_OPTS="${MAVEN_OPTS} -XX:MaxPermSize=512m"
-	$(MVN) install $(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS) -D skipTests
+	$(MVN) \
+		$(BUILD_FLAGS) \
+		$(EXTRA_BUILD_FLAGS) \
+		-D skipTests \
+		-D altDeploymentRepository=install::default::file://$(MAVEN_OUTPUT_DIR) \
+		deploy
 	touch $(BUILD_FILE)
 
 clean:
 	$(MVN) clean $(EXTRA_BUILD_FLAGS)
 	rm -rf $(OUTPUT_RPMBUILD) $(SPEC_FILE) $(OUTPUT_DIR) $(BUILD_FILE)
+	[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
 
 test:
 	$(MVN) install $(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
 
 install: \
-	build_mvn \
-	pre_copy \
-	create_dirs \
-	install_ear \
-	common_install
+	all \
+	install_without_maven
 
 install_without_maven: \
 	create_dirs \
-	install_brew_ear \
-	common_install
-
-common_install: \
+	install_artifacts \
 	install_config \
 	install_sysprep \
 	install_notification_service \
@@ -86,18 +114,6 @@ common_install: \
 	install_aio_plugin \
 	install_jboss_modules \
 	install_service
-
-# Brew compatibility hack
-# We want both env (local and brew) to work the same
-pre_copy:
-	echo $(SOURCE_DIR)
-	cp -f ./backend/manager/tools/engine-tools-common/target/engine-tools-common-$(APP_VERSION).jar $(SOURCE_DIR)/
-	cp -f ./backend/manager/tools/engine-config/target/engine-config-$(APP_VERSION).jar $(SOURCE_DIR)/
-	cp -f ./backend/manager/modules/engineencryptutils/target/engineencryptutils-$(APP_VERSION).jar $(SOURCE_DIR)/
-	cp -f ./backend/manager/modules/compat/target/compat-$(APP_VERSION).jar $(SOURCE_DIR)/
-	cp -f ./backend/manager/tools/engine-notifier/engine-notifier-service/target/engine-notifier-service-$(APP_VERSION).jar $(SOURCE_DIR)/
-	mkdir -p $(SOURCE_DIR)/ear
-	cp -rf $(EAR_SRC_DIR)/* $(SOURCE_DIR)/ear/
 
 tarball:
 	sed -e 's/^Version:.*/Version: $(RPM_VERSION)/' \
@@ -177,15 +193,23 @@ create_dirs:
 	@install -dm 755 $(PREFIX)/var/cache/ovirt-engine
 	@install -dm 755 $(PREFIX)/usr/lib/systemd/system
 
-install_ear:
+install_artifacts:
 	@echo "*** Deploying EAR to $(PREFIX)"
 	install -dm 755 $(PREFIX)$(EAR_DIR)
-	cp -rf $(SOURCE_DIR)/ear/* $(PREFIX)$(EAR_DIR)
+	X=`find "$(MAVEN_OUTPUT_DIR)" -name engine-server-ear-$(APP_VERSION).ear` && unzip "$$X" -d "$(PREFIX)$(EAR_DIR)"
 
-install_brew_ear:
-	@echo "*** Deploying EAR to $(PREFIX)"
-	install -dm 755 $(PREFIX)$(EAR_DIR)
-	unzip $(SOURCE_DIR)/*.ear -d $(PREFIX)$(EAR_DIR)
+	install -dm 755 $(PREFIX)$(JAVA_DIR)/ovirt-engine
+	install -dm 755 $(PREFIX)$(MAVENPOM_DIR)
+	for artifact_id in  $(ARTIFACTS); do \
+		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(APP_VERSION).pom"`; \
+		if ! [ -f "$${POM}" ]; then \
+			echo "ERROR: Cannot find artifact $${artifact_id}"; \
+			exit 1; \
+		fi; \
+		JAR=`echo "$${POM}" | sed 's/\.pom/.jar/'`; \
+		install -p -m 644 "$$POM" "$(PREFIX)$(MAVENPOM_DIR)/ovirt-engine-$${artifact_id}.pom"; \
+		[ -f "$${JAR}" ] && install -p -m 644 "$${JAR}" "$(PREFIX)$(JAVA_DIR)/ovirt-engine/$${artifact_id}.jar"; \
+	done
 
 install_setup:
 	@echo "*** Deploying setup executables"
