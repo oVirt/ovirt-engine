@@ -39,14 +39,14 @@ RELEASE_VERSION=3
 
 SPEC_FILE_IN=packaging/fedora/spec/ovirt-engine.spec.in
 SPEC_FILE=ovirt-engine.spec
-RPMBUILD=$(shell bash -c "pwd -P")/rpmbuild
-SRCRPMBUILD=$(shell bash -c "pwd -P")/srcrpmbuild
-OUTPUT_DIR=$(shell bash -c "pwd -P")/output
+RPMBUILD=rpmbuild
+OUTPUT_RPMBUILD=$(shell pwd -P)/tmp.rpmbuild
+OUTPUT_DIR=output
 TARBALL=ovirt-engine-$(RPM_VERSION).tar.gz
 SRPM=$(OUTPUT_DIR)/ovirt-engine-$(RPM_VERSION)*.src.rpm
 ARCH=noarch
 BUILD_FILE=$(shell bash -c "pwd -P")/build_mvn
-SOURCE_DIR=$(RPMBUILD)/SOURCES
+SOURCE_DIR=$(OUTPUT_RPMBUILD)/SOURCES
 
 CURR_DIR=$(shell bach -c "pwd -P")
 all: build_mvn
@@ -58,7 +58,7 @@ build_mvn:
 
 clean:
 	$(MVN) clean $(EXTRA_BUILD_FLAGS)
-	rm -rf $(RPMBUILD) $(SPEC_FILE) $(OUTPUT_DIR) $(SRCRPMBUILD) $(BUILD_FILE)
+	rm -rf $(OUTPUT_RPMBUILD) $(SPEC_FILE) $(OUTPUT_DIR) $(BUILD_FILE)
 
 test:
 	$(MVN) install $(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
@@ -99,29 +99,36 @@ pre_copy:
 	mkdir -p $(SOURCE_DIR)/ear
 	cp -rf $(EAR_SRC_DIR)/* $(SOURCE_DIR)/ear/
 
-tarball: $(TARBALL)
-$(TARBALL):
-	tar zcf $(TARBALL) `git ls-files`
-
-srpm: $(SRPM)
-
-$(SRPM): tarball $(SPEC_FILE_IN)
-	mkdir -p $(OUTPUT_DIR)
+tarball:
 	sed -e 's/^Version:.*/Version: $(RPM_VERSION)/' \
             -e 's/^Release:.*/Release: $(RELEASE_VERSION)%{?dist}/' $(SPEC_FILE_IN) > $(SPEC_FILE)
-	mkdir -p $(SRCRPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
-	cp -f $(SPEC_FILE) $(SRCRPMBUILD)/SPECS/
-	cp -f  $(TARBALL) $(SRCRPMBUILD)/SOURCES/
-	rpmbuild -bs --define="_topdir $(SRCRPMBUILD)" --define="_sourcedir ." $(SPEC_FILE)
-	mv $(SRCRPMBUILD)/SRPMS/*.rpm $(OUTPUT_DIR)
-	rm -rf $(SRCRPMBUILD) $(SPEC_FILE) $(TARBALL)
+	tar zcf $(TARBALL) `git ls-files` $(SPEC_FILE)
+	rm -f $(SPEC_FILE)
+	@echo
+	@echo You can use $(RPMBUILD) -tb $(TARBALL) to produce rpms
+	@echo
 
-rpm: $(SRPM)
-	rm -rf $(RPMBUILD)
-	mkdir -p $(RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
-	rpmbuild  --define="_topdir $(RPMBUILD)" --rebuild  $<
-	mv $(RPMBUILD)/RPMS/$(ARCH)/*.rpm $(OUTPUT_DIR)
-	rm -rf $(RPMBUILD)
+srpm:	tarball
+	rm -rf $(OUTPUT_RPMBUILD)
+	mkdir -p $(OUTPUT_RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
+	mkdir -p $(OUTPUT_DIR)
+	$(RPMBUILD) -ts --define="_topdir $(OUTPUT_RPMBUILD)" $(TARBALL)
+	mv $(OUTPUT_RPMBUILD)/SRPMS/*.rpm $(OUTPUT_DIR)
+	rm -rf $(OUTPUT_RPMBUILD)
+	@echo
+	@echo srpm is ready at $(OUTPUT_DIR)
+	@echo
+
+rpm:	srpm
+	rm -rf $(OUTPUT_RPMBUILD)
+	mkdir -p $(OUTPUT_RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
+	mkdir -p $(OUTPUT_DIR)
+	$(RPMBUILD)  --define="_topdir $(OUTPUT_RPMBUILD)" --rebuild $(SRPM)
+	mv $(OUTPUT_RPMBUILD)/RPMS/$(ARCH)/*.rpm $(OUTPUT_DIR)
+	rm -rf $(OUTPUT_RPMBUILD)
+	@echo
+	@echo rpms are ready at $(OUTPUT_DIR)
+	@echo
 
 create_dirs:
 	@echo "*** Creating Directories"
