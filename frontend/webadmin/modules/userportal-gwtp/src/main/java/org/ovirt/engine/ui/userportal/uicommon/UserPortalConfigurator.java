@@ -45,6 +45,9 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         this.basicPresenter = basicPresenter;
         eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
+        // This means that it is UserPortal application.
+        setIsAdmin(false);
+
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);
         usbFilterFileFetchedEvent.addListener(this);

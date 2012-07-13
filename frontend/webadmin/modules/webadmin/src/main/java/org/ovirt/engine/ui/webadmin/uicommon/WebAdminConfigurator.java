@@ -37,6 +37,9 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         super();
         eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
+        // This means that this is WebAdmin application.
+        setIsAdmin(true);
+
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);
         documentationFileFetchedEvent.addListener(this);

@@ -33,7 +33,6 @@ public abstract class Configurator {
 
     public Configurator() {
         // Set default configuration values
-        setIsAdmin(true);
         setSpiceAdminConsole(true);
         setSpiceFullScreen(false);
 
@@ -285,11 +284,8 @@ public abstract class Configurator {
     }
 
     /**
-     * Calculates the root URL of the server from where the application was
-     * downloaded. For example, if the URL is
-     * <code>http://www.example.com:8080/foo/bar</code> it will return
-     * <code>http://www.example.com:8080</code>.
-     *
+     * Calculates the root URL of the server from where the application was downloaded. For example, if the URL is
+     * <code>http://www.example.com:8080/foo/bar</code> it will return <code>http://www.example.com:8080</code>.
      * @return the root URL of the server
      */
     public static String getRootURL() {
