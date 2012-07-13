@@ -157,7 +157,7 @@ public class VolumeModel extends Model {
         getNfs_accecssProtocol().setEntity(true);
 
         setCifs_accecssProtocol(new EntityModel());
-        getCifs_accecssProtocol().setEntity(false);
+        getCifs_accecssProtocol().setEntity(true);
 
         setAllowAccess(new EntityModel());
         getAllowAccess().setEntity("*"); //$NON-NLS-1$

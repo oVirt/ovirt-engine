@@ -85,6 +85,7 @@
 				<g:Label ui:field="accessProtocolsLabel" addStyleNames="{style.sectionLabel}"></g:Label>
 				<e:EntityModelCheckBoxEditor ui:field="gluster_accecssProtocolEditor"/>
 				<e:EntityModelCheckBoxEditor ui:field="nfs_accecssProtocolEditor"/>
+				<e:EntityModelCheckBoxEditor ui:field="cifs_accecssProtocolEditor"/>
 				<e:EntityModelTextBoxEditor ui:field="allowAccessEditor" />
 				<g:Label ui:field="allowAccessLabel"></g:Label>
 

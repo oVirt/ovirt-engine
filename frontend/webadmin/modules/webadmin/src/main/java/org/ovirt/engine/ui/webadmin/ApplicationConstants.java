@@ -1953,6 +1953,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("NFS")
     String nfsVolume();
 
+    @DefaultStringValue("CIFS")
+    String cifsVolume();
+
     @DefaultStringValue("Allow Access From")
     String allowAccessFromVolume();
 

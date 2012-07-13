@@ -500,10 +500,12 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
         volume.setVolumeType(type);
 
-        if ((Boolean) volumeModel.getTcpTransportType().getEntity())
+        if ((Boolean) volumeModel.getTcpTransportType().getEntity()) {
             volume.getTransportTypes().add(TransportType.TCP);
-        if ((Boolean) volumeModel.getRdmaTransportType().getEntity())
+        }
+        if ((Boolean) volumeModel.getRdmaTransportType().getEntity()) {
             volume.getTransportTypes().add(TransportType.RDMA);
+        }
 
         ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
 
@@ -514,10 +516,19 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         volume.setBricks(brickList);
 
-        if ((Boolean) volumeModel.getNfs_accecssProtocol().getEntity())
+        if ((Boolean) volumeModel.getNfs_accecssProtocol().getEntity()) {
             volume.enableNFS();
-        else
+        }
+        else {
             volume.disableNFS();
+        }
+
+        if ((Boolean) volumeModel.getCifs_accecssProtocol().getEntity()) {
+            volume.enableCifs();
+        }
+        else {
+            volume.disableCifs();
+        }
 
         volume.setAccessControlList((String) volumeModel.getAllowAccess().getEntity());
 

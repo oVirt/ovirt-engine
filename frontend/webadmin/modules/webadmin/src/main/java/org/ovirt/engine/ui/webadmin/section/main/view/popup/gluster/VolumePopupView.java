@@ -120,6 +120,11 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     EntityModelCheckBoxEditor nfs_accecssProtocolEditor;
 
     @UiField
+    @Path(value = "cifs_accecssProtocol.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor cifs_accecssProtocolEditor;
+
+    @UiField
     @Path(value = "allowAccess.entity")
     @WithElementId
     EntityModelTextBoxEditor allowAccessEditor;
@@ -197,6 +202,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         accessProtocolsLabel.setText(constants.accessProtocolsVolume());
         gluster_accecssProtocolEditor.setLabel(constants.glusterVolume());
         nfs_accecssProtocolEditor.setLabel(constants.nfsVolume());
+        cifs_accecssProtocolEditor.setLabel(constants.cifsVolume());
         allowAccessEditor.setLabel(constants.allowAccessFromVolume());
         allowAccessLabel.setText(constants.allowAccessFromLabelVolume());
     }
