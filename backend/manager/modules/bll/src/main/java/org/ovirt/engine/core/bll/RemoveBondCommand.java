@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -13,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -47,7 +47,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         List<VdsNetworkInterface> all = DbFacade.getInstance().getInterfaceDAO()
                 .getAllInterfacesForVds(getParameters().getVdsId());
         for (VdsNetworkInterface iface : all) {
-            if (StringHelper.EqOp(iface.getName(), getParameters().getBondName())) {
+            if (StringUtils.equals(iface.getName(), getParameters().getBondName())) {
                 bond = iface;
                 break;
             }
@@ -108,7 +108,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
 
         _network = bond.getNetworkName();
 
-        if (StringHelper.isNullOrEmpty(_network)) {
+        if (StringUtils.isEmpty(_network)) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_HAVE_ATTACHED_VLANS);
             return false;
         }
