@@ -22,6 +22,12 @@
 /bin/getent group %{engine_group} >/dev/null || /sbin/groupadd -r %{engine_group}; \
 /bin/getent passwd %{engine_user} >/dev/null || /sbin/useradd -c "oVirt Manager" -u %{engine_uid} -g %{engine_group} -M -d %{engine_var} %{engine_user}
 
+%global make_common_opts \\\
+	-j1 \\\
+	PREFIX=%{buildroot} \\\
+	SOURCE_DIR=%{_sourcedir} \\\
+	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
+	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
 Name: ovirt-engine
 Version: 3.1.0
@@ -300,18 +306,16 @@ All-in-one plugin for oVirt Engine's setup
 
 %setup -c -q
 
-
 %build
 
-make PREFIX=%{buildroot} SOURCE_DIR=%{_sourcedir} build_mvn
-
+make %{make_common_opts} build_mvn
 
 %install
 
 # Use the makefile to do the normal installation, after that we
 # will need to replace jar files with links to their actual
 # locations:
-make PREFIX=%{buildroot} SOURCE_DIR=%{_sourcedir} install
+make %{make_common_opts} install
 
 # Create the directories required for jar and POM files:
 install -d -m 755 %{buildroot}%{engine_jar}

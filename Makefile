@@ -123,11 +123,27 @@ rpm:	srpm
 	rm -rf $(OUTPUT_RPMBUILD)
 	mkdir -p $(OUTPUT_RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
 	mkdir -p $(OUTPUT_DIR)
-	$(RPMBUILD)  --define="_topdir $(OUTPUT_RPMBUILD)" --rebuild $(SRPM)
+	$(RPMBUILD) --define="_topdir $(OUTPUT_RPMBUILD)" $(RPMBUILD_EXTRA_ARGS) --rebuild $(SRPM)
 	mv $(OUTPUT_RPMBUILD)/RPMS/$(ARCH)/*.rpm $(OUTPUT_DIR)
 	rm -rf $(OUTPUT_RPMBUILD)
 	@echo
 	@echo rpms are ready at $(OUTPUT_DIR)
+	@echo
+
+# This is intended to quickly build a set of RPMs that don't
+# contain working copies of the GWT applications, mostly useful
+# for testing the RPM build process itself or for testing only the
+# backend and the RESTAPI
+rpm-quick:
+	$(MAKE) \
+		rpm \
+		RPMBUILD_EXTRA_ARGS='--define="__jar_repack 0" \
+			--define="BUILD_FLAGS -D dummy" \
+			--define="EXTRA_BUILD_FLAGS -D maven.test.skip=true -D gwt.userAgent=gecko1_8"'
+	@echo
+	@echo WARNING:
+	@echo rpms produces from quick are partial!
+	@echo *DO NOT* use them for any other use but debug.
 	@echo
 
 create_dirs:
