@@ -2,24 +2,24 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -31,6 +31,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = -2404956975945588597L;
+    private VmNetworkInterface oldIface;
+    private boolean macAddressChanged;
 
     public UpdateVmInterfaceCommand(T parameters) {
         super(parameters);
@@ -57,7 +59,27 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 .getVmNetworkInterfaceDAO()
                 .update(getParameters().getInterface());
 
+        if (macAddressChanged) {
+            MacPoolManager.getInstance().freeMac(oldIface.getMacAddress());
+        }
         setSucceeded(true);
+    }
+
+    /**
+     * Reverts the MAC addresses status before as were before:
+     * <p/>
+     * <li>The original MAC address is re-allocated.</li>
+     * <li>The new MAC address is freed.</li>
+     */
+    @Override
+    public void Rollback() {
+        super.Rollback();
+        if (macAddressChanged) {
+            MacPoolManager.getInstance().AddMac(oldIface.getMacAddress());
+            if (!Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses)) {
+                MacPoolManager.getInstance().freeMac(getParameters().getInterface().getMacAddress());
+            }
+        }
     }
 
     @Override
@@ -71,14 +93,19 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
                 .getAllForVm(getParameters().getVmId());
-        VmNetworkInterface oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
+        oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
             @Override
             public boolean eval(VmNetworkInterface i) {
                 return i.getId().equals(getParameters().getInterface().getId());
             }
         });
 
-        if (!StringHelper.EqOp(oldIface.getName(), getParameters().getInterface().getName())) {
+        if (oldIface == null) {
+            addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+            return false;
+        }
+
+        if (!StringUtils.equals(oldIface.getName(), getParameters().getInterface().getName())) {
             if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
                          getParameters().getInterface().getName(),
                          getReturnValue().getCanDoActionMessages())) {
@@ -86,14 +113,13 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             }
         }
 
-        if (!StringHelper.EqOp(oldIface.getMacAddress(), getParameters().getInterface().getMacAddress())) {
+        macAddressChanged = !StringUtils.equals(oldIface.getMacAddress(), getParameters().getInterface().getMacAddress());
+        if (macAddressChanged) {
             Regex re = new Regex(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS);
             if (re.IsMatch(getParameters().getInterface().getMacAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);
                 return false;
             }
-
-            MacPoolManager.getInstance().freeMac(oldIface.getMacAddress());
 
             Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
             if (!MacPoolManager.getInstance().AddMac(getParameters().getInterface().getMacAddress())
@@ -160,8 +186,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
      * Set the parameters for bll messages, such as type and action,
      */
     @Override
-    protected void setActionMessageParameters()
-    {
+    protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
