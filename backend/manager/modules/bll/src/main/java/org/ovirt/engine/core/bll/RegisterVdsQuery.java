@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -79,7 +79,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         Long otp = getParameters().getOtp();
         try {
             String hostName = getParameters().getVdsHostName();
-            if (StringHelper.isNullOrEmpty(hostName)) {
+            if (StringUtils.isEmpty(hostName)) {
                 errorMessage.argvalue = "Cannot register Host - no Hostname address specified.";
                 returnValue = false;
             } else {
@@ -189,7 +189,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 log.info("RegisterVdsQuery::ExecuteCommand - Entering");
             }
 
-            if (StringHelper.isNullOrEmpty(getParameters().getVdsName())) {
+            if (StringUtils.isEmpty(getParameters().getVdsName())) {
                 getParameters().setVdsName(getParameters().getVdsUniqueId());
                 if (Config.<Boolean> GetValue(ConfigValues.LogVdsRegistration)) {
                     log.info("RegisterVdsQuery::ExecuteCommand - VdsName empty, using VdsUnique ID as name");
