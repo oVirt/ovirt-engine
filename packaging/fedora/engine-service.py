@@ -51,6 +51,12 @@ engineGroup = None
 engineUid = 0
 engineGid = 0
 
+# Java home directory:
+javaHomeDir = None
+
+# Java virtual machine launcher:
+javaLauncher = None
+
 # JBoss directories:
 jbossHomeDir = None
 
@@ -104,6 +110,14 @@ def loadSysconfig():
     except:
         raise Exception("The engine group \"%s\" doesn't exist." % engineGroup)
 
+    # Java home directory:
+    global javaHomeDir
+    javaHomeDir = getSysconfig("JAVA_HOME", "/usr/lib/jvm/jre-1.7.0-openjdk.x86_64")
+
+    # Java launcher:
+    global javaLauncher
+    javaLauncher = os.path.join(javaHomeDir, "bin/java")
+
     # JBoss directories:
     global jbossHomeDir
     jbossHomeDir = getSysconfig("JBOSS_HOME", "/usr/share/jboss-as")
@@ -152,12 +166,7 @@ def loadSysconfig():
 
 
 def getSysconfig(variable, default=None):
-    # Then try with the environment (it overrides the config file):
-    value = os.getenv(variable)
-    if value:
-        return value
-
-    # Then try with the config file:
+    # Try with the config file:
     value = engineSysconfig.get(variable)
     if value:
         return value
@@ -213,6 +222,11 @@ def checkLog(name):
 
 
 def checkInstallation():
+    # Check that the Java home directory exists and that it contais at least
+    # the java executable:
+    checkDirectory(javaHomeDir)
+    checkFile(javaLauncher)
+
     # Check the required JBoss directories and files:
     checkDirectory(jbossHomeDir)
     checkFile(jbossModulesJar)
@@ -428,7 +442,7 @@ def startEngine():
     }
 
     # Finally execute the java virtual machine:
-    os.execvpe("java", engineArgs, engineEnv)
+    os.execvpe(javaLauncher, engineArgs, engineEnv)
 
 
 def stopEngine():
