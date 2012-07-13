@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.UpdateSpmHostNameVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.CommandParametersInitializer;
@@ -58,7 +57,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
 
             if (VdsHandler.IsUpdateValid(getParameters().getVdsStaticData(), _oldVds.getStaticData(),
                     _oldVds.getstatus())) {
-                if (StringHelper.EqOp(getParameters().getVdsStaticData().getvds_name(), "")) {
+                if ("".equals(getParameters().getVdsStaticData().getvds_name())) {
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS);
                 }
                 String vdsName = getParameters().getvds().getvds_name();
@@ -77,11 +76,11 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
                     returnValue = false;
                 }
                 // check if a name is updated to an existing vds name
-                else if (!StringHelper.EqOp(_oldVds.getvds_name().toLowerCase(), getParameters().getVdsStaticData()
+                else if (!StringUtils.equals(_oldVds.getvds_name().toLowerCase(), getParameters().getVdsStaticData()
                         .getvds_name().toLowerCase())
                         && VdsHandler.isVdsWithSameNameExistStatic(getParameters().getVdsStaticData().getvds_name())) {
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS);
-                } else if (!StringHelper.EqOp(_oldVds.gethost_name().toLowerCase(), getParameters().getVdsStaticData()
+                } else if (!StringUtils.equals(_oldVds.gethost_name().toLowerCase(), getParameters().getVdsStaticData()
                         .gethost_name().toLowerCase())
                         && VdsHandler.isVdsWithSameHostExistStatic(getParameters().getVdsStaticData().gethost_name())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
@@ -90,7 +89,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
                         && _oldVds.getstatus() != VDSStatus.InstallFailed) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
                 } else if (getParameters().getInstallVds()
-                        && StringHelper.isNullOrEmpty(getParameters().getRootPassword())
+                        && StringUtils.isEmpty(getParameters().getRootPassword())
                         && getParameters().getVdsStaticData().getvds_type() == VDSType.VDS) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
                 } else if (!getParameters().getInstallVds()
@@ -134,7 +133,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         }
         // if host_name changed and host is spm we need to update irsBroker cache with the new host_name
         if (_oldVds.getstorage_pool_id() != Guid.Empty && _oldVds.getspm_status() != VdsSpmStatus.None &&
-                !StringHelper.EqOp(_oldVds.gethost_name(), getParameters().getVdsStaticData().gethost_name())) {
+                !StringUtils.equals(_oldVds.gethost_name(), getParameters().getVdsStaticData().gethost_name())) {
             Backend.getInstance()
             .getResourceManager()
             .RunVdsCommand(VDSCommandType.UpdateSpmHostName,
