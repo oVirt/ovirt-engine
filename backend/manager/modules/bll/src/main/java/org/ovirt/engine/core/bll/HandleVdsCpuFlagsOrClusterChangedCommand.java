@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -42,13 +41,13 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         String vdsGroupCpuName = getVds().getvds_group_cpu_name();
         boolean foundCPU = true;
         // if cluster doesnt have cpu then get the cpu from the vds
-        if (StringHelper.isNullOrEmpty(vdsGroupCpuName)) {
+        if (StringUtils.isEmpty(vdsGroupCpuName)) {
             ServerCpu sc = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(getVds().getcpu_flags(), getVds()
                     .getvds_group_compatibility_version());
             if (sc == null) {
                 // if there are flags and no cpu found, mark to be non
                 // operational
-                if (!StringHelper.isNullOrEmpty(getVds().getcpu_flags())) {
+                if (!StringUtils.isEmpty(getVds().getcpu_flags())) {
                     foundCPU = false;
                 } else {
                     _hasFlags = false;
@@ -73,7 +72,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
         List<String> missingFlags = CpuFlagsManagerHandler.missingServerCpuFlags(vdsGroupCpuName, getVds()
                 .getcpu_flags(), getVds().getvds_group_compatibility_version());
-        if (!StringHelper.isNullOrEmpty(getVds().getcpu_flags()) && (!foundCPU || missingFlags != null)) {
+        if (!StringUtils.isEmpty(getVds().getcpu_flags()) && (!foundCPU || missingFlags != null)) {
             if (missingFlags != null) {
                 AddCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
                 if (missingFlags.contains("nx")) {
