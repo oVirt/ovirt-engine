@@ -21,15 +21,26 @@
 # information on the Apache Software Foundation, please see
 # <http://www.apache.org/>.
 
-MVN=$(shell which mvn)
+MVN=mvn
 EXTRA_BUILD_FLAGS=
 BUILD_FLAGS=-P gwt-admin,gwt-user
-MAVENPOM_DIR=/usr/share/maven-poms
-JAVA_DIR=/usr/share/java
-
-EAR_DIR=/usr/share/ovirt-engine/engine.ear
-EAR_SRC_DIR=ear/target/engine
-PY_SITE_PKGS:=$(shell python -c "from distutils.sysconfig import get_python_lib as f;print f()")
+PACKAGE_NAME=ovirt-engine
+ENGINE_NAME=$(PACKAGE_NAME)
+PREFIX=/usr/local
+BIN_DIR=$(PREFIX)/bin
+SYSCONF_DIR=$(PREFIX)/etc
+DATAROOT_DIR=$(PREFIX)/share
+DATA_DIR=$(DATAROOT_DIR)/$(ENGINE_NAME)
+MAVENPOM_DIR=$(DATAROOT_DIR)/maven-poms
+JAVA_DIR=$(DATAROOT_DIR)/java
+PKG_JAVA_DIR=$(JAVA_DIR)/$(ENGINE_NAME)
+PKG_SYSCONF_DIR=$(SYSCONF_DIR)/$(ENGINE_NAME)
+PKG_PKI_DIR=$(SYSCONF_DIR)/pki/$(ENGINE_NAME)
+PKG_EAR_DIR=$(DATA_DIR)/engine.ear
+PKG_JBOSS_MODULES=$(DATA_DIR)/modules
+RPMBUILD=rpmbuild
+PYTHON=python
+PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print f()")
 
 # RPM version
 APP_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
@@ -37,15 +48,14 @@ RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
 
 # Release Version; used to create y in <x.x.x-y> numbering.
 # Should be used to create releases.
-RELEASE_VERSION=3
+RPM_RELEASE_VERSION=3
 
 SPEC_FILE_IN=packaging/fedora/spec/ovirt-engine.spec.in
-SPEC_FILE=ovirt-engine.spec
-RPMBUILD=rpmbuild
+SPEC_FILE=$(PACKAGE_NAME).spec
 OUTPUT_RPMBUILD=$(shell pwd -P)/tmp.rpmbuild
 OUTPUT_DIR=output
-TARBALL=ovirt-engine-$(RPM_VERSION).tar.gz
-SRPM=$(OUTPUT_DIR)/ovirt-engine-$(RPM_VERSION)*.src.rpm
+TARBALL=$(PACKAGE_NAME)-$(RPM_VERSION).tar.gz
+SRPM=$(OUTPUT_DIR)/$(PACKAGE_NAME)-$(RPM_VERSION)*.src.rpm
 ARCH=noarch
 BUILD_FILE=tmp.built
 MAVEN_OUTPUT_DIR_DEFAULT=$(shell pwd -P)/tmp.repos
@@ -164,42 +174,43 @@ rpm-quick:
 
 create_dirs:
 	@echo "*** Creating Directories"
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/{kerberos,scripts,engine.ear,conf,dbscripts,resources,ovirt-isos,db-backups,engine.ear}
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-config
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/notifier
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/service
-	@install -dm 755 $(PREFIX)/usr/share/java
-	@install -dm 755 $(PREFIX)/usr/bin
-	@install -dm 755 $(PREFIX)/usr/share/man/man8
-	@install -dm 755 $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
-	@install -dm 755 $(PREFIX)/etc/ovirt-engine/notifier
-	@install -dm 755 $(PREFIX)/var/log/ovirt-engine/{notifier,engine-manage-domains}
-	@install -dm 755 $(PREFIX)/var/run/ovirt-engine/notifier
-	@install -dm 755 $(PREFIX)/var/lock/ovirt-engine
-	@install -dm 755 $(PREFIX)/etc/tmpfiles.d
-	@install -dm 755 $(PREFIX)/etc/cron.daily
-	@install -dm 755 $(PREFIX)/etc/security/limits.d
-	@install -dm 755 $(PREFIX)/etc/rc.d/init.d
-	@install -dm 755 $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains,sysprep}
-	@install -dm 755 $(PREFIX)$(EAR_DIR)
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org
-	@install -dm 755 $(PREFIX)/etc/pki/ovirt-engine/{keys,private,requests,certs}
-	@install -dm 755 $(PREFIX)/etc/sysconfig
-	@install -dm 755 $(PREFIX)/var/lib/ovirt-engine
-	@install -dm 755 $(PREFIX)/var/lib/ovirt-engine/deployments
-	@install -dm 755 $(PREFIX)/var/lib/ovirt-engine/content
-	@install -dm 755 $(PREFIX)/var/cache/ovirt-engine
-	@install -dm 755 $(PREFIX)/usr/lib/systemd/system
+	@install -dm 755 $(DESTDIR)$(BIN_DIR)
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/conf
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/db-backups
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/engine-config
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/engine-manage-domains
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/kerberos
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ovirt-isos
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/plugins
+	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
+	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config
+	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains
+	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/sysconfig
+	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/cron.daily
+	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/security/limits.d
+	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d
+
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/resources/jboss/modules/org
+
+	@install -dm 755 $(DESTDIR)/var/lib/$(ENGINE_NAME)
+	@install -dm 755 $(DESTDIR)/var/lib/$(ENGINE_NAME)/deployments
+	@install -dm 755 $(DESTDIR)/var/lib/$(ENGINE_NAME)/content
+	@install -dm 755 $(DESTDIR)/var/cache/$(ENGINE_NAME)
+	@install -dm 755 $(DESTDIR)/var/log/$(ENGINE_NAME)/{notifier,engine-manage-domains}
+	@install -dm 755 $(DESTDIR)/var/run/$(ENGINE_NAME)/notifier
+	@install -dm 755 $(DESTDIR)/var/lock/$(ENGINE_NAME)
+
+	@install -dm 755 $(DESTDIR)/usr/lib/systemd/system
+	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/tmpfiles.d
 
 install_artifacts:
-	@echo "*** Deploying EAR to $(PREFIX)"
-	install -dm 755 $(PREFIX)$(EAR_DIR)
-	X=`find "$(MAVEN_OUTPUT_DIR)" -name engine-server-ear-$(APP_VERSION).ear` && unzip "$$X" -d "$(PREFIX)$(EAR_DIR)"
+	@echo "*** Deploying EAR to $(DESTDIR)"
+	install -dm 755 $(DESTDIR)$(PKG_EAR_DIR)
+	install -dm 755 $(DESTDIR)$(PKG_JAVA_DIR)
+	install -dm 755 $(DESTDIR)$(MAVENPOM_DIR)
 
-	install -dm 755 $(PREFIX)$(JAVA_DIR)/ovirt-engine
-	install -dm 755 $(PREFIX)$(MAVENPOM_DIR)
+	X=`find "$(MAVEN_OUTPUT_DIR)" -name engine-server-ear-$(APP_VERSION).ear` && unzip "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
+
 	for artifact_id in  $(ARTIFACTS); do \
 		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(APP_VERSION).pom"`; \
 		if ! [ -f "$${POM}" ]; then \
@@ -207,148 +218,149 @@ install_artifacts:
 			exit 1; \
 		fi; \
 		JAR=`echo "$${POM}" | sed 's/\.pom/.jar/'`; \
-		install -p -m 644 "$$POM" "$(PREFIX)$(MAVENPOM_DIR)/ovirt-engine-$${artifact_id}.pom"; \
-		[ -f "$${JAR}" ] && install -p -m 644 "$${JAR}" "$(PREFIX)$(JAVA_DIR)/ovirt-engine/$${artifact_id}.jar"; \
+		install -p -m 644 "$${POM}" "$(DESTDIR)$(MAVENPOM_DIR)/$(ENGINE_NAME)-$${artifact_id}.pom"; \
+		[ -f "$${JAR}" ] && install -p -m 644 "$${JAR}" "$(DESTDIR)$(PKG_JAVA_DIR)/$${artifact_id}.jar"; \
 	done
 
 install_setup:
 	@echo "*** Deploying setup executables"
 
 	# Configuration files:
-	install -m 644 packaging/fedora/setup/engine-config-install.properties $(PREFIX)/usr/share/ovirt-engine/conf
-	install -m 644 packaging/fedora/setup/iptables.default $(PREFIX)/usr/share/ovirt-engine/conf
-	install -m 644 packaging/fedora/setup/nfs.sysconfig $(PREFIX)/usr/share/ovirt-engine/conf
+	install -m 644 packaging/fedora/setup/engine-config-install.properties $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/fedora/setup/iptables.default $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/fedora/setup/nfs.sysconfig $(DESTDIR)$(DATA_DIR)/conf
 
 	# Shared python modules:
-	install -m 644 packaging/fedora/setup/nfsutils.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	install -m 644 packaging/fedora/setup/basedefs.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	install -m 644 packaging/fedora/setup/engine_validators.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	install -m 644 packaging/fedora/setup/setup_params.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	install -m 644 packaging/fedora/setup/setup_sequences.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	install -m 644 packaging/fedora/setup/setup_controller.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	install -m 644 packaging/fedora/setup/common_utils.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	install -m 644 packaging/fedora/setup/output_messages.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	install -m 644 packaging/fedora/setup/post_upgrade.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	install -m 644 packaging/fedora/setup/nfsutils.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/basedefs.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/engine_validators.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/setup_params.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/setup_sequences.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/setup_controller.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/common_utils.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/output_messages.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/post_upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
 
 	# Example Plugin:
-	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
+	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
 
 	# Main programs and links:
-	install -m 755 packaging/fedora/setup/engine-setup.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	ln -s /usr/share/ovirt-engine/scripts/engine-setup.py $(PREFIX)/usr/bin/engine-setup
-	install -m 755 packaging/fedora/setup/engine-cleanup.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	ln -s /usr/share/ovirt-engine/scripts/engine-cleanup.py $(PREFIX)/usr/bin/engine-cleanup
-	install -m 755 packaging/fedora/setup/engine-upgrade.py $(PREFIX)/usr/share/ovirt-engine/scripts
-	ln -s /usr/share/ovirt-engine/scripts/engine-upgrade.py $(PREFIX)/usr/bin/engine-upgrade
-	install -m 755 packaging/fedora/setup/engine-check-update $(PREFIX)/usr/bin/
+	install -m 755 packaging/fedora/setup/engine-setup.py $(DESTDIR)$(DATA_DIR)/scripts
+	ln -s $(DATA_DIR)/scripts/engine-setup.py $(DESTDIR)$(BIN_DIR)/engine-setup
+	install -m 755 packaging/fedora/setup/engine-cleanup.py $(DESTDIR)$(DATA_DIR)/scripts
+	ln -s $(DATA_DIR)/scripts/engine-cleanup.py $(DESTDIR)$(BIN_DIR)/engine-cleanup
+	install -m 755 packaging/fedora/setup/engine-upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
+	ln -s $(DATA_DIR)/scripts/engine-upgrade.py $(DESTDIR)$(BIN_DIR)/engine-upgrade
+	install -m 755 packaging/fedora/setup/engine-check-update $(DESTDIR)$(BIN_DIR)/
 
 	# Configuration file for the index page:
-	install -m 644 packaging/fedora/setup/resources/jboss/web-conf.js $(PREFIX)/etc/ovirt-engine
-	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RELEASE_VERSION)/" $(PREFIX)$(EAR_DIR)/root.war/engineVersion.js
+	install -m 644 packaging/fedora/setup/resources/jboss/web-conf.js $(DESTDIR)$(PKG_SYSCONF_DIR)
+	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RPM_RELEASE_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
 
 install_aio_plugin:
-	install -m 755 packaging/fedora/setup/plugins/all_in_one_100.py $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
+	install -m 755 packaging/fedora/setup/plugins/all_in_one_100.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
 
 install_sec:
-	# Create the directories:
-	install -dm 755 $(PREFIX)/etc/pki/ovirt-engine
-	install -dm 755 $(PREFIX)/etc/pki/ovirt-engine/certs
-	install -dm 755 $(PREFIX)/etc/pki/ovirt-engine/keys
-	install -dm 755 $(PREFIX)/etc/pki/ovirt-engine/private
-	install -dm 755 $(PREFIX)/etc/pki/ovirt-engine/requests
+	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/certs
+	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/keys
+	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/private
+	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/requests
 
 	# Configuration files:
-	install -m 644 backend/manager/conf/ca/openssl.conf $(PREFIX)/etc/pki/ovirt-engine
-	install -m 644 backend/manager/conf/ca/cacert.template $(PREFIX)/etc/pki/ovirt-engine
-	install -m 644 backend/manager/conf/ca/cert.template $(PREFIX)/etc/pki/ovirt-engine
+	install -m 644 backend/manager/conf/ca/openssl.conf $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 backend/manager/conf/ca/cacert.template $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 backend/manager/conf/ca/cert.template $(DESTDIR)$(PKG_PKI_DIR)
 
 	# Certificate database:
-	install -m 644 backend/manager/conf/ca/database.txt $(PREFIX)/etc/pki/ovirt-engine
-	install -m 644 backend/manager/conf/ca/serial.txt $(PREFIX)/etc/pki/ovirt-engine
+	install -m 644 backend/manager/conf/ca/database.txt $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 backend/manager/conf/ca/serial.txt $(DESTDIR)$(PKG_PKI_DIR)
 
 	# Scripts:
-	install -m 755 backend/manager/conf/ca/*.sh $(PREFIX)/etc/pki/ovirt-engine
-	install -m 755 backend/manager/conf/ca/generate-ssh-keys $(PREFIX)/etc/pki/ovirt-engine
+	install -m 755 backend/manager/conf/ca/*.sh $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 755 backend/manager/conf/ca/generate-ssh-keys $(DESTDIR)$(PKG_PKI_DIR)
 
 install_config:
 	@echo "*** Deploying engine-config & engine-manage-domains"
 
 	# Configuration files for the configuration tool:
-	install -m 644 backend/manager/tools/engine-config/src/main/resources/engine-config.conf $(PREFIX)/etc/ovirt-engine/engine-config/
-	install -m 644 backend/manager/tools/engine-config/src/main/resources/engine-config.*properties $(PREFIX)/etc/ovirt-engine/engine-config/
-	install -m 644 backend/manager/tools/engine-config/src/main/resources/log4j.xml $(PREFIX)/etc/ovirt-engine/engine-config/
+	install -m 644 backend/manager/tools/engine-config/src/main/resources/engine-config.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
+	install -m 644 backend/manager/tools/engine-config/src/main/resources/engine-config.*properties $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
+	install -m 644 backend/manager/tools/engine-config/src/main/resources/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
 
 	# Main program for the configuration tool:
-	install -m 750 backend/manager/tools/engine-config/src/main/resources/engine-config $(PREFIX)/usr/share/ovirt-engine/engine-config/
-	ln -s /usr/share/ovirt-engine/engine-config/engine-config $(PREFIX)/usr/bin/engine-config
+	install -m 750 backend/manager/tools/engine-config/src/main/resources/engine-config $(DESTDIR)$(DATA_DIR)/engine-config/
+	ln -s $(DATA_DIR)/engine-config/engine-config $(DESTDIR)$(BIN_DIR)/engine-config
 
 	# Configuration files for the domain management tool:
-	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains.conf $(PREFIX)/etc/ovirt-engine/engine-manage-domains/
-	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains/log4j.xml $(PREFIX)/etc/ovirt-engine/engine-manage-domains/
+	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
+	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
 
 	# Main program for the domain management tool:
-	install -m 750 backend/manager/conf/kerberos/engine-manage-domains $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/
-	ln -s /usr/share/ovirt-engine/engine-manage-domains/engine-manage-domains $(PREFIX)/usr/bin/engine-manage-domains
+	install -m 750 backend/manager/conf/kerberos/engine-manage-domains $(DESTDIR)$(DATA_DIR)/engine-manage-domains/
+	ln -s $(DATA_DIR)/engine-manage-domains/engine-manage-domains $(DESTDIR)$(BIN_DIR)/engine-manage-domains
 
 install_sysprep:
 	@echo "*** Deploying sysperp"
-	install -m 644 backend/manager/conf/sysprep/* $(PREFIX)/etc/ovirt-engine/sysprep
+	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep
+	install -m 644 backend/manager/conf/sysprep/* $(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep
 
 install_notification_service:
 	@echo "*** Deploying notification service"
 
+	install -dm 755 $(DESTDIR)$(DATA_DIR)/notifier
+	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier
+
 	# Configuration files:
-	install -m 644 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/log4j.xml $(PREFIX)/etc/ovirt-engine/notifier/
-	install -m 640 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.conf $(PREFIX)/etc/ovirt-engine/notifier/
+	install -m 644 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/
+	install -m 640 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/
 
 	# Main program:
-	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.sh $(PREFIX)/usr/share/ovirt-engine/notifier/
-	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/engine-notifierd $(PREFIX)/etc/rc.d/init.d/
+	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.sh $(DESTDIR)$(DATA_DIR)/notifier/
+	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/engine-notifierd $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d/
 
 install_db_scripts:
 	@echo "*** Deploying Database scripts"
-	cp -r backend/manager/dbscripts/* $(PREFIX)/usr/share/ovirt-engine/dbscripts
-	find $(PREFIX)/usr/share/ovirt-engine/dbscripts -type d -exec chmod 755 {} \;
-	find $(PREFIX)/usr/share/ovirt-engine/dbscripts -type f -name '*.sql' -exec chmod 644 {} \;
-	find $(PREFIX)/usr/share/ovirt-engine/dbscripts -type f -name '*.sh' -exec chmod 755 {} \;
+	install -dm 755 $(DESTDIR)$(DATA_DIR)/dbscripts
+	cp -r backend/manager/dbscripts/* $(DESTDIR)$(DATA_DIR)/dbscripts
+	find $(DESTDIR)$(DATA_DIR)/dbscripts -type d -exec chmod 755 {} \;
+	find $(DESTDIR)$(DATA_DIR)/dbscripts -type f -name '*.sql' -exec chmod 644 {} \;
+	find $(DESTDIR)$(DATA_DIR)/dbscripts -type f -name '*.sh' -exec chmod 755 {} \;
 
 install_misc:
 	@echo "*** Copying additional files"
-	install -m 644 backend/manager/conf/jaas.conf $(PREFIX)/usr/share/ovirt-engine/conf
-	install -m 640 backend/manager/conf/engine.conf $(PREFIX)/etc/ovirt-engine/
-	install -m 644 backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
-	install -m 644 backend/manager/conf/kerberos/* $(PREFIX)/usr/share/ovirt-engine/kerberos
+	install -m 644 backend/manager/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf
+	install -m 640 backend/manager/conf/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
+	install -m 644 backend/manager/conf/jboss-log4j.xml $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 backend/manager/conf/kerberos/* $(DESTDIR)$(DATA_DIR)/kerberos
 	# XXX: Does this script need execution permission? It
 	# needs when copied to the host, but I am not sure it
 	# should it have it in the manager machine.
-	install -m 755 backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts/
-	install -m 644 backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
-	install -m 755 packaging/resources/ovirtlogrot.sh ${PREFIX}/usr/share/ovirt-engine/scripts/
-	install -m 755 packaging/resources/ovirt-cron ${PREFIX}/etc/cron.daily/
-	install -m 644 packaging/resources/ovirt-tmpfilesd ${PREFIX}/etc/tmpfiles.d/ovirt-engine.conf
+	install -m 755 backend/manager/conf/vds_installer.py $(DESTDIR)$(DATA_DIR)/scripts/
+	install -m 644 backend/manager/conf/jboss-log4j.xml $(DESTDIR)$(DATA_DIR)/conf
+	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
+	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
+	install -m 644 packaging/resources/ovirt-tmpfilesd ${DESTDIR}$(SYSCONF_DIR)/tmpfiles.d/$(ENGINE_NAME).conf
 
 install_jboss_modules:
 	@echo "*** Deploying JBoss modules"
 
-	# Create the modules directory:
-	install -dm 755 $(PREFIX)/usr/share/ovirt-engine/modules
-
 	# PostgreSQL driver:
-	install -dm 755 $(PREFIX)/usr/share/ovirt-engine/modules/org/postgresql/main
-	install -m 644 deployment/modules/org/postgresql/main/module.xml $(PREFIX)/usr/share/ovirt-engine/modules/org/postgresql/main/.
-	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/postgresql/main/.
+	install -dm 755 $(DESTDIR)$(PKG_JBOSS_MODULES)/org/postgresql/main
+	install -m 644 deployment/modules/org/postgresql/main/module.xml $(DESTDIR)$(PKG_JBOSS_MODULES)/org/postgresql/main/.
+	ln -s $(JAVA_DIR)/postgresql-jdbc.jar $(DESTDIR)$(PKG_JBOSS_MODULES)/org/postgresql/main/.
 
 install_service:
 	@echo "*** Deploying service"
 
 	# Install the files:
-	install -m 644 packaging/fedora/engine-service.xml.in $(PREFIX)/usr/share/ovirt-engine/service
-	install -m 644 packaging/fedora/engine-service-logging.properties $(PREFIX)/usr/share/ovirt-engine/service
-	install -m 644 packaging/fedora/engine-service.sysconfig $(PREFIX)/etc/sysconfig/ovirt-engine
-	install -m 644 packaging/fedora/engine-service.limits $(PREFIX)/etc/security/limits.d/10-ovirt-engine.conf
-	install -m 755 packaging/fedora/engine-service.py $(PREFIX)/usr/share/ovirt-engine/service
-	install -m 644 packaging/fedora/engine-service.systemd $(PREFIX)/usr/lib/systemd/system/ovirt-engine.service
+	install -dm 755 $(DESTDIR)$(DATA_DIR)/service
+	install -m 644 packaging/fedora/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/service
+	install -m 644 packaging/fedora/engine-service-logging.properties $(DESTDIR)$(DATA_DIR)/service
+	install -m 755 packaging/fedora/engine-service.py $(DESTDIR)$(DATA_DIR)/service
+	install -m 644 packaging/fedora/engine-service.sysconfig $(DESTDIR)$(SYSCONF_DIR)/sysconfig/ovirt-engine
+	install -m 644 packaging/fedora/engine-service.limits $(DESTDIR)$(SYSCONF_DIR)/security/limits.d/10-$(ENGINE_NAME).conf
+	install -m 644 packaging/fedora/engine-service.systemd $(DESTDIR)/usr/lib/systemd/system/ovirt-engine.service
 
 	# Install the links:
-	ln -s /usr/share/ovirt-engine/service/engine-service.py $(PREFIX)/usr/bin/engine-service
+	ln -s $(DATA_DIR)/service/engine-service.py $(DESTDIR)$(BIN_DIR)/engine-service
 

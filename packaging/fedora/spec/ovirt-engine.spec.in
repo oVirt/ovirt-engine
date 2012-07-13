@@ -2,13 +2,18 @@
 # Short names for engine directories:
 %global engine_name ovirt-engine
 %global engine_etc %{_sysconfdir}/%{engine_name}
-%global engine_usr %{_datadir}/%{engine_name}
-%global engine_var %{_var}/lib/%{engine_name}
-%global engine_jar %{_javadir}/%{engine_name}
-%global engine_tmp %{_var}/cache/%{engine_name}
-%global engine_ear %{engine_usr}/engine.ear
+%global engine_data %{_datadir}/%{engine_name}
+%global engine_ear %{engine_data}/engine.ear
+%global engine_java %{_javadir}/%{engine_name}
 %global engine_pki %{_sysconfdir}/pki/%{engine_name}
-%global engine_modules %{engine_usr}/modules
+%global engine_jboss_modules %{engine_data}/modules
+
+%global engine_state %{_localstatedir}/lib/%{engine_name}
+%global engine_cache %{_localstatedir}/cache/%{engine_name}
+%global engine_log %{_localstatedir}/log/%{engine_name}
+%global engine_run %{_localstatedir}/run/%{engine_name}
+%global engine_lock %{_localstatedir}/lock/%{engine_name}
+
 %global restapi_war %{engine_ear}/restapi.war
 %global root_war %{engine_ear}/root.war
 
@@ -20,13 +25,25 @@
 # Macro to create the engine user:
 %global create_engine_user \
 /bin/getent group %{engine_group} >/dev/null || /sbin/groupadd -r %{engine_group}; \
-/bin/getent passwd %{engine_user} >/dev/null || /sbin/useradd -c "oVirt Manager" -u %{engine_uid} -g %{engine_group} -M -d %{engine_var} %{engine_user}
+/bin/getent passwd %{engine_user} >/dev/null || /sbin/useradd -c "oVirt Manager" -u %{engine_uid} -g %{engine_group} -M -d %{engine_state} %{engine_user}
 
 %global make_common_opts \\\
 	-j1 \\\
-	PREFIX=%{buildroot} \\\
+	PACKAGE_NAME=%{name} \\\
+	ENGINE_NAME=%{engine_name} \\\
+	PREFIX=%{_prefix} \\\
+	SYSCONF_DIR=%{_sysconfdir} \\\
+	BIN_DIR=%{_bindir} \\\
+	DATAROOT_DIR=%{_datadir} \\\
+	PYTHON=%{__python} \\\
+	PYTHON_DIR=%{python_sitelib} \\\
 	JAVA_DIR=%{_javadir} \\\
 	MAVENPOM_DIR=%{_mavenpomdir} \\\
+	PKG_JAVA_DIR=%{engine_java} \\\
+	PKG_SYSCONF_DIR=%{engine_etc} \\\
+	PKG_EAR_DIR=%{engine_ear} \\\
+	PKG_PKI_DIR=%{engine_pki} \\\
+	PKG_JBOSS_MODULES=%{engine_jboss_modules} \\\
 	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
@@ -313,10 +330,12 @@ make %{make_common_opts}
 
 %install
 
+rm -fr "%{buildroot}"
+
 # Use the makefile to do the normal installation, after that we
 # will need to replace jar files with links to their actual
 # locations:
-make %{make_common_opts} install
+make %{make_common_opts} install DESTDIR=%{buildroot}
 
 # Register poms
 for pom in %{buildroot}%{_mavenpomdir}/*.pom
@@ -326,7 +345,7 @@ do
   jpppom="JPP.`echo "${pom}" | sed 's/^%{engine_name}-/%{name}-/'`"
   mv "${pomdir}/${pom}" "${pomdir}/${jpppom}"
   artifact_id=`echo "${pom}" | sed -e 's/^%{name}-//' -e 's/\.pom//'`
-  if [ -f "%{buildroot}%{engine_jar}/${artifact_id}.jar" ]
+  if [ -f "%{buildroot}%{engine_java}/${artifact_id}.jar" ]
   then
     %add_maven_depmap "${jpppom}" "%{engine_name}/${artifact_id}.jar"
   else
@@ -340,7 +359,7 @@ done
 while read jar_name ear_path
 do
   rm -rf %{buildroot}%{engine_ear}/${ear_path}*.jar
-  ln -s %{engine_jar}/${jar_name}.jar %{buildroot}%{engine_ear}/${ear_path}.jar
+  ln -s %{engine_java}/${jar_name}.jar %{buildroot}%{engine_ear}/${ear_path}.jar
 done <<'.'
 bll engine-bll
 genericapi engine-genericapi
@@ -414,7 +433,7 @@ xmlrpc3-common xmlrpc-common
 while read jar_name lib_path
 do
   rm -rf %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}*.jar
-  ln -s %{engine_jar}/${jar_name}.jar %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}.jar
+  ln -s %{engine_java}/${jar_name}.jar %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}.jar
 done <<'.'
 interface-common-jaxrs interface-common-jaxrs
 restapi-definition restapi-definition
@@ -441,72 +460,72 @@ snakeyaml snakeyaml
 .
 
 # Copy the module definitions:
-install -dm 755 %{buildroot}%{engine_modules}
-cp -r deployment/modules/* %{buildroot}%{engine_modules}
-find %{buildroot}%{engine_modules} -type d -exec chmod 755 {} \;
-find %{buildroot}%{engine_modules} -type f -exec chmod 644 {} \;
+install -dm 755 %{buildroot}%{engine_jboss_modules}
+cp -r deployment/modules/* %{buildroot}%{engine_jboss_modules}
+find %{buildroot}%{engine_jboss_modules} -type d -exec chmod 755 {} \;
+find %{buildroot}%{engine_jboss_modules} -type f -exec chmod 644 {} \;
 
 # Apache commons-codec module:
-ln -s `build-classpath commons-codec` %{buildroot}%{engine_modules}/org/apache/commons/codec/main/.
+ln -s `build-classpath commons-codec` %{buildroot}%{engine_jboss_modules}/org/apache/commons/codec/main/.
 
 # Apache HTTP components module:
-ln -s `build-classpath httpcomponents/httpcore` %{buildroot}%{engine_modules}/org/apache/httpcomponents/main/.
-ln -s `build-classpath httpcomponents/httpclient` %{buildroot}%{engine_modules}/org/apache/httpcomponents/main/.
-ln -s `build-classpath httpcomponents/httpmime` %{buildroot}%{engine_modules}/org/apache/httpcomponents/main/.
+ln -s `build-classpath httpcomponents/httpcore` %{buildroot}%{engine_jboss_modules}/org/apache/httpcomponents/main/.
+ln -s `build-classpath httpcomponents/httpclient` %{buildroot}%{engine_jboss_modules}/org/apache/httpcomponents/main/.
+ln -s `build-classpath httpcomponents/httpmime` %{buildroot}%{engine_jboss_modules}/org/apache/httpcomponents/main/.
 
 # Scannotation module:
-ln -s `build-classpath scannotation` %{buildroot}%{engine_modules}/org/scannotation/scannotation/main/.
+ln -s `build-classpath scannotation` %{buildroot}%{engine_jboss_modules}/org/scannotation/scannotation/main/.
 
 # JAXB module:
-ln -s `build-classpath glassfish-jaxb/jaxb-impl` %{buildroot}%{engine_modules}/com/sun/xml/bind/main/.
-ln -s `build-classpath glassfish-jaxb/jaxb-xjc` %{buildroot}%{engine_modules}/com/sun/xml/bind/main/.
-ln -s `build-classpath istack-commons-runtime` %{buildroot}%{engine_modules}/com/sun/xml/bind/main/.
+ln -s `build-classpath glassfish-jaxb/jaxb-impl` %{buildroot}%{engine_jboss_modules}/com/sun/xml/bind/main/.
+ln -s `build-classpath glassfish-jaxb/jaxb-xjc` %{buildroot}%{engine_jboss_modules}/com/sun/xml/bind/main/.
+ln -s `build-classpath istack-commons-runtime` %{buildroot}%{engine_jboss_modules}/com/sun/xml/bind/main/.
 
 # JAX-RS API modules:
-ln -s `build-classpath resteasy/jaxrs-api` %{buildroot}%{engine_modules}/javax/ws/rs/api/main/.
+ln -s `build-classpath resteasy/jaxrs-api` %{buildroot}%{engine_jboss_modules}/javax/ws/rs/api/main/.
 
 # Resteasy modules:
-ln -s `build-classpath resteasy/resteasy-cdi` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-cdi/main/.
-ln -s `build-classpath resteasy/resteasy-jettison-provider` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-jettison-provider/main/.
-ln -s `build-classpath resteasy/resteasy-atom-provider` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-atom-provider/main/.
-ln -s `build-classpath resteasy/resteasy-yaml-provider` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-yaml-provider/main/.
-ln -s `build-classpath resteasy/resteasy-multipart-provider` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-multipart-provider/main/.
-ln -s `build-classpath resteasy/resteasy-jackson-provider` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-jackson-provider/main/.
-ln -s `build-classpath resteasy/resteasy-jaxb-provider` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-jaxb-provider/main/.
-ln -s `build-classpath resteasy/resteasy-jaxrs` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-jaxrs/main/.
-ln -s `build-classpath resteasy/async-http-servlet-3.0` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-jaxrs/main/.
-ln -s `build-classpath resteasy/resteasy-jsapi` %{buildroot}%{engine_modules}/org/jboss/resteasy/resteasy-jsapi/main/.
+ln -s `build-classpath resteasy/resteasy-cdi` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-cdi/main/.
+ln -s `build-classpath resteasy/resteasy-jettison-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jettison-provider/main/.
+ln -s `build-classpath resteasy/resteasy-atom-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-atom-provider/main/.
+ln -s `build-classpath resteasy/resteasy-yaml-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-yaml-provider/main/.
+ln -s `build-classpath resteasy/resteasy-multipart-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-multipart-provider/main/.
+ln -s `build-classpath resteasy/resteasy-jackson-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jackson-provider/main/.
+ln -s `build-classpath resteasy/resteasy-jaxb-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jaxb-provider/main/.
+ln -s `build-classpath resteasy/resteasy-jaxrs` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jaxrs/main/.
+ln -s `build-classpath resteasy/async-http-servlet-3.0` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jaxrs/main/.
+ln -s `build-classpath resteasy/resteasy-jsapi` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jsapi/main/.
 
 # Jackson modules:
-ln -s `build-classpath jackson/jackson-jaxrs` %{buildroot}%{engine_modules}/org/codehaus/jackson/jackson-jaxrs/main/.
-ln -s `build-classpath jackson/jackson-core-asl` %{buildroot}%{engine_modules}/org/codehaus/jackson/jackson-core-asl/main/.
-ln -s `build-classpath jackson/jackson-mapper-asl` %{buildroot}%{engine_modules}/org/codehaus/jackson/jackson-mapper-asl/main/.
-ln -s `build-classpath jackson/jackson-xc` %{buildroot}%{engine_modules}/org/codehaus/jackson/jackson-xc/main/.
+ln -s `build-classpath jackson/jackson-jaxrs` %{buildroot}%{engine_jboss_modules}/org/codehaus/jackson/jackson-jaxrs/main/.
+ln -s `build-classpath jackson/jackson-core-asl` %{buildroot}%{engine_jboss_modules}/org/codehaus/jackson/jackson-core-asl/main/.
+ln -s `build-classpath jackson/jackson-mapper-asl` %{buildroot}%{engine_jboss_modules}/org/codehaus/jackson/jackson-mapper-asl/main/.
+ln -s `build-classpath jackson/jackson-xc` %{buildroot}%{engine_jboss_modules}/org/codehaus/jackson/jackson-xc/main/.
 
 # Hibernate validator module:
-ln -s `build-classpath hibernate-validator` %{buildroot}%{engine_modules}/org/hibernate/validator/main/.
-ln -s `build-classpath jtype` %{buildroot}%{engine_modules}/org/hibernate/validator/main/.
+ln -s `build-classpath hibernate-validator` %{buildroot}%{engine_jboss_modules}/org/hibernate/validator/main/.
+ln -s `build-classpath jtype` %{buildroot}%{engine_jboss_modules}/org/hibernate/validator/main/.
 
 # Jettison:
-ln -s `build-classpath jettison` %{buildroot}%{engine_modules}/org/codehaus/jettison/main
+ln -s `build-classpath jettison` %{buildroot}%{engine_jboss_modules}/org/codehaus/jettison/main
 
 # Apache MIME4J:
-ln -s `build-classpath apache-mime4j/core` %{buildroot}%{engine_modules}/org/apache/james/mime4j/main/.
-ln -s `build-classpath apache-mime4j/dom` %{buildroot}%{engine_modules}/org/apache/james/mime4j/main/.
-ln -s `build-classpath apache-mime4j/storage` %{buildroot}%{engine_modules}/org/apache/james/mime4j/main/.
+ln -s `build-classpath apache-mime4j/core` %{buildroot}%{engine_jboss_modules}/org/apache/james/mime4j/main/.
+ln -s `build-classpath apache-mime4j/dom` %{buildroot}%{engine_jboss_modules}/org/apache/james/mime4j/main/.
+ln -s `build-classpath apache-mime4j/storage` %{buildroot}%{engine_jboss_modules}/org/apache/james/mime4j/main/.
 
 # Snakeyaml:
-ln -s `build-classpath snakeyaml` %{buildroot}%{engine_modules}/org/yaml/snakeyaml/main/.
+ln -s `build-classpath snakeyaml` %{buildroot}%{engine_jboss_modules}/org/yaml/snakeyaml/main/.
 
 
 %preun
 if [ "$1" -eq 0 ]
 then
-    curdate=`date +"%Y_%m_%d_%H_%M_%%S"`
-    if [[ -d %{_sysconfdir}/pki/%{engine_name} ]]; then
-        mkdir -p %{_sysconfdir}/pki/%{engine_name}-backups/%{engine_name}-${curdate}
+    if [ -d "%{engine_pki}" ]; then
         #backup whole 'rhevm' dir into the backup dir with current date
-        cp -pR %{_sysconfdir}/pki/%{engine_name}/ %{_sysconfdir}/pki/%{engine_name}-backups/%{engine_name}-${curdate}/
+        dest="%{engine_pki}/../%{engine_name}-backups/%{engine_name}-$(date +"%%Y_%%m_%%d_%%H_%%M_%%S")"
+        mkdir -p "${dest}"
+        cp -pR "%{engine_pki}" "${dest}"
     fi
 fi
 
@@ -514,9 +533,7 @@ fi
 %postun
 if [ "$1" -eq 0 ]
 then
-    if [[ -d %{_sysconfdir}/pki/%{engine_name} ]]; then
-	    rm -rf %{_sysconfdir}/pki/%{engine_name}
-	fi
+    rm -rf "%{engine_pki}"
 
     if [[ -f %{_sysconfdir}/yum/pluginconf.d/versionlock.list ]]
     then
@@ -540,24 +557,24 @@ fi
 %files
 
 # The main package owns most of the directories:
-%dir %{engine_usr}
-%dir %{engine_usr}/ovirt-isos
-%dir %{engine_usr}/resources
-%dir %{engine_usr}/db-backups
-%dir %{engine_usr}/scripts
-%dir %{_localstatedir}/run/%{engine_name}
-%dir %attr(-, %{engine_user}, %{engine_group}) %{_var}/log/%{engine_name}
-%dir %attr(-, %{engine_user}, %{engine_group}) %{_var}/lock/%{engine_name}
+%dir %{engine_data}
+%dir %{engine_data}/ovirt-isos
+%dir %{engine_data}/resources
+%dir %{engine_data}/db-backups
+%dir %{engine_data}/scripts
+%dir %{engine_run}
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_lock}
 
 # VDS installer script:
-%{engine_usr}/scripts/vds_installer.py*
+%{engine_data}/scripts/vds_installer.py*
 
 # Log rotation script:
-%{engine_usr}/scripts/ovirtlogrot.sh
+%{engine_data}/scripts/ovirtlogrot.sh
 %{_sysconfdir}/cron.daily/ovirt-cron
 
 # Misc configuration files:
-%{engine_usr}/conf
+%{engine_data}/conf
 %{_sysconfdir}/tmpfiles.d/ovirt-engine.conf
 
 # Engine configuration files:
@@ -568,18 +585,18 @@ fi
 # Files needed by the service:
 %config(noreplace) %{_sysconfdir}/sysconfig/%{engine_name}
 %config(noreplace) %{_sysconfdir}/security/limits.d/10-ovirt-engine.conf
-%{engine_usr}/service
+%{engine_data}/service
 %{_bindir}/engine-service
 %{_unitdir}/%{engine_name}.service
 
 # Jar files used by all the components:
-%dir %{engine_jar}
-%{engine_jar}/common.jar
-%{engine_jar}/compat.jar
-%{engine_jar}/utils.jar
+%dir %{engine_java}
+%{engine_java}/common.jar
+%{engine_java}/compat.jar
+%{engine_java}/utils.jar
 
 # POM files:
-%{_mavendepmapfragdir}/%{name}
+%{_mavendepmapfragdir}/%{engine_name}
 %{_mavenpomdir}/JPP.%{name}-root.pom
 %{_mavenpomdir}/JPP.%{name}-common.pom
 %{_mavenpomdir}/JPP.%{name}-compat.pom
@@ -592,13 +609,13 @@ fi
 %files backend
 
 # Jar files:
-%{engine_jar}/bll.jar
-%{engine_jar}/dal.jar
-%{engine_jar}/engine-config.jar
-%{engine_jar}/engineencryptutils.jar
-%{engine_jar}/scheduler.jar
-%{engine_jar}/searchbackend.jar
-%{engine_jar}/vdsbroker.jar
+%{engine_java}/bll.jar
+%{engine_java}/dal.jar
+%{engine_java}/engine-config.jar
+%{engine_java}/engineencryptutils.jar
+%{engine_java}/scheduler.jar
+%{engine_java}/searchbackend.jar
+%{engine_java}/vdsbroker.jar
 
 # POM files:
 %{_mavenpomdir}/JPP.%{name}-backend.pom
@@ -618,8 +635,8 @@ fi
 # Directories for the deployments, contents and temporary files need to
 # be owned by the engine user because the application server needs to
 # write to them:
-%attr(-, %{engine_user}, %{engine_group}) %{engine_var}
-%attr(-, %{engine_user}, %{engine_group}) %{engine_tmp}
+%attr(-, %{engine_user}, %{engine_group}) %{engine_state}
+%attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 
 # The backend owns the directory of the ear and most of its contents,
 # but not all, as most of the web applications are owned by other
@@ -659,8 +676,7 @@ fi
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/serial.txt
 
 # Modules:
-%{engine_modules}
-
+%{engine_jboss_modules}
 
 %files setup
 
@@ -671,39 +687,39 @@ fi
 %{_bindir}/engine-cleanup
 
 # Python scripts:
-%{engine_usr}/scripts/basedefs.py*
-%{engine_usr}/scripts/engine_validators.py*
-%{engine_usr}/scripts/setup_params.py*
-%{engine_usr}/scripts/setup_sequences.py*
-%{engine_usr}/scripts/setup_controller.py*
-%{engine_usr}/scripts/common_utils.py*
-%{engine_usr}/scripts/output_messages.py*
-%{engine_usr}/scripts/nfsutils.py*
-%{engine_usr}/scripts/engine-setup.py*
-%{engine_usr}/scripts/engine-cleanup.py*
-%{engine_usr}/scripts/engine-upgrade.py*
-%{engine_usr}/scripts/post_upgrade.py*
+%{engine_data}/scripts/basedefs.py*
+%{engine_data}/scripts/engine_validators.py*
+%{engine_data}/scripts/setup_params.py*
+%{engine_data}/scripts/setup_sequences.py*
+%{engine_data}/scripts/setup_controller.py*
+%{engine_data}/scripts/common_utils.py*
+%{engine_data}/scripts/output_messages.py*
+%{engine_data}/scripts/nfsutils.py*
+%{engine_data}/scripts/engine-setup.py*
+%{engine_data}/scripts/engine-cleanup.py*
+%{engine_data}/scripts/engine-upgrade.py*
+%{engine_data}/scripts/post_upgrade.py*
 
 # Plugins directory:
-%dir %{engine_usr}/scripts/plugins
-%{engine_usr}/scripts/plugins/example_plugin_000.py*
+%dir %{engine_data}/scripts/plugins
+%{engine_data}/scripts/plugins/example_plugin_000.py*
 
 
 %files setup-plugin-allinone
-%{engine_usr}/scripts/plugins/all_in_one_100.py*
+%{engine_data}/scripts/plugins/all_in_one_100.py*
 
 
 %files dbscripts
-%{engine_usr}/dbscripts
+%{engine_data}/dbscripts
 
 
 %files restapi
 
 # Jar files:
-%{engine_jar}/interface-common-jaxrs.jar
-%{engine_jar}/restapi-definition.jar
-%{engine_jar}/restapi-jaxrs.jar
-%{engine_jar}/restapi-types.jar
+%{engine_java}/interface-common-jaxrs.jar
+%{engine_java}/restapi-definition.jar
+%{engine_java}/restapi-jaxrs.jar
+%{engine_java}/restapi-types.jar
 
 # POM files:
 %{_mavenpomdir}/JPP.%{name}-interface-common-jaxrs.pom
@@ -720,7 +736,7 @@ fi
 %files genericapi
 
 # Jar files:
-%{engine_jar}/genericapi.jar
+%{engine_java}/genericapi.jar
 
 # POM files:
 %{_mavenpomdir}/JPP.%{name}-genericapi.pom
@@ -742,7 +758,7 @@ fi
 %files tools-common
 
 # Jar files:
-%{engine_jar}/engine-tools-common.jar
+%{engine_java}/engine-tools-common.jar
 
 # POM files:
 %{_mavenpomdir}/JPP.%{name}-engine-tools-common.pom
@@ -755,9 +771,9 @@ fi
 %{_bindir}/engine-manage-domains
 
 # Scripts:
-%{engine_usr}/engine-config
-%{engine_usr}/engine-manage-domains
-%{engine_usr}/kerberos
+%{engine_data}/engine-config
+%{engine_data}/engine-manage-domains
+%{engine_data}/kerberos
 
 # Configuration files for the configuration tool:
 %dir %{engine_etc}/engine-config
@@ -779,8 +795,8 @@ fi
 
 # Log and state directories must be owned by ovirt because the notifier service
 # runs with that user and needs to write them:
-%dir %attr(-, %{engine_user}, %{engine_group}) %{_var}/log/%{engine_name}/notifier
-%dir %attr(-, %{engine_user}, %{engine_group}) %{_localstatedir}/run/%{engine_name}/notifier
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/notifier
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_run}/notifier
 
 # Configuration files:
 %dir %{engine_etc}/notifier
@@ -788,7 +804,7 @@ fi
 %{engine_etc}/notifier/log4j.xml
 
 # Jar files:
-%{engine_jar}/engine-notifier-service.jar
+%{engine_java}/engine-notifier-service.jar
 
 # POM files:
 %{_mavenpomdir}/JPP.%{name}-engine-notifier.pom
