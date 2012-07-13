@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
@@ -54,7 +54,7 @@ public class SessionDataContainer {
      */
     public final boolean SetData(String key, Object value) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
-        if (StringHelper.isNullOrEmpty(sessionId)) {
+        if (StringUtils.isEmpty(sessionId)) {
             return false;
         }
         SetData(sessionId, key, value);
@@ -188,7 +188,7 @@ public class SessionDataContainer {
     public IVdcUser addUserToThreadContext(String sessionId, boolean refresh) {
         IVdcUser vdcUser = ThreadLocalParamsContainer.getVdcUser();
         if (vdcUser == null) {
-            if (!StringHelper.isNullOrEmpty(sessionId)) {
+            if (!StringUtils.isEmpty(sessionId)) {
                 vdcUser = getUser(sessionId, refresh);
                 ThreadLocalParamsContainer.setHttpSessionId(sessionId);
             } else {
