@@ -212,14 +212,6 @@ create_dirs:
 
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/resources/jboss/modules/org
 
-	@install -dm 755 $(DESTDIR)/var/lib/$(ENGINE_NAME)
-	@install -dm 755 $(DESTDIR)/var/lib/$(ENGINE_NAME)/deployments
-	@install -dm 755 $(DESTDIR)/var/lib/$(ENGINE_NAME)/content
-	@install -dm 755 $(DESTDIR)/var/cache/$(ENGINE_NAME)
-	@install -dm 755 $(DESTDIR)/var/log/$(ENGINE_NAME)/{notifier,engine-manage-domains}
-	@install -dm 755 $(DESTDIR)/var/run/$(ENGINE_NAME)/notifier
-	@install -dm 755 $(DESTDIR)/var/lock/$(ENGINE_NAME)
-
 	@install -dm 755 $(DESTDIR)/usr/lib/systemd/system
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/tmpfiles.d
 

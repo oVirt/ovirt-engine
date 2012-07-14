@@ -337,6 +337,13 @@ rm -fr "%{buildroot}"
 # locations:
 make %{make_common_opts} install DESTDIR=%{buildroot}
 
+install -dm 755 %{buildroot}/%{engine_state}/deployments
+install -dm 755 %{buildroot}/%{engine_state}/content
+install -dm 755 %{buildroot}/%{engine_cache}
+install -dm 755 %{buildroot}/%{engine_log}/{notifier,engine-manage-domains}
+install -dm 755 %{buildroot}/%{engine_run}/notifier
+install -dm 755 %{buildroot}/%{engine_lock}
+
 # Register poms
 for pom in %{buildroot}%{_mavenpomdir}/*.pom
 do
