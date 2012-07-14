@@ -353,27 +353,6 @@ do
   fi
 done
 
-# Replace jar files in the ear with links to their actuals
-# locations, first for jar files from this package, as for these
-# can't use build-classpath:
-while read jar_name ear_path
-do
-  rm -rf %{buildroot}%{engine_ear}/${ear_path}*.jar
-  ln -s %{engine_java}/${jar_name}.jar %{buildroot}%{engine_ear}/${ear_path}.jar
-done <<'.'
-bll engine-bll
-genericapi engine-genericapi
-scheduler engine-scheduler
-common lib/engine-common
-compat lib/engine-compat
-dal lib/engine-dal
-engineencryptutils lib/engine-encryptutils
-engine-tools-common lib/engine-tools-common
-utils lib/engine-utils
-vdsbroker lib/engine-vdsbroker
-searchbackend lib/searchbackend
-.
-
 # Remove the jar files that are not needed:
 while read lib_path
 do

@@ -87,6 +87,22 @@ ARTIFACTS = \
 	utils \
 	vdsbroker
 
+# avoid duplicate jars, remove 1st component
+# link to 2nd component
+# no convention yet...
+OWN_JAR_FIXUPS = \
+	$(PKG_EAR_DIR)/engine-bll,bll \
+	$(PKG_EAR_DIR)/engine-genericapi,genericapi \
+	$(PKG_EAR_DIR)/engine-scheduler,scheduler \
+	$(PKG_EAR_DIR)/lib/engine-common,common \
+	$(PKG_EAR_DIR)/lib/engine-compat,compat \
+	$(PKG_EAR_DIR)/lib/engine-dal,dal \
+	$(PKG_EAR_DIR)/lib/engine-encryptutils,engineencryptutils \
+	$(PKG_EAR_DIR)/lib/engine-tools-common,engine-tools-common \
+	$(PKG_EAR_DIR)/lib/engine-utils,utils \
+	$(PKG_EAR_DIR)/lib/engine-vdsbroker,vdsbroker \
+	$(PKG_EAR_DIR)/lib/searchbackend,searchbackend
+
 all: $(BUILD_FILE)
 
 $(BUILD_FILE):
@@ -220,6 +236,15 @@ install_artifacts:
 		JAR=`echo "$${POM}" | sed 's/\.pom/.jar/'`; \
 		install -p -m 644 "$${POM}" "$(DESTDIR)$(MAVENPOM_DIR)/$(ENGINE_NAME)-$${artifact_id}.pom"; \
 		[ -f "$${JAR}" ] && install -p -m 644 "$${JAR}" "$(DESTDIR)$(PKG_JAVA_DIR)/$${artifact_id}.jar"; \
+	done
+
+	# Replace jar files in the ear with links to their actuals
+	# locations
+	for jar_line in $(OWN_JAR_FIXUPS); do \
+		path=`echo $${jar_line} | sed 's/,.*//'`; \
+		jar=`echo $${jar_line} | sed 's/.*,//'`; \
+		rm -rf "$(DESTDIR)$${path}"*.jar; \
+		ln -s "$(PKG_JAVA_DIR)/$${jar}.jar" "$(DESTDIR)$${path}.jar"; \
 	done
 
 install_setup:
