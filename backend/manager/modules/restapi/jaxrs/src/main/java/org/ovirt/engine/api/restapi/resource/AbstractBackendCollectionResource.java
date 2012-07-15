@@ -60,11 +60,22 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
                                                                                      CASE_SENSITIVE_CONSTRAINT_PARAMETER,
                                                                                      FROM_CONSTRAINT_PARAMETER);
 
+        //preserved in sake if backward compatibility till 4.0
+        HashMap<String, String> queryConstraints = QueryHelper.getQueryConstraints(getUriInfo(),
+                                                                                   FROM_CONSTRAINT_PARAMETER);
+
         if (matrixConstraints.containsKey(FROM_CONSTRAINT_PARAMETER)) {
             try {
                 searchParams.setSearchFrom(Long.parseLong(matrixConstraints.get(FROM_CONSTRAINT_PARAMETER)));
             } catch (Exception ex) {
-                LOG.error("Unwrapping of '"+FROM_CONSTRAINT_PARAMETER+"' search parameter failed.", ex);
+                LOG.error("Unwrapping of '"+FROM_CONSTRAINT_PARAMETER+"' matrix search parameter failed.", ex);
+            }
+        } else if (queryConstraints.containsKey(FROM_CONSTRAINT_PARAMETER)) {
+            //preserved in sake if backward compatibility till 4.0
+            try {
+                searchParams.setSearchFrom(Long.parseLong(queryConstraints.get(FROM_CONSTRAINT_PARAMETER)));
+            } catch (Exception ex) {
+                LOG.error("Unwrapping of '"+FROM_CONSTRAINT_PARAMETER+"' query search parameter failed.", ex);
             }
         }
         if (matrixConstraints.containsKey(CASE_SENSITIVE_CONSTRAINT_PARAMETER)) {
