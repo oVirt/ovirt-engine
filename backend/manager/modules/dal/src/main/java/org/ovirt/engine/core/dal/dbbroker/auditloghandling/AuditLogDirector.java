@@ -283,6 +283,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_REMOVE_STORAGE_DOMAIN_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_ATTACH_STORAGE_DOMAIN_TO_POOL, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_ATTACH_STORAGE_DOMAIN_TO_POOL_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_ATTACH_STORAGE_DOMAINS_TO_POOL, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_ATTACH_STORAGE_DOMAINS_TO_POOL_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_DETACH_STORAGE_DOMAIN_FROM_POOL, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_DETACH_STORAGE_DOMAIN_FROM_POOL_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN, AuditLogSeverity.NORMAL);

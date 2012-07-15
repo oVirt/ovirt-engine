@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -254,6 +255,12 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             }
         }
         return true;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_ATTACH_STORAGE_DOMAINS_TO_POOL
+                : AuditLogType.USER_ATTACH_STORAGE_DOMAINS_TO_POOL_FAILED;
     }
 
     @Override
