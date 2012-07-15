@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -329,21 +327,21 @@ public class VdsSelector {
         return readyToRun.isEmpty() ? Guid.Empty : getBestVdsToRun(readyToRun);
     }
 
-    final static Transformer toNetworkName = new Transformer() {
-        @Override
-        public Object transform(Object input) {
-            return ((NetworkInterface<?>)input).getNetworkName();
-        }
-    };
-
     boolean areRequiredNetworksAvailable(final List<VmNetworkInterface> vmNetworkInterfaces,
             final List<VdsNetworkInterface> allInterfacesForVds) {
-        @SuppressWarnings("unchecked")
-        final List<String> vmNetworkInterfacesStr =
-                ListUtils.transformedList(vmNetworkInterfaces, toNetworkName);
-        @SuppressWarnings("unchecked")
-        final List<String> vdsNetNames = ListUtils.transformedList(allInterfacesForVds, toNetworkName);
-        return vdsNetNames.containsAll(vmNetworkInterfacesStr);
+        for (final VmNetworkInterface vmIf : vmNetworkInterfaces) {
+            boolean found = false;
+            for (final VdsNetworkInterface vdsIf : allInterfacesForVds) {
+                if (StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
     }
 
     VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
