@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Event;
@@ -66,6 +67,9 @@ public class EventMapper {
             DataCenter dataCenter = new DataCenter();
             dataCenter.setId(entity.getstorage_pool_id().toString());
             model.setDataCenter(dataCenter);
+        }
+        if (StringUtils.isNotEmpty(entity.getCorrelationId())) {
+            model.setCorrelationId(entity.getCorrelationId());
         }
         return model;
     }

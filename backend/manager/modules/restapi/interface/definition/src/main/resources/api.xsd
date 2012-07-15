@@ -1395,6 +1395,7 @@
           <xs:element name="code" type="xs:int" minOccurs="0" maxOccurs="1" />
           <xs:element name="severity" type="xs:string" minOccurs="0" maxOccurs="1" />
           <xs:element name="time" type="xs:dateTime" minOccurs="0" maxOccurs="1" />
+          <xs:element name="correlation_id" type="xs:string" minOccurs="0" maxOccurs="1" />
           <xs:element ref="user" minOccurs="0" />
           <xs:element ref="vm" minOccurs="0" />
           <xs:element ref="storage_domain" minOccurs="0" />
