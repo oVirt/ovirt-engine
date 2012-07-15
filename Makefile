@@ -101,7 +101,7 @@ pre_copy:
 
 tarball:
 	sed -e 's/^Version:.*/Version: $(RPM_VERSION)/' \
-            -e 's/^Release:.*/Release: $(RELEASE_VERSION)%{?dist}/' $(SPEC_FILE_IN) > $(SPEC_FILE)
+            -e 's/^Release:.*/Release: $(RPM_RELEASE_VERSION)%{?dist}/' $(SPEC_FILE_IN) > $(SPEC_FILE)
 	tar zcf $(TARBALL) `git ls-files` $(SPEC_FILE)
 	rm -f $(SPEC_FILE)
 	@echo
