@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -60,44 +61,44 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     public static void SetNetworkStatus(Guid vdsGroupId, final Network net) {
         NetworkStatus status = NetworkStatus.Operational;
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(vdsGroupId);
-        // Search all vds in cluster that have the specify network, if not the
-        // network is not active
-        SearchParameters searchParams = new SearchParameters("hosts: cluster = "
-                + vdsGroup.getname(), SearchType.VDS);
-        searchParams.setMaxCount(Integer.MAX_VALUE);
-        List<VDS> vdsList = (List) Backend.getInstance()
-                .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
+        network_cluster networkCluster =
+                DbFacade.getInstance().getNetworkClusterDAO().get(new NetworkClusterId(vdsGroupId, net.getId()));
 
-        if (net.isRequired()) {
-            for (VDS vds : vdsList) {
-                if (vds.getstatus() != VDSStatus.Up) {
-                    continue;
-                }
-                List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend
-                        .getInstance()
-                        .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-                                new GetVdsByVdsIdParameters(vds.getId())).getReturnValue();
-                VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-                    @Override
-                    public boolean eval(VdsNetworkInterface i) {
-                        return StringHelper.EqOp(i.getNetworkName(), net.getname());
+        if (networkCluster != null) {
+            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(vdsGroupId);
+
+            // Search all vds in cluster that have the specify network, if not the
+            // network is not active
+            SearchParameters searchParams = new SearchParameters("hosts: cluster = "
+                    + vdsGroup.getname(), SearchType.VDS);
+            searchParams.setMaxCount(Integer.MAX_VALUE);
+            List<VDS> vdsList = (List) Backend.getInstance()
+                    .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
+
+            if (networkCluster.isRequired()) {
+                for (VDS vds : vdsList) {
+                    if (vds.getstatus() != VDSStatus.Up) {
+                        continue;
                     }
-                });
-                if (iface == null) {
-                    status = NetworkStatus.NonOperational;
-                    break;
+                    List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend
+                            .getInstance()
+                            .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
+                                    new GetVdsByVdsIdParameters(vds.getId())).getReturnValue();
+                    VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
+                        @Override
+                        public boolean eval(VdsNetworkInterface i) {
+                            return StringHelper.EqOp(i.getNetworkName(), net.getname());
+                        }
+                    });
+                    if (iface == null) {
+                        status = NetworkStatus.NonOperational;
+                        break;
+                    }
                 }
             }
-        }
-        List<network_cluster> all = DbFacade.getInstance()
-                .getNetworkClusterDAO().getAllForCluster(vdsGroupId);
-        for (network_cluster nc : all) {
-            if (net.getId().equals(nc.getnetwork_id())) {
-                nc.setstatus(status.getValue());
-                DbFacade.getInstance().getNetworkClusterDAO().updateStatus(nc);
-                break;
-            }
+
+            networkCluster.setstatus(status.getValue());
+            DbFacade.getInstance().getNetworkClusterDAO().updateStatus(networkCluster);
         }
     }
 
