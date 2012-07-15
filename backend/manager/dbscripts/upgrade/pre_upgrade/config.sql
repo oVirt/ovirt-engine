@@ -470,6 +470,8 @@ select fn_db_update_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,m
 select fn_db_update_config_value('SignLockFile','/var/lock/ovirt-engine/.openssl.exclusivelock','general');
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','2.2,3.0,3.1','general');
+select fn_db_update_config_value('SupportedStorageFormats','0,3','3.1');
+select fn_db_update_config_value('SupportedVDSMVersions','4.5,4.9,4.10','general');
 select fn_db_update_config_value('VdcVersion','3.1.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','3.1.0.0','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port','general');
@@ -479,7 +481,6 @@ select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,por
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ilo3,ipmilan,rsa,rsb,wti,cisco_ucs','3.0');
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ipmilan,rsa,rsb,wti,cisco_ucs','2.2');
 select fn_db_update_config_value('VmGracefulShutdownMessage','The oVirt Engine is shutting down this Virtual Machine','general');
-select fn_db_update_config_value('SupportedVDSMVersions','4.5,4.9,4.10','general');
 
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
