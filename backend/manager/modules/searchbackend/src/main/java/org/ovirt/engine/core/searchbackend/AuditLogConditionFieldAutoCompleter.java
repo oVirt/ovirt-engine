@@ -19,6 +19,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mVerbs.put("EVENT_STORAGE", "EVENT_STORAGE");
         mVerbs.put("EVENT_DATACENTER", "EVENT_DATACENTER");
         mVerbs.put("EVENT_VOLUME", "EVENT_VOLUME");
+        mVerbs.put("CORRELATION_ID", "CORRELATION_ID");
         buildCompletions();
         // These search options remain hidden from the autocompletion
         // but still available for the user interface
@@ -50,7 +51,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         getTypeDictionary().put("_EVENT_QUOTA_ID", String.class);
         getTypeDictionary().put("EVENT_VOLUME", String.class);
         getTypeDictionary().put("_EVENT_VOLUME_ID", String.class);
-
+        getTypeDictionary().put("CORRELATION_ID", String.class);
         // building the ColumnName Dict
         mColumnNameDict.put("TYPE", "log_type");
         mColumnNameDict.put("SEVERITY", "severity");
@@ -71,6 +72,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mColumnNameDict.put("_EVENT_QUOTA_ID", "quota_id::varchar");
         mColumnNameDict.put("EVENT_VOLUME", "gluster_volume_name");
         mColumnNameDict.put("_EVENT_VOLUME_ID", "gluster_volume_id::varchar");
+        mColumnNameDict.put("CORRELATION_ID", "correlation_id::varchar");
         // Building the validation dict
         buildBasicValidationTable();
     }
@@ -91,7 +93,8 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
                 || StringHelper.EqOp(fieldName, "EVENT_STORAGE") || StringHelper.EqOp(fieldName, "EVENT_DATACENTER")
                 || StringHelper.EqOp(fieldName, "_EVENT_DATACENTER_ID")
                 || StringHelper.EqOp(fieldName, "_EVENT_QUOTA_ID")
-                || StringHelper.EqOp(fieldName, "EVENT_VOLUME") || StringHelper.EqOp(fieldName, "_EVENT_VOLUME_ID")) {
+                || StringHelper.EqOp(fieldName, "EVENT_VOLUME") || StringHelper.EqOp(fieldName, "_EVENT_VOLUME_ID") ||
+                StringHelper.EqOp(fieldName, "CORRELATION_ID")) {
             return StringConditionRelationAutoCompleter.INSTANCE;
         } else {
             return null;
