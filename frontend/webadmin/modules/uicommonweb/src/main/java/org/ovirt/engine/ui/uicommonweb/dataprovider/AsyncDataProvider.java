@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
@@ -880,30 +880,29 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void GetDiskPresetList(AsyncQuery aQuery, VmType vmType, StorageType storageType) {
-        aQuery.setData(new Object[] { vmType, storageType });
+    public static void GetDiskPresetList(AsyncQuery aQuery, StorageType storageType) {
+        aQuery.setData(new Object[] { storageType });
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                if (source == null)
-                {
+                if (source == null) {
                     return null;
                 }
 
                 ArrayList<DiskImageBase> list = new ArrayList<DiskImageBase>();
+                StorageType storageType = (StorageType) _asyncQuery.Data[0];
                 boolean hasBootDisk = false;
-                for (DiskImageBase disk : (ArrayList<DiskImageBase>) source)
-                {
+                for (DiskImageBase disk : (ArrayList<DiskImageBase>) source) {
                     if (!hasBootDisk) {
                         disk.setBoot(true);
                         hasBootDisk = true;
                     }
 
-                    disk.setvolume_type(disk.isBoot() && (VmType) _asyncQuery.Data[0] == VmType.Desktop ?
-                            VolumeType.Sparse : VolumeType.Preallocated);
-                    disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(),
-                            (StorageType) _asyncQuery.Data[1]));
+                    disk.setvolume_type(storageType == StorageType.ISCSI || storageType == StorageType.FCP ?
+                            VolumeType.Preallocated : VolumeType.Sparse);
+
+                    disk.setvolume_format(AsyncDataProvider.GetDiskVolumeFormat(disk.getvolume_type(), storageType));
 
                     list.add(disk);
                 }
@@ -911,6 +910,31 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetDiskConfigurationList, new VdcQueryParametersBase(), aQuery);
+    }
+
+    public static VolumeFormat GetDiskVolumeFormat(VolumeType volumeType, StorageType storageType) {
+        switch (storageType) {
+        case NFS:
+        case LOCALFS:
+        case POSIXFS:
+            return VolumeFormat.RAW;
+
+        case ISCSI:
+        case FCP:
+            switch (volumeType) {
+            case Sparse:
+                return VolumeFormat.COW;
+
+            case Preallocated:
+                return VolumeFormat.RAW;
+
+            default:
+                return VolumeFormat.Unassigned;
+            }
+
+        default:
+            return VolumeFormat.Unassigned;
+        }
     }
 
     public static void GetClusterNetworkList(AsyncQuery aQuery, Guid clusterId) {

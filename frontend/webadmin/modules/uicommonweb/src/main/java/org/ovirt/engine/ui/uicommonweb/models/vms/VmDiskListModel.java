@@ -289,7 +289,7 @@ public class VmDiskListModel extends SearchableListModel
                         vmDiskListModel.presets = presets;
                         vmDiskListModel.AddDiskPostData();
                     }
-                }), getEntity().getvm_type(), storageType);
+                }), storageType);
             }
         }), getEntity().getstorage_pool_id(), ActionGroup.CREATE_VM);
 

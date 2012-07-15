@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -673,7 +672,7 @@ public class DiskModel extends Model
                         preset.setvolume_format(VolumeFormat.RAW);
                         diskModel1.getPreset().setSelectedItem(preset);
                     }
-                }), VmType.Server, storageType);
+                }), storageType);
 
                 if (!isInternal) {
                     AsyncDataProvider.IsDirectLunDiskEnabled(new AsyncQuery(diskModel, new INewAsyncCallback() {

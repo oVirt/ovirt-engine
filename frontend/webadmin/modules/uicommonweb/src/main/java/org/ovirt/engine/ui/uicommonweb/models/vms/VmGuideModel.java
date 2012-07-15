@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -473,7 +472,6 @@ public class VmGuideModel extends GuideModel
             UpdateWipeAfterDelete(selectedStorageType, model.getWipeAfterDelete(), true);
         }
 
-        VmType vmType = getEntity().getvm_type();
         StorageType storageType = model.getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
                 : storage.getstorage_type();
 
@@ -485,7 +483,7 @@ public class VmGuideModel extends GuideModel
                         ArrayList<DiskImageBase> presets = (ArrayList<DiskImageBase>) returnValue;
                         vmGuideModel.AddDiskPostGetDiskPresets(presets);
                     }
-                }), vmType, storageType);
+                }), storageType);
     }
 
     private void updateQuota(final DiskModel model) {
