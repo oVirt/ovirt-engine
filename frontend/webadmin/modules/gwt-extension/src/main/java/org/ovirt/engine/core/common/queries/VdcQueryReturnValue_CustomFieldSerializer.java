@@ -64,12 +64,6 @@ public class VdcQueryReturnValue_CustomFieldSerializer {
 			instance.setReturnValue((IVdcQueryable) streamReader.readObject());
 		} else if (type.equals("UNKNOWN")) {
 			deserializedAs = "UNKNOWN";
-			if (type != null) {
-				instance.setReturnValue(streamReader.readObject());
-                GWT.log("WARNING: VdcQueryReturnValue of type: "
-						+ instance.getReturnValue().getClass().getName()
-						+ "has not casted to a specific type!");
-			}
 		}
 	}
 
@@ -152,12 +146,6 @@ public class VdcQueryReturnValue_CustomFieldSerializer {
 		} else {
 			serializedAs = "UNKNOWN";
 			streamWriter.writeString(serializedAs);
-			if (returnValue != null) {
-			    GWT.log("WARNING: VdcQueryReturnValue of type: "
-						+ instance.getReturnValue().getClass().getName()
-						+ "has not casted to a specific type!");
-				streamWriter.writeObject(instance.getReturnValue());
-			}
 		}
 	}
 

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class VdcReturnValueBase_CustomFieldSerializer {
 	public static void deserialize(SerializationStreamReader streamReader,
 			VdcReturnValueBase instance) throws SerializationException {
-		GWT.log("deserialize ReturnValue");
 		// Handled in instantiate
 	}
 
@@ -18,7 +17,6 @@ public class VdcReturnValueBase_CustomFieldSerializer {
 			SerializationStreamReader streamReader)
 			throws SerializationException {
 		// occur first
-		GWT.log("instantiate ReturnValue");
 
 		VdcReturnValueBase vrvb = new VdcReturnValueBase();
 		vrvb.setCanDoAction(streamReader.readBoolean());
