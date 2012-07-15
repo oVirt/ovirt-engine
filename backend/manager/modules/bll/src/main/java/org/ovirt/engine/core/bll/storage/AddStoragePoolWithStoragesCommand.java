@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -31,8 +31,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@InternalCommandAttribute
 @LockIdNameAttribute
+@NonTransactiveCommandAttribute
 public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStoragesParameter> extends
         UpdateStoragePoolCommand<T> {
     public AddStoragePoolWithStoragesCommand(T parameters) {
@@ -54,80 +54,66 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     @Override
     protected void executeCommand() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-            @Override
-            public Object runInTransaction() {
-                if (UpdateStorageDomainsInDb()) {
-                    // setting storage pool status to maintenance
-                    storage_pool storagePool = getStoragePool();
-                    getCompensationContext().snapshotEntity(storagePool);
-                    TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            getStoragePool().setstatus(StoragePoolStatus.Maintanance);
-                            getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
-                            DbFacade.getInstance().getStoragePoolDAO().update(getStoragePool());
-                            getCompensationContext().stateChanged();
-                            StoragePoolStatusHandler.PoolStatusChanged(getStoragePool().getId(),
-                                    getStoragePool().getstatus());
-                            return null;
-                        }
-                    });
-
-                    // Following code performs only read operations, therefore no need for new transaction
-                    boolean returnValue =
-                            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                                    new TransactionMethod<Boolean>() {
-                                        @Override
-                                        public Boolean runInTransaction() {
-                                            boolean result = false;
-                                            retVal = null;
-                                            for (VDS vds : getAllRunningVdssInPool()) {
-                                                setVds(vds);
-                                                for (Guid storageDomainId : getParameters().getStorages()) {
-                                                    // now the domain should have the mapping
-                                                    // with the pool in db
-                                                    storage_domains storageDomain =
-                                                            DbFacade.getInstance()
-                                                                    .getStorageDomainDAO()
-                                                                    .getForStoragePool(storageDomainId,
-                                                                            getStoragePool().getId());
-                                                    StorageHelperDirector.getInstance()
-                                                            .getItem(storageDomain.getstorage_type())
-                                                            .ConnectStorageToDomainByVdsId(storageDomain,
-                                                                    getVds().getId());
-                                                }
-                                                retVal = AddStoragePoolInIrs();
-                                                if (!retVal.getSucceeded()
-                                                        && retVal.getVdsError().getCode() == VdcBllErrors.StorageDomainAccessError) {
-                                                    log.warnFormat("Error creating storage pool on vds {0} - continuing",
-                                                            vds.getvds_name());
-                                                    continue;
-                                                } else {
-                                                    // storage pool creation succeeded or failed
-                                                    // but didn't throw exception
-                                                    result = retVal.getSucceeded();
-                                                    break;
-                                                }
-                                            }
-                                            return result;
-                                        }
-                                    });
-
-                    setSucceeded(returnValue);
-                    if (!returnValue) {
-                        if (retVal != null && retVal.getVdsError().getCode() != null) {
-                            throw new VdcBLLException(retVal.getVdsError().getCode(), retVal.getVdsError().getMessage());
-                        } else {
-                            // throw exception to cause rollback and stop the
-                            // command
-                            throw new VdcBLLException(VdcBllErrors.ENGINE_ERROR_CREATING_STORAGE_POOL);
-                        }
-                    }
+        if (UpdateStorageDomainsInDb()) {
+            // setting storage pool status to maintenance
+            storage_pool storagePool = getStoragePool();
+            getCompensationContext().snapshotEntity(storagePool);
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+                @Override
+                public Object runInTransaction() {
+                    getStoragePool().setstatus(StoragePoolStatus.Maintanance);
+                    getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
+                    DbFacade.getInstance().getStoragePoolDAO().update(getStoragePool());
+                    getCompensationContext().stateChanged();
+                    StoragePoolStatusHandler.PoolStatusChanged(getStoragePool().getId(),
+                            getStoragePool().getstatus());
+                    return null;
                 }
-                return null;
+            });
+
+            // Following code performs only read operations, therefore no need for new transaction
+            boolean result = false;
+            retVal = null;
+            for (VDS vds : getAllRunningVdssInPool()) {
+                setVds(vds);
+                for (Guid storageDomainId : getParameters().getStorages()) {
+                    // now the domain should have the mapping
+                    // with the pool in db
+                    storage_domains storageDomain =
+                            DbFacade.getInstance()
+                                    .getStorageDomainDAO()
+                                    .getForStoragePool(storageDomainId,
+                                            getStoragePool().getId());
+                    StorageHelperDirector.getInstance()
+                            .getItem(storageDomain.getstorage_type())
+                            .ConnectStorageToDomainByVdsId(storageDomain,
+                                    getVds().getId());
+                }
+                retVal = AddStoragePoolInIrs();
+                if (!retVal.getSucceeded()
+                        && retVal.getVdsError().getCode() == VdcBllErrors.StorageDomainAccessError) {
+                    log.warnFormat("Error creating storage pool on vds {0} - continuing",
+                            vds.getvds_name());
+                    continue;
+                } else {
+                    // storage pool creation succeeded or failed
+                    // but didn't throw exception
+                    result = retVal.getSucceeded();
+                    break;
+                }
             }
-        });
+
+            setSucceeded(result);
+            if (!result) {
+                if (retVal != null && retVal.getVdsError().getCode() != null) {
+                    throw new VdcBLLException(retVal.getVdsError().getCode(), retVal.getVdsError().getMessage());
+                } else {
+                    // throw exception to cause rollback and stop the
+                    // command
+                    throw new VdcBLLException(VdcBllErrors.ENGINE_ERROR_CREATING_STORAGE_POOL);
+                }
+            }
+        }
 
         // Create pool phase completed, no rollback is needed here, so compensation information needs to be cleared!
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -281,31 +267,5 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     @Override
     protected Map<String, String> getExclusiveLocks() {
         return Collections.singletonMap(getStoragePoolId().toString(), LockingGroup.POOL.name());
-    }
-
-    @Override
-    public void Rollback() {
-        super.Rollback();
-        // try to set status of all domains in the pool that are locked back to inactive
-        for (Guid storageDomainId : getParameters().getStorages()) {
-            storage_pool_iso_map domainPoolMap =
-                    DbFacade.getInstance()
-                            .getStoragePoolIsoMapDAO()
-                            .get(new StoragePoolIsoMapId(storageDomainId,
-                                    getStoragePoolId().getValue()));
-            if (domainPoolMap != null && domainPoolMap.getstatus() == StorageDomainStatus.Locked) {
-                try {
-                    domainPoolMap.setstatus(StorageDomainStatus.InActive);
-                    DbFacade.getInstance()
-                            .getStoragePoolIsoMapDAO()
-                            .updateStatus(domainPoolMap.getId(), domainPoolMap.getstatus());
-                } catch (Exception e) {
-                    log.warnFormat("Could not set domain {0} status to inactive in pool {1} during rollback: {2}",
-                            storageDomainId,
-                            getStoragePoolId().getValue(),
-                            e.getMessage());
-                }
-            }
-        }
     }
 }
