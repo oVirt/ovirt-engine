@@ -22,7 +22,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.API;
@@ -30,7 +29,6 @@ import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -39,11 +37,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest( { Config.class })
 public class BackendApiResourceTest extends Assert {
 
     private static final String ROOT_TAG_REL = "tags/root";
@@ -227,30 +221,30 @@ public class BackendApiResourceTest extends Assert {
 
     @Test
     public void testGet() {
-        doTestGet(ApplicationMode.AllModes, URI_BASE);
+        doTestGet(ApplicationMode.AllModes);
     }
 
     @Test
     public void testGetVirtOnly() {
-        doTestGet(ApplicationMode.VirtOnly, URI_BASE);
+        doTestGet(ApplicationMode.VirtOnly);
     }
 
     @Test
     public void testGetWithTrailingSlash() {
-        doTestGet(ApplicationMode.AllModes, URI_BASE + "/");
+        doTestGet(ApplicationMode.AllModes);
     }
 
     @Test
     public void testGetWithTrailingSlashVirtOnly() {
-        doTestGet(ApplicationMode.VirtOnly, URI_BASE + "/");
+        doTestGet(ApplicationMode.VirtOnly);
     }
 
     @Test
     public void testGetGlusterOnly() {
-        doTestGlusterOnlyGet(URI_BASE);
+        doTestGlusterOnlyGet();
     }
 
-    protected void doTestGet(ApplicationMode appMode, String base) {
+    protected void doTestGet(ApplicationMode appMode) {
         setupExpectations(appMode, relationships);
         verifyResponse(resource.get());
     }
@@ -262,7 +256,7 @@ public class BackendApiResourceTest extends Assert {
         setUpGetSystemStatisticsExpectations();
     }
 
-    protected void doTestGlusterOnlyGet(String base) {
+    protected void doTestGlusterOnlyGet() {
         setupExpectations(ApplicationMode.GlusterOnly, relationshipsGlusterOnly);
         verifyResponseGlusterOnly(resource.get());
     }
@@ -359,7 +353,7 @@ public class BackendApiResourceTest extends Assert {
 
 
 
-    private void assertContainsBlankTemplate(SpecialObjects objs) {
+    private static void assertContainsBlankTemplate(SpecialObjects objs) {
         for (Link link : objs.getLinks()) {
             if (link.getHref().equals(BLANK_TEMPLATE_HREF) && link.getRel().equals(BLANK_TEMPLATE_REL)) {
                 return;
@@ -368,15 +362,7 @@ public class BackendApiResourceTest extends Assert {
         fail();
     }
 
-    private void assertNotContainsBlankTemplate(SpecialObjects objs) {
-        for (Link link : objs.getLinks()) {
-            if (link.getHref().equals(BLANK_TEMPLATE_HREF) && link.getRel().equals(BLANK_TEMPLATE_REL)) {
-                fail();
-            }
-        }
-    }
-
-    private void assertContainsRootTag(SpecialObjects objs) {
+    private static void assertContainsRootTag(SpecialObjects objs) {
         for (Link link : objs.getLinks()) {
             if (link.getHref().equals(ROOT_TAG_HREF) && link.getRel().equals(ROOT_TAG_REL)) {
                 return;
