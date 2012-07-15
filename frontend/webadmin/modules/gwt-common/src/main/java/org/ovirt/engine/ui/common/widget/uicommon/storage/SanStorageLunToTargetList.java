@@ -35,13 +35,11 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
     }
 
     public SanStorageLunToTargetList(SanStorageModelBase model, boolean hideLeaf) {
-        super(model, hideLeaf);
+        super(model, hideLeaf, false);
     }
 
     public SanStorageLunToTargetList(SanStorageModelBase model, boolean hideLeaf, boolean multiSelection) {
-        super(model, hideLeaf);
-
-        this.multiSelection = multiSelection;
+        super(model, hideLeaf, multiSelection);
     }
 
     @Override

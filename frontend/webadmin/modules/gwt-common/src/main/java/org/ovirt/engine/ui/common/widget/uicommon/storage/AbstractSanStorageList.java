@@ -54,12 +54,13 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     protected static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
     public AbstractSanStorageList(SanStorageModelBase model) {
-        this(model, false);
+        this(model, false, false);
     }
 
-    public AbstractSanStorageList(SanStorageModelBase model, boolean hideLeaf) {
+    public AbstractSanStorageList(SanStorageModelBase model, boolean hideLeaf, boolean multiSelection) {
         this.model = model;
         this.hideLeaf = hideLeaf;
+        this.multiSelection = multiSelection;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         createHeaderWidget();
         createSanStorageListWidget();
