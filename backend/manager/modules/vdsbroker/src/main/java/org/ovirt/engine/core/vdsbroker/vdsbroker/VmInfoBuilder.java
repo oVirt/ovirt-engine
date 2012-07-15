@@ -484,6 +484,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
         struct.add(VdsProperties.Iface, VdsProperties.Fdc);
         struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
+        struct.add(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
 
     private static void addCdDetails(VmDevice vmDevice, XmlRpcStruct struct) {
@@ -492,6 +493,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
         struct.add(VdsProperties.Iface, VdsProperties.Ide);
         struct.add(VdsProperties.ReadOnly, Boolean.TRUE.toString());
+        struct.add(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
 
     private void addDevice(XmlRpcStruct struct, VmDevice vmDevice, String path) {
