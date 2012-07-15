@@ -198,7 +198,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getParameters().getVmTemplate().setId(Guid.NewGuid());
         for (VmNetworkInterface iface : getParameters().getVmTemplate().getInterfaces()) {
             iface.setId(Guid.NewGuid());
-            iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
         }
     }
 
@@ -371,8 +370,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
             iDynamic.setSpeed(iface.getSpeed());
             iDynamic.setType(iface.getType());
-
-            fillMacAddressIfMissing(iface);
 
             DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iDynamic);
             getCompensationContext().snapshotNewEntity(iDynamic);
