@@ -560,16 +560,12 @@ class DB():
                 os.remove(self.sqlfile)
             raise
 
-def stopJboss():
-    logging.debug("stopping jboss service.")
+def stopJboss(service=basedefs.JBOSS_SERVICE_NAME):
+    logging.debug("stopping %s service.", service)
     cmd = [
-        basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop",
+        basedefs.EXEC_SERVICE, service, "stop",
     ]
     output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STP_JBOSS_SERVICE)
-
-    # JBoss service sometimes return zero rc even if service is still up
-    if "[FAILED]" in output and "Timeout: Shutdown command was sent, but process is still running" in output:
-        raise OSError(MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN)
 
 def startJboss():
     logging.debug("starting jboss service.")
