@@ -146,8 +146,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         getParameters().setVm(getVm());
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             iface.setId(Guid.NewGuid());
-            String mac = MacPoolManager.getInstance().allocateNewMac();
-            iface.setMacAddress(mac);
         }
     }
 
@@ -823,7 +821,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             iface.setVmId(getVmId());
             iface.setVmName(getVm().getvm_name());
 
-            macAdded = vmInterfaceManager.add(iface, getCompensationContext());
+            macAdded = vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity());
         }
     }
 

@@ -34,9 +34,12 @@ public class VmInterfaceManager {
      *            Used to snapshot the saved entities.
      * @return <code>true</code> if the MAC wasn't used, <code>false</code> if it was.
      */
-    public boolean add(VmNetworkInterface iface, CompensationContext compensationContext) {
+    public boolean add(VmNetworkInterface iface, CompensationContext compensationContext, boolean allocateMac) {
         boolean macAdded = false;
-        if (getMacPoolManager().IsMacInUse(iface.getMacAddress())) {
+        if (allocateMac) {
+            iface.setMacAddress(getMacPoolManager().allocateNewMac());
+            macAdded = true;
+        } else if (getMacPoolManager().IsMacInUse(iface.getMacAddress())) {
             AuditLogableBase logable = new AuditLogableBase();
             logable.AddCustomValue("MACAddr", iface.getMacAddress());
             logable.AddCustomValue("VmName", iface.getVmName());

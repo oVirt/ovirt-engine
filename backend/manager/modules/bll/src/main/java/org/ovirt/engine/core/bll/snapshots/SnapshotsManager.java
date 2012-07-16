@@ -313,7 +313,7 @@ public class SnapshotsManager {
             }
             vmInterface.setVmId(vmId);
 
-            vmInterfaceManager.add(vmInterface, compensationContext);
+            vmInterfaceManager.add(vmInterface, compensationContext, false);
         }
     }
 

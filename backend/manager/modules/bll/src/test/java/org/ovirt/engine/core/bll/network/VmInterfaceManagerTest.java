@@ -80,8 +80,17 @@ public class VmInterfaceManagerTest {
             boolean expectedResult) {
         when(macPoolManager.AddMac(iface.getMacAddress())).thenReturn(addMacResult);
 
-        assertEquals(expectedResult, vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance()));
+        assertEquals(expectedResult, vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), false));
         verifyAddDelegatedCorrectly(iface, addMacVerification);
+    }
+
+    @Test
+    public void addAllocateNewMacAddress() {
+        VmNetworkInterface iface = createNewInterface();
+        String newMac = RandomUtils.instance().nextString(10);
+        when(macPoolManager.allocateNewMac()).thenReturn(newMac);
+        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), true);
+        assertEquals(newMac, iface.getMacAddress());
     }
 
     @Test
