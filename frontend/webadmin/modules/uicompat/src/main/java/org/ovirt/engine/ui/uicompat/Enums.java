@@ -309,6 +309,12 @@ public interface Enums extends LocalizedEnums {
 
     String VdsTransparentHugePagesState___Always();
 
+    String LunStatus___Free();
+
+    String LunStatus___Used();
+
+    String LunStatus___Unusable();
+
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
     String GlusterVolumeType___REPLICATE();

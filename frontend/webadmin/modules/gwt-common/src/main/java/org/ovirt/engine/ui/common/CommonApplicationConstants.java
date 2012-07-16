@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface CommonApplicationConstants extends Constants {
 
@@ -905,6 +904,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Format")
     String formatSanImStorage();
+
+    @DefaultStringValue("In Use")
+    String statusSanStorage();
 
     @DefaultStringValue("N/A")
     String notAvailableLabel();

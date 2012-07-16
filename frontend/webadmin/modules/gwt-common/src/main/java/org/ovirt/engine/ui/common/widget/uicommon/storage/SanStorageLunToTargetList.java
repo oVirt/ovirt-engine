@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -213,6 +214,13 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 return String.valueOf(model.getMultipathing());
             }
         }, constants.pathSanStorage(), "40px"); //$NON-NLS-1$
+
+        table.addColumn(new LunTextColumn() {
+            @Override
+            public String getRawValue(LunModel model) {
+                return EnumTranslator.createAndTranslate(model.getStatus());
+            }
+        }, constants.statusSanStorage(), "60px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
