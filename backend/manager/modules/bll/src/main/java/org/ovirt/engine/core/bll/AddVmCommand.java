@@ -551,30 +551,33 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean areParametersLegal(List<String> reasons) {
+        boolean returnValue = false;
         final VmStatic vmStaticData = getParameters().getVmStaticData();
 
-        if (vmStaticData == null) {
-            return false;
+        if (vmStaticData != null) {
+
+            returnValue = vmStaticData.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST
+                    || !vmStaticData.getauto_startup();
+
+            if (!returnValue) {
+                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST
+                        .toString());
+            }
+
+            if (!returnValue) {
+                returnValue = returnValue && IsLegalClusterId(vmStaticData.getvds_group_id(), reasons);
+            }
+
+            if (!isPinningAndMigrationValid(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
+                returnValue = false;
+            }
+
+            returnValue = returnValue
+                    && VmHandler.isMemorySizeLegal(vmStaticData.getos(), vmStaticData.getmem_size_mb(),
+                            reasons, getVdsGroup().getcompatibility_version().toString());
+
         }
-
-        if (vmStaticData.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST
-                || vmStaticData.getauto_startup()) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST
-                    .toString());
-            return false;
-        }
-
-        if (!IsLegalClusterId(vmStaticData.getvds_group_id(), reasons)) {
-            return false;
-        }
-
-        if (!isPinningAndMigrationValid(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
-            return false;
-        }
-
-        return VmHandler.isMemorySizeLegal(vmStaticData.getos(), vmStaticData.getmem_size_mb(),
-                reasons, getVdsGroup().getcompatibility_version().toString());
-
+        return returnValue;
     }
 
     protected void AddVmNetwork() {
