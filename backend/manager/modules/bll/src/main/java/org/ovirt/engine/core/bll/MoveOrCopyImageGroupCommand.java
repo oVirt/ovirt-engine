@@ -60,14 +60,15 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         LockImage();
         VDSReturnValue vdsReturnValue = null;
 
+        Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
+                .getValue()
+                : getDiskImage().getstorage_ids().get(0);
         if (getParameters().getUseCopyCollapse()) {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.CopyImage,
                     new CopyImageVDSCommandParameters(getStorageDomain().getstorage_pool_id()
                             .getValue(),
-                            getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
-                                    .getValue()
-                                    : getDiskImage().getstorage_ids().get(0),
+                            sourceDomainId,
                             getParameters()
                                     .getContainerId(),
                             getParameters().getImageGroupID(),
@@ -91,9 +92,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                     VDSCommandType.MoveImageGroup,
                     new MoveImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id()
                             .getValue(),
-                            getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
-                                    .getValue()
-                                    : getDiskImage().getstorage_ids().get(0),
+                            sourceDomainId,
                             getDiskImage()
                                     .getId(),
                             getParameters().getStorageDomainId(),
@@ -112,7 +111,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                     CreateTask(taskCreationInfo,
                             getParameters().getParentCommand(),
                             VdcObjectType.Storage,
-                            getParameters().getSourceDomainId().getValue(),
+                            sourceDomainId,
                             getParameters().getStorageDomainId()));
 
             // change storage domain in db only if object moved
