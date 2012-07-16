@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
@@ -160,13 +161,15 @@ public class HostModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostInterfaceListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
-                // Resolve by dialog model
-                if (windowModel instanceof HostBondInterfaceModel) {
-                    return hostBondPopupProvider.get();
-                } else if (windowModel instanceof HostInterfaceModel) {
-                    return hostInterfacePopupProvider.get();
-                } else if (windowModel instanceof HostManagementNetworkModel) {
-                    return hostManagementPopupProvider.get();
+                if (source.getWindow() instanceof HostSetupNetworksModel){
+                    // Resolve by dialog model
+                    if (windowModel instanceof HostBondInterfaceModel) {
+                        return hostBondPopupProvider.get();
+                    } else if (windowModel instanceof HostInterfaceModel) {
+                        return hostInterfacePopupProvider.get();
+                    } else if (windowModel instanceof HostManagementNetworkModel) {
+                        return hostManagementPopupProvider.get();
+                    }
                 }
 
                 // Resolve by last executed command

@@ -19,8 +19,7 @@ public class TogglePanel extends HorizontalPanel {
     public TogglePanel(final Model model) {
         super();
 
-        // create a read-only checkbox - the update of the model is done by a click handler for the whole panel
-        checkBox = new ModelBoundCheckBox(model, true);
+        checkBox = new ModelBoundCheckBox(model, false);
 
         setWidth("100%"); //$NON-NLS-1$
         setHeight("100%"); //$NON-NLS-1$
