@@ -465,8 +465,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             jobProperties = super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(),
                     (getVmTemplateName() == null) ? "" : getVmTemplateName());
-            jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
         }
+
         return jobProperties;
     }
 

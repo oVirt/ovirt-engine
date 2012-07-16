@@ -973,7 +973,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             jobProperties = super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
                     (getVmName() == null) ? "" : getVmName());
-            jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
+            jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
         }
         return jobProperties;
     }

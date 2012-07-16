@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.PermissionSubject;
@@ -255,5 +257,15 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));
         return permissionList;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = new HashMap<String, String>();
+            jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), getStoragePoolName());
+            jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(), getVmTemplateName());
+        }
+        return jobProperties;
     }
 }
