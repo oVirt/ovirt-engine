@@ -20,7 +20,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.put("CREATION_DATE", "CREATION_DATE");
         mVerbs.put("BOOTABLE", "BOOTABLE");
         mVerbs.put("SHAREABLE", "SHAREABLE");
-        mVerbs.put("ALLOW_SNAPSHOT", "ALLOW_SNAPSHOT");
         mVerbs.put("FORMAT", "FORMAT");
         mVerbs.put("STATUS", "STATUS");
         mVerbs.put("DISK_TYPE", "DISK_TYPE");
@@ -37,7 +36,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put("CREATION_DATE", Date.class);
         getTypeDictionary().put("BOOTABLE", Boolean.class);
         getTypeDictionary().put("SHAREABLE", Boolean.class);
-        getTypeDictionary().put("ALLOW_SNAPSHOT", Boolean.class);
         getTypeDictionary().put("FORMAT", VolumeFormat.class);
         getTypeDictionary().put("STATUS", ImageStatus.class);
         getTypeDictionary().put("DISK_TYPE", DiskStorageType.class);
@@ -51,7 +49,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mColumnNameDict.put("CREATION_DATE", "creation_date");
         mColumnNameDict.put("BOOTABLE", "boot");
         mColumnNameDict.put("SHAREABLE", "shareable");
-        mColumnNameDict.put("ALLOW_SNAPSHOT", "allow_snapshot");
         mColumnNameDict.put("FORMAT", "volume_format");
         mColumnNameDict.put("STATUS", "imageStatus");
         mColumnNameDict.put("DISK_TYPE", "disk_storage_type");

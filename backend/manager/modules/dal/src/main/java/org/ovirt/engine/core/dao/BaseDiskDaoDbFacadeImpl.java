@@ -26,8 +26,7 @@ public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk,
                 .addValue("wipe_after_delete", entity.isWipeAfterDelete())
                 .addValue("propagate_errors", EnumUtils.nameOrNull(entity.getPropagateErrors()))
                 .addValue("shareable", entity.isShareable())
-                .addValue("boot", entity.isBoot())
-                .addValue("allow_snapshot", entity.isAllowSnapshot());
+                .addValue("boot", entity.isBoot());
     }
 
     @Override

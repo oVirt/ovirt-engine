@@ -35,8 +35,7 @@ public class LunDisk extends Disk {
                 diskAlias,
                 diskDescription,
                 shareable,
-                boot,
-                false);
+                boot);
         this.lun = lun;
     }
 
@@ -56,6 +55,11 @@ public class LunDisk extends Disk {
     @Override
     public long getsize() {
         return lun.getDeviceSize();
+    }
+
+    @Override
+    public boolean isAllowSnapshot() {
+        return false;
     }
 
     @Override

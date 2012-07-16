@@ -34,8 +34,7 @@ public abstract class Disk extends BaseDisk {
             String diskAlias,
             String diskDescription,
             boolean shareable,
-            boolean boot,
-            boolean allowSnapshot) {
+            boolean boot) {
         super(id,
                 diskInterface,
                 wipeAfterDelete,
@@ -43,10 +42,14 @@ public abstract class Disk extends BaseDisk {
                 diskAlias,
                 diskDescription,
                 shareable,
-                boot,
-                allowSnapshot);
+                boot);
         this.vmEntityType = vmEntityType;
     }
+
+    /**
+     * @return Whether taking snapshots of this disk is allowed
+     */
+    public abstract boolean isAllowSnapshot();
 
     /**
      * @return The type of underlying storage implementation.

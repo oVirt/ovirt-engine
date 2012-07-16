@@ -106,9 +106,6 @@ public class DiskMapper {
         if (disk.isSetSparse()) {
             diskImage.setvolume_type(disk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
         }
-        if (disk.isSetAllowSnapshot()) {
-            diskImage.setAllowSnapshot(disk.isAllowSnapshot());
-        }
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
                 && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             StorageDomain storageDomain = disk.getStorageDomains().getStorageDomains().get(0);
@@ -139,7 +136,6 @@ public class DiskMapper {
         model.setWipeAfterDelete(entity.isWipeAfterDelete());
         model.setActive(entity.getPlugged());
         model.setShareable(entity.isShareable());
-        model.setAllowSnapshot(entity.isAllowSnapshot());
         if (entity.getDiskStorageType() == DiskStorageType.IMAGE) {
             mapDiskImageToDiskFields((DiskImage) entity, model);
         } else {

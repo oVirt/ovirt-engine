@@ -57,11 +57,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     private boolean shareable;
 
     /**
-     * A boolean indiaction whether disk can allow snapshot.
-     */
-    private boolean allowSnapshot;
-
-    /**
      * The disk interface (IDE/SCSI/etc).
      */
     private DiskInterface diskInterface;
@@ -88,8 +83,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
             String diskAlias,
             String diskDescription,
             boolean shareable,
-            boolean boot,
-            boolean allowSnapshot) {
+            boolean boot) {
         super();
         this.id = id;
         this.diskInterface = diskInterface;
@@ -99,7 +93,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.diskDescription = diskDescription;
         this.shareable = shareable;
         this.boot = boot;
-        this.allowSnapshot = allowSnapshot;
     }
 
     @Override
@@ -189,7 +182,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((propagateErrors == null) ? 0 : propagateErrors.hashCode());
         result = prime * result + (shareable ? 1231 : 1237);
-        result = prime * result + (allowSnapshot ? 1231 : 1237);
         result = prime * result + (wipeAfterDelete ? 1231 : 1237);
         result = prime * result + (boot ? 1231 : 1237);
         return result;
@@ -225,26 +217,10 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
             return false;
         if (shareable != other.shareable)
             return false;
-        if (allowSnapshot != other.allowSnapshot)
-            return false;
         if (wipeAfterDelete != other.wipeAfterDelete)
             return false;
         if (boot != other.boot)
             return false;
         return true;
-    }
-
-    /**
-     * @return the allowSnapshot
-     */
-    public boolean isAllowSnapshot() {
-        return allowSnapshot;
-    }
-
-    /**
-     * @param allowSnapshot the allowSnapshot to set
-     */
-    public void setAllowSnapshot(boolean allowSnapshot) {
-        this.allowSnapshot = allowSnapshot;
     }
 }

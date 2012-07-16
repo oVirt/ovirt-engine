@@ -102,6 +102,11 @@ public class DiskImageBase extends Disk {
     }
 
     @Override
+    public boolean isAllowSnapshot() {
+        return !isShareable();
+    }
+
+    @Override
     public DiskStorageType getDiskStorageType() {
         return DiskStorageType.IMAGE;
     }

@@ -32,7 +32,6 @@ public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements P
 
         disk.setShareable(rs.getBoolean("shareable"));
         disk.setBoot(rs.getBoolean("boot"));
-        disk.setAllowSnapshot(rs.getBoolean("allow_snapshot"));
         return disk;
     }
 

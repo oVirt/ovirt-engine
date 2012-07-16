@@ -261,7 +261,6 @@ actions:
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
-          disk.allow_snapshot: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
     urlparams: {}
@@ -277,7 +276,6 @@ actions:
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
-          disk.allow_snapshot: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
@@ -553,7 +551,6 @@ actions:
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
-          disk.allow_snapshot: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
     urlparams: {}
@@ -569,7 +566,6 @@ actions:
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
-          disk.allow_snapshot: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}

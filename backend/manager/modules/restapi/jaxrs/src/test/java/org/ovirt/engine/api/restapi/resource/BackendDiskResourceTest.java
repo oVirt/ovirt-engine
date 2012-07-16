@@ -47,7 +47,6 @@ public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk
         entity.setimageStatus(ImageStatus.OK);
         entity.setvolume_type(VolumeType.Sparse);
         entity.setBoot(false);
-        entity.setAllowSnapshot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
         return setUpStatisticalEntityExpectations(entity);

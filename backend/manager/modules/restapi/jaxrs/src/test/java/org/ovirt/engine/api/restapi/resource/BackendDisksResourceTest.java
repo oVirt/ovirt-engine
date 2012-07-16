@@ -41,7 +41,6 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         entity.setimageStatus(ImageStatus.OK);
         entity.setvolume_type(VolumeType.Sparse);
         entity.setBoot(false);
-        entity.setAllowSnapshot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
         return setUpStatisticalEntityExpectations(entity);    }
@@ -94,7 +93,6 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         model.setSparse(true);
         model.setBootable(false);
         model.setShareable(false);
-        model.setAllowSnapshot(false);
         model.setPropagateErrors(true);
         return model;
     }

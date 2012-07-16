@@ -15,8 +15,7 @@ Create or replace FUNCTION InsertBaseDisk(
     v_disk_alias VARCHAR(50),
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
-    v_boot BOOLEAN,
-    v_allow_snapshot BOOLEAN)
+    v_boot BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -28,8 +27,7 @@ BEGIN
         disk_alias,
         disk_description,
         shareable,
-        boot,
-        allow_snapshot)
+        boot)
     VALUES(
         v_disk_id,
         v_disk_interface,
@@ -38,8 +36,7 @@ BEGIN
         v_disk_alias,
         v_disk_description,
         v_shareable,
-        v_boot,
-        v_allow_snapshot);
+        v_boot);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -55,8 +52,7 @@ Create or replace FUNCTION UpdateBaseDisk(
     v_disk_alias VARCHAR(50),
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
-    v_boot BOOLEAN,
-    v_allow_snapshot BOOLEAN)
+    v_boot BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -67,8 +63,7 @@ BEGIN
            disk_alias = v_disk_alias,
            disk_description = v_disk_description,
            shareable = v_shareable,
-           boot = v_boot,
-           allow_snapshot = v_allow_snapshot
+           boot = v_boot
     WHERE  disk_id = v_disk_id;
 END; $procedure$
 LANGUAGE plpgsql;

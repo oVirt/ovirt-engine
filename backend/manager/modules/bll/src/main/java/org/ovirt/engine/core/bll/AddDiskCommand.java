@@ -167,14 +167,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 Collections.emptyList());
     }
 
-    private void setAllowSnapshotForDisk() {
-        if (getParameters().getDiskInfo().isShareable()) {
-            getParameters().getDiskInfo().setAllowSnapshot(false);
-        } else {
-            getParameters().getDiskInfo().setAllowSnapshot(true);
-        }
-    }
-
     private long getRequestDiskSpace() {
         if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
             return getDiskImageInfo().getSizeInGigabytes();
@@ -300,7 +292,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected void ExecuteVmCommand() {
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-            setAllowSnapshotForDisk();
             createDiskBasedOnImage();
         } else {
             createDiskBasedOnLun();

@@ -206,8 +206,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return false;
             }
 
-            // Set disk attributes when disk updated to be shareable.
-            _oldDisk.setAllowSnapshot(Boolean.FALSE);
             ((DiskImage)_oldDisk).setvm_snapshot_id(null);
         } else if (isDiskShareable && !isDiskUpdatedToShareable) {
             if (getVmDAO().getVmsListForDisk(_oldDisk.getId()).size() > 1) {
@@ -221,8 +219,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     .getId(getVmId(), SnapshotType.ACTIVE)
                     .getValue());
 
-            // If disk is shared then the disk should not allow snapshots.
-            _oldDisk.setAllowSnapshot(Boolean.TRUE);
         }
         return true;
     }

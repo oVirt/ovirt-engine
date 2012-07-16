@@ -35,7 +35,7 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
                 PropagateErrors.Off,
                 "DiskName",
                 "",
-                false, false, true);
+                false, false);
     }
 
     @Override
