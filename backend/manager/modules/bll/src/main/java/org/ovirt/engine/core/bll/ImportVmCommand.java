@@ -471,8 +471,19 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     @Override
     protected void executeCommand() {
         addVmToDb();
-        processImages();
+        VM vm = getVm();
+        // if there aren't any images- we can just perform the end
+        // vm related ops
+        if (!hasSnappableDisks(vm)) {
+            endVmRelatedOps();
+        } else {
+            processImages();
+        }
         setSucceeded(true);
+    }
+
+    private boolean hasSnappableDisks(VM vm) {
+        return !vm.getImages().isEmpty();
     }
 
     private void addVmToDb() {
@@ -879,9 +890,13 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected void EndImportCommand() {
-        setVm(null);
-
         EndActionOnAllImageGroups();
+        endVmRelatedOps();
+        setSucceeded(true);
+    }
+
+    private void endVmRelatedOps() {
+        setVm(null);
         if (getVm() != null) {
             VmHandler.UnLockVm(getVm());
 
@@ -892,8 +907,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             setCommandShouldBeLogged(false);
             log.warn("ImportVmCommand::EndImportCommand: Vm is null - not performing full EndAction");
         }
-
-        setSucceeded(true);
     }
 
     protected boolean updateVmInSpm() {

@@ -116,12 +116,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             }
         }
 
-        // check if Vm has disks
-        if (getVm().getDiskMap().size() == 0) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
-            return false;
-        }
-
         Map<Guid, ? extends Disk> images = getVm().getDiskMap();
         // check that the images requested format are valid (COW+Sparse)
         if (!ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
@@ -156,11 +150,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             return false;
         }
 
-        if (getVm().getDiskMap().size() == 0) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
-            return false;
-        }
-
         if (!(CheckVmInStorageDomain() && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                 && ImagesHandler.PerformImagesChecks(getVm(),
                         getReturnValue().getCanDoActionMessages(),
@@ -192,18 +181,29 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
         freeLock();
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        // Means that there are no asynchronous tasks to execute - so we can end the command
+        // immediately after the execution of the previous steps
+        if (!hasSnappableDisks()) {
+            endSuccessfullySynchronous();
+        } else {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-            @Override
-            public Void runInTransaction() {
-                MoveOrCopyAllImageGroups();
-                return null;
+
+                @Override
+                public Void runInTransaction() {
+                    MoveOrCopyAllImageGroups();
+                    return null;
+                }
+            });
+
+            if (!getReturnValue().getTaskIdList().isEmpty()) {
+                setSucceeded(true);
             }
-        });
-
-        if (!getReturnValue().getTaskIdList().isEmpty()) {
-            setSucceeded(true);
         }
+    }
+
+    private boolean hasSnappableDisks() {
+        return !getDisksBasedOnImage().isEmpty();
     }
 
     public boolean UpdateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
@@ -409,33 +409,42 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     @Override
     protected void EndSuccessfully() {
         EndActionOnAllImageGroups();
-
-        if (getVm() != null) {
-            VM vm = getVm();
-            VmHandler.UnLockVm(vm);
-
-            VmHandler.updateDisksFromDb(vm);
-            VmDeviceUtils.setVmDevices(vm.getStaticData());
-            if (getParameters().getCopyCollapse()) {
-                vm.setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
-                vm.setvmt_name(null);
-                Snapshot activeSnapshot = DbFacade.getInstance().getSnapshotDao().get(
-                        DbFacade.getInstance().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
-                vm.setSnapshots(Arrays.asList(activeSnapshot));
-                UpdateCopyVmInSpm(getVm().getstorage_pool_id(),
-                        vm, getParameters()
-                                .getStorageDomainId());
-            } else {
-                vm.setSnapshots(DbFacade.getInstance().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
-                UpdateVmImSpm();
-            }
+        VM vm = getVm();
+        VmHandler.UnLockVm(vm);
+        endDiskRelatedActions(vm);
+        if (getParameters().getCopyCollapse()) {
+            endCopyCollapseOperations(vm);
+        } else {
+            updateSnapshotOvf(vm);
         }
+        setSucceeded(true);
+    }
 
-        else {
-            setCommandShouldBeLogged(false);
-            log.warn("ExportVmCommand::EndMoveVmCommand: Vm is null - not performing full EndAction");
-        }
+    private void endDiskRelatedActions(VM vm) {
+        VmHandler.updateDisksFromDb(vm);
+        VmDeviceUtils.setVmDevices(vm.getStaticData());
+    }
 
+    private void endCopyCollapseOperations(VM vm) {
+        vm.setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
+        vm.setvmt_name(null);
+        Snapshot activeSnapshot = DbFacade.getInstance().getSnapshotDao().get(
+                DbFacade.getInstance().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
+        vm.setSnapshots(Arrays.asList(activeSnapshot));
+        UpdateCopyVmInSpm(getVm().getstorage_pool_id(),
+                vm, getParameters()
+                        .getStorageDomainId());
+    }
+
+    private void updateSnapshotOvf(VM vm) {
+        vm.setSnapshots(DbFacade.getInstance().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
+        UpdateVmImSpm();
+    }
+
+    protected void endSuccessfullySynchronous() {
+        VM vm = getVm();
+        VmHandler.UnLockVm(vm.getId());
+        this.updateSnapshotOvf(vm);
         setSucceeded(true);
     }
 
@@ -447,17 +456,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     @Override
     protected void EndWithFailure() {
         EndActionOnAllImageGroups();
-
-        if (getVm() != null) {
-            VmHandler.UnLockVm(getVm());
-            VmHandler.updateDisksFromDb(getVm());
-        }
-
-        else {
-            setCommandShouldBeLogged(false);
-            log.warn("ExportVmCommand::EndMoveVmCommand: Vm is null - not performing full EndAction");
-        }
-
+        VM vm = getVm();
+        VmHandler.UnLockVm(vm);
+        VmHandler.updateDisksFromDb(vm);
         setSucceeded(true);
     }
 
