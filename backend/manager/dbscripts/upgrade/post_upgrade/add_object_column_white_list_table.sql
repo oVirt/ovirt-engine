@@ -3,6 +3,7 @@ CREATE OR REPLACE FUNCTION __temp_add_object_column_white_list_table()
 RETURNS void
 AS $function$
 BEGIN
+
    -- This table holds the column white list per object
    IF NOT EXISTS (SELECT * FROM pg_tables WHERE tablename ILIKE 'object_column_white_list') THEN
       CREATE TABLE object_column_white_list
@@ -37,25 +38,27 @@ BEGIN
        from information_schema.columns
        where table_name = 'vds' and
        column_name in (
-           'anonymous_hugepages', 'build_name', 'cpu_cores', 'cpu_flags', 'cpu_idle', 'cpu_load', 'cpu_model',
-           'cpu_over_commit_duration_minutes','cpu_over_commit_time_stamp', 'cpu_sockets', 'cpu_speed_mh',
-           'cpu_sys', 'cpu_user', 'guest_overhead', 'high_utilization', 'hooks', 'host_name', 'host_os',
-           'hypervisor_type', 'if_total_speed', 'ip', 'iscsi_initiator_name', 'kernel_version',
-           'ksm_cpu_percent', 'ksm_pages', 'ksm_state', 'kvm_enabled', 'kvm_version', 'low_utilization',
-           'max_vds_memory_over_commit', 'mem_available', 'mem_commited', 'mem_shared', 'net_config_dirty',
-           'non_operational_reason', 'otp_validity', 'pending_vcpus_count', 'pending_vmem_size',
-           'physical_mem_mb','port', 'previous_status', 'recoverable', 'reserved_mem', 'selection_algorithm',
-           'server_ssl_enabled', 'software_version', 'spice_version', 'spm_status', 'status',
-           'storage_pool_id','storage_pool_name', 'supported_cluster_levels', 'supported_engines',
-           'swap_free','swap_total', 'transparent_hugepages_state','usage_cpu_percent', 'usage_mem_percent',
-           'usage_network_percent', 'vds_group_compatibility_version', 'vds_group_cpu_name',
-           'vds_group_description', 'vds_group_id', 'vds_group_name', 'vds_id', 'vds_name', 'vds_spm_id',
-           'vds_spm_priority', 'vds_strength','vds_type', 'vds_unique_id', 'version_name',
-           'vm_active', 'vm_count', 'vm_migrating', 'vms_cores_count'));
+          'vds_group_id', 'vds_group_name', 'vds_group_description', 'selection_algorithm',
+          'vds_id', 'vds_name', 'ip', 'vds_unique_id', 'host_name', 'port', 'vds_strength',
+          'server_ssl_enabled', 'vds_type', 'pm_type', 'pm_user', 'pm_password', 'pm_port',
+          'pm_options', 'pm_enabled', 'vds_spm_priority', 'hooks', 'status', 'cpu_cores',
+          'cpu_model', 'cpu_speed_mh', 'if_total_speed', 'kvm_enabled', 'physical_mem_mb',
+          'pending_vcpus_count', 'pending_vmem_size', 'mem_commited', 'vm_active', 'vm_count',
+          'vm_migrating', 'vms_cores_count', 'cpu_over_commit_time_stamp', 'hypervisor_type',
+          'net_config_dirty', 'high_utilization', 'low_utilization', 'max_vds_memory_over_commit',
+          'cpu_over_commit_duration_minutes', 'storage_pool_id', 'storage_pool_name', 'reserved_mem',
+          'guest_overhead', 'software_version', 'version_name', 'build_name', 'previous_status',
+          'cpu_idle', 'cpu_load', 'cpu_sys', 'cpu_user', 'usage_mem_percent', 'usage_cpu_percent',
+          'usage_network_percent', 'mem_available', 'mem_shared', 'swap_free', 'swap_total', 'ksm_cpu_percent',
+          'ksm_pages', 'ksm_state', 'cpu_flags', 'vds_group_cpu_name', 'cpu_sockets', 'vds_spm_id',
+          'otp_validity', 'spm_status', 'supported_cluster_levels', 'supported_engines',
+          'vds_group_compatibility_version', 'host_os', 'kvm_version', 'spice_version', 'kernel_version',
+          'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
+          'non_operational_reason', 'recoverable'));
+-- pm_options are missing
    end if;
 END; $function$
 LANGUAGE plpgsql;
-
 SELECT * FROM __temp_add_object_column_white_list_table();
 DROP FUNCTION __temp_add_object_column_white_list_table();
 

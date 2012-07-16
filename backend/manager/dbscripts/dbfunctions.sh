@@ -115,10 +115,7 @@ run_pre_upgrade() {
     drop_sps
     install_common_func
     #run pre upgrade scripts
-    for file in $(ls -1 upgrade/pre_upgrade/*.sql); do
-       echo "Running pre-upgrade script $file ..."
-       execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-    done
+    execute_commands_in_dir 'pre_upgrade' 'pre-upgrade'
     if [[ -n "${CLEAN_TASKS}" ]]; then
        echo "Cleaning tasks metadata..."
        delete_async_tasks_and_compensation_data
@@ -126,9 +123,21 @@ run_pre_upgrade() {
 }
 
 run_post_upgrade() {
-    #Refreshing  all views & sps
+    #Refreshing  all views & sps & run post-upgrade scripts
     refresh_views
     refresh_sps
+    #Running post-upgrade scripts
+    execute_commands_in_dir 'post_upgrade' 'post-upgrade'
+}
+
+# Runs all the SQL scripts in directory upgrade/$1/
+# The second argument is the label to use while notifying
+# the user about the running of the script
+execute_commands_in_dir() {
+    for file in $(ls -1 upgrade/$1/*.sql); do
+       echo "Running $2 script $file ..."
+       execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    done
 }
 
 set_version() {
