@@ -36,6 +36,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     private boolean bridged;
 
+    private NetworkImplementationDetails networkImplementationDetails;
+
     public VdsNetworkInterface() {
         super(new VdsNetworkStatistics(), VdsInterfaceType.None.getValue());
     }
@@ -286,6 +288,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.bridged = bridged;
     }
 
+    public NetworkImplementationDetails getNetworkImplementationDetails() {
+        return networkImplementationDetails;
+    }
+
+    public void setNetworkImplementationDetails(NetworkImplementationDetails networkImplementationDetails) {
+        this.networkImplementationDetails = networkImplementationDetails;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -390,5 +400,23 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
             return false;
         }
         return true;
+    }
+
+    /**
+     * Holds various details about regarding the logical network implementation on the device.
+     */
+    public static class NetworkImplementationDetails {
+        private final boolean inSync;
+
+        public NetworkImplementationDetails(boolean inSync) {
+            this.inSync = inSync;
+        }
+
+        /**
+         * @return Is the network's physical definition on the device same as the logical definition.
+         */
+        public boolean isInSync() {
+            return inSync;
+        }
     }
 }
