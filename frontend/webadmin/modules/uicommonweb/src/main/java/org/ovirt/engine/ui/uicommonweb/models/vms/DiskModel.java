@@ -432,6 +432,7 @@ public class DiskModel extends Model
     }
 
     private boolean isWipeAfterDeleteChangable;
+    private boolean oldWipeAfterDeleteValue;
     private boolean isQuotaAvailable;
     private Guid vmId;
 
@@ -781,10 +782,12 @@ public class DiskModel extends Model
         getDataCenter().setIsAvailable(!isInVm || !isInternal);
 
         if (!isInternal) {
+            oldWipeAfterDeleteValue = (Boolean) getWipeAfterDelete().getEntity();
             isWipeAfterDeleteChangable = getWipeAfterDelete().getIsChangable();
             isQuotaAvailable = getQuota().getIsAvailable();
         }
         UpdateDatacenters();
+        getWipeAfterDelete().setEntity(isInternal ? oldWipeAfterDeleteValue : false);
         getWipeAfterDelete().setIsChangable(isInternal ? isWipeAfterDeleteChangable : false);
         getWipeAfterDelete().setIsAvailable(isInternal ? true : false);
         getQuota().setIsAvailable(isInternal ? isQuotaAvailable : false);

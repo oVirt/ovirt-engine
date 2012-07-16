@@ -9,16 +9,20 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageTemplateBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<storage_domains, VmTemplate, StorageListModel, TemplateBackupModel>
         implements SubTabStorageTemplateBackupPresenter.ViewDef {
+
+    private static final Constants messageConstants = GWT.create(Constants.class);
 
     @Inject
     public SubTabStorageTemplateBackupView(SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider, ApplicationConstants constants) {
@@ -41,7 +45,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
-                        return object.getorigin() == null ? constants.notSpecifiedLabel() : object.getorigin()
+                        return object.getorigin() == null ? messageConstants.notSpecifiedLabel() : object.getorigin()
                                 .toString();
                     }
                 };
