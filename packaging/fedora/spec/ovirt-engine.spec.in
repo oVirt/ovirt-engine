@@ -24,8 +24,8 @@
 
 # Macro to create the engine user:
 %global create_engine_user \
-/bin/getent group %{engine_group} >/dev/null || /sbin/groupadd -r %{engine_group}; \
-/bin/getent passwd %{engine_user} >/dev/null || /sbin/useradd -c "oVirt Manager" -u %{engine_uid} -g %{engine_group} -M -d %{engine_state} %{engine_user}
+/usr/bin/getent group %{engine_group} >/dev/null || /usr/sbin/groupadd -r %{engine_group}; \
+/usr/bin/getent passwd %{engine_user} >/dev/null || /usr/sbin/useradd -c "oVirt Manager" -u %{engine_uid} -g %{engine_group} -M -d %{engine_state} %{engine_user}
 
 %global make_common_opts \\\
 	-j1 \\\
