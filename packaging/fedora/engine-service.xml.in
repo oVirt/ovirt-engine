@@ -253,14 +253,17 @@
   </profile>
 
   <interfaces>
+    <interface name="loopback">
+      <loopback/>
+    </interface>
     <interface name="public">
       <any-address/>
     </interface>
   </interfaces>
 
-  <socket-binding-group name="standard-sockets" default-interface="public">
-    <socket-binding name="http" port="${ENGINE_HTTP_PORT}"/>
-    <socket-binding name="https" port="${ENGINE_HTTPS_PORT}"/>
+  <socket-binding-group name="standard-sockets" default-interface="loopback">
+    <socket-binding name="http" port="${ENGINE_HTTP_PORT}" interface="public"/>
+    <socket-binding name="https" port="${ENGINE_HTTPS_PORT}" interface="public"/>
     <socket-binding name="ajp" port="${ENGINE_AJP_PORT}"/>
     <socket-binding name="remoting" port="4447"/>
     <socket-binding name="txn-recovery-environment" port="4712"/>
