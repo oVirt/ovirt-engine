@@ -16,6 +16,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("N/A")
     String notAvailableLabel();
 
+    @DefaultStringValue("Not Specified")
+    String notSpecifiedLabel();
+
 	// Titles
     @DefaultStringValue("")
     String blank();
@@ -1443,7 +1446,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Can't save configuration - Management Network must be attached")
     String mgmtNotAttachedToolTip();
-    
+
     @DefaultStringValue("LUN is not usable")
     String lunUnusable();
 

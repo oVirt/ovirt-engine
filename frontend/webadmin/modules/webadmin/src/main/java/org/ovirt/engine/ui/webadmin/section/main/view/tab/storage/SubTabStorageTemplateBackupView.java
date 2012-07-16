@@ -2,11 +2,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import java.util.Date;
 
-import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -29,7 +27,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
         initWidget(getTable());
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable(final ApplicationConstants constants) {
         TextColumnWithTooltip<VmTemplate> nameColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
@@ -40,10 +38,11 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
         getTable().addColumn(nameColumn, constants.nameTemplate());
 
         TextColumnWithTooltip<VmTemplate> originColumn =
-                new EnumColumn<VmTemplate, OriginType>() {
+                new TextColumnWithTooltip<VmTemplate>() {
                     @Override
-                    protected OriginType getRawValue(VmTemplate object) {
-                        return object.getorigin();
+                    public String getValue(VmTemplate object) {
+                        return object.getorigin() == null ? constants.notSpecifiedLabel() : object.getorigin()
+                                .toString();
                     }
                 };
         getTable().addColumn(originColumn, constants.originTemplate());
