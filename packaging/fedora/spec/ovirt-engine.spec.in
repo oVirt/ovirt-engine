@@ -344,17 +344,22 @@ install -dm 755 %{buildroot}/%{engine_log}/{notifier,engine-manage-domains}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 install -dm 755 %{buildroot}/%{engine_lock}
 
+# Needed for compatibility if package is different than the directory structure
+%if "%{name}" != "%{engine_name}"
+ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
+%endif
+
 # Register poms
 for pom in %{buildroot}%{_mavenpomdir}/*.pom
 do
   pomdir=`dirname "${pom}"`
   pom=`basename "${pom}"`
-  jpppom="JPP.`echo "${pom}" | sed 's/^%{engine_name}-/%{name}-/'`"
+  jpppom="JPP.${pom}"
   mv "${pomdir}/${pom}" "${pomdir}/${jpppom}"
   artifact_id=`echo "${pom}" | sed -e 's/^%{name}-//' -e 's/\.pom//'`
   if [ -f "%{buildroot}%{engine_java}/${artifact_id}.jar" ]
   then
-    %add_maven_depmap "${jpppom}" "%{engine_name}/${artifact_id}.jar"
+    %add_maven_depmap "${jpppom}" "%{name}/${artifact_id}.jar"
   else
     %add_maven_depmap "${jpppom}"
   fi
@@ -581,8 +586,13 @@ fi
 %{engine_java}/compat.jar
 %{engine_java}/utils.jar
 
+# Needed for compatibility if package is different than the directory structure
+%if "%{name}" != "%{engine_name}"
+%{_javadir}/%{name}
+%endif
+
 # POM files:
-%{_mavendepmapfragdir}/%{engine_name}
+%{_mavendepmapfragdir}/%{name}
 %{_mavenpomdir}/JPP.%{name}-root.pom
 %{_mavenpomdir}/JPP.%{name}-common.pom
 %{_mavenpomdir}/JPP.%{name}-compat.pom

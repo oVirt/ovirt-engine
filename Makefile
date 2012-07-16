@@ -230,7 +230,7 @@ install_artifacts:
 			exit 1; \
 		fi; \
 		JAR=`echo "$${POM}" | sed 's/\.pom/.jar/'`; \
-		install -p -m 644 "$${POM}" "$(DESTDIR)$(MAVENPOM_DIR)/$(ENGINE_NAME)-$${artifact_id}.pom"; \
+		install -p -m 644 "$${POM}" "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-$${artifact_id}.pom"; \
 		[ -f "$${JAR}" ] && install -p -m 644 "$${JAR}" "$(DESTDIR)$(PKG_JAVA_DIR)/$${artifact_id}.jar"; \
 	done
 
