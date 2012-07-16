@@ -762,8 +762,7 @@ fi
 
 
 %files userportal
-# XXX: This is really ugly, a config file deep inside /usr:
-#%config(noreplace) %{engine_ear}/userportal.war/org.ovirt.engine.ui.userportal.UserPortal/consoles/spice/usbfilter.txt
+%config(noreplace) %{engine_etc}/usbfilter.txt
 %{engine_ear}/userportal.war
 
 

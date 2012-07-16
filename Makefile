@@ -362,6 +362,9 @@ install_misc:
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
 	install -m 644 packaging/resources/ovirt-tmpfilesd ${DESTDIR}$(SYSCONF_DIR)/tmpfiles.d/$(ENGINE_NAME).conf
 
+	# USB filter:
+	install -m 644 frontend/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
+
 install_jboss_modules:
 	@echo "*** Deploying JBoss modules"
 

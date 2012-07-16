@@ -193,6 +193,24 @@
     <url-pattern>/spice/SpiceVersion_x64.txt</url-pattern>
   </servlet-mapping>
 
+  <!-- USB filter: -->
+  <servlet>
+    <servlet-name>usbfilter.txt</servlet-name>
+    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
+    <init-param>
+      <param-name>type</param-name>
+      <param-value>text/plain</param-value>
+    </init-param>
+    <init-param>
+      <param-name>file</param-name>
+      <param-value>/etc/ovirt-engine/usbfilter.txt</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>usbfilter.txt</servlet-name>
+    <url-pattern>/spice/usbfilter.txt</url-pattern>
+  </servlet-mapping>
+
   <!-- Make sure that 404 errors are redirected (not forwarded) to the index page: -->
   <servlet>
     <servlet-name>error</servlet-name>
