@@ -43,13 +43,15 @@ public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValu
     @Override
     public void edit(final KeyValueModel object) {
         setPanel(object);
-        object.getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
+        if (object.getKeyValueLines().getItemsChangedEvent().getListeners().size() == 0) {
+            object.getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
 
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                setPanel(object);
-            }
-        });
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    setPanel(object);
+                }
+            });
+        }
     }
 
     private void setPanel(KeyValueModel object) {
