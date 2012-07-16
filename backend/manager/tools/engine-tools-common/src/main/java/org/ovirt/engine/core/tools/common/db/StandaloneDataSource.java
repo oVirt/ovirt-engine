@@ -155,7 +155,6 @@ public class StandaloneDataSource implements DataSource {
         }
     }
 
-    @Override
     public Connection getConnection () throws SQLException {
         try {
             checkConnection();
@@ -168,42 +167,34 @@ public class StandaloneDataSource implements DataSource {
         return wrapper;
     }
 
-    @Override
     public Connection getConnection (String user, String password) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
-    @Override
     public PrintWriter getLogWriter () throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
-    @Override
     public void setLogWriter (PrintWriter out) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
-    @Override
     public void setLoginTimeout (int seconds) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
-    @Override
     public int getLoginTimeout () throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
-    @Override
     public <T> T unwrap (Class<T> iface) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
-    @Override
     public boolean isWrapperFor (Class<?> iface) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
-    @Override
     public java.util.logging.Logger getParentLogger () throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException();
     }
