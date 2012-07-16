@@ -173,7 +173,7 @@ def checkJbossService():
     """
     logging.debug("checking the status of jbossas service")
     cmd = [
-        basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "status",
+        basedefs.EXEC_SERVICE, basedefs.ENGINE_SERVICE_NAME, "status",
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=False)
 
@@ -560,17 +560,17 @@ class DB():
                 os.remove(self.sqlfile)
             raise
 
-def stopJboss(service=basedefs.JBOSS_SERVICE_NAME):
+def stopEngine(service=basedefs.ENGINE_SERVICE_NAME):
     logging.debug("stopping %s service.", service)
     cmd = [
         basedefs.EXEC_SERVICE, service, "stop",
     ]
     output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STP_JBOSS_SERVICE)
 
-def startJboss():
+def startEngine():
     logging.debug("starting jboss service.")
     cmd = [
-        basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "start",
+        basedefs.EXEC_SERVICE, basedefs.ENGINE_SERVICE_NAME, "start",
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_JBOSS_SERVICE)
 
