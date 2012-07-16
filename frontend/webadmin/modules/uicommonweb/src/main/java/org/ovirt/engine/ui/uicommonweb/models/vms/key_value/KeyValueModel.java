@@ -217,9 +217,6 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
     public void removeLine(KeyValueLineModel lineModel) {
         List<KeyValueLineModel> list =
                 new ArrayList<KeyValueLineModel>((List<KeyValueLineModel>) getKeyValueLines().getItems());
-        if (list.size() == 1) {
-            return;
-        }
         int counter = 0;
         for (KeyValueLineModel keyValueLineModel : list) {
             if (keyValueLineModel.equals(lineModel)) {
@@ -230,6 +227,9 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
         list.remove(counter);
         getKeyValueLines().setItems(list);
         updateKeys();
+        if (list.size() == 0) {
+            addLine(new KeyValueLineModel(this));
+        }
     }
 
     private void updateKeys() {
