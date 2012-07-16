@@ -190,7 +190,6 @@ public class VdsBrokerObjectsBuilder {
         }
 
         // ------------- vm internal agent data
-        vm.setguest_cur_user_name(AssignStringValue(xmlRpcStruct, VdsProperties.guest_cur_user_name));
         vm.setguest_last_login_time(AssignDateTImeFromEpoch(xmlRpcStruct, VdsProperties.guest_last_login_time));
         vm.setvm_host(AssignStringValue(xmlRpcStruct, VdsProperties.vm_host));
 
