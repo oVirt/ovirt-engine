@@ -773,13 +773,13 @@ fi
 
 # Configuration files for the configuration tool:
 %dir %{engine_etc}/engine-config
-%{engine_etc}/engine-config/engine-config.conf
+%config(noreplace) %{engine_etc}/engine-config/engine-config.conf
 %{engine_etc}/engine-config/engine-config.*properties
 %{engine_etc}/engine-config/log4j.xml
 
 # Configuration files for the domain management tool:
 %dir %{engine_etc}/engine-manage-domains
-%{engine_etc}/engine-manage-domains/engine-manage-domains.conf
+%config(noreplace) %{engine_etc}/engine-manage-domains/engine-manage-domains.conf
 %{engine_etc}/engine-manage-domains/log4j.xml
 
 
