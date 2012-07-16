@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.common.util.StringUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
@@ -48,7 +49,9 @@ public class DataCenterMapper {
         DataCenter model = template != null ? template : new DataCenter();
         model.setId(entity.getId().toString());
         model.setName(entity.getname());
-        model.setDescription(entity.getdescription());
+        if (!StringUtils.isNullOrEmpty(entity.getdescription())) {
+                model.setDescription(entity.getdescription());
+        }
         model.setStorageType(StorageDomainMapper.map(entity.getstorage_pool_type(), null));
         if (entity.getstatus()!=null) {
             model.setStatus(StatusUtils.create(map(entity.getstatus(), null)));

@@ -62,9 +62,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     new SetStoragePoolDescriptionVDSCommandParameters(
                         getStoragePool().getId(), getStoragePool().getname())
                 );
-                getStoragePoolDAO().updatePartial(getStoragePool());
             }
         }
+        getStoragePoolDAO().updatePartial(getStoragePool());
 
         updateStoragePoolFormatType();
         setSucceeded(true);
