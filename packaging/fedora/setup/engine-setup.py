@@ -127,7 +127,7 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
                                               { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
-                                                'functions' : [editSysconfig, _editWebConf] },
+                                                'functions' : [_editSysconfig, _editWebConf] },
                                               { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
                                                 'functions' : [_updatePgPassFile]}]
                        },
@@ -135,7 +135,7 @@ def initSequences():
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [True],
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
-                                                'functions' : [_encryptDBPass, configEncryptedPass] },
+                                                'functions' : [_encryptDBPass, _configEncryptedPass] },
                                               {  'title'     : output_messages.INFO_UPGRADE_DB,
                                                 'functions' : [stopRhevmDbRelatedServices, _upgradeDB, startRhevmDbRelatedServices]} ]
                        },
@@ -143,7 +143,7 @@ def initSequences():
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [False],
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
-                                                'functions' : [_encryptDBPass, configEncryptedPass]},
+                                                'functions' : [_encryptDBPass, _configEncryptedPass]},
                                               { 'title'     : output_messages.INFO_CREATE_DB,
                                                 'functions' : [_createDB,  _updateVDCOptions]},
                                               { 'title'     : output_messages.INFO_UPD_DC_TYPE,
@@ -1268,21 +1268,9 @@ def _encryptDBPass():
     Encryptes the jboss postgres db password
     and store it in conf
     """
-    #run encrypt tool on user give password
-    if (os.path.exists(basedefs.EXEC_ENCRYPT_PASS)):
-        cmd = [
-            basedefs.EXEC_ENCRYPT_PASS, controller.CONF["DB_PASS"],
-        ]
-
-        # The encrypt tool needs the jboss home env set
-        # Since we cant use the bash way, we need to set it as environ
-        os.environ["JBOSS_HOME"] = basedefs.DIR_ENGINE
-        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_ENCRYPT_PASS, maskList=masked_value_set)
-
-        #parse the encrypted password from the tool
-        controller.CONF["ENCRYPTED_DB_PASS"] = utils.parseStrRegex(output, "Encoded password:\s*(.+)", output_messages.ERR_EXP_PARSING_ENCRYPT_PASS)
-    else:
-        raise Exception(output_messages.ERR_ENCRYPT_TOOL_NOT_FOUND)
+    #run encrypt tool on user given password
+    controller.CONF["ENCRYPTED_DB_PASS"] = utils.encryptEngineDBPass(password=controller.CONF["DB_PASS"],
+                                               maskList=masked_value_set)
 
 def _verifyUserPermissions():
     username = pwd.getpwuid(os.getuid())[0]
@@ -1866,60 +1854,31 @@ def stopRhevmDbRelatedServices():
         logging.warn("Failed to start rhevm-notifierd")
         controller.MESSAGES.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
 
-def configEncryptedPass():
+def _configEncryptedPass():
     """
     Push the encrypted password into the local configuration file.
     """
     try:
-        logging.debug("Encrypting database password.")
-        handler = utils.TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
-        handler.open()
-        handler.editParam("ENGINE_DB_USER", getDbUser())
-        handler.editParam("ENGINE_DB_PASSWORD", controller.CONF["ENCRYPTED_DB_PASS"])
-        handler.close()
+        utils.configEncryptedPass(controller.CONF["ENCRYPTED_DB_PASS"])
     except:
         logging.error("ERROR Editing engine local configuration file.")
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_JBOSS)
 
-def editSysconfig():
+def _editSysconfig():
     """
     Update the local configuration file.
     """
-    # Load the file:
-    logging.debug("Loading text file handler")
-    handler = utils.TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
-    handler.open()
-
-    # Database connection details:
     dbUrl = "jdbc:postgresql://" + getDbHostName() + ":" + getDbPort() + "/" + basedefs.DB_NAME
     if "DB_SECURE_CONNECTION" in controller.CONF.keys() and controller.CONF["DB_SECURE_CONNECTION"] == "yes":
         dbUrl = dbUrl + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
-    handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
-    handler.editParam("ENGINE_DB_URL", dbUrl)
-    handler.editParam("ENGINE_DB_USER", getDbUser())
 
-    # Save port numbers and enabled/disabled state:
-    isProxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
-    if isProxyEnabled:
-        handler.editParam("ENGINE_PROXY_ENABLED", "true")
-        handler.editParam("ENGINE_PROXY_HTTP_PORT", controller.CONF["HTTP_PORT"])
-        handler.editParam("ENGINE_PROXY_HTTPS_PORT", controller.CONF["HTTPS_PORT"])
-        handler.editParam("ENGINE_HTTP_ENABLED", "false")
-        handler.editParam("ENGINE_HTTPS_ENABLED", "false")
-        handler.editParam("ENGINE_AJP_ENABLED", "true")
-        handler.editParam("ENGINE_AJP_PORT", basedefs.JBOSS_AJP_PORT)
-    else:
-        handler.editParam("ENGINE_PROXY_ENABLED", "false")
-        handler.editParam("ENGINE_HTTP_ENABLED", "true")
-        handler.editParam("ENGINE_HTTP_PORT", controller.CONF["HTTP_PORT"])
-        handler.editParam("ENGINE_HTTPS_ENABLED", "true")
-        handler.editParam("ENGINE_HTTPS_PORT", controller.CONF["HTTPS_PORT"])
-        handler.editParam("ENGINE_AJP_ENABLED", "false")
-
-    # Save and close the file:
-    logging.debug("Engine has been configured")
-    handler.close()
+    proxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
+    utils.editEngineSysconfig(proxyEnabled=proxyEnabled,
+                              dbUrl=dbUrl,
+                              dbUser=utils.getDbUser(),
+                              http=controller.CONF["HTTP_PORT"],
+                              https=controller.CONF["HTTPS_PORT"])
 
 def startRhevmDbRelatedServices():
     """

@@ -919,6 +919,69 @@ def getHostParams():
 
     return (values["fqdn"], values["httpPort"], values["httpsPort"])
 
+def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, http, https):
+    # Load the file:
+    logging.debug("Loading text file handler")
+    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
+    handler.open()
+
+    handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
+    handler.editParam("ENGINE_DB_URL", dbUrl)
+    handler.editParam("ENGINE_DB_USER", dbUser)
+
+    # Save port numbers and enabled/disabled state:
+    if proxyEnabled:
+        handler.editParam("ENGINE_PROXY_ENABLED", "true")
+        handler.editParam("ENGINE_PROXY_HTTP_PORT", http)
+        handler.editParam("ENGINE_PROXY_HTTPS_PORT", https)
+        handler.editParam("ENGINE_HTTP_ENABLED", "false")
+        handler.editParam("ENGINE_HTTPS_ENABLED", "false")
+        handler.editParam("ENGINE_AJP_ENABLED", "true")
+        handler.editParam("ENGINE_AJP_PORT", basedefs.JBOSS_AJP_PORT)
+    else:
+        handler.editParam("ENGINE_PROXY_ENABLED", "false")
+        handler.editParam("ENGINE_HTTP_ENABLED", "true")
+        handler.editParam("ENGINE_HTTP_PORT", http)
+        handler.editParam("ENGINE_HTTPS_ENABLED", "true")
+        handler.editParam("ENGINE_HTTPS_PORT", https)
+        handler.editParam("ENGINE_AJP_ENABLED", "false")
+
+    # Save and close the file:
+    logging.debug("Engine has been configured")
+    handler.close()
+
+def encryptEngineDBPass(password, maskList):
+    """
+    Encryptes the jboss postgres db password
+    and store it in conf
+    """
+    #run encrypt tool on user give password
+    if (os.path.exists(basedefs.EXEC_ENCRYPT_PASS)):
+        cmd = [
+            basedefs.EXEC_ENCRYPT_PASS, password,
+        ]
+
+        # The encrypt tool needs the jboss home env set
+        # Since we cant use the bash way, we need to set it as environ
+        os.environ["JBOSS_HOME"] = basedefs.DIR_ENGINE
+        output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_ENCRYPT_PASS, maskList=maskList)
+
+        #parse the encrypted password from the tool
+        return parseStrRegex(output, "Encoded password:\s*(.+)", output_messages.ERR_EXP_PARSING_ENCRYPT_PASS)
+    else:
+        raise Exception(output_messages.ERR_ENCRYPT_TOOL_NOT_FOUND)
+
+def configEncryptedPass(password):
+    """
+    Push the encrypted password into the local configuration file.
+    """
+    logging.debug("Encrypting database password.")
+    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
+    handler.open()
+    handler.editParam("ENGINE_DB_USER", getDbUser())
+    handler.editParam("ENGINE_DB_PASSWORD", password)
+    handler.close()
+
 # TODO: Support SystemD services
 class Service():
     def __init__(self, name):
