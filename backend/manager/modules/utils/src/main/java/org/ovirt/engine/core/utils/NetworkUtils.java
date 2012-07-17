@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
@@ -122,5 +124,31 @@ public final class NetworkUtils {
             }
         }
         return list;
+    }
+
+    /**
+     * Fill network details for the given network devices from the given networks.<br>
+     * {@link VdsNetworkInterface.NetworkDetails#isInSync()} will be <code>true</code> IFF the logical network
+     * properties are exactly the same as those defined on the network device.
+     * @param networks
+     *            The networks definitions to fill the details from.
+     * @param ifaces
+     *            The network devices to update.
+     */
+    public static VdsNetworkInterface.NetworkImplementationDetails calculateNetworkImplementationDetails(
+            Map<String, Network> networks,
+            VdsNetworkInterface iface) {
+        if (!StringUtils.isEmpty(iface.getNetworkName()) && networks.containsKey(iface.getNetworkName())) {
+            Network network = networks.get(iface.getNetworkName());
+            if ((network.getMtu() == 0 || iface.getMtu() == network.getMtu())
+                    && ObjectUtils.equals(iface.getVlanId(), network.getvlan_id())
+                    && iface.isBridged() == network.isVmNetwork()) {
+                return new VdsNetworkInterface.NetworkImplementationDetails(true);
+            } else {
+                return new VdsNetworkInterface.NetworkImplementationDetails(false);
+            }
+        }
+
+        return null;
     }
 }
