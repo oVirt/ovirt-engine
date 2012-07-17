@@ -378,10 +378,13 @@ ejb3-persistence
 jaxb-api
 jaxb-impl
 jboss-interceptors-api_1.1_spec
-spring-asm
 stax-api
 xml-apis
 .
+
+# Attention!
+# spring-asm *IS* required on rhel-6
+rm -rf %{buildroot}%{engine_ear}/lib/spring-asm*.jar
 
 # Then for the system jar files (using build-classpath):
 while read jar_name lib_path
