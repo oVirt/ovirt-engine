@@ -23,16 +23,23 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     }
 
     protected interface Style extends CssResource {
+
         String footerButton();
 
         String contentWidget();
+
+        String headerContainerWithBlankLogo();
+
     }
 
     @UiField
-    SimplePanel headerCenterPanel;
+    SimplePanel logoPanel;
 
     @UiField
-    SimplePanel headerLeftPanel;
+    FlowPanel headerContainerPanel;
+
+    @UiField
+    SimplePanel headerTitlePanel;
 
     @UiField
     SimplePanel contentPanel;
@@ -52,7 +59,9 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     @UiField
     Style style;
 
-    UICommand helpCommand;
+    private UICommand helpCommand;
+
+    private boolean useBlankLogo = true;
 
     public SimpleDialogPanel() {
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -63,12 +72,23 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     @Override
     @UiChild(tagname = "header", limit = 1)
     public void setHeader(Widget widget) {
-        headerCenterPanel.setWidget(widget);
+        headerTitlePanel.setWidget(widget);
+        updateHeaderContainerStyle();
     }
 
     @UiChild(tagname = "logo", limit = 1)
     public void setLogo(Widget widget) {
-        headerLeftPanel.setWidget(widget);
+        logoPanel.setWidget(widget);
+        useBlankLogo = false;
+        updateHeaderContainerStyle();
+    }
+
+    void updateHeaderContainerStyle() {
+        if (useBlankLogo) {
+            headerContainerPanel.addStyleName(style.headerContainerWithBlankLogo());
+        } else {
+            headerContainerPanel.removeStyleName(style.headerContainerWithBlankLogo());
+        }
     }
 
     @Override

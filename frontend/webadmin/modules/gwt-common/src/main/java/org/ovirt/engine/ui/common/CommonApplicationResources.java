@@ -90,11 +90,11 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/dialog/dialog_header_image.png")
     ImageResource dialogHeaderImage();
 
+    @Source("images/dialog/blank.png")
+    ImageResource dialogLogoBlankImage();
+
     @Source("images/dialog/error.png")
     ImageResource dialogLogoErrorImage();
-
-    @Source("images/dialog/info.png")
-    ImageResource dialogLogoInfoImage();
 
     @Source("images/dialog/warning.png")
     ImageResource dialogLogoWarningImage();

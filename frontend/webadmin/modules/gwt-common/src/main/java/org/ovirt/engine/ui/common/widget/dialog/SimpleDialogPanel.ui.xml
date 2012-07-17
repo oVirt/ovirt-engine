@@ -11,36 +11,36 @@
 			left: 0px;
 			right: 0px;
 		}
-		
+
 		.headerRightPanel {
 			position: absolute;
 			right: 5px;
 		}
-		
+
 		.headerLeftPanel {
 			position: absolute;
 			left: 5px;
 		}
-		
+
 		.headerCenterPanel {
 			position: absolute;
 			background: url(images/dialog_header_background_repetitive.png) repeat-x;
 			height: 27px;
 			line-height: 27px;
 			width: auto;
-			left: 27px;
+			left: 32px;
 			right: 123px;
 		}
-		
+
 		.headerTitle {
 			text-align: left;
 			font-size: 14px;
 			font-weight: bold;
 			color: white;
-			margin-left: 5px;
-			padding-left: 3px;
+			margin-left: 6px;
+			float: left;
 		}
-		
+
 		.content {
 			border: 1px solid #CED8DF;
 			position: absolute;
@@ -50,14 +50,14 @@
 			left: 6px;
 			right: 6px;
 		}
-		
+
 		.footer {
 			position: absolute;
 			right: 16px;
 			bottom: 9px;
 			width: 95%;
 		}
-		
+
 		.footerButton {
 			float: right;
 			font-size: 12px;
@@ -65,7 +65,7 @@
 			cursor: hand;
 			cursor: pointer;
 		}
-		
+
 		.contentWidget {
 			width: 100%;
 			height: 100%;
@@ -73,18 +73,23 @@
 			position: absolute;
 		}
 
+		.headerContainerWithBlankLogo {
+			position: relative;
+			left: -27px;
+		}
+
 		.helpIconButton {
-			position: absolute;
 			background: transparent;
 			border: 1px solid transparent;
 			line-height: 32px;
 			vertical-align: middle;
-			top: 0px;
-			right: 28px;
 			padding: 1px;
 			cursor: hand;
 			cursor: pointer;
 			z-index: 1;
+			float: left;
+			position: relative;
+			top: -3px;
 		}
 
 		.closeIconButton {
@@ -102,20 +107,24 @@
 		}
 	</ui:style>
 
-	<g:HTMLPanel>
+	<g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.header}">
-			<g:SimplePanel ui:field="headerLeftPanel" addStyleNames="{style.headerLeftPanel}">
-				<g:Image resource='{resources.dialogLogoInfoImage}' />
+			<g:SimplePanel ui:field="logoPanel" addStyleNames="{style.headerLeftPanel}">
+				<g:Image resource='{resources.dialogLogoBlankImage}' />
 			</g:SimplePanel>
-			<g:SimplePanel ui:field="headerCenterPanel" addStyleNames="{style.headerCenterPanel} {style.headerTitle}" />
-			<g:SimplePanel ui:field="headerRightPanel" addStyleNames="{style.headerRightPanel}">
-				<g:FlowPanel>
-					<g:Image resource='{resources.dialogHeaderImage}' />
-					<g:PushButton ui:field='helpIconButton' addStyleNames="{style.helpIconButton}" visible="false">
+			<g:FlowPanel addStyleNames="{style.headerCenterPanel}">
+				<g:FlowPanel ui:field="headerContainerPanel">
+					<g:SimplePanel ui:field="headerTitlePanel" addStyleNames="{style.headerTitle}" />
+					<g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
 						<g:upFace image='{resources.dialogIconHelp}' />
 						<g:downFace image='{resources.dialogIconHelpDown}' />
 						<g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
 					</g:PushButton>
+				</g:FlowPanel>
+			</g:FlowPanel>
+			<g:SimplePanel addStyleNames="{style.headerRightPanel}">
+				<g:FlowPanel>
+					<g:Image resource='{resources.dialogHeaderImage}' />
 					<g:PushButton ui:field='closeIconButton' addStyleNames="{style.closeIconButton}">
 						<g:upFace image='{resources.dialogIconClose}' />
 						<g:downFace image='{resources.dialogIconCloseDown}' />
@@ -132,6 +141,6 @@
 			<g:FlowPanel ui:field="footerStatusPanel" />
 			<div style="clear: both;" />
 		</g:HTMLPanel>
-	</g:HTMLPanel>
+	</g:FlowPanel>
 
 </ui:UiBinder>
