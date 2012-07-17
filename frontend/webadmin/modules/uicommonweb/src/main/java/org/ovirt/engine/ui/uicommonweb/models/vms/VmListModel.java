@@ -2707,7 +2707,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (command == getExportCommand())
         {
-            Export();
+            Export(ConstantsManager.getInstance().getConstants().exportVirtualMachineTitle());
         }
         else if (command == getMoveCommand())
         {

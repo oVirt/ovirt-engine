@@ -486,6 +486,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Export Virtual Machine")
 	String exportVirtualMachineTitle();
 
+	@DefaultStringValue("Export Template")
+    String exportTemplateTitle();
+
 	@DefaultStringValue("Template(s) not Found on Export Domain")
 	String templatesNotFoundOnExportDomainTitle();
 

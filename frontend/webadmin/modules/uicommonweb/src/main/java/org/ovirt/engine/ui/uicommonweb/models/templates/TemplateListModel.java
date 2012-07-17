@@ -702,7 +702,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
         else if (command == getExportCommand())
         {
-            Export();
+            Export(ConstantsManager.getInstance().getConstants().exportTemplateTitle());
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {

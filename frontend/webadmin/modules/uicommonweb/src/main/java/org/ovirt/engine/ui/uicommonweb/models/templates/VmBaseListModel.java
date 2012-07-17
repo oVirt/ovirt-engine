@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
 
-    protected void Export()
+    protected void Export(String title)
     {
         T selectedEntity = (T) getSelectedItem();
         if (selectedEntity == null)
@@ -40,7 +40,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
         ExportVmModel model = new ExportVmModel();
         setWindow(model);
         model.StartProgress(null);
-        model.setTitle(ConstantsManager.getInstance().getConstants().exportVirtualMachineTitle());
+        model.setTitle(title);
         model.setHashName("export_virtual_machine"); //$NON-NLS-1$
         setupExportModel(model);
 
