@@ -11,6 +11,7 @@ import logging, logging.config
 import traceback
 import string
 import random
+import glob
 import re
 
 SUPPORTED_PLATFORMS = [ "RedHatEnterpriseServer", "Fedora" ]
@@ -162,7 +163,11 @@ def downloadBootstrap(url_bs, random_num, vds_complete):
         trg_script = "/tmp/%s"%(tmp_script_name)
         trg_lib = "/tmp/%s"%(install_lib)
 
-        if install_lib is not None and not os.path.exists(trg_lib):
+        if install_lib is not None:
+            if os.path.exists(trg_lib):
+                 # To remove .py and .pyc
+                 for fileEntry in glob.glob('/tmp/deployUtil*'):
+                     os.unlink(fileEntry)
             src_lib_url = url_bs + install_lib
             execfn = ["/usr/bin/curl","-s", "-k", "-w", "%{http_code}", "-o", trg_lib, src_lib_url]
             logging.debug("trying to fetch %s script cmd = '%s'",install_lib, string.join(execfn, " "))
