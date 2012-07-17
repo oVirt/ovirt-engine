@@ -22,9 +22,6 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     public GlusterVolumeCommandBase(T params) {
         super(params);
         setGlusterVolumeId(getParameters().getVolumeId());
-        if(getGlusterVolume() != null) {
-            setVdsGroupId(getGlusterVolume().getClusterId());
-        }
     }
 
     protected GlusterBrickDao getGlusterBrickDao() {
@@ -37,12 +34,14 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
 
     @Override
     protected boolean canDoAction() {
-        if (!super.canDoAction()) {
-            return false;
-        }
-
         if (getGlusterVolume() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
+            return false;
+        }
+        setVdsGroupId(getGlusterVolume().getClusterId());
+
+        // super class canDoAction expects cluster id (VdsGroupId).
+        if (!super.canDoAction()) {
             return false;
         }
 
