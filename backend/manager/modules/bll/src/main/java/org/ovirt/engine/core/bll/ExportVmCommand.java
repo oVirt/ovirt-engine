@@ -69,24 +69,23 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         super(parameters);
         setVmId(parameters.getContainerId());
         parameters.setEntityId(getVmId());
-        setStoragePoolId(getVm().getstorage_pool_id());
     }
 
     @Override
     protected boolean canDoAction() {
-        boolean retVal = true;
-
         if (getVm() == null) {
-            retVal = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-        } else {
-            setDescription(getVmName());
+            return false;
         }
+        setDescription(getVmName());
+        setStoragePoolId(getVm().getstorage_pool_id());
 
         // check that target domain exists
         StorageDomainValidator targetstorageDomainValidator = new StorageDomainValidator(getStorageDomain());
-        retVal = retVal && targetstorageDomainValidator.isDomainExistAndActive(getReturnValue()
-                    .getCanDoActionMessages());
+        if (!targetstorageDomainValidator.isDomainExistAndActive(getReturnValue()
+                .getCanDoActionMessages())) {
+            return false;
+        }
 
         // load the disks of vm from database
         VmHandler.updateDisksFromDb(getVm());
@@ -94,95 +93,95 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         // update vm snapshots for storage free space check
         ImagesHandler.fillImagesBySnapshots(getVm());
 
-        setStoragePoolId(getVm().getstorage_pool_id());
-
         // check that the target and source domain are in the same storage_pool
         if (DbFacade.getInstance()
                 .getStoragePoolIsoMapDAO()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getstorage_pool_id())) == null) {
-            retVal = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            return false;
         }
 
         // check if template exists only if asked for
-        if (retVal && getParameters().getTemplateMustExists()) {
-            retVal = CheckTemplateInStorageDomain(getVm().getstorage_pool_id(), getParameters().getStorageDomainId(),
-                    getVm().getvmt_guid());
-            if (!retVal) {
+        if (getParameters().getTemplateMustExists()) {
+            if (!CheckTemplateInStorageDomain(getVm().getstorage_pool_id(), getParameters().getStorageDomainId(),
+                    getVm().getvmt_guid())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN);
                 getReturnValue().getCanDoActionMessages().add(
                         String.format("$TemplateName %1$s", getVm().getvmt_name()));
+                return false;
             }
         }
 
         // check if Vm has disks
-        if (retVal && getVm().getDiskMap().size() == 0) {
+        if (getVm().getDiskMap().size() == 0) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
-            retVal = false;
+            return false;
         }
 
-        if (retVal) {
-            Map<Guid, ? extends Disk> images = getVm().getDiskMap();
-            // check that the images requested format are valid (COW+Sparse)
-            retVal = ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
-                    new ArrayList<Disk>(images.values()),
-                    getReturnValue().getCanDoActionMessages());
+        Map<Guid, ? extends Disk> images = getVm().getDiskMap();
+        // check that the images requested format are valid (COW+Sparse)
+        if (!ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
+                new ArrayList<Disk>(images.values()),
+                getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
 
-            if (retVal && getParameters().getCopyCollapse()) {
-                for (DiskImage img : getDisksBasedOnImage()) {
-                    if (images.containsKey(img.getId())) {
-                        // check that no RAW format exists (we are in collapse
-                        // mode)
-                        if (((DiskImage) images.get(img.getId())).getvolume_format() == VolumeFormat.RAW
-                                && img.getvolume_format() != VolumeFormat.RAW) {
-                            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_EXPORT_RAW_FORMAT);
-                            retVal = false;
-                        }
+        if (getParameters().getCopyCollapse()) {
+            for (DiskImage img : getDisksBasedOnImage()) {
+                if (images.containsKey(img.getId())) {
+                    // check that no RAW format exists (we are in collapse
+                    // mode)
+                    if (((DiskImage) images.get(img.getId())).getvolume_format() == VolumeFormat.RAW
+                            && img.getvolume_format() != VolumeFormat.RAW) {
+                        addCanDoActionMessage(VdcBllMessages.VM_CANNOT_EXPORT_RAW_FORMAT);
+                        return false;
                     }
                 }
             }
         }
 
         // check destination storage is Export domain
-        if (retVal && getStorageDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
+        if (getStorageDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
-            retVal = false;
+            return false;
         }
         // check destination storage have free space
-        if (retVal) {
-            int sizeInGB = (int) getVm().getActualDiskWithSnapshotsSize();
-            retVal = StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(), sizeInGB);
-            if (!retVal)
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+        int sizeInGB = (int) getVm().getActualDiskWithSnapshotsSize();
+        if (!StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(), sizeInGB)) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+            return false;
         }
 
-        if (retVal && getVm().getDiskMap().size() == 0) {
+        if (getVm().getDiskMap().size() == 0) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
-            retVal = false;
+            return false;
         }
 
-        retVal =
-                CheckVmInStorageDomain() && retVal && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
-                        && ImagesHandler.PerformImagesChecks(getVm(),
-                                    getReturnValue().getCanDoActionMessages(),
-                                    getVm().getstorage_pool_id(),
-                                    Guid.Empty,
-                                    false,
-                                    true,
-                                    false,
-                                    false,
-                                    true,
-                                    true,
-                                    true,
-                                    true,
-                                    getDisksBasedOnImage());
-
-        if (!retVal) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        if (!(CheckVmInStorageDomain() && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                && ImagesHandler.PerformImagesChecks(getVm(),
+                        getReturnValue().getCanDoActionMessages(),
+                        getVm().getstorage_pool_id(),
+                        Guid.Empty,
+                        false,
+                        true,
+                        false,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        getDisksBasedOnImage()))) {
+            return false;
         }
-        return retVal;
+
+        return true;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 
     @Override
