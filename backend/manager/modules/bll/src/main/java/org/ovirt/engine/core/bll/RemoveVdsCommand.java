@@ -24,6 +24,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
+@LockIdNameAttribute
 public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     private AuditLogType errorType = AuditLogType.USER_FAILED_REMOVE_VDS;
