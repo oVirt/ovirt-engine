@@ -1,3 +1,8 @@
+# Settings
+%global product_name oVirt Engine
+%global product_name_short oVirt Engine
+%global user_description oVirt Manager
+%global install_poms 1
 
 # Short names for engine directories:
 %global engine_name ovirt-engine
@@ -25,7 +30,7 @@
 # Macro to create the engine user:
 %global create_engine_user \
 /usr/bin/getent group %{engine_group} >/dev/null || /usr/sbin/groupadd -r %{engine_group}; \
-/usr/bin/getent passwd %{engine_user} >/dev/null || /usr/sbin/useradd -c "oVirt Manager" -u %{engine_uid} -g %{engine_group} -M -d %{engine_state} %{engine_user}
+/usr/bin/getent passwd %{engine_user} >/dev/null || /usr/sbin/useradd -c "%{user_description}" -u %{engine_uid} -g %{engine_group} -M -d %{engine_state} %{engine_user}
 
 %global make_common_opts \\\
 	-j1 \\\
@@ -170,13 +175,13 @@ Requires: ovirt-log-collector
 
 
 %description
-oVirt Engine is a feature-rich server virtualization management
+%{product_name} is a feature-rich server virtualization management
 system that provides advanced capabilities for managing the Open
 virtualization infrastructure for Servers and Desktops.
 
 
 %package backend
-Summary: Engine core of oVirt Engine
+Summary: Engine core of %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 Requires: apache-commons-beanutils
@@ -214,67 +219,67 @@ Requires: xmlrpc3-common
 
 
 %description backend
-The backend engine of oVirt Engine
+The backend engine of %{product_name_short}
 
 
 %package restapi
-Summary: RESTful API for oVirt Engine
+Summary: RESTful API for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 
 %description restapi
-The RESTful API for oVirt Engine
+The RESTful API for %{product_name_short}
 
 
 %package genericapi
-Summary: Generic API for oVirt Engine
+Summary: Generic API for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 
 %description genericapi
-The generic API for oVirt Engine
+The generic API for %{product_name_short}
 
 
 %package setup
-Summary: Setup and upgrade scripts for oVirt Engine
+Summary: Setup and upgrade scripts for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name}
 Requires: lsof
 Requires: nfs-utils
 
 %description setup
-Setup and upgrade scripts for oVirt Engine
+Setup and upgrade scripts for %{product_name_short}
 
 
 %package dbscripts
-Summary: Database scripts for oVirt Engine
+Summary: Database scripts for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name}
 
 %description dbscripts
-Database scripts for oVirt Engine
+Database scripts for %{product_name_short}
 
 
 %package userportal
-Summary: User Portal of oVirt Engine
+Summary: User Portal of %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 
 %description userportal
-The user portal interface to oVirt Engine
+The user portal interface to %{product_name_short}
 
 
 %package webadmin-portal
-Summary: Web Admin Portal of oVirt Engine
+Summary: Web Admin Portal of %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name}
 
 %description webadmin-portal
-The web administration interface to oVirt Engine
+The web administration interface to %{product_name_short}
 
 
 %package tools-common
-Summary: Common libraries for  oVirt Engine Tools
+Summary: Common libraries for  %{product_name_short} Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 Requires: apache-commons-collections
@@ -286,38 +291,38 @@ Requires: apache-commons-jxpath
 Requires: log4j
 
 %description tools-common
-The common libraries used by oVirt Engine Tools
+The common libraries used by %{product_name_short} Tools
 
 
 %package notification-service
-Summary: Notification service for oVirt Engine Tools
+Summary: Notification service for %{product_name_short} Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-tools-common = %{version}-%{release}
 Requires: classpathx-mail
 
 %description notification-service
-The notification service used by oVirt Engine
+The notification service used by %{product_name_short}
 
 
 %package config
-Summary: Configuration tool for oVirt Engine
+Summary: Configuration tool for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name}-tools-common = %{version}-%{release}
 
 %description config
-The configuration tool for oVirt Engine
+The configuration tool for %{product_name_short}
 
 
 %package setup-plugin-allinone
-Summary: All-in-one plugin for oVirt Engine's setup
+Summary: All-in-one plugin for %{product_name_short}'s setup
 Group: Virtualization/Management
 Requires: %{name}-setup
 Requires: %{name}-sdk
 Requires: vdsm
 
 %description setup-plugin-allinone
-All-in-one plugin for oVirt Engine's setup
+All-in-one plugin for %{product_name_short}'s setup
 
 
 %prep
@@ -350,6 +355,9 @@ ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
 %endif
 
 # Register poms
+%if !%{install_poms}
+rm -fr "%{buildroot}%{_mavenpomdir}"
+%else
 for pom in %{buildroot}%{_mavenpomdir}/*.pom
 do
   pomdir=`dirname "${pom}"`
@@ -364,6 +372,7 @@ do
     %add_maven_depmap "${jpppom}"
   fi
 done
+%endif
 
 # Remove the jar files that are not needed:
 while read lib_path
@@ -595,11 +604,13 @@ fi
 %endif
 
 # POM files:
+%if %{install_poms}
 %{_mavendepmapfragdir}/%{name}
 %{_mavenpomdir}/JPP.%{name}-root.pom
 %{_mavenpomdir}/JPP.%{name}-common.pom
 %{_mavenpomdir}/JPP.%{name}-compat.pom
 %{_mavenpomdir}/JPP.%{name}-utils.pom
+%endif
 
 # Documentation:
 %doc LICENSE
@@ -617,6 +628,7 @@ fi
 %{engine_java}/vdsbroker.jar
 
 # POM files:
+%if %{install_poms}
 %{_mavenpomdir}/JPP.%{name}-backend.pom
 %{_mavenpomdir}/JPP.%{name}-manager.pom
 %{_mavenpomdir}/JPP.%{name}-manager-modules.pom
@@ -630,6 +642,7 @@ fi
 %{_mavenpomdir}/JPP.%{name}-scheduler.pom
 %{_mavenpomdir}/JPP.%{name}-searchbackend.pom
 %{_mavenpomdir}/JPP.%{name}-vdsbroker.pom
+%endif
 
 # Directories for the deployments, contents and temporary files need to
 # be owned by the engine user because the application server needs to
@@ -721,11 +734,13 @@ fi
 %{engine_java}/restapi-types.jar
 
 # POM files:
+%if %{install_poms}
 %{_mavenpomdir}/JPP.%{name}-interface-common-jaxrs.pom
 %{_mavenpomdir}/JPP.%{name}-restapi-definition.pom
 %{_mavenpomdir}/JPP.%{name}-restapi-jaxrs.pom
 %{_mavenpomdir}/JPP.%{name}-restapi-parent.pom
 %{_mavenpomdir}/JPP.%{name}-restapi-types.pom
+%endif
 
 # Everything inside of the web application is owned by this
 # subpackage:
@@ -738,7 +753,9 @@ fi
 %{engine_java}/genericapi.jar
 
 # POM files:
+%if %{install_poms}
 %{_mavenpomdir}/JPP.%{name}-genericapi.pom
+%endif
 
 # Link to the jar file inside the ear:
 %{engine_ear}/engine-genericapi.jar
@@ -760,7 +777,9 @@ fi
 %{engine_java}/engine-tools-common.jar
 
 # POM files:
+%if %{install_poms}
 %{_mavenpomdir}/JPP.%{name}-engine-tools-common.pom
+%endif
 
 
 %files config
@@ -806,7 +825,9 @@ fi
 %{engine_java}/engine-notifier-service.jar
 
 # POM files:
+%if %{install_poms}
 %{_mavenpomdir}/JPP.%{name}-engine-notifier.pom
+%endif
 
 
 %changelog
