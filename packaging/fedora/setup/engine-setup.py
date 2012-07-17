@@ -143,7 +143,7 @@ def initSequences():
                         'steps'           : [ { 'title'     : output_messages.INFO_CFG_IPTABLES,
                                                 'functions' : [_configIptables] },
                                               { 'title'     : output_messages.INFO_START_JBOSS,
-                                                'functions' : [_startJboss] } ]
+                                                'functions' : [_startEngine] } ]
                        },
                       { 'description'     : 'Handling httpd',
                         'condition'       : [utils.compareStrIgnoreCase, controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes"],
@@ -1557,7 +1557,7 @@ def _startHttpd():
 
 
 
-def _startJboss():
+def _startEngine():
     logging.debug("using chkconfig to enable engine to load on system startup.")
     srv = utils.Service(basedefs.ENGINE_SERVICE_NAME)
     srv.autoStart(True)
@@ -1684,27 +1684,25 @@ def _addFinalInfoMsg():
     controller.MESSAGES.append(output_messages.INFO_ADD_USERS)
     controller.MESSAGES.append(output_messages.INFO_RHEVM_URL % controller.CONF["HTTP_URL"])
 
-def _checkJbossService(configFile):
-    logging.debug("checking the status of engine")
+def _stopEngine(configFile):
+    logging.debug("stopping %s service" % basedefs.ENGINE_SERVICE_NAME)
     jservice = utils.Service(basedefs.ENGINE_SERVICE_NAME)
-    output, rc = jservice.status()
-    if 0 == rc:
-        logging.debug("engine is up and running")
 
-        #if we don't use an answer file, we need to ask the user if to stop engine
-        if not configFile:
-            print output_messages.INFO_NEED_STOP_JBOSS
-            answer = _askYesNo(output_messages.INFO_Q_STOP_JBOSS)
-            if answer:
-                print output_messages.INFO_STOP_JBOSS,
-                jservice.stop(True)
-            else:
-                logging.debug("User chose not to stop engine")
-                return False
-        else:
-            #we stop the jboss service on a silent install
+    #if we don't use an answer file, we need to ask the user if to stop engine
+    if not configFile:
+        print output_messages.INFO_NEED_STOP_JBOSS
+        answer = _askYesNo(output_messages.INFO_Q_STOP_JBOSS)
+        if answer:
             print output_messages.INFO_STOP_JBOSS,
             jservice.stop(True)
+        else:
+            logging.debug("User chose not to stop engine")
+            return False
+    else:
+        #we stop the jboss service on a silent install
+        print output_messages.INFO_STOP_JBOSS,
+        jservice.stop(True)
+
     return True
 
 def _lockRpmVersion():
@@ -1862,7 +1860,7 @@ def editSysconfig():
     if "DB_SECURE_CONNECTION" in controller.CONF.keys() and controller.CONF["DB_SECURE_CONNECTION"] == "yes":
         dbUrl = dbUrl + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
     handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
-    handler.editParam("ENGINE_DB_URL", dbUrl) 
+    handler.editParam("ENGINE_DB_URL", dbUrl)
     handler.editParam("ENGINE_DB_USER", getDbUser())
 
     # Ports:
@@ -1919,8 +1917,8 @@ def main(configFile=None):
                 print output_messages.INFO_STOP_INSTALL_EXIT
                 return 0
 
-        #TODO: add validation to answer file before stopping jboss
-        if not _checkJbossService(configFile):
+        # Stop engine
+        if not _stopEngine(configFile):
             logging.debug("exiting gracefully")
             print output_messages.INFO_STOP_INSTALL_EXIT
             return 0
