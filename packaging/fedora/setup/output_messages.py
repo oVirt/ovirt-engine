@@ -82,7 +82,7 @@ INFO_DB_RESTORED="Database upgrade failed. Previous database has been restored"
 INFO_IPTABLES_FILE="an example of the required configuration for iptables can be found at: %s"
 # the last 2 ports are http & https entered by the user
 INFO_IPTABLES_PORTS=basedefs.APP_NAME + " requires the following TCP/IP Incoming ports to be opened on the firewall:\n\
-22, 8006, 8007, 8008, %s, %s "
+22, %s, %s "
 INFO_IPTABLES_BACKUP_FILE="The firewall has been updated, the old iptables configuration file was saved to %s"
 
 #createca
