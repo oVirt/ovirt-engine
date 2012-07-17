@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -182,8 +184,8 @@ public class BackendVmDisksResourceTest
                                      asList(getEntity(0)));
         setUpCreationExpectations(VdcActionType.AddDisk,
                                   AddDiskParameters.class,
-                                  new String[] { "VmId" },
-                                  new Object[] { PARENT_ID },
+                                  new String[] { "VmId", "StorageDomainId" },
+                                  new Object[] { PARENT_ID, GUIDS[2] },
                                   true,
                                   true,
                                   GUIDS[0],
@@ -195,6 +197,44 @@ public class BackendVmDisksResourceTest
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));
         Disk model = getModel(0);
+        model.setSize(1024 * 1024L);
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Disk);
+        verifyModel((Disk)response.getEntity(), 0);
+        assertNull(((Disk)response.getEntity()).getCreationStatus());
+    }
+
+    @Test
+    public void testAddDiskIdentifyStorageDomainByName() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpHttpHeaderExpectations("Expect", "201-created");
+        setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
+                                     GetAllDisksByVmIdParameters.class,
+                                     new String[] { "VmId" },
+                                     new Object[] { PARENT_ID },
+                                     asList(getEntity(0)));
+        storage_domains sd = new storage_domains();
+        sd.setId(GUIDS[2]);
+        setUpGetEntityExpectations("Storage: name=Storage_Domain_1", SearchType.StorageDomain, sd);
+        setUpCreationExpectations(VdcActionType.AddDisk,
+                                  AddDiskParameters.class,
+                                  new String[] { "VmId", "StorageDomainId" },
+                                  new Object[] { PARENT_ID, GUIDS[2] },
+                                  true,
+                                  true,
+                                  GUIDS[0],
+                                  asList(GUIDS[3]),
+                                  asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                                  VdcQueryType.GetAllDisksByVmId,
+                                  GetAllDisksByVmIdParameters.class,
+                                  new String[] { "VmId" },
+                                  new Object[] { PARENT_ID },
+                                  asList(getEntity(0)));
+        Disk model = getModel(0);
+        model.getStorageDomains().getStorageDomains().get(0).setId(null);
+        model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
         model.setSize(1024 * 1024L);
 
         Response response = collection.add(model);

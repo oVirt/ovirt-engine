@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -127,6 +129,9 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         model.setBootable(false);
         model.setShareable(false);
         model.setPropagateErrors(true);
+        model.setStorageDomains(new StorageDomains());
+        model.getStorageDomains().getStorageDomains().add(new StorageDomain());
+        model.getStorageDomains().getStorageDomains().get(0).setId(GUIDS[2].toString());
         return model;
     }
 

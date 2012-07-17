@@ -11,6 +11,7 @@ import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -31,6 +32,11 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, null));
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             params.setStorageDomainId(Guid.createGuidFromString(disk.getStorageDomains().getStorageDomains().get(0).getId()));
+        } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
+            params.setStorageDomainId(
+                    getEntity(storage_domains.class,
+                            SearchType.StorageDomain,
+                            "Storage: name=" + disk.getStorageDomains().getStorageDomains().get(0).getName()).getId());
         }
         return performCreation(VdcActionType.AddDisk, params,
                 new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class));

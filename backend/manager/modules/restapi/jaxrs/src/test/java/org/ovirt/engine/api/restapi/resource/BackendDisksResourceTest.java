@@ -7,6 +7,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
+import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -17,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -66,6 +69,42 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         Disk model = getModel(0);
         setUpCreationExpectations(VdcActionType.AddDisk,
                 AddDiskParameters.class,
+                new String[] {"StorageDomainId"},
+                new Object[] {GUIDS[2]},
+                true,
+                true,
+                GUIDS[0],
+                asList(GUIDS[3]),
+                asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                VdcQueryType.GetDiskByDiskId,
+                GetDiskByDiskIdParameters.class,
+                new String[] {"DiskId"},
+                new Object[] {GUIDS[0]},
+                getEntity(0));
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Disk);
+        verifyModel((Disk)response.getEntity(), 0);
+        assertNull(((Disk)response.getEntity()).getCreationStatus());
+    }
+
+    @Test
+    public void testAddIdentifyStorageDomainByName() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpHttpHeaderExpectations("Expect", "201-created");
+        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+                GetDiskByDiskIdParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
+        Disk model = getModel(0);
+        model.getStorageDomains().getStorageDomains().get(0).setId(null);
+        model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
+        storage_domains sd = new storage_domains();
+        sd.setId(GUIDS[2]);
+        setUpGetEntityExpectations("Storage: name=Storage_Domain_1", SearchType.StorageDomain, sd);
+        setUpCreationExpectations(VdcActionType.AddDisk,
+                AddDiskParameters.class,
                 new String[] {},
                 new Object[] {},
                 true,
@@ -94,6 +133,9 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         model.setBootable(false);
         model.setShareable(false);
         model.setPropagateErrors(true);
+        model.setStorageDomains(new StorageDomains());
+        model.getStorageDomains().getStorageDomains().add(new StorageDomain());
+        model.getStorageDomains().getStorageDomains().get(0).setId(GUIDS[2].toString());
         return model;
     }
 

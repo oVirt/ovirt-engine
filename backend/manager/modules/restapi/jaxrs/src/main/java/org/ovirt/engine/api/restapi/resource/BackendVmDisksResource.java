@@ -21,6 +21,8 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -103,6 +105,11 @@ public class BackendVmDisksResource
         AddDiskParameters parameters = new AddDiskParameters(parentId, entity);
         if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             parameters.setStorageDomainId(new Guid(disk.getStorageDomains().getStorageDomains().get(0).getId()));
+        } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
+            parameters.setStorageDomainId(
+                    getEntity(storage_domains.class,
+                            SearchType.StorageDomain,
+                            "Storage: name=" + disk.getStorageDomains().getStorageDomains().get(0).getName()).getId());
         }
         return parameters;
     }
