@@ -2321,27 +2321,23 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     (storage_domains) unitVmModel.getDisksAllocationModel()
                                             .getStorageDomain().getSelectedItem();
 
-                            AddVmFromTemplateParameters parameters =
+                            AddVmFromTemplateParameters param =
                                     new AddVmFromTemplateParameters(vmListModel.getcurrentVm(),
                                             dict, storageDomain.getId());
 
-                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, parameters,
-                                    new IFrontendActionAsyncCallback() {
-                                        @Override
-                                        public void Executed(FrontendActionAsyncResult result) {
+                            ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                            parameters.add(param);
 
+                            Frontend.RunMultipleAction(VdcActionType.AddVmFromTemplate, parameters,
+                                    new IFrontendMultipleActionAsyncCallback() {
+                                        @Override
+                                        public void Executed(FrontendMultipleActionAsyncResult result) {
                                             VmListModel vmListModel1 = (VmListModel) result.getState();
                                             vmListModel1.getWindow().StopProgress();
-                                            VdcReturnValueBase returnValueBase = result.getReturnValue();
-                                            if (returnValueBase != null && returnValueBase.getSucceeded())
-                                            {
-                                                vmListModel1.Cancel();
-                                            }
-
+                                            vmListModel1.Cancel();
                                         }
                                     },
                                     vmListModel);
-
                         }
                     };
                     AsyncDataProvider.GetTemplateDiskList(_asyncQuery, template.getId());
@@ -2355,11 +2351,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                     model.StartProgress(null);
 
-                    HashMap<Guid, DiskImage> imageToDestinationDomainMap =
-                            model.getDisksAllocationModel().getImageToDestinationDomainMap();
-                    storage_domains storageDomain =
-                            ((storage_domains) model.getDisksAllocationModel().getStorageDomain().getSelectedItem());
-
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
                     params.setDiskInfoDestinationMap(
                             model.getDisksAllocationModel()
@@ -2367,21 +2358,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                             .getIsSingleStorageDomain()
                                             .getEntity()));
 
-                    Frontend.RunAction(VdcActionType.AddVm, params,
-                            new IFrontendActionAsyncCallback() {
+                    ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                    parameters.add(params);
+
+                    Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
+                            new IFrontendMultipleActionAsyncCallback() {
                                 @Override
-                                public void Executed(FrontendActionAsyncResult result) {
-
-                                    VmListModel vmListModel = (VmListModel) result.getState();
-                                    vmListModel.getWindow().StopProgress();
-                                    VdcReturnValueBase returnValueBase = result.getReturnValue();
-                                    if (returnValueBase != null && returnValueBase.getSucceeded())
-                                    {
-                                        vmListModel.Cancel();
-                                    }
-
+                                public void Executed(FrontendMultipleActionAsyncResult result) {
+                                    VmListModel vmListModel1 = (VmListModel) result.getState();
+                                    vmListModel1.getWindow().StopProgress();
+                                    vmListModel1.Cancel();
                                 }
-                            }, this);
+                            },
+                            this);
                 }
             }
         }

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -82,7 +83,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class UserPortalListModel extends IUserPortalListModel implements IVmPoolResolutionService
 {
@@ -1370,17 +1373,21 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 dict.put(a.getId(), a);
                             }
 
-                            AddVmFromTemplateParameters parameters =
+                            AddVmFromTemplateParameters param =
                                     new AddVmFromTemplateParameters(gettempVm(), dict, getstorageDomain().getId());
-                            parameters.setMakeCreatorExplicitOwner(true);
+                            param.setMakeCreatorExplicitOwner(true);
 
-                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, parameters,
-                                    new IFrontendActionAsyncCallback() {
+                            ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                            parameters.add(param);
+
+                            Frontend.RunMultipleAction(VdcActionType.AddVmFromTemplate, parameters,
+                                    new IFrontendMultipleActionAsyncCallback() {
                                         @Override
-                                        public void Executed(FrontendActionAsyncResult a) {
+                                        public void Executed(FrontendMultipleActionAsyncResult a) {
                                             stopProgress(a.getState());
                                         }
-                                    }, this);
+                                    },
+                                    this);
 
                             userPortalListModel1.cancel();
 
@@ -1391,17 +1398,20 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 }
                 else
                 {
-                    VmManagementParametersBase parameters = new VmManagementParametersBase(gettempVm());
-                    parameters.setStorageDomainId(getstorageDomain().getId());
-                    parameters.setMakeCreatorExplicitOwner(true);
+                    VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
+                    param.setStorageDomainId(getstorageDomain().getId());
+                    param.setMakeCreatorExplicitOwner(true);
 
-                    Frontend.RunAction(VdcActionType.AddVm, parameters,
-                            new IFrontendActionAsyncCallback() {
+                    ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                    parameters.add(param);
+                    Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
+                            new IFrontendMultipleActionAsyncCallback() {
                                 @Override
-                                public void Executed(FrontendActionAsyncResult result) {
-                                    stopProgress(result.getState());
+                                public void Executed(FrontendMultipleActionAsyncResult a) {
+                                    stopProgress(a.getState());
                                 }
-                            }, this);
+                            },
+                            this);
                 }
             }
         }
