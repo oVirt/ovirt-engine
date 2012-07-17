@@ -28,7 +28,6 @@ import org.ovirt.engine.api.model.DiskStates;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.DisplayTypes;
-import org.ovirt.engine.api.model.Features;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.FenceTypes;
 import org.ovirt.engine.api.model.GlusterState;
@@ -65,7 +64,6 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.StorageTypes;
 import org.ovirt.engine.api.model.TemplateStates;
 import org.ovirt.engine.api.model.TemplateStatus;
-import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.TransportType;
 import org.ovirt.engine.api.model.TransportTypes;
 import org.ovirt.engine.api.model.Usages;
@@ -83,6 +81,7 @@ import org.ovirt.engine.api.model.VmTypes;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
+import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.api.restapi.util.FencingOptionsParser;
@@ -99,13 +98,24 @@ import org.ovirt.engine.core.compat.NGuid;
 public class BackendCapabilitiesResource extends BackendResource implements CapabilitiesResource {
 
     private MappingLocator mappingLocator;
+    private FeaturesHelper featuresHelper = new FeaturesHelper();
 
     public void setMappingLocator(MappingLocator mappingLocator) {
         this.mappingLocator = mappingLocator;
     }
 
-    private static final Version VERSION_3_0 = new Version() {{ major = 3; minor = 0; }};
-    private static final Version VERSION_3_1 = new Version() {{ major = 3; minor = 1; }};
+    public static final Version VERSION_3_0 = new Version() {
+        {
+            major = 3;
+            minor = 0;
+        }
+    };
+    public static final Version VERSION_3_1 = new Version() {
+        {
+            major = 3;
+            minor = 1;
+        }
+    };
     private static Version currentVersion = null;
 
     @Override
@@ -175,7 +185,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addSchedulingPolicies(version, SchedulingPolicyType.values());
         addNetworkUsages(version, NetworkUsage.values());
 
-        version.setFeatures(getFeatures(v));
+        version.setFeatures(featuresHelper.getFeatures(v));
 
         if (current == null && VersionHelper.equals(v, getCurrentVersion())) {
             current = version;
@@ -369,14 +379,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         List<CustomProperty> ret = new ArrayList<CustomProperty>();
         ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class, ConfigurationValues.PredefinedVMProperties, version), true));
         ret.addAll(CustomPropertiesParser.parse(getConfigurationValue(String.class, ConfigurationValues.UserDefinedVMProperties, version), true));
-        return ret;
-    }
-
-    private Features getFeatures(Version version) {
-        Features ret = new Features();
-        if (VersionUtils.greaterOrEqual(version, VERSION_3_0)) {
-            ret.setTransparentHugepages(new TransparentHugePages());
-        }
         return ret;
     }
 

@@ -215,7 +215,8 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
         }
         if (thp) {
             assertNotNull(version.getFeatures());
-            assertNotNull(version.getFeatures().getTransparentHugepages());
+            assertFalse(version.getFeatures().getFeature().isEmpty());
+            assertNotNull(version.getFeatures().getFeature().get(0).getTransparentHugepages());
         }
     }
 

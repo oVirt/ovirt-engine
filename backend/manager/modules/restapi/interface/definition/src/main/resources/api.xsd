@@ -609,8 +609,29 @@
 
   <xs:complexType name="Features">
     <xs:sequence>
-      <xs:element ref="transparent_hugepages" minOccurs="0"/>
+      <xs:element ref="feature" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+  </xs:complexType>
+
+<xs:element name="feature" type="Feature"/>
+
+  <xs:complexType name="Feature">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="transparent_hugepages" minOccurs="0"/>
+          <xs:element ref="gluster_volumes" minOccurs="0"/>
+          <xs:element ref="vm_device_types" minOccurs="0"/>
+          <xs:element ref="storage_types" minOccurs="0"/>
+          <xs:element ref="storage_domain" minOccurs="0"/>
+          <xs:element ref="nic" minOccurs="0"/>
+          <xs:element ref="api" minOccurs="0"/>
+          <xs:element ref="host" minOccurs="0"/>
+          <xs:element ref="url" minOccurs="0"/>
+          <xs:element ref="headers" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="fence_types" type="FenceTypes"/>
