@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -480,37 +479,14 @@ public class VmSnapshotListModel extends SearchableListModel
 
     public void PostNew(ArrayList<Disk> disks) {
         SnapshotModel model = (SnapshotModel) getWindow();
-        boolean isSnapshotSupportedDiskExists = false;
-
-        for (Disk disk : disks) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                isSnapshotSupportedDiskExists = true;
-            }
-        }
-
-        if (!isSnapshotSupportedDiskExists)
-        {
-            model.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .snapshotCannotBeCreatedSinceTheVMHasNoDisksMsg());
-
-            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-            tempVar.setIsDefault(true);
-            tempVar.setIsCancel(true);
-            model.getCommands().add(tempVar);
-        }
-        else
-        {
-            UICommand tempVar2 = new UICommand("OnNew", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar2.setIsDefault(true);
-            model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar3.setIsCancel(true);
-            model.getCommands().add(tempVar3);
-        }
+        UICommand tempVar2 = new UICommand("OnNew", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar2.setIsDefault(true);
+        model.getCommands().add(tempVar2);
+        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar3.setIsCancel(true);
+        model.getCommands().add(tempVar3);
     }
 
     private void OnNew()

@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @LockIdNameAttribute
-@NonTransactiveCommandAttribute(forceCompensation=true)
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfVmParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = 2636628918352438919L;
@@ -73,25 +73,28 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
         if (getVm() != null) {
             VmHandler.unlockVm(getVm().getDynamicData(), getCompensationContext());
-
-            getSnapshotDao().updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.IN_PREVIEW);
-            getSnapshotDao().updateStatus(getSnapshotDao().getId(getVm().getId(),
-                    SnapshotType.PREVIEW,
-                    SnapshotStatus.LOCKED),
-                    SnapshotStatus.OK);
-
-            snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
-                    getSnapshotDao().get(getParameters().getDstSnapshotId()),
-                    getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
-                    getCompensationContext());
-            UpdateVmInSpm(getVm().getstorage_pool_id(),
-                    Arrays.asList(getVm()));
+            restoreVmConfigFromSnapshot();
         } else {
             setCommandShouldBeLogged(false);
             log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
         }
 
         setSucceeded(true);
+    }
+
+    private void restoreVmConfigFromSnapshot() {
+        getSnapshotDao().updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.IN_PREVIEW);
+        getSnapshotDao().updateStatus(getSnapshotDao().getId(getVm().getId(),
+                SnapshotType.PREVIEW,
+                SnapshotStatus.LOCKED),
+                SnapshotStatus.OK);
+
+        snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
+                getSnapshotDao().get(getParameters().getDstSnapshotId()),
+                getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
+                getCompensationContext());
+        UpdateVmInSpm(getVm().getstorage_pool_id(),
+                Arrays.asList(getVm()));
     }
 
     @Override
@@ -155,7 +158,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 }
             });
         } else {
-            getSnapshotDao().updateStatus(previousActiveSnapshotId, SnapshotStatus.OK);
+            restoreVmConfigFromSnapshot();
+            freeLock();
         }
 
         setSucceeded(true);
