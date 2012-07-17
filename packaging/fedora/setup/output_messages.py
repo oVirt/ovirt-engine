@@ -297,6 +297,7 @@ ERR_EXP_UPD_XML_FILE="Error while editing %s"
 
 #edit root war
 ERR_EXP_UPD_WEB_CONF="Error while updating web-conf.js file" #Give full path
+ERR_EXP_PARSE_WEB_CONF = "Cannot find '%s' from %s, please verify that ovirt-engine is configured"
 ERR_EXP_CANT_FIND_CA_FILE="Can't find file %s"
 ERR_EXP_CPY_FILE="Failed copying %s to %s"
 ERR_READ_RPM_VER="Error reading version number for package %s"

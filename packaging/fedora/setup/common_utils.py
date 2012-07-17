@@ -875,6 +875,36 @@ def listTempDbs():
 
     return dbListRemove
 
+def getHostParams():
+    """
+    get hostname & secured port from /etc/ovirt-engine/web-conf.js
+    """
+
+    logging.debug("looking for configuration from %s", basedefs.FILE_JBOSS_HTTP_PARAMS)
+    if not os.path.exists(basedefs.FILE_JBOSS_HTTP_PARAMS):
+        raise Exception("Could not find %s" % basedefs.FILE_JBOSS_HTTP_PARAMS)
+
+    handler = TextConfigFileHandler(basedefs.FILE_JBOSS_HTTP_PARAMS)
+    handler.open()
+
+    pattern = "\"(.+)\";"
+    values = {
+                "fqdn" : handler.getParam("var host_fqdn"),
+                "httpPort" : handler.getParam("var http_port"),
+                "httpsPort" : handler.getParam("var https_port"),
+             }
+
+    for name, value in values.items():
+        found = re.match(pattern, value)
+        if found:
+            values[name] = found.group(1)
+            logging.debug("%s is: %s", name, value)
+        else:
+            logging.error("Could not find the %s value in %s", name, basedefs.FILE_JBOSS_HTTP_PARAMS)
+            raise Exception(output_messages.ERR_EXP_PARSE_WEB_CONF % (name, basedefs.FILE_JBOSS_HTTP_PARAMS))
+
+    return (values["fqdn"], values["httpPort"], values["httpsPort"])
+
 # TODO: Support SystemD services
 class Service():
     def __init__(self, name):
@@ -965,4 +995,3 @@ def setHttpPortsToNonProxyDefault(controller):
     httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTP_PORT)
     httpParam = controller.getParamByName("HTTPS_PORT")
     httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTPS_PORT)
-
