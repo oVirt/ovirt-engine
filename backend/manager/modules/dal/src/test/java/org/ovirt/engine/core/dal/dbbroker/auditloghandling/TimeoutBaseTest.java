@@ -91,7 +91,7 @@ public class TimeoutBaseTest {
         final TestTimeoutBase t = new TestTimeoutBase();
         t.setUseTimout(true);
         long c = System.currentTimeMillis();
-        c -= 1;
+        c -= 1000;
         final Date d = new Date(c);
         t.setEndTime(d);
         final String s = "timeout";
