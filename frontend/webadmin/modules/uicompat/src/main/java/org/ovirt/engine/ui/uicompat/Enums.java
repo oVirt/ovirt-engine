@@ -297,6 +297,18 @@ public interface Enums extends LocalizedEnums {
 
     String AuditLogType___VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK();
 
+    String VdsSpmStatus___None();
+
+    String VdsSpmStatus___Contending();
+
+    String VdsSpmStatus___SPM();
+
+    String VdsTransparentHugePagesState___Never();
+
+    String VdsTransparentHugePagesState___MAdvise();
+
+    String VdsTransparentHugePagesState___Always();
+
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
     String GlusterVolumeType___REPLICATE();

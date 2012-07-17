@@ -268,7 +268,7 @@ public class HostSetupNetworksModel extends EntityModel {
             };
         } else if (item instanceof LogicalNetworkModel){
             LogicalNetworkModel logicalNetwork = (LogicalNetworkModel)item;
-            final VdsNetworkInterface entity = logicalNetwork.getAttachedToNic().getEntity();
+            final VdsNetworkInterface entity = logicalNetwork.hasVlan() ? logicalNetwork.getBridge().getEntity() : logicalNetwork.getAttachedToNic().getEntity();
 
             if (logicalNetwork.isManagement()) {
                 /*****************

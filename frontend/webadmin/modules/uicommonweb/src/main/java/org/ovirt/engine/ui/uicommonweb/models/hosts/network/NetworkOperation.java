@@ -298,6 +298,9 @@ public enum NetworkOperation {
      */
     public String getNoun(NetworkItemModel<?> op2) {
         assert !isUnary() : "The Unary Operation " + name() + " has no Noun"; //$NON-NLS-1$ //$NON-NLS-2$
+        if (op2 == null){
+            return "Unassigned Logical Networks panel"; //$NON-NLS-1$
+        }
         return op2.getName();
     }
 

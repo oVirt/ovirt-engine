@@ -2,9 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
@@ -44,7 +45,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
         NetworkParameters netParams = getSetupModel().getNetworkToLastDetachParams().get(getName());
 
-        if (netParams != null){
+        if (netParams != null && !hasVlan()){
             targetNic.getEntity().setBootProtocol(netParams.getBootProtocol());
             targetNic.getEntity().setAddress(netParams.getAddress());
             targetNic.getEntity().setSubnet(netParams.getSubnet());
@@ -68,7 +69,14 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             bridge.setVlanId(getVlanId());
             bridge.setVdsId(targetNicEntity.getVdsId());
             bridge.setVdsName(targetNicEntity.getVdsName());
-            bridge.setBootProtocol(targetNicEntity.getBootProtocol());
+            if (netParams != null){
+                bridge.setBootProtocol(netParams.getBootProtocol());
+                bridge.setAddress(netParams.getAddress());
+                bridge.setSubnet(netParams.getSubnet());
+                bridge.setGateway(netParams.getGateway());
+            }else{
+                bridge.setBootProtocol(NetworkBootProtocol.None);
+            }
             return bridge;
         } else {
             targetNicEntity.setNetworkName(getName());
@@ -87,9 +95,15 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         VdsNetworkInterface nicEntity = attachingNic.getEntity();
 
         NetworkParameters netParams = new NetworkParameters();
-        netParams.setBootProtocol(nicEntity.getBootProtocol());
-        netParams.setAddress(nicEntity.getAddress());
-        netParams.setSubnet(nicEntity.getSubnet());
+        if (!hasVlan()){
+            netParams.setBootProtocol(nicEntity.getBootProtocol());
+            netParams.setAddress(nicEntity.getAddress());
+            netParams.setSubnet(nicEntity.getSubnet());
+        }else{
+            netParams.setBootProtocol(bridge.getEntity().getBootProtocol());
+            netParams.setAddress(bridge.getEntity().getAddress());
+            netParams.setSubnet(bridge.getEntity().getSubnet());
+        }
 
         if (isManagement()){
             netParams.setGateway(nicEntity.getGateway());
