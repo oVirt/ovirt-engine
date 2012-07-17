@@ -1534,7 +1534,7 @@ public class UnitVmModel extends Model {
     {
         if ((Boolean) getRunVMOnSpecificHost().getEntity() == true)
         {
-            getDontMigrateVM().setEntity(true);
+            getDontMigrateVM().setEntity(false);
             getDontMigrateVM().setIsChangable(false);
         }
         else
