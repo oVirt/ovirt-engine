@@ -932,7 +932,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameHost();
 
-    @DefaultStringValue("Host/IP")
+    @DefaultStringValue("Hostname/IP")
     String ipHost();
 
     @DefaultStringValue("Cluster")
@@ -1483,7 +1483,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameClusterHost();
 
-    @DefaultStringValue("Host/IP")
+    @DefaultStringValue("Hostname/IP")
     String hostIpClusterHost();
 
     @DefaultStringValue("Status")
