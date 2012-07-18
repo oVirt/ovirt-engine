@@ -285,7 +285,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             destinationDiskDynamic.setactual_size(fromIRS.getactual_size());
             DbFacade.getInstance().getDiskImageDynamicDAO().update(destinationDiskDynamic);
         }
-        // DestinationDiskImage.description = CalculateImageDescription();
     }
 
     protected static void CompleteAdvancedDiskData(DiskImage from, DiskImage to) {
