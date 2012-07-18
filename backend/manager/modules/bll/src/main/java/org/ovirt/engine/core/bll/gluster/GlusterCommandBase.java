@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 
 /**
@@ -120,7 +119,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         return true;
     }
 
-    private VdsStaticDAO getVdsStaticDao() {
-        return DbFacade.getInstance().getVdsStaticDAO();
+    public VdsStaticDAO getVdsStaticDao() {
+        return getDbFacade().getVdsStaticDAO();
     }
 }

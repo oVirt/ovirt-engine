@@ -2,18 +2,16 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -26,22 +24,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, GlusterVolumeDao.class, StartRebalanceGlusterVolumeCommand.class, ClusterUtils.class })
+@RunWith(MockitoJUnitRunner.class)
 public class StartRebalanceGlusterVolumeCommandTest {
-    @Mock
-    DbFacade db;
 
     @Mock
     GlusterVolumeDao volumeDao;
-
-    @Mock
-    ClusterUtils clusterUtils;
 
     private Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
@@ -49,23 +38,19 @@ public class StartRebalanceGlusterVolumeCommandTest {
     private Guid volumeId4 = Guid.createGuidFromString("000000000000-0000-0000-0000-00000004");
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
+    /**
+     * The command under test.
+     */
     private StartRebalanceGlusterVolumeCommand cmd;
 
-    @Before
-    public void mockDbFacadeAndDao() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-        mockStatic(GlusterVolumeDao.class);
-        mockStatic(ClusterUtils.class);
-        when(db.getGlusterVolumeDao()).thenReturn(volumeDao);
-        when(DbFacade.getInstance()).thenReturn(db);
-        when(volumeDao.getById(volumeId1)).thenReturn(getDistributedVolume(volumeId1));
-        when(volumeDao.getById(volumeId2)).thenReturn(getDistributedVolume(volumeId2));
-        when(volumeDao.getById(volumeId3)).thenReturn(getReplicatedVolume(volumeId3, 2));
-        when(volumeDao.getById(volumeId4)).thenReturn(getReplicatedVolume(volumeId4, 4));
-        when(volumeDao.getById(null)).thenReturn(null);
-        when(ClusterUtils.getInstance()).thenReturn(clusterUtils);
-        when(clusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
+    private void prepareMocks(StartRebalanceGlusterVolumeCommand command) {
+        doReturn(volumeDao).when(command).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+        doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
+        doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
+        doReturn(getReplicatedVolume(volumeId3, 2)).when(volumeDao).getById(volumeId3);
+        doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
+        doReturn(null).when(volumeDao).getById(null);
     }
 
     private VDS getVds(VDSStatus status) {
@@ -127,31 +112,36 @@ public class StartRebalanceGlusterVolumeCommandTest {
 
     @Test
     public void canDoActionSucceedsOnUpVolume() {
-        cmd = createTestCommand(volumeId1);
+        cmd = spy(createTestCommand(volumeId1));
+        prepareMocks(cmd);
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionSucceedsOnDistributedVolume() {
-        cmd = createTestCommand(volumeId4);
+        cmd = spy(createTestCommand(volumeId4));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailesOnDownVolume() {
-        cmd = createTestCommand(volumeId2);
+        cmd = spy(createTestCommand(volumeId2));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNoDistribution() {
-        cmd = createTestCommand(volumeId3);
+        cmd = spy(createTestCommand(volumeId3));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNull() {
-        cmd = createTestCommand(null);
+        cmd = spy(createTestCommand(null));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 

@@ -2,18 +2,16 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -27,26 +25,17 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, GlusterVolumeDao.class, AddBricksToGlusterVolumeCommand.class, ClusterUtils.class })
+@RunWith(MockitoJUnitRunner.class)
 public class AddBricksToGlusterVolumeCommandTest {
-    @Mock
-    DbFacade db;
 
     @Mock
     GlusterVolumeDao volumeDao;
 
     @Mock
     VdsStaticDAO vdsStaticDao;
-
-    @Mock
-    ClusterUtils clusterUtils;
 
     private String serverName = "myhost";
 
@@ -58,6 +47,9 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
 
+    /**
+     * The command under test.
+     */
     private AddBricksToGlusterVolumeCommand cmd;
 
     private AddBricksToGlusterVolumeCommand createTestCommand(Guid volumeId,
@@ -101,21 +93,14 @@ public class AddBricksToGlusterVolumeCommandTest {
         return vds;
     }
 
-    @Before
-    public void mockDbFacadeAndDao() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-        mockStatic(GlusterVolumeDao.class);
-        mockStatic(ClusterUtils.class);
-        when(db.getGlusterVolumeDao()).thenReturn(volumeDao);
-        when(db.getVdsStaticDAO()).thenReturn(vdsStaticDao);
-        when(DbFacade.getInstance()).thenReturn(db);
-        when(volumeDao.getById(volumeId1)).thenReturn(getSingleBrickVolume(volumeId1));
-        when(volumeDao.getById(volumeId2)).thenReturn(getMultiBrickVolume(volumeId2));
-        when(volumeDao.getById(null)).thenReturn(null);
-        when(vdsStaticDao.get(serverId)).thenReturn(getVdsStatic());
-        when(ClusterUtils.getInstance()).thenReturn(clusterUtils);
-        when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
+    private void prepareMocks(AddBricksToGlusterVolumeCommand command) {
+        doReturn(volumeDao).when(command).getGlusterVolumeDao();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
+        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+        doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
+        doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);
+        doReturn(null).when(volumeDao).getById(null);
+        doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
     }
 
     private VdsStatic getVdsStatic() {
@@ -154,19 +139,22 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     @Test
     public void canDoActionSucceeds() {
-        cmd = createTestCommand(volumeId2, getBricks(volumeId2, 1), 2, 0);
+        cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1), 2, 0));
+        prepareMocks(cmd);
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFails() {
-        cmd = createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4);
+        cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4));
+        prepareMocks(cmd);
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNull() {
-        cmd = createTestCommand(null, null, 0, 0);
+        cmd = spy(createTestCommand(null, null, 0, 0));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 

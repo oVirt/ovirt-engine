@@ -2,15 +2,13 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -20,47 +18,29 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, GlusterVolumeDao.class, StartGlusterVolumeCommand.class, ClusterUtils.class })
+@RunWith(MockitoJUnitRunner.class)
 public class StartGlusterVolumeCommandTest {
-    @Mock
-    DbFacade db;
 
     @Mock
     GlusterVolumeDao volumeDao;
 
-    @Mock
-    ClusterUtils clusterUtils;
-
-    private Guid stoppedVolumeId = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private Guid startedVolumeId = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+    private Guid stoppedVolumeId = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
+    /**
+     * The command under test.
+     */
     private StartGlusterVolumeCommand cmd;
 
-    private StartGlusterVolumeCommand createTestCommand(Guid volumeId) {
-        return new StartGlusterVolumeCommand(new GlusterVolumeActionParameters(volumeId, false));
-    }
-
-    @Before
-    public void mockDbFacadeAndDao() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-        mockStatic(GlusterVolumeDao.class);
-        mockStatic(ClusterUtils.class);
-
-        when(db.getGlusterVolumeDao()).thenReturn(volumeDao);
-        when(DbFacade.getInstance()).thenReturn(db);
-        when(volumeDao.getById(stoppedVolumeId)).thenReturn(getStoppedVolume(stoppedVolumeId));
-        when(volumeDao.getById(startedVolumeId)).thenReturn(getStartedVolume(startedVolumeId));
-        when(volumeDao.getById(null)).thenReturn(null);
-        when(ClusterUtils.getInstance()).thenReturn(clusterUtils);
-        when(clusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
+    private void prepareMocks(StartGlusterVolumeCommand command) {
+        doReturn(volumeDao).when(command).getGlusterVolumeDao();
+        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+        doReturn(getGlusterVolume(stoppedVolumeId)).when(volumeDao).getById(stoppedVolumeId);
+        doReturn(getGlusterVolume(startedVolumeId)).when(volumeDao).getById(startedVolumeId);
+        doReturn(null).when(volumeDao).getById(null);
     }
 
     private VDS getVds(VDSStatus status) {
@@ -72,45 +52,36 @@ public class StartGlusterVolumeCommandTest {
         return vds;
     }
 
-    private GlusterVolumeEntity getStartedVolume(Guid volumeId) {
-        GlusterVolumeEntity volume = getGlusterVolume(volumeId);
-        volume.setStatus(GlusterVolumeStatus.UP);
-        volume.setClusterId(CLUSTER_ID);
-        return volume;
-    }
-
-    private GlusterVolumeEntity getStoppedVolume(Guid volumeId) {
-        GlusterVolumeEntity volume = getGlusterVolume(volumeId);
-        volume.setStatus(GlusterVolumeStatus.DOWN);
-        volume.setClusterId(CLUSTER_ID);
-        return volume;
-    }
-
-    private GlusterVolumeEntity getGlusterVolume(Guid id) {
+    private GlusterVolumeEntity getGlusterVolume(Guid volumeId) {
         GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
-        volumeEntity.setId(id);
+        volumeEntity.setId(volumeId);
         volumeEntity.setName("test-vol");
         volumeEntity.addAccessProtocol(AccessProtocol.GLUSTER);
         volumeEntity.addTransportType(TransportType.TCP);
         volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);
+        volumeEntity.setStatus((volumeId.equals(startedVolumeId)) ? GlusterVolumeStatus.UP : GlusterVolumeStatus.DOWN);
+        volumeEntity.setClusterId(CLUSTER_ID);
         return volumeEntity;
     }
 
     @Test
     public void canDoActionSucceeds() {
-        cmd = createTestCommand(stoppedVolumeId);
+        cmd = spy(new StartGlusterVolumeCommand(new GlusterVolumeActionParameters(stoppedVolumeId, false)));
+        prepareMocks(cmd);
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFails() {
-        cmd = createTestCommand(startedVolumeId);
+        cmd = spy(new StartGlusterVolumeCommand(new GlusterVolumeActionParameters(startedVolumeId, false)));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNull() {
-        cmd = createTestCommand(null);
+        cmd = spy(new StartGlusterVolumeCommand(new GlusterVolumeActionParameters(null, false)));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 

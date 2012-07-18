@@ -2,18 +2,16 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -28,26 +26,17 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, GlusterVolumeDao.class, ReplaceGlusterVolumeBrickCommand.class, ClusterUtils.class })
+@RunWith(MockitoJUnitRunner.class)
 public class ReplaceGlusterVolumeBrickCommandTest {
-    @Mock
-    DbFacade db;
 
     @Mock
     GlusterVolumeDao volumeDao;
 
     @Mock
     VdsStaticDAO vdsStaticDao;
-
-    @Mock
-    ClusterUtils clusterUtils;
 
     private String serverName = "myhost";
     private Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
@@ -57,25 +46,21 @@ public class ReplaceGlusterVolumeBrickCommandTest {
     private Guid volumeId3 = Guid.createGuidFromString("000000000000-0000-0000-0000-00000003");
     private Guid volumeId4 = Guid.createGuidFromString("000000000000-0000-0000-0000-00000004");
 
+    /**
+     * The command under test.
+     */
     private ReplaceGlusterVolumeBrickCommand cmd;
 
-    @Before
-    public void mockDbFacadeAndDao() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-        mockStatic(GlusterVolumeDao.class);
-        mockStatic(ClusterUtils.class);
-        when(db.getGlusterVolumeDao()).thenReturn(volumeDao);
-        when(db.getVdsStaticDAO()).thenReturn(vdsStaticDao);
-        when(DbFacade.getInstance()).thenReturn(db);
-        when(volumeDao.getById(volumeId1)).thenReturn(getDistributedVolume(volumeId1));
-        when(volumeDao.getById(volumeId2)).thenReturn(getDistributedVolume(volumeId2));
-        when(volumeDao.getById(volumeId3)).thenReturn(getReplicatedVolume(volumeId3, 2));
-        when(volumeDao.getById(volumeId4)).thenReturn(getReplicatedVolume(volumeId4, 4));
-        when(volumeDao.getById(null)).thenReturn(null);
-        when(vdsStaticDao.get(serverId)).thenReturn(getVdsStatic());
-        when(ClusterUtils.getInstance()).thenReturn(clusterUtils);
-        when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
+    private void prepareMocks(ReplaceGlusterVolumeBrickCommand command) {
+        doReturn(volumeDao).when(command).getGlusterVolumeDao();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
+        doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
+        doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
+        doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);
+        doReturn(getReplicatedVolume(volumeId3, 2)).when(volumeDao).getById(volumeId3);
+        doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
+        doReturn(null).when(volumeDao).getById(null);
+        doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
     }
 
     private VDS getVds(VDSStatus status) {
@@ -160,31 +145,36 @@ public class ReplaceGlusterVolumeBrickCommandTest {
 
     @Test
     public void canDoActionSucceedsOnUpVolume() {
-        cmd = createTestCommand1(volumeId1);
+        cmd = spy(createTestCommand1(volumeId1));
+        prepareMocks(cmd);
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailesOnDownVolume() {
-        cmd = createTestCommand1(volumeId2);
+        cmd = spy(createTestCommand1(volumeId2));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnInvalidBrick() {
-        cmd = createTestCommand1(volumeId3);
+        cmd = spy(createTestCommand1(volumeId3));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNull() {
-        cmd = createTestCommand1(null);
+        cmd = spy(createTestCommand1(null));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNoBrick() {
-        cmd = createTestCommand2(volumeId4);
+        cmd = spy(createTestCommand2(volumeId4));
+        prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
