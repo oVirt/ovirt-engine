@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
+import java.util.Map;
+
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -12,12 +17,16 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVGVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
+@LockIdNameAttribute
+@NonTransactiveCommandAttribute
 public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters> extends StorageDomainCommandBase<T> {
     public RemoveStorageDomainCommand(T parameters) {
         super(parameters);
@@ -26,7 +35,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     @Override
     protected void executeCommand() {
-        storage_domains dom = getStorageDomain();
+        final storage_domains dom = getStorageDomain();
         VDS vds = getVds();
         boolean format = getParameters().getDoFormat();
 
@@ -50,9 +59,15 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             }
         }
 
-        getStorageHelper(dom).StorageDomainRemoved(dom.getStorageStaticData());
-        getDbFacade().getStorageDomainDynamicDAO().remove(dom.getId());
-        getDbFacade().getStorageDomainStaticDAO().remove(dom.getId());
+        executeInNewTransaction(new TransactionMethod<Object>() {
+            @Override
+            public Object runInTransaction() {
+                getStorageHelper(dom).StorageDomainRemoved(dom.getStorageStaticData());
+                getDbFacade().getStorageDomainDynamicDAO().remove(dom.getId());
+                getDbFacade().getStorageDomainStaticDAO().remove(dom.getId());
+                return null;
+            }
+        });
 
         setSucceeded(true);
     }
@@ -188,5 +203,10 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                             new RemoveVGVDSCommandParameters(vds.getId(), dom.getstorage())).getSucceeded();
         }
         return true;
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getStorageDomainId().toString(), LockingGroup.STORAGE.name());
     }
 }
