@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -461,5 +462,15 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             return addValidationGroup(ImportClonedEntity.class);
         }
         return addValidationGroup(ImportEntity.class);
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(),
+                    (getVmTemplateName() == null) ? "" : getVmTemplateName());
+        }
+        return jobProperties;
     }
 }

@@ -79,6 +79,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         super(parameters);
         // if we came from EndAction the VmId is not null
         setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.NewGuid() : parameters.getVmId());
+        setVmName(parameters.getVm().getvm_name());
         parameters.setVmId(getVmId());
         setStorageDomainId(getParameters().getStorageDomainId());
         if (parameters.getVmStaticData() != null) {
@@ -798,4 +799,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return DbFacade.getInstance().getVmStaticDAO();
     }
 
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
+                    (getVmName() == null) ? "" : getVmName());
+        }
+        return jobProperties;
+    }
 }

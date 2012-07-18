@@ -967,4 +967,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
         return permissionList;
     }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
+                    (getVmName() == null) ? "" : getVmName());
+        }
+        return jobProperties;
+    }
 }
