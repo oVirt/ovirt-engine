@@ -22,6 +22,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
     private boolean balloonEnabled = true;
+    private VM vm = null;
 
     public VmManagementParametersBase() {
     }
@@ -70,8 +71,10 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     }
 
     public VM getVm() {
-        VM vm = new VM();
-        vm.setStaticData(_vmStatic);
+        if (vm == null) {
+            vm = new VM();
+            vm.setStaticData(_vmStatic);
+        }
         return vm;
     }
 
