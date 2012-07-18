@@ -166,13 +166,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             Guid imageGroupId = diskImage.getId() != null ? diskImage.getId().getValue()
                     : Guid.Empty;
 
-            DiskImage image = (DiskImage) Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.GetImageInfo,
-                            new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                                    getImage().getImageId())).getReturnValue();
+            DiskImage image = (DiskImage) runVdsCommand(
+                    VDSCommandType.GetImageInfo,
+                    new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
+                            getImage().getImageId())).getReturnValue();
 
             if (image.getimageStatus() != ImageStatus.OK) {
                 diskImage.setimageStatus(image.getimageStatus());
@@ -359,13 +356,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             Guid newStorageDomainID = getDestinationDiskImage().getstorage_ids().get(0);
 
             // complete IRS data to DB disk image:
-            DiskImage newImageIRS = (DiskImage) Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.GetImageInfo,
-                            new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
-                                    newImageId)).getReturnValue();
+            DiskImage newImageIRS = (DiskImage) runVdsCommand(
+                    VDSCommandType.GetImageInfo,
+                    new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
+                            newImageId)).getReturnValue();
 
             if (newImageIRS != null) {
                 CompleteImageData(newImageIRS);
