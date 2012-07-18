@@ -78,9 +78,8 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     }
 
     @Override
-    protected void AdditionalImageRemoveTreatment(DiskImage snapshot) {
-        // Vitaly
-
+    protected void RemoveSnapshot(DiskImage snapshot) {
+        super.RemoveSnapshot(snapshot);
         _imagesToDelete.add(_imagesToDelete.size(), snapshot.getImageId());
     }
 

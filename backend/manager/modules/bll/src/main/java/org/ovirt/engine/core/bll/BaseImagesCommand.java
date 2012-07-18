@@ -269,12 +269,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return retDiskImage;
     }
 
-   /**
-     * Overrides the relevant fields of the destination disk image ('DestinationDiskImage') with some values of the IRS
-     * disk image.
-     * @param fromIRS
-     *            the IRS disk image.
-     */
+    /**
+      * Overrides the relevant fields of the destination disk image ('DestinationDiskImage') with some values of the IRS
+      * disk image.
+      * @param fromIRS
+      *            the IRS disk image.
+      */
     protected void CompleteImageData(DiskImage fromIRS) {
         getDestinationDiskImage().setcreation_date(fromIRS.getcreation_date());
         getDestinationDiskImage().setlast_modified_date(fromIRS.getlast_modified_date());
@@ -302,10 +302,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         diskDynamic.setactual_size(image.getactual_size());
         DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(image.getImageId(),
-                    image.getstorage_ids().get(0));
+                image.getstorage_ids().get(0));
         DbFacade.getInstance()
-                    .getImageStorageDomainMapDao()
-                    .save(image_storage_domain_map);
+                .getImageStorageDomainMapDao()
+                .save(image_storage_domain_map);
         boolean isDiskAdded = saveDiskIfNotExists(image);
         if (compensationContext != null) {
             compensationContext.snapshotNewEntity(image.getImage());
@@ -402,7 +402,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void UndoActionOnSourceAndDestination() {
         if (getDestinationDiskImage() != null) {
-            RemoveSnapshotFromDB(getDestinationDiskImage());
+            RemoveSnapshot(getDestinationDiskImage());
         }
 
         if (getDiskImage() != null) {
@@ -416,14 +416,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
 
     protected void RemoveSnapshot(DiskImage snapshot) {
-        RemoveSnapshotFromDB(snapshot);
-        AdditionalImageRemoveTreatment(snapshot);
-    }
-
-    protected void AdditionalImageRemoveTreatment(DiskImage snapshot) {
-    }
-
-    protected void RemoveSnapshotFromDB(DiskImage snapshot) {
         DbFacade.getInstance().getImageStorageDomainMapDao().remove(snapshot.getImageId());
         getImageDao().remove(snapshot.getImageId());
         List<DiskImage> imagesForDisk =
