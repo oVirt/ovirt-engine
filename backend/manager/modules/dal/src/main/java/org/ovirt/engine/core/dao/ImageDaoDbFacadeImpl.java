@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -78,5 +79,13 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
             entity.setActive((Boolean) rs.getObject("active"));
             return entity;
         }
+    }
+
+    @Override
+    public void updateQuotaForImageAndSnapshots(Guid imageGroupId, NGuid quotaId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("image_group_id", imageGroupId)
+                .addValue("quota_id", quotaId);
+        getCallsHandler().executeModification("updateQuotaForImageAndSnapshots", parameterSource);
     }
 }

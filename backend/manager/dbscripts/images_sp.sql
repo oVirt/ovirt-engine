@@ -152,4 +152,13 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION updateQuotaForImageAndSnapshots(v_image_group_id UUID, v_quota_id UUID)
+RETURNS VOID
+AS $procedure$
+BEGIN
+UPDATE images
+    SET quota_id = v_quota_id
+    WHERE image_group_id = v_image_group_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
