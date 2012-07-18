@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
+import org.junit.Test;
+
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class SearchObjectAutoCompleterTest extends TestCase {
@@ -29,5 +32,13 @@ public class SearchObjectAutoCompleterTest extends TestCase {
     public void testGetInnerJoin() {
         SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertNotNull("Sanity test", comp.getInnerJoin("EVENT", "USER"));
+    }
+
+    @Test
+    public void testGetEntitySearchInfo() {
+        Assert.assertNotNull(SearchObjectAutoCompleter.getEntitySearchInfo(SearchObjects.AUDIT_PLU_OBJ_NAME));
+        Assert.assertEquals(SearchObjectAutoCompleter.getEntitySearchInfo(SearchObjects.AUDIT_PLU_OBJ_NAME),
+                SearchObjectAutoCompleter.getEntitySearchInfo(SearchObjects.AUDIT_OBJ_NAME));
+        Assert.assertNull(SearchObjectAutoCompleter.getEntitySearchInfo("RANDOM_NOTEXISTING_KEY"));
     }
 }

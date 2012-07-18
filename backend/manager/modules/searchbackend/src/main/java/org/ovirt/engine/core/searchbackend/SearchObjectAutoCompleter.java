@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeConditionFieldAutoCompleter;
 import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeCrossRefAutoCompleter;
 
@@ -75,7 +78,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_pool_id");
 
         // Datacenter(Storage_pool) - Storage Domain
-        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "storage_pool_id");
+        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
+                "id",
+                SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
+                "storage_pool_id");
 
         // Datacenter(Storage_pool) - Disk
         addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.DISK_OBJ_NAME, "storage_pool_id");
@@ -91,65 +97,148 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     }
 
     private void addJoin(String firstObj, String firstColumnName, String secondObj, String secondColumnName) {
-        mJoinDictionary.put(firstObj + "." + secondObj, new String[] {firstColumnName, secondColumnName});
-        mJoinDictionary.put(secondObj + "." + firstObj, new String[] {secondColumnName, firstColumnName});
+        mJoinDictionary.put(firstObj + "." + secondObj, new String[] { firstColumnName, secondColumnName });
+        mJoinDictionary.put(secondObj + "." + firstObj, new String[] { secondColumnName, firstColumnName });
+    }
+
+    private final static class EntitySearchInfo {
+        public EntitySearchInfo(IAutoCompleter crossRefAutoCompleter,
+                IConditionFieldAutoCompleter conditionFieldAutoCompleter,
+                String relatedTableNameWithOutTags,
+                String relatedTableName,
+                String primeryKeyName,
+                String defaultSort) {
+            this.crossRefAutoCompleter = crossRefAutoCompleter;
+            this.conditionFieldAutoCompleter = conditionFieldAutoCompleter;
+            this.relatedTableNameWithOutTags = relatedTableNameWithOutTags;
+            this.relatedTableName = relatedTableName;
+            this.primeryKeyName = primeryKeyName;
+            this.defaultSort = defaultSort;
+        }
+
+        final IAutoCompleter crossRefAutoCompleter;
+        final IConditionFieldAutoCompleter conditionFieldAutoCompleter;
+        final String relatedTableNameWithOutTags;
+        final String relatedTableName;
+        final String primeryKeyName;
+        final String defaultSort;
+    }
+
+    @SuppressWarnings("serial")
+    private final static Map<String, EntitySearchInfo> entitySearchInfo = Collections.unmodifiableMap(
+            new HashMap<String, SearchObjectAutoCompleter.EntitySearchInfo>() {
+                {
+                    put(SearchObjects.AUDIT_OBJ_NAME, new EntitySearchInfo(new AuditCrossRefAutoCompleter(),
+                            new AuditLogConditionFieldAutoCompleter(),
+                            null,
+                            "audit_log",
+                            "audit_log_id",
+                            "audit_log_id DESC "));
+                    put(SearchObjects.TEMPLATE_OBJ_NAME, new EntitySearchInfo(new TemplateCrossRefAutoCompleter(),
+                            new VmTemplateConditionFieldAutoCompleter(),
+                            "vm_templates_view",
+                            "vm_templates_storage_domain",
+                            "vmt_guid",
+                            "name ASC "));
+                    put(SearchObjects.VDC_USER_OBJ_NAME, new EntitySearchInfo(new UserCrossRefAutoCompleter(),
+                            new VdcUserConditionFieldAutoCompleter(),
+                            "vdc_users",
+                            "vdc_users_with_tags",
+                            "user_id",
+                            "name ASC "));
+                    put(SearchObjects.VDS_OBJ_NAME, new EntitySearchInfo(new VdsCrossRefAutoCompleter(),
+                            new VdsConditionFieldAutoCompleter(),
+                            "vds",
+                            "vds_with_tags",
+                            "vds_id",
+                            "vds_name ASC "));
+                    put(SearchObjects.VM_OBJ_NAME, new EntitySearchInfo(new VmCrossRefAutoCompleter(),
+                            new VmConditionFieldAutoCompleter(),
+                            "vms",
+                            "vms_with_tags",
+                            "vm_guid",
+                            "vm_name ASC "));
+                    put(SearchObjects.VDC_CLUSTER_OBJ_NAME, new EntitySearchInfo(new ClusterCrossRefAutoCompleter(),
+                            new ClusterConditionFieldAutoCompleter(),
+                            "vds_groups",
+                            "vds_groups_storage_domain",
+                            "vds_group_id",
+                            "name ASC "));
+                    put(SearchObjects.QUOTA_OBJ_NAME, new EntitySearchInfo(new QuotaConditionFieldAutoCompleter(),
+                            new QuotaConditionFieldAutoCompleter(),
+                            "quota_view",
+                            "quota_view",
+                            "quota_id",
+                            "quota_name ASC"));
+                    put(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME,
+                            new EntitySearchInfo(new StoragePoolCrossRefAutoCompleter(),
+                                    new StoragePoolFieldAutoCompleter(),
+                                    "storage_pool",
+                                    "storage_pool_with_storage_domain",
+                                    "id",
+                                    "name ASC "));
+                    put(SearchObjects.DISK_OBJ_NAME, new EntitySearchInfo(new DiskCrossRefAutoCompleter(),
+                            new DiskConditionFieldAutoCompleter(),
+                            "all_disks",
+                            "all_disks",
+                            "disk_id",
+                            "disk_alias ASC "));
+                    put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
+                            new EntitySearchInfo(new StorageDomainCrossRefAutoCompleter(),
+                                    new StorageDomainFieldAutoCompleter(),
+                                    "storage_domains_without_storage_pools",
+                                    "storage_domains_with_hosts_view",
+                                    "id",
+                                    "storage_name ASC "));
+                    put(SearchObjects.GLUSTER_VOLUME_OBJ_NAME,
+                            new EntitySearchInfo(GlusterVolumeCrossRefAutoCompleter.INSTANCE,
+                                    GlusterVolumeConditionFieldAutoCompleter.INSTANCE,
+                                    null,
+                                    "gluster_volumes",
+                                    "id",
+                                    "vol_name ASC "));
+                    put(SearchObjects.VDC_POOL_OBJ_NAME, new EntitySearchInfo(null,
+                            new PoolConditionFieldAutoCompleter(),
+                            null,
+                            "vm_pools_full_view",
+                            "vm_pool_id",
+                            "vm_pool_name ASC "));
+                }
+            });
+
+    static EntitySearchInfo getEntitySearchInfo(String key) {
+        return entitySearchInfo.get(singular(key));
+    }
+
+    @SuppressWarnings("serial")
+    private final static Map<String, String> singulars = Collections.unmodifiableMap(new HashMap<String, String>() {
+        {
+            put(SearchObjects.AUDIT_PLU_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME);
+            put(SearchObjects.TEMPLATE_PLU_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME);
+            put(SearchObjects.VDC_USER_PLU_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME);
+            put(SearchObjects.VDS_PLU_OBJ_NAME, SearchObjects.VDS_OBJ_NAME);
+            put(SearchObjects.VM_PLU_OBJ_NAME, SearchObjects.VM_OBJ_NAME);
+            put(SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME, SearchObjects.VDC_CLUSTER_OBJ_NAME);
+            put(SearchObjects.QUOTA_PLU_OBJ_NAME, SearchObjects.QUOTA_OBJ_NAME);
+            put(SearchObjects.DISK_PLU_OBJ_NAME, SearchObjects.DISK_OBJ_NAME);
+            put(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
+            put(SearchObjects.VDC_POOL_PLU_OBJ_NAME, SearchObjects.VDC_POOL_OBJ_NAME);
+            put(SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
+        }
+    });
+
+    static String singular(String key) {
+        return singulars.containsKey(key) ? singulars.get(key) : key;
     }
 
     public IAutoCompleter getCrossRefAutoCompleter(String obj) {
         if (obj == null) {
             return null;
         }
-        if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
-            return new AuditCrossRefAutoCompleter();
+        if (getEntitySearchInfo(obj) != null) {
+            return getEntitySearchInfo(obj).crossRefAutoCompleter;
+        }
 
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
-            return new TemplateCrossRefAutoCompleter();
-
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
-            return new UserCrossRefAutoCompleter();
-
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
-            return new VdsCrossRefAutoCompleter();
-
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
-            return new VmCrossRefAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
-            return new ClusterCrossRefAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
-            return new QuotaConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
-            return new StoragePoolCrossRefAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            return new DiskCrossRefAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
-            return new StorageDomainCrossRefAutoCompleter();
-
-            // no need for empty case before default: case
-            // SearchObjects.VDC_POOL_OBJ_NAME:
-            // no need for empty case before default: case
-            // SearchObjects.VDC_POOL_PLU_OBJ_NAME:
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
-            return GlusterVolumeCrossRefAutoCompleter.INSTANCE;
-        }
         else {
             return null;
         }
@@ -178,226 +267,45 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         if (obj == null) {
             return null;
         }
-        if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
-            retval = new VdsConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
-            retval = new VmConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
-            retval = new VmTemplateConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
-            retval = new AuditLogConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
-            retval = new VdcUserConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
-            retval = new PoolConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = new DiskConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
-            retval = new QuotaConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
-            retval = new ClusterConditionFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
-            retval = new StoragePoolFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
-            retval = new StorageDomainFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME)) {
-            retval = new StorageDomainFieldAutoCompleter();
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
-            retval = GlusterVolumeConditionFieldAutoCompleter.INSTANCE;
+        if (getEntitySearchInfo(obj) != null) {
+            return getEntitySearchInfo(obj).conditionFieldAutoCompleter;
         }
         return retval;
     }
 
     public String getRelatedTableNameWithOutTags(String obj) {
-        String retval;
         if (obj == null) {
             return null;
-        }
-        if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
-            retval = "vdc_users";
-
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
-            retval = "vms";
-
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "all_disks";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
-            retval = "vm_templates_view";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
-            retval = "vds";
-
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
-            retval = "vds_groups";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
-            retval = "quota_view";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
-            retval = "storage_pool";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
-            retval = "storage_domains_without_storage_pools";
-
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME)) {
-            retval = "vm_images_storage_domains_view";
+        } else if (getEntitySearchInfo(obj) != null && getEntitySearchInfo(obj).relatedTableNameWithOutTags != null) {
+            return getEntitySearchInfo(obj).relatedTableNameWithOutTags;
         }
         else {
-            retval = getRelatedTableName(obj);
+            return getRelatedTableName(obj);
         }
-        return retval;
     }
 
     public String getRelatedTableName(String obj) {
-        String retval = null;
         if (obj == null) {
-            return retval;
+            return null;
+        } else if (getEntitySearchInfo(obj) != null) {
+            return getEntitySearchInfo(obj).relatedTableName;
         }
-        if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
-            retval = "vds_with_tags";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
-            retval = "vms_with_tags";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
-            retval = "vm_templates_storage_domain";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
-            retval = "audit_log";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "all_disks";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
-            retval = "vdc_users_with_tags";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
-            retval = "vm_pools_full_view";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
-            retval = "vds_groups_storage_domain";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
-            retval = "storage_pool_with_storage_domain";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
-            retval = "quota_view";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
-            retval = "storage_domains_with_hosts_view";
-
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME)) {
-            retval = "vm_images_storage_domains_view";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
-            retval = "gluster_volumes";
-        }
-        return retval;
+        return null;
     }
 
     public String getPrimeryKeyName(String obj) {
-        String retval = null;
-        if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
-            retval = "vds_id";
+        if (getEntitySearchInfo(obj) != null) {
+            return getEntitySearchInfo(obj).primeryKeyName;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
-            retval = "vm_guid";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "disk_id";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
-            retval = "vmt_guid";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
-            retval = "audit_log_id";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
-            retval = "user_id";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
-            retval = "vm_pool_id";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
-            retval = "quota_id";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
-            retval = "vds_group_id";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
-            retval = "id";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
-            retval = "id";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
-            retval = "id";
-        }
-        return retval;
+        return null;
     }
 
     public IAutoCompleter getFieldRelationshipAutoCompleter(String obj, String fieldName) {
-        IAutoCompleter retval = null;
         IConditionFieldAutoCompleter curConditionFieldAC = getFieldAutoCompleter(obj);
         if (curConditionFieldAC != null) {
-            retval = curConditionFieldAC.getFieldRelationshipAutoCompleter(fieldName);
+            return curConditionFieldAC.getFieldRelationshipAutoCompleter(fieldName);
         }
-        return retval;
+        return null;
     }
 
     public IAutoCompleter getObjectRelationshipAutoCompleter(String obj) {
@@ -414,54 +322,12 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     }
 
     public String getDefaultSort(String obj) {
-        String retval = "";
         if (obj == null) {
-            return retval;
+            return "";
         }
-        if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
-            retval = "vds_name ASC ";
+        if (getEntitySearchInfo(obj) != null) {
+            return getEntitySearchInfo(obj).defaultSort;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
-            retval = "vm_name ASC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "disk_alias ASC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
-            retval = "audit_log_id DESC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
-            retval = "name ASC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
-            retval = "name ASC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
-            retval = "vm_pool_name ASC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
-            retval = "name ASC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
-            retval = "storage_name ASC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
-            retval = "name ASC ";
-        }
-        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
-            retval = "vol_name ASC ";
-        } else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME) || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
-            retval = "quota_name ASC";
-        }
-        return retval;
+        return "";
     }
 }
