@@ -98,8 +98,11 @@ public class VdsSelector {
 
         if (!returnValue) {
             if (privateVm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-                if (messages.size() > 0) {
-                    messages.set(0, VdcBllMessages.VM_PINNED_TO_HOST_CANNOT_RUN_ON_THE_DEFAULT_VDS.toString());
+                // we are checking for 2 because the first 2 (0 and 1) are the messaged for
+                // object and action type and we don't want to override them,
+                // we do override any previous message because this one has priority.
+                if (messages.size() > 2) {
+                    messages.set(2, VdcBllMessages.VM_PINNED_TO_HOST_CANNOT_RUN_ON_THE_DEFAULT_VDS.toString());
                 } else {
                     messages.add(VdcBllMessages.VM_PINNED_TO_HOST_CANNOT_RUN_ON_THE_DEFAULT_VDS.toString());
                 }
