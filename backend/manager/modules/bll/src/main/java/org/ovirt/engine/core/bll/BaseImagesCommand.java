@@ -332,24 +332,21 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void LockImage() {
-        SetImageStatus(getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage(),
-                ImageStatus.LOCKED);
+        setImageStatus(ImageStatus.LOCKED);
     }
 
     protected void UnLockImage() {
-        SetImageStatus(getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage(), ImageStatus.OK);
+        setImageStatus(ImageStatus.OK);
     }
 
     protected void MarkImageAsIllegal() {
-        SetImageStatus(getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage(),
-                ImageStatus.ILLEGAL);
+        setImageStatus(ImageStatus.ILLEGAL);
     }
 
-    protected static void SetImageStatus(DiskImage diskImage, ImageStatus imageStatus) {
-        if (diskImage != null) {
-            diskImage.setimageStatus(imageStatus);
-            DbFacade.getInstance().getImageDao().update(diskImage.getImage());
-        }
+    protected void setImageStatus(ImageStatus imageStatus) {
+        DiskImage diskImage = getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage();
+        diskImage.setimageStatus(imageStatus);
+        getImageDao().update(diskImage.getImage());
     }
 
     @Override
