@@ -50,4 +50,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("Memory Page Sharing Threshold set to {0} via API/CLI")
     String clusterPopupOptimizationCustomExplainationLabel(String a);
+
+    @DefaultMessage("The Network will be added to the Data Center {0} as well.")
+    String theNetworkWillBeAddedToTheDataCenterAsWell(String dcName);
 }

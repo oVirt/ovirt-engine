@@ -149,19 +149,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String dataCenterEventSubTabLabel();
 
     @DefaultStringValue("Name")
-    String dataCenterPopupNameLabel();
+    String nameLabel();
 
     @DefaultStringValue("Description")
-    String dataCenterPopupDescriptionLabel();
+    String descriptionLabel();
 
     @DefaultStringValue("VM network")
-    String dataCenterPopupVmNetworkLabel();
+    String vmNetworkLabel();
 
     @DefaultStringValue("Enable VLAN tagging")
-    String dataCenterPopupEnableVlanTagLabel();
+    String enableVlanTagLabel();
 
     @DefaultStringValue("Override MTU")
-    String dataCenterPopupEnableMtuLabel();
+    String overrideMtuLabel();
 
     @DefaultStringValue("Name")
     String nameClusterHeader();
@@ -185,7 +185,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String dataCenterNetworkPopupSubLabel();
 
     @DefaultStringValue("Attach/Detach Network to/from Cluster(s)")
-    String dataCenterNetworkPopupAssignLabel();
+    String networkPopupAssignLabel();
 
     @DefaultStringValue("Attach All")
     String attachAll();

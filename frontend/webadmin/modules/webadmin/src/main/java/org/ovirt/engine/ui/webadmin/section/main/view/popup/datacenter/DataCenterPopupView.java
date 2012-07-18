@@ -90,8 +90,8 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     }
 
     void localize(ApplicationConstants constants) {
-        nameEditor.setLabel(constants.dataCenterPopupNameLabel());
-        descriptionEditor.setLabel(constants.dataCenterPopupDescriptionLabel());
+        nameEditor.setLabel(constants.nameLabel());
+        descriptionEditor.setLabel(constants.descriptionLabel());
         storageTypeListEditor.setLabel(constants.dataCenterPopupStorageTypeLabel());
         versionEditor.setLabel(constants.dataCenterPopupVersionLabel());
         quotaEnforceTypeEditor.setLabel(constants.dataCenterPopupQuotaEnforceTypeLabel());

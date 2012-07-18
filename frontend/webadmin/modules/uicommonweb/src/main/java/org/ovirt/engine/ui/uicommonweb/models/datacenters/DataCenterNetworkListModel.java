@@ -316,7 +316,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
             {
                 DataCenterNetworkListModel networkListModel = (DataCenterNetworkListModel) model;
                 DataCenterNetworkModel networkModel1 = (DataCenterNetworkModel) networkListModel.getWindow();
-                // networkModel1.ClusterTreeNodes
+                // Cluster list
                 ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) ReturnValue;
                 NetworkClusterModel networkClusterModel;
                 ListModel networkClusterList =

@@ -242,8 +242,8 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         memoryOptimizationTab.setLabel(getConstants().hostPopupMemoryOptimizationTabLabel());
 
         dataCenterButton.setText(getConstants().editText());
-        dataCenterNameEditor.setLabel(getConstants().dataCenterPopupNameLabel());
-        dataCenterDescriptionEditor.setLabel(getConstants().dataCenterPopupDescriptionLabel());
+        dataCenterNameEditor.setLabel(getConstants().nameLabel());
+        dataCenterDescriptionEditor.setLabel(getConstants().descriptionLabel());
         dataCenterVersionEditor.setLabel(getConstants().dataCenterPopupVersionLabel());
 
         clusterButton.setText(getConstants().editText());

@@ -6,7 +6,7 @@
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterNetworkPopupView.WidgetStyle">
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractNetworkPopupView.WidgetStyle">
 		.dock {
 			border-right: 1px solid #BBBBBB;
 		}

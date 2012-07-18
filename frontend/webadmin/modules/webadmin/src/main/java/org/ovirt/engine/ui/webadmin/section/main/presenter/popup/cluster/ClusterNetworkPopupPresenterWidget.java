@@ -13,9 +13,7 @@ import com.google.inject.Inject;
 public class ClusterNetworkPopupPresenterWidget extends AbstractNetworkPopupPresenterWidget<ClusterNetworkModel, ClusterNetworkPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractNetworkPopupPresenterWidget.ViewDef<ClusterNetworkModel> {
-
         void setDataCenterName(String name);
-
     }
 
     @Inject
