@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.AccessProtocol;
 import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumeType;
@@ -28,13 +27,6 @@ public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<Glust
         List<String> transportTypes = model.getTransportTypes().getTransportTypes();
         transportTypes.clear();
         transportTypes.add(TransportType.TCP.name().toLowerCase());
-
-        List<String> accessProtocols = model.getAccessProtocols().getAccessProtocols();
-        accessProtocols.clear();
-        accessProtocols.add(AccessProtocol.GLUSTER.name().toLowerCase());
-        accessProtocols.add(AccessProtocol.NFS.name().toLowerCase());
-
-        model.getAccessControlList().getAccessControlList().add("*");
 
         return model;
     }

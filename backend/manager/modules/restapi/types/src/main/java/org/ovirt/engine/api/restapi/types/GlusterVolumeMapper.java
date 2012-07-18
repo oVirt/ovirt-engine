@@ -1,14 +1,10 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
-import org.ovirt.engine.api.model.AccessControlList;
 import org.ovirt.engine.api.model.AccessProtocol;
-import org.ovirt.engine.api.model.AccessProtocols;
 import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumeType;
@@ -48,20 +44,6 @@ public class GlusterVolumeMapper {
                     volume.addTransportType(map(transportType, null));
                 }
             }
-        }
-
-        if(fromVolume.isSetAccessProtocols()) {
-            for (String accessProtocolStr : fromVolume.getAccessProtocols().getAccessProtocols()) {
-                AccessProtocol accessProtocol = AccessProtocol.fromValue(accessProtocolStr.toUpperCase());
-                if (accessProtocol != null) {
-                    volume.addAccessProtocol(map(accessProtocol, null));
-                }
-            }
-        }
-
-        if (fromVolume.isSetAccessControlList()) {
-            volume.setAccessControlList(StringUtils.join(
-                    fromVolume.getAccessControlList().getAccessControlList(), ","));
         }
 
         if(fromVolume.isSetReplicaCount()) {
@@ -111,24 +93,6 @@ public class GlusterVolumeMapper {
             volume.getTransportTypes()
                     .getTransportTypes()
                     .addAll(transportTypeList);
-        }
-
-        if (fromVolume.getAccessProtocols() != null) {
-            ArrayList<String> accessProtocolList = new ArrayList<String>();
-            for (org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol accessProtocol : fromVolume.getAccessProtocols()) {
-                accessProtocolList.add(map(accessProtocol, null));
-            }
-            volume.setAccessProtocols(new AccessProtocols());
-            volume.getAccessProtocols()
-                    .getAccessProtocols()
-                    .addAll(accessProtocolList);
-        }
-
-        if(fromVolume.getAccessControlList() != null) {
-            volume.setAccessControlList(new AccessControlList());
-            volume.getAccessControlList()
-                    .getAccessControlList()
-                    .addAll(Arrays.asList(fromVolume.getAccessControlList().split(",")));
         }
 
         volume.setReplicaCount(fromVolume.getReplicaCount());

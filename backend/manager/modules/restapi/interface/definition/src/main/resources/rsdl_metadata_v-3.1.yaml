@@ -2477,8 +2477,6 @@ actions:
           gluster_volume.transport_types--COLLECTION: {transport_type: 'xs:string'}
           gluster_volume.replica_count: 'xs:unsignedShort'
           gluster_volume.stripe_count: 'xs:unsignedShort'
-          gluster_volume.access_protocols--COLLECTION: {access_protocol: 'xs:string'}
-          gluster_volume.access_control_list--COLLECTION: {ip: 'xs:string'}
           gluster_volume.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}
     urlparams: {}
     headers:

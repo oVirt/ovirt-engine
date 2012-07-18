@@ -574,7 +574,6 @@
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>
           <xs:element ref="transport_types" minOccurs="0"/>
-          <xs:element ref="access_protocols" minOccurs="0"/>
           <xs:element ref="gluster_volume_states" minOccurs="0"/>
           <xs:element ref="brick_states" minOccurs="0"/>
         </xs:sequence>
@@ -2645,26 +2644,11 @@
           <xs:element name="replica_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
           <xs:element name="stripe_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="bricks" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="access_protocols" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="access_control_list" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="options" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="access_control_list" type="AccessControlList"/>
-  <xs:complexType name="AccessControlList">
-    <xs:sequence>
-      <xs:element name="ip" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="AccessControlList"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="gluster_volume_types" type="GlusterVolumeTypes"/>
@@ -2674,19 +2658,6 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="GlusterVolumeTypes"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:element name="access_protocols" type="AccessProtocols"/>
-  <xs:complexType name="AccessProtocols">
-    <xs:sequence>
-      <xs:element name="access_protocol" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="AccessProtocols"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>

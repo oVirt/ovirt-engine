@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.api.common.util.LinkHelper;
-import org.ovirt.engine.api.model.AccessProtocol;
-import org.ovirt.engine.api.model.AccessProtocols;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootDevices;
 import org.ovirt.engine.api.model.BootProtocol;
@@ -231,7 +229,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
             addGlusterVolumeTypes(version, GlusterVolumeType.values());
             addTransportTypes(version, TransportType.values());
-            addAccessProtocols(version, AccessProtocol.values());
             addGlusterVolumeStates(version, GlusterState.values());
             addGlusterBrickStates(version, GlusterState.values());
         }
@@ -532,13 +529,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setTransportTypes(new TransportTypes());
         for(TransportType type : types) {
             version.getTransportTypes().getTransportTypes().add(type.value());
-        }
-    }
-
-    private void addAccessProtocols(VersionCaps version, AccessProtocol[] protocols) {
-        version.setAccessProtocols(new AccessProtocols());
-        for(AccessProtocol type : protocols) {
-            version.getAccessProtocols().getAccessProtocols().add(type.value());
         }
     }
 
