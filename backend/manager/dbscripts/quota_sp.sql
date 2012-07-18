@@ -189,9 +189,11 @@ BEGIN
     quota_enforcement_type
    FROM   quota_limitations_view
    WHERE  storage_id = v_storage_id
-   OR     (is_global AND NOT is_empty AND storage_pool_id IN (SELECT storage_pool_id
-                                                              FROM   storage_pool_iso_map
-                                                              WHERE  storage_id = v_storage_id));
+   OR     (is_global AND
+           NOT is_empty AND
+           storage_size_gb IS NOT null AND
+           storage_pool_id IN (SELECT storage_pool_id FROM storage_pool_iso_map
+               WHERE  storage_id = v_storage_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -213,9 +215,11 @@ BEGIN
     quota_enforcement_type
    FROM   quota_limitations_view
    WHERE  vds_group_id = v_vds_group_id
-   OR     (is_global AND NOT is_empty AND storage_pool_id IN (SELECT storage_pool_id
-                                                              FROM   vds_groups
-                                                              WHERE  vds_group_id = v_vds_group_id));
+   OR     (is_global AND
+           NOT is_empty AND
+           virtual_cpu IS NOT null AND
+           storage_pool_id IN (SELECT storage_pool_id FROM vds_groups
+               WHERE  vds_group_id = v_vds_group_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
