@@ -4,6 +4,11 @@ import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
 public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
+    public enum UserOrGroup {
+        User,
+        Group
+    }
+
     public VdcUserConditionFieldAutoCompleter() {
         super();
         // Building the basic vervs Dict
@@ -17,6 +22,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.put("ROLE", "ROLE");
         mVerbs.put("TAG", "TAG");
         mVerbs.put("POOL", "POOL");
+        mVerbs.put("TYPE", "TYPE");
 
         // Building the autoCompletion Dict
         buildCompletions();
@@ -31,6 +37,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("ROLE", String.class);
         getTypeDictionary().put("TAG", String.class);
         getTypeDictionary().put("POOL", String.class);
+        getTypeDictionary().put("TYPE", UserOrGroup.class);
 
         // building the ColumnName Dict
         mColumnNameDict.put("NAME", "name");
@@ -43,6 +50,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mColumnNameDict.put("ROLE", "mla_role");
         mColumnNameDict.put("TAG", "tag_name");
         mColumnNameDict.put("POOL", "vm_pool_name");
+        mColumnNameDict.put("TYPE", "user_group");
         // Building the validation dict
         buildBasicValidationTable();
     }
