@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -85,7 +85,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     public Object runInTransaction() {
                         DiskImage diskImage = getDiskImage();
                         if (diskImage != null) {
-                            DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getImageId());
+                            getDiskImageDynamicDAO().remove(diskImage.getImageId());
                             Guid imageTemplate = diskImage.getit_guid();
                             Guid currentGuid = diskImage.getImageId();
                             // next 'while' statement removes snapshots from DB only (the
@@ -111,9 +111,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             }
 
                             getBaseDiskDao().remove(diskImage.getId());
-                            DbFacade.getInstance()
-                                    .getVmDeviceDAO()
-                                    .remove(new VmDeviceId(diskImage.getId(), null));
+                            getVmDeviceDAO().remove(new VmDeviceId(diskImage.getId(), null));
                         } else {
                             log.warn("RemoveImageCommand::RemoveImageFromDB: DiskImage is null, nothing to remove.");
                         }
@@ -156,11 +154,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         if (getParameters().getRemoveFromDB()) {
             removeImageFromDB();
         } else {
-            DbFacade.getInstance()
-                    .getImageStorageDomainMapDao()
-                    .remove(
-                            new image_storage_domain_map_id(getParameters().getImageId(),
-                                    getParameters().getStorageDomainId()));
+            getImageStorageDomainMapDao().remove(
+                    new image_storage_domain_map_id(getParameters().getImageId(),
+                            getParameters().getStorageDomainId()));
             UnLockImage();
         }
         setSucceeded(true);
@@ -189,5 +185,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             }
             throw e;
         }
+    }
+
+    protected VmDeviceDAO getVmDeviceDAO() {
+        return getDbFacade().getVmDeviceDAO();
     }
 }
