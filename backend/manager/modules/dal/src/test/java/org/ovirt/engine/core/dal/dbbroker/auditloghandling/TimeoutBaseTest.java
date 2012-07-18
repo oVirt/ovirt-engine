@@ -94,7 +94,7 @@ public class TimeoutBaseTest {
         c -= 1000;
         final Date d = new Date(c);
         t.setEndTime(d);
-        final String s = "timeout";
+        final String s = "legal-timeout";
         t.setTimeoutObjectId(s);
         // get it into the hashtable
         t.getLegal();
@@ -106,7 +106,7 @@ public class TimeoutBaseTest {
     public void legalNotTimedOut() {
         final TestTimeoutBase t = new TestTimeoutBase();
         t.setUseTimout(true);
-        final String s = "timeout";
+        final String s = "illegal-timeout";
         t.setTimeoutObjectId(s);
         long c = System.currentTimeMillis();
         c += 5000;
