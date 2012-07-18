@@ -36,11 +36,23 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     public RemoveImageCommand(T parameters) {
         super(parameters);
-        setDiskImage(((getParameters().getDiskImage()) != null) ? getParameters().getDiskImage() : getDiskImage());
+        initImage();
+        initStoragePoolId();
+        initStorageDomainId();
+    }
+
+    protected void initImage() {
+        setDiskImage(((getParameters().getDiskImage()) != null) ? getParameters().getDiskImage() : getImage());
+    }
+
+    protected void initStoragePoolId() {
         if (getStoragePoolId() == null || Guid.Empty.equals(getStoragePoolId())) {
             setStoragePoolId(getDiskImage() != null && getDiskImage().getstorage_pool_id() != null ? getDiskImage()
                     .getstorage_pool_id().getValue() : Guid.Empty);
         }
+    }
+
+    protected void initStorageDomainId() {
         if ((getParameters().getStorageDomainId() == null || Guid.Empty.equals(getParameters().getStorageDomainId()))
                 && getDiskImage() != null) {
             setStorageDomainId(getDiskImage().getstorage_ids().get(0));

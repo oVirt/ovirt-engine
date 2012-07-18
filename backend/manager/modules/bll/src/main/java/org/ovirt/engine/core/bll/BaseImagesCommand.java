@@ -40,12 +40,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         super(parameters);
         mImageId = parameters.getImageId();
         if (parameters instanceof ImagesContainterParametersBase) {
-            ImagesContainterParametersBase tempVar = (ImagesContainterParametersBase) parameters;
-            super.setVmId(tempVar.getContainerId());
-            if (getDiskImage() != null && getDiskImage().getstorage_pool_id() != null) {
-                setStoragePoolId(getDiskImage()
-                        .getstorage_pool_id().getValue());
-            }
+            initContainerDetails((ImagesContainterParametersBase) parameters);
+        }
+    }
+
+    protected void initContainerDetails(ImagesContainterParametersBase parameters) {
+        super.setVmId(parameters.getContainerId());
+        if (getDiskImage() != null && getDiskImage().getstorage_pool_id() != null) {
+            setStoragePoolId(getDiskImage().getstorage_pool_id().getValue());
         }
     }
 
