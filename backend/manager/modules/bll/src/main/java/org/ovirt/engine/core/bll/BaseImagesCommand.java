@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -415,26 +413,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getId());
         if (imagesForDisk == null || imagesForDisk.isEmpty()) {
             getBaseDiskDao().remove(snapshot.getId());
-        }
-    }
-
-    public static void GetImageChildren(Guid snapshot, List<Guid> children) {
-        List<Guid> list = new ArrayList<Guid>();
-        for (DiskImage image : DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(snapshot)) {
-            list.add(image.getImageId());
-        }
-        children.addAll(list);
-        for (Guid snapshotId : list) {
-            GetImageChildren(snapshotId, children);
-        }
-    }
-
-    protected void RemoveChildren(Guid snapshot) {
-        List<Guid> children = new ArrayList<Guid>();
-        GetImageChildren(snapshot, children);
-        Collections.reverse(children);
-        for (Guid child : children) {
-            RemoveSnapshot(getDiskImageDao().getSnapshotById(child));
         }
     }
 

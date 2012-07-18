@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -47,14 +51,14 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         if (getDiskImage() != null) {
             VDSReturnValue vdsReturnValue = performImageVdsmOperation();
             getReturnValue().getInternalTaskIdList().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(),
-                                getParameters().getParentCommand(),
-                                VdcObjectType.Storage,
-                                getParameters().getStorageDomainId()));
+                    CreateTask(vdsReturnValue.getCreationInfo(),
+                            getParameters().getParentCommand(),
+                            VdcObjectType.Storage,
+                            getParameters().getStorageDomainId()));
 
             if (getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
-                        && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport
-                        && getParameters().getParentCommand() != VdcActionType.RemoveDisk) {
+                    && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport
+                    && getParameters().getParentCommand() != VdcActionType.RemoveDisk) {
                 removeImageFromDB();
             }
         } else {
@@ -115,6 +119,26 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         return null;
                     }
                 });
+    }
+
+    private void GetImageChildren(Guid snapshot, List<Guid> children) {
+        List<Guid> list = new ArrayList<Guid>();
+        for (DiskImage image : getDiskImageDAO().getAllSnapshotsForParent(snapshot)) {
+            list.add(image.getImageId());
+        }
+        children.addAll(list);
+        for (Guid snapshotId : list) {
+            GetImageChildren(snapshotId, children);
+        }
+    }
+
+    private void RemoveChildren(Guid snapshot) {
+        List<Guid> children = new ArrayList<Guid>();
+        GetImageChildren(snapshot, children);
+        Collections.reverse(children);
+        for (Guid child : children) {
+            RemoveSnapshot(getDiskImageDao().getSnapshotById(child));
+        }
     }
 
     @Override
