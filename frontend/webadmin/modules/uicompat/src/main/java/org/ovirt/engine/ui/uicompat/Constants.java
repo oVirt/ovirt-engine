@@ -1378,8 +1378,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("DefaultQuota")
     String defaultQuotaPrefix();
 
-    @DefaultStringValue("Quota name must be changed when it's not default")
-    String changeQuotaNameValidation();
+    @DefaultStringValue("Quota must contain limitations")
+    String quotaIsEmptyValidation();
 
     @DefaultStringValue("At least one service should be selected")
     String clusterServiceValidationMsg();

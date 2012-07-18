@@ -23,6 +23,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -46,17 +47,26 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     private static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
 
-    private UICommand createQuotaCommand;
+    private UICommand createQuotaStorageCommand;
+    private UICommand createQuotaClusterCommand;
     private UICommand removeQuotaCommand;
     private UICommand editQuotaCommand;
     private UICommand cloneQuotaCommand;
 
-    public UICommand getCreateQuotaCommand() {
-        return createQuotaCommand;
+    public UICommand getCreateQuotaClusterCommand() {
+        return createQuotaClusterCommand;
     }
 
-    public void setCreateQuotaCommand(UICommand createQuotaCommand) {
-        this.createQuotaCommand = createQuotaCommand;
+    public void setCreateQuotaClusterCommand(UICommand createQuotaClusterCommand) {
+        this.createQuotaClusterCommand = createQuotaClusterCommand;
+    }
+
+    public UICommand getCreateQuotaStorageCommand() {
+        return createQuotaStorageCommand;
+    }
+
+    public void setCreateQuotaStorageCommand(UICommand createQuotaCommand) {
+        this.createQuotaStorageCommand = createQuotaCommand;
     }
 
     public UICommand getRemoveQuotaCommand() {
@@ -82,7 +92,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.QUOTA_OBJ_NAME, SearchObjects.QUOTA_PLU_OBJ_NAME });
 
-        setCreateQuotaCommand(new UICommand("Create", this)); //$NON-NLS-1$
+        setCreateQuotaStorageCommand(new UICommand("CreateStorageQuota", this)); //$NON-NLS-1$
+        setCreateQuotaClusterCommand(new UICommand("CreateClusterQuota", this)); //$NON-NLS-1$
         setEditQuotaCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveQuotaCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setCloneQuotaCommand(new UICommand("Clone", this)); //$NON-NLS-1$
@@ -100,6 +111,18 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     @Override
+    protected void SelectedItemsChanged() {
+        super.SelectedItemsChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    protected void SelectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
+        super.SelectedItemPropertyChanged(sender, e);
+        updateActionAvailability();
+    }
+
+    @Override
     protected void OnSelectedItemChanged() {
         super.OnSelectedItemChanged();
         updateActionAvailability();
@@ -109,8 +132,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     protected void InitDetailModels() {
         super.InitDetailModels();
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new QuotaClusterListModel());
-        list.add(new QuotaStorageListModel());
+        QuotaClusterListModel quotaClusterListModel = new QuotaClusterListModel();
+        list.add(quotaClusterListModel);
+        QuotaStorageListModel quotaStorageListModel = new QuotaStorageListModel();
+        list.add(quotaStorageListModel);
         list.add(new QuotaVmListModel());
         list.add(new QuotaTemplateListModel());
         list.add(new QuotaUserListModel());
@@ -143,12 +168,19 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         getCloneQuotaCommand().setIsExecutionAllowed(isOnlyOneItemSelected);
     }
 
-    private void createQuota() {
+    private void createQuota(final boolean isQuotaForCluster) {
         final QuotaModel qModel = new QuotaModel();
         qModel.setTitle(ConstantsManager.getInstance().getConstants().newQuotaTitle());
         qModel.setHashName("new_quota"); //$NON-NLS-1$
         Quota newQuota = new Quota();
         qModel.setEntity(newQuota);
+        if (isQuotaForCluster) {
+            qModel.getSpecificStorageQuota().setEntity(true);
+            qModel.setClusterQuota(true);
+        } else {
+            qModel.getSpecificClusterQuota().setEntity(true);
+            qModel.setClusterQuota(false);
+        }
         setWindow(qModel);
         qModel.StartProgress(null);
 
@@ -183,60 +215,63 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 storage_pool selectedDataCenter = (storage_pool) qModel.getDataCenter().getSelectedItem();
-                AsyncDataProvider.GetClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+                if (isQuotaForCluster) {
+                    AsyncDataProvider.GetClusterList(new AsyncQuery(this, new INewAsyncCallback() {
 
-                    @Override
-                    public void OnSuccess(Object model, Object returnValue) {
-                        ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
-                        if (clusterList == null || clusterList.size() == 0) {
-                            qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaVdsGroup>());
-                            return;
-                        }
-                        ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
-                        QuotaVdsGroup quotaVdsGroup;
-                        for (VDSGroup vdsGroup : clusterList) {
-                            quotaVdsGroup = new QuotaVdsGroup();
-                            quotaVdsGroup.setVdsGroupId(vdsGroup.getId());
-                            quotaVdsGroup.setVdsGroupName(vdsGroup.getname());
-                            quotaVdsGroup.setMemSizeMB(null);
-                            quotaVdsGroup.setMemSizeMBUsage((long) 0);
-                            quotaVdsGroup.setVirtualCpu(null);
-                            quotaVdsGroup.setVirtualCpuUsage(0);
-                            quotaClusterList.add(quotaVdsGroup);
-                        }
-                        qModel.getAllDataCenterClusters().setItems(quotaClusterList);
-
-                    }
-                }), selectedDataCenter.getId());
-                AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
-
-                    @Override
-                    public void OnSuccess(Object model, Object returnValue) {
-                        ArrayList<storage_domains> storageList = (ArrayList<storage_domains>) returnValue;
-                        if (storageList == null || storageList.size() == 0) {
-                            qModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
-                            qModel.StopProgress();
-                            return;
-                        }
-                        ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
-                        QuotaStorage quotaStorage;
-                        for (storage_domains storage : storageList) {
-                            if (!storage.getstorage_domain_type().equals(StorageDomainType.Master)
-                                    && !storage.getstorage_domain_type().equals(StorageDomainType.Data)) {
-                                continue;
+                        @Override
+                        public void OnSuccess(Object model, Object returnValue) {
+                            ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
+                            if (clusterList == null || clusterList.size() == 0) {
+                                qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaVdsGroup>());
+                                return;
                             }
-                            quotaStorage = new QuotaStorage();
-                            quotaStorage.setStorageId(storage.getId());
-                            quotaStorage.setStorageName(storage.getstorage_name());
-                            quotaStorage.setStorageSizeGB(null);
-                            quotaStorage.setStorageSizeGBUsage((double) 0);
-                            quotaStorageList.add(quotaStorage);
-                        }
-                        qModel.getAllDataCenterStorages().setItems(quotaStorageList);
-                        qModel.StopProgress();
-                    }
-                }), selectedDataCenter.getId());
+                            ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
+                            QuotaVdsGroup quotaVdsGroup;
+                            for (VDSGroup vdsGroup : clusterList) {
+                                quotaVdsGroup = new QuotaVdsGroup();
+                                quotaVdsGroup.setVdsGroupId(vdsGroup.getId());
+                                quotaVdsGroup.setVdsGroupName(vdsGroup.getname());
+                                quotaVdsGroup.setMemSizeMB(null);
+                                quotaVdsGroup.setMemSizeMBUsage((long) 0);
+                                quotaVdsGroup.setVirtualCpu(null);
+                                quotaVdsGroup.setVirtualCpuUsage(0);
+                                quotaClusterList.add(quotaVdsGroup);
+                            }
+                            qModel.getAllDataCenterClusters().setItems(quotaClusterList);
+                            qModel.StopProgress();
 
+                        }
+                    }), selectedDataCenter.getId());
+                } else {
+                    AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+
+                        @Override
+                        public void OnSuccess(Object model, Object returnValue) {
+                            ArrayList<storage_domains> storageList = (ArrayList<storage_domains>) returnValue;
+                            if (storageList == null || storageList.size() == 0) {
+                                qModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
+                                qModel.StopProgress();
+                                return;
+                            }
+                            ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
+                            QuotaStorage quotaStorage;
+                            for (storage_domains storage : storageList) {
+                                if (!storage.getstorage_domain_type().equals(StorageDomainType.Master)
+                                        && !storage.getstorage_domain_type().equals(StorageDomainType.Data)) {
+                                    continue;
+                                }
+                                quotaStorage = new QuotaStorage();
+                                quotaStorage.setStorageId(storage.getId());
+                                quotaStorage.setStorageName(storage.getstorage_name());
+                                quotaStorage.setStorageSizeGB(null);
+                                quotaStorage.setStorageSizeGBUsage((double) 0);
+                                quotaStorageList.add(quotaStorage);
+                            }
+                            qModel.getAllDataCenterStorages().setItems(quotaStorageList);
+                            qModel.StopProgress();
+                        }
+                    }), selectedDataCenter.getId());
+                }
             }
         });
 
@@ -277,7 +312,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 quota.getGlobalQuotaVdsGroup().setVirtualCpu(iter.getVirtualCpu());
                 quota.getQuotaVdsGroups().clear();
             }
-        } else {
+        } else if (model.getAllDataCenterClusters().getItems() != null) {
             quota.setGlobalQuotaVdsGroup(null);
             ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
             QuotaVdsGroup quotaVdsGroup;
@@ -297,7 +332,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 quota.getGlobalQuotaStorage().setStorageSizeGB(iter.getStorageSizeGB());
                 quota.getQuotaStorages().clear();
             }
-        } else {
+        } else if (model.getAllDataCenterStorages().getItems() != null) {
             quota.setGlobalQuotaStorage(null);
             ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
             QuotaStorage quotaStorage;
@@ -335,7 +370,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     private void editQuota(boolean isClone) {
         Quota outer_quota = (Quota) getSelectedItem();
-        QuotaModel qModel = new QuotaModel();
+        final QuotaModel qModel = new QuotaModel();
         qModel.getName().setEntity(outer_quota.getQuotaName());
 
         qModel.getGraceCluster().setEntity(outer_quota.getGraceVdsGroupPercentage());
@@ -362,8 +397,6 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         qModel.getCommands().add(command);
-        setWindow(qModel);
-        qModel.StartProgress(null);
 
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.Model = this;
@@ -371,9 +404,19 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
             @Override
             public void OnSuccess(Object model, Object returnValue) {
-                final QuotaListModel outer_quotaListModel = (QuotaListModel) model;
-                final QuotaModel quotaModel = (QuotaModel) outer_quotaListModel.getWindow();
                 final Quota quota = (Quota) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                final QuotaListModel outer_quotaListModel = (QuotaListModel) model;
+
+                if (quota.getGlobalQuotaVdsGroup() != null
+                        || (quota.getQuotaVdsGroups() != null && quota.getQuotaVdsGroups().size() > 0)) {
+                    qModel.setClusterQuota(true);
+                } else {
+                    qModel.setClusterQuota(false);
+                }
+                setWindow(qModel);
+                qModel.StartProgress(null);
+
+                final QuotaModel quotaModel = qModel;
                 quotaModel.setEntity(quota);
                 boolean hasSpecificLimitation =
                         quota.getQuotaVdsGroups() == null || quota.getQuotaVdsGroups().size() == 0;
@@ -595,8 +638,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     @Override
     public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
-        if (command.equals(getCreateQuotaCommand())) {
-            createQuota();
+        if (command.equals(getCreateQuotaStorageCommand())) {
+            createQuota(false);
+        } else if (command.equals(getCreateQuotaClusterCommand())) {
+            createQuota(true);
         }
         else if (command.equals(getEditQuotaCommand())) {
             editQuota(false);

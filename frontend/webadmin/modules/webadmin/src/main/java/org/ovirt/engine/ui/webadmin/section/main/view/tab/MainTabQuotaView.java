@@ -76,10 +76,16 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         //        },
         //        constants.usedStorageQuota());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuotaStorage()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getCreateQuotaCommand();
+                return getMainModel().getCreateQuotaStorageCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuotaCluster()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getCreateQuotaClusterCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.editQuota()) {
