@@ -95,7 +95,6 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             while (!imageTemplate.equals(currentGuid) && !currentGuid.equals(Guid.Empty)) {
                                 RemoveChildren(currentGuid);
 
-                                // DiskImage image = IrsBroker.getImageInfo(currentGuid);
                                 DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
                                 if (image != null) {
                                     RemoveSnapshot(image);
