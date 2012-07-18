@@ -2,10 +2,15 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -38,15 +43,22 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
         // no child interfaces
 
         List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>(list.size());
-        for (final VdsNetworkInterface i : list) {
-            if (i.getBonded() == null || (i.getBonded() != null && i.getBonded())
-                        && LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
-                            @Override
-                            public boolean eval(VdsNetworkInterface bond) {
-                                return StringHelper.EqOp(bond.getBondName(), i.getName());
-                            }
-                        }).size() > 0) {
-                interfaces.add(i);
+
+        if (!list.isEmpty()) {
+            VdsStatic vdsStatic = getDbFacade().getVdsStaticDAO().get(getParameters().getVdsId());
+            Map<String, Network> networks = Entities.entitiesByName(
+                    getDbFacade().getNetworkDAO().getAllForCluster(vdsStatic.getvds_group_id()));
+            for (final VdsNetworkInterface i : list) {
+                if (i.getBonded() == null || (i.getBonded() != null && i.getBonded())
+                            && LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
+                                @Override
+                                public boolean eval(VdsNetworkInterface bond) {
+                                    return StringHelper.EqOp(bond.getBondName(), i.getName());
+                                }
+                            }).size() > 0) {
+                    interfaces.add(i);
+                    i.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(networks, i));
+                }
             }
         }
 
