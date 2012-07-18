@@ -26,6 +26,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
  * Base class for all image handling commands
@@ -66,11 +67,15 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected ImageDao getImageDao() {
-        return DbFacade.getInstance().getImageDao();
+        return getDbFacade().getImageDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDAO();
+        return getDbFacade().getDiskImageDAO();
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return getDbFacade().getSnapshotDao();
     }
 
     protected void setImage(DiskImage image) {
@@ -209,8 +214,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return The ID of the image for the same drive, or null if none found.
      */
     protected Guid findImageForSameDrive(SnapshotType snapshotType) {
-        return findImageForSameDrive(DbFacade.getInstance()
-                .getSnapshotDao()
+        return findImageForSameDrive(getSnapshotDao()
                 .getId(getVmDAO().getVmsListForDisk(getImage().getId()).get(0).getId(), snapshotType));
     }
 
@@ -224,8 +228,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return The ID of the image for the same drive, or null if none found.
      */
     protected Guid findImageForSameDrive(Guid snapshotId) {
-        List<DiskImage> imagesFromSanpshot =
-                DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForVmSnapshot(snapshotId);
+        List<DiskImage> imagesFromSanpshot = getDiskImageDAO().getAllSnapshotsForVmSnapshot(snapshotId);
         for (DiskImage diskImage : imagesFromSanpshot) {
             if (getDiskImage().getId().equals(diskImage.getId())) {
                 return diskImage.getImageId();
@@ -275,11 +278,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         getDestinationDiskImage().setcreation_date(fromIRS.getcreation_date());
         getDestinationDiskImage().setlast_modified_date(fromIRS.getlast_modified_date());
         getDestinationDiskImage().setlastModified(getDestinationDiskImage().getlast_modified_date());
-        DiskImageDynamic destinationDiskDynamic = DbFacade.getInstance().getDiskImageDynamicDAO().get(
-                getDestinationDiskImage().getImageId());
+        DiskImageDynamic destinationDiskDynamic = getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId());
         if (destinationDiskDynamic != null) {
             destinationDiskDynamic.setactual_size(fromIRS.getactual_size());
-            DbFacade.getInstance().getDiskImageDynamicDAO().update(destinationDiskDynamic);
+            getDiskImageDynamicDAO().update(destinationDiskDynamic);
         }
     }
 
@@ -296,12 +298,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
         diskDynamic.setactual_size(image.getactual_size());
-        DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
+        getDiskImageDynamicDAO().save(diskDynamic);
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(image.getImageId(),
                 image.getstorage_ids().get(0));
-        DbFacade.getInstance()
-                .getImageStorageDomainMapDao()
-                .save(image_storage_domain_map);
+        getImageStorageDomainMapDao().save(image_storage_domain_map);
         boolean isDiskAdded = saveDiskIfNotExists(image);
         if (compensationContext != null) {
             compensationContext.snapshotNewEntity(image.getImage());
@@ -328,7 +328,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected BaseDiskDao getBaseDiskDao() {
-        return DbFacade.getInstance().getBaseDiskDao();
+        return getDbFacade().getBaseDiskDao();
     }
 
     protected void LockImage() {
@@ -412,7 +412,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
 
     protected void RemoveSnapshot(DiskImage snapshot) {
-        DbFacade.getInstance().getImageStorageDomainMapDao().remove(snapshot.getImageId());
+        getImageStorageDomainMapDao().remove(snapshot.getImageId());
         getImageDao().remove(snapshot.getImageId());
         List<DiskImage> imagesForDisk =
                 getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getId());

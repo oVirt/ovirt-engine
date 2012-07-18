@@ -32,6 +32,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
@@ -342,6 +343,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected DiskImageDAO getDiskImageDAO() {
         return getDbFacade().getDiskImageDAO();
+    }
+
+    protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
+        return getDbFacade().getDiskImageDynamicDAO();
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {
