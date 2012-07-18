@@ -172,16 +172,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                                     getImage().getImageId())).getReturnValue();
 
             if (image.getimageStatus() != ImageStatus.OK) {
-                if (diskImage != null) {
-                    diskImage.setimageStatus(image.getimageStatus());
-                    getImageDao().update(diskImage.getImage());
-                    throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
-                }
+                diskImage.setimageStatus(image.getimageStatus());
+                getImageDao().update(diskImage.getImage());
+                throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
 
-            if (diskImage != null) {
-                diskImage.setlastModified(image.getlast_modified_date());
-            }
+            diskImage.setlastModified(image.getlast_modified_date());
         } catch (RuntimeException ex) {
             if (ex instanceof VdcBLLException) {
                 throw ex;
