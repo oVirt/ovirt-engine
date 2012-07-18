@@ -309,7 +309,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is previewing a Snapshot.")
     String ACTION_TYPE_FAILED_VM_IN_PREVIEW();
 
-    @DefaultStringValue("Cannot ${action} ${type}: VM's image is locked. Please try again in a few minutes.")
+    @DefaultStringValue("Cannot ${action} ${type}: The disks ${diskAliases} are locked. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED();
 
     @DefaultStringValue("Cannot ${action} ${type}: VM is being exported now. Please try again in a few minutes.")

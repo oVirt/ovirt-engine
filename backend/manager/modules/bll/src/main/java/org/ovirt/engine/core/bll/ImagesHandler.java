@@ -460,20 +460,23 @@ public final class ImagesHandler {
         }
 
         if (returnValue && checkImagesLocked) {
+            List<String> lockedDisksAliases = new ArrayList<String>();
             if (vm.getstatus() == VMStatus.ImageLocked) {
+                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
                 returnValue = false;
             } else if (diskImageList != null) {
                 for (Object object : diskImageList) {
                     Disk disk = (Disk) object;
                     if (DiskStorageType.IMAGE == disk.getDiskStorageType()
                             && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED) {
+                        lockedDisksAliases.add(disk.getDiskAlias());
                         returnValue = false;
-                        break;
                     }
                 }
-            }
-            if (!returnValue) {
-                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.toString());
+                if (lockedDisksAliases.size() > 0) {
+                    ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.toString());
+                    messages.add(String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
+                }
             }
         }
         if (returnValue && checkVmIsDown && vm.getstatus() != VMStatus.Down) {
