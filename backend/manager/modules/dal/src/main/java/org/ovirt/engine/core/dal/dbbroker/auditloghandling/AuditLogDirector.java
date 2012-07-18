@@ -409,6 +409,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_RUN_VM, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_RUN_VM, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_RUN_VM_AS_STATELESS_WITH_DISKS_NOT_ALLOWING_SNAPSHOT,
+                AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_RUN_VM_FAILURE_STATELESS_SNAPSHOT_LEFT, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_PAUSE_VM, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_PAUSE_VM, AuditLogSeverity.ERROR);

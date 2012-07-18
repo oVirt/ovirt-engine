@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
@@ -55,6 +56,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -304,6 +306,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     private void StatelessVmTreatment() {
+        warnIfNotAllDisksPermitSnapshots();
+
         if (statelessSnapshotExistsForVm()) {
             log.errorFormat(
                     "RunVmAsStateless - {0} - found existing vm images in stateless_vm_image_map table - skipped creating snapshots.",
@@ -353,6 +357,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 }
                 getReturnValue().setFault(vdcReturnValue.getFault());
                 log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getvm_name());
+            }
+        }
+    }
+
+    private void warnIfNotAllDisksPermitSnapshots() {
+        for (Disk disk : getVm().getDiskMap().values()) {
+            if (!disk.isAllowSnapshot()) {
+                AuditLogDirector.log(this,
+                        AuditLogType.USER_RUN_VM_AS_STATELESS_WITH_DISKS_NOT_ALLOWING_SNAPSHOT);
+                break;
             }
         }
     }
