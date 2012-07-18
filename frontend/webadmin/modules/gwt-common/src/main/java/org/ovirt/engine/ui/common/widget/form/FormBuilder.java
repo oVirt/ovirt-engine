@@ -59,6 +59,15 @@ public class FormBuilder {
         model.getPropertyChangedEvent().addListener(propertyChangedEventListener);
     }
 
+    public void clear() {
+        formPanel.clear();
+        formItems.clear();
+    }
+
+    public boolean isEmpty() {
+        return formItems.isEmpty();
+    }
+
     private final IEventListener propertyChangedEventListener = new IEventListener() {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {

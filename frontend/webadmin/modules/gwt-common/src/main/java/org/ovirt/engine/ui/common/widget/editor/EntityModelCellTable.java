@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
@@ -240,6 +241,11 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     @Override
     public void addColumn(Column column, String headerString) {
         super.addColumn(column, headerString);
+    }
+
+    @Override
+    public void addColumn(Column column, SafeHtml headerHtml) {
+        super.addColumn(column, headerHtml);
     }
 
     @Override

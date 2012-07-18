@@ -465,6 +465,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("(Pkts)")
     String pkts();
 
+    @DefaultStringValue("MB")
+    String mb();
+
     // Event
     @DefaultStringValue("Time")
     String timeEvent();

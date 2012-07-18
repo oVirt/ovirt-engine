@@ -219,6 +219,8 @@ public class VmSnapshotListModel extends SearchableListModel
         getCanSelectSnapshot().setEntity(true);
 
         setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
+        getSnapshotsMap().put(null, new SnapshotModel());
+
         if (getCustomPropertiesKeysList() == null) {
             AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -313,6 +315,11 @@ public class VmSnapshotListModel extends SearchableListModel
     {
         super.OnSelectedItemChanged();
         UpdateActionAvailability();
+
+        if (getSelectedItem() != null) {
+            Snapshot snapshot = ((Snapshot) getSelectedItem());
+            UpdateVmConfigurationBySnapshot(snapshot.getId());
+        }
     }
 
     @Override

@@ -42,4 +42,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("{0} <sub>{1}</sub>")
     SafeHtml sub(String main, String sub);
 
+    @Template("<b><font style='{0}'>{1}</font></b>")
+    SafeHtml snapshotDescription(String style, String description);
+
 }
