@@ -591,6 +591,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         });
     }
 
+    protected void setupHostTabAvailability(UnitVmModel model) {
+        hostTab.setVisible(model.getIsHostAvailable());
+    }
+
     private void initListeners(final UnitVmModel object) {
         // TODO should be handled by the core framework
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -598,7 +602,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
                 if ("IsHostAvailable".equals(propName)) { //$NON-NLS-1$
-                    hostTab.setVisible(object.getIsHostAvailable());
+                    setupHostTabAvailability(object);
                 } else if ("IsHostTabValid".equals(propName)) { //$NON-NLS-1$
                     if (object.getIsHostTabValid()) {
                         hostTab.markAsValid();
@@ -610,7 +614,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         });
 
         // only for non local storage available
-        hostTab.setVisible(object.getIsHostAvailable());
+        setupHostTabAvailability(object);
 
         object.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
             @Override

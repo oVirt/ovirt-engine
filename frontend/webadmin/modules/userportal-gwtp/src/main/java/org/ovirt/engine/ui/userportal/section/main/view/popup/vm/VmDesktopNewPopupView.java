@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.popup.vm;
 
 import org.ovirt.engine.ui.common.view.popup.AbstractVmPopupView;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDesktopNewPopupWidget;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
@@ -13,7 +14,12 @@ public class VmDesktopNewPopupView extends AbstractVmPopupView implements VmDesk
 
     @Inject
     public VmDesktopNewPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, new VmDesktopNewPopupWidget(constants));
+        super(eventBus, resources, new VmDesktopNewPopupWidget(constants) {
+            @Override
+            protected void setupHostTabAvailability(UnitVmModel model) {
+                hostTab.setVisible(false);
+            }
+        });
     }
 
 }
