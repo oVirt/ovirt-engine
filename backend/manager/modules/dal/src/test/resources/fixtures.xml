@@ -1926,7 +1926,6 @@
         <column>disk_description</column>
         <column>shareable</column>
         <column>boot</column>
-        <column>allow_snapshot</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>VirtIO</value>
@@ -1936,7 +1935,6 @@
             <value>New Description</value>
             <value>false</value>
             <value>false</value>
-            <value>true</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
@@ -1947,7 +1945,6 @@
             <value>New Description</value>
             <value>false</value>
             <value>false</value>
-            <value>true</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
@@ -1958,7 +1955,6 @@
             <value>New Description</value>
             <value>false</value>
             <value>false</value>
-            <value>true</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
@@ -1968,7 +1964,6 @@
             <value>false</value>
             <value>New Description</value>
             <value>true</value>
-            <value>false</value>
             <value>false</value>
         </row>
     </table>
