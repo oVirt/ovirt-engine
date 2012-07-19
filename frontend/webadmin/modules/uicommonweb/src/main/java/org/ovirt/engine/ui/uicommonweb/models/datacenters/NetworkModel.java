@@ -110,7 +110,7 @@ public class NetworkModel extends Model
         return privateIsVmNetwork;
     }
 
-    private void setIsVmNetwork(EntityModel value)
+    public void setIsVmNetwork(EntityModel value)
     {
         privateIsVmNetwork = value;
     }

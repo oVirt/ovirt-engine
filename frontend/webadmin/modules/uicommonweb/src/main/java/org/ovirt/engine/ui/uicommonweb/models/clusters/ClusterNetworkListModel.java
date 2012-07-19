@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -366,6 +367,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         setWindow(networkModel);
         networkModel.setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
         networkModel.setHashName("new_logical_network"); //$NON-NLS-1$
+
         if (getEntity().getstorage_pool_id() != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -376,6 +378,16 @@ public class ClusterNetworkListModel extends SearchableListModel
                 {
                     ClusterNetworkModel clusterNetworkModel = (ClusterNetworkModel) model;
                     storage_pool dataCenter = (storage_pool) result;
+
+                    Version v31 = new Version(3, 1);
+                    boolean isLessThan31 = dataCenter.getcompatibility_version().compareTo(v31) < 0;
+
+                    // Bridged networks are not supported in cluster will less than 3.1 version
+                    if (isLessThan31){
+                        clusterNetworkModel.getIsVmNetwork().setEntity(true);
+                        clusterNetworkModel.getIsVmNetwork().setIsChangable(false);
+                    }
+
                     clusterNetworkModel.setDataCenterName(dataCenter.getname());
                     AsyncQuery _asyncQuery2 = new AsyncQuery();
                     _asyncQuery2.asyncCallback = new INewAsyncCallback() {

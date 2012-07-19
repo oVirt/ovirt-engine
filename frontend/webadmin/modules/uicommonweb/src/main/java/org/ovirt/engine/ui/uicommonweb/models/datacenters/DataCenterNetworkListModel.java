@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -249,7 +250,17 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         networkModel.getVLanTag().setEntity((network.getvlan_id() == null ? 0 : network.getvlan_id()));
         networkModel.getHasMtu().setEntity(network.getMtu() != 0);
         networkModel.getMtu().setEntity(network.getMtu() != 0 ? String.valueOf(network.getMtu()) : null);
-        networkModel.getIsVmNetwork().setEntity(network.isVmNetwork());
+
+        Version v31 = new Version(3, 1);
+        boolean isLessThan31 = getEntity().getcompatibility_version().compareTo(v31) < 0;
+
+        // Bridged networks are not supported in cluster will less than 3.1 version
+        if (isLessThan31){
+            networkModel.getIsVmNetwork().setEntity(true);
+            networkModel.getIsVmNetwork().setIsChangable(false);
+        }else{
+            networkModel.getIsVmNetwork().setEntity(network.isVmNetwork());
+        }
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -308,6 +319,16 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         networkModel.setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
         networkModel.setHashName("new_logical_network"); //$NON-NLS-1$
         networkModel.setIsNew(true);
+
+        Version v31 = new Version(3, 1);
+        boolean isLessThan31 = getEntity().getcompatibility_version().compareTo(v31) < 0;
+
+        // Bridged networks are not supported in cluster will less than 3.1 version
+        if (isLessThan31){
+            networkModel.getIsVmNetwork().setEntity(true);
+            networkModel.getIsVmNetwork().setIsChangable(false);
+        }
+
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
