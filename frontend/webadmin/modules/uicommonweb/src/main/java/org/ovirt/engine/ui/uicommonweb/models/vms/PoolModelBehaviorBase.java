@@ -51,6 +51,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(false);
 
+        getModel().getProvisioning().setIsAvailable(false);
+        getModel().getProvisioning().setEntity(false);
+
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
@@ -175,7 +178,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getInitrd_path().setEntity(vmBase.getinitrd_url());
 
             getModel().setIsDisksAvailable(getModel().getIsNew());
-            getModel().getProvisioning().setIsAvailable(false);
 
             if (!vmBase.getId().equals(Guid.Empty))
             {
