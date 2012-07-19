@@ -97,9 +97,17 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     }
 
     protected Response performCreation(VdcActionType task,
+            VdcActionParametersBase taskParams,
+            EntityIdResolver entityResolver,
+            boolean block) {
+        return performCreation(task, taskParams, entityResolver, block, null);
+    }
+
+    protected Response performCreation(VdcActionType task,
                                        VdcActionParametersBase taskParams,
                                        EntityIdResolver entityResolver,
-                                       boolean block) {
+                                       boolean block,
+                                       Class<? extends BaseResource> suggestedParentType) {
         VdcReturnValueBase createResult;
         try {
             createResult = runAction(task, taskParams);
@@ -107,13 +115,13 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             return handleError(e, false);
         }
 
-        R model = resolveCreated(createResult, entityResolver);
+        R model = resolveCreated(createResult, entityResolver, suggestedParentType);
         Response response = null;
         if (createResult.getHasAsyncTasks()) {
             if (block) {
                 awaitCompletion(createResult);
                 // refresh model state
-                model = resolveCreated(createResult, entityResolver);
+                model = resolveCreated(createResult, entityResolver, suggestedParentType);
                 response = Response.created(URI.create(model.getHref())).entity(model).build();
             } else {
                 if (model==null) {
@@ -150,6 +158,13 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return performCreation(task, taskParams, entityResolver, expectBlocking());
     }
 
+    protected Response performCreation(VdcActionType task,
+            VdcActionParametersBase taskParams,
+            EntityIdResolver entityResolver,
+            Class<? extends BaseResource> suggestedParentType) {
+        return performCreation(task, taskParams, entityResolver, expectBlocking(), suggestedParentType);
+    }
+
     protected boolean expectBlocking() {
         boolean expectBlocking = false;
         List<String> expect = httpHeaders.getRequestHeader(EXPECT_HEADER);
@@ -164,10 +179,10 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         linkSubResource(model, CREATION_STATUS_REL, asString(result.getTaskIdList()));
     }
 
-    protected R resolveCreated(VdcReturnValueBase result, EntityIdResolver entityResolver) {
+    protected R resolveCreated(VdcReturnValueBase result, EntityIdResolver entityResolver, Class<? extends BaseResource> suggestedParentType) {
         try {
             Q created = entityResolver.resolve((Guid)result.getActionReturnValue());
-            return addLinks(populate(map(created), created));
+            return addLinks(populate(map(created), created), suggestedParentType);
         } catch (Exception e) {
             // we tolerate a failure in the entity resolution
             // as the substantive action (entity creation) has

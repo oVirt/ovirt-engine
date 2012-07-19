@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.UserResource;
@@ -43,7 +44,7 @@ public class BackendUsersResource extends BackendUsersResourceBase implements Us
                                   getSearchPattern(user.getUserName(), domain));
         AddUserParameters newUser = new AddUserParameters();
         newUser.setVdcUser(map(adUser));
-        return performCreation(VdcActionType.AddUser, newUser, new UserIdResolver(adUser.getUserId()));
+        return performCreation(VdcActionType.AddUser, newUser, new UserIdResolver(adUser.getUserId()), BaseResource.class);
     }
 
 }
