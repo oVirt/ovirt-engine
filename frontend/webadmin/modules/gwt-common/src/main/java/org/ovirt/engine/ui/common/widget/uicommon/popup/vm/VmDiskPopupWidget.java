@@ -415,6 +415,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 boolean isAttach = (Boolean) ((EntityModel) sender).getEntity();
                 createDiskPanel.setVisible(!isAttach);
                 attachDiskPanel.setVisible(isAttach);
+
+                if (!isAttach && !isNewLunDiskEnabled) {
+                    disk.getIsInternal().setEntity(true);
+                }
                 revealDiskPanel(disk);
             }
         });
@@ -522,10 +526,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
         // Reveal view by storge type
         if (storageType == StorageType.ISCSI) {
-            storageView = new IscsiStorageView(false, 110, 210, 244, 268, 275, 125, 35, -60);
+            storageView = new IscsiStorageView(false, 110, 210, 244, 268, 275, 125, 60, -59);
         }
         else if (storageType == StorageType.FCP) {
-            storageView = new FcpStorageView(false);
+            storageView = new FcpStorageView(false, 270);
         }
 
         // Clear the current storage view

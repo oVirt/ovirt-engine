@@ -49,9 +49,8 @@
 			position: relative;
 			top: 9px;
 			left: 6px;
-			width: 122px;
+			white-space: nowrap;
 			padding-left: 3px;
-			padding-right: 3px;
 			background-color: white;
 		}
 		

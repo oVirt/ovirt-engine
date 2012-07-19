@@ -346,8 +346,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getName().setEntity(storage.getstorage_name());
         model.setOriginalName(storage.getstorage_name());
 
-        model.getDataCenter().setIsAvailable(false);
-        model.getFormat().setIsAvailable(false);
+        model.getDataCenter().setIsChangable(false);
+        model.getFormat().setIsChangable(false);
 
         IStorageModel item = null;
         switch (storage.getstorage_type()) {

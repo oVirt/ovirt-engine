@@ -17,36 +17,54 @@
 			text-align: center;
 			margin-top: 10px;
 		}
-		
+
 		.topPanel {
-			border-bottom: 1px solid black;
-			width: 100%
+			background-color: #688B21;
+			height: 36px;
+			width: 100%;
+			padding-top: 4px;
+			margin-bottom: 1px;
+			color: white;
+			font-weight: bold;
 		}
-		
+
+		.diskTypePanel {
+			background-color: #82AA32;
+			height: 36px;
+			width: 100%;
+			padding-top: 6px;
+			margin-bottom: 6px;
+			padding-left: 9px;
+			color: white;
+			font-weight: bold;
+			display: block;
+		}
+
+		.diskTypeRadioButton {
+			margin-right: 30px;
+		}
+
 		.mainPanel {
 			width: 100%;
 		}
-		
+
 		.isPluggedEditor {
 			position: absolute;
 			bottom: 10px;
 		}
-		
-		.diskTypePanel {
-			padding-top: 10px;
-			padding-bottom: 10px;
-		}
-		
+
 		.boxEditor {
 			width: 400px;
 		}
-		
+
 		.checkBoxEditor {
 			padding-left: 50px;
 		}
-		
-		.externalDiskPanel {			
+
+		.externalDiskPanel {
 			width: 100%;
+			bottom: 0px;
+			position: absolute;
 		}
 	</ui:style>
 
@@ -55,8 +73,8 @@
 			<e:EntityModelCheckBoxEditor ui:field="attachEditor" />
 		</g:HorizontalPanel>
 		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.diskTypePanel}">
-			<g:RadioButton ui:field="internalDiskRadioButton" ui:name="disktype" ui:text="{constants.internalDisk}" ></g:RadioButton>
-			<g:RadioButton ui:field="externalDiskRadioButton" ui:name="disktype" ui:text="{constants.externalDisk}" ></g:RadioButton>
+			<g:RadioButton ui:field="internalDiskRadioButton" ui:name="disktype" ui:text="{constants.internalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
+			<g:RadioButton ui:field="externalDiskRadioButton" ui:name="disktype" ui:text="{constants.externalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
 		</g:HorizontalPanel>
 		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
 			<g:HorizontalPanel>
@@ -82,7 +100,7 @@
 			<g:FlowPanel ui:field="externalDiskPanel" addStyleNames="{style.externalDiskPanel}"/>
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">
-			<g:ScrollPanel height="300px">			
+			<g:ScrollPanel height="410px">
 				<g:VerticalPanel>
 					<e:EntityModelCellTable ui:field="internalDiskTable" />
 					<e:EntityModelCellTable ui:field="externalDiskTable" />

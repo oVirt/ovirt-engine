@@ -31,10 +31,10 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Connection closed: {0}")
     String uiCommonPublicConnectionClosed(String reason);
 
-    @DefaultMessage("LUN is already part of storage domain: {0}")
+    @DefaultMessage("LUN is already part of a Storage Domain: {0}")
     String lunAlreadyPartOfStorageDomainWarning(String storageDomainName);
 
-    @DefaultMessage("LUN is already used by disk: {0}")
+    @DefaultMessage("LUN is already used by a Disk: {0}")
     String lunUsedByDiskWarning(String diskAlias);
 
 }

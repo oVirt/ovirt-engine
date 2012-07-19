@@ -22,6 +22,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -76,7 +77,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     double treeCollapsedHeight = 208, treeExpandedHeight = 306, lunsTreeHeight = 344;
     double tabPanelHeight = 368, tabContentHeight = 340, tabHeight = 175;
-    double textTop = 35, textLeft = -84, textWidth = 100;
+    double textTop = 80, textLeft = -84, textWidth = 100;
 
     protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
@@ -169,22 +170,23 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         iscsiTargetToLunView = new IscsiTargetToLunView(treeCollapsedHeight, treeExpandedHeight, false, multiSelection);
         iscsiLunToTargetView = new IscsiLunToTargetView(lunsTreeHeight, multiSelection);
 
-        targetsToLunsTabContentPanel.getElement().getStyle().setHeight(tabPanelHeight, Unit.PX);
-        lunsToTargetsTabContentPanel.getElement().getStyle().setHeight(tabPanelHeight, Unit.PX);
+        // Update Style
         dialogTabPanel.getElement().getStyle().setHeight(tabContentHeight, Unit.PX);
-        targetsToLunTab.getElement().getStyle().setHeight(tabHeight, Unit.PX);
-        lunToTargetsTab.getElement().getStyle().setHeight(tabHeight, Unit.PX);
-
-        targetsToLunTab.getTabLabel().getElement().getStyle().setTop(textTop, Unit.PX);
-        targetsToLunTab.getTabLabel().getElement().getStyle().setLeft(textLeft, Unit.PX);
-        targetsToLunTab.getTabLabel().getElement().getStyle().setWidth(tabHeight, Unit.PX);
-        lunToTargetsTab.getTabLabel().getElement().getStyle().setTop(textTop, Unit.PX);
-        lunToTargetsTab.getTabLabel().getElement().getStyle().setLeft(textLeft, Unit.PX);
-        lunToTargetsTab.getTabLabel().getElement().getStyle().setWidth(tabHeight, Unit.PX);
+        updateStyle(targetsToLunsTabContentPanel, targetsToLunTab);
+        updateStyle(lunsToTargetsTabContentPanel, lunToTargetsTab);
 
         // Add view widgets to panel
         lunsListPanel.add(iscsiLunToTargetView);
         targetsToLunsPanel.add(iscsiTargetToLunView);
+    }
+
+    void updateStyle(FlowPanel tabContentPanel, DialogTab dialogTab) {
+        tabContentPanel.getElement().getStyle().setHeight(tabPanelHeight, Unit.PX);
+        dialogTab.getElement().getStyle().setHeight(tabHeight, Unit.PX);
+        dialogTab.getTabLabel().getElement().getStyle().setTop(textTop, Unit.PX);
+        dialogTab.getTabLabel().getElement().getStyle().setLeft(textLeft, Unit.PX);
+        dialogTab.getTabLabel().getElement().getStyle().setWidth(tabHeight, Unit.PX);
+        dialogTab.getTabLabel().setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
     }
 
     void updateListByGropping(IscsiStorageModel object) {
