@@ -13,6 +13,7 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -54,7 +55,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -492,7 +492,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                                 && validateQuota();
                 if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
                     log.warnFormat("CanDoAction of action {0} failed. Reasons:{1}", getActionType(),
-                            StringHelper.aggregate(getReturnValue().getCanDoActionMessages(), ','));
+                            StringUtils.join(getReturnValue().getCanDoActionMessages(), ','));
                 }
             } finally {
                 TransactionSupport.resume(transaction);
@@ -553,8 +553,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // cluster level ok check storage_pool level
         if (actionVersionMap != null
                 && ((getVdsGroup() != null && getVdsGroup().getcompatibility_version().compareTo(
-                        new Version(actionVersionMap.getcluster_minimal_version())) < 0) || (!StringHelper.EqOp(
-                        actionVersionMap.getstorage_pool_minimal_version(), "*") && getStoragePool() != null && getStoragePool()
+                        new Version(actionVersionMap.getcluster_minimal_version())) < 0) || 
+                        (!"*".equals(actionVersionMap.getstorage_pool_minimal_version()) && getStoragePool() != null && getStoragePool()
                         .getcompatibility_version().compareTo(
                                 new Version(actionVersionMap.getstorage_pool_minimal_version())) < 0))) {
             result = false;
