@@ -156,11 +156,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected VdcReturnValueBase attemptRollback(VdcActionType commandType,
             VdcActionParametersBase params,
-            CommandContext context) {
+            CommandContext rollbackContext) {
         if (canPerformRollbackUsingCommand(commandType, params)) {
             params.setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            return getBackend().runInternalAction(commandType, params, context);
+            return getBackend().runInternalAction(commandType, params, rollbackContext);
         }
         return new VdcReturnValueBase();
     }
@@ -211,13 +211,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             return NoOpCompensationContext.getInstance();
         }
 
-        DefaultCompensationContext context = new DefaultCompensationContext();
-        context.setCommandId(commandId);
-        context.setCommandType(getClass().getName());
-        context.setBusinessEntitySnapshotDAO(getBusinessEntitySnapshotDAO());
-        context.setSnapshotSerializer(
+        DefaultCompensationContext defaultContext = new DefaultCompensationContext();
+        defaultContext.setCommandId(commandId);
+        defaultContext.setCommandType(getClass().getName());
+        defaultContext.setBusinessEntitySnapshotDAO(getBusinessEntitySnapshotDAO());
+        defaultContext.setSnapshotSerializer(
                 SerializationFactory.getFactory().createSerializer());
-        return context;
+        return defaultContext;
     }
 
     protected BusinessEntitySnapshotDAO getBusinessEntitySnapshotDAO() {
@@ -553,7 +553,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // cluster level ok check storage_pool level
         if (actionVersionMap != null
                 && ((getVdsGroup() != null && getVdsGroup().getcompatibility_version().compareTo(
-                        new Version(actionVersionMap.getcluster_minimal_version())) < 0) || 
+                        new Version(actionVersionMap.getcluster_minimal_version())) < 0) ||
                         (!"*".equals(actionVersionMap.getstorage_pool_minimal_version()) && getStoragePool() != null && getStoragePool()
                         .getcompatibility_version().compareTo(
                                 new Version(actionVersionMap.getstorage_pool_minimal_version())) < 0))) {
