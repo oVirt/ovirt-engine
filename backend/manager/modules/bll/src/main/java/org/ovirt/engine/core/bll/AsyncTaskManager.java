@@ -51,7 +51,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * AsyncTaskManager: Singleton, manages all tasks in the system.
  */
 public final class AsyncTaskManager {
-    private static Log log = LogFactory.getLog(AsyncTaskManager.class);
+    private static final Log log = LogFactory.getLog(AsyncTaskManager.class);
 
     /** Map which consist all tasks that currently are monitored **/
     private Map<Guid, SPMAsyncTask> _tasks;
