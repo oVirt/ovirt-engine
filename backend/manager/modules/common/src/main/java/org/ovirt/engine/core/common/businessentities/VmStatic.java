@@ -231,10 +231,6 @@ public class VmStatic extends VmBase {
         is_initialized = value;
     }
 
-    public int getnum_of_cpus() {
-        return getcpu_per_socket() * getnum_of_sockets();
-    }
-
     public DisplayType getdefault_display_type() {
         return default_display_type;
     }

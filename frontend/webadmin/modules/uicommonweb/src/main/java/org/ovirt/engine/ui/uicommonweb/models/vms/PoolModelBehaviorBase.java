@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
@@ -101,38 +102,35 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         }
     }
 
-    @Override
-    public void Template_SelectedItemChanged()
-    {
-        VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+    protected void setupWindowModelFrom(VmBase vmBase) {
 
-        if (template != null)
+        if (vmBase != null)
         {
-            updateQuotaByCluster(template.getQuotaId());
+            updateQuotaByCluster(vmBase.getQuotaId());
             // Copy VM parameters from template.
-            getModel().getOSType().setSelectedItem(template.getos());
-            getModel().getNumOfSockets().setEntity(template.getnum_of_sockets());
-            getModel().getTotalCPUCores().setEntity(template.getnum_of_cpus());
-            getModel().getNumOfMonitors().setSelectedItem(template.getnum_of_monitors());
-            getModel().getDomain().setSelectedItem(template.getdomain());
-            getModel().getMemSize().setEntity(template.getmem_size_mb());
-            getModel().getUsbPolicy().setSelectedItem(template.getusb_policy());
-            getModel().setBootSequence(template.getdefault_boot_sequence());
-            getModel().getIsHighlyAvailable().setEntity(template.getauto_startup());
+            getModel().getOSType().setSelectedItem(vmBase.getos());
+            getModel().getNumOfSockets().setEntity(vmBase.getnum_of_sockets());
+            getModel().getTotalCPUCores().setEntity(vmBase.getnum_of_cpus());
+            getModel().getNumOfMonitors().setSelectedItem(vmBase.getnum_of_monitors());
+            getModel().getDomain().setSelectedItem(vmBase.getdomain());
+            getModel().getMemSize().setEntity(vmBase.getmem_size_mb());
+            getModel().getUsbPolicy().setSelectedItem(vmBase.getusb_policy());
+            getModel().setBootSequence(vmBase.getdefault_boot_sequence());
+            getModel().getIsHighlyAvailable().setEntity(vmBase.getauto_startup());
 
-            boolean hasCd = !StringHelper.isNullOrEmpty(template.getiso_path());
+            boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getiso_path());
 
             getModel().getCdImage().setIsChangable(hasCd);
             getModel().getCdAttached().setEntity(hasCd);
             if (hasCd) {
-                getModel().getCdImage().setSelectedItem(template.getiso_path());
+                getModel().getCdImage().setSelectedItem(vmBase.getiso_path());
             }
 
-            if (!StringHelper.isNullOrEmpty(template.gettime_zone()))
+            if (!StringHelper.isNullOrEmpty(vmBase.gettime_zone()))
             {
                 // Patch! Create key-value pair with a right key.
                 getModel().getTimeZone()
-                        .setSelectedItem(new KeyValuePairCompat<String, String>(template.gettime_zone(), "")); //$NON-NLS-1$
+                        .setSelectedItem(new KeyValuePairCompat<String, String>(vmBase.gettime_zone(), "")); //$NON-NLS-1$
 
                 UpdateTimeZone();
             }
@@ -146,7 +144,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getModel().getCluster().getItems();
             VDSGroup selectCluster =
-                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(template.getvds_group_id()));
+                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vmBase.getvds_group_id()));
 
             getModel().getCluster().setSelectedItem((selectCluster != null) ? selectCluster
                     : Linq.FirstOrDefault(clusters));
@@ -163,7 +161,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                     isFirst = false;
                 }
                 DisplayType dt = (DisplayType) a.getEntity();
-                if (dt == template.getdefault_display_type())
+                if (dt == extractDisplayType(vmBase))
                 {
                     displayProtocol = a;
                     break;
@@ -172,14 +170,14 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getDisplayProtocol().setSelectedItem(displayProtocol);
 
             // By default, take kernel params from template.
-            getModel().getKernel_path().setEntity(template.getkernel_url());
-            getModel().getKernel_parameters().setEntity(template.getkernel_params());
-            getModel().getInitrd_path().setEntity(template.getinitrd_url());
+            getModel().getKernel_path().setEntity(vmBase.getkernel_url());
+            getModel().getKernel_parameters().setEntity(vmBase.getkernel_params());
+            getModel().getInitrd_path().setEntity(vmBase.getinitrd_url());
 
             getModel().setIsDisksAvailable(getModel().getIsNew());
             getModel().getProvisioning().setIsAvailable(false);
 
-            if (!template.getId().equals(Guid.Empty))
+            if (!vmBase.getId().equals(Guid.Empty))
             {
                 getModel().getStorageDomain().setIsChangable(true);
 
@@ -197,11 +195,18 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             getModel().getProvisioning().setEntity(false);
 
-            InitPriority(template.getpriority());
+            InitPriority(vmBase.getpriority());
             InitStorageDomains();
             UpdateMinAllocatedMemory();
         }
     }
+
+    @Override
+    public void Template_SelectedItemChanged() {
+        // override if there is a need to do some actions
+    }
+
+    protected abstract DisplayType extractDisplayType(VmBase vmBase);
 
     @Override
     public void Cluster_SelectedItemChanged()
@@ -263,11 +268,15 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                     }
                 }
                 getModel().getTemplate().setItems(templates);
-                // Template.Value = templates.FirstOrDefault();
                 setupSelectedTemplate(getModel().getTemplate(), templates);
+                templateInited();
             }
         }), dataCenter.getId());
 
+    }
+
+    protected void templateInited() {
+        // override if needed
     }
 
     protected abstract void setupSelectedTemplate(ListModel model, List<VmTemplate> templates);
