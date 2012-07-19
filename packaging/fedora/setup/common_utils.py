@@ -582,13 +582,20 @@ def getDbPort():
         return port
     return basedefs.DB_PORT
 
-def getDbConfig(param):
+def getDbPassword(user):
+    password = getDbConfig("password", user)
+    if password:
+        return password.rstrip("\n")
+
+    return False
+
+def getDbConfig(param, user=None):
     """
     Generic function to retrieve values from admin line in .pgpass
     """
     # 'user' and 'admin' are the same fields, just different lines
     # and for different cases
-    field = {'user' : 3, 'admin' : 3, 'host' : 0, 'port' : 1}
+    field = {'password' : 4, 'user' : 3, 'admin' : 3, 'host' : 0, 'port' : 1}
     if param not in field.keys():
         return False
 
@@ -610,6 +617,14 @@ def getDbConfig(param):
                     dbcreds = line.split(":", 4)
                     return dbcreds[field[param]]
 
+                # Fetch the password if needed
+                if param == "password" \
+                   and user \
+                   and not line.startswith("#"):
+                    dbcreds = line.split(":", 4)
+                    if dbcreds[3] == user:
+                        return dbcreds[field[param]]
+
                 # find the line with "DB USER"
                 if basedefs.PGPASS_FILE_USER_LINE in line:
                     inDbUserSection = True
@@ -622,7 +637,6 @@ def getDbConfig(param):
                     return dbcreds[field[param]]
 
     return False
-
 
 def backupDB(db, user, backupFile, host="localhost", port="5432"):
     """
