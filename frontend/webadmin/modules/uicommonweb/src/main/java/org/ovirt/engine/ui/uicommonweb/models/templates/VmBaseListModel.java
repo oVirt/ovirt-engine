@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -163,29 +162,28 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                 @Override
                 public void OnSuccess(Object model, Object result) {
                     VmBaseListModel listModel = (VmBaseListModel) model;
-                    ExportVmModel exportModel1 = (ExportVmModel) listModel.getWindow();
-                    String existingEntitiess = ""; //$NON-NLS-1$
+                    ExportVmModel windowModel = (ExportVmModel) listModel.getWindow();
+                    List<T> foundVms = new ArrayList<T>();
 
                     if (result != null) {
+                        VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
+                        Iterable<T> iterableReturnValue = asIterableReturnValue(returnValue.getReturnValue());
+
                         for (Object rawSelectedItem : listModel.getSelectedItems()) {
                             T selectedItem = (T) rawSelectedItem;
-                            T foundVm = null;
-                            VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
-                            for (T returnValueItem : asIterableReturnValue(returnValue.getReturnValue())) {
+                            for (T returnValueItem : iterableReturnValue) {
                                 if (entititesEqualsNullSafe(returnValueItem, selectedItem)) {
-                                    foundVm = selectedItem;
+                                    foundVms.add(selectedItem);
                                     break;
                                 }
                             }
-
-                            if (foundVm != null) {
-                                existingEntitiess = "\u2022  " + extractNameFromEntity(foundVm) + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
-                            }
                         }
                     }
-                    if (!StringHelper.isNullOrEmpty(existingEntitiess)) {
-                        exportModel1.setMessage(composeEntityOnStorage(existingEntitiess));
+
+                    if (foundVms.size() != 0) {
+                        windowModel.setMessage(composeEntityOnStorage(composeExistingVmsWarningMessage(foundVms)));
                     }
+
                     exportModel.StopProgress();
                 }
             };
@@ -198,6 +196,15 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
         } else {
             exportModel.StopProgress();
         }
+    }
+
+    private String composeExistingVmsWarningMessage(List<T> existingVms) {
+        String res = ""; //$NON-NLS-1$
+        for (T t : existingVms) {
+            String name = extractNameFromEntity(t);
+            res += "\u2022  " + name + " "; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return res;
     }
 
     protected void setupExportModel(ExportVmModel model) {
