@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
-import com.gwtplatform.mvp.client.TabContainerPresenter;
 import com.gwtplatform.mvp.client.TabView;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -15,13 +15,13 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class MainTabPanelPresenter extends TabContainerPresenter<MainTabPanelPresenter.ViewDef, MainTabPanelPresenter.ProxyDef> {
+public class MainTabPanelPresenter extends DynamicTabContainerPresenter<MainTabPanelPresenter.ViewDef, MainTabPanelPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     public interface ProxyDef extends Proxy<MainTabPanelPresenter> {
     }
 
-    public interface ViewDef extends TabView {
+    public interface ViewDef extends TabView, DynamicTabContainerPresenter.DynamicTabPanel {
 
         void setTabWidgetHandler(TabWidgetHandler tabWidgetHandler);
 

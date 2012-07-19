@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -298,4 +299,10 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         }
     }
+
+    @Override
+    public SimpleActionTable<VDS> getTable() {
+        return super.getTable();
+    }
+
 }

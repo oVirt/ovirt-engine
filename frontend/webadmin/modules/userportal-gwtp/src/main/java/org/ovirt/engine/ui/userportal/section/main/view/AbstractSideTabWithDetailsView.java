@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.userportal.section.main.view;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
@@ -86,21 +85,12 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     }
 
     @Override
-    public OrderedMultiSelectionModel<T> getTableSelectionModel() {
-        return table.getSelectionModel();
-    }
-
-    @Override
-    public void resetTableScrollPosition() {
-        table.resetTableScrollPosition();
+    public SimpleActionTable<T> getTable() {
+        return table;
     }
 
     protected M getModel() {
         return modelProvider.getModel();
-    }
-
-    protected SimpleActionTable<T> getTable() {
-        return table;
     }
 
 }

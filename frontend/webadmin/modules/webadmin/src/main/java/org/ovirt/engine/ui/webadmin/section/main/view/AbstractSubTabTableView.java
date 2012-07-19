@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -14,7 +13,6 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 
 /**
  * Base class for sub tab views that use {@link SimpleActionTable} directly.
@@ -57,28 +55,14 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         return modelProvider.getModel();
     }
 
-    protected SimpleActionTable<T> getTable() {
+    @Override
+    public SimpleActionTable<T> getTable() {
         return table;
     }
 
     @Override
     public void setMainTabSelectedItem(I selectedItem) {
         // No-op since table-based sub tab views don't handle main tab selection on their own
-    }
-
-    @Override
-    public OrderedMultiSelectionModel<?> getTableSelectionModel() {
-        return getTable().getSelectionModel();
-    }
-
-    @Override
-    public void resetTableScrollPosition() {
-        getTable().resetTableScrollPosition();
-    }
-
-    @Override
-    public void setLoadingState(LoadingState state) {
-        getTable().setLoadingState(state);
     }
 
 }

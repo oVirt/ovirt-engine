@@ -46,7 +46,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <T>
  *            Action panel item type.
  */
-public abstract class AbstractActionPanel<T> extends Composite implements HasElementId {
+public abstract class AbstractActionPanel<T> extends Composite implements ActionPanel<T>, HasElementId {
 
     @UiField
     public FlowPanel actionPanel;
@@ -94,8 +94,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
     /**
      * Adds a new button to the action panel.
      */
+    @Override
     public void addActionButton(final ActionButtonDefinition<T> buttonDef) {
-
         final ActionButton newActionButton = createNewActionButton(buttonDef);
 
         // Configure the button according to its definition
@@ -245,7 +245,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
         }
 
         for (final ActionButtonDefinition<T> buttonDef : actions) {
-
             if (buttonDef instanceof UiMenuBarButtonDefinition) {
                 UiMenuBarButtonDefinition<T> menuBarDef = ((UiMenuBarButtonDefinition<T>) buttonDef);
                 if (menuBarDef.isAsTitle()) {
@@ -275,6 +274,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
                 menuBar.addItem(item);
             }
         }
+
         return menuBar;
     }
 
@@ -305,11 +305,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
     boolean hasActionButtons() {
         return !actionButtonList.isEmpty();
     }
-
-    /**
-     * Returns items currently selected in the action panel.
-     */
-    protected abstract List<T> getSelectedItems();
 
     /**
      * Returns a new action button widget based on the given definition.

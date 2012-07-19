@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
  */
 public class UserportalDynamicHostingServlet extends GwtDynamicHostPageServlet {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8713825482196759603L;
 
     @Override
     protected String getSelectorScriptName() {

@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.common.widget.tab;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
+
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
@@ -19,7 +21,7 @@ import com.gwtplatform.mvp.client.TabPanel;
  * <li>{@link #tabContentContainer} widget for displaying tab contents
  * </ul>
  */
-public abstract class AbstractTabPanel extends Composite implements TabPanel {
+public abstract class AbstractTabPanel extends Composite implements TabPanel, DynamicTabContainerPresenter.DynamicTabPanel {
 
     @UiField
     public Panel tabContentContainer;
@@ -28,6 +30,7 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel {
     private final List<TabDefinition> tabList = new ArrayList<TabDefinition>();
 
     private Tab activeTab;
+    private String activeTabHistoryToken;
 
     @Override
     public Tab addTab(TabData tabData, String historyToken) {
@@ -46,6 +49,11 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel {
         newTab.setTargetHistoryToken(historyToken);
         newTab.setText(tabData.getLabel());
         updateTab(newTab);
+
+        // Try to retain active tab by its history token
+        if (activeTabHistoryToken != null && activeTabHistoryToken.equals(historyToken)) {
+            setActiveTab(newTab);
+        }
 
         return newTab;
     }
@@ -76,6 +84,11 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel {
         }
 
         activeTab = tab;
+    }
+
+    @Override
+    public void setActiveTabHistoryToken(String historyToken) {
+        this.activeTabHistoryToken = historyToken;
     }
 
     /**

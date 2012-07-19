@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.users.VdcUser;
  */
 public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3946034162721073929L;
 
     private BackendLocal backend;
 
@@ -46,6 +46,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter writer = response.getWriter();
         response.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
+        response.setHeader("Cache-Control", "no-cache"); //$NON-NLS-1$ //$NON-NLS-2$
 
         writer.append("<!DOCTYPE html><html><head>"); //$NON-NLS-1$
         writer.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"); //$NON-NLS-1$
@@ -91,21 +92,24 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      */
     protected void writeJsObject(PrintWriter writer, String objectName, Map<String, String> attributes) {
         StringBuilder sb = new StringBuilder();
-        sb.append(" var ").append(objectName).append(" = { "); //$NON-NLS-1$ //$NON-NLS-2$
+        sb.append("var ").append(objectName).append(" = { "); //$NON-NLS-1$ //$NON-NLS-2$
 
         int countdown = attributes.size();
         for (Entry<String, String> e : attributes.entrySet()) {
-            sb.append(e.getKey()).append(": "); //$NON-NLS-1$
-            sb.append("\"").append(e.getValue()).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
+            appendJsObjectAttribute(sb, e.getKey(), e.getValue(), true);
 
             if (--countdown > 0) {
                 sb.append(", "); //$NON-NLS-1$
             }
         }
 
-        sb.append(" }; "); //$NON-NLS-1$
-
+        sb.append(" };"); //$NON-NLS-1$
         writer.append(sb.toString());
+    }
+
+    protected void appendJsObjectAttribute(StringBuilder sb, String name, String value, boolean quoteValue) {
+        sb.append(name).append(": "); //$NON-NLS-1$
+        sb.append(quoteValue ? "\"" + value + "\"" : value); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void initQueryParams(VdcQueryParametersBase queryParams, HttpServletRequest request) {

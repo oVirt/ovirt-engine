@@ -53,13 +53,12 @@ public abstract class AbstractMainTabTableView<T, M extends SearchableListModel>
         return modelProvider.getModel();
     }
 
-    protected SimpleActionTable<T> getTable() {
+    public SimpleActionTable<T> getTable() {
         return table;
     }
 
     public MainModelProvider<T, M> getModelProvider() {
         return modelProvider;
     }
-
 
 }

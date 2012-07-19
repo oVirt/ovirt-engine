@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTreeWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -106,6 +106,11 @@ public class AbstractSubTabTreeWidgetView<I, T, M extends ListWithDetailsModel, 
     }
 
     @Override
+    public ActionTable<?> getTable() {
+        return null;
+    }
+
+    @Override
     public void setMainTabSelectedItem(I selectedItem) {
         if (getModelBoundTreeWidget().getModel().getItems() == null) {
             table.setLoadingState(LoadingState.LOADING);
@@ -114,26 +119,12 @@ public class AbstractSubTabTreeWidgetView<I, T, M extends ListWithDetailsModel, 
         tree.updateTree(getModelBoundTreeWidget().getModel());
     }
 
-    @Override
-    public OrderedMultiSelectionModel<?> getTableSelectionModel() {
-        return null;
-    }
-
-    @Override
-    public void resetTableScrollPosition() {
-    }
-
     private void updateStyles() {
         treeContainer.addStyleName(style.actionTreeContainer());
     }
 
     protected SubTabTreeActionPanel createActionPanel(SearchableDetailModelProvider<I, M, D> modelProvider) {
         return null;
-    }
-
-    @Override
-    public void setLoadingState(LoadingState state) {
-
     }
 
     interface WidgetStyle extends CssResource {

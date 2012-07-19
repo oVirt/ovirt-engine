@@ -8,7 +8,7 @@ import com.google.gwt.event.logical.shared.HasInitializeHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
- * Describes a button rendered within an {@link AbstractActionPanel}.
+ * Describes a button rendered within an {@link ActionPanel}.
  *
  * @param <T>
  *            Action panel item type.
@@ -19,7 +19,7 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
      * Action button click event callback.
      *
      * @param selectedItems
-     *            Items currently selected in the {@link AbstractActionPanel}.
+     *            Items currently selected in the {@link ActionPanel}.
      */
     void onClick(List<T> selectedItems);
 
@@ -27,7 +27,7 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
      * Checks whether or not this action button should be enabled for the given selection.
      *
      * @param selectedItems
-     *            Items currently selected in the {@link AbstractActionPanel}.
+     *            Items currently selected in the {@link ActionPanel}.
      */
     boolean isEnabled(List<T> selectedItems);
 
@@ -85,18 +85,23 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
     void update();
 
     /**
-     *
-     *  Indicates whether this action button has a title action.
+     * Indicates whether this action button has a title action.
      */
     boolean isSubTitledAction();
 
+    /**
+     * Indicates whether this action button is visible.
+     */
+    boolean isVisible(List<T> selectedItems);
+
+    /**
+     * Returns the default tool-tip associated with this button.
+     */
     String getToolTip();
 
     /**
-    *
-    *  Indicates whether this action button is visible.
-    */
-    boolean isVisible(List<T> selectedItems);
-
+     * Returns the custom tool-tip associated with this button.
+     */
     String getCustomToolTip();
+
 }

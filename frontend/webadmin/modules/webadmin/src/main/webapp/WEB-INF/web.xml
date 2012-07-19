@@ -23,6 +23,16 @@
 		<url-pattern>/webadmin/WebAdmin.html</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>PluginResourceServlet</servlet-name>
+		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginResourceServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>PluginResourceServlet</servlet-name>
+		<url-pattern>/webadmin/plugin/*</url-pattern>
+	</servlet-mapping>
+
 	<!-- Default page to serve -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

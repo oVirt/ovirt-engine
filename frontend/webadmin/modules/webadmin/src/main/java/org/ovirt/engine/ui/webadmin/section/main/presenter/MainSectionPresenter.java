@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -28,11 +30,13 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<RevealContentHandler<?>>();
 
     private final HeaderPresenterWidget header;
+    private final PluginManager pluginManager;
 
     @Inject
-    public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy, HeaderPresenterWidget header) {
+    public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy, HeaderPresenterWidget header, PluginManager pluginManager) {
         super(eventBus, view, proxy);
         this.header = header;
+        this.pluginManager = pluginManager;
         getView().setUiHandlers(header);
     }
 
@@ -46,6 +50,17 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
         super.onReveal();
 
         setInSlot(TYPE_SetHeader, header);
+
+        // Enable plugin invocation within the scope of main section
+        pluginManager.enablePluginInvocation();
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+
+        // Disable plugin invocation outside the scope of main section
+        pluginManager.disablePluginInvocation();
     }
 
 }

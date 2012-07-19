@@ -69,7 +69,7 @@ import com.google.gwt.view.client.SelectionModel;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements HasResizableColumns<T> {
+public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T>, HasResizableColumns<T> {
 
     // Minimum width of a column used with column resizing, in pixels
     private static final int RESIZE_MINIMUM_COLUMN_WIDTH = 30;
@@ -339,7 +339,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         tableHeader.getElement().getStyle().setLeft(-tableContainerScrollPosition, Unit.PX);
     }
 
-    public void resetTableScrollPosition() {
+    @Override
+    public void resetScrollPosition() {
         tableContainerScrollPosition = 0;
         enforceScrollPosition();
     }
@@ -573,6 +574,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         return RESIZE_MINIMUM_COLUMN_WIDTH;
     }
 
+    @Override
     public OrderedMultiSelectionModel<T> getSelectionModel() {
         return selectionModel;
     }
@@ -591,10 +593,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     }
 
     @Override
-    protected List<T> getSelectedItems() {
-        return new ArrayList<T>(selectionModel.getSelectedList());
+    public List<T> getSelectedItems() {
+        return selectionModel.getSelectedList();
     }
 
+    @Override
     public void setLoadingState(LoadingState state) {
         table.setLoadingState(state);
     }

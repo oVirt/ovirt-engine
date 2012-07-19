@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 
@@ -18,16 +17,6 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
 
     public AbstractMainTabWithDetailsTableView(MainModelProvider<T, M> modelProvider) {
         super(modelProvider);
-    }
-
-    @Override
-    public OrderedMultiSelectionModel<T> getTableSelectionModel() {
-        return getTable().getSelectionModel();
-    }
-
-    @Override
-    public void resetTableScrollPosition() {
-        getTable().resetTableScrollPosition();
     }
 
 }

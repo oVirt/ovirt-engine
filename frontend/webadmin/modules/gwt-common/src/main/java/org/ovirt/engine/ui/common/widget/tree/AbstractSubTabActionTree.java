@@ -112,7 +112,7 @@ public class AbstractSubTabActionTree<M extends SearchableListModel, R, N> exten
     }
 
     @Override
-    protected List getSelectedItems() {
+    public List getSelectedItems() {
         return null;
     }
 

@@ -21,7 +21,7 @@ public class SubTabTreeActionPanel<T> extends AbstractActionPanel<T> {
     }
 
     @Override
-    protected List<T> getSelectedItems() {
+    public List<T> getSelectedItems() {
         return getDataProvider().getModel().getSelectedItems();
     }
 

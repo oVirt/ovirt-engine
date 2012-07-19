@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.view;
 
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -12,7 +13,7 @@ import com.gwtplatform.mvp.client.TabView;
  *
  * @see AbstractTabPanel
  */
-public abstract class AbstractTabPanelView extends AbstractSingleSlotView implements TabView {
+public abstract class AbstractTabPanelView extends AbstractSingleSlotView implements TabView, DynamicTabContainerPresenter.DynamicTabPanel {
 
     @Override
     public Tab addTab(TabData tabData, String historyToken) {
@@ -32,6 +33,11 @@ public abstract class AbstractTabPanelView extends AbstractSingleSlotView implem
     @Override
     public void setActiveTab(Tab tab) {
         getTabPanel().setActiveTab(tab);
+    }
+
+    @Override
+    public void setActiveTabHistoryToken(String historyToken) {
+        getTabPanel().setActiveTabHistoryToken(historyToken);
     }
 
     @Override

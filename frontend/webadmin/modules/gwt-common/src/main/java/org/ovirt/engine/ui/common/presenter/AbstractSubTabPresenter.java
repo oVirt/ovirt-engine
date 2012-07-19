@@ -10,6 +10,8 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.widget.table.ActionTable;
+import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -41,28 +43,23 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
         extends Presenter<V, P> {
 
-    public interface ViewDef<T> extends View {
+    // TODO(vszocs) use HasActionTable<I> instead of raw type HasActionTable, this will
+    // require adding new type parameter to presenter (do later as part of refactoring)
+    @SuppressWarnings("rawtypes")
+    public interface ViewDef<T> extends View, HasActionTable {
+
+        /**
+         * Returns the sub tab view table widget.
+         * <p>
+         * Returns {@code null} if the sub tab view has no table widget associated.
+         */
+        @Override
+        public ActionTable<?> getTable();
 
         /**
          * Notifies the view that the main tab item selection has changed.
          */
         void setMainTabSelectedItem(T selectedItem);
-
-        /**
-         * For table-based sub tab views, returns the selection model used by the sub tab table widget. Returns
-         * {@code null} otherwise.
-         */
-        OrderedMultiSelectionModel<?> getTableSelectionModel();
-
-        /**
-         * Resets the scroll position of the sub tab table widget.
-         */
-        void resetTableScrollPosition();
-
-        /**
-         * Sets the loading state of the sub tab view.
-         */
-        void setLoadingState(LoadingState state);
 
     }
 
@@ -84,7 +81,8 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     protected void onBind() {
         super.onBind();
 
-        OrderedMultiSelectionModel<?> tableSelectionModel = getView().getTableSelectionModel();
+        OrderedMultiSelectionModel<?> tableSelectionModel = getView().getTable() != null
+                ? getView().getTable().getSelectionModel() : null;
         if (tableSelectionModel != null) {
             registerHandler(tableSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
                 @Override
@@ -130,7 +128,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         // Clear table selection before starting
         clearSelection();
 
-        getView().resetTableScrollPosition();
+        if (getView().getTable() != null) {
+            getView().getTable().resetScrollPosition();
+        }
     }
 
     @Override
@@ -176,25 +176,19 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     protected abstract PlaceRequest getMainTabRequest();
 
     /**
-     * Returns {@code true} when the view exposes a table selection model.
-     */
-    boolean hasTableSelectionModel() {
-        return getView().getTableSelectionModel() != null;
-    }
-
-    /**
-     * Returns items currently selected in the table.
+     * Returns items currently selected in the table, or {@code null} if the sub tab view has no table widget
+     * associated.
      */
     protected List<?> getSelectedItems() {
-        return hasTableSelectionModel() ? getView().getTableSelectionModel().getSelectedList() : null;
+        return getView().getTable() != null ? getView().getTable().getSelectionModel().getSelectedList() : null;
     }
 
     /**
      * Deselects any selected values in the table.
      */
     protected void clearSelection() {
-        if (hasTableSelectionModel()) {
-            getView().getTableSelectionModel().clear();
+        if (getView().getTable() != null) {
+            getView().getTable().getSelectionModel().clear();
         }
     }
 
@@ -218,7 +212,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
                 if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
                     if (modelProvider.getModel().getProgress() != null) {
-                        getView().setLoadingState(LoadingState.LOADING);
+                        if (getView().getTable() != null) {
+                            getView().getTable().setLoadingState(LoadingState.LOADING);
+                        }
                     }
                 }
             }

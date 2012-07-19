@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ToggleButton;
 
 /**
- * Represents a button rendered within an {@link AbstractActionPanel}.
+ * Represents a button rendered within an {@link ActionPanel}.
  */
 public interface ActionButton extends IsWidget, HasClickHandlers, HasEnabled {
 
@@ -26,6 +26,9 @@ public interface ActionButton extends IsWidget, HasClickHandlers, HasEnabled {
      */
     void setDisabledHtml(SafeHtml html);
 
+    /**
+     * Returns this button represented as {@link ToggleButton} widget.
+     */
     ToggleButton asToggleButton();
 
 }

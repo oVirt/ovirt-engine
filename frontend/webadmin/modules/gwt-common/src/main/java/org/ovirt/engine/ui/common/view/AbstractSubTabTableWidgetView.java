@@ -3,13 +3,10 @@ package org.ovirt.engine.ui.common.view;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-
-import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 
 /**
  * Base class for sub tab views that use {@linkplain AbstractModelBoundTableWidget model-bound table widgets}.
@@ -39,7 +36,8 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
         return modelBoundTableWidget;
     }
 
-    SimpleActionTable<T> getTable() {
+    @Override
+    public SimpleActionTable<T> getTable() {
         return modelBoundTableWidget.getTable();
     }
 
@@ -50,21 +48,6 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
     @Override
     public void setMainTabSelectedItem(I selectedItem) {
         // No-op since table-based sub tab views don't handle main tab selection on their own
-    }
-
-    @Override
-    public OrderedMultiSelectionModel<?> getTableSelectionModel() {
-        return getTable().getSelectionModel();
-    }
-
-    @Override
-    public void resetTableScrollPosition() {
-        getTable().resetTableScrollPosition();
-    }
-
-    @Override
-    public void setLoadingState(LoadingState state) {
-        getTable().setLoadingState(state);
     }
 
 }

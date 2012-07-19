@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
@@ -31,22 +31,12 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithDetailsModel, V extends AbstractSideTabWithDetailsPresenter.ViewDef<T>, P extends Proxy<?>>
         extends AbstractModelActivationPresenter<T, M, V, P> {
 
-    public interface ViewDef<T> extends View {
+    public interface ViewDef<T> extends View, HasActionTable<T> {
 
         /**
          * Controls the sub tab panel visibility.
          */
         void setSubTabPanelVisible(boolean subTabPanelVisible);
-
-        /**
-         * Returns the selection model used by the side tab table widget.
-         */
-        OrderedMultiSelectionModel<T> getTableSelectionModel();
-
-        /**
-         * Resets the scroll position of the side tab table widget.
-         */
-        void resetTableScrollPosition();
 
     }
 
@@ -67,7 +57,7 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
     protected void onBind() {
         super.onBind();
 
-        registerHandler(getView().getTableSelectionModel()
+        registerHandler(getView().getTable().getSelectionModel()
                 .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
                     @Override
                     public void onSelectionChange(SelectionChangeEvent event) {
@@ -101,7 +91,7 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
             updateLayout();
         }
 
-        getView().resetTableScrollPosition();
+        getView().getTable().resetScrollPosition();
     }
 
     /**
@@ -132,7 +122,7 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
      * Returns items currently selected in the table.
      */
     protected List<T> getSelectedItems() {
-        return getView().getTableSelectionModel().getSelectedList();
+        return getView().getTable().getSelectionModel().getSelectedList();
     }
 
     /**
@@ -146,7 +136,7 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
      * Deselects any selected values in the table.
      */
     protected void clearSelection() {
-        getView().getTableSelectionModel().clear();
+        getView().getTable().getSelectionModel().clear();
     }
 
 }

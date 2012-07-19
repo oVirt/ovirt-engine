@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 
@@ -29,18 +29,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithDetailsModel, V extends AbstractMainTabWithDetailsPresenter.ViewDef<T>, P extends ProxyPlace<?>>
         extends AbstractMainTabPresenter<T, M, V, P> {
 
-    public interface ViewDef<T> extends View {
-
-        /**
-         * Returns the selection model used by the main tab table widget.
-         */
-        OrderedMultiSelectionModel<T> getTableSelectionModel();
-
-        /**
-         * Resets the scroll position of the main tab table widget.
-         */
-        void resetTableScrollPosition();
-
+    public interface ViewDef<T> extends View, HasActionTable<T> {
     }
 
     public AbstractMainTabWithDetailsPresenter(EventBus eventBus, V view, P proxy,
@@ -52,7 +41,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     protected void onBind() {
         super.onBind();
 
-        registerHandler(getView().getTableSelectionModel()
+        registerHandler(getView().getTable().getSelectionModel()
                 .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
                     @Override
                     public void onSelectionChange(SelectionChangeEvent event) {
@@ -86,7 +75,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
             updateLayout();
         }
 
-        getView().resetTableScrollPosition();
+        getView().getTable().resetScrollPosition();
     }
 
     /**
@@ -109,7 +98,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
      * Returns items currently selected in the table.
      */
     protected List<T> getSelectedItems() {
-        return getView().getTableSelectionModel().getSelectedList();
+        return getView().getTable().getSelectionModel().getSelectedList();
     }
 
     /**
@@ -123,7 +112,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
      * Deselects any selected values in the table.
      */
     protected void clearSelection() {
-        getView().getTableSelectionModel().clear();
+        getView().getTable().getSelectionModel().clear();
     }
 
 }
