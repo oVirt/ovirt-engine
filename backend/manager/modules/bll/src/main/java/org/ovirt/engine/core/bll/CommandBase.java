@@ -356,8 +356,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-    * Delete the compensation data, so that we don't accidentaly try to compensate it at a later time.
-    */
+     * Delete the compensation data, so that we don't accidentaly try to compensate it at a later time.
+     */
     private void cleanUpCompensationData() {
         getBusinessEntitySnapshotDAO().removeAllForCommandId(commandId);
     }
@@ -556,7 +556,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (actionVersionMap != null
                 && ((getVdsGroup() != null && getVdsGroup().getcompatibility_version().compareTo(
                         new Version(actionVersionMap.getcluster_minimal_version())) < 0) ||
-                        (!"*".equals(actionVersionMap.getstorage_pool_minimal_version()) && getStoragePool() != null && getStoragePool()
+                (!"*".equals(actionVersionMap.getstorage_pool_minimal_version()) && getStoragePool() != null && getStoragePool()
                         .getcompatibility_version().compareTo(
                                 new Version(actionVersionMap.getstorage_pool_minimal_version())) < 0))) {
             result = false;
@@ -1083,13 +1083,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
             SPMAsyncTask task = ConcreteCreateTask(asyncTaskCreationInfo, parentCommand);
             retValue = task.getTaskID();
-            if (task != null) {
-                task.setEntityType(entityType);
-                task.setAssociatedEntities(entityIds);
-                AsyncTaskUtils.addOrUpdateTaskInDB(task);
-                AsyncTaskManager.getInstance().lockAndAddTaskToManager(task);
-                retValue = task.getTaskID();
-            }
+            task.setEntityType(entityType);
+            task.setAssociatedEntities(entityIds);
+            AsyncTaskUtils.addOrUpdateTaskInDB(task);
+            AsyncTaskManager.getInstance().lockAndAddTaskToManager(task);
+            retValue = task.getTaskID();
             ExecutionHandler.updateStepExternalId(taskStep, retValue, ExternalSystemType.VDSM);
         } catch (RuntimeException ex) {
             log.errorFormat("Error during CreateTask for command: {0}. Exception {1}", getClass().getName(), ex);
