@@ -192,7 +192,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            parameters for the rollback command
      * @return true if it is possible to run rollback using command
      */
-    protected boolean canPerformRollbackUsingCommand(VdcActionType commandType, VdcActionParametersBase params) {
+    protected boolean canPerformRollbackUsingCommand
+            (@SuppressWarnings("unused") VdcActionType commandType,
+                    @SuppressWarnings("unused") VdcActionParametersBase params) {
         return true;
     }
 
@@ -1098,7 +1100,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return retValue;
     }
 
-    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    protected SPMAsyncTask ConcreteCreateTask
+            (@SuppressWarnings("unused") AsyncTaskCreationInfo asyncTaskCreationInfo,
+                    @SuppressWarnings("unused") VdcActionType parentCommand) {
         throw new NotImplementedException();
     }
 
