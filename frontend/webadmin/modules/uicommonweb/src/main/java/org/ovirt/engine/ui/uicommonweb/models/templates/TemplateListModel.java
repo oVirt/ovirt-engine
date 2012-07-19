@@ -679,8 +679,31 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
     }
 
+    /**
+     * Returns true if at least one of the selected items is the blank template
+     */
     protected boolean isBlankTemplateSelected() {
-        return getSelectedItem() != null && Guid.OpEquality(((VmTemplate) getSelectedItem()).getId(), NGuid.Empty);
+        if (isBlankTemplate(getSelectedItem())) {
+            return true;
+        }
+
+        if (getSelectedItems() == null) {
+            return false;
+        }
+
+        for (Object selectedItem : getSelectedItems()) {
+            if (isBlankTemplate(selectedItem)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isBlankTemplate(Object selectedItem) {
+        return selectedItem != null &&
+                selectedItem instanceof VmTemplate &&
+                Guid.OpEquality(((VmTemplate) selectedItem).getId(), NGuid.Empty);
     }
 
     @Override
