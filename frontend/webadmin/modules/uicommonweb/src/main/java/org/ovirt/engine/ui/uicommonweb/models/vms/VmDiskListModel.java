@@ -732,7 +732,7 @@ public class VmDiskListModel extends SearchableListModel
 
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems()) {
-            DiskImage disk = (DiskImage) item;
+            Disk disk = (Disk) item;
             disk.setPlugged(plug);
 
             paramerterList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getId()));
