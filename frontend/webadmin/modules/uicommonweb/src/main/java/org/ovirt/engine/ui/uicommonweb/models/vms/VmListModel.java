@@ -2583,7 +2583,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
                         : new ArrayList();
 
-        getEditCommand().setIsExecutionAllowed(items.size() == 1);
+        getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(items.size() > 0
@@ -2614,6 +2614,21 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
                 || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
+    }
+
+    /**
+     * Return true if and only if one elemnt is selected, and this element is not a part of any pool.
+     */
+    private boolean isEditCommandExecutionAllowed(List items) {
+        if (items == null) {
+            return false;
+        }
+        if (items.size() != 1) {
+            return false;
+        }
+
+        VM selectedItem = (VM) items.get(0);
+        return selectedItem.getVmPoolId() == null;
     }
 
     @Override
