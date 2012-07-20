@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -28,7 +28,9 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -58,7 +60,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-@SuppressWarnings("unused")
 public class PoolListModel extends ListWithDetailsModel
 {
 
@@ -249,238 +250,262 @@ public class PoolListModel extends ListWithDetailsModel
 
         final PoolListModel poolListModel = this;
 
-        AsyncDataProvider.GetVmList(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object modell, Object returnValue) {
-                final VM vm = Linq.FirstOrDefault((ArrayList<VM>) returnValue);
+        Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+                new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
 
-                final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm);
-                behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener() {
+                new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        final PoolModel model = behavior.getModel();
+                    public void OnSuccess(Object modell, Object result) {
+                        final VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
 
-                        for (Object item : model.getPoolType().getItems())
-                        {
-                            EntityModel a = (EntityModel) item;
-                            if (a.getEntity() == pool.getvm_pool_type())
-                            {
-                                model.getPoolType().setSelectedItem(a);
-                                break;
-                            }
-                        }
-                        String cdImage = null;
+                        final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm);
+                        behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener() {
+                            @Override
+                            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                                final PoolModel model = behavior.getModel();
 
-                        if (vm != null) {
-                            model.getDataCenter().setSelectedItem(null);
-                            model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(model.getDataCenter().getItems(),
-                                    new Linq.DataCenterPredicate(vm.getstorage_pool_id())));
-                            model.getDataCenter().setIsChangable(false);
-                            model.getTemplate().setIsChangable(false);
+                                for (Object item : model.getPoolType().getItems())
+                                {
+                                    EntityModel a = (EntityModel) item;
+                                    if (a.getEntity() == pool.getvm_pool_type())
+                                    {
+                                        model.getPoolType().setSelectedItem(a);
+                                        break;
+                                    }
+                                }
+                                String cdImage = null;
 
-                            if (model.getDataCenter().getSelectedItem() == null)
-                            {
+                                if (vm != null) {
+                                    model.getDataCenter().setSelectedItem(null);
+                                    model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(model.getDataCenter()
+                                            .getItems(),
+                                            new Linq.DataCenterPredicate(vm.getstorage_pool_id())));
+                                    model.getDataCenter().setIsChangable(false);
+                                    model.getTemplate().setIsChangable(false);
 
-                                AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
-                                        new INewAsyncCallback() {
-                                            @Override
-                                            public void OnSuccess(Object target, Object returnValue) {
-                                                ArrayList<storage_pool> list = (ArrayList<storage_pool>) returnValue;
-                                                model.getDataCenter().setItems(list);
-                                                model.getDataCenter().setSelectedItem(list.get(0));
+                                    if (model.getDataCenter().getSelectedItem() == null)
+                                    {
 
-                                                ArrayList<VmTemplate> templates = new ArrayList<VmTemplate>();
-                                                // TODO: need to be async
-                                                VmTemplate basedOnTemplate =
-                                                        DataProvider.GetTemplateByID(vm.getvmt_guid());
-                                                if (basedOnTemplate != null)
-                                                {
-                                                    templates.add(basedOnTemplate);
-                                                }
+                                        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+                                                new INewAsyncCallback() {
+                                                    @Override
+                                                    public void OnSuccess(Object target, Object returnValue) {
+                                                        List<storage_pool> list =
+                                                                asList(returnValue);
+                                                        model.getDataCenter().setItems(list);
+                                                        model.getDataCenter().setSelectedItem(list.get(0));
 
-                                                model.getTemplate().setItems(templates);
-                                                model.getTemplate().setSelectedItem(basedOnTemplate);
+                                                        ArrayList<VmTemplate> templates = new ArrayList<VmTemplate>();
+                                                        // TODO: need to be async
+                                                        VmTemplate basedOnTemplate =
+                                                                DataProvider.GetTemplateByID(vm.getvmt_guid());
+                                                        if (basedOnTemplate != null)
+                                                        {
+                                                            templates.add(basedOnTemplate);
+                                                        }
 
-                                                model.getDefaultHost().setSelectedItem(null);
-                                                VDS host = null;
-                                                for (Object item : model.getDefaultHost().getItems())
-                                                {
-                                                    VDS a = (VDS) item;
-                                                    if (a.getId()
-                                                            .equals(((vm.getdedicated_vm_for_vds()) != null) ? vm.getdedicated_vm_for_vds()
-                                                                    : Guid.Empty))
-                                                    {
-                                                        host = a;
-                                                        break;
-                                                    }
-                                                }
+                                                        model.getTemplate().setItems(templates);
+                                                        model.getTemplate().setSelectedItem(basedOnTemplate);
 
-                                                if (host == null)
-                                                {
-                                                    model.getIsAutoAssign().setEntity(true);
-                                                }
-                                                else
-                                                {
-                                                    model.getDefaultHost().setSelectedItem(host);
-                                                    model.getIsAutoAssign().setEntity(false);
-                                                }
-
-                                                if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST)
-                                                {
-                                                    model.getRunVMOnSpecificHost().setEntity(true);
-                                                }
-                                                else
-                                                {
-                                                    if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE)
-                                                    {
-                                                        model.getDontMigrateVM().setEntity(true);
-                                                    }
-                                                }
-
-                                                model.getMemSize().setEntity(vm.getvm_mem_size_mb());
-                                                model.getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
-                                                model.getOSType().setSelectedItem(vm.getvm_os());
-                                                model.getDomain().setSelectedItem(vm.getvm_domain());
-
-                                                if (!StringHelper.isNullOrEmpty(vm.gettime_zone()))
-                                                {
-                                                    model.getTimeZone()
-                                                            .setSelectedItem(Linq.FirstOrDefault(model.getTimeZone()
-                                                                    .getItems(),
-                                                                    new Linq.TimeZonePredicate(vm.gettime_zone())));
-                                                }
-
-                                                EntityModel displayType = null;
-                                                for (Object item : model.getDisplayProtocol().getItems())
-                                                {
-                                                    EntityModel a = (EntityModel) item;
-                                                    DisplayType dt = (DisplayType) a.getEntity();
-                                                    if (dt == vm.getdefault_display_type())
-                                                    {
-                                                        displayType = a;
-                                                        break;
-                                                    }
-                                                }
-                                                model.getDisplayProtocol().setSelectedItem(displayType);
-
-                                                model.getUsbPolicy().setSelectedItem(vm.getusb_policy());
-                                                model.getNumOfMonitors().setSelectedItem(vm.getnum_of_monitors());
-                                                model.getNumOfSockets().setEntity(vm.getnum_of_sockets());
-                                                model.getTotalCPUCores().setEntity(vm.getnum_of_cpus());
-                                                model.setBootSequence(vm.getdefault_boot_sequence());
-
-                                                model.getKernel_path().setEntity(vm.getkernel_url());
-                                                model.getKernel_parameters().setEntity(vm.getkernel_params());
-                                                model.getInitrd_path().setEntity(vm.getinitrd_url());
-
-                                                AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
-                                                        new INewAsyncCallback() {
-                                                            @Override
-                                                            public void OnSuccess(Object modell, Object returnValue) {
-
-                                                                LinkedList<DiskImage> disks =
-                                                                        (LinkedList<DiskImage>) returnValue;
-                                                                // feature for filling storage domain in case of
-                                                                // data center list empty
-                                                                if (disks.size() > 0)
+                                                        model.getDefaultHost().setSelectedItem(null);
+                                                        VDS host = null;
+                                                        if (model.getDefaultHost().getItems() != null) {
+                                                            for (Object item : model.getDefaultHost().getItems())
+                                                            {
+                                                                VDS a = (VDS) item;
+                                                                if (a.getId()
+                                                                        .equals(((vm.getdedicated_vm_for_vds()) != null) ? vm.getdedicated_vm_for_vds()
+                                                                                : Guid.Empty))
                                                                 {
-                                                                    ArrayList<Guid> storage_ids =
-                                                                            disks.get(0).getstorage_ids();
-                                                                    Guid storageId =
-                                                                            storage_ids != null
-                                                                                    && storage_ids.size() > 0 ? storage_ids.get(0)
-                                                                                    : null;
-
-                                                                    if (storageId != null) {
-                                                                        AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this,
-                                                                                new INewAsyncCallback() {
-                                                                                    @Override
-                                                                                    public void OnSuccess(Object target,
-                                                                                            Object returnValue) {
-                                                                                        storage_domains storageDomain =
-                                                                                                (storage_domains) returnValue;
-                                                                                        model.getStorageDomain()
-                                                                                                .setItems(new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { storageDomain })));
-                                                                                        model.getStorageDomain()
-                                                                                                .setSelectedItem(storageDomain);
-                                                                                    }
-                                                                                }),
-                                                                                storageId);
-                                                                    }
+                                                                    host = a;
+                                                                    break;
                                                                 }
-                                                                model.getStorageDomain().setIsChangable(false);
-
                                                             }
-                                                        }),
-                                                        vm.getId(),
-                                                        false);
-                                            }
-                                        }),
-                                        vm.getstorage_pool_id());
+                                                        }
+
+                                                        if (host == null)
+                                                        {
+                                                            model.getIsAutoAssign().setEntity(true);
+                                                        }
+                                                        else
+                                                        {
+                                                            model.getDefaultHost().setSelectedItem(host);
+                                                            model.getIsAutoAssign().setEntity(false);
+                                                        }
+
+                                                        if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST)
+                                                        {
+                                                            model.getRunVMOnSpecificHost().setEntity(true);
+                                                        }
+                                                        else
+                                                        {
+                                                            if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE)
+                                                            {
+                                                                model.getDontMigrateVM().setEntity(true);
+                                                            }
+                                                        }
+
+                                                        model.getMemSize().setEntity(vm.getvm_mem_size_mb());
+                                                        model.getMinAllocatedMemory()
+                                                                .setEntity(vm.getMinAllocatedMem());
+                                                        model.getOSType().setSelectedItem(vm.getvm_os());
+                                                        model.getDomain().setSelectedItem(vm.getvm_domain());
+
+                                                        if (!StringHelper.isNullOrEmpty(vm.gettime_zone()))
+                                                        {
+                                                            model.getTimeZone()
+                                                                    .setSelectedItem(Linq.FirstOrDefault(model.getTimeZone()
+                                                                            .getItems(),
+                                                                            new Linq.TimeZonePredicate(vm.gettime_zone())));
+                                                        }
+
+                                                        EntityModel displayType = null;
+                                                        for (Object item : model.getDisplayProtocol().getItems())
+                                                        {
+                                                            EntityModel a = (EntityModel) item;
+                                                            DisplayType dt = (DisplayType) a.getEntity();
+                                                            if (dt == vm.getdefault_display_type())
+                                                            {
+                                                                displayType = a;
+                                                                break;
+                                                            }
+                                                        }
+                                                        model.getDisplayProtocol().setSelectedItem(displayType);
+
+                                                        model.getUsbPolicy().setSelectedItem(vm.getusb_policy());
+                                                        model.getNumOfMonitors()
+                                                                .setSelectedItem(vm.getnum_of_monitors());
+                                                        model.getNumOfSockets().setEntity(vm.getnum_of_sockets());
+                                                        model.getTotalCPUCores().setEntity(vm.getnum_of_cpus());
+                                                        model.setBootSequence(vm.getdefault_boot_sequence());
+
+                                                        model.getKernel_path().setEntity(vm.getkernel_url());
+                                                        model.getKernel_parameters().setEntity(vm.getkernel_params());
+                                                        model.getInitrd_path().setEntity(vm.getinitrd_url());
+
+                                                        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
+                                                                new INewAsyncCallback() {
+                                                                    @Override
+                                                                    public void OnSuccess(Object modell,
+                                                                            Object returnValue) {
+
+                                                                        List<DiskImage> disks =
+                                                                                (List<DiskImage>) returnValue;
+                                                                        // feature for filling storage domain in case of
+                                                                        // data center list empty
+                                                                        if (disks.size() > 0)
+                                                                        {
+                                                                            ArrayList<Guid> storage_ids =
+                                                                                    disks.get(0).getstorage_ids();
+                                                                            Guid storageId =
+                                                                                    storage_ids != null
+                                                                                            && storage_ids.size() > 0 ? storage_ids.get(0)
+                                                                                            : null;
+
+                                                                            if (storageId != null) {
+                                                                                AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this,
+                                                                                        new INewAsyncCallback() {
+                                                                                            @Override
+                                                                                            public void OnSuccess(Object target,
+                                                                                                    Object returnValue) {
+                                                                                                storage_domains storageDomain =
+                                                                                                        (storage_domains) returnValue;
+                                                                                                model.getStorageDomain()
+                                                                                                        .setItems(new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { storageDomain })));
+                                                                                                model.getStorageDomain()
+                                                                                                        .setSelectedItem(storageDomain);
+                                                                                            }
+                                                                                        }),
+                                                                                        storageId);
+                                                                            }
+                                                                        }
+                                                                        model.getStorageDomain().setIsChangable(false);
+
+                                                                    }
+                                                                }),
+                                                                vm.getId(),
+                                                                false);
+                                                    }
+
+                                                }),
+                                                vm.getstorage_pool_id());
+                                    }
+
+                                    cdImage = vm.getiso_path();
+                                }
+                                else
+                                {
+                                    model.getDataCenter()
+                                            .setSelectedItem(Linq.FirstOrDefault(Linq.<storage_pool> Cast(model.getDataCenter()
+                                                    .getItems())));
+                                }
+
+                                // make sure that Clusters list won't be null:
+                                ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
+                                if (model.getCluster().getItems() == null)
+                                {
+                                    VDSGroup poolCluster = DataProvider.GetClusterById(pool.getvds_group_id());
+                                    if (poolCluster != null)
+                                    {
+                                        clusters.add(poolCluster);
+                                    }
+
+                                    model.getCluster().setItems(clusters);
+                                }
+
+                                model.getCluster().setIsChangable(vm == null);
+
+                                boolean hasCd = !StringHelper.isNullOrEmpty(cdImage);
+                                model.getCdImage().setIsChangable(hasCd);
+                                model.getCdAttached().setEntity(hasCd);
+                                if (hasCd) {
+                                    model.getCdImage().setSelectedItem(cdImage);
+                                }
+
+                                model.getProvisioning().setIsChangable(false);
+                                model.getStorageDomain().setIsChangable(false);
+
+                                UICommand command = new UICommand("OnSave", poolListModel); //$NON-NLS-1$
+                                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                                command.setIsDefault(true);
+                                model.getCommands().add(command);
+
+                                command = new UICommand("Cancel", poolListModel); //$NON-NLS-1$
+                                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                                command.setIsCancel(true);
+                                model.getCommands().add(command);
                             }
+                        });
 
-                            cdImage = vm.getiso_path();
-                        }
-                        else
-                        {
-                            model.getDataCenter()
-                                    .setSelectedItem(Linq.FirstOrDefault(Linq.<storage_pool> Cast(model.getDataCenter()
-                                            .getItems())));
-                        }
-
-                        // make sure that Clusters list won't be null:
-                        ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
-                        if (model.getCluster().getItems() == null)
-                        {
-                            VDSGroup poolCluster = DataProvider.GetClusterById(pool.getvds_group_id());
-                            if (poolCluster != null)
-                            {
-                                clusters.add(poolCluster);
-                            }
-
-                            model.getCluster().setItems(clusters);
-                        }
-
-                        model.getCluster().setIsChangable(vm == null);
-
-                        boolean hasCd = !StringHelper.isNullOrEmpty(cdImage);
-                        model.getCdImage().setIsChangable(hasCd);
-                        model.getCdAttached().setEntity(hasCd);
-                        if (hasCd) {
-                            model.getCdImage().setSelectedItem(cdImage);
-                        }
-
-                        model.getProvisioning().setIsChangable(false);
-                        model.getStorageDomain().setIsChangable(false);
-
-                        UICommand command = new UICommand("OnSave", poolListModel); //$NON-NLS-1$
-                        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        command.setIsDefault(true);
-                        model.getCommands().add(command);
-
-                        command = new UICommand("Cancel", poolListModel); //$NON-NLS-1$
-                        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        command.setIsCancel(true);
-                        model.getCommands().add(command);
+                        PoolModel model = new PoolModel(behavior);
+                        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+                        model.StartProgress("");
+                        setWindow(model);
+                        model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
+                        model.setHashName("edit_pool"); //$NON-NLS-1$
+                        model.setVmType(VmType.Desktop);
+                        model.Initialize(null);
+                        model.getName().setEntity(pool.getvm_pool_name());
+                        model.getDescription().setEntity(pool.getvm_pool_description());
+                        model.getAssignedVms().setEntity(pool.getvm_assigned_count());
+                        model.getPrestartedVms().setEntity(pool.getPrestartedVms());
+                        model.setPrestartedVmsHint("0-" + pool.getvm_assigned_count()); //$NON-NLS-1$
                     }
-                });
+                }));
+    }
 
-                PoolModel model = new PoolModel(behavior);
-                model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
-                model.StartProgress("");
-                setWindow(model);
-                model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
-                model.setHashName("edit_pool"); //$NON-NLS-1$
-                model.setVmType(VmType.Desktop);
-                model.Initialize(null);
-                model.getName().setEntity(pool.getvm_pool_name());
-                model.getDescription().setEntity(pool.getvm_pool_description());
-                model.getAssignedVms().setEntity(pool.getvm_assigned_count());
-                model.getPrestartedVms().setEntity(pool.getPrestartedVms());
-                model.setPrestartedVmsHint("0-" + pool.getvm_assigned_count()); //$NON-NLS-1$
-            }
-        }),
-                pool.getvm_pool_name());
+    private List<storage_pool> asList(Object returnValue) {
+        if (returnValue instanceof ArrayList) {
+            return (ArrayList<storage_pool>) returnValue;
+        }
+
+        if (returnValue instanceof storage_pool) {
+            List<storage_pool> res = new ArrayList<storage_pool>();
+            res.add((storage_pool) returnValue);
+            return res;
+        }
+
+        throw new IllegalArgumentException("Expected ArrayList of storage_pools or a storage_pool. Given " + returnValue.getClass().getName()); //$NON-NLS-1$
     }
 
     public void remove()

@@ -33,7 +33,7 @@ public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValu
     @UiField
     VerticalPanel panel;
 
-    private ArrayList<KeyValueLineWidget> widgetList;
+    private ArrayList<KeyValueLineWidget> widgetList = new ArrayList<KeyValueLineWidget>();
 
     KeyValueWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
