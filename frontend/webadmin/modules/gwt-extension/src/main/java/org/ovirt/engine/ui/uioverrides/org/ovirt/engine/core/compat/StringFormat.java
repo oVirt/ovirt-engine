@@ -16,7 +16,7 @@ public final class StringFormat {
      */
     public static String format(String pattern, Object... args) {
         String message = new FormatterJava().format(pattern, args).toString();
-        log.infoFormat("Formatting Java pattern: {0} With result: {1}", pattern, message);
+        log.debugFormat("Formatting Java pattern: {0} With result: {1}", pattern, message);
         return message;
     }
 

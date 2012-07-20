@@ -87,7 +87,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         try {
             sqlInjectionChecker = getSqlInjectionChecker();
         } catch (Exception e) {
-            log.error("Failed to load Sql Injection Checker. " + e.getMessage());
+            log.debug("Failed to load Sql Injection Checker. " + e.getMessage());
         }
     }
 
