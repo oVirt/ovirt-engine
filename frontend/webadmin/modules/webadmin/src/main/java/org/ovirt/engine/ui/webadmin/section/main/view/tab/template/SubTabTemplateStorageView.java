@@ -12,6 +12,8 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
@@ -24,8 +26,8 @@ public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTr
 
     @Inject
     public SubTabTemplateStorageView(final SearchableDetailModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel> modelProvider,
-            EventBus eventBus, ApplicationConstants constant) {
-        super(modelProvider, constant);
+            EventBus eventBus, ApplicationConstants constant, ApplicationTemplates templates, ApplicationResources resources) {
+        super(modelProvider, constant, templates, resources);
 
         actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constant.removeStorage()) {
             @Override

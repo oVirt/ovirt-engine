@@ -10,6 +10,8 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
@@ -22,8 +24,8 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
 
     @Inject
     public SubTabTemplateDiskView(final SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> modelProvider,
-            EventBus eventBus, ApplicationConstants constants) {
-        super(modelProvider, constants);
+            EventBus eventBus, ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
+        super(modelProvider, constants, templates, resources);
 
         actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constants.copyDisk()) {
             @Override

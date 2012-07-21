@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaTemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.storage.TemplatesTree;
@@ -17,8 +19,9 @@ public class SubTabQuotaTemplateView extends AbstractSubTabTreeView<TemplatesTre
         implements SubTabQuotaTemplatePresenter.ViewDef {
 
     @Inject
-    public SubTabQuotaTemplateView(SearchableDetailModelProvider<VmTemplate, QuotaListModel, QuotaTemplateListModel> modelProvider, ApplicationConstants constants) {
-        super(modelProvider, constants);
+    public SubTabQuotaTemplateView(SearchableDetailModelProvider<VmTemplate, QuotaListModel, QuotaTemplateListModel> modelProvider,
+            ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
+        super(modelProvider, constants, templates, resources);
     }
 
     @Override

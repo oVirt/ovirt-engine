@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
@@ -52,16 +51,17 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
     boolean isActionTree;
 
-    protected final ApplicationResources resources;
     protected final ApplicationConstants constants;
     protected final ApplicationTemplates templates;
+    protected final ApplicationResources resources;
 
-    public AbstractSubTabTreeView(SearchableDetailModelProvider modelProvider, ApplicationConstants constants) {
+    public AbstractSubTabTreeView(SearchableDetailModelProvider modelProvider,
+            ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
         super(modelProvider);
 
-        resources = ClientGinjectorProvider.instance().getApplicationResources();
-        this.constants =constants;
-        this.templates = ClientGinjectorProvider.instance().getApplicationTemplates();
+        this.constants = constants;
+        this.templates = templates;
+        this.resources = resources;
 
         table = new EntityModelCellTable<ListModel>(false, true);
         tree = getTree();
@@ -71,13 +71,6 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
         headerTableContainer.add(table);
         treeContainer.add(tree);
-
-        getDetailModel().getItemsChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                table.setRowData(new ArrayList<EntityModel>());
-            }
-        });
 
         actionPanel = createActionPanel(modelProvider);
         if (actionPanel != null) {
@@ -98,11 +91,22 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
         updateStyles();
     }
 
+    private final IEventListener itemsChangedListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            table.setRowData(new ArrayList<EntityModel>());
+        }
+    };
+
     @Override
     public void setMainTabSelectedItem(I selectedItem) {
         if (getDetailModel().getItems() == null) {
             table.setLoadingState(LoadingState.LOADING);
         }
+        if (!getDetailModel().getItemsChangedEvent().getListeners().contains(itemsChangedListener)) {
+            getDetailModel().getItemsChangedEvent().addListener(itemsChangedListener);
+        }
+
         tree.clearTree();
         tree.updateTree(getDetailModel());
     }

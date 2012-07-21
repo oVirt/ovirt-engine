@@ -7,6 +7,8 @@ import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.storage.VMsTree;
@@ -17,8 +19,9 @@ public class SubTabStorageVmView extends AbstractSubTabTreeView<VMsTree<StorageV
         implements SubTabStorageVmPresenter.ViewDef {
 
     @Inject
-    public SubTabStorageVmView(SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> modelProvider, ApplicationConstants constants) {
-        super(modelProvider, constants);
+    public SubTabStorageVmView(SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> modelProvider,
+            ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
+        super(modelProvider, constants, templates, resources);
     }
 
     @Override
