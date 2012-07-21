@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.widget.tree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.compat.Event;
@@ -42,7 +44,8 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> extends Composite {
 
     protected final Tree tree;
-    protected ArrayList<TreeItem> oldTreeItems;
+    protected Map<Object, Boolean> oldItemStatesMap;
+    protected Map<Object, TreeItem> oldRootItemsMap;
     protected ArrayList<Object> selectedItems;
     protected ArrayList<Object> newSelectedItems;
 
@@ -70,6 +73,8 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
         selectedItems = new ArrayList<Object>();
         newSelectedItems = new ArrayList<Object>();
+        oldRootItemsMap = new HashMap<Object, TreeItem>();
+        oldItemStatesMap = new HashMap<Object, Boolean>();
         isMultiSelection = true;
 
         tree.addOpenHandler(treeOpenHandler);
@@ -122,16 +127,20 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     private void saveTreeState() {
-        oldTreeItems = new ArrayList<TreeItem>();
+        oldItemStatesMap.clear();
 
         for (int i = 0; i < tree.getItemCount(); i++) {
-            TreeItem root = tree.getItem(i);
-            oldTreeItems.add(root);
+            TreeItem rootItem = tree.getItem(i);
+            oldRootItemsMap.put(rootItem.getUserObject(), rootItem);
+            saveTreeItemState(rootItem);
+        }
+    }
 
-            for (int n = 0; n < root.getChildCount(); n++) {
-                TreeItem node = root.getChild(n);
-                oldTreeItems.add(node);
-            }
+    private void saveTreeItemState(TreeItem item) {
+        oldItemStatesMap.put(item.getUserObject(), item.getState());
+
+        for (int n = 0; n < item.getChildCount(); n++) {
+            saveTreeItemState(item.getChild(n));
         }
     }
 
@@ -139,17 +148,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         newSelectedItems.clear();
 
         for (int i = 0; i < tree.getItemCount(); i++) {
-            TreeItem root = tree.getItem(i);
-            root.setState(getItemOldState(root));
-            if (isRootSelectionEnabled)
-                updateItemSelection(root);
-
-            for (int n = 0; n < root.getChildCount(); n++) {
-                TreeItem node = root.getChild(n);
-                node.setState(getItemOldState(node));
-                if (isNodeSelectionEnabled)
-                    updateItemSelection(node);
-            }
+            updateItemSelection(tree.getItem(i));
         }
 
         selectedItems.clear();
@@ -157,13 +156,10 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         onItemsSelection();
     }
 
-    private boolean getItemOldState(TreeItem treeItem) {
-        for (TreeItem oldTreeItem : oldTreeItems) {
-            Object oldEntity = (Object) oldTreeItem.getUserObject();
-            Object entity = (Object) treeItem.getUserObject();
-
-            if (oldEntity != null && entity != null && oldEntity.equals(entity)) {
-                return oldTreeItem.getState();
+    private boolean getItemOldState(Object userObject) {
+        for (Object oldUserObject : oldItemStatesMap.keySet()) {
+            if (oldUserObject != null && userObject != null && oldUserObject.equals(userObject)) {
+                return oldItemStatesMap.get(oldUserObject);
             }
         }
         return false;
@@ -201,7 +197,13 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
             }
 
             if (getNodeObjects(root).isEmpty()) {
-                emptyRoot(rootItem);
+                boolean isOpen = getItemOldState(rootItem.getUserObject());
+                if (isOpen) {
+                    rootItem = oldRootItemsMap.get(rootItem.getUserObject());
+                }
+                else {
+                    rootItem.addItem(getEmptyRoot());
+                }
             } else {
                 for (N node : getNodeObjects(root)) {
                     TreeItem nodeItem = getNodeItem(node);
@@ -228,10 +230,6 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         }
     }
 
-    protected void emptyRoot(TreeItem rootItem) {
-
-    }
-
     protected abstract TreeItem getRootItem(R rootObject);
 
     protected abstract TreeItem getNodeItem(N nodeObject);
@@ -241,6 +239,10 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     protected TreeItem getNodeHeader() {
+        return null;
+    }
+
+    protected TreeItem getEmptyRoot() {
         return null;
     }
 
@@ -359,9 +361,10 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
     private void onItemSelection(TreeItem item, boolean enforceSelection) {
         Object entity = (Object) item.getUserObject();
+        boolean isRootItem = item.getParentItem() == null;
+        boolean isNodeItem = item.getParentItem() != null;
 
-        if ((item.getParentItem() == null && !isRootSelectionEnabled) ||
-                (item.getParentItem() != null && !isNodeSelectionEnabled)) {
+        if ((isRootItem && !isRootSelectionEnabled) || (isNodeItem && !isNodeSelectionEnabled)) {
             return;
         }
 
@@ -386,10 +389,13 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
     private void updateItemSelection(TreeItem item) {
         Object entity = (Object) item.getUserObject();
+        boolean isRootItem = item.getParentItem() == null;
+
         if (entity == null) {
             return;
         }
 
+        // Update selected Items
         boolean selected = false;
         for (Object selectedEntity : selectedItems) {
             if (entity.equals(selectedEntity) && !newSelectedItems.contains(selectedEntity)) {
@@ -398,17 +404,21 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
             }
         }
 
-        Element element;
-        if (item.getParentItem() == null) {
-            element = item.getElement().getElementsByTagName("table").getItem(0); //$NON-NLS-1$
-        }
-        else {
-            element = item.getElement();
-        }
-
+        // Update element's style
+        Element element = isRootItem ?
+                item.getElement().getElementsByTagName("table").getItem(0) : item.getElement(); //$NON-NLS-1$
         if (!NODE_HEADER.equals(item.getUserObject())) {
             element.getStyle().setBackgroundColor(selected ? "#C3D0E0" : "transparent"); //$NON-NLS-1$ //$NON-NLS-2$
             element.getStyle().setProperty("borderBottom", "1px solid white"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+
+        // Set item's state
+        item.setState(getItemOldState(item.getUserObject()));
+
+        // Recursively update children
+        for (int n = 0; n < item.getChildCount(); n++) {
+            TreeItem node = item.getChild(n);
+            updateItemSelection(node);
         }
     }
 

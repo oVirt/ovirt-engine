@@ -57,9 +57,8 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
     }
 
     @Override
-    protected void emptyRoot(TreeItem rootItem) {
-        super.emptyRoot(rootItem);
-        rootItem.addItem(new Label("Loading...")); //$NON-NLS-1$
+    protected TreeItem getEmptyRoot() {
+        return new TreeItem(new Label(constants.loadingLabel()));
     }
 
     @Override
