@@ -182,11 +182,11 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
     }
 
     public NetworkStatus getStatus() {
-        return cluster == null ? null : NetworkStatus.forValue(cluster.getstatus());
+        return cluster == null ? null : cluster.getstatus();
     }
 
     public void setStatus(NetworkStatus value) {
-        cluster.setstatus(value.getValue());
+        cluster.setstatus(value);
     }
 
     public boolean getstp() {

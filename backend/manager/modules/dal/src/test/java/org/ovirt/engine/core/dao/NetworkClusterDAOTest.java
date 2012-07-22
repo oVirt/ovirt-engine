@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
@@ -139,7 +140,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        existingNetworkCluster.setstatus(existingNetworkCluster.getstatus() * 2);
+        existingNetworkCluster.setRequired(!existingNetworkCluster.isRequired());
 
         dao.update(existingNetworkCluster);
 
@@ -160,7 +161,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdateStatus() {
-        existingNetworkCluster.setstatus(existingNetworkCluster.getstatus() * 2);
+        existingNetworkCluster.setstatus(NetworkStatus.NonOperational);
 
         dao.updateStatus(existingNetworkCluster);
 

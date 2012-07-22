@@ -50,7 +50,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             getNetworkClusterDAO().update(getParameters().getNetworkCluster());
         } else {
             getNetworkClusterDAO().save(new network_cluster(getVdsGroupId(), getNetwork().getId(),
-                    NetworkStatus.Operational.getValue(), false, getNetwork().isRequired()));
+                    NetworkStatus.Operational, false, getNetwork().isRequired()));
         }
         if (getNetwork().getCluster().getis_display()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
@@ -97,7 +97,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 }
             }
 
-            networkCluster.setstatus(status.getValue());
+            networkCluster.setstatus(status);
             DbFacade.getInstance().getNetworkClusterDAO().updateStatus(networkCluster);
         }
     }

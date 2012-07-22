@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
+import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -24,7 +25,7 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
                     network_cluster entity = new network_cluster();
                     entity.setcluster_id(Guid.createGuidFromString(rs.getString("cluster_id")));
                     entity.setnetwork_id(Guid.createGuidFromString(rs.getString("network_id")));
-                    entity.setstatus(rs.getInt("status"));
+                    entity.setstatus(NetworkStatus.forValue(rs.getInt("status")));
                     entity.setis_display(rs.getBoolean("is_display"));
                     entity.setRequired(rs.getBoolean("required"));
                     return entity;

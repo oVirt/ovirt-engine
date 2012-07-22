@@ -21,7 +21,7 @@ public class network_cluster implements BusinessEntity<NetworkClusterId> {
     private NetworkClusterId id = new NetworkClusterId();
 
     @Column(name = "status")
-    private Integer status = 0;
+    private NetworkStatus status = NetworkStatus.NonOperational;
 
     @Column(name = "is_display")
     private Boolean isDisplay = false;
@@ -77,7 +77,7 @@ public class network_cluster implements BusinessEntity<NetworkClusterId> {
     }
 
 
-    public network_cluster(Guid cluster_id, Guid network_id, int status, boolean isDisplay, boolean required) {
+    public network_cluster(Guid cluster_id, Guid network_id, NetworkStatus status, boolean isDisplay, boolean required) {
         id.setClusterId(cluster_id);
         id.setNetworkId(network_id);
         this.status = status;
@@ -111,11 +111,11 @@ public class network_cluster implements BusinessEntity<NetworkClusterId> {
         id.setNetworkId(value);
     }
 
-    public int getstatus() {
+    public NetworkStatus getstatus() {
         return this.status;
     }
 
-    public void setstatus(int value) {
+    public void setstatus(NetworkStatus value) {
         this.status = value;
     }
 
