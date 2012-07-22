@@ -134,9 +134,9 @@ run_post_upgrade() {
 # The second argument is the label to use while notifying
 # the user about the running of the script
 execute_commands_in_dir() {
-    for file in $(ls -1 upgrade/$1/*.sql); do
-       echo "Running $2 script $file ..."
-       execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    for sqlfile in $(ls -1 upgrade/$1/*.sql); do
+       echo "Running $2 script $sqlfile ..."
+       execute_file $sqlfile ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     done
 }
 
@@ -248,6 +248,12 @@ run_upgrade_files() {
                     last=$xver
                     comment="Installed already by ${installed_version}"
                 else
+                    # force pre upgrade to run in case no md5 change was
+                    # found but we still upgrade, like in db restore.
+                    if [ $updated -eq 0 ]; then
+                       run_pre_upgrade
+                       updated=1
+                    fi
                     echo "Running upgrade script $file "
                     execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} 1 > /dev/null
                     code=$?
