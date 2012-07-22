@@ -23,6 +23,8 @@ public class SetupNetworksParameters extends VdsActionParameters {
             message = "VALIDATION.CONNECTIVITY.TIMEOUT.INVALID")
     private Integer conectivityTimeout;
 
+    private List<String> networksToSync;
+
     /**
      * @param interfaces Interfaces that are connected to a network or bond
      */
@@ -60,6 +62,14 @@ public class SetupNetworksParameters extends VdsActionParameters {
 
     public void setConectivityTimeout(Integer conectivityTimeout) {
         this.conectivityTimeout = conectivityTimeout;
+    }
+
+    public List<String> getNetworksToSync() {
+        return networksToSync;
+    }
+
+    public void setNetworksToSync(List<String> networksToSync) {
+        this.networksToSync = networksToSync;
     }
 }
 

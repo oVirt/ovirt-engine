@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -49,11 +50,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
-        validateAndExpectNoViolations(helper);
-        assertNoBondsModified(helper);
-        assertNoNetworksModified(helper);
-        assertNoNetworksRemoved(helper);
-        assertNoBondsRemoved(helper);
+        validateAndAssertNoChanges(helper);
     }
 
     @Test
@@ -191,6 +188,171 @@ public class SetupNetworksHelperTest {
         nic.setAddress(RandomUtils.instance().nextString(10));
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    /* --- Tests for sync network functionality --- */
+
+    @Test
+    public void dontSyncNetworkAlreadyInSync() {
+        Network net = createNetwork("net");
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForSync(nic));
+
+        validateAndAssertNoChanges(helper);
+    }
+
+    @Test
+    public void unmanagedNetworkNotSynced() {
+        VdsNetworkInterface nic = createNic("nic0", "net");
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForSync(nic));
+
+        validateAndExpectNoViolations(helper);
+        assertTrue(helper.getNetworks().isEmpty());
+    }
+
+    @Test
+    public void unsyncedNetworkRemoved() {
+        Network net = createNetwork("net");
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBridged(!net.isVmNetwork());
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic);
+
+        nic.setNetworkName(null);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndExpectNoViolations(helper);
+        assertNoBondsModified(helper);
+        assertNoNetworksModified(helper);
+        assertNetworkRemoved(helper, net.getName());
+        assertNoBondsRemoved(helper);
+    }
+
+    @Test
+    public void unsyncedNetworkModified() {
+        Network net = createNetwork("net");
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBridged(!net.isVmNetwork());
+        nic.setBootProtocol(NetworkBootProtocol.None);
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic);
+
+        nic.setBootProtocol(NetworkBootProtocol.Dhcp);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_NOT_IN_SYNC);
+    }
+
+    @Test
+    public void unsyncedNetworkNotModified() {
+        Network net = createNetwork("net");
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBridged(!net.isVmNetwork());
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndAssertNoChanges(helper);
+    }
+
+    @Test
+    public void unsyncedNetworkMovedToAnotherNic() {
+        Network net = createNetwork("net");
+        VdsNetworkInterface nic1 = createNicSyncedWithNetwork("nic0", net);
+        nic1.setBridged(!net.isVmNetwork());
+        VdsNetworkInterface nic2 = createNic("nic1", null);
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic1, nic2);
+
+        nic2.setNetworkName(nic1.getNetworkName());
+        nic1.setNetworkName(null);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic1, nic2));
+
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_NOT_IN_SYNC);
+    }
+
+    @Test
+    public void networkToSyncMovedToAnotherNic() {
+        Network net = createNetwork("net");
+        VdsNetworkInterface nic1 = createNicSyncedWithNetwork("nic0", net);
+        nic1.setBridged(!net.isVmNetwork());
+        VdsNetworkInterface nic2 = createNic("nic1", null);
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic1, nic2);
+
+        nic2.setNetworkName(nic1.getNetworkName());
+        nic1.setNetworkName(null);
+        SetupNetworksHelper helper = createHelper(createParametersForSync(nic2.getNetworkName(), nic1, nic2));
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void syncNetworkOnVmNetwork() {
+        Network net = createNetwork("net");
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBridged(!net.isVmNetwork());
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForSync(nic));
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void dontSyncNetworkOnDefaultMtu() {
+        Network net = createNetwork("net");
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setMtu(RandomUtils.instance().nextInt());
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForSync(nic));
+
+        validateAndAssertNoChanges(helper);
+    }
+
+    @Test
+    public void syncNetworkOnMtu() {
+        Network net = createNetwork("net");
+        net.setMtu(RandomUtils.instance().nextInt());
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setMtu(RandomUtils.instance().nextInt());
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForSync(nic));
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void syncNetworkOnVlan() {
+        Network net = createNetwork("net");
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setVlanId(RandomUtils.instance().nextInt());
+
+        mockExistingNetworks(net);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForSync(nic));
 
         validateAndAssertNetworkModified(helper, net);
     }
@@ -497,6 +659,14 @@ public class SetupNetworksHelperTest {
                 violations.contains(violation));
     }
 
+    private void validateAndAssertNoChanges(SetupNetworksHelper helper) {
+        validateAndExpectNoViolations(helper);
+        assertNoBondsModified(helper);
+        assertNoNetworksModified(helper);
+        assertNoNetworksRemoved(helper);
+        assertNoBondsRemoved(helper);
+    }
+
     private void validateAndAssertNetworkModified(SetupNetworksHelper helper, Network net) {
         validateAndExpectNoViolations(helper);
         assertNoBondsModified(helper);
@@ -567,7 +737,7 @@ public class SetupNetworksHelperTest {
      * @return A network with some defaults and the given name,
      */
     private Network createNetwork(String networkName) {
-        return new Network("", "", Guid.NewGuid(), networkName, "", "", 0, 100, false, 0, true);
+        return new Network("", "", Guid.NewGuid(), networkName, "", "", 0, null, false, 0, true);
     }
 
     /**
@@ -734,6 +904,32 @@ public class SetupNetworksHelperTest {
         }
 
         return parameters;
+    }
+
+    /**
+     * Create parameters for the given NIC, and the nic's network name set to be synchronized.
+     *
+     * @param nic
+     *            The NIC to use in parameters.
+     * @return Parameters with the NIC.
+     */
+    private SetupNetworksParameters createParametersForSync(VdsNetworkInterface nic) {
+        return createParametersForSync(nic.getNetworkName(), nic);
+    }
+
+    /**
+     * Create parameters for the given NICs, and the given network name to be synchronized.
+     *
+     * @param nics
+     *            The NICs to use in parameters.
+     * @param network
+     *            The name of network to be synchronized.
+     * @return Parameters with the NIC.
+     */
+    private SetupNetworksParameters createParametersForSync(String network, VdsNetworkInterface... nics) {
+        SetupNetworksParameters params = createParametersForNics(nics);
+        params.setNetworksToSync(Collections.singletonList(network));
+        return params;
     }
 
     private void mockExistingNetworks(Network... networks) {

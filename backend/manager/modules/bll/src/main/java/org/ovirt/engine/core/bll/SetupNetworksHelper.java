@@ -11,9 +11,9 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -148,11 +148,28 @@ public class SetupNetworksHelper {
 
     private Map<String, VdsNetworkInterface> getExistingIfaces() {
         if (existingIfaces == null) {
-            existingIfaces = Entities.entitiesByName(
-                    getDbFacade().getInterfaceDAO().getAllInterfacesForVds(params.getVdsId()));
+            List<VdsNetworkInterface> ifaces =
+                    getDbFacade().getInterfaceDAO().getAllInterfacesForVds(params.getVdsId());
+
+            for (VdsNetworkInterface iface : ifaces) {
+                iface.setNetworkImplementationDetails(
+                        NetworkUtils.calculateNetworkImplementationDetails(getExistingClusterNetworks(), iface));
+            }
+
+            existingIfaces = Entities.entitiesByName(ifaces);
         }
 
         return existingIfaces;
+    }
+
+    private VdsNetworkInterface getExistingIfaceByNetwork(String network) {
+        for (VdsNetworkInterface iface : getExistingIfaces().values()) {
+            if (network.equals(iface.getNetworkName())) {
+                return iface;
+            }
+        }
+
+        return null;
     }
 
     protected DbFacade getDbFacade() {
@@ -178,10 +195,21 @@ public class SetupNetworksHelper {
 
             // check if network exists on cluster
             if (getExistingClusterNetworks().containsKey(networkName)) {
-                if (networkWasModified(iface)) {
-                    modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
+                VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
+                if (existingIface != null && !networkName.equals(existingIface.getNetworkName())) {
+                    existingIface = getExistingIfaceByNetwork(networkName);
                 }
 
+                if (existingIface != null && existingIface.getNetworkImplementationDetails() != null
+                        && !existingIface.getNetworkImplementationDetails().isInSync()) {
+                    if (networkShouldBeSynced(networkName)) {
+                        modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
+                    } else if (networkWasModified(iface)) {
+                        violations.add(VdcBllMessages.NETWORK_NOT_IN_SYNC);
+                    }
+                } else if (networkWasModified(iface)) {
+                    modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
+                }
             } else if (unmanagedNetworkChanged(iface)) {
                 violations.add(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
             }
@@ -221,6 +249,17 @@ public class SetupNetworksHelper {
         return !ObjectUtils.equals(iface.getNetworkName(), existingIface.getNetworkName())
                 || iface.getBootProtocol() != existingIface.getBootProtocol()
                 || staticBootProtoPropertiesChanged(iface, existingIface);
+    }
+
+    /**
+     * Check if network's logical configuration should be synchronized (as sent in parameters).
+     *
+     * @param network
+     *            The network to check if synchronized.
+     * @return <code>true</code> in case network should be sunchronized, <code>false</code> otherwise.
+     */
+    private boolean networkShouldBeSynced(String network) {
+        return params.getNetworksToSync() != null && params.getNetworksToSync().contains(network);
     }
 
     /**
