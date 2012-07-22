@@ -55,7 +55,7 @@ public class NetworkMapper {
         if (model.isSetUsages()) {
             List<NetworkUsage> networkUsages = new ArrayList<NetworkUsage>();
             for (String usage : model.getUsages().getUsages()) {
-                networkUsages.add(map(usage,null));
+                networkUsages.add(NetworkUsage.fromValue(usage));
             }
             entity.getCluster().setis_display(networkUsages.contains(NetworkUsage.DISPLAY));
             entity.setVmNetwork(networkUsages.contains(NetworkUsage.VM));
@@ -143,14 +143,6 @@ public class NetworkMapper {
                 return null;
             }
         }
-    }
-
-    @Mapping(from = String.class, to = NetworkUsage.class)
-    public static NetworkUsage map(String candidate, NetworkUsage template) {
-        if (candidate == null) {
-            return null;
-        }
-        return NetworkUsage.valueOf(candidate);
     }
 
 }
