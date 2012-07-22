@@ -223,6 +223,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                             ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
                             if (clusterList == null || clusterList.size() == 0) {
                                 qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaVdsGroup>());
+                                qModel.StopProgress();
                                 return;
                             }
                             ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
