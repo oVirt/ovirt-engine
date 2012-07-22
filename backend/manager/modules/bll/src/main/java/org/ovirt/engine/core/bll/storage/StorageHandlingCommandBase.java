@@ -374,8 +374,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(),
-                    (getStoragePoolName() == null) ? "" : getStoragePoolName());
+            jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), getStoragePoolName());
+            jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVdsName());
         }
         return jobProperties;
     }
