@@ -123,6 +123,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         final VM vm = getVm();
         final IVdcUser user = getCurrentUser();
         vm.setConsoleUserId(user.getUserId());
+        vm.setguest_cur_user_name(user.getFQN());
 
         // If the virtual machine has the allow reconnect flag or the user
         // needed additional permissions to connect to the console then we just

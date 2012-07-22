@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.users;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -141,5 +142,20 @@ public class VdcUser implements IVdcUser, Serializable {
     @Override
     public void setAdmin(boolean isAdmin) {
         this.mIsAdmin = isAdmin;
+    }
+
+    /**
+     * return the FQDN of a user in a form of user@domain. if the domain is empty then only return the username
+     */
+    @Override
+    public String getFQN() {
+        String domain = getDomainControler();
+        String username = getUserName();
+
+        if (StringUtils.isEmpty(username) || username.contains("@") || StringUtils.isEmpty(domain)) {
+            return username;
+        } else {
+            return username + "@" + domain;
+        }
     }
 }

@@ -45,4 +45,22 @@ public class VdcUserTest {
         user.setAdmin(false);
         assertFalse("after being set not to be, the user should be an admin", user.isAdmin());
     }
+
+    @Test
+    public void getUserFQN() {
+        VdcUser user = new VdcUser();
+
+        // expect null FQN when no username is set
+        assertTrue(user.getFQN() == null);
+
+        // expect only username if the domain is not set or empty
+        user.setUserName("Legolas");
+        user.setDomainControler("");
+        assertTrue(user.getFQN().equals("Legolas"));
+
+        // expect user@example.com in case both username and domains are set and non-empty
+        user.setDomainControler("MiddleEarth.com");
+        assertTrue(user.getFQN().equals("Legolas@MiddleEarth.com"));
+
+    }
 }

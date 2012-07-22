@@ -50,7 +50,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     public boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", vm.getId())
-                .addValue("console_user_id", vm.getConsoleUserId());
+                .addValue("console_user_id", vm.getConsoleUserId())
+                .addValue("guest_cur_user_name", vm.getguest_cur_user_name());
 
         Map<String, Object> results = getCallsHandler().executeModification("UpdateConsoleUserWithOptimisticLocking", parameterSource);
 

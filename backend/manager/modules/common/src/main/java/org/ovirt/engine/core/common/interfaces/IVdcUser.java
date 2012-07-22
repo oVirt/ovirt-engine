@@ -42,4 +42,6 @@ public interface IVdcUser {
     String getGroupIds();
 
     void setGroupIds(String groupIds);
+
+    String getFQN();
 }

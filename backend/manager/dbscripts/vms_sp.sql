@@ -196,11 +196,13 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION UpdateConsoleUserWithOptimisticLocking(
     v_vm_guid UUID,
     v_console_user_id UUID,
+    v_guest_cur_user_name VARCHAR(255),
     OUT v_updated BOOLEAN)
     AS $procedure$
 BEGIN
     UPDATE vm_dynamic SET
-        console_user_id = v_console_user_id
+        console_user_id = v_console_user_id,
+        guest_cur_user_name = v_guest_cur_user_name
     WHERE
         vm_guid = v_vm_guid AND
         (console_user_id = v_console_user_id OR console_user_id IS NULL);

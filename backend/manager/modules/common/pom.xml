@@ -44,6 +44,11 @@
       <version>${slf4j-jdk14.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+       <groupId>commons-lang</groupId>
+       <artifactId>commons-lang</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
