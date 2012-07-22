@@ -28,9 +28,6 @@ public class NetworkMapper {
         if (model.isSetDescription()) {
             entity.setdescription(model.getDescription());
         }
-        if (model.isSetStatus()) {
-            entity.setStatus(map(NetworkStatus.fromValue(model.getStatus().getState()), null));
-        }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
             entity.setstorage_pool_id(new Guid(model.getDataCenter().getId()));
         }
@@ -63,11 +60,11 @@ public class NetworkMapper {
             entity.setis_display(networkUsages.contains(NetworkUsage.DISPLAY));
             entity.setVmNetwork(networkUsages.contains(NetworkUsage.VM));
         }
-        if (model.isSetDisplay()) { // for backward compatibility use display tag or usage tag
-            entity.setis_display(model.isDisplay());
-        }
         if (model.isSetMtu()) {
             entity.setMtu(model.getMtu());
+        }
+        if (model.isSetDisplay()) { // for backward compatibility use display tag or usage tag
+            entity.setis_display(model.isDisplay());
         }
         if (model.isSetRequired()) {
             entity.setRequired(model.isRequired());
@@ -81,9 +78,6 @@ public class NetworkMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getname());
         model.setDescription(entity.getdescription());
-        if (entity.getStatus() != null) {
-            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
-        }
         if (entity.getstorage_pool_id() != null) {
             DataCenter dataCenter = new DataCenter();
             dataCenter.setId(entity.getstorage_pool_id().toString());
@@ -102,16 +96,19 @@ public class NetworkMapper {
             model.getVlan().setId(entity.getvlan_id());
         }
         model.setStp(entity.getstp());
-        model.setDisplay(entity.getis_display());
         model.setMtu(entity.getMtu());
 
         model.setUsages(new Usages());
-        if (entity.getis_display() != null && entity.getis_display()) {
-            model.getUsages().getUsages().add(NetworkUsage.DISPLAY.name());
-        }
         if (entity.isVmNetwork()) {
             model.getUsages().getUsages().add(NetworkUsage.VM.name());
         }
+        if (entity.getis_display() != null && entity.getis_display()) {
+            model.getUsages().getUsages().add(NetworkUsage.DISPLAY.name());
+        }
+        if (entity.getStatus() != null) {
+            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
+        }
+        model.setDisplay(entity.getis_display());
         model.setRequired(entity.isRequired());
         return model;
     }
