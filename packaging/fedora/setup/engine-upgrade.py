@@ -163,7 +163,7 @@ def askYesNo(question=None):
     else:
         return askYesNo(question)
 
-def checkJbossService():
+def checkJbossService(service=basedefs.ENGINE_SERVICE_NAME):
     """
     Ask user to stop jboss service before
     upgrading ovirt-engine
@@ -173,7 +173,7 @@ def checkJbossService():
     """
     logging.debug("checking the status of jbossas service")
     cmd = [
-        basedefs.EXEC_SERVICE, basedefs.ENGINE_SERVICE_NAME, "status",
+        basedefs.EXEC_SERVICE, service , "status",
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=False)
 
