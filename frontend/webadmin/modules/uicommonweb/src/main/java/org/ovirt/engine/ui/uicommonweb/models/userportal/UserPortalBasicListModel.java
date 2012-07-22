@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
-import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
@@ -144,8 +144,8 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetUserVmsByUserIdAndGroups,
-                new GetUserVmsByUserIdAndGroupsParameters(Frontend.getLoggedInUser().getUserId()),
+        Frontend.RunQuery(VdcQueryType.GetAllVms,
+                new VdcQueryParametersBase(),
                 _asyncQuery);
 
         AsyncQuery _asyncQuery1 = new AsyncQuery();
