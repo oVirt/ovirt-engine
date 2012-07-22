@@ -104,7 +104,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             // 'DeleteImageGroup'
                             // VDS Command should take care of removing all the snapshots from
                             // the storage).
-                            while (!imageTemplate.equals(currentGuid) && !currentGuid.equals(Guid.Empty)) {
+                            while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
                                 RemoveChildren(currentGuid);
 
                                 DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
