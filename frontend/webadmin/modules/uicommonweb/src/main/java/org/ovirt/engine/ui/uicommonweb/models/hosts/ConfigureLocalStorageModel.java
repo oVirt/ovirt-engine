@@ -382,9 +382,13 @@ public class ConfigureLocalStorageModel extends Model {
         }
 
         // Choose default CPU name to match host.
-        if (host.getCpuName() != null && getCluster().getCPU().getSelectedItem() != null) {
-            getCluster().getCPU().setSelectedItem(Linq.FirstOrDefault((List<ServerCpu>) getCluster().getCPU()
-                    .getItems(), new Linq.ServerCpuPredicate(host.getCpuName().getCpuName())));
+        List<ServerCpu> serverCpus = (List<ServerCpu>) getCluster().getCPU().getItems();
+        if (host.getCpuName() != null) {
+            getCluster().getCPU().setSelectedItem(Linq.FirstOrDefault(
+                    serverCpus, new Linq.ServerCpuPredicate(host.getCpuName().getCpuName())));
+        }
+        else {
+            getCluster().getCPU().setSelectedItem(serverCpus.isEmpty() ? null : serverCpus.get(0));
         }
 
         // Always choose a available storage name.
