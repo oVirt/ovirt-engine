@@ -75,7 +75,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 removeImageFromDB();
             }
         } else {
-            log.warn("RemoveImageCommand::ExecuteCommand: DiskImage is null, nothing to remove");
+            log.warn("DiskImage is null, nothing to remove");
         }
         setSucceeded(true);
     }
@@ -116,7 +116,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 else {
                                     currentGuid = Guid.Empty;
                                     log.warnFormat(
-                                            "RemoveImageCommand::RemoveImageFromDB: 'image' (snapshot of image '{0}') is null, cannot remove it.",
+                                            "'image' (snapshot of image '{0}') is null, cannot remove it.",
                                             diskImage.getImageId());
                                 }
                             }
@@ -124,7 +124,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             getBaseDiskDao().remove(diskImage.getId());
                             getVmDeviceDAO().remove(new VmDeviceId(diskImage.getId(), null));
                         } else {
-                            log.warn("RemoveImageCommand::RemoveImageFromDB: DiskImage is null, nothing to remove.");
+                            log.warn("DiskImage is null, nothing to remove.");
                         }
                         return null;
                     }
