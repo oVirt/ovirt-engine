@@ -890,7 +890,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         if (getVm() != null) {
             VmHandler.UnLockVm(getVm());
 
-            UpdateVmImSpm();
+            updateVmInSpm();
         }
 
         else {
@@ -901,7 +901,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         setSucceeded(true);
     }
 
-    protected boolean UpdateVmImSpm() {
+    protected boolean updateVmInSpm() {
         return VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
                 new ArrayList<VM>(Arrays.asList(new VM[] { getVm() })));
     }
