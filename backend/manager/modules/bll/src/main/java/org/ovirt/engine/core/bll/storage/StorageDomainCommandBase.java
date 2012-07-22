@@ -367,7 +367,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     private static final class LastTimeUsedAsMasterComp implements Comparator<storage_domains> {
         @Override
         public int compare(storage_domains o1, storage_domains o2) {
-            return Long.compare(o1.getLastTimeUsedAsMaster(), o2.getLastTimeUsedAsMaster());
+            // TODO: When moving to JDK7 - this can be replaced with
+            // Long.compare(o1.getLastTimeUsedAsMaster(),o2.getLastTimeUsedAsMaster());
+            return (o1.getLastTimeUsedAsMaster() < o2.getLastTimeUsedAsMaster()) ? -1
+                    : ((o1.getLastTimeUsedAsMaster() == o2.getLastTimeUsedAsMaster()) ? 0 : 1);
         }
     }
 }
