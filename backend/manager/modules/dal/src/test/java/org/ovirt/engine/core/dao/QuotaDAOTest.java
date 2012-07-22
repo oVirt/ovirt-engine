@@ -19,7 +19,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class QuotaDAOTest extends BaseDAOTestCase {
     private QuotaDAO dao;
     private static final Long unlimited = -1L;
-    private static final int NUM_QUOTAS = 4;
+    private static final int STORAGE_NUM_QUOTAS = 4;
+    private static final int VDS_GRUOP_NUM_QUOTAS = 3;
 
     @Override
     public void setUp() throws Exception {
@@ -465,7 +466,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetRelevantQuotasExistingStorage() throws Exception {
         // there is one specific quota and all the general ones defined on this storage domain
-        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, NUM_QUOTAS);
+        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, STORAGE_NUM_QUOTAS);
     }
 
     /**
@@ -474,7 +475,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetRelevantQuotasExistingStorageNoSpecificQuotas() throws Exception {
         // there are no specific quotas, but all the general quotas relate to the storage pool containing this domain
-        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOAMIN_NFS_ISO, NUM_QUOTAS - 1);
+        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOAMIN_NFS_ISO, STORAGE_NUM_QUOTAS - 1);
     }
 
     /**
@@ -500,7 +501,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetRelevantQuotasExistingVdsGroup() throws Exception {
         // there is one specific quota and all the general ones defined on this VDS Group
-        assertGetAllRelevantQuoatsForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS, NUM_QUOTAS);
+        assertGetAllRelevantQuoatsForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS, VDS_GRUOP_NUM_QUOTAS);
     }
 
     /**
@@ -509,7 +510,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetRelevantQuotasExistingVdsGroupNoSpecificQuotas() throws Exception {
         // there are no specific quotas, but all the general quotas relate to the storage pool containing this group
-        assertGetAllRelevantQuoatsForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS, NUM_QUOTAS - 1);
+        assertGetAllRelevantQuoatsForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS, VDS_GRUOP_NUM_QUOTAS - 1);
     }
 
     /**
