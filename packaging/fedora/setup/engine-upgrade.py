@@ -244,6 +244,7 @@ class MYum():
 
     def __initbase(self):
         self.yumbase = yum.YumBase()
+        self.yumbase.preconf.disabled_plugins = ['versionlock']
         self.yumbase.conf.cache = False # Do not relay on existing cache
         self.yumbase.cleanMetadata()
         self.yumbase.cleanSqlite()
@@ -308,13 +309,9 @@ class MYum():
 
         # Get packages info from yum
         rpms = RPM_LIST.split()
-        self._unlock()
-        try:
-            logging.debug("Getting list of packages to upgrade")
-            pkgs = self.yumbase.doPackageLists(patterns=rpms)
-            upkgs = self.yumbase.doPackageLists(pkgnarrow="updates", patterns=rpms)
-        finally:
-            self._lock()
+        logging.debug("Getting list of packages to upgrade")
+        pkgs = self.yumbase.doPackageLists(patterns=rpms)
+        upkgs = self.yumbase.doPackageLists(pkgnarrow="updates", patterns=rpms)
 
         # Save update candidates
         if upkgs.updates:
