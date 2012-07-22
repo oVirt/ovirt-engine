@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
 
 import static org.easymock.classextension.EasyMock.expect;
+import org.ovirt.engine.core.common.businessentities.network_cluster;
 
 public abstract class AbstractBackendNetworksResourceTest
         extends AbstractBackendCollectionResourceTest<Network, org.ovirt.engine.core.common.businessentities.Network, AbstractBackendNetworksResource> {
@@ -69,8 +70,10 @@ public abstract class AbstractBackendNetworksResourceTest
     }
 
     static org.ovirt.engine.core.common.businessentities.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.Network entity, boolean isDisplay, boolean isRequired, int index) {
-        expect(entity.getis_display()).andReturn(isDisplay).anyTimes();
-        expect(entity.isRequired()).andReturn(isRequired).anyTimes();
+        network_cluster networkCluster = new network_cluster();
+        networkCluster.setis_display(isDisplay);
+        networkCluster.setRequired(isRequired);
+        expect(entity.getCluster()).andReturn(networkCluster).anyTimes();
         return setUpEntityExpectations(entity, index);
      }
 

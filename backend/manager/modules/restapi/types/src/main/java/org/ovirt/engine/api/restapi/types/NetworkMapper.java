@@ -57,17 +57,17 @@ public class NetworkMapper {
             for (String usage : model.getUsages().getUsages()) {
                 networkUsages.add(map(usage,null));
             }
-            entity.setis_display(networkUsages.contains(NetworkUsage.DISPLAY));
+            entity.getCluster().setis_display(networkUsages.contains(NetworkUsage.DISPLAY));
             entity.setVmNetwork(networkUsages.contains(NetworkUsage.VM));
         }
         if (model.isSetMtu()) {
             entity.setMtu(model.getMtu());
         }
         if (model.isSetDisplay()) { // for backward compatibility use display tag or usage tag
-            entity.setis_display(model.isDisplay());
+            entity.getCluster().setis_display(model.isDisplay());
         }
         if (model.isSetRequired()) {
-            entity.setRequired(model.isRequired());
+            entity.getCluster().setRequired(model.isRequired());
         }
         return entity;
     }
@@ -102,14 +102,16 @@ public class NetworkMapper {
         if (entity.isVmNetwork()) {
             model.getUsages().getUsages().add(NetworkUsage.VM.name());
         }
-        if (entity.getis_display() != null && entity.getis_display()) {
+        if (entity.getCluster() != null && entity.getCluster().getis_display()) {
             model.getUsages().getUsages().add(NetworkUsage.DISPLAY.name());
         }
-        if (entity.getStatus() != null) {
-            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
+        if (entity.getCluster() != null) {
+            if (entity.getCluster().getstatus() != null) {
+                model.setStatus(StatusUtils.create(map(entity.getCluster().getstatus(), null)));
+            }
+            model.setDisplay(entity.getCluster().getis_display());
+            model.setRequired(entity.getCluster().isRequired());
         }
-        model.setDisplay(entity.getis_display());
-        model.setRequired(entity.isRequired());
         return model;
     }
 
