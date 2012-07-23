@@ -315,6 +315,10 @@ public interface Enums extends LocalizedEnums {
 
     String LunStatus___Unusable();
 
+    String DiskStorageType___LUN();
+
+    String DiskStorageType___IMAGE();
+
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
     String GlusterVolumeType___REPLICATE();
