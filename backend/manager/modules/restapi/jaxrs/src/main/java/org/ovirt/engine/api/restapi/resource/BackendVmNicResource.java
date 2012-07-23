@@ -54,29 +54,45 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
         //TODO: this is temporary mapping between engine boolean port mirroring parameter, and REST
         //      port mirroring network collection, next engine version will support the network collection
         //      in port mirroring
+        boolean fault = false;
+        String faultString = null;
+        boolean isPortMirroring = device.isSetPortMirroring() && device.getPortMirroring().isSetNetworks();
+        boolean isPortMirroringExceeded =
+                isPortMirroring && device.getPortMirroring().getNetworks().getNetworks().size() > 1;
+        isPortMirroring = isPortMirroring && device.getPortMirroring().getNetworks().getNetworks().size() == 1;
 
-        // if port mirroring exists we check that the network id is equals to the nic network name
-        if (device.isSetPortMirroring() &&
-                device.getPortMirroring().isSetNetworks()
-                &&
-                device.getPortMirroring().getNetworks().getNetworks().size() == 1
-                &&
-                device.getPortMirroring().getNetworks().getNetworks().get(0).isSetId()
-                &&
-                device.isSetNetwork() && device.getNetwork().isSetId() &&
-                !device.getNetwork()
+        // Check if user set more then one network in port mirroring networks collection
+        if (isPortMirroringExceeded) {
+            fault = true;
+            faultString = "Cannot set more than one network in port mirroring mode";
+        }
+
+        if (!fault && isPortMirroring) {
+            boolean isNetwork = device.isSetNetwork() && device.getNetwork().isSetId();
+            // if Nics network set no need to check the Nics network from the engine
+            if (isNetwork) {
+                if (!device.getNetwork()
                         .getId()
                         .equals(device.getPortMirroring().getNetworks().getNetworks().get(0).getId())) {
-            Fault fault = new Fault();
-            fault.setReason("The port mirroring network must match the Network set on the NIC");
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(fault).build();
-            throw new WebApplicationException(response);
-        } else if (device.isSetPortMirroring() &&
-                device.getPortMirroring().isSetNetworks() &&
-                device.getPortMirroring().getNetworks().getNetworks().size() > 1) {
-            Fault fault = new Fault();
-            fault.setReason("cannot set more than one network in port mirroring mode");
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(fault).build();
+                    fault = true;
+                    faultString = "The port mirroring network must match the Network set on the NIC";
+                }
+                // check if port mirroring network match the Nics network that is store in the engine
+            } else if (!device.getPortMirroring()
+                    .getNetworks()
+                    .getNetworks()
+                    .get(0)
+                    .getId()
+                    .equals(get().getNetwork().getId())) {
+                fault = true;
+                faultString = "The port mirroring network must match the Network set on the NIC";
+            }
+        }
+
+        if (fault) {
+            Fault f = new Fault();
+            f.setReason(faultString);
+            Response response = Response.status(Response.Status.BAD_REQUEST).entity(f).build();
             throw new WebApplicationException(response);
         }
         return super.update(device);

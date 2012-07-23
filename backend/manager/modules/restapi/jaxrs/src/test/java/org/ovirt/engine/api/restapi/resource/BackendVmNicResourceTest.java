@@ -16,7 +16,9 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
@@ -125,7 +127,7 @@ public class BackendVmNicResourceTest
                                      new ArrayList<VmNetworkInterface>());
         control.replay();
         try {
-            resource.update(getUpdate(false));
+            resource.update(getNic(false));
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
@@ -134,9 +136,9 @@ public class BackendVmNicResourceTest
 
     @Test
     public void testUpdate() throws Exception {
-        setUpGetEntityExpectations(2);
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
+        setUpGetEntityExpectations(3);
+        setGetVmQueryExpectations(2);
+        setGetNetworksQueryExpectations(2);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                                            AddVmInterfaceParameters.class,
                                            new String[] { "VmId", "Interface.Id" },
@@ -144,16 +146,28 @@ public class BackendVmNicResourceTest
                                            true,
                                            true));
 
-        NIC nic = resource.update(getUpdate(false));
+        NIC nic = resource.update(getNic(false));
+        assertNotNull(nic);
+    }
+
+    @Test(expected = WebApplicationException.class)
+    public void testUpdateWrongPortMirroringNetwork() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(1);
+        setGetVmQueryExpectations(1);
+        setGetNetworksQueryExpectations(1);
+        control.replay();
+        NIC nic = getNic(false);
+        nic.getPortMirroring().getNetworks().getNetworks().get(0).setId(GUIDS[1].toString());
+        nic = resource.update(nic);
         assertNotNull(nic);
     }
 
     @Test(expected=WebFaultException.class)
     public void testUpdateWithNonExistingNetwork() throws Exception {
-        setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1);
         control.replay();
-        NIC nic = resource.update(getUpdate(true));
+        NIC nic = resource.update(getNic(true));
+        nic.getNetwork().setId(GUIDS[2].toString());
         assertNotNull(nic);
     }
 
@@ -169,7 +183,7 @@ public class BackendVmNicResourceTest
                                            true,
                                            true));
 
-        NIC nic = resource.update(getUpdate(true));
+        NIC nic = resource.update(getNic(true));
         assertNotNull(nic);
     }
 
@@ -250,16 +264,23 @@ public class BackendVmNicResourceTest
         assertEquals(PARENT_ID.toString(), adopted.getNic().getVm().getId());
     }
 
-    protected NIC getUpdate(boolean withNetwork) {
-        NIC update = new NIC();
-        update.setMac(new MAC());
-        update.getMac().setAddress("00:1a:4a:16:85:18");
+    protected NIC getNic(boolean withNetwork) {
+        NIC nic = new NIC();
+        nic.setMac(new MAC());
+        nic.getMac().setAddress("00:1a:4a:16:85:18");
         if (withNetwork) {
             Network network = new Network();
             network.setId(GUIDS[0].toString());
-            update.setNetwork(network);
+            nic.setNetwork(network);
         }
-        return update;
+
+        Network network = new Network();
+        network.setId(GUIDS[0].toString());
+         nic.setPortMirroring(new PortMirroring());
+         nic.getPortMirroring().setNetworks(new Networks());
+         nic.getPortMirroring().getNetworks().getNetworks().add(network);
+
+        return nic;
     }
 
     @Override
