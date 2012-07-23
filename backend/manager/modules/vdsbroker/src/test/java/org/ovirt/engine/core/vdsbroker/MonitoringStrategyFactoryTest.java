@@ -5,6 +5,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,7 +26,8 @@ public class MonitoringStrategyFactoryTest {
     @Mock
     private VdsGroupDAO vdsGroupDAO;
 
-    private void mockDbFacade() {
+    @Before
+    public void mockDbFacade() {
         mockStatic(DbFacade.class);
         when(DbFacade.getInstance()).thenReturn(db);
         when(db.getVdsGroupDAO()).thenReturn(vdsGroupDAO);
@@ -55,7 +57,6 @@ public class MonitoringStrategyFactoryTest {
 
     @Test
     public void testMonitoringStrategyFactoryVirtStrategy() {
-        mockDbFacade();
         VDS vds = new VDS();
         MonitoringStrategy monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         assertTrue(monitoringStrategy instanceof VirtMonitoringStrategy);
