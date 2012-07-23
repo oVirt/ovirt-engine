@@ -66,6 +66,10 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             }
 
             opts.put("bridged", Boolean.toString(net.isVmNetwork()));
+            if (net.isVmNetwork()) {
+                opts.put(VdsProperties.stp, net.getstp() ? "yes" : "no");
+            }
+
             networks.add(net.getname(), opts);
         }
 
