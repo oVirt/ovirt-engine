@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 
@@ -11,7 +12,7 @@ public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
     public AttachNetworkToVdsGroupParameter(VDSGroup group, Network net) {
         super(new network_cluster(group.getId(),
                 net.getId(),
-                null,
+                NetworkStatus.NonOperational,
 
                 // Cluster attachment data can sometimes be missing, so use defaults in that case.
                 net.getCluster() == null ? false : net.getCluster().getis_display(),
