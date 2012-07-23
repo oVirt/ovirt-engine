@@ -13,6 +13,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import javax.security.sasl.SaslException;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.ldap.LdapProviderType;
@@ -147,13 +148,17 @@ public class JndiAction implements PrivilegedAction {
     }
 
     protected void handleAuthenticationException(AuthenticationException ex) {
-        ex.printStackTrace();
         AuthenticationResult result = AuthenticationResult.OTHER;
         KerberosReturnCodeParser parser = new KerberosReturnCodeParser();
         result = parser.parse(ex.toString());
         String errorMsg = result.getDetailedMessage().replace("Authentication Failed", "LDAP query Failed");
         System.out.println(InstallerConstants.ERROR_PREFIX + errorMsg);
-        log.error("Error from Kerberos: " + ex.getMessage());
+        String krbLoginModuleErrorMsg = ex.getMessage();
+        if (ex.getRootCause() instanceof SaslException) {
+            SaslException saslException = (SaslException)ex.getRootCause();
+            krbLoginModuleErrorMsg = saslException.getMessage();
+        }
+        log.error("Error during login to kerberos. Detailed information is: " + krbLoginModuleErrorMsg);
     }
 
     protected void handleCommunicationException(String currentLdapServer, String address) {
