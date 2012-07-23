@@ -5,9 +5,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -72,8 +72,8 @@ public class VncConsoleModel extends ConsoleModel
                                 }
                             };
 
-                            Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVdsId,
-                                    new VdsIdParametersBase(getEntity().getrun_on_vds().getValue()), _asyncQuery);
+                            Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVmId,
+                                    new GetVmByVmIdParameters(getEntity().getId()), _asyncQuery);
                         }
                         else {
                             postGetHost(getEntity().getdisplay_ip());

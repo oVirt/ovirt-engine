@@ -76,7 +76,17 @@ public class BackendVmResource extends
 
     @Override
     public VM get() {
-        return performGet(VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(guid));
+        VM vm = performGet(VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(guid));
+        return removeRestrictedInfo(vm);
+    }
+
+    private VM removeRestrictedInfo(VM vm) {
+        // Filtered users are not allowed to view host related information
+        if (vm != null && isFiltered()) {
+            vm.setHost(null);
+            vm.setPlacementPolicy(null);
+        }
+        return vm;
     }
 
     @Override
@@ -88,16 +98,22 @@ public class BackendVmResource extends
                               new ChangeVMClusterParameters(clusterId, guid));
             }
         }
-        //if the user updated the host within placement-policy, but supplied host-name rather than the host-id (legal) -
-        //resolve the host's ID, because it will be needed down the line
-        if (incoming.isSetPlacementPolicy() && incoming.getPlacementPolicy().isSetHost()
-                && incoming.getPlacementPolicy().getHost().isSetName() && !incoming.getPlacementPolicy().getHost().isSetId()) {
-            incoming.getPlacementPolicy().getHost().setId(getHostId(incoming.getPlacementPolicy().getHost().getName()));
+        if (!isFiltered()) {
+            //if the user updated the host within placement-policy, but supplied host-name rather than the host-id (legal) -
+            //resolve the host's ID, because it will be needed down the line
+            if (incoming.isSetPlacementPolicy() && incoming.getPlacementPolicy().isSetHost()
+                    && incoming.getPlacementPolicy().getHost().isSetName() && !incoming.getPlacementPolicy().getHost().isSetId()) {
+                incoming.getPlacementPolicy().getHost().setId(getHostId(incoming.getPlacementPolicy().getHost().getName()));
+            }
+        } else {
+            incoming.setPlacementPolicy(null);
         }
-        return performUpdate(incoming,
+
+        return removeRestrictedInfo(
+                performUpdate(incoming,
                              new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class),
                              VdcActionType.UpdateVm,
-                             new UpdateParametersProvider());
+                             new UpdateParametersProvider()));
     }
 
     private String getHostId(String hostName) {

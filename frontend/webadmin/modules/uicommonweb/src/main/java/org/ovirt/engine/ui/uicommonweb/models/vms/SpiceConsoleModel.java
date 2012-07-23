@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -25,14 +24,14 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -269,25 +268,23 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 }
 
                 ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
-                queryTypeList.add(VdcQueryType.GetVdsByVdsId);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
-                queryTypeList.add(VdcQueryType.GetVdsCertificateSubjectByVdsId);
+                queryTypeList.add(VdcQueryType.GetVdsCertificateSubjectByVmId);
                 queryTypeList.add(VdcQueryType.GetCACertificate);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
 
                 ArrayList<VdcQueryParametersBase> parametersList =
                         new ArrayList<VdcQueryParametersBase>();
-                parametersList.add(new GetVdsByVdsIdParameters(thisVm.getrun_on_vds().getValue()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, Config.DefaultConfigurationVersion));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, Config.DefaultConfigurationVersion));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels,
                         thisVm.getvds_group_compatibility_version().toString()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, Config.DefaultConfigurationVersion));
-                parametersList.add(new GetVdsByVdsIdParameters(thisVm.getrun_on_vds().getValue()));
+                parametersList.add(new GetVmByVmIdParameters(thisVm.getId()));
                 parametersList.add(new VdcQueryParametersBase());
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys, Config.DefaultConfigurationVersion));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys, Config.DefaultConfigurationVersion));
@@ -327,8 +324,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         if (!success)
         {
-            boolean enableSpiceRootCertificateValidation = (Boolean) result.getReturnValues().get(4).getReturnValue();
-            VdcQueryReturnValue caCertificateReturnValue = result.getReturnValues().get(6);
+            boolean enableSpiceRootCertificateValidation = (Boolean) result.getReturnValues().get(3).getReturnValue();
+            VdcQueryReturnValue caCertificateReturnValue = result.getReturnValues().get(5);
 
             // If only the caCertificate query failed - ignore failure (goto OnSuccess)
             if (!caCertificateReturnValue.getSucceeded() && !enableSpiceRootCertificateValidation)
@@ -348,20 +345,20 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         String cipherSuite = null;
         String spiceSecureChannels = null;
 
-        boolean isSSLEnabled = (Boolean) returnValues.get(1).getReturnValue();
+        boolean isSSLEnabled = (Boolean) returnValues.get(0).getReturnValue();
         if (isSSLEnabled)
         {
-            cipherSuite = (String) returnValues.get(2).getReturnValue();
-            spiceSecureChannels = (String) returnValues.get(3).getReturnValue();
+            cipherSuite = (String) returnValues.get(1).getReturnValue();
+            spiceSecureChannels = (String) returnValues.get(2).getReturnValue();
         }
 
         String certificateSubject = ""; //$NON-NLS-1$
         String caCertificate = ""; //$NON-NLS-1$
 
-        if ((Boolean) returnValues.get(4).getReturnValue())
+        if ((Boolean) returnValues.get(3).getReturnValue())
         {
-            certificateSubject = (String) returnValues.get(5).getReturnValue();
-            caCertificate = (String) returnValues.get(6).getReturnValue();
+            certificateSubject = (String) returnValues.get(4).getReturnValue();
+            caCertificate = (String) returnValues.get(5).getReturnValue();
         }
 
         getspice().setHost(getEntity().getdisplay_ip());
@@ -385,8 +382,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().setHostSubject(certificateSubject);
         getspice().setTrustStore(caCertificate);
 
-        String toggleFullScreenKeys = (String) returnValues.get(7).getReturnValue();
-        String releaseCursorKeys = (String) returnValues.get(8).getReturnValue();
+        String toggleFullScreenKeys = (String) returnValues.get(6).getReturnValue();
+        String releaseCursorKeys = (String) returnValues.get(7).getReturnValue();
         String ctrlAltDel = "ctrl+alt+del"; //$NON-NLS-1$
         String ctrlAltEnd = "ctrl+alt+end"; //$NON-NLS-1$
 
@@ -472,10 +469,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         ArrayList<String> isos = new ArrayList<String>();
 
-        if (returnValues.size() > 9)
+        if (returnValues.size() > 8)
         {
             ArrayList<RepoFileMetaData> repoList =
-                    (ArrayList<RepoFileMetaData>) returnValues.get(9).getReturnValue();
+                    (ArrayList<RepoFileMetaData>) returnValues.get(8).getReturnValue();
             for (RepoFileMetaData RepoFileMetaData : repoList)
             {
                 isos.add(RepoFileMetaData.getRepoFileName());
@@ -524,7 +521,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (StringHelper.isNullOrEmpty(getEntity().getdisplay_ip())
                 || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0")) //$NON-NLS-1$
         {
-            determineIpAndConnect((VDS) returnValues.get(0).getReturnValue());
+            determineIpAndConnect(getEntity().getId());
         }
         else
         {
@@ -533,8 +530,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         }
     }
 
-    private void determineIpAndConnect(VDS host) {
-        if (host == null) {
+    private void determineIpAndConnect(Guid vmId) {
+        if (vmId == null) {
             return;
         }
 
@@ -552,8 +549,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVdsId,
-                new VdsIdParametersBase(host.getId()),
+        Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVmId,
+                new GetVmByVmIdParameters(vmId),
                 _asyncQuery);
     }
 

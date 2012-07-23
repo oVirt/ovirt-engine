@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
@@ -63,6 +64,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Host get() {
+        // Filtered users are not allowed to view hosts
+        if (isFiltered()) {
+            throw new WebApplicationException(Response.Status.FORBIDDEN);
+        }
         return performGet(VdcQueryType.GetVdsByVdsId, new GetVdsByVdsIdParameters(guid));
     }
 

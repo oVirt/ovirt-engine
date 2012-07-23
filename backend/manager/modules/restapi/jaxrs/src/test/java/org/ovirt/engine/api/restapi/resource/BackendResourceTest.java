@@ -41,14 +41,13 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         resource.get();
     }
 
-    @Test
+    @Test(expected = javax.ws.rs.WebApplicationException.class)
     public void testQueryWithFilter() throws Exception {
         List<String> filterValue = new ArrayList<String>();
         filterValue.add("true");
         EasyMock.reset(httpHeaders);
         expect(httpHeaders.getRequestHeader("filter")).andReturn(filterValue);
         resource.setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(true, true);
         control.replay();
         resource.get();
     }

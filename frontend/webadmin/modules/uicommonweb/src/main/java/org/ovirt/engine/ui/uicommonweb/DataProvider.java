@@ -1431,19 +1431,6 @@ public final class DataProvider
         return false;
     }
 
-    public static String GetHostCertSubjectByHostID(Guid hostID)
-    {
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId, new GetVdsByVdsIdParameters(hostID));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return (String) returnValue.getReturnValue();
-        }
-
-        return null;
-    }
-
     public static String GetCACertificate()
     {
         VdcQueryReturnValue returnValue =

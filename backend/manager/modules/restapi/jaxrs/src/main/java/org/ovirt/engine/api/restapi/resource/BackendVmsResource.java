@@ -65,9 +65,9 @@ public class BackendVmsResource extends
     @Override
     public VMs list() {
         if (isFiltered())
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllVms, new VdcQueryParametersBase()));
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllVms, new VdcQueryParametersBase()), true);
         else
-         return mapCollection(getBackendCollection(SearchType.VM));
+         return mapCollection(getBackendCollection(SearchType.VM), false);
     }
 
     @Override
@@ -93,11 +93,15 @@ public class BackendVmsResource extends
             staticVm.setusb_policy(usbPolicy);
         }
 
-        //if the user set the host-name within placement-policy, rather than the host-id (legal) -
-        //resolve the host's ID, because it will be needed down the line
-        if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
-                && vm.getPlacementPolicy().getHost().isSetName() && !vm.getPlacementPolicy().getHost().isSetId()) {
-            vm.getPlacementPolicy().getHost().setId(getHostId(vm.getPlacementPolicy().getHost().getName()));
+        if (!isFiltered()) {
+            //if the user set the host-name within placement-policy, rather than the host-id (legal) -
+            //resolve the host's ID, because it will be needed down the line
+            if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
+                    && vm.getPlacementPolicy().getHost().isSetName() && !vm.getPlacementPolicy().getHost().isSetId()) {
+                vm.getPlacementPolicy().getHost().setId(getHostId(vm.getPlacementPolicy().getHost().getName()));
+            }
+        } else {
+            vm.setPlacementPolicy(null);
         }
 
         Response response = null;
@@ -128,7 +132,24 @@ public class BackendVmsResource extends
         } else {
             response = addVm(staticVm, vm, storageDomainId, templateId);
         }
+
+        return removeRestrictedInfoFromResponse(response);
+    }
+
+    private Response removeRestrictedInfoFromResponse(Response response) {
+        if (isFiltered()) {
+            VM vm = (VM) response.getEntity();
+            removeRestrictedInfoFromVM(vm);
+        }
         return response;
+    }
+
+    private VM removeRestrictedInfoFromVM(VM vm) {
+        if (vm != null) {
+            vm.setHost(null);
+            vm.setPlacementPolicy(null);
+        }
+        return vm;
     }
 
     protected VmPayload getPayload(VM vm) {
@@ -327,10 +348,14 @@ public class BackendVmsResource extends
 
     }
 
-    protected VMs mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities) {
+    protected VMs mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {
         VMs collection = new VMs();
         for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
             VM vm = map(entity);
+         // Filtered users are not allowed to view host related information
+            if (isFiltered) {
+                removeRestrictedInfoFromVM(vm);
+            }
             collection.getVMs().add(addLinks(populate(vm, entity)));
         }
         return collection;

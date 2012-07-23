@@ -13,8 +13,8 @@ public enum VdcQueryType implements Serializable {
     GetVmCustomProperties(VdcQueryAuthType.User),
     GetVmConfigurationBySnapshot(VdcQueryAuthType.User),
     GetVmsByDiskGuid,
-    GetVmPayload,
-    IsBalloonEnabled,
+    GetVmPayload(VdcQueryAuthType.User),
+    IsBalloonEnabled(VdcQueryAuthType.User),
 
     // Vds queries
     IsVdsWithSameNameExist,
@@ -45,8 +45,7 @@ public enum VdcQueryType implements Serializable {
     GetAllNetworksByClusterId(VdcQueryAuthType.User),
     GetNetworkDisplayByClusterId,
     GetNonOperationalVds,
-    GetManagementInterfaceAddressByVdsId(VdcQueryAuthType.User),
-
+    GetManagementInterfaceAddressByVmId(VdcQueryAuthType.User),
     // Vm Network
     GetVmInterfacesByVmId(VdcQueryAuthType.User),
 
@@ -55,8 +54,9 @@ public enum VdcQueryType implements Serializable {
 
     // VdsGroups
     GetVdsCertificateSubjectByVdsId(VdcQueryAuthType.User),
+    GetVdsCertificateSubjectByVmId(VdcQueryAuthType.User),
     GetAllVdsGroups(VdcQueryAuthType.User),
-    GetVdsGroupByVdsGroupId,
+    GetVdsGroupByVdsGroupId(VdcQueryAuthType.User), // needed when updating VM
     GetVdsGroupById(VdcQueryAuthType.User),
     GetVdsGroupByName,
     IsVdsGroupWithSameNameExist,
