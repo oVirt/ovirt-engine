@@ -30,7 +30,7 @@ INFO_INSTALL="Installing:"
 INFO_SET_DB_SECURITY="Setting Database Security"
 INFO_SET_DB_CONFIGURATION="Setting Database Configuration"
 INFO_CONFIG_OVIRT_ENGINE="Configuring oVirt-engine"
-INFO_CONFIG_HTTPD="Handling HTTPD"
+INFO_CONFIG_HTTPD="Configuring HTTPD"
 INFO_CREATE_CA="Creating CA"
 INFO_CREATE_DB="Creating Database"
 INFO_UPGRADE_DB="Upgrading Database Schema"
@@ -68,7 +68,7 @@ INFO_GRP_IPTABLES="Firewall related parameters"
 
 #_addFinalInfoMsg
 INFO_LOG_FILE_PATH="The installation log file is available at: %s"
-INFO_RHEVM_URL="To access "+basedefs.APP_NAME+" please go to the following URL: %s"
+INFO_RHEVM_URL="**** To access "+basedefs.APP_NAME+" browse to %s ****"
 
 #_printAdditionalMessages
 INFO_ADDTIONAL_MSG="Additional information:"
@@ -87,22 +87,22 @@ INFO_IPTABLES_BACKUP_FILE="The firewall has been updated, the old iptables confi
 
 #createca
 INFO_CA_KEYSTORE_EXISTS="Keystore already exists, skipped certificates creation phase"
-INFO_CA_SSL_FINGERPRINT="SSL Certificate fingerprint: %s"
+INFO_CA_SSL_FINGERPRINT=basedefs.APP_NAME + " CA SSL Certificate SHA1 fingerprint: %s"
 INFO_CA_SSH_FINGERPRINT="SSH Public key fingerprint: %s"
 
 #conf params
 INFO_CONF_PARAMS_IPTABLES_USAGE="Should the installer configure the local firewall, overriding the current configuration"
 INFO_CONF_PARAMS_IPTABLES_PROMPT="Firewall ports need to be opened.\n\
-You can let the installer configure iptables automatically overriding the current configuration. The old configuration will be backed up.\n\
-Alternately you can configure the firewall later using an example iptables file found under /usr/share/ovirt-engine/conf/iptables.example\n\
-Configure iptables ?"
+The installer can configure iptables automatically overriding the current configuration. The old configuration will be backed up.\n\
+Alternately you can configure the firewall later using an example iptables file found under %s\n\
+Configure iptables ?" % basedefs.FILE_IPTABLES_EXAMPLE
 
 
 INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_USAGE="Should the installer configure the ports, overriding the current httpd configuration"
 INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_PROMPT="%s uses httpd to proxy requests to the application server.\n\
 It looks like the httpd installed locally is being actively used.\n\
 The installer can override current configuration .\n\
-Alternately you can use JBoss directly (on ports higher than 1024)\n\
+Alternatively you can use JBoss directly (on ports higher than 1024)\n\
 Do you wish to override current httpd configuration and restart the service?" % basedefs.APP_NAME
 
 
@@ -114,7 +114,7 @@ INFO_CONF_PARAMS_HTTPS_PORT_PROMPT="HTTPS Port"
 INFO_CONF_PARAMS_AJP_PORT_USAGE="Configures the AJP port"
 INFO_CONF_PARAMS_AJP_PORT_PROMPT="AJP Port (The default is recommended)"
 INFO_CONF_PARAMS_FQDN_USAGE="The Host's fully qualified domain name"
-INFO_CONF_PARAMS_FQDN_PROMPT="Host fully qualified domain name, note that this name should be fully resolvable"
+INFO_CONF_PARAMS_FQDN_PROMPT="Host fully qualified domain name. Note: this name should be fully resolvable"
 INFO_CONF_PARAMS_CA_PASS_USAGE="The password for the CA private key"
 INFO_CONF_PARAMS_CA_PASS_PROMPT="Password for the CA private key"
 INFO_CONF_PARAMS_AUTH_PASS_USAGE="Password for local admin user"
@@ -124,7 +124,7 @@ INFO_CONF_PARAMS_ORG_NAME_PROMPT="Organization Name for the Certificate"
 INFO_CONF_PARAMS_DC_TYPE_USAGE="Default Data Center Storage Type"
 INFO_CONF_PARAMS_DC_TYPE_PROMPT="The default storage type you will be using "
 INFO_CONF_PARAMS_CONFIG_NFS_USAGE="Whether to configure NFS share on this server to be used as an ISO domain"
-INFO_CONF_PARAMS_CONFIG_NFS_PROMPT="Should the installer configure NFS share on this server to be used as an ISO Domain?"
+INFO_CONF_PARAMS_CONFIG_NFS_PROMPT="Configure NFS share on this server to be used as an ISO Domain?"
 INFO_CONF_PARAMS_NFS_MP_USAGE="NFS mount point"
 INFO_CONF_PARAMS_NFS_MP_PROMPT="Local ISO domain path"
 INFO_CONF_PARAMS_NFS_DESC_USAGE="ISO Domain name"
@@ -175,7 +175,7 @@ INFO_VAL_ORG_NAME_ILLEGAL_CHARS="Error: organization name can't contain ',', '%'
 #iso domain warning
 WARN_ISO_DOMAIN_SECURITY="A default ISO share has been created on this host.\n\
    If IP based access restrictions are required, please edit %s entry in /etc/exports"
-WARN_LOW_MEMORY="There is less than %s GB of available free memory on this machine.\nIt is  recommended to have at least %s GB of available memory to run the %s." % (basedefs.CONST_WARN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB, basedefs.APP_NAME)
+WARN_LOW_MEMORY="There are less than %s GBs of available free memory on this machine.\nIt is  recommended to have at least %s GBs of available memory to run the %s." % (basedefs.CONST_WARN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB, basedefs.APP_NAME)
 
 WARN_WEAK_PASS="Warning: Weak Password."
 

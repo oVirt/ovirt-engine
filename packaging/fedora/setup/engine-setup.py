@@ -89,6 +89,34 @@ def generateMacRange():
         logging.error("Could not find a configured ip address, returning default MAC address range")
         return basedefs.CONST_DEFAULT_MAC_RANGE
 
+
+def generateIsoDomainName():
+    '''
+    Generates name for iso domain
+    '''
+
+    if os.path.exists(basedefs.DEFAULT_ISO_EXPORT_PATH):
+        return "%s_%s" % (basedefs.DEFAULT_ISO_EXPORT_PATH, utils.getCurrentDateTime())
+    else:
+        return basedefs.DEFAULT_ISO_EXPORT_PATH
+
+
+def generateOrgName():
+    '''
+    Generates org name
+    fqdn - recevies the fqdn of the host
+    '''
+
+    # Get the domain name, split only once
+    fqdn = socket.getfqdn().split('.', 1)
+
+    if fqdn:
+        # Return domain name
+        return fqdn[-1]
+    else:
+        # No domain name, return empty
+        return ""
+
 def initSequences():
     sequences_conf = [
                       { 'description'     : 'Initial Steps',
@@ -276,7 +304,7 @@ def initConfig():
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_ORG_NAME_PROMPT,
                 "OPTION_LIST"     :[],
                 "VALIDATION_FUNC" :validate.validateOrgName,
-                "DEFAULT_VALUE"   :"",
+                "DEFAULT_VALUE"   :generateOrgName(),
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "ORG_NAME",
@@ -397,7 +425,7 @@ def initConfig():
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_MP_PROMPT,
                 "OPTION_LIST"     :[],
                 "VALIDATION_FUNC" :validate.validateNFSMountPoint,
-                "DEFAULT_VALUE"   :"",
+                "DEFAULT_VALUE"   :generateIsoDomainName(),
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "NFS_MP",
@@ -410,11 +438,11 @@ def initConfig():
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_DESC_PROMPT,
                 "OPTION_LIST"     :[],
                 "VALIDATION_FUNC" :validate.validateIsoDomainName,
-                "DEFAULT_VALUE"   :"",
+                "DEFAULT_VALUE"   :basedefs.ISO_DISPLAY_NAME,
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "ISO_DOMAIN_NAME",
-                "USE_DEFAULT"     : False,
+                "USE_DEFAULT"     : True,
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False},
 
@@ -1682,7 +1710,6 @@ def _addFinalInfoMsg():
     controller.MESSAGES.append(output_messages.INFO_LOG_FILE_PATH%(logFile))
     controller.MESSAGES.append(output_messages.INFO_LOGIN_USER)
     controller.MESSAGES.append(output_messages.INFO_ADD_USERS)
-    controller.MESSAGES.append(output_messages.INFO_RHEVM_URL % controller.CONF["HTTP_URL"])
 
 def _stopEngine(configFile):
     logging.debug("stopping %s service" % basedefs.ENGINE_SERVICE_NAME)
@@ -1962,6 +1989,7 @@ def main(configFile=None):
         # Print info
         _addFinalInfoMsg()
         print output_messages.INFO_INSTALL_SUCCESS
+        print output_messages.INFO_RHEVM_URL % controller.CONF["HTTPS_URL"]
         _printAdditionalMessages()
 
     finally:

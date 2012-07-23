@@ -98,6 +98,10 @@ FILE_VIRTIO_WIN_ISO="/usr/share/virtio-win/virtio-win.iso"
 FILE_RHEV_GUEST_TOOLS_ISO="/usr/share/rhev-guest-tools-iso/rhev-tools-setup.iso"
 FILE_SYSCTL="/etc/sysctl.conf"
 
+# ISO
+ISO_DISPLAY_NAME = "ISO_DOMAIN"
+DEFAULT_ISO_EXPORT_PATH = "/usr/local/exports/iso"
+
 EXEC_IPTABLES="/sbin/iptables"
 EXEC_SLIMMING_PROFILE="%s/ovirt-engine/scripts/slimmingEAP51.sh" % DIR_USR_SHARE
 EXEC_NSLOOKUP="/usr/bin/nslookup"
