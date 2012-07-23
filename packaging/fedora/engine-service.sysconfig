@@ -53,6 +53,14 @@
 #ENGINE_PROPERTIES=
 
 #
+# Additional applications to be deployed in the instance of the
+# application server started by the engine. This is a list space
+# separated of files or directories that should exist under
+# /usr/share/ovirt-engine:
+#
+#ENGINE_APPS="engine.ear whatever.war"
+
+#
 # Ports used by the web container:
 #
 #ENGINE_HTTP_PORT=8080

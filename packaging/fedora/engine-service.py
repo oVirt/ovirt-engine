@@ -66,7 +66,6 @@ engineVarDir = None
 engineLockDir = None
 engineContentDir = None
 engineDeploymentsDir = None
-engineEarDir = None
 
 # Engine files:
 enginePidFile = None
@@ -123,7 +122,6 @@ def loadSysconfig():
     global engineServiceDir
     global engineContentDir
     global engineDeploymentsDir
-    global engineEarDir
     engineEtcDir = getSysconfig("ENGINE_ETC", "/etc/ovirt-engine")
     engineLogDir = getSysconfig("ENGINE_LOG", "/var/log/ovirt-engine")
     engineTmpDir = getSysconfig("ENGINE_TMP", "/var/cache/ovirt-engine")
@@ -133,7 +131,6 @@ def loadSysconfig():
     engineServiceDir = os.path.join(engineUsrDir, "service")
     engineContentDir = os.path.join(engineVarDir, "content")
     engineDeploymentsDir = os.path.join(engineVarDir, "deployments")
-    engineEarDir = os.path.join(engineUsrDir, "engine.ear")
 
     # Engine files:
     global enginePidFile
@@ -230,7 +227,6 @@ def checkInstallation():
     checkDirectory(engineContentDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineDeploymentsDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineTmpDir, uid=engineUid, gid=engineGid)
-    checkDirectory(engineEarDir, uid=0, gid=0)
     checkFile(engineLoggingFile)
     checkFile(engineConfigTemplateFile)
 
@@ -267,30 +263,40 @@ def startEngine():
         syslog.syslog(syslog.LOG_WARNING, "The engine PID file \"%s\" already exists." % enginePidFile)
         return
 
-    # Make sure the engine archive directory is linked in the deployments
-    # directory, if not link it now:
-    engineEarLink = os.path.join(engineDeploymentsDir, "engine.ear")
-    if not os.path.islink(engineEarLink):
-        syslog.syslog(syslog.LOG_INFO, "The symbolic link \"%s\" doesn't exist, will create it now." % engineEarLink)
-        try:
-            os.symlink(engineEarDir, engineEarLink)
-        except:
-            raise Exception("Can't create symbolic link from \"%s\" to \"%s\"." % (engineEarLink, engineEarDir))
+    # The list of applications to be deployed:
+    engineApps = getSysconfig("ENGINE_APPS", "engine.ear").split()
 
-    # Remove all existing deployment markers:
-    for markerFile in glob.glob("%s.*" % engineEarLink):
-        try:
-            os.remove(markerFile)
-        except:
-            raise Exception("Can't remove deployment marker file \"%s\"." % markerFile)
+    for engineApp in engineApps:
+        # Do nothing if the application is not available:
+        engineAppDir = os.path.join(engineUsrDir, engineApp)
+        if not os.path.exists(engineAppDir):
+            syslog.syslog(syslog.LOG_WARNING, "The application \"%s\" doesn't exist, it will be ignored." % engineAppDir)
+            continue
 
-    # Create the new marker file to trigger deployment of the engine:
-    markerFile = "%s.dodeploy" % engineEarLink
-    try:
-        markerFd = open(markerFile, "w")
-        markerFd.close()
-    except:
-        raise Exception("Can't create deployment marker file \"%s\"." % markerFile)
+        # Make sure the application is linked in the deployments directory, if not
+        # link it now:
+        engineAppLink = os.path.join(engineDeploymentsDir, engineApp)
+        if not os.path.islink(engineAppLink):
+            syslog.syslog(syslog.LOG_INFO, "The symbolic link \"%s\" doesn't exist, will create it now." % engineAppLink)
+            try:
+                os.symlink(engineAppDir, engineAppLink)
+            except:
+                raise Exception("Can't create symbolic link from \"%s\" to \"%s\"." % (engineAppLink, engineAppDir))
+
+        # Remove all existing deployment markers:
+        for markerFile in glob.glob("%s.*" % engineAppLink):
+            try:
+                os.remove(markerFile)
+            except:
+                raise Exception("Can't remove deployment marker file \"%s\"." % markerFile)
+
+        # Create the new marker file to trigger deployment of the application:
+        markerFile = "%s.dodeploy" % engineAppLink
+        try:
+            markerFd = open(markerFile, "w")
+            markerFd.close()
+        except:
+            raise Exception("Can't create deployment marker file \"%s\"." % markerFile)
 
     # Generate the main configuration from the template and copy it to the
     # configuration directory making sure that the application server will be
