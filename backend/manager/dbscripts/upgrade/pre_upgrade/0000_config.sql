@@ -135,7 +135,7 @@ select fn_db_add_config_value('HotPlugEnabled','false','2.2');
 select fn_db_add_config_value('HotPlugEnabled','false','3.0');
 select fn_db_add_config_value('HotPlugEnabled','true','3.1');
 select fn_db_add_config_value('DisconnectPoolOnReconstruct','0,2','general');
-select fn_db_add_config_value('HotPlugSupportedOsList','Windows7,Windows7x64,Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64','general');
+select fn_db_add_config_value('HotPlugUnsupportedOsList','','general');
 select fn_db_add_config_value('InitStorageSparseSizeInGB','1','general');
 --Handling Install virtualization software on Add Host
 select fn_db_add_config_value('InstallVds','true','general');
@@ -515,6 +515,7 @@ select fn_db_delete_config_value('PredefinedVMProperties','general');
 select fn_db_delete_config_value('RpmsRepositoryUrl','general');
 select fn_db_delete_config_value('SysPrep3.0Path','general');
 select fn_db_delete_config_value('UseENGINERepositoryRPMs','general');
+select fn_db_delete_config_value('HotPlugSupportedOsList','general');
 select fn_db_delete_config_value('VdsErrorsFileName','general');
 select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
 

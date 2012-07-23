@@ -50,8 +50,8 @@ public class HotPlugDiskToVmCommandTest {
     @Rule
     public static final MockConfigRule mcr = new MockConfigRule(
             mockConfig
-            (ConfigValues.HotPlugSupportedOsList,
-                    "Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64"),
+            (ConfigValues.HotPlugUnsupportedOsList,
+                    "RHEL3x64"),
             mockConfig(ConfigValues.HotPlugEnabled, "3.1", true)
             );
 

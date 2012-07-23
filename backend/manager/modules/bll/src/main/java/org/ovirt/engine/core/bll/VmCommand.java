@@ -474,14 +474,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      */
     protected boolean isOSSupportingHotPlug() {
         String vmOs = getVm().getos().name();
-        String[] oses = Config.<String> GetValue(ConfigValues.HotPlugSupportedOsList).split(",");
-        for (String os : oses) {
+        String[] unsupportedOSs = Config.<String> GetValue(ConfigValues.HotPlugUnsupportedOsList).split(",");
+        for (String os : unsupportedOSs) {
             if (os.equalsIgnoreCase(vmOs)) {
-                return true;
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+                return false;
             }
         }
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
-        return false;
+        return true;
     }
 
     protected VmDeviceDAO getVmDeviceDao() {
