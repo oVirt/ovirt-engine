@@ -382,6 +382,7 @@ public class VmDeviceUtils {
         // We add USB slots in case support doesn't exist in the oldVm configuration, but exists in the new one
         if (!oldUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE) && newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {
             if (usbSlots > 0) {
+                removeUsbControllers(newVm);
                 addUsbControllers(newVm, getNeededNumberOfUsbControllers(usbSlots));
                 addUsbSlots(newVm, usbSlots);
             }
