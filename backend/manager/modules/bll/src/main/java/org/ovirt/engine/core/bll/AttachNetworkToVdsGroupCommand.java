@@ -50,7 +50,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             getNetworkClusterDAO().update(getParameters().getNetworkCluster());
         } else {
             getNetworkClusterDAO().save(new network_cluster(getVdsGroupId(), getNetwork().getId(),
-                    NetworkStatus.Operational, false, getNetwork().isRequired()));
+                    NetworkStatus.Operational, false, getParameters().getNetworkCluster().isRequired()));
         }
         if (getNetwork().getCluster().getis_display()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());

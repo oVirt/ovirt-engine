@@ -178,14 +178,6 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.vlan_id = value;
     }
 
-    public NetworkStatus getStatus() {
-        return cluster == null ? null : cluster.getstatus();
-    }
-
-    public void setStatus(NetworkStatus value) {
-        cluster.setstatus(value);
-    }
-
     public boolean getstp() {
         return this.stp;
     }
@@ -200,25 +192,6 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
 
     public void setstorage_pool_id(NGuid value) {
         this.storage_pool_id = value;
-    }
-
-    public Boolean getis_display() {
-        return cluster == null ? null : cluster.getis_display();
-    }
-
-    public void setis_display(Boolean value) {
-        if (value == null) {
-            value = false;
-        }
-        cluster.setis_display(value);
-    }
-
-    public Boolean isRequired() {
-        return cluster == null ? null : cluster.isRequired();
-    }
-
-    public void setRequired(boolean value) {
-        cluster.setRequired(value);
     }
 
     public void setCluster(network_cluster cluster) {

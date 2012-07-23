@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -38,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -706,7 +706,7 @@ public class VdsUpdateRunTimeInfo {
                 && networksByName.containsKey(iface.getNetworkName())) {
 
             Network net = networksByName.get(iface.getNetworkName());
-            if (net.getStatus() == NetworkStatus.Operational && net.isRequired()
+            if (net.getCluster().getstatus() == NetworkStatus.Operational && net.getCluster().isRequired()
                     && (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
                 networks.add(iface.getNetworkName());
                 nics.add(iface.getName());

@@ -95,7 +95,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         }
 
         // set the network object if we don't got in the parameters
-        if (getParameters().getNetwork() == null) {
+        if (getParameters().getNetwork() == null || getParameters().getNetwork().getCluster() == null) {
             List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                             .getAllForCluster(getVdsGroupId());
             for (Network n : networks) {
@@ -122,7 +122,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
         // check if network in cluster and vds active
         if ((vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing)
-                && getParameters().getNetwork().getStatus() == NetworkStatus.Operational) {
+                && getParameters().getNetwork().getCluster().getstatus() == NetworkStatus.Operational) {
             List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                     .getAllForCluster(vds.getvds_group_id());
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
