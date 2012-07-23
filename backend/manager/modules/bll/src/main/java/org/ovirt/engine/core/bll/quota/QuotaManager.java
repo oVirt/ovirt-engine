@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.quota;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -71,13 +73,17 @@ public class QuotaManager {
     }
 
     public void rollbackQuota(storage_pool storagePool, List<Guid> quotaList) {
+        rollbackQuota(storagePool.getId(), quotaList);
+    }
+
+    private void rollbackQuota(Guid storagePoolId, List<Guid> quotaList) {
         lock.readLock().lock();
         try {
-            if (!storagePoolQuotaMap.containsKey(storagePool.getId())) {
+            if (!storagePoolQuotaMap.containsKey(storagePoolId)) {
                 return;
             }
-            synchronized (storagePoolQuotaMap.get(storagePool.getId())) {
-                Map<Guid, Quota> map = storagePoolQuotaMap.get(storagePool.getId());
+            synchronized (storagePoolQuotaMap.get(storagePoolId)) {
+                Map<Guid, Quota> map = storagePoolQuotaMap.get(storagePoolId);
                 for (Guid quotaId : quotaList) {
                     map.remove(quotaId);
                 }
@@ -489,5 +495,12 @@ public class QuotaManager {
             list.add(param.getQuotaId());
         }
         return list;
+    }
+
+    public void rollbackQuota(Guid vmId) {
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+        if (vm != null) {
+            rollbackQuota(vm.getstorage_pool_id(), Arrays.asList(vm.getQuotaId()));
+        }
     }
 }

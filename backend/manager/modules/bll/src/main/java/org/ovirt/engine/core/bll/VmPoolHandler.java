@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
@@ -12,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class VmPoolHandler {
 
@@ -42,6 +43,8 @@ public class VmPoolHandler {
             // Otherwise this was already done in DetachUserFromVmFromPoolCommand
             removeVmStatelessImages(vmId, context);
         }
+
+        QuotaManager.getInstance().rollbackQuota(vmId);
     }
 
     public static void removeVmStatelessImages(Guid vmId, CommandContext context) {
