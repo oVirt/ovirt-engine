@@ -47,7 +47,7 @@ public class VdsInstaller implements IVdsInstallCallBack {
             Config.<String> GetValue(ConfigValues.BootstrapInstallerFileName)).getName();
 
     final public static String _getUniqueIdCommand =
-            "/bin/echo -e `/bin/bash -c  /usr/sbin/dmidecode|/bin/awk ' /UUID/{ print $2; } ' | /usr/bin/tr '\n' '_' && cat /sys/class/net/*/address | /bin/grep -v '00:00:00:00' | /bin/sort -u | /usr/bin/head --lines=1`";
+            "/bin/echo -e `/bin/bash -c  /usr/sbin/dmidecode|/bin/awk ' /UUID/{ print $2; } ' | /usr/bin/tr '\n' '_' && /bin/cat /sys/class/net/*/address | /bin/sed -e '/00:00:00:00/d' -e '/^$/d' | /bin/sort -u | /usr/bin/head --lines=1`";
 
     protected VdsInstallStages _prevInstallStage = VdsInstallStages.Start;
     protected VdsInstallStages _currentInstallStage = VdsInstallStages.Start;
