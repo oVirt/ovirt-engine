@@ -483,6 +483,20 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.jvnet</groupId>
+        <artifactId>animal-sniffer</artifactId>
+        <version>1.2</version>
+        <configuration>
+          <signature>
+            <groupId>org.jvnet.animal-sniffer</groupId>
+            <artifactId>java1.6</artifactId>
+            <version>1.0</version>
+          </signature>
+        </configuration>
+      </plugin>
+    </plugins>
     <resources>
       <resource>
         <directory>src/main/java</directory>
