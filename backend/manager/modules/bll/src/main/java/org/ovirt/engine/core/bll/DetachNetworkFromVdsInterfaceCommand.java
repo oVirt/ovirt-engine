@@ -122,6 +122,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
         // check if network in cluster and vds active
         if ((vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing)
+                && getParameters().getNetwork().getCluster() != null
                 && getParameters().getNetwork().getCluster().getstatus() == NetworkStatus.Operational) {
             List<Network> networks = DbFacade.getInstance().getNetworkDAO()
                     .getAllForCluster(vds.getvds_group_id());
