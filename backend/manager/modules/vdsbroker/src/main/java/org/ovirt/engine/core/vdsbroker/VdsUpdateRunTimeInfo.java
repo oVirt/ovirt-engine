@@ -539,9 +539,8 @@ public class VdsUpdateRunTimeInfo {
         Map<String, Boolean> activeBonds = new HashMap<String, Boolean>();
         List<Network> clusterNetworks = getDbFacade().getNetworkDAO()
                 .getAllForCluster(_vds.getvds_group_id());
-        boolean setHostDown = false;
         List<String> networks = new ArrayList<String>();
-        List<String> nics = new ArrayList<String>();
+        List<String> brokenNics = new ArrayList<String>();
         Map<String, List<String>> bondNics = new HashMap<String, List<String>>();
 
         List<VdsNetworkInterface> interfaces = _vds.getInterfaces();
@@ -553,7 +552,10 @@ public class VdsUpdateRunTimeInfo {
                 logMTUDifferences(networksByName, iface);
 
                 // Handle nics that are non bonded and not vlan over bond
-                setHostDown = isRequiredInterfaceDown(networksByName, networks, nics, iface);
+                if (isRequiredInterfaceDown(networksByName, iface)) {
+                    brokenNics.add(iface.getName());
+                    networks.add(iface.getNetworkName());
+                }
 
                 // Handle bond nics
                 if (iface.getBondName() != null) {
@@ -563,13 +565,12 @@ public class VdsUpdateRunTimeInfo {
 
             // check the bond statuses, if one is down we set the host to down
             // only if we didn't already set the host to down
-            if (!setHostDown) {
+            if (brokenNics.isEmpty()) {
                 for (String key : activeBonds.keySet()) {
                     if (!activeBonds.get(key)) {
-                        setHostDown = true;
                         // add the nics name for audit log
                         for (String name : bondNics.get(key)) {
-                            nics.add(name);
+                            brokenNics.add(name);
                         }
                     }
                 }
@@ -578,7 +579,7 @@ public class VdsUpdateRunTimeInfo {
             log.error(String.format("Failure on checkInterfaces on update runtimeinfo for vds: %s", _vds.getvds_name()),
                     e);
         } finally {
-            if (setHostDown) {
+            if (!brokenNics.isEmpty()) {
                 // we give 1 minutes to a nic to get up in case the nic get the ip from DHCP server
                 if (!hostDownTimes.containsKey(_vds.getId())) {
                     hostDownTimes.put(_vds.getId(), System.currentTimeMillis());
@@ -599,7 +600,7 @@ public class VdsUpdateRunTimeInfo {
                     StringBuilder sNics = new StringBuilder();
                     StringBuilder sNetworks = new StringBuilder();
 
-                    for (String nic : nics) {
+                    for (String nic : brokenNics) {
                         sNics.append(nic)
                                 .append(", ");
                     }
@@ -691,14 +692,9 @@ public class VdsUpdateRunTimeInfo {
      * check if an interface implementing a required cluster network is down
      *
      * @param networksByName
-     * @param networks
-     * @param nics
      * @param iface
      */
-    private boolean isRequiredInterfaceDown(Map<String, Network> networksByName,
-            List<String> networks,
-            List<String> nics,
-            VdsNetworkInterface iface) {
+    private boolean isRequiredInterfaceDown(Map<String, Network> networksByName, VdsNetworkInterface iface) {
         if (iface.getStatistics().getStatus() != InterfaceStatus.Up
                 && iface.getNetworkName() != null
                 && iface.getBonded() == null
@@ -708,8 +704,6 @@ public class VdsUpdateRunTimeInfo {
             Network net = networksByName.get(iface.getNetworkName());
             if (net.getCluster().getstatus() == NetworkStatus.Operational && net.getCluster().isRequired()
                     && (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
-                networks.add(iface.getNetworkName());
-                nics.add(iface.getName());
                 return true;
             }
         }
