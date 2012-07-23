@@ -8,7 +8,7 @@ public class NetworkStatusColumn extends WebAdminImageResourceColumn<Network> {
 
     @Override
     public ImageResource getValue(Network nwk) {
-        switch (nwk.getStatus()) {
+        switch (nwk.getCluster().getstatus()) {
         case Operational:
             return getApplicationResources().upImage();
         case NonOperational:

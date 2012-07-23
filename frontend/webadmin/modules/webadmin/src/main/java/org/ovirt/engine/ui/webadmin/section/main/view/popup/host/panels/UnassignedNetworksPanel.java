@@ -109,7 +109,8 @@ public class UnassignedNetworksPanel extends DnDPanel{
         nonRequiredPanel.add(nonRequiredTitlePanel);
         for (NetworkPanel networkPanel : list){
             LogicalNetworkModel networkModel = (LogicalNetworkModel) networkPanel.getItem();
-            if (networkModel.getEntity().isRequired()){
+            boolean isRequired = networkModel.getEntity().getCluster() == null ? false : networkModel.getEntity().getCluster().isRequired();
+            if (isRequired){
                 requiredPanel.add(networkPanel);
             }else{
                 nonRequiredPanel.add(networkPanel);

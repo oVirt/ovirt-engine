@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -49,7 +49,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         TextColumnWithTooltip<Network> statusColumn = new EnumColumn<Network, NetworkStatus>() {
             @Override
             public NetworkStatus getRawValue(Network object) {
-                return object.getStatus();
+                return object.getCluster().getstatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusNetwork());
@@ -58,7 +58,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
             @Override
             public String getValue(Network object) {
                 // according to ClusterNetworkListView.xaml:45
-                return object.getis_display() ? constants.displayNetwork() : constants.empty();
+                return (object.getCluster() == null ? false : object.getCluster().getis_display()) ? constants.displayNetwork() : constants.empty();
             }
         };
         getTable().addColumn(roleColumn, constants.roleNetwork());

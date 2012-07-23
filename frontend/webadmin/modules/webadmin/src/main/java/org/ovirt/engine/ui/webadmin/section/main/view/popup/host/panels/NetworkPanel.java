@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
+import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -24,9 +25,31 @@ public class NetworkPanel extends NetworkItemPanel {
     protected Widget getContents() {
         LogicalNetworkModel network = (LogicalNetworkModel) item;
 
-        Image mgmtNetworkImage = new Image(network.isManagement() ? resources.mgmtNetwork() : resources.empty());
-        Image vmImage = new Image(network.getEntity().isVmNetwork() ? resources.networkVm() : resources.empty());
-        Image monitorImage = new Image(network.getEntity().getis_display() ? resources.networkMonitor() : resources.empty());
+        Image mgmtNetworkImage;
+        Image vmImage;
+        Image monitorImage;
+
+        if (network.getEntity().getCluster() == null){
+            monitorImage = new Image(resources.questionMarkImage());
+            mgmtNetworkImage = new Image(resources.empty());
+            vmImage = new Image(resources.empty());
+        }else{
+            monitorImage = new Image(network.getEntity().getCluster().getis_display() ? resources.networkMonitor() : resources.empty());
+            mgmtNetworkImage = new Image(network.isManagement() ? resources.mgmtNetwork() : resources.empty());
+            vmImage = new Image(network.getEntity().isVmNetwork() ? resources.networkVm() : resources.empty());
+
+            if (network.isManagement()){
+                mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
+            }
+
+            if (network.getEntity().isVmNetwork()){
+                vmImage.setStylePrimaryName(style.networkImageBorder());
+            }
+
+            if (network.getEntity().getCluster().getis_display()){
+                monitorImage.setStylePrimaryName(style.networkImageBorder());
+            }
+        }
 
         Grid rowPanel = new Grid(1, 7);
         rowPanel.setCellSpacing(3);
@@ -37,18 +60,6 @@ public class NetworkPanel extends NetworkItemPanel {
         columnFormatter.setWidth(0, "5px"); //$NON-NLS-1$
         columnFormatter.setWidth(1, "20px"); //$NON-NLS-1$
         columnFormatter.setWidth(2, "100%"); //$NON-NLS-1$
-
-        if (network.isManagement()){
-            mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
-        }
-
-        if (network.getEntity().isVmNetwork()){
-            vmImage.setStylePrimaryName(style.networkImageBorder());
-        }
-
-        if (network.getEntity().getis_display()){
-            monitorImage.setStylePrimaryName(style.networkImageBorder());
-        }
 
         rowPanel.setWidget(0, 0, dragImage);
 
@@ -66,12 +77,13 @@ public class NetworkPanel extends NetworkItemPanel {
     }
 
     protected ImageResource getStatusImage() {
-        switch (((LogicalNetworkModel) item).getStatus()) {
-        case Operational:
+        NetworkStatus netStatus = ((LogicalNetworkModel) item).getStatus();
+
+        if (netStatus == NetworkStatus.Operational){
             return resources.upImage();
-        case NonOperational:
+        } else if (netStatus == NetworkStatus.NonOperational){
             return resources.downImage();
-        default:
+        }else{
             return resources.questionMarkImage();
         }
     }

@@ -10,11 +10,11 @@ import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -203,7 +203,7 @@ public class VmInterfaceListModel extends SearchableListModel
                 ArrayList<Network> networks = new ArrayList<Network>();
                 for (Network a : (ArrayList<Network>) result1)
                 {
-                    if (a.getStatus() == NetworkStatus.Operational)
+                    if (a.getCluster().getstatus() == NetworkStatus.Operational)
                     {
                         networks.add(a);
                     }
@@ -282,7 +282,7 @@ public class VmInterfaceListModel extends SearchableListModel
                 ArrayList<Network> networks = new ArrayList<Network>();
                 for (Network a : (ArrayList<Network>) result1)
                 {
-                    if (a.getStatus() == NetworkStatus.Operational)
+                    if (a.getCluster().getstatus() == NetworkStatus.Operational)
                     {
                         networks.add(a);
                     }

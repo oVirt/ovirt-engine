@@ -85,11 +85,6 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
 
     public Network() {
     }
-    //Because the webadmin uses the same BE as backend, the constructor of these BEs
-    //should not contain any logic that refer only to backend side.
-    public Network(String dummyVariable){
-        cluster = new network_cluster();
-    }
 
     public Network(String addr, String description, Guid id, String name, String subnet, String gateway, Integer type,
             Integer vlan_id, boolean stp, int mtu, boolean vmNetwork) {
@@ -126,10 +121,12 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.description = value;
     }
 
+    @Override
     public Guid getId() {
         return this.id;
     }
 
+    @Override
     public void setId(Guid value) {
         this.id = value;
     }

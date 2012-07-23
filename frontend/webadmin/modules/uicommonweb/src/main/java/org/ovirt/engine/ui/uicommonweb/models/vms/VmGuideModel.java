@@ -247,7 +247,7 @@ public class VmGuideModel extends GuideModel
         ArrayList<Network> operationalNetworks = new ArrayList<Network>();
         for (Network a : networks)
         {
-            if (a.getStatus() == NetworkStatus.Operational)
+            if (a.getCluster().getstatus() == NetworkStatus.Operational)
             {
                 operationalNetworks.add(a);
             }

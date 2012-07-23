@@ -1892,6 +1892,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Display")
     String displayItemInfo();
 
+    @DefaultStringValue("Unknown")
+    String unknownItemInfo();
+
     @DefaultStringValue("Management")
     String managementItemInfo();
 

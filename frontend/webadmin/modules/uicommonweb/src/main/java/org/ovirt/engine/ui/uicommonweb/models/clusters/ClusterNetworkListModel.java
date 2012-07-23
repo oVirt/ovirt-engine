@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -219,9 +220,15 @@ public class ClusterNetworkListModel extends SearchableListModel
             if (index >= 0) {
                 Network clusterNetwork = clusterNetworks.get(index);
                 networkManageModel.setVmNetwork(clusterNetwork.isVmNetwork());
-                networkManageModel.setRequired(clusterNetwork.isRequired());
-                networkManageModel.setDisplayNetwork(clusterNetwork.getis_display());
-                if (clusterNetwork.getis_display()) {
+
+                // getCluster can return null if the networks is not attached
+                if (clusterNetwork.getCluster() == null){
+                    // Init default network_cluster values
+                    clusterNetwork.setCluster(new network_cluster());
+                }
+                networkManageModel.setRequired(clusterNetwork.getCluster().isRequired());
+                networkManageModel.setDisplayNetwork(clusterNetwork.getCluster().getis_display());
+                if (clusterNetwork.getCluster().getis_display()) {
                     displayNetwork = clusterNetwork;
                 }
                 networkManageModel.setAttached(true);
@@ -268,8 +275,8 @@ public class ClusterNetworkListModel extends SearchableListModel
             if (contains && !needsDetach) {
                 Network clusterNetwork = existingClusterNetworks.get(existingClusterNetworks.indexOf(network));
 
-                if ((networkModel.isRequired() != clusterNetwork.isRequired())
-                                || (networkModel.isDisplayNetwork() != clusterNetwork.getis_display())) {
+                if ((networkModel.isRequired() != clusterNetwork.getCluster().isRequired())
+                                || (networkModel.isDisplayNetwork() != clusterNetwork.getCluster().getis_display())) {
                     needsUpdate = true;
                 }
             }
@@ -352,8 +359,8 @@ public class ClusterNetworkListModel extends SearchableListModel
 
         // CanRemove = SelectedItems != null && SelectedItems.Count > 0;
         getSetAsDisplayCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
-                && network != null && !(network.getis_display() == null ? false : network.getis_display())
-                && network.getStatus() != NetworkStatus.NonOperational);
+                && network != null && !network.getCluster().getis_display()
+                && network.getCluster().getstatus() != NetworkStatus.NonOperational);
     }
 
     public void New()
@@ -446,7 +453,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             return;
         }
 
-        model.setcurrentNetwork(new Network(null));
+        model.setcurrentNetwork(new Network());
 
         if (!model.Validate() || getEntity().getstorage_pool_id() == null)
         {
@@ -529,9 +536,11 @@ public class ClusterNetworkListModel extends SearchableListModel
 
         for (VDSGroup attachNetworkToCluster : networkModel.getnewClusters())
         {
-            Network tempVar = new Network(null);
+            Network tempVar = new Network();
             tempVar.setId(networkId);
             tempVar.setname(network.getname());
+            // Init default network_cluster values (required, display, status)
+            tempVar.setCluster(new network_cluster());
             actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
         }
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -10,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -262,7 +263,7 @@ public final class Cloner
 
     private static Network CloneNetwork(Network instance)
     {
-        Network obj = new Network(null);
+        Network obj = new Network();
 
         obj.setaddr(instance.getaddr());
         obj.setdescription(instance.getdescription());
@@ -273,10 +274,13 @@ public final class Cloner
         obj.settype(instance.gettype());
         obj.setvlan_id(instance.getvlan_id());
         obj.setstp(instance.getstp());
-        obj.setStatus(instance.getStatus());
         obj.setstorage_pool_id(instance.getstorage_pool_id());
-        obj.setis_display(instance.getis_display());
-
+        if (instance.getCluster() !=null){
+            obj.setCluster(new network_cluster());
+            obj.getCluster().setstatus(instance.getCluster().getstatus());
+            obj.getCluster().setis_display(instance.getCluster().getis_display());
+            obj.getCluster().setRequired(instance.getCluster().isRequired());
+        }
         return obj;
     }
 

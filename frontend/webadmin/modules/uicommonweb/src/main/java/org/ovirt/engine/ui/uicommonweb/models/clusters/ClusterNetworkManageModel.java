@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
@@ -8,11 +9,14 @@ public class ClusterNetworkManageModel extends EntityModel {
 
     private boolean attached;
     private boolean vmNetwork;
-    private boolean required;
     private boolean management;
 
     public ClusterNetworkManageModel(Network network) {
         setEntity(network);
+        if (network.getCluster() == null){
+            // Init with default values
+            getEntity().setCluster(new network_cluster());
+        }
         if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getname())) {
             setManagement(true);
         }
@@ -32,7 +36,7 @@ public class ClusterNetworkManageModel extends EntityModel {
     }
 
     public boolean isDisplayNetwork() {
-        return getEntity().getis_display();
+        return getEntity().getCluster().getis_display();
     }
 
     public boolean isManagement() {
@@ -40,7 +44,7 @@ public class ClusterNetworkManageModel extends EntityModel {
     }
 
     public boolean isRequired() {
-        return getEntity().isRequired();
+        return getEntity().getCluster().isRequired();
     }
 
     public boolean isVmNetwork() {
@@ -52,7 +56,7 @@ public class ClusterNetworkManageModel extends EntityModel {
     }
 
     public void setDisplayNetwork(boolean displayNetwork) {
-        getEntity().setis_display(displayNetwork);
+        getEntity().getCluster().setis_display(displayNetwork);
     }
 
     public void setManagement(boolean management) {
@@ -60,7 +64,7 @@ public class ClusterNetworkManageModel extends EntityModel {
     }
 
     public void setRequired(boolean required) {
-        getEntity().setRequired(required);
+        getEntity().getCluster().setRequired(required);
     }
 
     public void setVmNetwork(boolean vmNetwork) {

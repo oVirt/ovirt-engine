@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -375,7 +376,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
             return;
         }
 
-        model.setcurrentNetwork(model.getIsNew() ? new Network(null) : (Network) Cloner.clone(getSelectedItem()));
+        model.setcurrentNetwork(model.getIsNew() ? new Network() : (Network) Cloner.clone(getSelectedItem()));
 
         if (!model.Validate())
         {
@@ -509,9 +510,11 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
         for (VDSGroup attachNetworkToCluster : attachNetworkToClusters)
         {
-            Network tempVar = new Network(null);
+            Network tempVar = new Network();
             tempVar.setId(networkId);
             tempVar.setname(network.getname());
+            // Init default network_cluster values (required, display, status)
+            tempVar.setCluster(new network_cluster());
             actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
         }
 
@@ -555,6 +558,9 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         }
         final DataCenterNetworkModel dcNetworkModel = (DataCenterNetworkModel) getWindow();
         Network network = (Network) getSelectedItem();
+
+        // Init default network_cluster values (required, display, status)
+        network.setCluster(new network_cluster());
 
         dcNetworkModel.setnewClusters(new ArrayList<VDSGroup>());
 

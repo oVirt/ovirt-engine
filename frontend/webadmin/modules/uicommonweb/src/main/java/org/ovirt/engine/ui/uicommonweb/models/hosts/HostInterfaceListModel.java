@@ -863,7 +863,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 // Add a 'none' option to networks.
                 if (!StringHelper.isNullOrEmpty(item.getNetworkName()))
                 {
-                    Network tempVar = new Network(null);
+                    Network tempVar = new Network();
                     tempVar.setId(NGuid.Empty);
                     tempVar.setname("None"); //$NON-NLS-1$
                     networksToAdd.add(0, tempVar);
@@ -1799,7 +1799,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
 
-                Network defaultNetwork = new Network(null);
+                Network defaultNetwork = new Network();
                 VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
                 defaultNetwork.setname(nic.getNetworkName());
                 Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
@@ -1902,7 +1902,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 ArrayList<Network> networks =
                         DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
-                Network defaultNetwork = new Network(null);
+                Network defaultNetwork = new Network();
                 defaultNetwork.setname(nic.getNetworkName());
                 Network tempVar3 = Linq.FindNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
@@ -2110,7 +2110,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         nicName);
         ArrayList<Network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
 
-        Network defaultNetwork = new Network(null);
+        Network defaultNetwork = new Network();
         defaultNetwork.setname(nic.getNetworkName());
         Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
         Network net = (tempVar != null) ? tempVar : defaultNetwork;

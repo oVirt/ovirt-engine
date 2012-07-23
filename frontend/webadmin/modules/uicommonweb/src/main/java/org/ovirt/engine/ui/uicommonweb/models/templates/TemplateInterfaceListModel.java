@@ -1,14 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -26,9 +29,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class TemplateInterfaceListModel extends SearchableListModel
@@ -163,7 +163,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         ArrayList<Network> networks = new ArrayList<Network>();
         for (Network a : network_list)
         {
-            if (a.getStatus() == NetworkStatus.Operational)
+            if (a.getCluster().getstatus() == NetworkStatus.Operational)
             {
                 networks.add(a);
             }
@@ -225,7 +225,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         ArrayList<Network> networks = new ArrayList<Network>();
         for (Network a : network_list)
         {
-            if (a.getStatus() == NetworkStatus.Operational)
+            if (a.getCluster().getstatus() == NetworkStatus.Operational)
             {
                 networks.add(a);
             }
