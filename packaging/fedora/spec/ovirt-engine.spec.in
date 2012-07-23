@@ -14,7 +14,6 @@
 %global engine_jboss_modules %{engine_data}/modules
 
 %global engine_state %{_localstatedir}/lib/%{engine_name}
-%global engine_cache %{_localstatedir}/cache/%{engine_name}
 %global engine_log %{_localstatedir}/log/%{engine_name}
 %global engine_run %{_localstatedir}/run/%{engine_name}
 %global engine_lock %{_localstatedir}/lock/%{engine_name}
@@ -344,7 +343,6 @@ make %{make_common_opts} install DESTDIR=%{buildroot}
 
 install -dm 755 %{buildroot}/%{engine_state}/deployments
 install -dm 755 %{buildroot}/%{engine_state}/content
-install -dm 755 %{buildroot}/%{engine_cache}
 install -dm 755 %{buildroot}/%{engine_log}/{notifier,engine-manage-domains}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 install -dm 755 %{buildroot}/%{engine_lock}
@@ -644,11 +642,10 @@ fi
 %{_mavenpomdir}/JPP.%{name}-vdsbroker.pom
 %endif
 
-# Directories for the deployments, contents and temporary files need to
-# be owned by the engine user because the application server needs to
+# Directories for the deployments and contents files need to be
+# owned by the engine user because the application server needs to
 # write to them:
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
-%attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 
 # The backend owns the directory of the ear and most of its contents,
 # but not all, as most of the web applications are owned by other

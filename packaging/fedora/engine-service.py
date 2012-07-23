@@ -28,6 +28,7 @@ import optparse
 import os
 import pwd
 import resource
+import shutil
 import signal
 import stat
 import string
@@ -138,7 +139,7 @@ def loadSysconfig():
     global engineDeploymentsDir
     engineEtcDir = getSysconfig("ENGINE_ETC", "/etc/ovirt-engine")
     engineLogDir = getSysconfig("ENGINE_LOG", "/var/log/ovirt-engine")
-    engineTmpDir = getSysconfig("ENGINE_TMP", "/var/cache/ovirt-engine")
+    engineTmpDir = getSysconfig("ENGINE_TMP", "/var/tmp/ovirt-engine")
     engineUsrDir = getSysconfig("ENGINE_USR", "/usr/share/ovirt-engine")
     engineVarDir = getSysconfig("ENGINE_VAR", "/var/lib/ovirt-engine")
     engineLockDir = getSysconfig("ENGINE_LOCK", "/var/lock/ovirt-engine")
@@ -240,7 +241,6 @@ def checkInstallation():
     checkDirectory(engineServiceDir, uid=0, gid=0)
     checkDirectory(engineContentDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineDeploymentsDir, uid=engineUid, gid=engineGid)
-    checkDirectory(engineTmpDir, uid=engineUid, gid=engineGid)
     checkFile(engineLoggingFile)
     checkFile(engineConfigTemplateFile)
 
@@ -311,6 +311,12 @@ def startEngine():
             markerFd.close()
         except:
             raise Exception("Can't create deployment marker file \"%s\"." % markerFile)
+
+    # Clean and recreate the temporary directory:
+    if os.path.exists(engineTmpDir):
+        shutil.rmtree(engineTmpDir)
+    os.mkdir(engineTmpDir)
+    os.chown(engineTmpDir, engineUid, engineGid)
 
     # Generate the main configuration from the template and copy it to the
     # configuration directory making sure that the application server will be
@@ -483,8 +489,12 @@ def stopEngine():
     else:
         syslog.syslog(syslog.LOG_INFO, "Stopped engine process %d." % enginePid)
 
-    # And finally we remove the PID file:
+    # Remove the PID file:
     removeEnginePid()
+
+    # Clean the temporary directory:
+    if os.path.exists(engineTmpDir):
+        shutil.rmtree(engineTmpDir)
 
 
 def checkEngine():
