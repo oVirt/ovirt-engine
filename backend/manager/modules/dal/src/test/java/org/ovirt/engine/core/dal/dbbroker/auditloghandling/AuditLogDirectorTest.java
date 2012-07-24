@@ -2,12 +2,12 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.apache.commons.collections.MapUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,7 +86,7 @@ public class AuditLogDirectorTest {
     public void testResolveUnknownVariable() {
         final String message = "This is my ${Variable}";
         final String expectedResolved = "This is my <UNKNOWN>";
-        Map<String, String> values = MapUtils.EMPTY_MAP;
+        Map<String, String> values = Collections.emptyMap();
         String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
         Assert.assertEquals(expectedResolved, resolvedMessage);
     }
