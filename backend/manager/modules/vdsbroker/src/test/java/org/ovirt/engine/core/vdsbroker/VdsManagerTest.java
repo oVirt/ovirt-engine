@@ -26,7 +26,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, VdsGroupDAO.class, SchedulerUtilQuartzImpl.class })
+@PrepareForTest({ DbFacade.class, SchedulerUtilQuartzImpl.class })
 public class VdsManagerTest {
     @Mock
     private DbFacade db;
@@ -40,7 +40,6 @@ public class VdsManagerTest {
     public VdsManagerTest() {
         MockitoAnnotations.initMocks(this);
         mockStatic(DbFacade.class);
-        mockStatic(VdsGroupDAO.class);
         mockStatic(SchedulerUtilQuartzImpl.class);
     }
 
