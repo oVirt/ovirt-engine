@@ -211,18 +211,11 @@
     <url-pattern>/spice/usbfilter.txt</url-pattern>
   </servlet-mapping>
 
-  <!-- Make sure that 404 errors are redirected (not forwarded) to the index page: -->
-  <servlet>
-    <servlet-name>error</servlet-name>
-    <servlet-class>org.ovirt.engine.core.ErrorServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>error</servlet-name>
-    <url-pattern>/error</url-pattern>
-  </servlet-mapping>
+  <!-- Go to the index when a page is not found (preserving the
+       404 status code): -->
   <error-page>
     <error-code>404</error-code>
-    <location>/error</location>
+    <location>/index.html</location>
   </error-page>
 
 </web-app>
