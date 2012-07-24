@@ -32,6 +32,7 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
 
         if (bootProtocol != null && bootProtocol == StaticIp) {
             if (isNullOrEmpty(address)) {
+                context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("NETWROK_ADDR_MANDATORY_IN_STATIC_IP")
                         .addNode("address").addConstraintViolation();
                 return false;
@@ -40,6 +41,7 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
 
         if (!Config.<String> GetValue(ConfigValues.ManagementNetwork).equals(iface.getNetworkName())
                 && !isNullOrEmpty(iface.getGateway()) && !"0.0.0.0".equals(iface.getGateway())) {
+            context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("NETWORK_ATTACH_ILLEGAL_GATEWAY")
                     .addNode("gateway").addConstraintViolation();
             return false;

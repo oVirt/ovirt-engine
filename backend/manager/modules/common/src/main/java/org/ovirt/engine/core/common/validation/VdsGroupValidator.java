@@ -15,6 +15,7 @@ public class VdsGroupValidator implements ConstraintValidator<ValidVdsGroup, VDS
     @Override
     public boolean isValid(VDSGroup value, ConstraintValidatorContext context) {
         if (value.supportsVirtService() && value.getcpu_name() == null) {
+            context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("VDS_GROUP_CPU_TYPE_CANNOT_BE_NULL")
                     .addNode("cpu_name")
                     .addConstraintViolation();
