@@ -3,8 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +26,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -50,7 +51,6 @@ public class VdsBrokerObjectBuilderTest {
     public VdsBrokerObjectBuilderTest() {
         MockitoAnnotations.initMocks(this);
         mockStatic(DbFacade.class);
-        mockStatic(VdsBrokerObjectsBuilder.class);
     }
 
     @Test
@@ -267,6 +267,7 @@ public class VdsBrokerObjectBuilderTest {
         vmStatistics.setId(vmId);
         return vmStatistics;
     }
+
     private VmDynamic getVmDynamic() {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(vmId);
@@ -275,7 +276,7 @@ public class VdsBrokerObjectBuilderTest {
 
     private void mockDiskImageDao() {
         List<Disk> diskImageList = setVmDiskImagesList();
-        when(DbFacade.getInstance()).thenReturn(dbFacade);
+        PowerMockito.when(DbFacade.getInstance()).thenReturn(dbFacade);
         when(dbFacade.getDiskDao()).thenReturn(diskDao);
         when(diskDao.getAllForVm(vmId))
                 .thenReturn(diskImageList);
