@@ -117,17 +117,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             }
                         }
 
-                        if (disks.isEmpty())
-                        {
-                            behavior.DisableNewTemplateModel(ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .cannotCreateTemplateVmHasNoDisksMsg());
-                        }
-                        else
-                        {
-                            behavior.InitStorageDomains();
-                        }
-
+                        behavior.InitStorageDomains();
                         InitDisks(disks);
                     }
                 }, getModel().getHash()),

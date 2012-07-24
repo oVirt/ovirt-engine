@@ -906,9 +906,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Data Center is not accessible.")
     String dataCenterIsNotAccessibleMsg();
 
-    @DefaultStringValue("Cannot create Template. VM has no disks.")
-    String cannotCreateTemplateVmHasNoDisksMsg();
-
     @DefaultStringValue("This field can't be empty.")
     String thisFieldCantBeEmptyInvalidReason();
 

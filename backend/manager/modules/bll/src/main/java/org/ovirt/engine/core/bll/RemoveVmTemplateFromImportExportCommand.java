@@ -66,10 +66,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             }
         }
-        if (retVal && (getParameters().getImages() == null || getParameters().getImages().size() == 0)) {
-            addCanDoActionMessage(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST);
-            retVal = false;
-        }
+
         if (retVal) {
             StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
             retVal = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
@@ -108,26 +105,30 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.RemoveVM, tempVar);
 
         List<DiskImage> images = getParameters().getImages();
-        for (DiskImage image : images) {
-            ArrayList<Guid> storageIds = new ArrayList<Guid>();
-            storageIds.add(getParameters().getStorageDomainId());
-            image.setstorage_ids(storageIds);
-            image.setstorage_pool_id(getParameters().getStoragePoolId());
-        }
-        RemoveAllVmImagesParameters tempVar2 = new RemoveAllVmImagesParameters(getVmId(), images);
-        tempVar2.setParentCommand(getActionType());
-        tempVar2.setEntityId(getParameters().getEntityId());
-        tempVar2.setForceDelete(true);
-        tempVar2.setParentParemeters(getParameters());
-        VdcReturnValueBase vdcRetValue =
-                Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
-                        tempVar2,
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-        if (vdcRetValue.getSucceeded()) {
-            getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
-            setSucceeded(true);
+        if (!images.isEmpty()) {
+            for (DiskImage image : images) {
+                ArrayList<Guid> storageIds = new ArrayList<Guid>();
+                storageIds.add(getParameters().getStorageDomainId());
+                image.setstorage_ids(storageIds);
+                image.setstorage_pool_id(getParameters().getStoragePoolId());
+            }
+            RemoveAllVmImagesParameters tempVar2 = new RemoveAllVmImagesParameters(getVmId(), images);
+            tempVar2.setParentCommand(getActionType());
+            tempVar2.setEntityId(getParameters().getEntityId());
+            tempVar2.setForceDelete(true);
+            tempVar2.setParentParemeters(getParameters());
+            VdcReturnValueBase vdcRetValue =
+                    Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
+                            tempVar2,
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            if (vdcRetValue.getSucceeded()) {
+                getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+                setSucceeded(true);
+            } else {
+                getReturnValue().setFault(vdcRetValue.getFault());
+            }
         } else {
-            getReturnValue().setFault(vdcRetValue.getFault());
+            EndRemoveTemplate();
         }
     }
 

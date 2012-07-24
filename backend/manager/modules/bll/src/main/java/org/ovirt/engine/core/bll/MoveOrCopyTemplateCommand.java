@@ -100,10 +100,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (getVmTemplate() == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-        } else if (getTemplateDisks() == null || getTemplateDisks().size() == 0) {
-            addCanDoActionMessage(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST);
-            retValue = false;
-        } else {
+        } else if (getTemplateDisks() != null && !getTemplateDisks().isEmpty()) {
             ensureDomainMap(getTemplateDisks(), getParameters().getStorageDomainId());
             // check that images are ok
             ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
@@ -161,7 +158,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     protected void executeCommand() {
         if (VmTemplateHandler.isTemplateStatusIsNotLocked(getVmTemplateId())) {
             VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
-            MoveOrCopyAllImageGroups();
+            if (!getTemplateDisks().isEmpty()) {
+                MoveOrCopyAllImageGroups();
+            } else {
+                endVmTemplateRelatedOps();
+            }
             setSucceeded(true);
         }
     }
@@ -242,19 +243,20 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected void EndMoveOrCopyCommand() {
         EndActionOnAllImageGroups();
+        endVmTemplateRelatedOps();
+        setSucceeded(true);
+    }
 
+    private void endVmTemplateRelatedOps() {
         if (getVmTemplate() != null) {
             VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
             VmDeviceUtils.setVmDevices(getVmTemplate());
             UpdateTemplateInSpm();
         }
-
         else {
             setCommandShouldBeLogged(false);
             log.warn("MoveOrCopyTemplateCommand::EndMoveOrCopyCommand: VmTemplate is null, not performing full EndAction");
         }
-
-        setSucceeded(true);
     }
 
     protected void UpdateTemplateInSpm() {

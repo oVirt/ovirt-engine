@@ -180,21 +180,22 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             // Set VM to lock status immediately, for reducing race condition.
             VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
             // if for some reason template doesn't have images, remove it now and not in end action
-            final boolean hasImanges = imageTemplates.size() > 0;
+            final boolean hasImages = imageTemplates.size() > 0;
             if (RemoveTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(), getVmTemplateId())) {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                if (hasImages) {
+                    TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-                    @Override
-                    public Void runInTransaction() {
-                        if (RemoveVmTemplateImages()) {
-                            if (!hasImanges) {
-                                RemoveTemplateFromDb();
+                        @Override
+                        public Void runInTransaction() {
+                            if (RemoveVmTemplateImages()) {
+                                setSucceeded(true);
                             }
-                            setSucceeded(true);
+                            return null;
                         }
-                        return null;
-                    }
-                });
+                    });
+                } else {
+                    HandleEndAction();
+                }
             }
         }
     }

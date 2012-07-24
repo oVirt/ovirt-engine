@@ -165,13 +165,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         }
 
-        // check that template has images
-        if (retVal && (getParameters().getImages() == null || getParameters().getImages().size() == 0)) {
-            retVal = false;
-            addCanDoActionMessage(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST);
-        }
-
-        if (retVal) {
+        if (retVal && getParameters().getImages() != null && !getParameters().getImages().isEmpty()) {
             Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(
                     new ArrayList<DiskImage>(getVmTemplate().getDiskImageMap().values()));
             if (domainMap.isEmpty()) {
@@ -260,8 +254,18 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 return null;
             }
         });
-        MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
+
+        boolean doesVmTemplateContainImages = !getParameters().getImages().isEmpty();
+        if (doesVmTemplateContainImages) {
+            MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
+        }
+
         VmDeviceUtils.addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
+
+        if (!doesVmTemplateContainImages) {
+            EndMoveOrCopyCommand();
+        }
+
         setSucceeded(success);
     }
 

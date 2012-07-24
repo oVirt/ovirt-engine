@@ -139,6 +139,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         });
 
+        // means that there are no asynchronous tasks to execute and that we can
+        // end the command synchronously
+        boolean pendingAsyncTasks = !getReturnValue().getTaskIdList().isEmpty();
+        if (!pendingAsyncTasks) {
+            endSuccessfullySynchronous();
+        }
     }
 
     @Override
@@ -149,10 +155,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
         for (DiskImage diskImage : getVm().getDiskList()) {
             mImages.add(diskImage);
-        }
-        if (mImages.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
-            return false;
         }
         if (!VmHandler.isMemorySizeLegal(getParameters().getMasterVm().getos(),
                 getParameters().getMasterVm().getmem_size_mb(),
@@ -359,28 +361,43 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Override
     protected void EndSuccessfully() {
         setVmTemplateId(getParameters().getVmTemplateId());
-        // set it to null to reload from db
-        setVmTemplate(null);
 
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().EndAction(VdcActionType.CreateImageTemplate, p);
         }
-
-        if (getVmTemplate() != null) {
-            UpdateTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(), new java.util.ArrayList<VmTemplate>(
-                    java.util.Arrays.asList(new VmTemplate[] { getVmTemplate() })));
-            if (getVm() != null) {
-                VmHandler.UnLockVm(getVm());
-            } else {
-                log.warn("AddVmTemplateCommand::EndSuccessfully: Vm is null, cannot unlock Vm");
-            }
-            VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
-        } else {
-            setCommandShouldBeLogged(false);
-            log.warn("AddVmTemplateCommand::EndSuccessfully: VmTemplate is null - not performing full EndAction");
+        if (reloadVmTemplateFromDB() != null) {
+            endDefaultOperations();
         }
-
         setSucceeded(true);
+    }
+
+    private void endSuccessfullySynchronous() {
+        if (reloadVmTemplateFromDB() != null) {
+            endDefaultOperations();
+        }
+        setSucceeded(true);
+    }
+
+    private void endDefaultOperations() {
+        endTemplateRelatedOperations();
+        endUnlockOps();
+    }
+
+    private void endTemplateRelatedOperations() {
+        VmTemplate template = this.reloadVmTemplateFromDB();
+        UpdateTemplateInSpm(template.getstorage_pool_id().getValue(), new java.util.ArrayList<VmTemplate>(
+                java.util.Arrays.asList(new VmTemplate[] { template })));
+    }
+
+    private void endUnlockOps() {
+        VmHandler.UnLockVm(getVm());
+        VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
+    }
+
+    private VmTemplate reloadVmTemplateFromDB() {
+        // set it to null to reload the template from the db
+        setVmTemplate(null);
+        return getVmTemplate();
     }
 
     @Override
