@@ -918,7 +918,6 @@ public class VdsBrokerObjectsBuilder {
                     iface.setMacAddress((String) bond.get("hwaddr"));
                     iface.setAddress((String) bond.get("addr"));
                     iface.setSubnet((String) bond.get("netmask"));
-                    iface.setGateway((String) bond.get(VdsProperties.GLOBAL_GATEWAY));
                     if (bond.get("slaves") != null) {
                         Object[] interfaces = (Object[]) bond.get("slaves");
                         iStats.setVdsId(vds.getId());
@@ -1046,7 +1045,7 @@ public class VdsBrokerObjectsBuilder {
                 iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
             }
             iface.setSubnet(net.getsubnet());
-            iface.setGateway(net.getgateway());
+            setGatewayIfManagementNetwork(iface, net.getgateway());
             Map<String, Object> networkConfigAsMap =
                     (Map<String, Object>) ((network.get("cfg") instanceof Map) ? network.get("cfg") : null);
             XmlRpcStruct networkConfig = networkConfigAsMap == null ? null : new XmlRpcStruct(
@@ -1110,7 +1109,7 @@ public class VdsBrokerObjectsBuilder {
                 if (cfg.containsKey(VdsProperties.gateway)) {
                     Object gateway = cfg.getItem(VdsProperties.gateway);
                     if (gateway != null && !StringUtils.isEmpty(gateway.toString())) {
-                        iface.setGateway(gateway.toString());
+                        setGatewayIfManagementNetwork(iface, gateway.toString());
                     }
                 }
             } else {
@@ -1135,6 +1134,21 @@ public class VdsBrokerObjectsBuilder {
                     nic.setBondName(iface.getName());
                 }
             }
+        }
+    }
+
+    /**
+     * Store the gateway for management network only. If gateway was provided for non-management network, its value
+     * should be ignored
+     *
+     * @param iface
+     *            the host network interface
+     * @param gateway
+     *            the gateway value to be set
+     */
+    private static void setGatewayIfManagementNetwork(VdsNetworkInterface iface, String gateway) {
+        if (NetworkUtils.getEngineNetwork().equals(iface.getNetworkName())) {
+            iface.setGateway(gateway);
         }
     }
 
