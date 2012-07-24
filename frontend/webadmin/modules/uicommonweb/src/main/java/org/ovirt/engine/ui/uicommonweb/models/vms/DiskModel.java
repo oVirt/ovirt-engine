@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -667,10 +666,7 @@ public class DiskModel extends Model
                         ArrayList<DiskImageBase> presets = (ArrayList<DiskImageBase>) returnValue;
 
                         diskModel1.getPreset().setItems(presets);
-                        DiskImageBase preset = new DiskImage();
-                        preset.setvolume_type(VolumeType.Preallocated);
-                        preset.setvolume_format(VolumeFormat.RAW);
-                        diskModel1.getPreset().setSelectedItem(preset);
+                        diskModel1.getPreset().setSelectedItem(Linq.FirstOrDefault(presets));
                     }
                 }), storageType);
 
