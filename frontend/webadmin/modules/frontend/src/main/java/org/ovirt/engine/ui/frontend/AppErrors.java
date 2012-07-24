@@ -366,6 +366,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to a specific Host but cannot run on it due to:\nInvalid Host status or not enough free resources on it.\nYou may:\n- Run the VM on another Host manually (using Run Once).\n- Free resources on the Host by migrating other VMs.")
     String VM_PINNED_TO_HOST_CANNOT_RUN_ON_THE_DEFAULT_VDS();
 
+    @DefaultStringValue("CPU pinning format invalid.")
+    String VM_PINNING_FORMAT_INVALID();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM doesn't exist.")
     String ACTION_TYPE_FAILED_VM_NOT_EXIST();
 
