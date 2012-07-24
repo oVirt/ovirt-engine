@@ -1092,6 +1092,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The specified Logical Network doesn't exist in the current Cluster.")
     String NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER();
 
+    @DefaultStringValue("The Network definitions on the Network Interface are different than those on the Logical Network. Please synchronize the Network Interface before editing the network.")
+    String NETWORK_NOT_IN_SYNC();
+
     @DefaultStringValue("The currently used VM Snapshot Image cannot be used in Preview command.")
     String CANNOT_PREIEW_CURRENT_IMAGE();
 
