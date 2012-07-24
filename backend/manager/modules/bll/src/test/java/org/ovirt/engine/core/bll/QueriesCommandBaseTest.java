@@ -2,12 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Constructor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,43 +47,6 @@ public class QueriesCommandBaseTest {
         query.setInternalExecution(false);
 
         assertFalse("Query should not be marked for internel execution", query.isInternalExecution());
-    }
-
-    /** Test queries are created with the correct type */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testQueryCreation() throws Exception {
-        for (VdcQueryType queryType : VdcQueryType.values()) {
-            try {
-                log.debug("evaluating " + queryType);
-
-                // Get the query's class
-                Class<? extends QueriesCommandBase<?>> clazz =
-                        (Class<? extends QueriesCommandBase<?>>) Class.forName(queryType.getPackageName() + "."
-                                + queryType.name() + "Query");
-
-                // Create a new instance, parameters don't matter
-                Constructor<? extends QueriesCommandBase<?>> cons =
-                        (Constructor<? extends QueriesCommandBase<?>>) clazz.getConstructors()[0];
-
-                // Construct the parameter array
-                Class<?>[] paramTypes = cons.getParameterTypes();
-                Object[] params = new Object[paramTypes.length];
-                for (int i = 0; i < paramTypes.length; ++i) {
-                    params[i] = mock(paramTypes[i]);
-                }
-                QueriesCommandBase<?> query = cons.newInstance(params);
-
-                VdcQueryType type = TestHelperQueriesCommandType.getQueryTypeFieldValue(query);
-
-                assertNotNull("could not find type", type);
-                assertFalse("could not find type", type.equals(VdcQueryType.Unknown));
-            } catch (ClassNotFoundException ignore) {
-                log.debug("skipping");
-            } catch (ExceptionInInitializerError ignore) {
-                log.debug("skipping");
-            }
-        }
     }
 
     /** Test that an "oddly" typed query will be considered unknown */
