@@ -498,18 +498,22 @@ def stopEngine():
 
 
 def checkEngine():
-    # First check that the engine PID file exists:
+    # First check that the engine PID file exists, if it doesn't
+    # then we assume that the engine is not running:
     enginePid = loadEnginePid()
     if not enginePid:
-        raise Exception("The engine PID file \"%s\" doesn't exist." % enginePidFile)
+        print("The engine is not running.")
+        sys.exit(3)
 
     # Now check that the process exists:
     if not os.path.exists("/proc/%d" % enginePid):
-        raise Exception("The engine PID file \"%s\" contains %d, but that process doesn't exist." % (enginePidFile, enginePid))
+        print("The engine process %d is not running." % enginePid)
+        sys.exit(1)
 
     # XXX: Here we could check deeper the status of the engine sending a
     # request to the health status servlet.
-    syslog.syslog(syslog.LOG_INFO, "Engine process %d is running." % enginePid)
+    print("The engine process %d is running." % enginePid)
+    sys.exit(0)
 
 
 def showUsage():
@@ -541,26 +545,27 @@ def prettyAction(label, action):
         raise
 
 
-def main():
-    # Open connection to the syslog daemon:
-    syslog.openlog(engineName, syslog.LOG_PID)
+def performAction(action):
+    # The status action is a bit special, as it has some very
+    # specific requirements regarding the exit codes, so they are
+    # managed inside the function:
+    if action == "status":
+        try:
+            loadSysconfig()
+            checkEngine()
+        except SystemExit:
+            raise
+        except Exception as exception:
+            print(str(exception))
+            sys.exit(4)
 
-    # Check the arguments:
-    args = sys.argv[1:]
-    if len(args) != 1 or not args[0] in [ "start", "stop", "restart", "status" ]:
-        showUsage()
-        sys.exit(1)
-
+    # The rest of the actions all work in the same way, if
+    # everything goes well finish with exit code zero, otherwise
+    # finish with non zero exit code:
     try:
-        # Load the configuration:
         loadSysconfig()
-
-        # Do some important checks:
         checkIdentity()
         checkInstallation()
-
-        # Perform the requested action:
-        action = args[0].lower()
         if action == "start":
             prettyAction("Starting", startEngine)
         elif action == "stop":
@@ -568,22 +573,31 @@ def main():
         elif action == "restart":
             prettyAction("Stopping", stopEngine)
             prettyAction("Starting", startEngine)
-        elif action == "status":
-            try:
-                checkEngine()
-                print("ovirt-engine is running")
-            except:
-                print("ovirt-engine is stopped")
-                raise
     except Exception as exception:
-        #traceback.print_exc()
         syslog.syslog(syslog.LOG_ERR, str(exception))
         sys.exit(1)
     else:
         sys.exit(0)
 
-    # Close connection to syslog:
-    syslog.closelog()
+
+def main():
+    # Check the arguments:
+    args = sys.argv[1:]
+    if len(args) != 1:
+        showUsage()
+        sys.exit(1)
+    action = args[0].lower()
+    if not action in ["start", "stop", "restart", "status"]:
+        showUsage()
+        sys.exit(1)
+
+    # Run the action with syslog open and remember to close it
+    # regardless of what happens in the middle:
+    syslog.openlog(engineName, syslog.LOG_PID)
+    try:
+        performAction(action)
+    finally:
+        syslog.closelog()
 
 
 if __name__ == "__main__":
