@@ -38,7 +38,7 @@ public class DirectorySearcherTest extends AbstractLdapTest {
 
     @Rule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.LDAPQueryTimeout, 30),
+            mockConfig(ConfigValues.LDAPQueryTimeout, 2),
             mockConfig(ConfigValues.LDAPProviderTypes, "example.com:general")
             );
 
@@ -174,14 +174,6 @@ public class DirectorySearcherTest extends AbstractLdapTest {
 
     private static Boolean execute(GetRootDSETask task) throws InterruptedException, ExecutionException,
             TimeoutException {
-        // Execution timeout after 20 seconds.
-        // Why 20?
-        // Currently GetRootDSE swallows NamingException that is
-        // thrown during a socket connect, causing the callable to exit with
-        // no Timeout exception at all, leading to false test results.
-        //
-        // To satisfy different machines and enviornments this call will timeout
-        // earlier than most resonable tcp/ip setups
-        return executerService.submit(task).get(20, TimeUnit.SECONDS);
+        return executerService.submit(task).get(1, TimeUnit.SECONDS);
     }
 }
