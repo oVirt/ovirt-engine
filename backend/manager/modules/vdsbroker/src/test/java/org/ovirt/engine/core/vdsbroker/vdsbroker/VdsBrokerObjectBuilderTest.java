@@ -231,13 +231,13 @@ public class VdsBrokerObjectBuilderTest {
         validateDisksStatsList(getVds(), xml, true);
     }
 
-    private void validateDisksUsagesList(VmStatistics vmStatistics, Object[] disksUsages, XmlRpcStruct xml) {
+    private static void validateDisksUsagesList(VmStatistics vmStatistics, Object[] disksUsages, XmlRpcStruct xml) {
         VdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
         assertEquals(Arrays.asList(disksUsages),
                 new JsonObjectDeserializer().deserializeUnformattedJson(vmStatistics.getDisksUsage(), ArrayList.class));
     }
 
-    private void validateDisksStatsList(VDS vds, XmlRpcStruct xml, boolean assertNullValues) {
+    private static void validateDisksStatsList(VDS vds, XmlRpcStruct xml, boolean assertNullValues) {
         VdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, xml);
         assertNotNull(vds.getLocalDisksUsage());
 
@@ -258,7 +258,7 @@ public class VdsBrokerObjectBuilderTest {
         return xml;
     }
 
-    private VDS getVds() {
+    private static VDS getVds() {
         return new VDS();
     }
 
@@ -291,21 +291,21 @@ public class VdsBrokerObjectBuilderTest {
         return diskImageList;
     }
 
-    private XmlRpcStruct setDisksInXmlRpc(Map<String, Map<String, Object>> disksData) {
+    private static XmlRpcStruct setDisksInXmlRpc(Map<String, Map<String, Object>> disksData) {
         XmlRpcStruct xml = new XmlRpcStruct();
         Map<String, Object> innerMap = xml.getInnerMap();
         innerMap.put(VdsProperties.vm_disks, disksData);
         return xml;
     }
 
-    private XmlRpcStruct setDisksUsageInXmlRpc(Object[] disksUsageData) {
+    private static XmlRpcStruct setDisksUsageInXmlRpc(Object[] disksUsageData) {
         XmlRpcStruct xml = new XmlRpcStruct();
         Map<String, Object> innerMap = xml.getInnerMap();
         innerMap.put(VdsProperties.VM_DISKS_USAGE, disksUsageData);
         return xml;
     }
 
-    private XmlRpcStruct setDisksStatsInXmlRpc(Object disksStatsData) {
+    private static XmlRpcStruct setDisksStatsInXmlRpc(Object disksStatsData) {
         XmlRpcStruct xml = new XmlRpcStruct();
         Map<String, Object> innerMap = xml.getInnerMap();
         innerMap.put(VdsProperties.DISK_STATS, disksStatsData);
@@ -325,14 +325,14 @@ public class VdsBrokerObjectBuilderTest {
         return diskData;
     }
 
-    private Object[] initDisksUsageData() {
+    private static Object[] initDisksUsageData() {
         Object[] disksUsage = new Object[2];
         disksUsage[0] = getDiskUsageAsMap("11704201216", "FAT32", "c:\\", "9516027904");
         disksUsage[1] = getDiskUsageAsMap("133543936", "CDFS", "d:\\", "133543936");
         return disksUsage;
     }
 
-    private Map<String, String> getDiskUsageAsMap(String total, String fs, String path, String used) {
+    private static Map<String, String> getDiskUsageAsMap(String total, String fs, String path, String used) {
         Map<String, String> diskUsage = new HashMap<String, String>();
         diskUsage.put("total", total);
         diskUsage.put("fs", fs);
