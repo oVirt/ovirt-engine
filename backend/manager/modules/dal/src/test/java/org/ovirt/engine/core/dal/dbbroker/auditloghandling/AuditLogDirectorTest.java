@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +17,12 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AuditLogDAO;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ AuditLogDirector.class, DbFacade.class })
+@PrepareForTest({ AuditLogDirector.class })
 public class AuditLogDirectorTest {
 
     @Mock
@@ -41,8 +41,8 @@ public class AuditLogDirectorTest {
     }
 
     private void initAuditLogDirectorMock() {
-        spy(AuditLogDirector.class);
-        when(AuditLogDirector.getDbFacadeInstance()).thenReturn(dbFacade);
+        PowerMockito.spy(AuditLogDirector.class);
+        PowerMockito.when(AuditLogDirector.getDbFacadeInstance()).thenReturn(dbFacade);
     }
 
     @Test
