@@ -350,7 +350,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllVms, new VdcQueryParametersBase(),_asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetAllVms, new VdcQueryParametersBase(), _asyncQuery);
 
         AsyncQuery _asyncQuery1 = new AsyncQuery();
         _asyncQuery1.setModel(this);
@@ -1285,7 +1285,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setkernel_url((String) model.getKernel_path().getEntity());
         gettempVm().setkernel_params((String) model.getKernel_parameters().getEntity());
 
-        gettempVm().setCustomProperties((String) model.getCustomProperties().getEntity());
+        gettempVm().setCustomProperties(model.getCustomPropertySheet().getEntity());
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
         gettempVm().setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
