@@ -18,9 +18,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -101,7 +101,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void networkMovedFromNicToNic() {
         Network net = createNetwork("net");
-        VdsNetworkInterface nic1 = createNic("nic0", net.getname());
+        VdsNetworkInterface nic1 = createNicSyncedWithNetwork("nic0", net);
         VdsNetworkInterface nic2 = createNic("nic1", null);
 
         mockExistingNetworks(net);
@@ -123,7 +123,7 @@ public class SetupNetworksHelperTest {
         Network net = createNetwork("net");
         Network newNet = createNetwork("net2");
         mockExistingNetworks(net, newNet);
-        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         mockExistingIfaces(nic);
         nic.setNetworkName(newNet.getName());
 
@@ -140,7 +140,7 @@ public class SetupNetworksHelperTest {
     public void bootProtocolChanged() {
         Network net = createNetwork("net");
         mockExistingNetworks(net);
-        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.None);
         mockExistingIfaces(nic);
         nic.setBootProtocol(NetworkBootProtocol.Dhcp);
@@ -154,7 +154,7 @@ public class SetupNetworksHelperTest {
     public void gatewayChanged() {
         Network net = createNetwork("net");
         mockExistingNetworks(net);
-        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.StaticIp);
         nic.setGateway(RandomUtils.instance().nextString(10));
         mockExistingIfaces(nic);
@@ -169,7 +169,7 @@ public class SetupNetworksHelperTest {
     public void subnetChanged() {
         Network net = createNetwork("net");
         mockExistingNetworks(net);
-        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.StaticIp);
         nic.setSubnet(RandomUtils.instance().nextString(10));
         mockExistingIfaces(nic);
@@ -184,7 +184,7 @@ public class SetupNetworksHelperTest {
     public void ipChanged() {
         Network net = createNetwork("net");
         mockExistingNetworks(net);
-        VdsNetworkInterface nic = createNic("nic0", net.getName());
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.StaticIp);
         nic.setAddress(RandomUtils.instance().nextString(10));
         mockExistingIfaces(nic);
@@ -579,13 +579,14 @@ public class SetupNetworksHelperTest {
      * @param bondName
      * @param vlanId
      * @param networkName
+     * @param bridged
      * @return A network interface.
      */
     private VdsNetworkInterface createVdsInterface(Guid id,
             String name,
             Boolean bonded,
             String bondName,
-            Integer vlanId, String networkName) {
+            Integer vlanId, String networkName, boolean bridged) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setId(id);
         iface.setName(name);
@@ -593,6 +594,7 @@ public class SetupNetworksHelperTest {
         iface.setBondName(bondName);
         iface.setVlanId(vlanId);
         iface.setNetworkName(networkName);
+        iface.setBridged(bridged);
         return iface;
     }
 
@@ -604,7 +606,25 @@ public class SetupNetworksHelperTest {
      * @return {@link VdsNetworkInterface} representing a regular NIC with the given parameters.
      */
     private VdsNetworkInterface createNic(String nicName, String networkName) {
-        return createVdsInterface(Guid.NewGuid(), nicName, false, null, null, networkName);
+        return createVdsInterface(Guid.NewGuid(), nicName, false, null, null, networkName, true);
+    }
+
+    /**
+     * @param nicName
+     *            The name of the NIC.
+     * @param network
+     *            The network that the NIC is synced to. Can't be <code>null</code>.
+     * @return {@link VdsNetworkInterface} representing a regular NIC with the given parameters.
+     */
+    private VdsNetworkInterface createNicSyncedWithNetwork(String nicName, Network network) {
+        VdsNetworkInterface nic = createVdsInterface(Guid.NewGuid(),
+                nicName,
+                false,
+                null,
+                network.getvlan_id(),
+                network.getName(),
+                network.isVmNetwork());
+        return nic;
     }
 
     /**
@@ -615,7 +635,7 @@ public class SetupNetworksHelperTest {
      * @return Bond with the given parameters.
      */
     private VdsNetworkInterface createBond(String name, String networkName) {
-        return createVdsInterface(Guid.NewGuid(), name, true, null, null, networkName);
+        return createVdsInterface(Guid.NewGuid(), name, true, null, null, networkName, true);
     }
 
     /**
@@ -633,7 +653,8 @@ public class SetupNetworksHelperTest {
                 false,
                 null,
                 vlanId,
-                networkName);
+                networkName,
+                true);
     }
 
     /**
@@ -646,7 +667,7 @@ public class SetupNetworksHelperTest {
      * @return NIC from given NIC which is either enslaved or freed.
      */
     private VdsNetworkInterface enslaveOrReleaseNIC(VdsNetworkInterface iface, String bondName) {
-        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null);
+        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null, true);
     }
 
     /**
@@ -735,7 +756,8 @@ public class SetupNetworksHelperTest {
                     nics[i].getBonded(),
                     nics[i].getBondName(),
                     nics[i].getVlanId(),
-                    nics[i].getNetworkName()));
+                    nics[i].getNetworkName(),
+                    nics[i].isBridged()));
         }
         when(interfaceDAO.getAllInterfacesForVds(any(Guid.class))).thenReturn(existingIfaces);
     }
