@@ -91,8 +91,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private boolean canRemoveLunDisk() {
-        if (listVms != null) {
-            for (VM vm : listVms) {
+        if (disk.getVmEntityType() == VmEntityType.VM) {
+            for (VM vm : getVmsForDiskId()) {
                 if (vm.getstatus() != VMStatus.Down) {
                     VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getId()));
                     if (vmDevice.getIsPlugged()) {
