@@ -799,6 +799,10 @@ public class ClusterModel extends Model
                         clusterModel.getVersion().setSelectedItem(Linq.SelectHighestVersion(versions));
                     }
                 }
+                else {
+                    clusterModel.getVersion().setSelectedItem(Linq.FirstOrDefault(versions,
+                            new Linq.VersionPredicate(((VDSGroup) getEntity()).getcompatibility_version())));
+                }
             }
         };
         AsyncDataProvider.GetDataCenterVersions(_asyncQuery, selectedDataCenter == null ? null
