@@ -51,8 +51,8 @@ public class JobRepositoryImpl implements JobRepository {
             @Override
             public Void runInTransaction() {
                 try {
-                    stepDao.save(step);
                     jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
+                    stepDao.save(step);
                 } catch (Exception e) {
                     log.errorFormat("Failed to save step {0}, {1}.", step.getId(), step.getStepName(), e);
                 }
@@ -69,8 +69,8 @@ public class JobRepositoryImpl implements JobRepository {
             public Void runInTransaction() {
 
                 try {
-                    stepDao.update(step);
                     jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
+                    stepDao.update(step);
                 } catch (Exception e) {
                     log.errorFormat("Failed to update step {0}, {1}.", step.getId(), step.getStepName(), e);
                 }
@@ -202,9 +202,9 @@ public class JobRepositoryImpl implements JobRepository {
 
             @Override
             public Void runInTransaction() {
+                jobDao.updateJobLastUpdateTime(existingStep.getJobId(), new Date());
                 stepDao.update(existingStep);
                 stepDao.save(newStep);
-                jobDao.updateJobLastUpdateTime(existingStep.getJobId(), new Date());
                 return null;
             }
         });
@@ -216,8 +216,8 @@ public class JobRepositoryImpl implements JobRepository {
 
             @Override
             public Void runInTransaction() {
-                stepDao.updateJobStepsCompleted(job.getId(), job.getStatus(), job.getEndTime());
                 jobDao.update(job);
+                stepDao.updateJobStepsCompleted(job.getId(), job.getStatus(), job.getEndTime());
                 return null;
             }
         });

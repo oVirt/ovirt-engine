@@ -437,14 +437,6 @@ RETURNS VOID
 AS $procedure$
 BEGIN
 
-update step
-set status = 'UNKNOWN',
-    end_time = v_end_time
-where status = 'STARTED'
-and job_id not in (select step.job_id
-                   from step step
-                   where step.external_id is not null);
-
 update job
 set status = 'UNKNOWN',
     end_time = v_end_time,
@@ -453,6 +445,14 @@ where job.status = 'STARTED'
 and job_id not in (select job_id
                    from step
                    where external_id is not null);
+
+update step
+set status = 'UNKNOWN',
+    end_time = v_end_time
+where status = 'STARTED'
+and job_id not in (select step.job_id
+                   from step step
+                   where step.external_id is not null);
 
 END; $procedure$
 LANGUAGE plpgsql;
