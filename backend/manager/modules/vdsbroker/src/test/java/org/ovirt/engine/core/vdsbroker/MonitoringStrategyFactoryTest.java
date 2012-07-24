@@ -18,7 +18,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, VdsGroupDAO.class })
+@PrepareForTest({ DbFacade.class})
 public class MonitoringStrategyFactoryTest {
     @Mock
     private DbFacade db;
