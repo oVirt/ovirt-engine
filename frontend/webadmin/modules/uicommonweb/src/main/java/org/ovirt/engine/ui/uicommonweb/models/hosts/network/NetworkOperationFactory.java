@@ -84,11 +84,24 @@ public class NetworkOperationFactory {
             else if (op2 instanceof NetworkInterfaceModel) {
                 NetworkInterfaceModel nic = (NetworkInterfaceModel) op2;
                 List<LogicalNetworkModel> nicNetworks = nic.getItems();
-                if (!nicNetworks.contains(network) && !nic.isBonded()) {
+                if (!nicNetworks.contains(network)) {
                     if (!network.hasVlan()) {
-                        // cannot connect a non-vlan network if there is already a non-vlan network
+
+                        // non-vlan, bridge - can't be added to a nic that already has networks
+                        if ((nicNetworks.size() > 0) && (network.getEntity().isVmNetwork())){
+                            return NetworkOperation.NULL_OPERATION;
+                        }
+
+                        // non-vlan, non-bridge - can't be added to a nic that already has a non-vlan network
                         for (LogicalNetworkModel nicNetwork : nicNetworks) {
                             if (!nicNetwork.hasVlan()) {
+                                return NetworkOperation.NULL_OPERATION;
+                            }
+                        }
+                    }else{
+                        // vlan- can't be added to a nic that already has non-vlan bridge network
+                        for (LogicalNetworkModel nicNetwork : nicNetworks) {
+                            if (!nicNetwork.hasVlan() && nicNetwork.getEntity().isVmNetwork()) {
                                 return NetworkOperation.NULL_OPERATION;
                             }
                         }
