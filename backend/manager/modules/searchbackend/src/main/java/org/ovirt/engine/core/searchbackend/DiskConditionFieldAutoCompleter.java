@@ -68,10 +68,12 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
         if (StringHelper.EqOp(fieldName, "CREATIONDATE") || StringHelper.EqOp(fieldName, "SIZE")
-                || StringHelper.EqOp(fieldName, "NUMBER_OF_VMS")
                 || StringHelper.EqOp(fieldName, "ACTUAL_SIZE")
                 || StringHelper.EqOp(fieldName, "PROVISIONED_SIZE")) {
             retval = BiggerOrSmallerRelationAutoCompleter.INTSANCE;
+        }
+        else if (StringHelper.EqOp(fieldName, "NUMBER_OF_VMS")) {
+            retval = NumericConditionRelationAutoCompleter.INSTANCE;
         } else {
             retval = StringConditionRelationAutoCompleter.INSTANCE;
         }
