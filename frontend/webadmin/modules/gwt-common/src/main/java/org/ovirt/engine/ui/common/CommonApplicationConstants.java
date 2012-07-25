@@ -594,6 +594,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Destination")
     String destDisk();
 
+    @DefaultStringValue("Attached To")
+    String attachedToDisk();
+
     // Application list
     @DefaultStringValue("Installed Applications")
     String installedApp();

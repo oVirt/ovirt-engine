@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
@@ -62,15 +63,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().addColumn(new ImageResourceColumn<Disk>() {
             @Override
             public ImageResource getValue(Disk object) {
-                setEnumTitle(object.getVmEntityType());
-                return object.getVmEntityType() == VmEntityType.VM ? resources.vmsImage() :
-                        object.getVmEntityType() == VmEntityType.TEMPLATE ? resources.templatesImage() : null;
-            }
-        }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        getTable().addColumn(new ImageResourceColumn<Disk>() {
-            @Override
-            public ImageResource getValue(Disk object) {
                 setTitle(object.isBoot() ? constants.bootableDisk() : null);
                 return object.isBoot() ? resources.bootableDiskIcon() : null;
             }
@@ -92,6 +84,17 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                         resources.externalDiskIcon() : null;
             }
         }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        getTable().addColumn(new ImageResourceColumn<Disk>() {
+            @Override
+            public ImageResource getValue(Disk object) {
+                setEnumTitle(object.getVmEntityType());
+                return object.getVmEntityType() == VmEntityType.VM ? resources.vmsImage() :
+                        object.getVmEntityType() == VmEntityType.TEMPLATE ? resources.templatesImage() : null;
+            }
+        }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        getTable().addColumn(new DiskContainersColumn(), constants.attachedToDisk(), "150px"); //$NON-NLS-1$
 
         DiskSizeColumn<Disk> sizeColumn = new DiskSizeColumn<Disk>() {
             @Override
@@ -129,7 +132,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                         ((DiskImage) object).getcreation_date() : null;
             }
         };
-        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Disk> statusColumn = new EnumColumn<Disk, ImageStatus>() {
             @Override

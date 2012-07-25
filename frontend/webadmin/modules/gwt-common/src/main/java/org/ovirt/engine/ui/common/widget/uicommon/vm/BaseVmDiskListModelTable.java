@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -103,6 +104,8 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
         };
 
         getTable().addColumn(statusColumn, constants.statusDisk(), "100px"); //$NON-NLS-1$
+
+        getTable().addColumn(new DiskContainersColumn(), constants.attachedToDisk(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Disk> dateCreatedColumn = new FullDateTimeColumn<Disk>() {
             @Override

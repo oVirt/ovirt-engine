@@ -20,6 +20,8 @@ package org.ovirt.engine.ui.uicompat.external;
 //package org.apache.commons.codec.binary;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 //import org.apache.commons.codec.CharEncoding;
 
@@ -276,6 +278,30 @@ public class StringUtils {
      */
     public static String newStringUtf8(byte[] bytes) {
         return StringUtils.newString(bytes, CharEncoding.UTF_8);
+    }
+
+    /**
+     * Joins the Strings of the provided array into a single String.
+     *
+     * @param array the array of Strings to join together
+     * @param delimiter the separator string to use
+     * @return
+     */
+    public static String join(ArrayList<String> array, String delimiter) {
+        if (array == null) {
+            return "";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        Iterator<String> iter = array.iterator();
+        while (iter.hasNext()) {
+            builder.append(iter.next());
+            if (!iter.hasNext()) {
+                break;
+            }
+            builder.append(delimiter);
+        }
+        return builder.toString();
     }
 
 }
