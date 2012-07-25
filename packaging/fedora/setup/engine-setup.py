@@ -1890,12 +1890,23 @@ def editSysconfig():
     handler.editParam("ENGINE_DB_URL", dbUrl)
     handler.editParam("ENGINE_DB_USER", getDbUser())
 
-    # Ports:
-    handler.editParam("ENGINE_HTTP_PORT", basedefs.JBOSS_HTTP_PORT)
-    handler.editParam("ENGINE_HTTPS_PORT", basedefs.JBOSS_HTTPS_PORT)
+    # Save port numbers and enabled/disabled state:
     isProxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
     if isProxyEnabled:
+        handler.editParam("ENGINE_PROXY_ENABLED", "true")
+        handler.editParam("ENGINE_PROXY_HTTP_PORT", controller.CONF["HTTP_PORT"])
+        handler.editParam("ENGINE_PROXY_HTTPS_PORT", controller.CONF["HTTPS_PORT"])
+        handler.editParam("ENGINE_HTTP_ENABLED", "false")
+        handler.editParam("ENGINE_HTTPS_ENABLED", "false")
+        handler.editParam("ENGINE_AJP_ENABLED", "true")
         handler.editParam("ENGINE_AJP_PORT", basedefs.JBOSS_AJP_PORT)
+    else:
+        handler.editParam("ENGINE_PROXY_ENABLED", "false")
+        handler.editParam("ENGINE_HTTP_ENABLED", "true")
+        handler.editParam("ENGINE_HTTP_PORT", controller.CONF["HTTP_PORT"])
+        handler.editParam("ENGINE_HTTPS_ENABLED", "true")
+        handler.editParam("ENGINE_HTTPS_PORT", controller.CONF["HTTPS_PORT"])
+        handler.editParam("ENGINE_AJP_ENABLED", "false")
 
     # Save and close the file:
     logging.debug("Engine has been configured")

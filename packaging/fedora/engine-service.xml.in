@@ -87,7 +87,7 @@
       <datasources>
 
         <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true">
-          <connection-url><![CDATA[${ENGINE_DB_URL}]]></connection-url>
+          <connection-url><![CDATA[$getString('ENGINE_DB_URL')]]></connection-url>
           <driver>postgresql</driver>
           <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
           <pool>
@@ -96,7 +96,7 @@
             <prefill>true</prefill>
           </pool>
           <security>
-            <user-name>${ENGINE_DB_USER}</user-name>
+            <user-name>$getString('ENGINE_DB_USER')</user-name>
             <security-domain>EncryptDBPassword</security-domain>
           </security>
           <statement>
@@ -216,8 +216,8 @@
         <security-domain name="EncryptDBPassword">
           <authentication>
             <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
-              <module-option name="username" value="${ENGINE_DB_USER}"/>
-              <module-option name="password" value="${ENGINE_DB_PASSWORD}"/>
+              <module-option name="username" value="$getString('ENGINE_DB_USER')"/>
+              <module-option name="password" value="$getString('ENGINE_DB_PASSWORD')"/>
               <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
             </login-module>
           </authentication>
@@ -239,11 +239,17 @@
     <subsystem xmlns="urn:jboss:domain:threads:1.1"/>
 
     <subsystem xmlns="urn:jboss:domain:web:1.1" native="false" default-virtual-server="default-host">
-      <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
-      <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
-        <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/.keystore" key-alias="engine" protocol="TLSv1" verify-client="false"/>
-      </connector>
-      <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp"/>
+      #if $getBoolean('ENGINE_HTTP_ENABLED', True)
+        <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
+      #end if
+      #if $getBoolean('ENGINE_HTTPS_ENABLED', True)
+        <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
+          <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/.keystore" key-alias="engine" protocol="TLSv1" verify-client="false"/>
+        </connector>
+      #end if
+      #if $getBoolean('ENGINE_AJP_ENABLED', False)
+        <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp"/>
+      #end if
       <virtual-server name="default-host" enable-welcome-root="false">
         <alias name="localhost"/>
         <rewrite pattern="^/RHEVManager(.*)$" substitution="/OvirtEngine$1" flags="last"/>
@@ -262,9 +268,15 @@
   </interfaces>
 
   <socket-binding-group name="standard-sockets" default-interface="loopback">
-    <socket-binding name="http" port="${ENGINE_HTTP_PORT}" interface="public"/>
-    <socket-binding name="https" port="${ENGINE_HTTPS_PORT}" interface="public"/>
-    <socket-binding name="ajp" port="${ENGINE_AJP_PORT}"/>
+    #if $getBoolean('ENGINE_HTTP_ENABLED', True)
+      <socket-binding name="http" port="$getInteger('ENGINE_HTTP_PORT', 8080)" interface="public"/>
+    #end if
+    #if $getBoolean('ENGINE_HTTPS_ENABLED', True)
+      <socket-binding name="https" port="$getInteger('ENGINE_HTTPS_PORT', 8443)" interface="public"/>
+    #end if
+    #if $getBoolean('ENGINE_AJP_ENABLED', False)
+      <socket-binding name="ajp" port="$getInteger('ENGINE_AJP_PORT', 8009)"/>
+    #end if
     <socket-binding name="remoting" port="4447"/>
     <socket-binding name="txn-recovery-environment" port="4712"/>
     <socket-binding name="txn-status-manager" port="4713"/>
