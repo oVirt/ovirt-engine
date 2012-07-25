@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.junit.Test;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 
@@ -40,5 +41,20 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNIC, Vd
                     .getValue());
         }
 
+    }
+
+    @Test
+    public void testCustomNetworkConfigurationMapped() throws Exception {
+        VdsNetworkInterface entity = new VdsNetworkInterface();
+        HostNIC model = HostNicMapper.map(entity, null);
+        assertFalse(model.isSetCustomConfiguration());
+
+        entity.setNetworkImplementationDetails(new VdsNetworkInterface.NetworkImplementationDetails(false));
+        model = HostNicMapper.map(entity, null);
+        assertEquals(entity.getNetworkImplementationDetails().isInSync(), !model.isCustomConfiguration());
+
+        entity.setNetworkImplementationDetails(new VdsNetworkInterface.NetworkImplementationDetails(true));
+        model = HostNicMapper.map(entity, null);
+        assertEquals(entity.getNetworkImplementationDetails().isInSync(), !model.isCustomConfiguration());
     }
 }

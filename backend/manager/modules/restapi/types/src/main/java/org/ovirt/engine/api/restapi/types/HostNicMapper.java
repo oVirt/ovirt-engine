@@ -129,6 +129,9 @@ public class HostNicMapper {
         }
         model.setMtu(entity.getMtu());
         model.setBridged(entity.isBridged());
+        if (entity.getNetworkImplementationDetails() != null) {
+            model.setCustomConfiguration(!entity.getNetworkImplementationDetails().isInSync());
+        }
         return model;
     }
 
