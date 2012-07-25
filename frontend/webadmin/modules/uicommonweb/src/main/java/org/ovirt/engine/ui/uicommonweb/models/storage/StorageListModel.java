@@ -1720,10 +1720,15 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         storageListModel.storageModel,
                         ConstantsManager.getInstance().getMessages().importFailedDomainAlreadyExistStorageMsg(storageName));
                 } else {
-
                     storage_server_connections tempVar = new storage_server_connections();
+                    storageModel = storageListModel.storageModel;
+                    NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
+
                     tempVar.setconnection(storageListModel.path);
                     tempVar.setstorage_type(StorageType.NFS);
+                    tempVar.setNfsVersion(((EntityModel) nfsModel.getVersion().getSelectedItem()).AsConvertible().nullableShort());
+                    tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
+                    tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
                     storageListModel.nfsConnection = tempVar;
                     storageListModel.ImportNfsStorageConnect();
                 }
@@ -1733,7 +1738,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     public void ImportNfsStorageConnect()
     {
-        Frontend.RunAction(VdcActionType.ConnectStorageToVds, new StorageServerConnectionParametersBase(nfsConnection, hostId),
+        Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(nfsConnection, hostId),
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void Executed(FrontendActionAsyncResult result) {
@@ -1804,7 +1809,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
-
         Frontend.RunAction(VdcActionType.AddExistingNFSStorageDomain, params, new IFrontendActionAsyncCallback() {
             @Override
             public void Executed(FrontendActionAsyncResult result) {
