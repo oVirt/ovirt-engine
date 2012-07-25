@@ -869,6 +869,13 @@ public class DiskModel extends Model
             getAlias().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
         }
 
-        return getSize().getIsValid() && getStorageDomain().getIsValid() && getAlias().getIsValid();
+        boolean isSanStorageModelValid = true;
+        if (!(Boolean) isInternal.getEntity() && getSanStorageModel() != null) {
+            getSanStorageModel().Validate();
+            isSanStorageModelValid = getSanStorageModel().getIsValid();
+        }
+
+        return getSize().getIsValid() && getStorageDomain().getIsValid() && getAlias().getIsValid()
+                && isSanStorageModelValid;
     }
 }
