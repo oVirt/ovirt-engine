@@ -31,7 +31,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -292,7 +291,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             return;
         }
 
-        DataCenterModel model = new DataCenterModel();
+        final DataCenterModel model = new DataCenterModel();
         setWindow(model);
         model.setEntity(dataCenter);
         model.setDataCenterId(dataCenter.getId());
@@ -309,13 +308,22 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         model.getDescription().setEntity(dataCenter.getdescription());
         model.setOriginalName(dataCenter.getname());
-        if (DataProvider.GetStorageDomainList(dataCenter.getId()).size() != 0)
-        {
-            model.getStorageTypeList().setIsChangable(false);
-            model.getStorageTypeList()
-                    .getChangeProhibitionReasons()
-                    .add("Cannot change Repository type with Storage Domains attached to it"); //$NON-NLS-1$
-        }
+
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        List<storage_domains> storageDomainList = (List<storage_domains>) returnValue;
+
+                        if (storageDomainList.size() != 0) {
+                            model.getStorageTypeList().setIsChangable(false);
+                            model.getStorageTypeList()
+                                    .getChangeProhibitionReasons()
+                                    .add("Cannot change Repository type with Storage Domains attached to it"); //$NON-NLS-1$
+                        }
+
+                    }
+                }), dataCenter.getId());
 
         model.getStorageTypeList().setSelectedItem(dataCenter.getstorage_pool_type());
 
@@ -747,11 +755,11 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         storage_pool storagePoolItem = (storage_pool) getSelectedItem();
 
         getForceRemoveCommand().setIsExecutionAllowed(storagePoolItem != null
-            && items.size() == 1
-            && storagePoolItem.getstatus() != StoragePoolStatus.Up);
+                && items.size() == 1
+                && storagePoolItem.getstatus() != StoragePoolStatus.Up);
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
-            || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
+                || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
 
         getActivateCommand().setIsExecutionAllowed(items.size() > 0);
         if (getActivateCommand().getIsExecutionAllowed())
