@@ -44,7 +44,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
     @Override
     protected void executeCommand() {
-        // YAIRPOSTGRES - this code should be split to several blocks of run in new transaction + set states
+        // TODO: This code should be revisited and proper compensation logic should be introduced here
         VDSGroup oldGroup = getVdsGroupDAO().get(getParameters().getVdsGroup().getId());
         CheckMaxMemoryOverCommitValue();
         getVdsGroupDAO().update(getParameters().getVdsGroup());
