@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationParameters> extends
@@ -15,6 +16,10 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
     public VdsGroupOperationCommandBase(T parameters) {
         super(parameters);
+    }
+
+    protected VdsGroupOperationCommandBase(Guid commandId) {
+        super(commandId);
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -17,6 +18,10 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
 
     public VdsGroupCommandBase(T parameters) {
         super(parameters);
+    }
+
+    protected VdsGroupCommandBase(Guid commandId) {
+        super(commandId);
     }
 
     @Override

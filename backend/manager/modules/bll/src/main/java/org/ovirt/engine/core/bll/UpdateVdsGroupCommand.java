@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -40,6 +41,10 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         VdsGroupOperationCommandBase<T> {
     public UpdateVdsGroupCommand(T parameters) {
         super(parameters);
+    }
+
+    protected UpdateVdsGroupCommand(Guid commandId) {
+        super(commandId);
     }
 
     @Override
