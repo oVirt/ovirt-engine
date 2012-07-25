@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -535,8 +536,9 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.System);
 
         volumeList.setIsAvailable(model.getType() == SystemTreeItemType.Cluster_Gluster
-                || model.getType() == SystemTreeItemType.Volume || model.getType() == SystemTreeItemType.Volumes
-                || model.getType() == SystemTreeItemType.System);
+                || model.getType() == SystemTreeItemType.Volume
+                || model.getType() == SystemTreeItemType.Volumes
+                || (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly && model.getType() == SystemTreeItemType.System));
 
         if (model.getType() == SystemTreeItemType.Cluster) {
             volumeList.setIsAvailable(false);
