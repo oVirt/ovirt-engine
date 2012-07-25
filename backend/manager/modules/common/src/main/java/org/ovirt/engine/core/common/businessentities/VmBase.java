@@ -261,18 +261,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.vmUnManagedDeviceList = list;
     }
 
-    // no need for DataMember, it's setter and calculated from 2 other fields
-    public int getnum_of_cpus() {
-        return this.getcpu_per_socket() * this.getnum_of_sockets();
-    }
-
-    /**
-     * empty setters to fix CXF issue
-     */
-    public void setnum_of_cpus(int val) {
-        // Purposely empty
-    }
-
     @Override
     public Guid getId() {
         return id;
