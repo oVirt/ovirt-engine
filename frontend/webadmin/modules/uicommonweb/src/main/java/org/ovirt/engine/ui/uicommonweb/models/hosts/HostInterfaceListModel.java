@@ -986,10 +986,10 @@ public class HostInterfaceListModel extends SearchableListModel
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
-                HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
+                final HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> clusterNetworks = (ArrayList<Network>) ReturnValue;
-                VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
-                HostManagementNetworkModel managementModel =
+                final VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
+                final HostManagementNetworkModel managementModel =
                         (HostManagementNetworkModel) hostInterfaceListModel.getWindow();
                 Network networkToEdit = Linq.FindNetworkByName(clusterNetworks, item.getNetworkName());
 
@@ -1004,78 +1004,86 @@ public class HostInterfaceListModel extends SearchableListModel
                 managementModel.getSubnet().setEntity(item.getSubnet());
                 managementModel.getGateway().setEntity(item.getGateway());
 
-                String defaultInterfaceName = null;
-                RefObject<String> tempRef_defaultInterfaceName = new RefObject<String>(defaultInterfaceName);
-                ArrayList<VdsNetworkInterface> interfaces =
-                        DataProvider.GetInterfaceOptionsForEditNetwork(getOriginalItems(),
+                final StringBuilder tmpDefaultInterfaceName = new StringBuilder();
+
+                        AsyncDataProvider.GetInterfaceOptionsForEditNetwork(new AsyncQuery(this, new INewAsyncCallback() {
+
+                            @Override
+                            public void OnSuccess(Object model, Object returnValue) {
+                                ArrayList<VdsNetworkInterface> interfaces = (ArrayList<VdsNetworkInterface>) returnValue;
+
+                                String  defaultInterfaceName = tmpDefaultInterfaceName.toString();
+                                managementModel.getInterface().setItems(interfaces);
+                                managementModel.getInterface()
+                                        .setSelectedItem(Linq.FindInterfaceByName(Linq.VdsNetworkInterfaceListToBase(interfaces),
+                                                defaultInterfaceName));
+                                if (item.getBonded() != null && item.getBonded().equals(true))
+                                {
+                                    managementModel.getInterface().setTitle(ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .interfaceListTitle());
+                                    managementModel.getInterface().getSelectedItemChangedEvent().addListener(hostInterfaceListModel);
+                                }
+                                managementModel.getCheckConnectivity().setIsAvailable(true);
+                                managementModel.getCheckConnectivity().setIsChangable(true);
+                                managementModel.getCheckConnectivity().setEntity(item.getIsManagement()); // currently, always should be
+                                                                                                          // true
+
+                                managementModel.getBondingOptions().setIsAvailable(false);
+                                if (item.getBonded() != null && item.getBonded().equals(true))
+                                {
+                                    managementModel.getBondingOptions().setIsAvailable(true);
+                                    Map.Entry<String, EntityModel> defaultItem = null;
+                                    RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
+                                            new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
+                                    ArrayList<Map.Entry<String, EntityModel>> list =
+                                            DataProvider.GetBondingOptionList(tempRef_defaultItem);
+                                    defaultItem = tempRef_defaultItem.argvalue;
+                                    Map.Entry<String, EntityModel> selectBondingOpt =
+                                            new KeyValuePairCompat<String, EntityModel>();
+                                    boolean containsSelectBondingOpt = false;
+                                    managementModel.getBondingOptions().setItems(list);
+                                    for (int i = 0; i < list.size(); i++)
+                                    {
+                                        if (StringHelper.stringsEqual(list.get(i).getKey(), item.getBondOptions()))
+                                        {
+                                            selectBondingOpt = list.get(i);
+                                            containsSelectBondingOpt = true;
+                                            break;
+                                        }
+                                    }
+                                    if (containsSelectBondingOpt == false)
+                                    {
+                                        if (StringHelper.stringsEqual(item.getBondOptions(), DataProvider.GetDefaultBondingOption()))
+                                        {
+                                            selectBondingOpt = defaultItem;
+                                        }
+                                        else
+                                        {
+                                            selectBondingOpt = list.get(list.size() - 1);
+                                            EntityModel entityModel = selectBondingOpt.getValue();
+                                            entityModel.setEntity(item.getBondOptions());
+                                        }
+                                    }
+                                    managementModel.getBondingOptions().setSelectedItem(selectBondingOpt);
+                                }
+
+                                UICommand tempVar = new UICommand("OnEditManagementNetworkConfirmation", hostInterfaceListModel); //$NON-NLS-1$
+                                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                                tempVar.setIsDefault(true);
+                                managementModel.getCommands().add(tempVar);
+                                UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
+                                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                                tempVar2.setIsCancel(true);
+                                managementModel.getCommands().add(tempVar2);
+
+                            }
+                        }) ,getOriginalItems(),
                                 item,
                                 networkToEdit,
                                 getEntity().getId(),
-                                tempRef_defaultInterfaceName);
-                defaultInterfaceName = tempRef_defaultInterfaceName.argvalue;
-                managementModel.getInterface().setItems(interfaces);
-                managementModel.getInterface()
-                        .setSelectedItem(Linq.FindInterfaceByName(Linq.VdsNetworkInterfaceListToBase(interfaces),
-                                defaultInterfaceName));
-                if (item.getBonded() != null && item.getBonded().equals(true))
-                {
-                    managementModel.getInterface().setTitle(ConstantsManager.getInstance()
-                            .getConstants()
-                            .interfaceListTitle());
-                    managementModel.getInterface().getSelectedItemChangedEvent().addListener(hostInterfaceListModel);
-                }
-                managementModel.getCheckConnectivity().setIsAvailable(true);
-                managementModel.getCheckConnectivity().setIsChangable(true);
-                managementModel.getCheckConnectivity().setEntity(item.getIsManagement()); // currently, always should be
-                                                                                          // true
+                                tmpDefaultInterfaceName);
 
-                managementModel.getBondingOptions().setIsAvailable(false);
-                if (item.getBonded() != null && item.getBonded().equals(true))
-                {
-                    managementModel.getBondingOptions().setIsAvailable(true);
-                    Map.Entry<String, EntityModel> defaultItem = null;
-                    RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
-                            new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
-                    ArrayList<Map.Entry<String, EntityModel>> list =
-                            DataProvider.GetBondingOptionList(tempRef_defaultItem);
-                    defaultItem = tempRef_defaultItem.argvalue;
-                    Map.Entry<String, EntityModel> selectBondingOpt =
-                            new KeyValuePairCompat<String, EntityModel>();
-                    boolean containsSelectBondingOpt = false;
-                    managementModel.getBondingOptions().setItems(list);
-                    for (int i = 0; i < list.size(); i++)
-                    {
-                        if (StringHelper.stringsEqual(list.get(i).getKey(), item.getBondOptions()))
-                        {
-                            selectBondingOpt = list.get(i);
-                            containsSelectBondingOpt = true;
-                            break;
-                        }
-                    }
-                    if (containsSelectBondingOpt == false)
-                    {
-                        if (StringHelper.stringsEqual(item.getBondOptions(), DataProvider.GetDefaultBondingOption()))
-                        {
-                            selectBondingOpt = defaultItem;
-                        }
-                        else
-                        {
-                            selectBondingOpt = list.get(list.size() - 1);
-                            EntityModel entityModel = selectBondingOpt.getValue();
-                            entityModel.setEntity(item.getBondOptions());
-                        }
-                    }
-                    managementModel.getBondingOptions().setSelectedItem(selectBondingOpt);
-                }
-
-                UICommand tempVar = new UICommand("OnEditManagementNetworkConfirmation", hostInterfaceListModel); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
-                managementModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
-                managementModel.getCommands().add(tempVar2);
             }
         };
         AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());

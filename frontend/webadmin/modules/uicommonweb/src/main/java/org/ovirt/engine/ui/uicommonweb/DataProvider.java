@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -44,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
@@ -2148,107 +2147,7 @@ public final class DataProvider
         return _cachedSearchResultsLimit;
     }
 
-    public static ArrayList<VdsNetworkInterface> GetInterfaceOptionsForEditNetwork(ArrayList<VdsNetworkInterface> interfaceList,
-            VdsNetworkInterface originalInterface,
-            Network networkToEdit,
-            Guid vdsID,
-            RefObject<String> defaultInterfaceName)
-    {
-        ArrayList<VdsNetworkInterface> ifacesOptions = new ArrayList<VdsNetworkInterface>();
-        for (VdsNetworkInterface i : interfaceList)
-        {
-            if (StringHelper.isNullOrEmpty(i.getNetworkName()) && StringHelper.isNullOrEmpty(i.getBondName()))
-            {
-                ifacesOptions.add(i);
-            }
-        }
 
-        // List<Interface> ifacesOptions =
-
-        // interfaceList
-        // Filter only Interfaces that are not connected to a network:
-        // .Where(a => string.IsNullOrEmpty(a.network_name))
-
-        // Filter only Interfaces that are not slaves of a bond:
-        // .Where(a => string.IsNullOrEmpty(a.bond_name))
-
-        // .ToList();
-
-        if (originalInterface.getVlanId() == null) // no vlan:
-        {
-            // Filter out the Interfaces that have child vlan Interfaces:
-            // ifacesOptions.RemoveAll(
-            // delegate(Interface i)
-            // {
-            // return InterfaceHasChildVlanInterfaces(vdsID, i);
-            // });
-            ArrayList<VdsNetworkInterface> ifacesOptionsTemp = new ArrayList<VdsNetworkInterface>();
-            for (VdsNetworkInterface i : ifacesOptions)
-            {
-                if (!InterfaceHasChildVlanInterfaces(vdsID, i))
-                {
-                    ifacesOptionsTemp.add(i);
-                }
-            }
-            ifacesOptions = ifacesOptionsTemp;
-
-            if (originalInterface.getBonded() != null && originalInterface.getBonded())
-            {
-                // eth0 -- \
-                // |---> bond0 -> <networkToEdit>
-                // eth1 -- /
-                // ---------------------------------------
-                // - originalInterface: 'bond0'
-                // --> We want to add 'eth0' and and 'eth1' as optional Interfaces
-                // (note that choosing one of them will break the bond):
-                // ifacesOptions.AddRange(interfaceList.Where(a => a.bond_name == originalInterface.name).ToList());
-                for (VdsNetworkInterface i : interfaceList)
-                {
-                    if (StringHelper.stringsEqual(i.getBondName(), originalInterface.getName()))
-                    {
-                        ifacesOptions.add(i);
-                    }
-                }
-            }
-
-            // add the original interface as an option and set it as the default option:
-            ifacesOptions.add(originalInterface);
-            defaultInterfaceName.argvalue = originalInterface.getName();
-        }
-
-        else // vlan:
-        {
-            VdsNetworkInterface vlanParent = GetVlanParentInterface(vdsID, originalInterface);
-            if (vlanParent != null && vlanParent.getBonded() != null && vlanParent.getBonded()
-                    && !InterfaceHasSiblingVlanInterfaces(vdsID, originalInterface))
-            {
-                // eth0 -- \
-                // |--- bond0 ---> bond0.3 -> <networkToEdit>
-                // eth1 -- /
-                // ---------------------------------------------------
-                // - originalInterface: 'bond0.3'
-                // - vlanParent: 'bond0'
-                // - 'bond0.3' has no vlan siblings
-                // --> We want to add 'eth0' and and 'eth1' as optional Interfaces.
-                // (note that choosing one of them will break the bond):
-                // ifacesOptions.AddRange(interfaceList.Where(a => a.bond_name == vlanParent.name).ToList());
-                for (VdsNetworkInterface i : interfaceList)
-                {
-                    if (StringHelper.stringsEqual(i.getBondName(), vlanParent.getName()))
-                    {
-                        ifacesOptions.add(i);
-                    }
-                }
-            }
-
-            // the vlanParent should already be in ifacesOptions
-            // (since it has no network_name or bond_name).
-
-            defaultInterfaceName.argvalue = vlanParent.getName();
-        }
-
-        return ifacesOptions;
-    }
 
     private static ArrayList<VdsNetworkInterface> GetAllHostInterfaces(Guid vdsID)
     {
@@ -2263,60 +2162,6 @@ public final class DataProvider
         }
 
         return interfaceList;
-    }
-
-    private static VdsNetworkInterface GetVlanParentInterface(Guid vdsID, VdsNetworkInterface iface)
-    {
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.GetVlanParanet, new GetAllChildVlanInterfacesQueryParameters(vdsID,
-                        iface));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return (VdsNetworkInterface) returnValue.getReturnValue();
-        }
-
-        return null;
-    }
-
-    private static boolean InterfaceHasChildVlanInterfaces(Guid vdsID, VdsNetworkInterface iface)
-    {
-        ArrayList<VdsNetworkInterface> childVlanInterfaces = new ArrayList<VdsNetworkInterface>();
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.GetAllChildVlanInterfaces,
-                        new GetAllChildVlanInterfacesQueryParameters(vdsID, iface));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            childVlanInterfaces = (ArrayList<VdsNetworkInterface>) (returnValue.getReturnValue());
-        }
-
-        if (childVlanInterfaces.size() > 0)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static boolean InterfaceHasSiblingVlanInterfaces(Guid vdsID, VdsNetworkInterface iface)
-    {
-        ArrayList<VdsNetworkInterface> siblingVlanInterfaces = new ArrayList<VdsNetworkInterface>();
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
-                        new GetAllChildVlanInterfacesQueryParameters(vdsID, iface));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            siblingVlanInterfaces = (ArrayList<VdsNetworkInterface>) returnValue.getReturnValue();
-        }
-
-        if (siblingVlanInterfaces.size() > 0)
-        {
-            return true;
-        }
-
-        return false;
     }
 
     public static HashMap<String, Integer> GetSystemStatistics()

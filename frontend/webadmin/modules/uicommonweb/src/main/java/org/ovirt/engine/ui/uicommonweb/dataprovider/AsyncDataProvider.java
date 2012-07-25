@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -46,6 +47,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
+import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
@@ -95,6 +97,7 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -106,6 +109,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public final class AsyncDataProvider {
 
@@ -2167,4 +2172,186 @@ public final class AsyncDataProvider {
             return list;
         }
     }
+
+    public static void GetInterfaceOptionsForEditNetwork(final AsyncQuery asyncQuery, final ArrayList<VdsNetworkInterface> interfaceList,
+            final VdsNetworkInterface originalInterface,
+            Network networkToEdit,
+            final Guid vdsID,
+            final StringBuilder defaultInterfaceName)
+    {
+        final ArrayList<VdsNetworkInterface> ifacesOptions = new ArrayList<VdsNetworkInterface>();
+        for (VdsNetworkInterface i : interfaceList)
+        {
+            if (StringHelper.isNullOrEmpty(i.getNetworkName()) && StringHelper.isNullOrEmpty(i.getBondName()))
+            {
+                ifacesOptions.add(i);
+            }
+        }
+
+        if (originalInterface.getVlanId() == null) // no vlan:
+        {
+            // Filter out the Interfaces that have child vlan Interfaces
+
+            ArrayList<GetAllChildVlanInterfacesQueryParameters> parametersList =
+                    new ArrayList<GetAllChildVlanInterfacesQueryParameters>();
+            ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+            GetAllChildVlanInterfaces(vdsID, ifacesOptions, new IFrontendMultipleQueryAsyncCallback() {
+
+                @Override
+                public void Executed(FrontendMultipleQueryAsyncResult result) {
+
+                    ArrayList<VdsNetworkInterface> ifacesOptionsTemp = new ArrayList<VdsNetworkInterface>();
+                    List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
+
+                    for (int i = 0; i < returnValueList.size(); i++)
+                    {
+                        VdcQueryReturnValue returnValue = returnValueList.get(i);
+                        ArrayList<VdsNetworkInterface> childVlanInterfaces = new ArrayList<VdsNetworkInterface>();
+                        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
+                        {
+                            childVlanInterfaces = (ArrayList<VdsNetworkInterface>) (returnValue.getReturnValue());
+
+                            if (childVlanInterfaces.size() == 0)
+                            {
+                                ifacesOptionsTemp.add(ifacesOptions.get(i));
+                            }
+                        }
+                    }
+
+                    ifacesOptions.clear();
+                    ifacesOptions.addAll(ifacesOptionsTemp);
+
+                    if (originalInterface.getBonded() != null && originalInterface.getBonded())
+                    {
+                        // eth0 -- \
+                        // |---> bond0 -> <networkToEdit>
+                        // eth1 -- /
+                        // ---------------------------------------
+                        // - originalInterface: 'bond0'
+                        // --> We want to add 'eth0' and and 'eth1' as optional Interfaces
+                        // (note that choosing one of them will break the bond):
+                        for (VdsNetworkInterface i : interfaceList)
+                        {
+                            if (StringHelper.stringsEqual(i.getBondName(), originalInterface.getName()))
+                            {
+                                ifacesOptions.add(i);
+                            }
+                        }
+                    }
+
+                    // add the original interface as an option and set it as the default option:
+                    ifacesOptions.add(originalInterface);
+                    defaultInterfaceName.append(originalInterface.getName());
+
+                    asyncQuery.asyncCallback.OnSuccess(asyncQuery.Model, ifacesOptions);
+                }
+            });
+
+
+
+        }
+
+        else // vlan:
+        {
+            GetVlanParentInterface(vdsID, originalInterface, new AsyncQuery(asyncQuery, new INewAsyncCallback() {
+
+                @Override
+                public void OnSuccess(Object model, Object returnValue) {
+                    final VdsNetworkInterface vlanParent = (VdsNetworkInterface) returnValue;
+
+                    if (vlanParent != null && vlanParent.getBonded() != null && vlanParent.getBonded()){
+                        InterfaceHasSiblingVlanInterfaces(vdsID, originalInterface, new AsyncQuery(asyncQuery, new INewAsyncCallback() {
+
+                            @Override
+                            public void OnSuccess(Object model, Object returnValue) {
+                                Boolean interfaceHasSiblingVlanInterfaces = (Boolean) returnValue;
+
+                                if (!interfaceHasSiblingVlanInterfaces){
+                                    // eth0 -- \
+                                    // |--- bond0 ---> bond0.3 -> <networkToEdit>
+                                    // eth1 -- /
+                                    // ---------------------------------------------------
+                                    // - originalInterface: 'bond0.3'
+                                    // - vlanParent: 'bond0'
+                                    // - 'bond0.3' has no vlan siblings
+                                    // --> We want to add 'eth0' and and 'eth1' as optional Interfaces.
+                                    // (note that choosing one of them will break the bond):
+                                    // ifacesOptions.AddRange(interfaceList.Where(a => a.bond_name == vlanParent.name).ToList());
+                                    for (VdsNetworkInterface i : interfaceList)
+                                    {
+                                        if (StringHelper.stringsEqual(i.getBondName(), vlanParent.getName()))
+                                        {
+                                            ifacesOptions.add(i);
+                                        }
+                                    }
+                                }
+
+                                // the vlanParent should already be in ifacesOptions
+                                // (since it has no network_name or bond_name).
+                                defaultInterfaceName.append(vlanParent.getName());
+
+                                asyncQuery.asyncCallback.OnSuccess(asyncQuery.Model, ifacesOptions);
+
+                            }
+                        }));
+                    }else{
+                        // the vlanParent should already be in ifacesOptions
+                        // (since it has no network_name or bond_name).
+                        defaultInterfaceName.append(vlanParent.getName());
+                        asyncQuery.asyncCallback.OnSuccess(asyncQuery.Model, ifacesOptions);
+                    }
+                }
+           }));
+        }
+}
+
+
+    private static void GetVlanParentInterface(Guid vdsID, VdsNetworkInterface iface, AsyncQuery aQuery)
+    {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetVlanParanet, new GetAllChildVlanInterfacesQueryParameters(vdsID,
+                iface), aQuery);
+    }
+
+    private static void InterfaceHasSiblingVlanInterfaces(Guid vdsID, VdsNetworkInterface iface, AsyncQuery aQuery)
+    {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                ArrayList<VdsNetworkInterface> siblingVlanInterfaces = new ArrayList<VdsNetworkInterface>();
+
+                siblingVlanInterfaces = (ArrayList<VdsNetworkInterface>) source;
+
+                if (siblingVlanInterfaces.size() > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
+                new GetAllChildVlanInterfacesQueryParameters(vdsID, iface), aQuery);
+
+    }
+
+    private static void GetAllChildVlanInterfaces(Guid vdsID, List<VdsNetworkInterface> ifaces, IFrontendMultipleQueryAsyncCallback callback)
+    {
+        ArrayList<VdcQueryParametersBase> parametersList = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        for (final VdsNetworkInterface iface : ifaces)
+        {
+            queryTypeList.add(VdcQueryType.GetAllChildVlanInterfaces);
+            parametersList.add(new GetAllChildVlanInterfacesQueryParameters(vdsID, iface));
+        }
+        Frontend.RunMultipleQueries(queryTypeList, parametersList, callback);
+    }
+
 }
