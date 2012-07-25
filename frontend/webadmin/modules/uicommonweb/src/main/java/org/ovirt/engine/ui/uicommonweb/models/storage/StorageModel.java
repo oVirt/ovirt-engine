@@ -633,8 +633,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 // future
                 // and in order to make the code more explicit, it is here. ***)
                 else if ((getSelectedItem().getRole() == StorageDomainType.ISO
-                        || getSelectedItem().getRole() == StorageDomainType.ImportExport)
-                        && (dataCenter.getcompatibility_version().compareTo(Version.v3_1) < 0))
+                        || getSelectedItem().getRole() == StorageDomainType.ImportExport))
                 {
                     formats.add(StorageFormatType.V1);
                 }
@@ -645,17 +644,17 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                     formats.add(StorageFormatType.V1);
                 }
                 else if ((getSelectedItem().getType() == StorageType.ISCSI || getSelectedItem().getType() == StorageType.FCP)
-                        && dataCenter.getcompatibility_version().compareTo(Version.v3_0) < 0) //$NON-NLS-1$
+                        && dataCenter.getcompatibility_version().compareTo(Version.v3_0) < 0)
                 {
                     formats.add(StorageFormatType.V1);
                 }
                 else if ((getSelectedItem().getType() == StorageType.ISCSI || getSelectedItem().getType() == StorageType.FCP)
-                        && dataCenter.getcompatibility_version().compareTo(Version.v3_0) == 0) //$NON-NLS-1$
+                        && dataCenter.getcompatibility_version().compareTo(Version.v3_0) == 0)
                 {
                     formats.add(StorageFormatType.V2);
                     selectItem = StorageFormatType.V2;
                 }
-                else if (dataCenter.getcompatibility_version().compareTo(Version.v3_1) >= 0) //$NON-NLS-1$
+                else if (dataCenter.getcompatibility_version().compareTo(Version.v3_1) >= 0)
                 {
                     formats.add(StorageFormatType.V3);
                     selectItem = StorageFormatType.V3;
@@ -663,16 +662,27 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             }
             else // Unassigned DC:
             {
-                getFormat().setIsChangable(true);
+                if ((getSelectedItem().getRole() == StorageDomainType.ISO
+                        || getSelectedItem().getRole() == StorageDomainType.ImportExport))
+                {
+                    // ISO/Export domains should not be available for '(none)' DC
+                    return;
+                }
 
-                formats.add(StorageFormatType.V1);
+                getFormat().setIsChangable(true);
 
                 if ((getSelectedItem().getType() == StorageType.FCP || getSelectedItem().getType() == StorageType.ISCSI)
                         && getSelectedItem().getRole() == StorageDomainType.Data)
                 {
                     formats.add(StorageFormatType.V2);
-                    selectItem = StorageFormatType.V2;
                 }
+                else
+                {
+                    formats.add(StorageFormatType.V1);
+                }
+
+                formats.add(StorageFormatType.V3);
+                selectItem = StorageFormatType.V3;
             }
         }
 
