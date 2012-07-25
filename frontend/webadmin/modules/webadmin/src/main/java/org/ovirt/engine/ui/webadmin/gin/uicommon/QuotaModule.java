@@ -46,8 +46,7 @@ public class QuotaModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(QuotaListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand.equals(getModel().getCreateQuotaStorageCommand())
-                        || lastExecutedCommand.equals(getModel().getCreateQuotaClusterCommand())
+                if (lastExecutedCommand.equals(getModel().getCreateQuotaCommand())
                         || lastExecutedCommand.equals(getModel().getEditQuotaCommand())
                         || lastExecutedCommand.equals(getModel().getCloneQuotaCommand())) {
                     return quotaPopupProvider.get();

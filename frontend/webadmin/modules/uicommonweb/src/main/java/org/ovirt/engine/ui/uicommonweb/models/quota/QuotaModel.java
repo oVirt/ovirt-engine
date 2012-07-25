@@ -14,12 +14,9 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class QuotaModel extends EntityModel {
-
-    boolean isClusterQuota;
 
     UICommand editQuotaClusterCommand;
     UICommand editQuotaStorageCommand;
@@ -47,14 +44,6 @@ public class QuotaModel extends EntityModel {
 
     private QuotaStorage quotaStorage;
     private QuotaVdsGroup quotaCluster;
-
-    public boolean isClusterQuota() {
-        return isClusterQuota;
-    }
-
-    public void setClusterQuota(boolean isClusterQuota) {
-        this.isClusterQuota = isClusterQuota;
-    }
 
     public UICommand getEditQuotaClusterCommand() {
         return editQuotaClusterCommand;
@@ -401,54 +390,7 @@ public class QuotaModel extends EntityModel {
                 getThresholdCluster().getIsValid() &
                 getThresholdStorage().getIsValid();
 
-        return getName().getIsValid() & graceThreshold & ValidateNotEmpty();
-    }
-
-    private boolean ValidateNotEmpty() {
-        boolean empty = true;
-        getSpecificClusterQuota().setIsValid(true);
-        getSpecificStorageQuota().setIsValid(true);
-        if ((Boolean) getGlobalClusterQuota().getEntity() || (Boolean) getGlobalStorageQuota().getEntity()) {
-            empty = false;
-        }
-        if (empty) {
-            if (getAllDataCenterClusters().getItems() != null) {
-                for (QuotaVdsGroup quotaVdsGroup : (ArrayList<QuotaVdsGroup>) getAllDataCenterClusters().getItems()) {
-                    if (quotaVdsGroup.getMemSizeMB() != null) {
-                        empty = false;
-                        break;
-                    }
-                }
-            }
-
-            if (empty && getAllDataCenterStorages().getItems() != null) {
-                for (QuotaStorage quotaStorage : (ArrayList<QuotaStorage>) getAllDataCenterStorages().getItems()) {
-                    if (quotaStorage.getStorageSizeGB() != null) {
-                        empty = false;
-                        break;
-                    }
-                }
-            }
-
-            if (empty) {
-                IValidation changeQuotaName = new IValidation() {
-
-                    @Override
-                    public ValidationResult Validate(Object value) {
-                        ValidationResult result = new ValidationResult();
-                        result.setSuccess(false);
-                        result.getReasons().clear();
-                        result.getReasons().add(ConstantsManager.getInstance()
-                                .getConstants()
-                                .quotaIsEmptyValidation());
-                        return result;
-                    }
-                };
-                getSpecificClusterQuota().ValidateEntity(new IValidation[] { changeQuotaName });
-                getSpecificStorageQuota().ValidateEntity(new IValidation[] { changeQuotaName });
-            }
-        }
-        return !empty;
+        return getName().getIsValid() & graceThreshold;
     }
 
     public Integer getGraceClusterAsInteger() {

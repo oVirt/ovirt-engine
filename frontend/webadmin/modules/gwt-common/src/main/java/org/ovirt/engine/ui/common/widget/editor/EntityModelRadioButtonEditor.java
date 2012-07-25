@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
-import java.util.List;
-
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
 
@@ -89,18 +87,6 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
         } else {
             super.setLabel(label);
         }
-    }
-
-    @Override
-    public void markAsInvalid(List<String> validationHints) {
-        super.markAsInvalid(validationHints);
-        getValidatedWidgetStyle().setBorderStyle(BorderStyle.SOLID);
-    }
-
-    @Override
-    public void markAsValid() {
-        super.markAsValid();
-        getValidatedWidgetStyle().setBorderStyle(BorderStyle.NONE);
     }
 
 }

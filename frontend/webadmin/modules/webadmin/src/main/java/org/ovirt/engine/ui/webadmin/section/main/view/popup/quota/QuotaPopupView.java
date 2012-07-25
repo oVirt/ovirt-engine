@@ -38,7 +38,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
@@ -56,12 +55,6 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     private static final String MAX_COLOR = "#4E9FDD"; //$NON-NLS-1$
 
     private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
-
-    @UiField
-    FlowPanel quotaStoragePanel;
-
-    @UiField
-    FlowPanel quotaClusterPanel;
 
     @UiField
     WidgetStyle style;
@@ -428,11 +421,6 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             registerHandlers();
             firstTime = true;
             updateSliders();
-            if (object.isClusterQuota()) {
-                quotaStoragePanel.setVisible(false);
-            } else {
-                quotaClusterPanel.setVisible(false);
-            }
         }
 
         quotaClusterTable.edit(object.getQuotaClusters());

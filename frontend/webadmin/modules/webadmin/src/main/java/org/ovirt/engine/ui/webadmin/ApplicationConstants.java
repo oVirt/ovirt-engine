@@ -1403,11 +1403,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Used Storage/Total")
     String usedStorageQuota();
 
-    @DefaultStringValue("Add Storage Quota")
-    String addQuotaStorage();
-
-    @DefaultStringValue("Add Cluster Quota")
-    String addQuotaCluster();
+    @DefaultStringValue("Add")
+    String addQuota();
 
     @DefaultStringValue("Edit")
     String editQuota();
@@ -2021,6 +2018,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("No Valid Action")
     String noValidActionSetupNetwork();
+
 
     @DefaultStringValue("Check this checkbox to ensure you won't lose connectivity to the engine.")
     String checkConnectivityInfoPart1();
