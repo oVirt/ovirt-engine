@@ -21,7 +21,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.InterfaceDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -120,58 +119,46 @@ public class VdsSelector {
      * @return
      */
     private Guid GetVdsRunOnDestination() {
-        final VDS target_vds = getVdsDAO().get(getDestinationVdsId());
-        log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
-        VmHandler.UpdateVmGuestAgentVersion(getVm());
-        if (target_vds.getvds_type() == VDSType.PowerClient
-                && !Config.<Boolean> GetValue(ConfigValues.PowerClientAllowRunningGuestsWithoutTools)
-                && getVm() != null && getVm().getHasAgent()) {
-            log.infoFormat(
-                    "VdcBLL.RunVmCommandBase.getVdsToRunOn - VM {0} has no tools - skipping power client check",
-                    getVm().getId());
-            return Guid.Empty;
-        } else if (target_vds.getvds_group_id().equals(getVm().getvds_group_id())
-                && target_vds.getstatus() != VDSStatus.Up
-                && target_vds.getcpu_cores() != null
-                && target_vds.getcpu_cores() >= getVm().getnum_of_cpus()) {
-            return getVdsToRunOn(Arrays.asList(target_vds));
+        Guid result = Guid.Empty;
+        if (getDestinationVdsId() != null) {
+            VDS target_vds = DbFacade.getInstance().getVdsDAO().get(getDestinationVdsId());
+            log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
+                    getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
+            VmHandler.UpdateVmGuestAgentVersion(getVm());
+            if (target_vds.getvds_type() == VDSType.PowerClient
+                    && !Config.<Boolean> GetValue(ConfigValues.PowerClientAllowRunningGuestsWithoutTools)
+                    && getVm() != null && getVm().getHasAgent()) {
+                log.infoFormat(
+                        "VdcBLL.RunVmCommandBase.getVdsToRunOn - VM {0} has no tools - skipping power client check",
+                        getVm().getId());
+            } else {
+                result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })));
+            }
         }
-
-        return Guid.Empty;
+        return result;
     }
 
     private Guid GetAnyVdsToRunOn() {
-        return getVdsToRunOn(getVdsDAO()
-                .getVdsToRun(new VDSType[] { VDSType.VDS, VDSType.oVirtNode },
-                        getVm().getvds_group_id(),
-                        VDSStatus.Up,
-                        getVm().getnum_of_cpus()));
+        return getVdsToRunOn(DbFacade.getInstance()
+                .getVdsDAO()
+                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
 
     private boolean CanRunOnDestinationVds(List<String> messages, boolean isMigrate) {
         boolean returnValue = false;
         if (getDestinationVdsId() != null) {
-            VDS target_vds = getVdsDAO().get(getDestinationVdsId());
+            VDS target_vds = DbFacade.getInstance().getVdsDAO().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
             returnValue = CanFindVdsToRun(messages, isMigrate,
-                    new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })));
+                    new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { target_vds })));
         }
         return returnValue;
     }
 
     private boolean CanFindAnyVds(List<String> messages, boolean isMigrate) {
-        return CanFindVdsToRun(messages,
-                isMigrate,
-                getVdsDAO().getVdsToRun(new VDSType[] { VDSType.VDS, VDSType.oVirtNode },
-                        getVm().getvds_group_id(),
-                        VDSStatus.Up,
-                        getVm().getnum_of_cpus()));
-    }
-
-    VdsDAO getVdsDAO() {
-        return DbFacade.getInstance().getVdsDAO();
+        return CanFindVdsToRun(messages, isMigrate,
+                DbFacade.getInstance().getVdsDAO().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
 
     /**
@@ -301,28 +288,35 @@ public class VdsSelector {
         final List<VDS> readyToRun = new ArrayList<VDS>();
         final List<VmNetworkInterface> vmNICs = getVmNetworkInterfaceDAO().getAllForVm(getVm().getId());
         for (VDS curVds : vdss) {
+            // vds must be in the correct group
+            if (!curVds.getvds_group_id().equals(getVm().getvds_group_id()))
+                continue;
+
+            // vds must be up to run a vm
+            if (curVds.getstatus() != VDSStatus.Up)
+                continue;
 
             // apply limit on vds memory over commit.
-            if (!RunVmCommandBase.hasMemoryToRunVM(curVds, getVm())) {
+            if (!RunVmCommandBase.hasMemoryToRunVM(curVds, getVm()))
                 continue;
-            }
 
             // In case we are using this function in migration we make sure we
             // don't allocate the same VDS
             if ((getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getId()))
                     || isVdsFailedToRunVm(curVds.getId()) ||
                     // RunVmCommandBase.isVdsVersionOld(curVds, getVm()) ||
-                    !RunVmCommandBase.hasCapacityToRunVM(curVds)) {
+                    !RunVmCommandBase.hasCapacityToRunVM(curVds))
                 continue;
-            }
 
-            if (!IsVMSwapValueLegal(curVds)) {
+            // vds must have at least cores as the vm
+            if (curVds.getcpu_cores() != null && getVm().getnum_of_cpus() > curVds.getcpu_cores()) {
                 continue;
             }
+            if (!IsVMSwapValueLegal(curVds))
+                continue;
 
-            if(!areRequiredNetworksAvailable(vmNICs, getInterfaceDAO().getAllInterfacesForVds(curVds.getId()))) {
+            if(!areRequiredNetworksAvailable(vmNICs, getInterfaceDAO().getAllInterfacesForVds(curVds.getId())))
                 continue;
-            }
 
             readyToRun.add(curVds);
         }

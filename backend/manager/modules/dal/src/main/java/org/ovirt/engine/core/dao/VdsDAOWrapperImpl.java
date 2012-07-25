@@ -89,6 +89,26 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
         return convertToVdsList(found);
     }
 
+    @Override
+    public List<VDS> getAllOfType(VDSType vds) {
+        List<VdsStatic> found = vdsStaticDAO.findByCriteria(Restrictions.eq("vdsType", vds.getValue()));
+
+        return convertToVdsList(found);
+    }
+
+    @Override
+    public List<VDS> getAllOfTypes(VDSType[] types) {
+        Integer[] intTypes = new Integer[types.length];
+
+        for (int index = 0; index < types.length; index++) {
+            intTypes[index] = types[index].getValue();
+        }
+
+        List<VdsStatic> found = vdsStaticDAO.findByCriteria(Restrictions.in("vdsType", intTypes));
+
+        return convertToVdsList(found);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<VDS> getAllForVdsGroupWithoutMigrating(final Guid vdsGroup) {
@@ -166,18 +186,6 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
 
     @Override
     public List<VDS> getAllForVdsGroup(Guid vdsGroup, Guid userID, boolean isFiltered) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<VDS> getVdsToRun(VDSType type, Guid groupId, VDSStatus status, int minNrOfCpus) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<VDS> getVdsToRun(VDSType[] types, Guid groupId, VDSStatus status, int minNrOfCpus) {
         // TODO Auto-generated method stub
         return null;
     }
