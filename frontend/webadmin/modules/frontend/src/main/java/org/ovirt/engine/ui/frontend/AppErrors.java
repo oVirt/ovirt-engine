@@ -1800,7 +1800,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Disk is already deactivated.")
     String HOT_UNPLUG_DISK_IS_NOT_PLUGGED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Disk cannot be shareable if it depends on a snapshot or is bootable. In order to share it, remove the disk's snapshots, and make sure it's not bootable.")
+    @DefaultStringValue("Cannot ${action} ${type}. Disk cannot be shareable if it depends on a snapshot. In order to share it, remove the disk's snapshots.")
     String SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK();
 
     @DefaultStringValue("Cannot ${action} ${type}. The disk is already configured in a snapshot. In order to detach it, remove the disk's snapshots.")

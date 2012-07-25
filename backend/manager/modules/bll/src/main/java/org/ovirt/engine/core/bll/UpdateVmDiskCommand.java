@@ -147,12 +147,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     break;
                 }
             }
-
-            // If disk is shareable and it is also bootable return an appropriate CDA message.
-            if (getParameters().getDiskInfo().isBoot() && getParameters().getDiskInfo().isShareable()) {
-                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
-                return false;
-            }
         }
 
         // Set disk alias name in the disk retrieved from the parameters.
