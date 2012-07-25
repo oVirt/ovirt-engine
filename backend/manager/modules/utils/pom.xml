@@ -153,9 +153,20 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
           </additionalClasspathElements>
+          <excludes>
+            <exclude>**/ssh/*.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>enable-ssh-tests</id>
+      <properties>
+        <test>**/ssh/*.java</test>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
