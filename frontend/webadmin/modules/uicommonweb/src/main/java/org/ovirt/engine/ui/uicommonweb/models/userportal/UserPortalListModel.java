@@ -1000,7 +1000,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 .getMessages()
                 .newVmTitle(vmType == VmType.Server ? ConstantsManager.getInstance().getConstants().serverVmType()
                         : ConstantsManager.getInstance().getConstants().desktopVmType()));
-        model.setHashName(model.getTitle().toLowerCase().replace(' ', '_'));
+        model.setHashName("new_" + (vmType == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         model.setIsNew(true);
         model.setVmType(vmType);
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
@@ -1044,7 +1044,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         .getConstants()
                         .serverVmType()
                         : ConstantsManager.getInstance().getConstants().desktopVmType()));
-        model.setHashName(model.getTitle().toLowerCase().replace(' ', '_'));
+        model.setHashName("edit_" + (vm.getvm_type() == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         model.setVmType(vm.getvm_type());
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
 

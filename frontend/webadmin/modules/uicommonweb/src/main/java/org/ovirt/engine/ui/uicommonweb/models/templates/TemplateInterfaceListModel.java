@@ -140,7 +140,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         model.getMAC().setIsAvailable(false);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
-
+        model.setHashName("new_network_interface_tmps"); //$NON-NLS-1$
         model.setIsNew(true);
 
         AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
@@ -202,6 +202,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         model.getMAC().setIsAvailable(false);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
+        model.setHashName("edit_network_interface_tmps"); //$NON-NLS-1$
 
         AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
                 new INewAsyncCallback() {
