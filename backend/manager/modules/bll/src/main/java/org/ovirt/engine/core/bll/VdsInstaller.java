@@ -46,8 +46,9 @@ public class VdsInstaller implements IVdsInstallCallBack {
     private String _bootstrapRunningScript = new java.io.File(
             Config.<String> GetValue(ConfigValues.BootstrapInstallerFileName)).getName();
 
+    // <HW UUID>_<lowest MAC>
     final public static String _getUniqueIdCommand =
-            "/bin/echo -e `/bin/bash -c  /usr/sbin/dmidecode|/bin/awk ' /UUID/{ print $2; } ' | /usr/bin/tr '\n' '_' && /bin/cat /sys/class/net/*/address | /bin/sed -e '/00:00:00:00/d' -e '/^$/d' | /bin/sort -u | /usr/bin/head --lines=1`";
+            "dmidecode | awk ' /UUID/{ print $2; } ' | tr '\n' '_' && cat /sys/class/net/*/address | sed -e '/00:00:00:00/d' -e '/^$/d' | sort -u | head -n 1";
 
     protected VdsInstallStages _prevInstallStage = VdsInstallStages.Start;
     protected VdsInstallStages _currentInstallStage = VdsInstallStages.Start;
