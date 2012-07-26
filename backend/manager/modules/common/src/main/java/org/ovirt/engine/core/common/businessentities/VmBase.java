@@ -261,6 +261,10 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.vmUnManagedDeviceList = list;
     }
 
+    public int getnum_of_cpus() {
+        return this.getcpu_per_socket() * this.getnum_of_sockets();
+    }
+
     @Override
     public Guid getId() {
         return id;
