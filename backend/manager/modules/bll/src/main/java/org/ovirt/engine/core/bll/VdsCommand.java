@@ -25,8 +25,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
@@ -190,6 +188,4 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         return Collections.singletonList(new PermissionSubject(getVdsId(), VdcObjectType.VDS,
                 getActionType().getActionGroup()));
     }
-
-    private static Log log = LogFactory.getLog(VdsCommand.class);
 }
