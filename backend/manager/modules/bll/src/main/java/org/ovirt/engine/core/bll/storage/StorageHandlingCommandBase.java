@@ -375,6 +375,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), getStoragePoolName());
+            jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
             jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVdsName());
         }
         return jobProperties;
