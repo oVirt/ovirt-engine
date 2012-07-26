@@ -29,6 +29,10 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -38,7 +42,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@PrepareForTest({ DbFacade.class, TransactionSupport.class, Config.class })
+@PrepareForTest({ DbFacade.class, TransactionSupport.class, Config.class, Backend.class })
 @RunWith(PowerMockRunner.class)
 public class VmHandlerTest {
 
@@ -49,6 +53,7 @@ public class VmHandlerTest {
     VmDynamicDAO vmDynamicDAO;
 
     public VmHandlerTest() {
+        mockStatic(Backend.class);
         mockStatic(DbFacade.class);
         mockStatic(TransactionSupport.class);
         MockitoAnnotations.initMocks(this);
@@ -173,4 +178,16 @@ public class VmHandlerTest {
         BaseUsbPolicyTest(UsbPolicy.ENABLED_NATIVE, Version.v3_1, VmOsType.OtherLinux, true);
     }
 
+    @Test
+    public void VerifyAddVmTest() {
+        VDSReturnValue returnValue = new VDSReturnValue();
+        returnValue.setReturnValue(new Boolean(false));
+        Backend backendMock = mock(Backend.class);
+        VDSBrokerFrontend resourceManagerMock = mock(VDSBrokerFrontend.class);
+        when(Backend.getInstance()).thenReturn(backendMock);
+        when(backendMock.getResourceManager()).thenReturn(resourceManagerMock);
+        when(resourceManagerMock.RunVdsCommand(any(VDSCommandType.class), any(IrsBaseVDSCommandParameters.class))).thenReturn(returnValue);
+
+        assertFalse(VmHandler.VerifyAddVm(new ArrayList<String>(), 0, null, Guid.NewGuid(), 0));
+    }
 }

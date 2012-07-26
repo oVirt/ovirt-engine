@@ -119,8 +119,11 @@ public class VmHandler {
                 if (!VmTemplateCommand.IsVmPriorityValueLegal(vmPriority, reasons)) {
                     returnValue = false;
                 }
-            } else if (reasons != null) {
-                reasons.add(VdcBllMessages.IMAGE_REPOSITORY_NOT_FOUND.toString());
+            } else {
+                if (reasons != null) {
+                    reasons.add(VdcBllMessages.IMAGE_REPOSITORY_NOT_FOUND.toString());
+                }
+                returnValue = false;
             }
         }
         return returnValue;
