@@ -164,12 +164,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         VM vm = getVm();
         if (vm == null) {
             retValue = false;
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
         } else {
             // If VM is pinned to host, no migration can occur
             if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
                 retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST.toString());
+                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST.name());
             } else if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE
                     && !forcedMigrationForNonMigratableVM) {
                 retValue = false;
@@ -177,17 +177,20 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         .toString());
             } else if (vm.getstatus() == VMStatus.MigratingFrom) {
                 retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS.toString());
+                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS.name());
             } else if (vm.getstatus() == VMStatus.NotResponding) {
                 retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
+                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.name());
+            } else if (vm.getstatus() == VMStatus.Paused) {
+                retValue = false;
+                reasons.add(VdcBllMessages.MIGRATE_PAUSED_VM_IS_UNSUPPORTED.name());
             } else if (!VM.isStatusQualifyToMigrate(vm.getstatus())) {
                 retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.toString());
+                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.name());
             } else if (getDestinationVds() != null && getDestinationVds().getstatus() != VDSStatus.Up) {
                 retValue = false;
-                reasons.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
+                reasons.add(VdcBllMessages.VAR__HOST_STATUS__UP.name());
+                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.name());
             }
 
             retValue = retValue && validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
