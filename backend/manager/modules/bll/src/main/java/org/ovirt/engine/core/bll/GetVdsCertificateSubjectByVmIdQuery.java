@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -14,7 +15,8 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends GetVmByVmIdParameter
 
     @Override
     protected void executeQueryCommand() {
-        Object returnValue = null;
+        getQueryReturnValue().setSucceeded(false);
+        VdcQueryReturnValue returnValue = null;
         Guid vmId = getParameters().getId();
         if (vmId != null) {
             VM vm = getDbFacade().getVmDAO().get(vmId);
@@ -25,6 +27,9 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends GetVmByVmIdParameter
                 }
             }
         }
-        getQueryReturnValue().setReturnValue(returnValue);
+        if (returnValue != null) {
+            getQueryReturnValue().setSucceeded(returnValue.getSucceeded());
+            getQueryReturnValue().setReturnValue(returnValue.getReturnValue());
+        }
     }
 }
