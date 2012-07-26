@@ -140,7 +140,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             }
             // if subsequent attempts failure exceeds configuration value , abort the loop.
             if (subsequentFailedAttempts == vmPoolMaxSubsequentFailures) {
-                logSubsequentFailedAttempts(subsequentFailedAttempts, i - 1);
+                AuditLogableBase logable = new AuditLogableBase();
+                AuditLogDirector.log(logable, AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED);
                 break;
             }
             isAtLeastOneVMCreationFailed = isAtLeastOneVMCreationFailed || !_addVmsSucceded;
@@ -339,14 +340,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     private int getBlockSparseInitSizeInGB() {
         return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
-    }
-
-    private void logSubsequentFailedAttempts(int subsequentFailedAttempts, int createdVms) {
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.AddCustomValue("Attempts", String.valueOf(subsequentFailedAttempts));
-        logable.AddCustomValue("Num", String.valueOf(createdVms));
-        logable.AddCustomValue("Total", String.valueOf(getParameters().getVmsCount()));
-        AuditLogDirector.log(logable, AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED);
     }
 
     protected boolean getAddVmsSucceded() {
