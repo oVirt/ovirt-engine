@@ -1,6 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,15 +14,18 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.HostNics;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Slaves;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
+import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
@@ -219,6 +226,42 @@ public class BackendHostNicsResourceTest
     @Test
     public void testRemoveFailed() throws Exception {
         doTestBadRemove(true, false, FAILURE);
+    }
+
+    @Test
+    public void testSetupNetworksNotSyncsNetwork() throws Exception {
+        setUpNetworkQueryExpectations(1);
+
+        doTestSetupNetworksSyncsNetwork(false, Collections.<String> emptyList());
+    }
+
+    @Test
+    public void testSetupNetworksSyncsNetwork() throws Exception {
+        setUpNetworkQueryExpectations(2);
+
+        doTestSetupNetworksSyncsNetwork(true, Collections.singletonList(NETWORK_NAME));
+    }
+
+    private void doTestSetupNetworksSyncsNetwork(boolean overrideConfiguration, List<String> expectedNetworksToSync) {
+        HostNIC hostNic = new HostNIC();
+        Network network = new Network();
+        network.setName(NETWORK_NAME);
+        hostNic.setNetwork(network);
+        hostNic.setOverrideConfiguration(overrideConfiguration);
+
+        HostNics hostNics = control.createMock(HostNics.class);
+        expect(hostNics.getHostNics()).andReturn(Collections.singletonList(hostNic)).anyTimes();
+
+        setUriInfo(setUpActionExpectations(VdcActionType.SetupNetworks,
+                                           SetupNetworksParameters.class,
+                                           new String[] { "NetworksToSync" },
+                                           new Object[] { expectedNetworksToSync },
+                                           true,
+                                           true));
+
+        Action action = new Action();
+        action.setHostNics(hostNics);
+        collection.setupNetworks(action);
     }
 
     @Test

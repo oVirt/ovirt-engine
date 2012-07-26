@@ -341,6 +341,7 @@ public class BackendHostNicsResource
         if (action.isSetConnectivityTimeout()) {
             parameters.setConectivityTimeout(action.getConnectivityTimeout());
         }
+        parameters.setNetworksToSync(nicsToNetworksToSync(action.getHostNics().getHostNics()));
         return parameters;
     }
 
@@ -358,6 +359,17 @@ public class BackendHostNicsResource
             }
         }
         return ifaces;
+    }
+
+    private List<String> nicsToNetworksToSync(List<HostNIC> hostNics) {
+        List<String> networks = new ArrayList<String>();
+        for (HostNIC nic : hostNics) {
+            if (nic.isSetOverrideConfiguration() && nic.isOverrideConfiguration() && nic.isSetNetwork()) {
+                org.ovirt.engine.core.common.businessentities.Network net = lookupNetwork(nic.getNetwork());
+                networks.add(net.getname());
+            }
+        }
+        return networks;
     }
 
 
