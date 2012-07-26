@@ -25,16 +25,15 @@
     </appender>
 
     <logger name="org.ovirt.engine.core.config">
-        <priority value="DEBUG"/>
-        <appender-ref ref="FILE"/>
+        <level value="INFO"/>
     </logger>
 
     <logger name="org.apache.commons.configuration.ConfigurationUtils">
-        <priority value="ERROR"/>
+        <level value="INFO"/>
     </logger>
 
     <logger name="org.ovirt.engine.core.engineencryptutils">
-        <priority value="FATAL"/>
+        <level value="FATAL"/>
     </logger>
 
     <root>
