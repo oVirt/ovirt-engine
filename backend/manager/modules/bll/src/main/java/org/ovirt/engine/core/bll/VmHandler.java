@@ -214,26 +214,25 @@ public class VmHandler {
      * @param compensationContext
      *            Used to save the old VM status, for compensation purposes.
      */
-    public static void unlockVm(final VmDynamic vm, final CompensationContext compensationContext) {
+    public static void unlockVm(final VM vm, final CompensationContext compensationContext) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
             public Void runInTransaction() {
                 compensationContext.snapshotEntityStatus(vm, vm.getstatus());
                 vm.setstatus(VMStatus.Down);
-                UnLockVm(vm.getId());
+                UnLockVm(vm);
                 compensationContext.stateChanged();
                 return null;
             }
         });
     }
 
-    public static void UnLockVm(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+    public static void UnLockVm(VM vm) {
         if (vm.getstatus() == VMStatus.ImageLocked) {
             Backend.getInstance()
                     .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVmStatus, new SetVmStatusVDSCommandParameters(vmId, VMStatus.Down));
+                    .RunVdsCommand(VDSCommandType.SetVmStatus, new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
         } else {
             log.errorFormat("Trying to unlock vm {0} in status {1} - not moving to down!", vm.getvm_name(),
                     vm.getstatus());

@@ -72,7 +72,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         EndActionOnDisks();
 
         if (getVm() != null) {
-            VmHandler.unlockVm(getVm().getDynamicData(), getCompensationContext());
+            VmHandler.unlockVm(getVm(), getCompensationContext());
             restoreVmConfigFromSnapshot();
         } else {
             setCommandShouldBeLogged(false);

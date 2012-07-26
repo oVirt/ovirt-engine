@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -49,7 +47,6 @@ import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
-import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -61,7 +58,6 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
     private static final int Kb = 1024;
-    private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
     protected final static int MAX_NETWORK_INTERFACES_SUPPORTED = 8;
 
     public VmCommand(T parameters) {
@@ -247,7 +243,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         if (getVm() != null) {
             if (getVm().getstatus() == VMStatus.ImageLocked) {
-                VmHandler.unlockVm(getVm().getDynamicData(), getCompensationContext());
+                VmHandler.unlockVm(getVm(), getCompensationContext());
             }
 
             UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));

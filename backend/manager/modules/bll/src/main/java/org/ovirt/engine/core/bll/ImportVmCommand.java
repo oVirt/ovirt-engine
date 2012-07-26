@@ -846,7 +846,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         // it form DB
         VM vmFromParams = getParameters().getVm();
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getId());
+            VmHandler.UnLockVm(getVm());
             for (DiskImage disk : imageList) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(disk.getImageId());
                 DbFacade.getInstance().getImageDao().remove(disk.getImageId());
@@ -881,7 +881,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         EndActionOnAllImageGroups();
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getId());
+            VmHandler.UnLockVm(getVm());
 
             UpdateVmImSpm();
         }

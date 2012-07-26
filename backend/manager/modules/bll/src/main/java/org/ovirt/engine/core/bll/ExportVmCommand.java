@@ -412,7 +412,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         if (getVm() != null) {
             VM vm = getVm();
-            VmHandler.UnLockVm(vm.getId());
+            VmHandler.UnLockVm(vm);
 
             VmHandler.updateDisksFromDb(vm);
             VmDeviceUtils.setVmDevices(vm.getStaticData());
@@ -449,7 +449,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         EndActionOnAllImageGroups();
 
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getId());
+            VmHandler.UnLockVm(getVm());
             VmHandler.updateDisksFromDb(getVm());
         }
 

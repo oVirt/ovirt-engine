@@ -205,7 +205,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         EndActionOnAllImageGroups();
 
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm().getId());
+            VmHandler.UnLockVm(getVm());
 
             VmHandler.updateDisksFromDb(getVm());
             UpdateVmImSpm();
