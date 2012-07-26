@@ -831,12 +831,15 @@ public class HostInterfaceListModel extends SearchableListModel
                         if (networkDictionary.containsKey(selectedNetworkName))
                         {
                             Network network = networkDictionary.get(selectedNetworkName);
-                            networksToAdd.add(network);
-                            attachedNetworks.remove(network);
 
-                            if (selectedNetwork == null)
-                            {
-                                selectedNetwork = network;
+                            if (!StringHelper.isNullOrEmpty(item.getNetworkName())){
+                                networksToAdd.add(network);
+                                attachedNetworks.remove(network);
+
+                                if (selectedNetwork == null)
+                                {
+                                    selectedNetwork = network;
+                                }
                             }
                         }
                     }
@@ -1246,75 +1249,6 @@ public class HostInterfaceListModel extends SearchableListModel
                 },
                 this);
         CancelConfirm();
-    }
-
-    private ArrayList<Network> GetNetworksList(RefObject<Network> selectedNetwork)
-    {
-        selectedNetwork.argvalue = null;
-        ArrayList<Network> networksByCluster =
-                DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
-        ArrayList<Network> networksToAdd = new ArrayList<Network>();
-        // creating dictionary of networks by name
-        HashMap<String, Network> networkDictionary = new HashMap<String, Network>();
-        for (Network network : networksByCluster)
-        {
-            networkDictionary.put(network.getname(), network);
-        }
-        // creating list of attached networks.
-        ArrayList<Network> attachedNetworks = new ArrayList<Network>();
-        for (VdsNetworkInterface nic : getAllItems())
-        {
-            if (nic.getNetworkName() != null && networkDictionary.containsKey(nic.getNetworkName()))
-            {
-                attachedNetworks.add(networkDictionary.get(nic.getNetworkName()));
-            }
-        }
-
-        ArrayList<Network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
-
-        // adding selected network names to list.
-        boolean isVlanSelected = false;
-        boolean isManagement = false;
-        RefObject<Boolean> tempRef_isVlanSelected = new RefObject<Boolean>(isVlanSelected);
-        RefObject<Boolean> tempRef_isManagement = new RefObject<Boolean>(isManagement);
-        ArrayList<String> selectedNicsNetworks =
-                GetSelectedNicsNetworks(tempRef_isVlanSelected, tempRef_isManagement);
-        isVlanSelected = tempRef_isVlanSelected.argvalue;
-        isManagement = tempRef_isManagement.argvalue;
-
-        for (String selectedNetworkName : selectedNicsNetworks)
-        {
-            if (networkDictionary.containsKey(selectedNetworkName))
-            {
-                Network network = networkDictionary.get(selectedNetworkName);
-                networksToAdd.add(network);
-                attachedNetworks.remove(network);
-
-                if (selectedNetwork.argvalue == null)
-                {
-                    selectedNetwork.argvalue = network;
-                }
-            }
-        }
-
-        if (!isManagement)
-        {
-            for (Network unAttachedNetwork : unAttachedNetworks)
-            {
-                if (isVlanSelected)
-                {
-                    if (unAttachedNetwork.getvlan_id() != null)
-                    {
-                        networksToAdd.add(unAttachedNetwork);
-                    }
-                }
-                else
-                {
-                    networksToAdd.add(unAttachedNetwork);
-                }
-            }
-        }
-        return networksToAdd;
     }
 
     public void Bond()
@@ -1863,7 +1797,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
 
         String nicName = (String) model.getEntity();
-        VdsNetworkInterface nic =
+        final VdsNetworkInterface nic =
                 (VdsNetworkInterface) Linq.FindInterfaceByName(Linq.VdsNetworkInterfaceListToBase(getAllItems()),
                         nicName);
 
@@ -1908,49 +1842,59 @@ public class HostInterfaceListModel extends SearchableListModel
                     return;
                 }
 
-                ArrayList<Network> networks =
-                        DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
-                Network defaultNetwork = new Network();
-                defaultNetwork.setname(nic.getNetworkName());
-                Network tempVar3 = Linq.FindNetworkByName(networks, nic.getNetworkName());
-                Network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
+                AsyncQuery _asyncQuery = new AsyncQuery();
+                _asyncQuery.setModel(this);
+                _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object model, Object ReturnValue)
+                    {
+                        final HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
+                        HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) hostInterfaceListModel.getWindow();
+                        ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
+                        Network defaultNetwork = new Network();
+                        defaultNetwork.setname(nic.getNetworkName());
+                        Network tempVar3 = Linq.FindNetworkByName(networks, nic.getNetworkName());
+                        Network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
 
-                model.StartProgress(null);
-                setcurrentModel(model);
+                        hostInterfaceModel.StartProgress(null);
+                        setcurrentModel(hostInterfaceModel);
 
-                Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
-                        new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                        Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
+                                new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
+                                new IFrontendActionAsyncCallback() {
+                                    @Override
+                                    public void Executed(FrontendActionAsyncResult result) {
 
-                                HostInterfaceListModel hostInterfaceListModel =
-                                        (HostInterfaceListModel) result.getState();
-                                VdcReturnValueBase returnValueBase = result.getReturnValue();
-                                if (returnValueBase != null && returnValueBase.getSucceeded())
-                                {
-                                    EntityModel commitChanges =
-                                            ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                                    if ((Boolean) commitChanges.getEntity())
-                                    {
-                                        SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
-                                                hostInterfaceListModel);
+                                        HostInterfaceListModel hostInterfaceListModel =
+                                                (HostInterfaceListModel) result.getState();
+                                        VdcReturnValueBase returnValueBase = result.getReturnValue();
+                                        if (returnValueBase != null && returnValueBase.getSucceeded())
+                                        {
+                                            EntityModel commitChanges =
+                                                    ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
+                                            if ((Boolean) commitChanges.getEntity())
+                                            {
+                                                SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
+                                                        hostInterfaceListModel);
+                                            }
+                                            else
+                                            {
+                                                hostInterfaceListModel.getcurrentModel().StopProgress();
+                                                hostInterfaceListModel.Cancel();
+                                                hostInterfaceListModel.Search();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            hostInterfaceListModel.getcurrentModel().StopProgress();
+                                        }
+
                                     }
-                                    else
-                                    {
-                                        hostInterfaceListModel.getcurrentModel().StopProgress();
-                                        hostInterfaceListModel.Cancel();
-                                        hostInterfaceListModel.Search();
-                                    }
-                                }
-                                else
-                                {
-                                    hostInterfaceListModel.getcurrentModel().StopProgress();
-                                }
-
-                            }
-                        },
-                        this);
+                                },
+                                hostInterfaceListModel);
+                    }
+                };
+                AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());
             }
         }
         else
@@ -1998,7 +1942,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                 }
             }
-            // if the selected item is a non-attached or attached to vlan eth (over bond or not),
+            // If the selected item is a non-attached or attached to vlan eth (over bond or not),
             // and the selected network in the dialog is a new vlan, attach selected network.
             if ((StringHelper.isNullOrEmpty(nic.getNetworkName()) && !isUpdateVlan)
                     || (bondWithVlans && (!vLanAttached && network.getvlan_id() != null)))
@@ -2113,52 +2057,60 @@ public class HostInterfaceListModel extends SearchableListModel
         }
 
         String nicName = (String) model.getEntity();
-        VdsNetworkInterface nic =
+        final VdsNetworkInterface nic =
                 (VdsNetworkInterface) Linq.FindInterfaceByName(Linq.<NetworkInterface> Cast(getInterfaceItems()),
                         nicName);
-        ArrayList<Network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
+                ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
+                Network defaultNetwork = new Network();
+                defaultNetwork.setname(nic.getNetworkName());
+                Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
+                Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
-        Network defaultNetwork = new Network();
-        defaultNetwork.setname(nic.getNetworkName());
-        Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
-        Network net = (tempVar != null) ? tempVar : defaultNetwork;
+                hostInterfaceListModel.StartProgress(null);
+                setcurrentModel(hostInterfaceListModel);
 
-        model.StartProgress(null);
-        setcurrentModel(model);
+                Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
+                        new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
+                        new IFrontendActionAsyncCallback() {
+                            @Override
+                            public void Executed(FrontendActionAsyncResult result) {
 
-        Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
-                new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                                HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) result.getState();
+                                VdcReturnValueBase returnValueBase = result.getReturnValue();
+                                if (returnValueBase != null && returnValueBase.getSucceeded())
+                                {
+                                    EntityModel commitChanges =
+                                            ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
+                                    if ((Boolean) commitChanges.getEntity())
+                                    {
+                                        SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
+                                                hostInterfaceListModel);
+                                    }
+                                    else
+                                    {
+                                        hostInterfaceListModel.getcurrentModel().StopProgress();
+                                        hostInterfaceListModel.Cancel();
+                                        hostInterfaceListModel.Search();
+                                    }
+                                }
+                                else
+                                {
+                                    hostInterfaceListModel.getcurrentModel().StopProgress();
+                                }
 
-                        HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) result.getState();
-                        VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded())
-                        {
-                            EntityModel commitChanges =
-                                    ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
-                            if ((Boolean) commitChanges.getEntity())
-                            {
-                                SaveNetworkConfig(hostInterfaceListModel.getEntity().getId(),
-                                        hostInterfaceListModel);
                             }
-                            else
-                            {
-                                hostInterfaceListModel.getcurrentModel().StopProgress();
-                                hostInterfaceListModel.Cancel();
-                                hostInterfaceListModel.Search();
-                            }
-                        }
-                        else
-                        {
-                            hostInterfaceListModel.getcurrentModel().StopProgress();
-                        }
-
-                    }
-                },
-                this);
-
+                        },
+                        hostInterfaceListModel);
+            }
+        };
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());
     }
 
     public void Cancel()
