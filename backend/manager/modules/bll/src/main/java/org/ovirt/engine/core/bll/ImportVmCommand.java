@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -266,6 +267,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private boolean canDoAction_afterCloneVm(boolean retVal,
             List<String> canDoActionMessages,
             Map<Guid, storage_domains> domainsMap) {
+        VM vm = getParameters().getVm();
         // check that the imported vm guid is not in engine
         if (retVal) {
             VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
@@ -287,8 +289,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
             retVal = false;
         }
-        if (retVal && getParameters().getCopyCollapse() && getParameters().getVm().getDiskMap() != null) {
-            for (Disk disk : getParameters().getVm().getDiskMap().values()) {
+        if (retVal && getParameters().getCopyCollapse() && vm.getDiskMap() != null) {
+            for (Disk disk : vm.getDiskMap().values()) {
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage key = (DiskImage) getVm().getDiskMap()
                         .get(disk.getId());
@@ -346,7 +348,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 getVdsGroup().getcompatibility_version().toString())) {
             // check that we have no more then 8 interfaces (kvm limitation in
             // version 2.x)
-            if (!VmCommand.validateNumberOfNics(getParameters().getVm().getInterfaces(), null)) {
+            if (!VmCommand.validateNumberOfNics(vm.getInterfaces(), null)) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_EXITED_MAX_INTERFACES);
                 retVal = false;
             }
@@ -354,7 +356,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         // Check that the USB policy is legal
         if (retVal) {
-            retVal = VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+            //Enforce disabled USB policy for Linux OS with legacy policy.
+            if (vm.getos().isLinux() &&  vm.getusb_policy().equals(UsbPolicy.ENABLED_LEGACY)) {
+                vm.setusb_policy(UsbPolicy.DISABLED);
+            }
+
+            retVal = VmHandler.isUsbPolicyLegal(vm.getusb_policy(), vm.getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
         }
 
         if (retVal) {
