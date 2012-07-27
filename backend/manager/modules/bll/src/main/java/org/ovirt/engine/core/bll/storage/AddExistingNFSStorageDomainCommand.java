@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -7,7 +9,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.Pair;
 
@@ -34,7 +35,7 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
 
     @Override
     protected void executeCommand() {
-        if (StringHelper.isNullOrEmpty(getStorageDomain().getstorage())) {
+        if (StringUtils.isEmpty(getStorageDomain().getstorage())) {
             getStorageDomain().setstorage(
                     (String) Backend
                             .getInstance()
@@ -52,14 +53,14 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
     protected boolean ConcreteCheckExistingStorageDomain(Pair<storage_domain_static, SANState> domain) {
         boolean returnValue = false;
         storage_domain_static domainFromIrs = domain.getFirst();
-        if (StringHelper.isNullOrEmpty(getStorageDomain().getStorageStaticData().getstorage())
-                && StringHelper.isNullOrEmpty(domainFromIrs.getstorage()) && domainFromIrs.getConnection() != null
+        if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getstorage())
+                && StringUtils.isEmpty(domainFromIrs.getstorage()) && domainFromIrs.getConnection() != null
                 && getStorageDomain().getStorageStaticData().getConnection() != null) {
-            returnValue = (StringHelper.EqOp(domainFromIrs.getConnection().getconnection(), getStorageDomain()
+            returnValue = (StringUtils.equals(domainFromIrs.getConnection().getconnection(), getStorageDomain()
                     .getStorageStaticData().getConnection().getconnection()));
-        } else if (!StringHelper.isNullOrEmpty(getStorageDomain().getStorageStaticData().getstorage())
-                && !StringHelper.isNullOrEmpty(domainFromIrs.getstorage())) {
-            returnValue = (StringHelper.EqOp(domainFromIrs.getstorage(), getStorageDomain().getStorageStaticData()
+        } else if (!StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getstorage())
+                && !StringUtils.isEmpty(domainFromIrs.getstorage())) {
+            returnValue = (StringUtils.equals(domainFromIrs.getstorage(), getStorageDomain().getStorageStaticData()
                     .getstorage()));
         }
         if (!returnValue) {
