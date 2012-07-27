@@ -319,6 +319,20 @@ public interface Enums extends LocalizedEnums {
 
     String DiskStorageType___IMAGE();
 
+    String RoleType___ADMIN();
+
+    String RoleType___USER();
+
+    String JobExecutionStatus___STARTED();
+
+    String JobExecutionStatus___FINISHED();
+
+    String JobExecutionStatus___FAILED();
+
+    String JobExecutionStatus___ABORTED();
+
+    String JobExecutionStatus___UNKNOWN();
+
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
     String GlusterVolumeType___REPLICATE();
