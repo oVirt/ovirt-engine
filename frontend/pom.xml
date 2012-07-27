@@ -21,6 +21,35 @@
     <engine.version>3.1.0</engine.version>
     <aspectj.version>1.6.11</aspectj.version>
   </properties>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <versionRange>[1.3.2.google,)</versionRange>
+                    <goals>
+                      <goal>resources</goal>
+                      <goal>generateAsync</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
   <pluginRepositories>
     <pluginRepository>
       <id>gwt-plugin-repo</id>
