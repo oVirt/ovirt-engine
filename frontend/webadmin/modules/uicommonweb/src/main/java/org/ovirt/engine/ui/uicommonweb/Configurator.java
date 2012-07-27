@@ -37,9 +37,8 @@ public abstract class Configurator {
         setSpiceFullScreen(false);
 
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
+        documentationLangPath = (currentLocale.equals("default") ? "en-US" : currentLocale) + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        documentationLangPath = (currentLocale.equals("default") ? "en-US" : currentLocale); //$NON-NLS-1$ //$NON-NLS-2$
-        documentationLangPath = "/" + documentationLangPath + "/"; //$NON-NLS-1$ //$NON-NLS-2$
         setSpiceVersion(new Version(4, 4));
         setSpiceDefaultUsbPort(32023);
         setSpiceDisableUsbListenPort(0);
@@ -207,12 +206,26 @@ public abstract class Configurator {
         this.documentationBasePath = documentationBasePath;
     }
 
+    /**
+     * Returns the base URL for serving documentation resources.
+     * <p>
+     * Example: <code>http://www.example.com:8080/docs/</code>
+     *
+     * @return Documentation base URL, including the trailing slash.
+     */
     public String getDocumentationBaseURL() {
-        return getRootURL() + getDocumentationBasePath() + documentationLangPath;
+        return getRootURL() + getDocumentationBasePath() + "/"; //$NON-NLS-1$
     }
 
+    /**
+     * Returns the base URL for serving locale-specific HTML documentation.
+     * <p>
+     * Example: <code>http://www.example.com:8080/docs/en-US/html/</code>
+     *
+     * @return Locale-specific HTML documentation base URL, including the trailing slash.
+     */
     public String getDocumentationLibURL() {
-        return getDocumentationBaseURL() + DOCUMENTATION_LIB_PATH;
+        return getDocumentationBaseURL() + documentationLangPath + DOCUMENTATION_LIB_PATH;
     }
 
     protected void setUsbFilter(String usbFilter) {
