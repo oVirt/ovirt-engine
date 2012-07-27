@@ -77,6 +77,23 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         assertNotNull(guids);
         assertTrue(guids.isEmpty());
     }
+
+    @Test
+    public void testGetAsyncTaskIdsByStoragePoolId() {
+        // According ot fixtures.xml , STORAGE_POOL_RHEL6_ISCSI_OTHER is the storage pool
+        // that has storage domain associated to which has one task on it
+        List<Guid> guids = dao.getAsyncTaskIdsByStoragePoolId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        assertNotNull(guids);
+        assertEquals(guids.size(), 1);
+    }
+
+    @Test
+    public void testGetAsyncTaskIdsByInvalidStoragePoolId() {
+        List<Guid> guids = dao.getAsyncTaskIdsByStoragePoolId(Guid.NewGuid());
+        assertNotNull(guids);
+        assertEquals(guids.size(), 0);
+    }
+
     /**
      * Ensures that, if the id is valid, then retrieving a AsyncTask works as expected.
      */

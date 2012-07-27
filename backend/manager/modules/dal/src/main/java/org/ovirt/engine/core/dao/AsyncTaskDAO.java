@@ -27,6 +27,14 @@ public interface AsyncTaskDAO extends DAO {
      */
     List<Guid> getAsyncTaskIdsByEntity(Guid entityId);
 
+    /**
+     * Gets async task Ids of tasks that are running
+     * on the given storage pool
+     * @param storagePoolId ID of storage pool to return running tasks for
+     * @return
+     */
+    List<Guid> getAsyncTaskIdsByStoragePoolId(Guid storagePoolId);
+
 
     /**
      * Retrieves all tasks.
