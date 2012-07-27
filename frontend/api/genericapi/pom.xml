@@ -58,6 +58,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
+        <version>${gwt.plugin.version}</version>
         <configuration>
           <logLevel>INFO</logLevel>
           <extraJvmArgs>-Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M</extraJvmArgs>

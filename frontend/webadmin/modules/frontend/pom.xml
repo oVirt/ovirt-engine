@@ -58,6 +58,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
+        <version>${gwt.plugin.version}</version>
         <configuration>
           <servicePattern>**/gwtservices/*GWTService.java</servicePattern>
         </configuration>
