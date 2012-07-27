@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -240,20 +241,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected void EndVmCommand() {
         EndActionOnDisks();
-
-        if (getVm() != null) {
-            if (getVm().getstatus() == VMStatus.ImageLocked) {
-                VmHandler.unlockVm(getVm(), getCompensationContext());
-            }
-
-            UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
-        }
-
-        else {
-            setCommandShouldBeLogged(false);
-            log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
-        }
-
+        endActionOnVmConfiguration();
         setSucceeded(true);
     }
 
@@ -265,6 +253,18 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
             getBackend().EndAction(
                     p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(), p);
+        }
+    }
+
+    protected void endActionOnVmConfiguration() {
+        if (getVm() != null) {
+            if (getVm().getstatus() == VMStatus.ImageLocked) {
+                VmHandler.unlockVm(getVm(), getCompensationContext());
+            }
+            UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
+        } else {
+            setCommandShouldBeLogged(false);
+            log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
         }
     }
 

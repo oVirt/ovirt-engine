@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
@@ -73,42 +77,44 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     protected void ExecuteVmCommand() {
-        if (getImagesList().size() > 0) {
+
+        if (!getImagesList().isEmpty()) {
             lockVmWithCompensationIfNeeded();
             if (!isInternalExecution()) {
                 freeLock();
             }
+        }
 
-            restoreSnapshotAndRemoveObsoleteSnapshots();
+        restoreSnapshotAndRemoveObsoleteSnapshots();
 
-            VdcReturnValueBase returnValue = null;
-            for (DiskImage image : getImagesList()) {
-                if (image.getimageStatus() != ImageStatus.ILLEGAL) {
-                    ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
-                            getVmId(), targetSnapshot, removedSnapshotId);
-                    returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
-                }
-            }
-
-            // We should have at least one task in the VDSM, to be sure that EndCommand will be called and the VM would
-            // change its status from Image lock.
-            if (getTaskIdList().size() == 0) {
-                log.errorFormat("Can't restore snapshot for VM, since no destroyImage task could be established in the VDSM.");
-                if (returnValue != null) {
+        boolean succeeded = true;
+        for (DiskImage image : getImagesList()) {
+            if (image.getimageStatus() != ImageStatus.ILLEGAL) {
+                ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
+                        getVmId(), targetSnapshot, removedSnapshotId);
+                VdcReturnValueBase returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
+                // Save the first fault
+                if (succeeded && !returnValue.getSucceeded()) {
+                    succeeded = false;
                     getReturnValue().setFault(returnValue.getFault());
-                    return;
                 }
-            } else {
-                setSucceeded(true);
             }
+        }
 
+        removeSnapshotsFromDB();
+
+        if (!getTaskIdList().isEmpty()) {
             deleteOrphanedImages();
-
-            for (Guid snapshotId : snapshotsToRemove) {
-                getSnapshotDao().remove(snapshotId);
-            }
         } else {
-            setSucceeded(true);
+            endActionOnVmConfiguration();
+        }
+
+        setSucceeded(succeeded);
+    }
+
+    protected void removeSnapshotsFromDB() {
+        for (Guid snapshotId : snapshotsToRemove) {
+            getSnapshotDao().remove(snapshotId);
         }
     }
 
@@ -176,9 +182,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         switch (targetSnapshot.getType()) {
         case PREVIEW:
-            getSnapshotDao().updateStatus(getSnapshotDao().getId(getVmId(),
-                    SnapshotType.REGULAR,
-                    SnapshotStatus.IN_PREVIEW),
+            getSnapshotDao().updateStatus(
+                    getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW),
                     SnapshotStatus.OK);
         case STATELESS:
             restoreConfiguration(targetSnapshot);
@@ -280,8 +285,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     @Override
     protected boolean canDoAction() {
         boolean result = false;
-        if (getImagesList() == null || getImagesList().isEmpty()
-                || !getSnapshotDao().exists(getVmId(), getParameters().getDstSnapshotId())) {
+        if (!getSnapshotDao().exists(getVmId(), getParameters().getDstSnapshotId())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
         } else {
             result = performImagesChecks();
