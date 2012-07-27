@@ -67,6 +67,7 @@
     <jaxb-impl.version>2.2</jaxb-impl.version>
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
     <log4j.version>1.2.16</log4j.version>
+    <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -363,6 +364,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
           <configuration>
             <source>1.6</source>
             <target>1.6</target>

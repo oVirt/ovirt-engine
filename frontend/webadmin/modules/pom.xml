@@ -31,7 +31,6 @@
     <gwtp.version>0.6</gwtp.version>
     <guice.version>3.0</guice.version>
     <gin.version>1.5.0</gin.version>
-    <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
     <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
     <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
