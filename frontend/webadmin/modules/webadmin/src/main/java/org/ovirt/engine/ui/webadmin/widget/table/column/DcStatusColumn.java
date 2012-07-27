@@ -8,6 +8,7 @@ public class DcStatusColumn extends WebAdminImageResourceColumn<storage_pool> {
 
     @Override
     public ImageResource getValue(storage_pool dc) {
+        setEnumTitle(dc.getstatus());
         switch (dc.getstatus()) {
         case Contend:
             return getApplicationResources().waitImage();

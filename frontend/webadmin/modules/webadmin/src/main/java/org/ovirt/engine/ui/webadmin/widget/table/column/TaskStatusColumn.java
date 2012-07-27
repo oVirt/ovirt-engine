@@ -22,6 +22,8 @@ public class TaskStatusColumn extends WebAdminImageResourceColumn<EntityModel> {
         } else {
             return null;
         }
+
+        setEnumTitle(jobExecutionStatus);
         switch (jobExecutionStatus) {
         case STARTED:
             return getApplicationResources().waitImage();

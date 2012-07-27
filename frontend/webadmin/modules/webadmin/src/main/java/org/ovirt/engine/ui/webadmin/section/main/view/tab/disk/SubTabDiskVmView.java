@@ -37,12 +37,13 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         initWidget(getTable());
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable(final ApplicationConstants constants) {
         ImageResourceColumn<VM> pluggedColumn = new ImageResourceColumn<VM>() {
             @Override
             public ImageResource getValue(VM object) {
-                return getDetailModel().isDiskPluggedToVm(object) ?
-                        getCommonResources().upImage() : getCommonResources().downImage();
+                boolean isDiskPlugged = getDetailModel().isDiskPluggedToVm(object);
+                setTitle(isDiskPlugged ? constants.activeDisk() : constants.unactiveDisk());
+                return isDiskPlugged ? getCommonResources().upImage() : getCommonResources().downImage();
             }
         };
         getTable().addColumn(pluggedColumn, constants.empty(), "30px"); //$NON-NLS-1$

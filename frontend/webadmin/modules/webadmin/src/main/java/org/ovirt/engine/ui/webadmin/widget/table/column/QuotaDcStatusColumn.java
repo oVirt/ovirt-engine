@@ -14,6 +14,8 @@ public class QuotaDcStatusColumn extends WebAdminImageResourceColumn<Quota> {
         if (quota.getQuotaEnforcementType() == null) {
             return getApplicationResources().iconDisable();
         }
+
+        setEnumTitle(quota.getQuotaEnforcementType());
         switch (quota.getQuotaEnforcementType()) {
         case HARD_ENFORCEMENT:
             return getApplicationResources().iconEnforce();

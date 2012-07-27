@@ -9,6 +9,8 @@ public class SnapshotStatusColumn extends ImageResourceColumn<Snapshot> {
 
     @Override
     public ImageResource getValue(Snapshot snapshot) {
+        setEnumTitle(snapshot.getStatus());
+
         switch (snapshot.getStatus()) {
         case OK:
             return getCommonResources().snapshotImage();

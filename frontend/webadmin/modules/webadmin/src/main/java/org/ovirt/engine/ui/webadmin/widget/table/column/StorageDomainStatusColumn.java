@@ -8,6 +8,7 @@ public class StorageDomainStatusColumn extends WebAdminImageResourceColumn<stora
 
     @Override
     public ImageResource getValue(storage_domains sp) {
+        setEnumTitle(sp.getstatus());
         switch (sp.getstatus()) {
         case Unattached:
             return getApplicationResources().tornChainImage();
