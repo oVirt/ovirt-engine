@@ -315,9 +315,9 @@ public interface Enums extends LocalizedEnums {
 
     String LunStatus___Unusable();
 
-    String DiskStorageType___LUN();
+    String Disk$DiskStorageType___LUN();
 
-    String DiskStorageType___IMAGE();
+    String Disk$DiskStorageType___IMAGE();
 
     String RoleType___ADMIN();
 
