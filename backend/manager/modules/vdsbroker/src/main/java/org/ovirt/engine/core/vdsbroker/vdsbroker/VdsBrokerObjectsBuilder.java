@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -833,42 +834,7 @@ public class VdsBrokerObjectsBuilder {
 
         addHostNetworkInterfaces(vds, xmlRpcStruct);
 
-        // interface to vlan map
-        Map<String, Integer> currVlans = new HashMap<String, Integer>();
-
-        // vlans
-        Map<String, Object> vlans = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_vlans);
-        if (vlans != null) {
-            for (String key : vlans.keySet()) {
-                VdsNetworkInterface iface = new VdsNetworkInterface();
-                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
-                iface.setStatistics(iStats);
-                iStats.setId(Guid.NewGuid());
-                iface.setId(iStats.getId());
-
-                iface.setName(key);
-                iface.setVdsId(vds.getId());
-
-                if (key.contains(".")) {
-                    String[] names = key.split("[.]", -1);
-                    String vlan = names[1];
-                    iface.setVlanId(Integer.parseInt(vlan));
-                    currVlans.put(key, iface.getVlanId());
-                }
-
-                Map<String, Object> vlan = (Map<String, Object>) vlans.get(key);
-
-                iface.setAddress((String) vlan.get("addr"));
-                iface.setSubnet((String) vlan.get("netmask"));
-                if (StringUtils.isNotBlank((String) vlan.get(VdsProperties.mtu))) {
-                    iface.setMtu(Integer.parseInt((String) vlan.get(VdsProperties.mtu)));
-                }
-
-                iStats.setVdsId(vds.getId());
-
-                vds.getInterfaces().add(iface);
-            }
-        }
+        Map<String, Integer> currVlans = addHostVlanDevices(vds, xmlRpcStruct);
 
         // bonds
         Map<String, Object> bonds = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_bondings);
@@ -965,6 +931,55 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.netConfigDirty)) {
             vds.setnet_config_dirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
         }
+    }
+
+    /**
+     * Updates the host interfaces list with vlan devices
+     *
+     * @param vds
+     *            The host to update
+     * @param xmlRpcStruct
+     *            a map contains pairs of vlan device name and vlan data
+     * @return a map of the added vlan device names and their vlan tag
+     */
+    private static Map<String, Integer> addHostVlanDevices(VDS vds, XmlRpcStruct xmlRpcStruct) {
+        // interface to vlan map
+        Map<String, Integer> currVlans = new HashMap<String, Integer>();
+
+        // vlans
+        Map<String, Object> vlans = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_vlans);
+        if (vlans != null) {
+            for (Entry<String, Object> entry : vlans.entrySet()) {
+                VdsNetworkInterface iface = new VdsNetworkInterface();
+                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
+                iface.setStatistics(iStats);
+                iStats.setId(Guid.NewGuid());
+                iface.setId(iStats.getId());
+
+                String vlanDeviceName = entry.getKey();
+                iface.setName(vlanDeviceName);
+                iface.setVdsId(vds.getId());
+
+                if (vlanDeviceName.contains(".")) {
+                    String[] names = vlanDeviceName.split("[.]", -1);
+                    String vlan = names[1];
+                    iface.setVlanId(Integer.parseInt(vlan));
+                    currVlans.put(vlanDeviceName, iface.getVlanId());
+                }
+
+                Map<String, Object> vlan = (Map<String, Object>) entry.getValue();
+
+                iface.setAddress((String) vlan.get("addr"));
+                iface.setSubnet((String) vlan.get("netmask"));
+                if (StringUtils.isNotBlank((String) vlan.get(VdsProperties.mtu))) {
+                    iface.setMtu(Integer.parseInt((String) vlan.get(VdsProperties.mtu)));
+                }
+
+                iStats.setVdsId(vds.getId());
+                vds.getInterfaces().add(iface);
+            }
+        }
+        return currVlans;
     }
 
     /**
