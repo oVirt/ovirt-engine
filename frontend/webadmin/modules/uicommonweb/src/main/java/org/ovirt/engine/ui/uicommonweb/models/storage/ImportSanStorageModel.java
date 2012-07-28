@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
@@ -15,9 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public abstract class ImportSanStorageModel extends SanStorageModelBase
@@ -86,19 +86,12 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         super.PostDiscoverTargets(newItems);
 
         InitializeItems(newItems);
-
-        getContainer().StopProgress();
     }
 
     @Override
     protected void UpdateInternal()
     {
         super.UpdateInternal();
-
-        if (getContainer().getProgress() != null)
-        {
-            return;
-        }
 
         VDS host = (VDS) getContainer().getHost().getSelectedItem();
         if (host == null)
@@ -115,32 +108,29 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         InitializeItems(null);
 
         setError(null);
-        getContainer().StartProgress(null);
 
+        AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+
+                ImportSanStorageModel model = (ImportSanStorageModel) target;
+                Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                if (result != null)
+                {
+                    model.setCandidates((ArrayList<storage_domains>) result);
+                }
+                else
+                {
+                    setError(ConstantsManager.getInstance()
+                            .getConstants()
+                            .errorWhileRetrievingListOfDomainsImportSanStorage());
+                }
+            }
+        }, true);
+        asyncQuery.setContext(getHash());
         Frontend.RunQuery(VdcQueryType.GetExistingStorageDomainList,
                 new GetExistingStorageDomainListParameters(host.getId(), getType(), getRole(), ""), //$NON-NLS-1$
-                new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void OnSuccess(Object target, Object returnValue) {
-
-                                ImportSanStorageModel model = (ImportSanStorageModel) target;
-                                Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                if (result != null)
-                                {
-                                    model.setCandidates((ArrayList<storage_domains>) result);
-                                }
-                                else
-                                {
-                                    setError(ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .errorWhileRetrievingListOfDomainsImportSanStorage());
-                                }
-                                model.getContainer().StopProgress();
-
-                            }
-                        },
-                        true));
+                asyncQuery);
     }
 
     private void InitializeItems(List<SanTargetModel> newItems)
@@ -149,26 +139,25 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         {
             setItems(new ObservableCollection<SanTargetModel>());
         }
-        else
+
+        // Add new targets.
+        if (newItems != null)
         {
             ArrayList<SanTargetModel> items = new ArrayList<SanTargetModel>();
             items.addAll((List<SanTargetModel>) getItems());
 
-            // Add new targets.
-            if (newItems != null)
+            for (SanTargetModel newItem : newItems)
             {
-                for (SanTargetModel newItem : newItems)
+                if (Linq.FirstOrDefault(items, new Linq.TargetPredicate(newItem)) == null)
                 {
-                    if (Linq.FirstOrDefault(items, new Linq.TargetPredicate(newItem)) == null)
-                    {
-                        items.add(newItem);
-                    }
+                    items.add(newItem);
                 }
             }
 
             setItems(items);
-            UpdateLoginAllAvailability();
         }
+
+        UpdateLoginAllAvailability();
     }
 
     @Override

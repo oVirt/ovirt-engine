@@ -164,7 +164,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         Frontend.Subscribe(new VdcQueryType[] { VdcQueryType.Search, VdcQueryType.GetConfigurationValue,
                 VdcQueryType.GetStoragePoolsByStorageDomainId, VdcQueryType.GetStorageDomainsByStoragePoolId,
                 VdcQueryType.GetLunsByVgId, VdcQueryType.GetAllVdsByStoragePool,
-                VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList });
+                VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList, VdcQueryType.GetExistingStorageDomainList });
 
         setName(new EntityModel());
         setDataCenter(new ListModel());

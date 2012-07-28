@@ -142,7 +142,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     model.setGetLUNsFailure(
                             ConstantsManager.getInstance().getConstants().couldNotRetrieveLUNsLunsFailure());
                 }
-                model.getContainer().StopProgress();
             }
         }, true);
         asyncQuery.setContext(getHash());

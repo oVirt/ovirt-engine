@@ -332,7 +332,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
 
         if (sanStorageModel.targetsToConnect.isEmpty()) {
-            sanStorageModel.getContainer().StopProgress();
             sanStorageModel.UpdateInternal();
         }
     }
