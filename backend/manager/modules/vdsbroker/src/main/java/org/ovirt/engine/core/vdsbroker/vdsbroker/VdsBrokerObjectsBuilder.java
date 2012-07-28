@@ -818,49 +818,20 @@ public class VdsBrokerObjectsBuilder {
         return status;
     }
 
+    /**
+     * Updates the host network data with the network data reported by the host
+     *
+     * @param vds
+     *            The host to update
+     * @param xmlRpcStruct
+     *            A nested map contains network interfaces data
+     */
     public static void updateNetworkData(VDS vds, XmlRpcStruct xmlRpcStruct) {
         List<VdsNetworkInterface> oldInterfaces =
                 DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(vds.getId());
         vds.getInterfaces().clear();
 
-        // Interfaces list
-        Map<String, Object> nics = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_nics);
-        if (nics != null) {
-            for (String key : nics.keySet()) {
-                VdsNetworkInterface iface = new VdsNetworkInterface();
-                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
-                iface.setStatistics(iStats);
-                iStats.setId(Guid.NewGuid());
-                iface.setId(iStats.getId());
-
-                iface.setName(key);
-                iface.setVdsId(vds.getId());
-
-                // name value of nic property, i.e.: speed = 1000
-                Map<String, Object> nic = (Map<String, Object>) nics.get(key);
-                if (nic != null) {
-                    if (nic.get("speed") != null) {
-                        Object speed = nic.get("speed");
-                        iface.setSpeed((Integer) speed);
-                    }
-                    iface.setAddress((String) nic.get("addr"));
-                    iface.setSubnet((String) nic.get("netmask"));
-                    iface.setMacAddress((String) nic.get("hwaddr"));
-                    // if we get "permhwaddr", we are a part of a bond and we use that as the mac address
-                    if (nic.get("permhwaddr") != null) {
-                        iface.setMacAddress((String) nic.get("permhwaddr"));
-                    }
-                    if (StringUtils.isNotBlank((String) nic.get(VdsProperties.mtu))) {
-                        iface.setMtu(Integer.parseInt((String) nic.get(VdsProperties.mtu)));
-                    }
-
-                }
-
-                iStats.setVdsId(vds.getId());
-
-                vds.getInterfaces().add(iface);
-            }
-        }
+        addHostNetworkInterfaces(vds, xmlRpcStruct);
 
         // interface to vlan map
         Map<String, Integer> currVlans = new HashMap<String, Integer>();
@@ -993,6 +964,61 @@ public class VdsBrokerObjectsBuilder {
         // This information was added in 3.1, so don't use it if it's not there.
         if (xmlRpcStruct.containsKey(VdsProperties.netConfigDirty)) {
             vds.setnet_config_dirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
+        }
+    }
+
+    /**
+     * Updates the host network interfaces with the collected data from the host
+     *
+     * @param vds
+     *            The host to update its interfaces
+     * @param xmlRpcStruct
+     *            A nested map contains network interfaces data
+     */
+    private static void addHostNetworkInterfaces(VDS vds, XmlRpcStruct xmlRpcStruct) {
+        Map<String, Object> nics = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_nics);
+        if (nics != null) {
+            for (String key : nics.keySet()) {
+                VdsNetworkInterface iface = new VdsNetworkInterface();
+                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
+                iface.setStatistics(iStats);
+                iStats.setId(Guid.NewGuid());
+                iface.setId(iStats.getId());
+                iface.setName(key);
+                iface.setVdsId(vds.getId());
+
+                updateNetworkInterfaceDataFromHost(iface, (Map<String, Object>) nics.get(key));
+
+                iStats.setVdsId(vds.getId());
+                vds.getInterfaces().add(iface);
+            }
+        }
+    }
+
+    /**
+     * Updates a given interface by data as collected from the host.
+     *
+     * @param iface
+     *            The interface to update
+     * @param nic
+     *            A key-value map of the interface properties and their value
+     */
+    private static void updateNetworkInterfaceDataFromHost(VdsNetworkInterface iface, Map<String, Object> nic) {
+        if (nic != null) {
+            if (nic.get("speed") != null) {
+                Object speed = nic.get("speed");
+                iface.setSpeed((Integer) speed);
+            }
+            iface.setAddress((String) nic.get("addr"));
+            iface.setSubnet((String) nic.get("netmask"));
+            iface.setMacAddress((String) nic.get("hwaddr"));
+            // if we get "permhwaddr", we are a part of a bond and we use that as the mac address
+            if (nic.get("permhwaddr") != null) {
+                iface.setMacAddress((String) nic.get("permhwaddr"));
+            }
+            if (StringUtils.isNotBlank((String) nic.get(VdsProperties.mtu))) {
+                iface.setMtu(Integer.parseInt((String) nic.get(VdsProperties.mtu)));
+            }
         }
     }
 
