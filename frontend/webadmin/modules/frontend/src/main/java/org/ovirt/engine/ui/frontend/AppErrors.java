@@ -1056,6 +1056,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot deactivate Data Domain while there are running tasks in the Data Center.\n-Please wait until tasks will finish and try again.")
     String ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS();
 
+    @DefaultStringValue("Cannot deactivate Master Data Domain while there are running tasks on its Data Center.\n-Please wait until tasks will finish and try again.")
+    String ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL();
+
     @DefaultStringValue("Cannot ${action} ${type}. The system must have at least one Super User Role defined.")
     String ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE();
 
