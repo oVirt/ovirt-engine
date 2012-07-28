@@ -112,6 +112,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Select new Data Storage Domain(Master):")
     String dataCenterRecoveryStoragePopupSelectNewDSDLabel();
 
+    @DefaultStringValue("The following operation is unrecoverable and destructive!")
+    String dataCenterForceRemovePopupWarningLabel();
+
     @DefaultStringValue("Name")
     String clusterNewNetworkNameLabel();
 

@@ -5,21 +5,20 @@
 
 	<ui:style>
 		.content {
-		}		
-		
+		}
+
 		.warningLabel {
 			color: red;
 			font-weight: bold;
 			text-align: center;
 		}
-		
+
 		.messageLabel {
 			padding-top: 20px;
 			padding-bottom: 20px;
 		}
-		
 	</ui:style>
-	
+
 	<d:SimpleDialogPanel width="450px" height="270px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">

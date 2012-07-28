@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Cluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterForceRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditDataCenterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
@@ -181,6 +182,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPolic
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.ConfigurePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.RolePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterForceRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.EditDataCenterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindMultiStoragePopupView;
@@ -782,6 +784,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(EditDataCenterNetworkPopupPresenterWidget.class,
                 EditDataCenterNetworkPopupPresenterWidget.ViewDef.class,
                 EditDataCenterNetworkPopupView.class);
+        bindPresenterWidget(DataCenterForceRemovePopupPresenterWidget.class,
+                DataCenterForceRemovePopupPresenterWidget.ViewDef.class,
+                DataCenterForceRemovePopupView.class);
 
         // Cluster
         bindPresenterWidget(ClusterNetworkPopupPresenterWidget.class,

@@ -42,6 +42,9 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("All references to objects that reside on Storage Domain {0} in the database will be removed. You may need to manually clean the storage in order to reuse it.")
     String storageDestroyPopupMessageLabel(String storageName);
 
+    @DefaultMessage("All references to objects that belong to Data Center {0} in the database will be removed. You may need to manually clean the Storage Domains in order to reuse them.")
+    String detaCenterForceRemovePopupMessageLabel(String dcName);
+
     @DefaultMessage("Memory Page Sharing Threshold set to {0}. Allow VMs to run on the Host up to the overcommit threshold")
     String clusterPopupOptimizationForServerExplainationLabel(String a);
 
