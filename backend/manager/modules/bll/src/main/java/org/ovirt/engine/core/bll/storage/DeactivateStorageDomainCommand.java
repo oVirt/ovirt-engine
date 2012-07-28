@@ -100,11 +100,17 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_RUNNING_VMS);
             return false;
         }
-        if (getStoragePool().getspm_vds_id() != null
-                    && getStorageDomain().getstorage_domain_type() != StorageDomainType.ISO
-                    && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
+        if (getStoragePool().getspm_vds_id() != null) {
+            // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
+            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master &&
+            getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getstorage_pool_id().getValue()).size() > 0) {
+                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
                 return false;
+            } else if (getStorageDomain().getstorage_domain_type() != StorageDomainType.ISO
+            && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
+               addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
+               return false;
+            }
         }
         return true;
     }
