@@ -836,45 +836,8 @@ public class VdsBrokerObjectsBuilder {
 
         Map<String, Integer> currVlans = addHostVlanDevices(vds, xmlRpcStruct);
 
-        // bonds
-        Map<String, Object> bonds = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_bondings);
-        if (bonds != null) {
-            for (String key : bonds.keySet()) {
-                VdsNetworkInterface iface = new VdsNetworkInterface();
-                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
-                iface.setStatistics(iStats);
-                iStats.setId(Guid.NewGuid());
-                iface.setId(iStats.getId());
+        addHostBondDevices(vds, xmlRpcStruct);
 
-                iface.setName(key);
-                iface.setVdsId(vds.getId());
-                iface.setBonded(true);
-
-                Map<String, Object> bond = (Map<String, Object>) bonds.get(key);
-                if (bond != null) {
-                    iface.setMacAddress((String) bond.get("hwaddr"));
-                    iface.setAddress((String) bond.get("addr"));
-                    iface.setSubnet((String) bond.get("netmask"));
-                    if (bond.get("slaves") != null) {
-                        Object[] interfaces = (Object[]) bond.get("slaves");
-                        iStats.setVdsId(vds.getId());
-                        AddBond(vds, iface, interfaces);
-                    }
-                    if (StringUtils.isNotBlank((String) bond.get(VdsProperties.mtu))) {
-                        iface.setMtu(Integer.parseInt((String) bond.get(VdsProperties.mtu)));
-                    }
-
-                    XmlRpcStruct config =
-                            (bond.get("cfg") instanceof Map) ? new XmlRpcStruct((Map<String, Object>) bond.get("cfg"))
-                                    : null;
-
-                    if (config != null && config.getItem("BONDING_OPTS") != null) {
-                        iface.setBondOptions(config.getItem("BONDING_OPTS").toString());
-                    }
-                    AddBootProtocol(config, iface);
-                }
-            }
-        }
         // network to vlan map
         Map<String, Integer> networkVlans = new HashMap<String, Integer>();
 
@@ -930,6 +893,47 @@ public class VdsBrokerObjectsBuilder {
         // This information was added in 3.1, so don't use it if it's not there.
         if (xmlRpcStruct.containsKey(VdsProperties.netConfigDirty)) {
             vds.setnet_config_dirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
+        }
+    }
+
+    private static void addHostBondDevices(VDS vds, XmlRpcStruct xmlRpcStruct) {
+        Map<String, Object> bonds = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_bondings);
+        if (bonds != null) {
+            for (Entry<String, Object> entry : bonds.entrySet()) {
+                VdsNetworkInterface iface = new VdsNetworkInterface();
+                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
+                iface.setStatistics(iStats);
+                iStats.setId(Guid.NewGuid());
+                iStats.setVdsId(vds.getId());
+                iface.setId(iStats.getId());
+
+                iface.setName(entry.getKey());
+                iface.setVdsId(vds.getId());
+                iface.setBonded(true);
+
+                Map<String, Object> bond = (Map<String, Object>) entry.getValue();
+                if (bond != null) {
+                    iface.setMacAddress((String) bond.get("hwaddr"));
+                    iface.setAddress((String) bond.get("addr"));
+                    iface.setSubnet((String) bond.get("netmask"));
+                    if (bond.get("slaves") != null) {
+                        addBondDeviceToHost(vds, iface, (Object[]) bond.get("slaves"));
+                    }
+
+                    if (StringUtils.isNotBlank((String) bond.get(VdsProperties.mtu))) {
+                        iface.setMtu(Integer.parseInt((String) bond.get(VdsProperties.mtu)));
+                    }
+
+                    XmlRpcStruct config =
+                            (bond.get("cfg") instanceof Map) ? new XmlRpcStruct((Map<String, Object>) bond.get("cfg"))
+                                    : null;
+
+                    if (config != null && config.getItem("BONDING_OPTS") != null) {
+                        iface.setBondOptions(config.getItem("BONDING_OPTS").toString());
+                    }
+                    AddBootProtocol(config, iface);
+                }
+            }
         }
     }
 
@@ -1159,20 +1163,15 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void AddBond(VDS vds, VdsNetworkInterface iface, Object[] interfaces) {
+    private static void addBondDeviceToHost(VDS vds, VdsNetworkInterface iface, Object[] interfaces) {
         vds.getInterfaces().add(iface);
         if (interfaces != null) {
             for (Object name : interfaces) {
-                VdsNetworkInterface nic = null;
                 for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
                     if (tempInterface.getName().equals(name.toString())) {
-                        nic = tempInterface;
+                        tempInterface.setBondName(iface.getName());
                         break;
                     }
-                }
-
-                if (nic != null) {
-                    nic.setBondName(iface.getName());
                 }
             }
         }
