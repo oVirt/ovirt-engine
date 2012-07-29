@@ -1085,12 +1085,7 @@ public class VdsBrokerObjectsBuilder {
             }
             iface.setAddress(net.getaddr());
 
-            // if vdsm doesn't report the 'bridged' property, we assumes bridge-less network isn't supported
-            boolean bridged = true;
-            if (network.get("bridged") != null) {
-                bridged = Boolean.parseBoolean(network.get("bridged").toString());
-            }
-            iface.setBridged(bridged);
+            iface.setBridged(isBridgedNetwork(network));
 
             // set the management ip
             if (StringUtils.equals(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
@@ -1104,6 +1099,19 @@ public class VdsBrokerObjectsBuilder {
                     networkConfigAsMap);
             AddBootProtocol(networkConfig, iface);
         }
+    }
+
+    /**
+     * Returns true if vdsm doesn't report the 'bridged' attribute or if reported - its actual value.<br>
+     * The assumption is bridge-less network isn't supported if the 'bridged' attribute wasn't reported.<br>
+     * Bridge-less networks must report 'false' for this property.
+     *
+     * @param network
+     *            The network to evaluate its bridge attribute
+     * @return true is no attribute is reported or its actual value
+     */
+    private static boolean isBridgedNetwork(Map<String, Object> network) {
+        return network.get("bridged") == null || Boolean.parseBoolean(network.get("bridged").toString());
     }
 
     // we check for old bonding options,
