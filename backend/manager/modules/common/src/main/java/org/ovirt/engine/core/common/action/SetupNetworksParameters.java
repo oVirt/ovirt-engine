@@ -8,15 +8,16 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
+import org.ovirt.engine.core.common.validation.annotation.NoRepetitiveStaticIpInList;
 
 
 public class SetupNetworksParameters extends VdsActionParameters {
 
     @Valid
+    @NoRepetitiveStaticIpInList(message = "VALIDATION.REPETITIVE.IP.IN.VDS")
     private List<VdsNetworkInterface> interfaces;
 
     private boolean force;
-
     private boolean checkConnectivity;
 
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.NetworkConnectivityCheckTimeoutInSeconds,
