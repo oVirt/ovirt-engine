@@ -522,8 +522,14 @@ public class HostSetupNetworksModel extends EntityModel {
             // does this nic have a network?
             if (networkName != null) {
                 LogicalNetworkModel networkModel = networkMap.get(networkName);
+
                 if (networkModel == null) {
                     networkModel = createErrorNetworkModel(networkName, null);
+                }else{
+                    // The real vlanId and mtu configured on the host can be not synced with the values configured in the networks table (dc networks).
+                    // The real values configured on the host should be displayed.
+                    networkModel.getEntity().setvlan_id(nic.getVlanId());
+                    networkModel.getEntity().setMtu(nic.getMtu());
                 }
 
                 // is this a management network (from backend)?
