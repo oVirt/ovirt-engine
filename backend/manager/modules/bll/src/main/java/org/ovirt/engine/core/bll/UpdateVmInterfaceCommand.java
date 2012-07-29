@@ -77,7 +77,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         if (macAddressChanged) {
             MacPoolManager.getInstance().AddMac(oldIface.getMacAddress());
             if (!Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses)) {
-                MacPoolManager.getInstance().freeMac(getParameters().getInterface().getMacAddress());
+                MacPoolManager.getInstance().freeMac(getMacAddress());
             }
         }
     }
@@ -109,22 +109,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
                          getParameters().getInterface().getName(),
                          getReturnValue().getCanDoActionMessages())) {
-                return false;
-            }
-        }
-
-        macAddressChanged = !StringUtils.equals(oldIface.getMacAddress(), getParameters().getInterface().getMacAddress());
-        if (macAddressChanged) {
-            Regex re = new Regex(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS);
-            if (re.IsMatch(getParameters().getInterface().getMacAddress())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);
-                return false;
-            }
-
-            Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
-            if (!MacPoolManager.getInstance().AddMac(getParameters().getInterface().getMacAddress())
-                    && !allowDupMacs) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;
             }
         }
@@ -173,7 +157,30 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
             return false;
         }
+
+        macAddressChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
+        // this must be the last check because it adds the mac address to the pool
+        if (macAddressChanged) {
+            Regex re = new Regex(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS);
+            if (re.IsMatch(getMacAddress())) {
+                addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);
+                return false;
+            }
+
+            Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+            if (!MacPoolManager.getInstance().AddMac(getMacAddress())
+                    && !allowDupMacs) {
+                // Free the mac address since canDoAction failed
+                MacPoolManager.getInstance().freeMac(getMacAddress());
+                addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
+                return false;
+            }
+        }
         return true;
+    }
+
+    private String getMacAddress() {
+        return getParameters().getInterface().getMacAddress();
     }
 
     @Override

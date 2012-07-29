@@ -52,7 +52,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         AddCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
         this.setVmName(DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
-        if (StringUtils.isEmpty(getParameters().getInterface().getMacAddress())) {
+        if (StringUtils.isEmpty(getMacAddress())) {
             getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
         }
 
@@ -146,17 +146,45 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                 return false;
             }
         }
-        // this must be the last check because it's add mac to the pool
-        if (!StringUtils.isEmpty(getParameters().getInterface().getMacAddress())) {
+
+        // check that the exists in current cluster
+        List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(vm.getvds_group_id());
+
+        Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
+            @Override
+            public boolean eval(Network network) {
+                return network.getname().equals(getParameters().getInterface().getNetworkName());
+            }
+        });
+
+        if (interfaceNetwork == null) {
+            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+            return false;
+        } else if (!interfaceNetwork.isVmNetwork()) {
+            AddCustomValue("networks", interfaceNetwork.getname());
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
+            return false;
+        }
+
+        if (getParameters().getInterface().isActive()) {
+            if (getVm().getstatus() == VMStatus.Up && !canPerformHotPlug()) {
+                return false;
+            }
+        }
+
+        // this must be the last check because it adds the mac address to the pool
+        if (!StringUtils.isEmpty(getMacAddress())) {
             Regex re = new Regex(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS);
-            if (re.IsMatch(getParameters().getInterface().getMacAddress())) {
+            if (re.IsMatch(getMacAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);
                 return false;
             }
 
             Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
-            if (!MacPoolManager.getInstance().AddMac(getParameters().getInterface().getMacAddress())
+            if (!MacPoolManager.getInstance().AddMac(getMacAddress())
                     && !allowDupMacs) {
+                // Free the mac address since canDoAction failed
+                MacPoolManager.getInstance().freeMac(getMacAddress());
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;
             }
@@ -173,31 +201,11 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             return false;
         }
 
-        // check that the exists in current cluster
-        List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(vm.getvds_group_id());
-
-        Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getname().equals(getParameters().getInterface().getNetworkName());
-            }
-        });
-
-        if (interfaceNetwork == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
-            return false;
-        } else if (!interfaceNetwork.isVmNetwork()){
-            AddCustomValue("networks", interfaceNetwork.getname());
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
-            return false;
-        }
-
-        if (getParameters().getInterface().isActive()) {
-            if (getVm().getstatus() == VMStatus.Up && !canPerformHotPlug()) {
-                return false;
-            }
-        }
         return super.canDoAction();
+    }
+
+    private String getMacAddress() {
+        return getParameters().getInterface().getMacAddress();
     }
 
     @Override
@@ -224,7 +232,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
     public void Rollback() {
         super.Rollback();
         try {
-            MacPoolManager.getInstance().freeMac(getParameters().getInterface().getMacAddress());
+            MacPoolManager.getInstance().freeMac(getMacAddress());
         } catch (java.lang.Exception e) {
         }
     }
