@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
@@ -36,19 +37,18 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
         // we don't return bond1 because he is not connected to network and has
         // no child interfaces
 
-        List<VdsNetworkInterface> interfaces = LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(final VdsNetworkInterface i) {
-                return (i.getBonded() == null || (i.getBonded() != null && i.getBonded())
+        List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>(list.size());
+        for (final VdsNetworkInterface i : list) {
+            if (i.getBonded() == null || (i.getBonded() != null && i.getBonded())
                         && LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
                             @Override
                             public boolean eval(VdsNetworkInterface bond) {
                                 return StringHelper.EqOp(bond.getBondName(), i.getName());
                             }
-                        }).size() > 0);
-
+                        }).size() > 0) {
+                interfaces.add(i);
             }
-        });
+        }
 
         getQueryReturnValue().setReturnValue(interfaces);
     }
