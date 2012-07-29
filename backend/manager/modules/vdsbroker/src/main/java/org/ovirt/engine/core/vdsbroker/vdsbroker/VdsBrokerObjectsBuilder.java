@@ -841,6 +841,24 @@ public class VdsBrokerObjectsBuilder {
         // network to vlan map
         Map<String, Integer> networkVlans = new HashMap<String, Integer>();
 
+        addHostNetworksAndUpdateInterfaces(vds, xmlRpcStruct, currVlans, networkVlans);
+
+        // Check vlans are line with Clusters vlans
+        checkClusterVlans(vds, networkVlans);
+
+        // set bonding options
+        setBondingOptions(vds, oldInterfaces);
+
+        // This information was added in 3.1, so don't use it if it's not there.
+        if (xmlRpcStruct.containsKey(VdsProperties.netConfigDirty)) {
+            vds.setnet_config_dirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
+        }
+    }
+
+    private static void addHostNetworksAndUpdateInterfaces(VDS vds,
+            XmlRpcStruct xmlRpcStruct,
+            Map<String, Integer> currVlans,
+            Map<String, Integer> networkVlans) {
         // Networks collection (name point to list of nics or bonds)
         Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_networks);
         if (networks != null) {
@@ -882,17 +900,6 @@ public class VdsBrokerObjectsBuilder {
                     vds.getNetworks().add(net);
                 }
             }
-        }
-
-        // Check vlans are line with Clusters vlans
-        checkClusterVlans(vds, networkVlans);
-
-        // set bonding options
-        setBondingOptions(vds, oldInterfaces);
-
-        // This information was added in 3.1, so don't use it if it's not there.
-        if (xmlRpcStruct.containsKey(VdsProperties.netConfigDirty)) {
-            vds.setnet_config_dirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
         }
     }
 
