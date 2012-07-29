@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -16,12 +17,16 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -101,8 +106,29 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
                 setNonOperationl(vds, VM_NETWORK_IS_BRIDGELESS, customLogValues);
                 return true;
             }
+
+            logUnsynchronizedNetworks(vds, Entities.entitiesByName(clusterNetworks));
         }
         return false;
+    }
+
+    private static void logUnsynchronizedNetworks(VDS vds, Map<String, Network> networks) {
+        List<String> networkNames = new ArrayList<String>();
+
+        for (VdsNetworkInterface iface : vds.getInterfaces()) {
+            NetworkImplementationDetails networkImplementationDetails =
+                    NetworkUtils.calculateNetworkImplementationDetails(networks, iface);
+
+            if (networkImplementationDetails != null && !networkImplementationDetails.isInSync()) {
+                networkNames.add(iface.getNetworkName());
+            }
+        }
+
+        if (!networkNames.isEmpty()) {
+            AuditLogableBase logable = new AuditLogableBase(vds.getId());
+            logable.AddCustomValue("Networks", StringUtils.join(networkNames, ","));
+            AuditLogDirector.log(logable, AuditLogType.VDS_NETWORKS_OUT_OF_SYNC);
+        }
     }
 
     private static void persistTopology(VDS vds) {
