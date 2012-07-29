@@ -845,11 +845,11 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_networks);
         if (networks != null) {
             vds.getNetworks().clear();
-            for (String key : networks.keySet()) {
-                Map<String, Object> network = (Map<String, Object>) networks.get(key);
+            for (Entry<String, Object> entry : networks.entrySet()) {
+                Map<String, Object> network = (Map<String, Object>) entry.getValue();
                 if (network != null) {
                     Network net = new Network();
-                    net.setname(key);
+                    net.setname(entry.getKey());
 
                     net.setaddr((String) network.get("addr"));
                     net.setsubnet((String) network.get("netmask"));
@@ -860,7 +860,7 @@ public class VdsBrokerObjectsBuilder {
 
                     // map interface to network
                     if (network.get("interface") != null) {
-                        updateNetwrokDetailsInInterface(vds,
+                        updateNetworkDetailsInInterface(vds,
                                 currVlans,
                                 networkVlans,
                                 network,
@@ -870,7 +870,7 @@ public class VdsBrokerObjectsBuilder {
                         Object[] ports = (Object[]) network.get("ports");
                         if (ports != null) {
                             for (Object port : ports) {
-                                updateNetwrokDetailsInInterface(vds,
+                                updateNetworkDetailsInInterface(vds,
                                         currVlans,
                                         networkVlans,
                                         network,
@@ -1057,7 +1057,7 @@ public class VdsBrokerObjectsBuilder {
      * @param ifaceName
      *            The name of the interface to update.
      */
-    private static void updateNetwrokDetailsInInterface(VDS vds,
+    private static void updateNetworkDetailsInInterface(VDS vds,
             Map<String, Integer> currVlans,
             Map<String, Integer> networkVlans,
             Map<String, Object> network,
