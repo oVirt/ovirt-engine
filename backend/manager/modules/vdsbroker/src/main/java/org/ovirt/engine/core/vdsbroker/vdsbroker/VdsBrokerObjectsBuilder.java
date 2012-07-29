@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
@@ -859,8 +860,11 @@ public class VdsBrokerObjectsBuilder {
             XmlRpcStruct xmlRpcStruct,
             Map<String, Integer> currVlans,
             Map<String, Integer> networkVlans) {
+
         // Networks collection (name point to list of nics or bonds)
         Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_networks);
+        Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(vds.getInterfaces());
+
         if (networks != null) {
             vds.getNetworks().clear();
             for (Entry<String, Object> entry : networks.entrySet()) {
@@ -877,25 +881,25 @@ public class VdsBrokerObjectsBuilder {
                     }
 
                     // map interface to network
-                    if (network.get("interface") != null) {
-                        updateNetworkDetailsInInterface(vds,
-                                currVlans,
-                                networkVlans,
-                                network,
-                                net,
-                                network.get("interface").toString());
-                    } else {
+                    if (isBridgedNetwork(network)) {
                         Object[] ports = (Object[]) network.get("ports");
                         if (ports != null) {
                             for (Object port : ports) {
-                                updateNetworkDetailsInInterface(vds,
+                                updateNetworkDetailsInInterface(vdsInterfaces.get(port.toString()),
                                         currVlans,
                                         networkVlans,
                                         network,
                                         net,
-                                        port.toString());
+                                        true);
                             }
                         }
+                    } else {
+                        updateNetworkDetailsInInterface(vdsInterfaces.get(String.valueOf(network.get("interface"))),
+                                currVlans,
+                                networkVlans,
+                                network,
+                                net,
+                                false);
                     }
                     vds.getNetworks().add(net);
                 }
@@ -1049,10 +1053,10 @@ public class VdsBrokerObjectsBuilder {
     }
 
     /**
-     * Update the network details on the given iface.
+     * Update the network details on a given interface.
      *
-     * @param vds
-     *            The host (for getting the interface from).
+     * @param iface
+     *            The interface to update.
      * @param currVlans
      *            Used for checking the VLANs later.
      * @param networkVlans
@@ -1061,42 +1065,37 @@ public class VdsBrokerObjectsBuilder {
      *            Network struct to get details from.
      * @param net
      *            Network to get details from.
-     * @param ifaceName
-     *            The name of the interface to update.
+     * @param bridged
+     *            Is the network is bridged or not
      */
-    private static void updateNetworkDetailsInInterface(VDS vds,
+    private static void updateNetworkDetailsInInterface(VdsNetworkInterface iface,
             Map<String, Integer> currVlans,
             Map<String, Integer> networkVlans,
             Map<String, Object> network,
             Network net,
-            String ifaceName) {
-        VdsNetworkInterface iface = null;
-        for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
-            if (tempInterface.getName().equals(ifaceName)) {
-                iface = tempInterface;
-                break;
-            }
-        }
+            boolean bridged) {
+
         if (iface != null) {
             iface.setNetworkName(net.getname());
 
             if (currVlans.containsKey(iface.getName())) {
                 networkVlans.put(net.getname(), currVlans.get(iface.getName()));
             }
-            iface.setAddress(net.getaddr());
-
-            iface.setBridged(isBridgedNetwork(network));
 
             // set the management ip
             if (StringUtils.equals(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
                 iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
             }
+
+            iface.setAddress(net.getaddr());
             iface.setSubnet(net.getsubnet());
+            iface.setBridged(bridged);
+
             setGatewayIfManagementNetwork(iface, net.getgateway());
+
             Map<String, Object> networkConfigAsMap =
                     (Map<String, Object>) ((network.get("cfg") instanceof Map) ? network.get("cfg") : null);
-            XmlRpcStruct networkConfig = networkConfigAsMap == null ? null : new XmlRpcStruct(
-                    networkConfigAsMap);
+            XmlRpcStruct networkConfig = networkConfigAsMap == null ? null : new XmlRpcStruct(networkConfigAsMap);
             AddBootProtocol(networkConfig, iface);
         }
     }
