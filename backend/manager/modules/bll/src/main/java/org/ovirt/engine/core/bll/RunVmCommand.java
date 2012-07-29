@@ -549,7 +549,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     /**
-     * If vdss version greater then vm's and vm not running with cd and there is appropriate QumranetAgentTools image -
+     * If vds version greater then vm's and vm not running with cd and there is appropriate RhevAgentTools image -
      * add it to vm as cd.
      */
     private void GuestToolsVersionTreatment() {
@@ -558,7 +558,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         String selectedToolsClusterVersion = "";
         VmHandler.UpdateVmGuestAgentVersion(getVm());
         storage_domains isoDomain = null;
-        if (!getVm().getvm_os().isLinux()
+        if (getVm().getvm_os().isWindows()
                 && (null != (isoDomain =
                         LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool(getVm().getstorage_pool_id()),
                                 new Predicate<storage_domains>() {
@@ -623,15 +623,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         if (attachCd) {
-            String qumranetToolsPath =
+            String rhevToolsPath =
                     String.format("%1$s%2$s_%3$s.iso", IsoDomainListSyncronizer.getGuestToolsSetupIsoPrefix(),
                             selectedToolsClusterVersion, selectedToolsVersion);
 
             String isoDir = (String) runVdsCommand(VDSCommandType.IsoDirectory,
                     new IrsBaseVDSCommandParameters(getVm().getstorage_pool_id())).getReturnValue();
-            qumranetToolsPath = Path.Combine(isoDir, qumranetToolsPath);
+            rhevToolsPath = Path.Combine(isoDir, rhevToolsPath);
 
-            getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(qumranetToolsPath, getVm().getstorage_pool_id()));
+            getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(rhevToolsPath, getVm().getstorage_pool_id()));
         }
     }
 
