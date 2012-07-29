@@ -411,7 +411,7 @@ def main():
             ret_value = process_ovirt_platform(url_bs, engine_port, random_num, systime)
             if ret_value is False:
                 printNlog("<BSTRAP component='RHEV_INSTALL' status='FAIL'/>")
-            return ret_value
+            return (not ret_value)
         elif res == 2:
             logging.error("Failed platform test.")
             return 1
