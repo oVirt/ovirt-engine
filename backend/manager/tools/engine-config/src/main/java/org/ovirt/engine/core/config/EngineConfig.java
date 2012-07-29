@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.config;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 
@@ -44,6 +45,7 @@ public class EngineConfig {
      */
     public static void main(String... args) {
         try {
+            Logger.getRootLogger().setLevel(Level.OFF);
             getInstance().setParser(new EngineConfigCLIParser());
             getInstance().setUpAndExecute(args);
 

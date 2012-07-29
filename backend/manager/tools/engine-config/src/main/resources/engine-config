@@ -120,6 +120,6 @@ do
 done
 
 # Run!
-java -cp .:$CP org.ovirt.engine.core.config.EngineConfig "$@"
+java -cp .:$CP -Dlog4j.configuration=file:/etc/ovirt-engine/engine-config/log4j.xml org.ovirt.engine.core.config.EngineConfig "$@"
 
 exit $?

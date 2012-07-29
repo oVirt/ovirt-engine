@@ -36,7 +36,6 @@ public class EngineConfigLogic {
 
     private final static String ALTERNATE_KEY = "alternateKey";
     private final static String DEFAULT_LOG4J_CONF_PATH = "/etc/ovirt-engine/engine-config/log4j.xml";
-    private final static String LOG4J_CONF_PATH_KEY = "log4jConfPath";
 
     private final static Logger log = Logger.getLogger(EngineConfigLogic.class);
 
@@ -61,13 +60,6 @@ public class EngineConfigLogic {
         log.debug("init: beginning initiation of EngineConfigLogic");
         appConfig = new AppConfig<PropertiesConfiguration>(parser.getAlternateConfigFile()).getFile();
         keysConfig = new KeysConfig<HierarchicalConfiguration>(parser.getAlternatePropertiesFile()).getFile();
-        for (String currentLog4jConfPath : getPossibleLog4jConfPaths()) {
-            File f = new File(currentLog4jConfPath);
-            if (f.exists()) {
-                DOMConfigurator.configure(currentLog4jConfPath);
-                break;
-            }
-        }
         populateAlternateKeyMap(keysConfig);
         ConfigKeyFactory.init(keysConfig, alternateKeysMap, parser);
         configKeyFactory = ConfigKeyFactory.getInstance();
@@ -77,10 +69,6 @@ public class EngineConfigLogic {
             log.debug("init: caught connection error. Error details: ", se);
             throw new ConnectException("Connection to the Database failed. Please check that the hostname and port number are correct and that the Database service is up and running.");
         }
-    }
-
-    private Collection<String> getPossibleLog4jConfPaths() {
-        return Arrays.asList(appConfig.getString(LOG4J_CONF_PATH_KEY, DEFAULT_LOG4J_CONF_PATH), DEFAULT_LOG4J_CONF_PATH);
     }
 
     private void populateAlternateKeyMap(HierarchicalConfiguration config) {
