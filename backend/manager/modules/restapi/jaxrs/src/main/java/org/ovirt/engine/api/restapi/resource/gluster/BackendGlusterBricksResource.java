@@ -126,7 +126,7 @@ public class BackendGlusterBricksResource
             EntityIdResolver entityResolver) {
         VdcReturnValueBase createResult;
         try {
-            createResult = runAction(task, taskParams);
+            createResult = doAction(task, taskParams);
         } catch (Exception e) {
             return handleError(e, false);
         }
