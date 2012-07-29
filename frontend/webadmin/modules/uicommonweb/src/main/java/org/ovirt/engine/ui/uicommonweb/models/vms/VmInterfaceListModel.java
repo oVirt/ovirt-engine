@@ -514,12 +514,31 @@ public class VmInterfaceListModel extends SearchableListModel
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.UpdateVmInterface)
                 && (getSelectedItems() != null && getSelectedItems().size() == 1));
         getRemoveCommand().setIsExecutionAllowed(vm != null
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RemoveVmInterface)
+                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RemoveVmInterface) && canRemoveNics()
                 && (getSelectedItems() != null && getSelectedItems().size() > 0));
         getActivateCommand().setIsExecutionAllowed(vm != null
                 && (getSelectedItems() != null && getSelectedItems().size() > 0) && isActivateCommandAvailable(true));
         getDeactivateCommand().setIsExecutionAllowed(vm != null
                 && (getSelectedItems() != null && getSelectedItems().size() > 0) && isActivateCommandAvailable(false));
+    }
+
+    private boolean canRemoveNics() {
+        if (!isActivateSupported){
+            return false;
+        }
+
+        ArrayList<VmNetworkInterface> nics =
+                getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems()) : new ArrayList<VmNetworkInterface>();
+
+        for (VmNetworkInterface nic : nics)
+        {
+            if (nic.isActive())
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private boolean isActivateCommandAvailable(boolean active) {
