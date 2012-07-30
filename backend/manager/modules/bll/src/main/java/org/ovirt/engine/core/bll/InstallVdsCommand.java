@@ -98,7 +98,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 .RunVdsCommand(VDSCommandType.SetVdsStatus,
                                new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
                 if (isOvirtReInstallOrUpgrade()) {
-                    _vdsInstaller = new OVirtInstaller(getVds(), parameters.getoVirtIsoFile());
+                    _vdsInstaller = new OVirtUpgrader(getVds(), parameters.getoVirtIsoFile());
                 } else {
                     _vdsInstaller = new CBCInstaller(getVds());
                 }

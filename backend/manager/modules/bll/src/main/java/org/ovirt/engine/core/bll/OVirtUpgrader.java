@@ -7,12 +7,12 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 
-public class OVirtInstaller extends VdsInstaller {
+public class OVirtUpgrader extends VdsInstaller {
 
     private final String runUpgradeCommand = Config.<String> GetValue(ConfigValues.oVirtUpgradeScriptName);
     private String _oVirtISOFile;
 
-    public OVirtInstaller(VDS vds, String oVirtISOFile) // Call base constructor
+    public OVirtUpgrader(VDS vds, String oVirtISOFile) // Call base constructor
                                                         // with null password
                                                         // (because we are using
                                                         // know public key)
@@ -62,5 +62,5 @@ public class OVirtInstaller extends VdsInstaller {
         }
     }
 
-    private static Log log = LogFactory.getLog(OVirtInstaller.class);
+    private static Log log = LogFactory.getLog(OVirtUpgrader.class);
 }
