@@ -6,13 +6,13 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-public class CBCInstaller extends VdsInstaller {
+public class OVirtInstaller extends VdsInstaller {
     private String createCertReqCommand = Config.<String> GetValue(ConfigValues.CBCCertificateScriptName)
             + " -O \"{OrganizationName}\" {vds-server} {GUID}";
     private String finishCommandInitial = Config.<String> GetValue(ConfigValues.CBCCloseCertificateScriptName)
             + " -c 'ssl={server_SSL_enabled}' {GUID} 0";
 
-    public CBCInstaller(VDS vds) // Call base constructor with null password
+    public OVirtInstaller(VDS vds) // Call base constructor with null password
                                  // (because we are using know public key)
     {
         super(vds, null, false);
@@ -75,5 +75,5 @@ public class CBCInstaller extends VdsInstaller {
         }
     }
 
-    private static Log log = LogFactory.getLog(CBCInstaller.class);
+    private static Log log = LogFactory.getLog(OVirtInstaller.class);
 }

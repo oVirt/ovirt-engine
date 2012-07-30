@@ -100,7 +100,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 if (isOvirtReInstallOrUpgrade()) {
                     _vdsInstaller = new OVirtUpgrader(getVds(), parameters.getoVirtIsoFile());
                 } else {
-                    _vdsInstaller = new CBCInstaller(getVds());
+                    _vdsInstaller = new OVirtInstaller(getVds());
                 }
             }
 
