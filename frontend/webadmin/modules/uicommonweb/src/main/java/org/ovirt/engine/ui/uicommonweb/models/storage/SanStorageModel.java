@@ -474,10 +474,10 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
     private void ProposeDiscover()
     {
-        if (!getProposeDiscoverTargets() && (getItems() == null || Linq.Count(getItems()) == 0))
-        {
-            setProposeDiscoverTargets(true);
-        }
+        boolean proposeDiscover =
+                !getProposeDiscoverTargets() && (getItems() == null || Linq.Count(getItems()) == 0);
+
+        setProposeDiscoverTargets(proposeDiscover);
     }
 
     @Override

@@ -26,6 +26,8 @@ public class SanImportStorageView extends AbstractSanStorageView {
 
     EntityModelCellTable<ListModel> table;
 
+    static final double panelHeight = 396;
+
     @Override
     protected void initLists(SanStorageModelBase object) {
         table = new EntityModelCellTable<ListModel>(false, (Resources) GWT.create(LunTableResources.class));
@@ -49,6 +51,8 @@ public class SanImportStorageView extends AbstractSanStorageView {
         table.setColumnWidth(table.getColumn(0), "20px"); //$NON-NLS-1$
 
         listPanel.add(table);
+
+        contentPanel.setHeight(panelHeight + "PX"); //$NON-NLS-1$
     }
 
     @Override

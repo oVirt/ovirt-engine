@@ -268,11 +268,11 @@ public class DiskListModel extends ListWithDetailsModel
             return;
         }
 
-        // Save changes.
         storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
-
         Disk disk;
-        if ((Boolean) model.getIsInternal().getEntity()) {
+        boolean isInternal = (Boolean) model.getIsInternal().getEntity();
+
+        if (isInternal) {
             DiskImage diskImage = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
             diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
             diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
@@ -303,14 +303,16 @@ public class DiskListModel extends ListWithDetailsModel
         VmDiskOperatinParameterBase parameters;
         if (model.getIsNew())
         {
-            parameters = new AddDiskParameters(Guid.Empty, disk);
-            ((AddDiskParameters) parameters).setStorageDomainId(storageDomain.getId());
             actionType = VdcActionType.AddDisk;
+            parameters = new AddDiskParameters(Guid.Empty, disk);
+            if (isInternal) {
+                ((AddDiskParameters) parameters).setStorageDomainId(storageDomain.getId());
+            }
         }
         else
         {
-            parameters = new UpdateVmDiskParameters(Guid.Empty, disk.getId(), disk);
             actionType = VdcActionType.UpdateVmDisk;
+            parameters = new UpdateVmDiskParameters(Guid.Empty, disk.getId(), disk);
         }
 
         model.StartProgress(null);

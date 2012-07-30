@@ -615,15 +615,15 @@ public class VmDiskListModel extends SearchableListModel
             return;
         }
 
-        // Save changes.
         storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
-
         Disk disk = (Disk) getSelectedItem();
+        boolean isInternal = (Boolean) model.getIsInternal().getEntity();
+
         if (!model.getIsNew()) {
             model.getIsInternal().setEntity(disk.getDiskStorageType() == DiskStorageType.IMAGE);
         }
 
-        if ((Boolean) model.getIsInternal().getEntity()) {
+        if (isInternal) {
             DiskImage diskImage = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
             diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
             diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
@@ -669,14 +669,16 @@ public class VmDiskListModel extends SearchableListModel
 
         if (model.getIsNew())
         {
-            parameters = new AddDiskParameters(vm.getId(), disk);
-            ((AddDiskParameters) parameters).setStorageDomainId(storageDomain.getId());
             actionType = VdcActionType.AddDisk;
+            parameters = new AddDiskParameters(vm.getId(), disk);
+            if (isInternal) {
+                ((AddDiskParameters) parameters).setStorageDomainId(storageDomain.getId());
+            }
         }
         else
         {
-            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk);
             actionType = VdcActionType.UpdateVmDisk;
+            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk);
         }
 
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();

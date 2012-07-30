@@ -6,6 +6,10 @@
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 	
 	<ui:style>
+		.container {
+			width: 100%;
+		}
+
 		.macExample {
 			color: gray;
 			float: right;
@@ -34,14 +38,14 @@
 			width: 100%;
 			padding-top: 6px;
 			margin-bottom: 6px;
-			padding-left: 9px;
 			color: white;
 			font-weight: bold;
 			display: block;
 		}
 
 		.diskTypeRadioButton {
-			margin-right: 30px;
+			margin-right: 21px;
+			padding-left: 9px;
 		}
 
 		.mainPanel {
@@ -62,13 +66,14 @@
 		}
 
 		.externalDiskPanel {
+			height: 298px;
 			width: 100%;
 			bottom: 0px;
 			position: absolute;
 		}
 	</ui:style>
 
-	<g:FlowPanel>
+	<g:FlowPanel addStyleNames="{style.container}">
 		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.topPanel}">
 			<e:EntityModelCheckBoxEditor ui:field="attachEditor" />
 		</g:HorizontalPanel>

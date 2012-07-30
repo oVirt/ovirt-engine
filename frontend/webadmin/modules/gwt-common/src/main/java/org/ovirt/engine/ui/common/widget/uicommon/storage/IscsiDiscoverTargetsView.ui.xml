@@ -11,6 +11,7 @@
 		
 		.authPanelInner {
 			padding-top: 10px;
+			width: 100%;
 		}	
 		
 		.discoverTargetAuthPanel {
@@ -93,6 +94,9 @@
 			padding-bottom: 2px;
 		}
 		
+		.textBoxEditor {
+        	width: 210px;
+		}
 	</ui:style>	
 
 	<g:FlowPanel>
@@ -103,14 +107,14 @@
 			<g:FlowPanel ui:field="discoverTargetsPanelInner">
 				<g:HorizontalPanel addStyleNames="{style.authPanelInner}">									
 					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor ui:field="addressEditor" />
-						<e:EntityModelTextBoxEditor ui:field="portEditor" />
+						<e:EntityModelTextBoxEditor ui:field="addressEditor" addStyleNames="{style.textBoxEditor}" />
+						<e:EntityModelTextBoxEditor ui:field="portEditor" addStyleNames="{style.textBoxEditor}" />
 					</g:VerticalPanel>																				
 					<g:VerticalPanel addStyleNames="{style.discoverTargetAuthPanel}">
 						<e:EntityModelCheckBoxEditor ui:field="useUserAuthEditor" addStyleNames="{style.userAuthLabel}" />
 						<g:HorizontalPanel>
-							<e:EntityModelTextBoxEditor ui:field="chapUserEditor" />
-							<e:EntityModelTextBoxEditor ui:field="chapPassEditor" />
+							<e:EntityModelTextBoxEditor ui:field="chapUserEditor" addStyleNames="{style.textBoxEditor}" />
+							<e:EntityModelTextBoxEditor ui:field="chapPassEditor" addStyleNames="{style.textBoxEditor}" />
 						</g:HorizontalPanel>
 					</g:VerticalPanel>										
 				</g:HorizontalPanel>

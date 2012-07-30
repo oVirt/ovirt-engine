@@ -3,9 +3,12 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
 	<ui:style>
+		.container {
+			width: 100%;
+        }
 	</ui:style>
 	
-	<g:VerticalPanel>																							
+	<g:VerticalPanel addStyleNames="{style.container}">																							
 		<g:SimplePanel ui:field="lunsListPanel" />
 	</g:VerticalPanel>
 

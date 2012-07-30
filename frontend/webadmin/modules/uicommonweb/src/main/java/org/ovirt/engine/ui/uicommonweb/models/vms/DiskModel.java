@@ -505,8 +505,8 @@ public class DiskModel extends Model
         getIsInVm().getEntityChangedEvent().addListener(this);
 
         setIsInternal(new EntityModel());
-        getIsInternal().setEntity(true);
         getIsInternal().getEntityChangedEvent().addListener(this);
+        getIsInternal().setEntity(true);
 
         setIsVmHasDisks(new EntityModel());
         getIsVmHasDisks().setEntity(true);
@@ -579,10 +579,6 @@ public class DiskModel extends Model
         else if (ev.equals(EntityModel.EntityChangedEventDefinition) && sender == getAttachDisk())
         {
             AttachDisk_EntityChanged(args);
-        }
-        else if (ev.equals(ListModel.EntityChangedEventDefinition) && sender == getIsInVm())
-        {
-            IsInVm_EntityChanged();
         }
         else if (ev.equals(ListModel.EntityChangedEventDefinition) && sender == getIsInternal())
         {
@@ -670,7 +666,7 @@ public class DiskModel extends Model
                     }
                 }), storageType);
 
-                if (!isInternal) {
+                if (!isInternal && datacenter != null) {
                     AsyncDataProvider.IsDirectLunDiskEnabled(new AsyncQuery(diskModel, new INewAsyncCallback() {
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
@@ -727,8 +723,8 @@ public class DiskModel extends Model
     }
 
     private void UpdateDatacenters() {
-        Boolean isInVm = (Boolean) getIsInVm().getEntity();
-        Boolean isInternal = (Boolean) getIsInternal().getEntity();
+        boolean isInVm = getIsInVm().getEntity() != null ? (Boolean) getIsInVm().getEntity() : false;
+        boolean isInternal = getIsInternal().getEntity() != null ? (Boolean) getIsInternal().getEntity() : false;
 
         getDataCenter().setIsAvailable(!isInVm);
 
@@ -758,16 +754,9 @@ public class DiskModel extends Model
         }
     }
 
-    private void IsInVm_EntityChanged() {
-        Boolean isInVm = (Boolean) getIsInVm().getEntity();
-        if (!isInVm) {
-            UpdateDatacenters();
-        }
-    }
-
     private void IsInternal_EntityChanged() {
-        Boolean isInVm = (Boolean) getIsInVm().getEntity();
-        Boolean isInternal = (Boolean) getIsInternal().getEntity();
+        boolean isInVm = getIsInVm().getEntity() != null ? (Boolean) getIsInVm().getEntity() : false;
+        boolean isInternal = getIsInternal().getEntity() != null ? (Boolean) getIsInternal().getEntity() : false;
 
         getSize().setIsAvailable(isInternal);
         getStorageDomain().setIsAvailable(isInternal);

@@ -32,7 +32,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -174,6 +173,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         getHost().getSelectedItemChangedEvent().addListener(this);
         setFormat(new ListModel());
         setAvailableStorageItems(new ListModel());
+        getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
 
         AsyncDataProvider.GetLocalFSPath(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -216,6 +216,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             {
                 if (getAvailableStorageItems().getSelectedItem() instanceof IStorageModel)
                 {
+                    setSelectedItem(null);
                     setSelectedItem((IStorageModel) getAvailableStorageItems().getSelectedItem());
                 }
             }
@@ -687,50 +688,6 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
 
         behavior.UpdateItemsAvailability();
-    }
-
-    public void ChooseFirstItem()
-    {
-        // first init to null
-        setSelectedItem(null);
-
-        boolean chooseFirst = false;
-        if (getSelectedItem() != null)
-        {
-            Model selectedModel = (Model) getSelectedItem();
-            if (!selectedModel.getIsSelectable())
-            {
-                chooseFirst = true;
-            }
-            SelectStorageItem(selectedModel);
-        }
-        else
-        {
-            chooseFirst = true;
-        }
-
-        if (chooseFirst)
-        {
-            // Choose first allowed type (it will be data role in case of
-            // New Domain and ISO role in case of Import Domain).
-            for (IStorageModel item : Linq.<IStorageModel> Cast(getItems()))
-            {
-                Model model = (Model) item;
-                if (model.getIsSelectable())
-                {
-                    setSelectedItem(item);
-                    SelectStorageItem(model);
-                    break;
-                }
-            }
-        }
-    }
-
-    public void SelectStorageItem(Model model)
-    {
-        getAvailableStorageItems().getSelectedItemChangedEvent().removeListener(this);
-        getAvailableStorageItems().setSelectedItem(model);
-        getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
     }
 
     public boolean Validate()

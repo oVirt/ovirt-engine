@@ -75,16 +75,15 @@ public abstract class StorageModelBehavior extends Model
         // Filter UnSelectable model from AvailableStorageItems list
         if (getModel().UpdatedStorageModels.size() == Linq.<IStorageModel> Cast(getModel().getItems()).size())
         {
+            getModel().UpdatedStorageModels.clear();
+
             getModel().getHost().setItems(new ArrayList<HostModel>());
             getModel().getHost().setSelectedItem(null);
 
             FilterUnSelectableModels();
-            getModel().UpdatedStorageModels.clear();
-            getModel().ChooseFirstItem();
 
             if (getModel().getSelectedItem() != null) {
                 getModel().UpdateFormat();
-                getModel().UpdateHost();
             }
         }
     }

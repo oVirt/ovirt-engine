@@ -106,6 +106,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
         // Add blank item list
         table.setRowData(new ArrayList<EntityModel>());
+        table.setWidth("100%", true); //$NON-NLS-1$
 
         // Add table as header widget
         treeHeader.add(table);
@@ -254,6 +255,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
         table.setRowData(items == null ? new ArrayList<LunModel>() : items);
         table.edit(leafModel);
+        table.setWidth("100%", true); //$NON-NLS-1$
 
         ScrollPanel panel = new ScrollPanel();
         panel.add(table);

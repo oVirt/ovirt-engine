@@ -17,4 +17,9 @@ public class VmDiskPopupView extends AbstractModelBoundWidgetPopupView<DiskModel
         super(eventBus, resources, new VmDiskPopupWidget(constants, resources, false), "725px", "615px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    @Override
+    public boolean handleEnterKeyDisabled() {
+        VmDiskPopupWidget vmDiskPopupWidget = (VmDiskPopupWidget) asWidget().getContent();
+        return vmDiskPopupWidget.handleEnterKeyDisabled();
+    }
 }

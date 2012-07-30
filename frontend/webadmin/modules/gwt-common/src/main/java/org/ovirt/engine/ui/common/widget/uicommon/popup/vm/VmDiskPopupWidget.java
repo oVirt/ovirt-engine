@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
@@ -11,10 +13,12 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -30,6 +34,8 @@ import org.ovirt.engine.ui.common.widget.uicommon.storage.FcpStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
@@ -155,11 +161,28 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     @UiField
     Label message;
 
+    @Ignore
+    ProgressPopupContent progressContent;
+
+    @Ignore
+    IscsiStorageView iscsiStorageView;
+
+    @Ignore
+    FcpStorageView fcpStorageView;
+
+    @Ignore
+    AbstractStorageView storageView;
+
     boolean isNewLunDiskEnabled;
+    StorageModel storageModel;
+    IscsiStorageModel iscsiStorageModel;
+    FcpStorageModel fcpStorageModel;
+    SanStorageModel sanStorageModel;
 
     public VmDiskPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources,
             boolean isLunDiskEnabled) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
+        this.progressContent = createProgressContentWidget();
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
@@ -168,7 +191,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         Driver.driver.initialize(this);
     }
 
-    // TODO: Localize
     private void localize(CommonApplicationConstants constants) {
         aliasEditor.setLabel(constants.aliasVmDiskPopup());
         sizeEditor.setLabel(constants.sizeVmDiskPopup());
@@ -400,6 +422,12 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         externalDiskTable.setHeight("100%"); //$NON-NLS-1$
     }
 
+    private ProgressPopupContent createProgressContentWidget() {
+        ProgressPopupContent progressPopupContent = new ProgressPopupContent();
+        progressPopupContent.setHeight("100%"); //$NON-NLS-1$
+        return progressPopupContent;
+    }
+
     @Override
     public void focusInput() {
         sizeEditor.setFocus(true);
@@ -463,7 +491,42 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         internalDiskRadioButton.setEnabled(disk.getIsNew());
         externalDiskRadioButton.setEnabled(disk.getIsNew());
 
+        storageModel = new StorageModel(new NewEditStorageModelBehavior());
+
+        // Create IscsiStorageModel
+        iscsiStorageModel = new IscsiStorageModel();
+        iscsiStorageModel.setContainer(storageModel);
+        iscsiStorageModel.getPropertyChangedEvent().addListener(progressEventHandler);
+        iscsiStorageModel.setIsGrouppedByTarget(true);
+        iscsiStorageModel.setIgnoreGrayedOut(true);
+        iscsiStorageView = new IscsiStorageView(false, 108, 207, 246, 268, 275, 125, 60, -59);
+        iscsiStorageView.edit(iscsiStorageModel);
+
+        // Create FcpStorageModel
+        fcpStorageModel = new FcpStorageModel();
+        fcpStorageModel.setContainer(storageModel);
+        fcpStorageModel.getPropertyChangedEvent().addListener(progressEventHandler);
+        fcpStorageModel.setIsGrouppedByTarget(false);
+        fcpStorageModel.setIgnoreGrayedOut(true);
+        fcpStorageView = new FcpStorageView(false, 266);
+        fcpStorageView.edit(fcpStorageModel);
+
+        // Set 'StorageModel' items
+        ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
+        items.add(iscsiStorageModel);
+        items.add(fcpStorageModel);
+        storageModel.setItems(items);
+        storageModel.setHost(disk.getHost());
+
+        // SelectedItemChangedEvent handlers
         disk.getStorageType().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                revealStorageView(disk);
+            }
+        });
+
+        disk.getHost().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 revealStorageView(disk);
@@ -503,44 +566,48 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     }
 
     private void revealStorageView(final DiskModel diskModel) {
-        StorageModel storageModel = new StorageModel(new NewEditStorageModelBehavior());
-        storageModel.setHost(diskModel.getHost());
-
-        final SanStorageModel model = new IscsiStorageModel();
-        model.setContainer(storageModel);
-        model.setIsGrouppedByTarget(true);
-        model.setIgnoreGrayedOut(true);
-
-        diskModel.setSanStorageModel(model);
-        diskModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!(Boolean) diskModel.getIsInternal().getEntity()) {
-                    model.getUpdateCommand().Execute();
-                }
-            }
-        });
-
-        AbstractStorageView storageView = null;
         StorageType storageType = (StorageType) diskModel.getStorageType().getSelectedItem();
 
-        // Reveal view by storge type
+        // Set view and model by storage type
         if (storageType == StorageType.ISCSI) {
-            storageView = new IscsiStorageView(false, 110, 210, 244, 268, 275, 125, 60, -59);
+            storageView = iscsiStorageView;
+            sanStorageModel = iscsiStorageModel;
         }
         else if (storageType == StorageType.FCP) {
-            storageView = new FcpStorageView(false, 270);
+            storageView = fcpStorageView;
+            sanStorageModel = fcpStorageModel;
         }
 
-        // Clear the current storage view
-        externalDiskPanel.clear();
+        storageModel.setSelectedItem(sanStorageModel);
+        diskModel.setSanStorageModel(sanStorageModel);
 
-        // Add the new storage view and call focus on it if needed
+        // Execute 'UpdateCommand' to call 'GetDeviceList'
+        sanStorageModel.getUpdateCommand().Execute();
+
+        //externalDiskPanel.clear();
         if (storageView != null) {
-            storageView.edit(model);
-            externalDiskPanel.add(storageView);
+            //externalDiskPanel.add(storageView);
         }
     }
+
+    public boolean handleEnterKeyDisabled() {
+        return storageView != null && storageView.isSubViewFocused();
+    }
+
+    final IEventListener progressEventHandler = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
+            if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+                externalDiskPanel.clear();
+                if (sanStorageModel.getProgress() != null) {
+                    externalDiskPanel.add(progressContent);
+                } else {
+                    externalDiskPanel.add(storageView);
+                }
+            }
+        }
+    };
 
     @Override
     public DiskModel flush() {
