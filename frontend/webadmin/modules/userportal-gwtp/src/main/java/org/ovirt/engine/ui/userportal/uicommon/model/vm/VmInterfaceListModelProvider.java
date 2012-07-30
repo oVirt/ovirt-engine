@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.networkinterface.NetworkInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
@@ -19,14 +19,14 @@ import com.google.inject.Provider;
 
 public class VmInterfaceListModelProvider extends UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel, VmInterfaceListModel> {
 
-    private final Provider<NetworkInterfacePopupPresenterWidget> newTemplateInterfacePopupProvider;
+    private final Provider<VmInterfacePopupPresenterWidget> newTemplateInterfacePopupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
     public VmInterfaceListModelProvider(ClientGinjector ginjector,
             UserPortalListProvider parentModelProvider,
             UserPortalModelResolver resolver,
-            Provider<NetworkInterfacePopupPresenterWidget> newTemplateInterfacePopupProvider,
+            Provider<VmInterfacePopupPresenterWidget> newTemplateInterfacePopupProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             CurrentUser user) {
         super(ginjector, parentModelProvider, VmInterfaceListModel.class, resolver, user);

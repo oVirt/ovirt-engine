@@ -46,7 +46,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @UiField
     @Path("portMirroring.entity")
-    EntityModelCheckBoxEditor portMirroringEditor;
+    protected EntityModelCheckBoxEditor portMirroringEditor;
 
     @UiField
     @Ignore
