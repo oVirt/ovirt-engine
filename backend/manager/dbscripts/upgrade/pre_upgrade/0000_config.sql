@@ -241,6 +241,9 @@ select fn_db_add_config_value('NumberOfFailedRunsOnVds','3','general');
 select fn_db_add_config_value('NumberOfUSBSlots','4','general');
 select fn_db_add_config_value('NumberOfVmsForTopSizeVms','10','general');
 select fn_db_add_config_value('NumberVmRefreshesBeforeSave','5','general');
+select fn_db_add_config_value('SupportBridgesReportByVDSM','false','2.2');
+select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.0');
+select fn_db_add_config_value('SupportBridgesReportByVDSM','true','3.1');
 --Handling Organization Name
 select fn_db_add_config_value('OrganizationName','oVirt','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');

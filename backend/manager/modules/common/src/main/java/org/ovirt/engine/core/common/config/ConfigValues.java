@@ -1386,6 +1386,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("120")
     NetworkConnectivityCheckTimeoutInSeconds(369),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    SupportBridgesReportByVDSM(370),
+
     Invalid(65535);
 
     private int intValue;

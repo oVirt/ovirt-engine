@@ -36,6 +36,8 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.FormatException;
 import org.ovirt.engine.core.compat.Guid;
@@ -863,48 +865,109 @@ public class VdsBrokerObjectsBuilder {
 
         // Networks collection (name point to list of nics or bonds)
         Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_networks);
-        Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(vds.getInterfaces());
 
         if (networks != null) {
             vds.getNetworks().clear();
             for (Entry<String, Object> entry : networks.entrySet()) {
                 Map<String, Object> network = (Map<String, Object>) entry.getValue();
                 if (network != null) {
-                    Network net = new Network();
-                    net.setname(entry.getKey());
+                    Network net = createNetworkData(entry.getKey(), network);
 
-                    net.setaddr((String) network.get("addr"));
-                    net.setsubnet((String) network.get("netmask"));
-                    net.setgateway((String) network.get(VdsProperties.GLOBAL_GATEWAY));
-                    if (StringUtils.isNotBlank((String) network.get(VdsProperties.mtu))) {
-                        net.setMtu(Integer.parseInt((String) network.get(VdsProperties.mtu)));
-                    }
+                    List<VdsNetworkInterface> interfaces = findNetworkInterfaces(vds, xmlRpcStruct, network);
 
-                    // map interface to network
-                    if (isBridgedNetwork(network)) {
-                        Object[] ports = (Object[]) network.get("ports");
-                        if (ports != null) {
-                            for (Object port : ports) {
-                                updateNetworkDetailsInInterface(vdsInterfaces.get(port.toString()),
-                                        currVlans,
-                                        networkVlans,
-                                        network,
-                                        net,
-                                        true);
-                            }
-                        }
-                    } else {
-                        updateNetworkDetailsInInterface(vdsInterfaces.get(String.valueOf(network.get("interface"))),
+                    for (VdsNetworkInterface iface : interfaces) {
+                        updateNetworkDetailsInInterface(iface,
                                 currVlans,
                                 networkVlans,
                                 network,
-                                net,
-                                false);
+                                net);
                     }
+
                     vds.getNetworks().add(net);
+                    reportInvalidInterfacesForNetwork(interfaces, net, vds);
                 }
             }
         }
+    }
+
+    /**
+     * Reports a warning to the audit log if a bridge is connected to more than one interface which is considered bad
+     * configuration.
+     *
+     * @param interfaces
+     *            The network's interfaces
+     * @param network
+     *            The network to report for
+     * @param vds
+     *            The host in which the network is defined
+     */
+    private static void reportInvalidInterfacesForNetwork(List<VdsNetworkInterface> interfaces, Network network, VDS vds) {
+        if (interfaces.size() != 1) {
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.setVdsId(vds.getId());
+            logable.AddCustomValue("NetworkName", network.getName());
+            logable.AddCustomValue("Interfaces", StringUtils.join(Entities.objectNames(interfaces), ","));
+            AuditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
+        }
+    }
+
+    private static List<VdsNetworkInterface> findNetworkInterfaces(VDS vds,
+            XmlRpcStruct xmlRpcStruct,
+            Map<String, Object> network) {
+
+        Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(vds.getInterfaces());
+
+        boolean bridgesReportSupported =
+                Config.<Boolean> GetValue(ConfigValues.SupportBridgesReportByVDSM,
+                        vds.getvds_group_compatibility_version().getValue());
+
+        List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
+        if (bridgesReportSupported) {
+            VdsNetworkInterface iface = null;
+            String interfaceName = (String) network.get("interface");
+            if (interfaceName != null) {
+                iface = vdsInterfaces.get(interfaceName);
+                if (iface == null) {
+                    Map<String, Object> bridges =
+                            (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.NETWORK_BRIDGES);
+                    if (bridges != null && bridges.containsKey(interfaceName)) {
+                        interfaces.addAll(findBridgedNetworkInterfaces((Map<String, Object>) bridges.get(interfaceName),
+                                vdsInterfaces));
+                    }
+                } else {
+                    interfaces.add(iface);
+                }
+            }
+        } else {
+            interfaces.addAll(findBridgedNetworkInterfaces(network, vdsInterfaces));
+        }
+        return interfaces;
+    }
+
+    private static Network createNetworkData(String networkName, Map<String, Object> network) {
+        Network net = new Network();
+        net.setname(networkName);
+        net.setaddr((String) network.get("addr"));
+        net.setsubnet((String) network.get("netmask"));
+        net.setgateway((String) network.get(VdsProperties.GLOBAL_GATEWAY));
+        if (StringUtils.isNotBlank((String) network.get(VdsProperties.mtu))) {
+            net.setMtu(Integer.parseInt((String) network.get(VdsProperties.mtu)));
+        }
+        return net;
+    }
+
+    private static List<VdsNetworkInterface> findBridgedNetworkInterfaces(Map<String, Object> bridge,
+            Map<String, VdsNetworkInterface> vdsInterfaces) {
+        List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
+        Object[] ports = (Object[]) bridge.get("ports");
+        if (ports != null) {
+            for (Object port : ports) {
+                if (vdsInterfaces.containsKey(port.toString())) {
+                    interfaces.add(vdsInterfaces.get(port.toString()));
+                }
+            }
+        }
+        return interfaces;
     }
 
     private static void addHostBondDevices(VDS vds, XmlRpcStruct xmlRpcStruct) {
@@ -1064,15 +1127,12 @@ public class VdsBrokerObjectsBuilder {
      *            Network struct to get details from.
      * @param net
      *            Network to get details from.
-     * @param bridged
-     *            Is the network is bridged or not
      */
     private static void updateNetworkDetailsInInterface(VdsNetworkInterface iface,
             Map<String, Integer> currVlans,
             Map<String, Integer> networkVlans,
             Map<String, Object> network,
-            Network net,
-            boolean bridged) {
+            Network net) {
 
         if (iface != null) {
             iface.setNetworkName(net.getname());
@@ -1088,8 +1148,7 @@ public class VdsBrokerObjectsBuilder {
 
             iface.setAddress(net.getaddr());
             iface.setSubnet(net.getsubnet());
-            iface.setBridged(bridged);
-
+            iface.setBridged(isBridgedNetwork(network));
             setGatewayIfManagementNetwork(iface, net.getgateway());
 
             Map<String, Object> networkConfig =
