@@ -387,10 +387,10 @@ def main():
             vds_complete = False
         else:
             printNlog(main.__doc__)
-            return 1
+            return False
     except:
         printNlog(main.__doc__)
-        return 1
+        return False
     try:
         logging.debug('**** Start VDS Installation ****')
         res = testPlatform()
@@ -411,15 +411,15 @@ def main():
             ret_value = process_ovirt_platform(url_bs, engine_port, random_num, systime)
             if ret_value is False:
                 printNlog("<BSTRAP component='RHEV_INSTALL' status='FAIL'/>")
-            return (not ret_value)
+            return ret_value
         elif res == 2:
             logging.error("Failed platform test.")
-            return 1
+            return False
 
     except:
         logging.error(traceback.format_exc())
-        return 1
-    return 0
+        return False
+    return True
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(not main()) # exit=0 is success
