@@ -935,14 +935,13 @@ public class VdsBrokerObjectsBuilder {
                         iface.setMtu(Integer.parseInt((String) bond.get(VdsProperties.mtu)));
                     }
 
-                    XmlRpcStruct config =
-                            (bond.get("cfg") instanceof Map) ? new XmlRpcStruct((Map<String, Object>) bond.get("cfg"))
-                                    : null;
+                    Map<String, Object> config =
+                            (Map<String, Object>) ((bond.get("cfg") instanceof Map) ? bond.get("cfg") : null);
 
-                    if (config != null && config.getItem("BONDING_OPTS") != null) {
-                        iface.setBondOptions(config.getItem("BONDING_OPTS").toString());
+                    if (config != null && config.get("BONDING_OPTS") != null) {
+                        iface.setBondOptions(config.get("BONDING_OPTS").toString());
                     }
-                    AddBootProtocol(config, iface);
+                    addBootProtocol(config, iface);
                 }
             }
         }
@@ -1093,10 +1092,9 @@ public class VdsBrokerObjectsBuilder {
 
             setGatewayIfManagementNetwork(iface, net.getgateway());
 
-            Map<String, Object> networkConfigAsMap =
+            Map<String, Object> networkConfig =
                     (Map<String, Object>) ((network.get("cfg") instanceof Map) ? network.get("cfg") : null);
-            XmlRpcStruct networkConfig = networkConfigAsMap == null ? null : new XmlRpcStruct(networkConfigAsMap);
-            AddBootProtocol(networkConfig, iface);
+            addBootProtocol(networkConfig, iface);
         }
     }
 
@@ -1155,18 +1153,18 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void AddBootProtocol(XmlRpcStruct cfg, VdsNetworkInterface iface) {
+    private static void addBootProtocol(Map<String, Object> cfg, VdsNetworkInterface iface) {
         if (cfg != null) {
-            if (cfg.getItem("BOOTPROTO") != null) {
-                if (cfg.getItem("BOOTPROTO").toString().toLowerCase().equals("dhcp")) {
+            if (cfg.get("BOOTPROTO") != null) {
+                if (cfg.get("BOOTPROTO").toString().toLowerCase().equals("dhcp")) {
                     iface.setBootProtocol(NetworkBootProtocol.Dhcp);
                 } else {
                     iface.setBootProtocol(NetworkBootProtocol.None);
                 }
-            } else if (cfg.containsKey("IPADDR") && !StringUtils.isEmpty(cfg.getItem("IPADDR").toString())) {
+            } else if (cfg.containsKey("IPADDR") && !StringUtils.isEmpty(cfg.get("IPADDR").toString())) {
                 iface.setBootProtocol(NetworkBootProtocol.StaticIp);
                 if (cfg.containsKey(VdsProperties.gateway)) {
-                    Object gateway = cfg.getItem(VdsProperties.gateway);
+                    Object gateway = cfg.get(VdsProperties.gateway);
                     if (gateway != null && !StringUtils.isEmpty(gateway.toString())) {
                         setGatewayIfManagementNetwork(iface, gateway.toString());
                     }
