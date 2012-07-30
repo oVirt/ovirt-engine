@@ -134,7 +134,9 @@ def initSequences():
                       { 'description'     : 'Update DB',
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [True],
-                        'steps'           : [ { 'title'     : output_messages.INFO_UPGRADE_DB,
+                        'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
+                                                'functions' : [_encryptDBPass, configEncryptedPass] },
+                                              {  'title'     : output_messages.INFO_UPGRADE_DB,
                                                 'functions' : [stopRhevmDbRelatedServices, _upgradeDB, startRhevmDbRelatedServices]} ]
                        },
                       { 'description'     : 'Create DB',
@@ -989,6 +991,9 @@ def _upgradeDB():
     won't change db security settings
     """
 
+    # Set current DB name
+    currentDbName = basedefs.DB_NAME
+
     # Before db upgrade we want to make a backup of existing db in case we fail
     # The backup is performed on local system, even for remote DB.
     dbBackupFile = tempfile.mkstemp(suffix=".sql", dir=basedefs.DIR_DB_BACKUPS)[1]
@@ -1001,6 +1006,7 @@ def _upgradeDB():
     # if upgrade passes fine, rename the DB back.
     DB_NAME_TEMP = "%s_%s" % (basedefs.DB_NAME, utils.getCurrentDateTime())
     utils.renameDB(basedefs.DB_NAME, DB_NAME_TEMP)
+    currentDbName = DB_NAME_TEMP
 
     # if we're here, DB was renamed.
     # upgrade script must run from dbscripts dir
@@ -1030,23 +1036,26 @@ def _upgradeDB():
 
         # Upgrade was successful, so rename the DB back.
         utils.renameDB(DB_NAME_TEMP, basedefs.DB_NAME)
+        currentDbName = basedefs.DB_NAME
 
         # Update rpm version in vdc options
         utils.updateVDCOption("ProductRPMVersion", utils.getRpmVersion(basedefs.ENGINE_RPM_NAME))
     except:
         # Upgrade failed! we need to restore the old db
         logging.debug("DB upgrade failed, restoring it to a previous state. DB was backed up to %s", dbBackupFile)
-        utils.restoreDB(getDbUser(), getDbHostName(), getDbPort(), dbBackupFile)
 
         # Delete the original DB.
         # TODO: handle the case of failure - it should not stop the flow, but should write to the log
-        sqlQuery="DROP DATABASE %s" % DB_NAME_TEMP
+        sqlQuery="DROP DATABASE %s" % currentDbName
         utils.execRemoteSqlCommand(getDbUser(), \
                                    getDbHostName(), \
                                    getDbPort(), \
                                    basedefs.DB_POSTGRES, \
                                    sqlQuery, False, \
                                    output_messages.ERR_DB_DROP)
+
+        # Restore the DB
+        utils.restoreDB(getDbUser(), getDbHostName(), getDbPort(), dbBackupFile)
 
         raise Exception(output_messages.ERR_DB_UPGRADE_FAILED)
 
