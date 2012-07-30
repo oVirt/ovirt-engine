@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, ListModel> {
 
@@ -108,6 +109,23 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         }, multiSelection ? selectAllHeader : null, "27px"); //$NON-NLS-1$
     }
 
+    final IEventListener lunModelSelectedItemListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            String propName = ((PropertyChangedEventArgs) args).PropertyName;
+            EntityModelCellTable<ListModel> table = (EntityModelCellTable<ListModel>) ev.getContext();
+
+            if (propName.equals("IsSelected")) { //$NON-NLS-1$
+                LunModel lunModel = (LunModel) sender;
+
+                if (!lunModel.getIsSelected()) {
+                    table.getSelectionModel().setSelected(lunModel, false);
+                    table.redraw();
+                }
+            }
+        }
+    };
+
     @Override
     protected TreeItem createRootNode(LunModel rootModel) {
         final EntityModelCellTable<ListModel> table =
@@ -132,52 +150,27 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         ListModel listModel = new ListModel();
         listModel.setItems(items);
 
-        // Add selection handlers
-        rootModel.getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (propName.equals("IsSelected")) { //$NON-NLS-1$
-                    LunModel lunModel = (LunModel) sender;
-                    if (lunModel.getIsSelected() != table.getSelectionModel().isSelected(lunModel)) {
-                        table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
-                    }
-                }
-            }
-        });
-
-        table.getSelectionModel().addSelectionChangeHandler(new Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                LunModel lunModel = (LunModel) table.getVisibleItem(0);
-                boolean isSelected = table.getSelectionModel().isSelected(lunModel);
-
-                if (!multiSelection) {
-                    if (!isSelected) {
-                        return;
-                    }
-
-                    // Clear current selection
-                    for (LunModel item : (List<LunModel>) model.getItems()) {
-                        if (!item.equals(lunModel) && item.getIsSelected()) {
-                            item.setIsSelected(false);
-                        }
-                    }
-                    lunModel.setIsSelected(true);
-                }
-                else {
-                    lunModel.setIsSelected(isSelected);
-                }
-
-                if (isSelected && model.isIgnoreGrayedOut()) {
-                    updateSelectedLunWarning(lunModel);
-                }
-            }
-        });
-
         // Update table
         table.setRowData(items);
+        table.edit(listModel);
         table.setWidth("100%", true); //$NON-NLS-1$
+
+        if (!multiSelection) {
+            rootModel.getPropertyChangedEvent().removeListener(lunModelSelectedItemListener);
+            rootModel.getPropertyChangedEvent().addListener(lunModelSelectedItemListener, table);
+
+            table.getSelectionModel().addSelectionChangeHandler(new Handler() {
+                @Override
+                public void onSelectionChange(SelectionChangeEvent event) {
+                    SingleSelectionModel SingleSelectionModel = (SingleSelectionModel) event.getSource();
+                    LunModel selectedLunModel = (LunModel) SingleSelectionModel.getSelectedObject();
+
+                    if (selectedLunModel != null) {
+                        updateSelectedLunWarning(selectedLunModel);
+                    }
+                }
+            });
+        }
 
         // Create tree item
         HorizontalPanel panel = new HorizontalPanel();

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -92,6 +93,22 @@ public class DiskGeneralModel extends EntityModel
         }
     }
 
+    private String privateLunId;
+
+    public String getLunId()
+    {
+        return privateLunId;
+    }
+
+    public void setLunId(String value)
+    {
+        if (privateLunId != value)
+        {
+            privateLunId = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("LUN ID")); //$NON-NLS-1$
+        }
+    }
+
     private String privateQuotaName;
 
     public String getQuotaName()
@@ -116,6 +133,26 @@ public class DiskGeneralModel extends EntityModel
 
     public void setQuotaAvailable(boolean quotaAvailable) {
         this.quotaAvailable = quotaAvailable;
+    }
+
+    private boolean image;
+
+    public boolean isImage() {
+        return image;
+    }
+
+    public void setImage(boolean image) {
+        this.image = image;
+    }
+
+    private boolean lun;
+
+    public boolean isLun() {
+        return lun;
+    }
+
+    public void setLun(boolean lun) {
+        this.lun = lun;
     }
 
     public DiskGeneralModel()
@@ -147,15 +184,22 @@ public class DiskGeneralModel extends EntityModel
     {
         Disk disk = (Disk) getEntity();
 
+        setImage(disk.getDiskStorageType() == DiskStorageType.IMAGE);
+        setLun(disk.getDiskStorageType() == DiskStorageType.LUN);
+
         setAlias(disk.getDiskAlias());
         setDescription(disk.getDiskDescription());
         setDiskId(disk.getId().toString());
 
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
             setVolumeFormat(diskImage.getvolume_format());
             setQuotaName(diskImage.getQuotaName());
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
+        }
+        else if (isLun()) {
+            LunDisk lunDisk = (LunDisk) disk;
+            setLunId(lunDisk.getLun().getLUN_id());
         }
     }
 }

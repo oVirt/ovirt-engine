@@ -61,6 +61,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         this.model = model;
         this.hideLeaf = hideLeaf;
         this.multiSelection = multiSelection;
+        model.setMultiSelection(multiSelection);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         createHeaderWidget();
         createSanStorageListWidget();

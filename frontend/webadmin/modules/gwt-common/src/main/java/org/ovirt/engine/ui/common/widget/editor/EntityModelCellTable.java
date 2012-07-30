@@ -172,8 +172,12 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                 // Set "IsSelected"
                 SelectionModel<? super EntityModel> selectionModel = EntityModelCellTable.this.getSelectionModel();
                 if (selectionModel instanceof SingleSelectionModel) {
-                    ((SingleSelectionModel<EntityModel>) selectionModel).getSelectedObject().setIsSelected(true);
-                    EntityModelCellTable.this.listModel.setSelectedItem(((SingleSelectionModel<EntityModel>) selectionModel).getSelectedObject());
+                    EntityModel selectedObject =
+                            ((SingleSelectionModel<EntityModel>) selectionModel).getSelectedObject();
+                    if (selectedObject != null) {
+                        selectedObject.setIsSelected(true);
+                        EntityModelCellTable.this.listModel.setSelectedItem(selectedObject);
+                    }
                 } else if (selectionModel instanceof MultiSelectionModel) {
                     List<EntityModel> selectedItems = new ArrayList<EntityModel>();
                     for (EntityModel entity : ((MultiSelectionModel<EntityModel>) selectionModel).getSelectedSet()) {

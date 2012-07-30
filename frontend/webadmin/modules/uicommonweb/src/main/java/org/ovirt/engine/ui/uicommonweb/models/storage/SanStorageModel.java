@@ -12,6 +12,9 @@ import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -19,6 +22,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Messages;
@@ -405,8 +409,55 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     item.getLuns().add(lun);
                 }
             }
+
+            // Adding PropertyEventListener to LunModel
+            if (!isMultiSelection()) {
+                lun.getPropertyChangedEvent().removeListener(lunModelEventListener);
+                lun.getPropertyChangedEvent().addListener(lunModelEventListener);
+            }
         }
     }
+
+    final IEventListener lunModelEventListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            String propName = ((PropertyChangedEventArgs) args).PropertyName;
+            if (propName.equals("IsSelected")) { //$NON-NLS-1$
+                LunModel selectedLunModel = (LunModel) sender;
+
+                if (!selectedLunModel.getIsSelected() || !getItems().iterator().hasNext()) {
+                    return;
+                }
+
+                // Clear LUNs selection
+                for (Model model : (List<Model>) getItems()) {
+                    if (model instanceof LunModel) {
+                        LunModel lunModel = (LunModel) model;
+                        if (!lunModel.equals(selectedLunModel)) {
+                            lunModel.setIsSelected(false);
+                        }
+                    }
+                    else {
+                        SanTargetModel sanTargetModel = (SanTargetModel) model;
+                        boolean isIncludeSelected = false;
+
+                        for (LunModel lunModel : sanTargetModel.getLuns()) {
+                            if (!lunModel.equals(selectedLunModel)) {
+                                lunModel.setIsSelected(false);
+                            }
+                            else {
+                                isIncludeSelected = true;
+                            }
+                        }
+
+                        if (!isIncludeSelected && sanTargetModel.getLunsList().getSelectedItem() != null) {
+                            sanTargetModel.getLunsList().setSelectedItem(null);
+                        }
+                    }
+                }
+            }
+        }
+    };
 
     private List<SanTargetModel> ToTargetModelList(List<LunModel> source)
     {

@@ -214,6 +214,22 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
+    private boolean multiSelection;
+
+    public boolean isMultiSelection()
+    {
+        return multiSelection;
+    }
+
+    public void setMultiSelection(boolean value)
+    {
+        if (multiSelection != value)
+        {
+            multiSelection = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("MultiSelection")); //$NON-NLS-1$
+        }
+    }
+
     private String selectedLunWarning;
 
     public String getSelectedLunWarning()

@@ -215,6 +215,16 @@ public class LunModel extends EntityModel
         this.status = status;
     }
 
+    @Override
+    public void setIsSelected(boolean value)
+    {
+        if (getIsGrayedOut()) {
+            return;
+        }
+
+        super.setIsSelected(value);
+    }
+
     public LunModel()
     {
         setTargetsList(new ListModel());

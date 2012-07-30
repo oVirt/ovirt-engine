@@ -38,6 +38,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel diskId = new TextBoxLabel();
     EnumLabel<VolumeFormat> volumeFormat = new EnumLabel<VolumeFormat>();
+    TextBoxLabel lunId = new TextBoxLabel();
     TextBoxLabel quotaName = new TextBoxLabel();
 
     @UiField(provided = true)
@@ -64,14 +65,24 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.idDisk(), diskId, 2, 0));
-        formBuilder.addFormItem(new FormItem(constants.volumeFormatDisk(), volumeFormat, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 4, 0) {
+        formBuilder.addFormItem(new FormItem(constants.volumeFormatDisk(), volumeFormat, 3, 0) {
+            @Override
+            public boolean isVisible() {
+                return getDetailModel().isImage();
+            }
+        });
+        formBuilder.addFormItem(new FormItem(constants.lunIdSanStorage(), lunId, 4, 0) {
+            @Override
+            public boolean isVisible() {
+                return getDetailModel().isLun();
+            }
+        });
+        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 5, 0) {
             @Override
             public boolean isVisible() {
                 return getDetailModel().isQuotaAvailable();
             }
         });
-
     }
 
     @Override

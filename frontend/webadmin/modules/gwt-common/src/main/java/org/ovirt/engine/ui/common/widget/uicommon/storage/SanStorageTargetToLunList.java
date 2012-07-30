@@ -3,9 +3,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -31,6 +28,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetModel, ListModel> {
 
@@ -161,7 +161,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     @SuppressWarnings("unchecked")
     @Override
-    protected TreeItem createLeafNode(final ListModel leafModel) {
+    protected TreeItem createLeafNode(ListModel leafModel) {
         TreeItem item = new TreeItem();
         List<LunModel> items = (List<LunModel>) leafModel.getItems();
 
@@ -170,28 +170,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             return item;
         }
 
-        if (!multiSelection) {
-            leafModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
-                @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    LunModel lunModel = (LunModel) leafModel.getSelectedItem();
-                    if (leafModel.getSelectedItem() != null) {
-                        // Clear current selection
-                        for (SanTargetModel item : (List<SanTargetModel>) model.getItems()) {
-                            if (item.getLunsList() != leafModel) {
-                                item.getLunsList().setSelectedItem(null);
-                            }
-                        }
-
-                        if (model.isIgnoreGrayedOut()) {
-                            updateSelectedLunWarning(lunModel);
-                        }
-                    }
-                }
-            });
-        }
-
-        EntityModelCellTable<ListModel> table =
+        final EntityModelCellTable<ListModel> table =
                 new EntityModelCellTable<ListModel>(multiSelection,
                         (Resources) GWT.create(SanStorageListLunTableResources.class));
 
@@ -256,6 +235,26 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         table.setRowData(items == null ? new ArrayList<LunModel>() : items);
         table.edit(leafModel);
         table.setWidth("100%", true); //$NON-NLS-1$
+
+        if (!multiSelection) {
+            for (LunModel lunModel : items) {
+                if (lunModel.getIsSelected()) {
+                    table.getSelectionModel().setSelected(lunModel, true);
+                }
+            }
+
+            table.getSelectionModel().addSelectionChangeHandler(new Handler() {
+                @Override
+                public void onSelectionChange(SelectionChangeEvent event) {
+                    SingleSelectionModel SingleSelectionModel = (SingleSelectionModel) event.getSource();
+                    LunModel selectedLunModel = (LunModel) SingleSelectionModel.getSelectedObject();
+
+                    if (selectedLunModel != null) {
+                        updateSelectedLunWarning(selectedLunModel);
+                    }
+                }
+            });
+        }
 
         ScrollPanel panel = new ScrollPanel();
         panel.add(table);
