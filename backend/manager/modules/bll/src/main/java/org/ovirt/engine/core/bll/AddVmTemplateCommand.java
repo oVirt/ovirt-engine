@@ -478,8 +478,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
         List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
-        for (DiskImage diskImage : mImages) {
-            DiskImage disk = diskInfoDestinationMap.get(diskImage.getId());
+        for (DiskImage disk : diskInfoDestinationMap.values()) {
             list.add(new StorageQuotaValidationParameter(disk.getQuotaId() != null ? disk.getQuotaId()
                     : getParameters().getMasterVm().getQuotaId(),
                     disk.getstorage_ids().get(0),
