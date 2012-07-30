@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -405,8 +406,13 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     /**
      * Holds various details about regarding the logical network implementation on the device.
      */
-    public static class NetworkImplementationDetails {
-        private final boolean inSync;
+    public static class NetworkImplementationDetails implements Serializable{
+
+        private static final long serialVersionUID = 5213991878221362832L;
+        private boolean inSync;
+
+        public NetworkImplementationDetails() {
+        }
 
         public NetworkImplementationDetails(boolean inSync) {
             this.inSync = inSync;
