@@ -22,6 +22,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @LockIdNameAttribute
+@NonTransactiveCommandAttribute
 public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
     public ActivateVdsCommand(T parameters) {
         super(parameters);
@@ -66,12 +67,19 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 .RunVdsCommand(VDSCommandType.ActivateVds, new ActivateVdsVDSCommandParameters(getVdsId()))
                 .getSucceeded());
         if (getSucceeded()) {
-            // set network to operational / non-operational
-            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
-                    .getAllForCluster(vds.getvds_group_id());
-            for (Network net : networks) {
-                AttachNetworkToVdsGroupCommand.SetNetworkStatus(vds.getvds_group_id(), net);
-            }
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                    // set network to operational / non-operational
+                    List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+                            .getAllForCluster(vds.getvds_group_id());
+                    for (Network net : networks) {
+                        AttachNetworkToVdsGroupCommand.SetNetworkStatus(vds.getvds_group_id(), net);
+                    }
+                    return null;
+                }
+            });
         }
     }
 
