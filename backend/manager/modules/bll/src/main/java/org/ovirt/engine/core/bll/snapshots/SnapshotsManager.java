@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -376,8 +377,8 @@ public class SnapshotsManager {
         for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
                 vmId, VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName())) {
             if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
-                DiskImage diskImage = getDiskImageDao().getAllSnapshotsForImageGroup(vmDevice.getDeviceId()).get(0);
-                if (diskImage.isAllowSnapshot()) {
+                Disk disk = getDiskDao().get(vmDevice.getDeviceId());
+                if (disk.isAllowSnapshot()) {
                     getBaseDiskDao().remove(vmDevice.getDeviceId());
                     getVmDeviceDao().remove(vmDevice.getId());
                 }
