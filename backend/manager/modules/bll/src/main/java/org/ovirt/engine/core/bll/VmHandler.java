@@ -231,15 +231,11 @@ public class VmHandler {
     }
 
     public static void UnLockVm(VM vm) {
-        if (vm.getstatus() == VMStatus.ImageLocked) {
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVmStatus, new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
-            vm.setstatus(VMStatus.Down);
-        } else {
-            log.errorFormat("Trying to unlock vm {0} in status {1} - not moving to down!", vm.getvm_name(),
-                    vm.getstatus());
-        }
+        Backend.getInstance()
+                .getResourceManager()
+                .RunVdsCommand(VDSCommandType.SetVmStatus,
+                        new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
+        vm.setstatus(VMStatus.Down);
     }
 
     public static void MarkVmAsIllegal(Guid vmId) {
