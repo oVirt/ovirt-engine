@@ -82,6 +82,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
     @Override
     public void acquireLockWait(EngineLock lock) {
         log.debugFormat("Before acquiring and wait lock {0}", lock);
+        validateLockForAcquireAndWait(lock);
         globalLock.lock();
         try {
             boolean firstRun = true;
@@ -90,16 +91,25 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
                 if (firstRun) {
                     firstRun = false;
                 } else {
-                    // This is a second try, we did not successes, but possible that release signal for other waiting thread
-                    // so try to signal to other thread
-                    releasedLock.signal();
+                    // This is a second try, we did not successes, but possible that release signal for other waiting
+                    // thread
+                    // so try to signal to other threads
+                    releasedLock.signalAll();
                 }
+                log.infoFormat("Failed to acquire lock and wait lock {0}", lock);
                 releasedLock.await();
             }
         } catch (InterruptedException e) {
             releasedLock.signal();
         } finally {
             globalLock.unlock();
+        }
+    }
+
+    private void validateLockForAcquireAndWait(EngineLock lock) {
+        if (lock.getSharedLocks() != null && lock.getExclusiveLocks().size() > 1) {
+            log.errorFormat("Trying to acquire or wait on shared or more than one exclussive locks {0}", lock);
+            throw new IllegalArgumentException("Trying to acquire or wait on shared or more than one exclussive locks");
         }
     }
 
@@ -118,7 +128,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
                     releaseExclusiveLock(buildHashMapKey(entry));
                 }
             }
-            releasedLock.signal();
+            releasedLock.signalAll();
         } finally {
             globalLock.unlock();
         }
@@ -151,7 +161,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
             } else {
                 releaseSharedLock(lockId);
             }
-            releasedLock.signal();
+            releasedLock.signalAll();
         } finally {
             globalLock.unlock();
         }

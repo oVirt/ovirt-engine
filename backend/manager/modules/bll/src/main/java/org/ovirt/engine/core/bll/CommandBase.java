@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -196,8 +195,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return true if it is possible to run rollback using command
      */
     protected boolean canPerformRollbackUsingCommand
-            (@SuppressWarnings("unused") VdcActionType commandType,
-                    @SuppressWarnings("unused") VdcActionParametersBase params) {
+            (VdcActionType commandType,
+                    VdcActionParametersBase params) {
         return true;
     }
 
@@ -1099,9 +1098,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected SPMAsyncTask ConcreteCreateTask
-            (@SuppressWarnings("unused") AsyncTaskCreationInfo asyncTaskCreationInfo,
-                    @SuppressWarnings("unused") VdcActionType parentCommand) {
-        throw new NotImplementedException();
+            (AsyncTaskCreationInfo asyncTaskCreationInfo,
+                    VdcActionType parentCommand) {
+        throw new UnsupportedOperationException();
     }
 
     protected void UpdateTasksWithActionParameters() {
@@ -1189,7 +1188,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
         boolean returnValue = true;
         if (annotation != null) {
-            returnValue = acquireLockInternal();
+            if (!annotation.isWait()) {
+                returnValue = acquireLockInternal();
+            } else {
+                acquireLockAndWait();
+            }
         }
         return returnValue;
     }
@@ -1213,6 +1216,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         }
         return returnValue;
+    }
+
+    private void acquireLockAndWait() {
+        // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
+        if (commandLock == null) {
+            Map<String, String> exclusiveLocks = getExclusiveLocks();
+            if (exclusiveLocks != null) {
+                EngineLock lock = new EngineLock(exclusiveLocks, null);
+                getLockManager().acquireLockWait(lock);
+                commandLock = lock;
+            }
+        }
     }
 
     protected void freeLock() {

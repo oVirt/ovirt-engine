@@ -14,7 +14,8 @@ public interface LockManager {
     boolean acquireLock(EngineLock lock);
 
     /**
-     * The following method will try to acquire lock and will wait until lock acquired
+     * The following method will try to acquire lock and will wait until lock acquired The lock should be exclusive and
+     * only one, otherwise exception will be thrown
      * @param lock
      */
     void acquireLockWait(EngineLock lock);

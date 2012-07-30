@@ -15,8 +15,8 @@ public class EngineLock {
     }
 
     public EngineLock(Map<String, String> exclusiveLocks, Map<String, String> sharedLocks) {
-        setExclusiveLocks(exclusiveLocks);
-        setSharedLocks(sharedLocks);
+        this.exclusiveLocks = exclusiveLocks;
+        this.sharedLocks = sharedLocks;
     }
 
     public Map<String, String> getExclusiveLocks() {

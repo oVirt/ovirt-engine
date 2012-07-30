@@ -10,6 +10,7 @@ public enum LockingGroup {
     DISK,
     VM_DISK_BOOT,
     VM_NAME,
-    STORAGE;
+    STORAGE,
+    REGISTER_VDS;
 
 }
