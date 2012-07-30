@@ -2,15 +2,18 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 @InternalCommandAttribute
+@LockIdNameAttribute(isWait=true)
 public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     /**
@@ -61,5 +64,10 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
         }
 
         setSucceeded(true);
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVds().getstorage_pool_id().toString(), LockingGroup.REGISTER_VDS.name());
     }
 }
