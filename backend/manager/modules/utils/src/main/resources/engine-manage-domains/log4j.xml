@@ -4,7 +4,7 @@
 
     <!-- Log levels:DEBUG,INFO,WARN,ERROR,FATAL -->
     <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="/var/log/engine/engine-manage-domains/engine-manage-domains.log" />
+        <param name="File" value="/var/log/ovirt-engine/engine-manage-domains.log" />
         <param name="Append" value="true" />
         <param name="MaxFileSize" value="1500KB" />
         <param name="MaxBackupIndex" value="1" />
