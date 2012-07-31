@@ -240,7 +240,7 @@
 
     <subsystem xmlns="urn:jboss:domain:web:1.1" native="false" default-virtual-server="default-host">
       #if $getBoolean('ENGINE_HTTP_ENABLED', True)
-        <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
+        <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http" redirect-port="$getInteger('ENGINE_HTTPS_PORT', 8443)"/>
       #end if
       #if $getBoolean('ENGINE_HTTPS_ENABLED', True)
         <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
@@ -248,7 +248,7 @@
         </connector>
       #end if
       #if $getBoolean('ENGINE_AJP_ENABLED', False)
-        <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp"/>
+        <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp" redirect-port="$getInteger('ENGINE_PROXY_HTTPS_PORT', 443)"/>
       #end if
       <virtual-server name="default-host" enable-welcome-root="false">
         <alias name="localhost"/>
