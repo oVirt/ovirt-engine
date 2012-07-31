@@ -142,7 +142,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         public void setCurrentVdsId(Guid value) {
-            mCurrentVdsId = (value == Guid.Empty) ? null : (Guid) value;
+            mCurrentVdsId = (Guid.Empty.equals(value)) ? null : value;
         }
 
         private String privatemCurrentIrsHost;
