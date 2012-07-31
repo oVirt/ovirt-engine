@@ -245,29 +245,33 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 true);
     }
 
+    private Integer cachedMaxPriority;
+
     protected void InitPriority(int priority)
     {
-        AsyncDataProvider.GetRoundedPriority(new AsyncQuery(getModel(),
+        AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(new Object[] {getModel(), priority},
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel model = (UnitVmModel) target;
-                        int value = (Integer) returnValue;
+                        Object[] array = (Object[])target;
+                        UnitVmModel model = (UnitVmModel)array[0];
+                        int vmPriority = (Integer)array[1];
+                        cachedMaxPriority = (Integer)returnValue;
+
+                        int value = AsyncDataProvider.GetRoundedPriority(vmPriority, cachedMaxPriority);
                         EntityModel tempVar = new EntityModel();
                         tempVar.setEntity(value);
                         model.getPriority().setSelectedItem(tempVar);
                         UpdatePriority();
 
                     }
-                }, getModel().getHash()), priority);
+                }, getModel().getHash()));
     }
-
-    private Integer cachedMaxPrority;
 
     protected void UpdatePriority()
     {
-        if (cachedMaxPrority == null)
+        if (cachedMaxPriority == null)
         {
             AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -275,7 +279,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         public void OnSuccess(Object target, Object returnValue) {
 
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                            cachedMaxPrority = (Integer) returnValue;
+                            cachedMaxPriority = (Integer) returnValue;
                             behavior.PostUpdatePriority();
 
                         }
@@ -296,11 +300,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         items.add(tempVar);
         EntityModel tempVar2 = new EntityModel();
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().mediumTitle());
-        tempVar2.setEntity(cachedMaxPrority / 2);
+        tempVar2.setEntity(cachedMaxPriority / 2);
         items.add(tempVar2);
         EntityModel tempVar3 = new EntityModel();
         tempVar3.setTitle(ConstantsManager.getInstance().getConstants().highTitle());
-        tempVar3.setEntity(cachedMaxPrority);
+        tempVar3.setEntity(cachedMaxPriority);
         items.add(tempVar3);
 
         // If there was some priority selected before, try select it again.

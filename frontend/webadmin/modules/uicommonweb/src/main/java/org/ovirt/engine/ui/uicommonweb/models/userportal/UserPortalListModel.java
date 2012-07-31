@@ -1598,39 +1598,47 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
+
+    private Integer cachedMaxPriority;
+
     private void VmModel_Priority_ItemsChanged()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         if (!model.getIsNew())
         {
-            UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-            VM vm = (VM) selectedItem.getEntity();
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void OnSuccess(Object model, Object result)
-                {
-                    UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                    int roundPriority = (Integer) result;
-                    EntityModel priority = null;
-
-                    for (Object item : ((UnitVmModel) userPortalListModel.getWindow()).getPriority().getItems())
-                    {
-                        EntityModel a = (EntityModel) item;
-                        int p = (Integer) a.getEntity();
-                        if (p == roundPriority)
-                        {
-                            priority = a;
-                            break;
-                        }
-                    }
-                    ((UnitVmModel) userPortalListModel.getWindow()).getPriority().setSelectedItem(priority);
-
-                }
-            };
-            AsyncDataProvider.GetRoundedPriority(_asyncQuery, vm.getpriority());
+            if (cachedMaxPriority == null) {
+                AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(model,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object target, Object returnValue) {
+                                cachedMaxPriority = (Integer) returnValue;
+                                updatePriority((UnitVmModel)target);
+                            }
+                        }, model.getHash()));
+            } else {
+                updatePriority(model);
+            }
         }
+    }
+
+    private void updatePriority(UnitVmModel model) {
+        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        VM vm = (VM) selectedItem.getEntity();
+        int roundPriority = AsyncDataProvider.GetRoundedPriority(vm.getpriority(), cachedMaxPriority);
+        EntityModel priority = null;
+
+
+        for (Object item : model.getPriority().getItems())
+        {
+            EntityModel a = (EntityModel) item;
+            int p = (Integer) a.getEntity();
+            if (p == roundPriority)
+            {
+                priority = a;
+                break;
+            }
+        }
+        ((UnitVmModel) model.getWindow()).getPriority().setSelectedItem(priority);
     }
 
     private void VmModel_TimeZone_ItemsChanged()

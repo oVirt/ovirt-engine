@@ -563,36 +563,37 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesDisks, new GetVmTemplatesDisksParameters(templateId), aQuery);
     }
 
-    public static void GetRoundedPriority(AsyncQuery aQuery, int priority) {
-        aQuery.setData(new Object[] { priority });
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
+
+    /**
+     * Round the priority to the closest value from n (3 for now) values
+     *
+     * i.e.: if priority entered is 30 and the predefined values are 1,50,100
+     *
+     * then the return value will be 50 (closest to 50).
+     * @param priority - the current priority of the vm
+     * @param maxPriority - the max priority
+     * @return the rounded priority
+     */
+    public static int GetRoundedPriority(int priority, int maxPriority) {
+
+        int medium = maxPriority / 2;
+
+        int[] levels = new int[] { 1, medium, maxPriority };
+
+        for (int i = 0; i < levels.length; i++)
+        {
+            int lengthToLess = levels[i] - priority;
+            int lengthToMore = levels[i + 1] - priority;
+
+            if (lengthToMore < 0)
             {
-                int max = ((Integer) source).intValue();
-                int medium = max / 2;
-
-                int[] levels = new int[] { 1, medium, max };
-
-                for (int i = 0; i < levels.length; i++)
-                {
-                    int lengthToLess = levels[i] - (Integer) _asyncQuery.Data[0];
-                    int lengthToMore = levels[i + 1] - (Integer) _asyncQuery.Data[0];
-
-                    if (lengthToMore < 0)
-                    {
-                        continue;
-                    }
-
-                    return Math.abs(lengthToLess) < lengthToMore ? levels[i] : levels[i + 1];
-                }
-
-                return 0;
+                continue;
             }
-        };
-        GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue, Config.DefaultConfigurationVersion),
-                aQuery);
+
+            return Math.abs(lengthToLess) < lengthToMore ? levels[i] : levels[i + 1];
+        }
+
+        return 0;
     }
 
     public static void GetTemplateListByDataCenter(AsyncQuery aQuery, Guid dataCenterId) {
