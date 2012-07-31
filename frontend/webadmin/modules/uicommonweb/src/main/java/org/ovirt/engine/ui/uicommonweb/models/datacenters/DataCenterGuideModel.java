@@ -270,7 +270,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             getOptionalActions().add(addClusterAction);
         }
 
-        // Add host action.
         Version minimalClusterVersion = Linq.GetMinVersionByClusters(clusters);
 
         if (minimalClusterVersion == null)
@@ -315,8 +314,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         // Select host action.
         UICommand selectHostAction = new UICommand("SelectHost", this); //$NON-NLS-1$
 
-        if (availableHosts.size() > 0 && clusters.size() > 0)
-        {
+        // If now compatible hosts are found - disable the select host button
+        selectHostAction.setIsChangable(availableHosts.size() > 0);
+        selectHostAction.setIsExecutionAllowed(availableHosts.size() > 0);
+
+        if (clusters.size() > 0) {
             if (hosts.isEmpty())
             {
                 selectHostAction.setTitle(DataCenterSelectHostsAction);
@@ -328,6 +330,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 getOptionalActions().add(selectHostAction);
             }
         }
+
 
         ArrayList<storage_domains> unattachedStorage = new ArrayList<storage_domains>();
         boolean addToList;
