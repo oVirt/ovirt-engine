@@ -135,7 +135,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 if (!ImagesHandler.PerformImagesChecks(getVm(), messages, getVm().getstorage_pool_id(), Guid.Empty,
                                 false, !getParameters().getForce(), false, false,
                                 getParameters().getForce(), false, !getVm().getDiskMap().values().isEmpty(),
-                                !getVm().getDiskMap().values().isEmpty(), getVm().getDiskMap().values())) {
+                                true, getVm().getDiskMap().values())) {
                     returnValue = false;
                 }
             }
