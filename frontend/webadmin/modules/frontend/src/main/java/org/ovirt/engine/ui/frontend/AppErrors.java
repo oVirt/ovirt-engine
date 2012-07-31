@@ -820,6 +820,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot suspend VM that belongs to a  VM-Pool.")
     String VM_CANNOT_SUSPEND_VM_FROM_POOL();
 
+    @DefaultStringValue("Cannot suspend VM that has no image disks.")
+    String VM_CANNOT_SUSPEND_VM_WITHOUT_IMAGE_DISKS();
+
     @DefaultStringValue("User is not authorized to perform this action.")
     String USER_NOT_AUTHORIZED_TO_PERFORM_ACTION();
 

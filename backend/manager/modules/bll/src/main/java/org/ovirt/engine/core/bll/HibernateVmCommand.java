@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -257,6 +259,15 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                     } else if (DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(getVmId()) != null) {
                         retValue = false;
                         addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
+                    }
+
+                    if (retValue) {
+                        Collection<DiskImage> disksImages =
+                                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false);
+                        if (disksImages.isEmpty()) {
+                            retValue = false;
+                            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_VM_WITHOUT_IMAGE_DISKS);
+                        }
                     }
 
                     // Check storage before trying to create Images for hibernation.
