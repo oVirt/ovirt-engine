@@ -232,11 +232,8 @@ public class BackendStorageDomainResource extends
             ParametersProvider<StorageDomain, storage_domains> {
         @Override
         public VdcActionParametersBase getParameters(StorageDomain incoming, storage_domains entity) {
-            //we don't want to send the storage-domain type, so store the original value and re-set it after the mapping.
-            org.ovirt.engine.core.common.businessentities.StorageDomainType existingType = entity.getStorageStaticData()==null ? null : entity.getStorageStaticData().getstorage_domain_type();
             storage_domain_static updated = getMapper(modelType, storage_domain_static.class).map(
                     incoming, entity.getStorageStaticData());
-            updated.setstorage_domain_type(existingType);
             return new StorageDomainManagementParameter(updated);
         }
     }
