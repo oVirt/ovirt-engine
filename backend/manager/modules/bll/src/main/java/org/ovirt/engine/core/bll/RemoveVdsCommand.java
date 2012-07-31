@@ -23,7 +23,10 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 @LockIdNameAttribute
 public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
@@ -38,9 +41,16 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
     protected void executeCommand() {
         if (getVdsIdRef() != null && CanBeRemoved(getVdsId())) {
             glusterHostRemove();
-            RemoveVdsStatisticsFromDb();
-            RemoveVdsDynamicFromDb();
-            RemoveVdsStaticFromDb();
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                    RemoveVdsStatisticsFromDb();
+                    RemoveVdsDynamicFromDb();
+                    RemoveVdsStaticFromDb();
+                    return null;
+                }
+            });
             RemoveVdsFromCollection();
             setSucceeded(true);
         }
@@ -73,9 +83,13 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
             }
         }
 
+        return returnValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-        return returnValue;
     }
 
     @Override
