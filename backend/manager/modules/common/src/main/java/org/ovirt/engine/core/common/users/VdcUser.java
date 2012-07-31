@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.users;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -152,7 +151,8 @@ public class VdcUser implements IVdcUser, Serializable {
         String domain = getDomainControler();
         String username = getUserName();
 
-        if (StringUtils.isEmpty(username) || username.contains("@") || StringUtils.isEmpty(domain)) {
+        // empty username or a user with empty domain will be returned as is
+        if ( (username == null || username.length() == 0) || username.contains("@") || (domain == null || domain.length() == 0)) {
             return username;
         } else {
             return username + "@" + domain;
