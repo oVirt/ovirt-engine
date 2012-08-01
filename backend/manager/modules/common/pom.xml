@@ -61,7 +61,35 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <!--
+
+           The enforcer plugin is used to ban us from using artifacts that will fail
+           the Frontend's gwt compilation.
+
+      -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.1.1</version>
+        <executions>
+          <execution>
+            <id>enforce-banned-dependencies</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <rules>
+            <bannedDependencies>
+              <excludes>
+                <exclude>commons-lang</exclude>
+              </excludes>
+            </bannedDependencies>
+          </rules>
+          <fail>true</fail>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-
 </project>
