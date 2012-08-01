@@ -588,8 +588,7 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
 
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
-                && (model.getType() == SystemTreeItemType.System
-                        || model.getType() == SystemTreeItemType.DataCenter || model.getType() == SystemTreeItemType.Clusters));
+                && ReportInit.getInstance().getDashboard(model.getType().toString()) != null);
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
