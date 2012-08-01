@@ -20,9 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.core.compat.Version;
 
-;
-
-@SuppressWarnings("unused")
 public class UserPortalItemModel extends EntityModel
 {
 
@@ -325,11 +322,6 @@ public class UserPortalItemModel extends EntityModel
             this.spiceDriverVersion = spiceDriverVersion;
             OnPropertyChanged(new PropertyChangedEventArgs("spiceDriverVersion")); //$NON-NLS-1$
         }
-    }
-
-    public boolean getIsFromAutomaticPool()
-    {
-        return getIsFromPool() && getPoolType() == VmPoolType.Automatic;
     }
 
     private ItemBehavior behavior;

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -160,20 +159,6 @@ public class VmItemBehavior extends ItemBehavior
         getItem().setOsType(entity.getvm_os());
         getItem().setIsFromPool(entity.getVmPoolId() != null);
         getItem().setSpiceDriverVersion(entity.getSpiceDriverVersion());
-
-        // Assign PoolType.
-        if (entity.getVmPoolId() != null)
-        {
-            vm_pools pool = getItem().getResolutionService().ResolveVmPoolById(entity.getVmPoolId().getValue());
-
-            // Throw exception. Will help finding bugs in development phase.
-            if (pool == null)
-            {
-                throw new NotImplementedException();
-            }
-
-            getItem().setPoolType(pool.getvm_pool_type());
-        }
 
         if (getItem().getDefaultConsole() == null)
         {
