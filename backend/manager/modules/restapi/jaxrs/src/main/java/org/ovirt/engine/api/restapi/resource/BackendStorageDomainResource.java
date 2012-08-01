@@ -232,8 +232,14 @@ public class BackendStorageDomainResource extends
             ParametersProvider<StorageDomain, storage_domains> {
         @Override
         public VdcActionParametersBase getParameters(StorageDomain incoming, storage_domains entity) {
+            //save SD type before mapping
+            org.ovirt.engine.core.common.businessentities.StorageDomainType currentType = entity.getStorageStaticData()==null ? null : entity.getStorageStaticData().getstorage_domain_type();
             storage_domain_static updated = getMapper(modelType, storage_domain_static.class).map(
                     incoming, entity.getStorageStaticData());
+            //if SD type was 'Master', and user gave 'Data', they are the same, this is not a real update, so exchange data back to master.
+            if (currentType==org.ovirt.engine.core.common.businessentities.StorageDomainType.Master && updated.getstorage_domain_type()==org.ovirt.engine.core.common.businessentities.StorageDomainType.Data) {
+                updated.setstorage_domain_type(org.ovirt.engine.core.common.businessentities.StorageDomainType.Master);
+            }
             return new StorageDomainManagementParameter(updated);
         }
     }
