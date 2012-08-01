@@ -407,8 +407,11 @@ public class RsdlBuilder {
                 header.setName(key.toString());
                 Object value = action.getRequest().getHeaders().get(key);
                 if (value != null) {
-                    header.setValue(value.toString());
+                    ParamData paramData = (ParamData) value;
+                    header.setValue(paramData.getValue());
+                    header.setRequired(paramData.getRequired() == null ? false : paramData.getRequired());
                 }
+
                 link.getRequest().getHeaders().getHeaders().add(header);
             }
         }
@@ -423,7 +426,7 @@ public class RsdlBuilder {
                 param.setName(key.toString());
                 Object value = action.getRequest().getUrlparams().get(key);
                 if (value != null) {
-                    UrlParamData urlParamData = (UrlParamData)value;
+                    ParamData urlParamData = (ParamData)value;
                     param.setType(urlParamData.getType());
                     param.setContext(urlParamData.getContext());
                     param.setValue(urlParamData.getValue());

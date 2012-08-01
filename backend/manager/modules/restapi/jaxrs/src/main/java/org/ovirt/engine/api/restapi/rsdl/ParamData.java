@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.rsdl;
 
-public class UrlParamData {
+public class ParamData {
 
     private String context;
     private String value;

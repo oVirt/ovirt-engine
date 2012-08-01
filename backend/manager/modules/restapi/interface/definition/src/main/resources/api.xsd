@@ -2523,8 +2523,14 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
-          <xs:element name="mandatory" type="xs:boolean" minOccurs="0"/>
         </xs:sequence>
+       <xs:attribute name="required" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+       </xs:attribute>    
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
