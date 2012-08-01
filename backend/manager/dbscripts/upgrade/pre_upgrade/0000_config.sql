@@ -485,6 +485,7 @@ select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ipmilan,rsa,rsb,wti,cisco_ucs','2.2');
 select fn_db_update_config_value('VmGracefulShutdownMessage','The oVirt Engine is shutting down this Virtual Machine','general');
 select fn_db_update_config_value('DisconnectPoolOnReconstruct','0,2,3','general');
+select fn_db_update_config_value('SupportBridgesReportByVDSM','false','3.1');
 
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
