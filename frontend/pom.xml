@@ -42,6 +42,7 @@
                       <goal>generateAsync</goal>
                     </goals>
                   </pluginExecutionFilter>
+                  <action><ignore/></action>
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>

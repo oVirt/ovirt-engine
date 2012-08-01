@@ -72,17 +72,6 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>eclipse</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
           <propertyExpansion>runNlsCheck=true</propertyExpansion>
