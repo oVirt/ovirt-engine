@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -159,7 +161,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return canMigrateVm(getVmId(), getReturnValue().getCanDoActionMessages());
     }
 
-    protected boolean canMigrateVm(Guid vmGuid, java.util.ArrayList<String> reasons) {
+    protected boolean canMigrateVm(@SuppressWarnings("unused") Guid vmGuid, ArrayList<String> reasons) {
         boolean retValue = true;
         VM vm = getVm();
         if (vm == null) {
