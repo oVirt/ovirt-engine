@@ -117,6 +117,7 @@ public final class VdsProperties {
     public static final String network_bondings = "bondings";
     public static final String NETWORK_BRIDGES = "bridges";
     public static final String network_lastclientinterface = "lastClientIface";
+    public static final String NETWORK_INTERFACE = "iface";
 
     // Disks usage configuration
     public static final String VM_DISKS_USAGE = "disksUsage";

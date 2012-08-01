@@ -924,7 +924,7 @@ public class VdsBrokerObjectsBuilder {
         List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
         if (bridgesReportSupported) {
             VdsNetworkInterface iface = null;
-            String interfaceName = (String) network.get("interface");
+            String interfaceName = (String) network.get(VdsProperties.NETWORK_INTERFACE);
             if (interfaceName != null) {
                 iface = vdsInterfaces.get(interfaceName);
                 if (iface == null) {
