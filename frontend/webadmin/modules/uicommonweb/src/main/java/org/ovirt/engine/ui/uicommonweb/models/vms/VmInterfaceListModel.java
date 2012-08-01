@@ -282,7 +282,7 @@ public class VmInterfaceListModel extends SearchableListModel
                 ArrayList<Network> networks = new ArrayList<Network>();
                 for (Network a : (ArrayList<Network>) result1)
                 {
-                    if (a.getCluster().getstatus() == NetworkStatus.Operational)
+                    if (a.getCluster().getstatus() == NetworkStatus.Operational && a.isVmNetwork())
                     {
                         networks.add(a);
                     }
