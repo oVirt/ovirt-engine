@@ -246,7 +246,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 break;
             case CROSS_REF_OBJ:
                 String curRefObj = syntaxContainer.getPreviousSyntaxObject(0, SyntaxObjectType.CROSS_REF_OBJ);
-                curConditionRelationAC = mSearchObjectAC.getObjectRelationshipAutoCompleter(curRefObj);
+                curConditionRelationAC = mSearchObjectAC.getObjectRelationshipAutoCompleter();
                 if (idx + 1 < searchCharArr.length) {
                     tryNextObj = searchText.substring(curStartPos, idx + 2).toUpperCase();
                 }
@@ -624,7 +624,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     } else // curState == SyntaxObjectType.CROSS_REF_OBJ
                     {
                         relObj = retval.getPreviousSyntaxObject(0, SyntaxObjectType.CROSS_REF_OBJ);
-                        conditionRelationAC = mSearchObjectAC.getObjectRelationshipAutoCompleter(relObj);
+                        conditionRelationAC = mSearchObjectAC.getObjectRelationshipAutoCompleter();
 
                     }
                     if (conditionRelationAC != null) {

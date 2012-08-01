@@ -9,7 +9,7 @@ import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeConditionFieldAu
 import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeCrossRefAutoCompleter;
 
 public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
-    private final java.util.HashMap<String, String[]> mJoinDictionary = new java.util.HashMap<String, String[]>();
+    private final Map<String, String[]> mJoinDictionary = new HashMap<String, String[]>();
 
     public SearchObjectAutoCompleter(boolean isDesktopsAllowed) {
 
@@ -101,7 +101,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mJoinDictionary.put(secondObj + "." + firstObj, new String[] { secondColumnName, firstColumnName });
     }
 
-    private final static class EntitySearchInfo {
+    private static final class EntitySearchInfo {
         public EntitySearchInfo(IAutoCompleter crossRefAutoCompleter,
                 IConditionFieldAutoCompleter conditionFieldAutoCompleter,
                 String relatedTableNameWithOutTags,
@@ -246,31 +246,29 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
     public boolean isCrossReferece(String text, String obj) {
         IAutoCompleter completer = getCrossRefAutoCompleter(obj);
-        boolean retval = false;
         if (completer != null) {
-            retval = completer.validate(text);
+            return completer.validate(text);
         }
-        return retval;
+        return false;
     }
 
     public String getInnerJoin(String searchObj, String crossRefObj) {
-        String[] JoinKey = mJoinDictionary.get(StringFormat.format("%1$s.%2$s", searchObj, crossRefObj));
-        String crossRefTable = getRelatedTableName(crossRefObj);
-        String searchObjTable = getRelatedTableName(searchObj);
+        final String[] joinKey = mJoinDictionary.get(StringFormat.format("%1$s.%2$s", searchObj, crossRefObj));
+        final String crossRefTable = getRelatedTableName(crossRefObj);
+        final String searchObjTable = getRelatedTableName(searchObj);
 
-        return StringFormat.format(" LEFT OUTER JOIN %3$s ON %1$s.%2$s=%3$s.%4$s ", searchObjTable, JoinKey[0],
-                crossRefTable, JoinKey[1]);
+        return StringFormat.format(" LEFT OUTER JOIN %3$s ON %1$s.%2$s=%3$s.%4$s ", searchObjTable, joinKey[0],
+                crossRefTable, joinKey[1]);
     }
 
     public IConditionFieldAutoCompleter getFieldAutoCompleter(String obj) {
-        IConditionFieldAutoCompleter retval = null;
         if (obj == null) {
             return null;
         }
         if (getEntitySearchInfo(obj) != null) {
             return getEntitySearchInfo(obj).conditionFieldAutoCompleter;
         }
-        return retval;
+        return null;
     }
 
     public String getRelatedTableNameWithOutTags(String obj) {
@@ -308,17 +306,16 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         return null;
     }
 
-    public IAutoCompleter getObjectRelationshipAutoCompleter(String obj) {
+    public IAutoCompleter getObjectRelationshipAutoCompleter() {
         return StringConditionRelationAutoCompleter.INSTANCE;
     }
 
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String obj, String fieldName) {
-        IConditionValueAutoCompleter retval = null;
-        IConditionFieldAutoCompleter curConditionFieldAC = getFieldAutoCompleter(obj);
+        final IConditionFieldAutoCompleter curConditionFieldAC = getFieldAutoCompleter(obj);
         if (curConditionFieldAC != null) {
-            retval = curConditionFieldAC.getFieldValueAutoCompleter(fieldName);
+            return curConditionFieldAC.getFieldValueAutoCompleter(fieldName);
         }
-        return retval;
+        return null;
     }
 
     public String getDefaultSort(String obj) {
