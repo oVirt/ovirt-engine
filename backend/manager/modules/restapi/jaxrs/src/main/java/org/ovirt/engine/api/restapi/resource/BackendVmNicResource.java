@@ -92,14 +92,14 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
         HotPlugUnplugVmNicParameters params = new HotPlugUnplugVmNicParameters(guid, PlugAction.PLUG);
         BackendNicsResource parent = (BackendNicsResource) collection;
         params.setVmId(parent.parentId);
-        return performAction(VdcActionType.HotPlugUnplugVmNic, params);
+        return doAction(VdcActionType.HotPlugUnplugVmNic, params, action);
     }
 
     @Override
     public Response deactivate(Action action) {
         HotPlugUnplugVmNicParameters params = new HotPlugUnplugVmNicParameters(guid, PlugAction.UNPLUG);
         params.setVmId(((BackendNicsResource) collection).parentId);
-        return performAction(VdcActionType.HotPlugUnplugVmNic, params);
+        return doAction(VdcActionType.HotPlugUnplugVmNic, params, action);
     }
 
     @Override
