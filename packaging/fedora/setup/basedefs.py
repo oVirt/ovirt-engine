@@ -61,7 +61,6 @@ DIR_OVIRT_PKI="/etc/pki/ovirt-engine"
 
 
 FILE_INSTALLER_LOG="engine-setup.log"
-FILE_JBOSS_HTTP_PARAMS="/etc/ovirt-engine/web-conf.js"
 FILE_KRB_CONF="%s/deployments/configuration/krb5.conf" % DIR_ENGINE
 FILE_CA_CRT_SRC="%s/ca.pem"%(DIR_OVIRT_PKI)
 FILE_CA_CRT_TEMPLATE="%s/cacert.template"%(DIR_OVIRT_PKI)

@@ -106,17 +106,6 @@ def _configureJbossXml():
         logging.error(traceback.format_exc())
         raise output_messages.ERR_EXP_FAILED_CONFIG_JBOSS
 
-def _editRootWar():
-    try:
-        # Update web-conf.js file to use port 80/443
-        logging.debug("Update %s to use port 80 and 443"%(basedefs.FILE_JBOSS_HTTP_PARAMS))
-
-        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var http_port.*", 'var http_port = "%s";'%(HTTP_NEW_PORT))
-        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var https_port.*", 'var https_port = "%s";'%(HTTPS_NEW_PORT))
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_WEB_CONF%(basedefs.FILE_JBOSS_HTTP_PARAMS))
-
 def _redirectUrl():
     try:
         # Redirect oVirt specific URLs to the application server using the AJP protocol
@@ -185,7 +174,6 @@ if __name__ == "__main__":
     _configureSelinuxBoolean()
     _configureJbossXml()
     _redirectUrl()
-    _editRootWar()
     _exportPrivateKey()
     #_configureIpTables()
     _listenHttpPort()

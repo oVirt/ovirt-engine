@@ -12,15 +12,15 @@
     <param-value>false</param-value>
   </context-param>
 
-   <!-- <security-constraint>
-      <web-resource-collection>
-        <web-resource-name>Protected Context</web-resource-name>
-        <description>Protected Context</description>
-        <url-pattern>/*</url-pattern>
-      </web-resource-collection>
-      <user-data-constraint>
-        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-      </user-data-constraint>
-   </security-constraint> -->
+  <!-- confidentiality -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>everything</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
 
 </web-app>

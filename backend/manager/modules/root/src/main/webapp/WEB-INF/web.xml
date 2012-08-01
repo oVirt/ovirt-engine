@@ -6,16 +6,6 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
-  <!-- Find (or guess) and send the content of the web-conf.js file: -->
-  <servlet>
-    <servlet-name>web-conf.js</servlet-name>
-    <servlet-class>org.ovirt.engine.core.WebConfServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>web-conf.js</servlet-name>
-    <url-pattern>/web-conf.js</url-pattern>
-  </servlet-mapping>
-
   <!-- File servlet instance to serve the CA certificate: -->
   <servlet>
     <servlet-name>ca.crt</servlet-name>

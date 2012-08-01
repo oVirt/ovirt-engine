@@ -28,4 +28,15 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
+	<!-- confidentiality -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>everything</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
 </web-app>

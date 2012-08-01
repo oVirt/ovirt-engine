@@ -353,6 +353,15 @@ install -dm 755 %{buildroot}/%{engine_lock}
 ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
 %endif
 
+#
+# Force TLS/SSL for selected applications.
+#
+for war in restapi userportal webadmin; do
+    sed -i \
+        's#<transport-guarantee>NONE</transport-guarantee>#<transport-guarantee>CONFIDENTIAL</transport-guarantee>#' \
+        "%{buildroot}%{engine_ear}/${war}.war/WEB-INF/web.xml"
+done
+
 # Register poms
 %if !%{install_poms}
 rm -fr "%{buildroot}%{_mavenpomdir}"
@@ -582,7 +591,6 @@ fi
 # Engine configuration files:
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf
-%config(noreplace) %{engine_etc}/web-conf.js
 
 # Files needed by the service:
 %config(noreplace) %{_sysconfdir}/sysconfig/%{engine_name}

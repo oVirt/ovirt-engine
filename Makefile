@@ -274,8 +274,6 @@ install_setup:
 	ln -s $(DATA_DIR)/scripts/engine-upgrade.py $(DESTDIR)$(BIN_DIR)/engine-upgrade
 	install -m 755 packaging/fedora/setup/engine-check-update $(DESTDIR)$(BIN_DIR)/
 
-	# Configuration file for the index page:
-	install -m 644 packaging/fedora/setup/resources/jboss/web-conf.js $(DESTDIR)$(PKG_SYSCONF_DIR)
 	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RPM_RELEASE_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
 
 install_aio_plugin:

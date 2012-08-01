@@ -127,7 +127,7 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
                                               { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
-                                                'functions' : [_editSysconfig, _editWebConf] },
+                                                'functions' : [_editSysconfig] },
                                               { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
                                                 'functions' : [_updatePgPassFile]}]
                        },
@@ -760,22 +760,6 @@ def _configureHttpdSslPort():
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_HTTPS_LISTEN_PORT%(basedefs.FILE_HTTPD_SSL_CONFIG))
-
-def _editWebConf():
-    try:
-        # Update rhevm_index.html file with consts
-        logging.debug("update %s with http & ssl urls"%(basedefs.FILE_JBOSS_HTTP_PARAMS))
-
-        controller.CONF["HTTP_URL"] = "http://" + controller.CONF["HOST_FQDN"] + ":" + controller.CONF["HTTP_PORT"]
-        controller.CONF["HTTPS_URL"] = "https://" + controller.CONF["HOST_FQDN"] + ":" + controller.CONF["HTTPS_PORT"]
-
-        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var host_fqdn.*", 'var host_fqdn = "%s";'%(controller.CONF["HOST_FQDN"]))
-        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var http_port.*", 'var http_port = "%s";'%(controller.CONF["HTTP_PORT"]))
-        utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var https_port.*", 'var https_port = "%s";'%(controller.CONF["HTTPS_PORT"]))
-
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_WEB_CONF)
 
 def _createCA():
 
@@ -1968,7 +1952,9 @@ def main(configFile=None):
         # Print info
         _addFinalInfoMsg()
         print output_messages.INFO_INSTALL_SUCCESS
-        print output_messages.INFO_RHEVM_URL % controller.CONF["HTTPS_URL"]
+        print output_messages.INFO_RHEVM_URL % (
+            "http://%s:%s" % (controller.CONF["HOST_FQDN"],
+            controller.CONF["HTTP_PORT"]))
         _printAdditionalMessages()
 
     finally:
