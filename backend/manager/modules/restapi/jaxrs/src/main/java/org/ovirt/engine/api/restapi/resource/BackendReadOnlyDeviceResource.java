@@ -7,7 +7,7 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendReadOnlyDeviceResource<D extends BaseDevice, C extends BaseDevices, Q extends IVdcQueryable> extends AbstractBackendSubResource<D, Q> implements ReadOnlyDeviceResource<D> {
+public class BackendReadOnlyDeviceResource<D extends BaseDevice, C extends BaseDevices, Q extends IVdcQueryable> extends AbstractBackendActionableResource<D, Q> implements ReadOnlyDeviceResource<D> {
 
     protected AbstractBackendReadOnlyDevicesResource<D, C, Q> collection;
 
