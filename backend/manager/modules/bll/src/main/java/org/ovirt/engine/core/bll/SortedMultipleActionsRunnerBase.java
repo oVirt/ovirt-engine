@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.action.*;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 
 public abstract class SortedMultipleActionsRunnerBase extends MultipleActionsRunner {
     public SortedMultipleActionsRunnerBase(VdcActionType actionType,
