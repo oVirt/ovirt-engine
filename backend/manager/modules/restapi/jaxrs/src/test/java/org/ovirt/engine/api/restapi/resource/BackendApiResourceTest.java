@@ -66,6 +66,7 @@ public class BackendApiResourceTest extends Assert {
     protected static final String URI_BASE = URI_ROOT + BASE_PATH;
     protected static final String BUNDLE_PATH = "org/ovirt/engine/api/restapi/logging/Messages";
     protected static final String sessionId = Guid.NewGuid().toString();
+    private static String USER_FILTER_HEADER = "Filter";
 
     protected static final int MAJOR = 11;
     protected static final int MINOR = 0;
@@ -210,7 +211,7 @@ public class BackendApiResourceTest extends Assert {
         expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();
         List<String> filterValue = new ArrayList<String>();
         filterValue.add("false");
-        expect(httpHeaders.getRequestHeader("filter")).andReturn(filterValue).anyTimes();
+        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue).anyTimes();
         resource.setHttpHeaders(httpHeaders);
     }
 

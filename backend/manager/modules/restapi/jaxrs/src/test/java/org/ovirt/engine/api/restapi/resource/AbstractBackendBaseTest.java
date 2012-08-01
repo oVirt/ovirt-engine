@@ -71,6 +71,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected static final String INCOMPLETE_PARAMS_DETAIL_SERVER_LOCALE = " erforderlich fur ";
     protected static final Locale CLIENT_LOCALE = new Locale("ga", "IE");
 
+    protected static String USER_FILTER_HEADER = "Filter";
+
     protected static int SERVER_ERROR = 500;
     protected static int BAD_REQUEST = 400;
 
@@ -110,7 +112,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         expect(httpHeaders.getRequestHeader("Accept")).andReturn(accepts).anyTimes();
         List<String> filterValue = new ArrayList<String>();
         filterValue.add("false");
-        expect(httpHeaders.getRequestHeader("filter")).andReturn(filterValue).anyTimes();
+        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue).anyTimes();
         mapperLocator = new MappingLocator();
         mapperLocator.populate();
         locale = Locale.getDefault();

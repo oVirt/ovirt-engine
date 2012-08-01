@@ -46,7 +46,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         List<String> filterValue = new ArrayList<String>();
         filterValue.add("true");
         EasyMock.reset(httpHeaders);
-        expect(httpHeaders.getRequestHeader("filter")).andReturn(filterValue);
+        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
         resource.setUriInfo(setUpBasicUriExpectations());
         control.replay();
         resource.get();

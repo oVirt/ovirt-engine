@@ -9,14 +9,14 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/vms/{vm:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/vms/{vm:id}|rel=delete
   request:
     body:
@@ -594,14 +594,14 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/storagedomains/{storagedomain:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/storagedomains/{storagedomain:id}|rel=delete
   request:
     body:
@@ -759,14 +759,14 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/clusters/{cluster:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/clusters/{cluster:id}|rel=delete
   request:
     body:
@@ -896,14 +896,14 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/datacenters/{datacenter:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/datacenters/{datacenter:id}|rel=delete
   request:
     body:
@@ -1253,14 +1253,14 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/hosts/{host:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/hosts/{host:id}|rel=delete
   request:
     body:
@@ -1728,14 +1728,14 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/templates/{template:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/templates/{template:id}|rel=delete
   request:
     body:
@@ -2101,14 +2101,14 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/vmpools/{vmpool:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {filter: true|false}
+    headers: {Filter: true|false}
 - name: /api/vmpools/{vmpool:id}|rel=delete
   request:
     body:
