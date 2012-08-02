@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
-@SuppressWarnings("unused")
-public class VolumeEventListModel extends EventListModel
+public class VolumeEventListModel extends SubTabEventListModel
 {
 
     @Override

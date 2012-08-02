@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
-@SuppressWarnings("unused")
-public class UserEventListModel extends EventListModel
+public class UserEventListModel extends SubTabEventListModel
 {
 
     @Override

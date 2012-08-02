@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
-@SuppressWarnings("unused")
-public class VmEventListModel extends EventListModel
+public class VmEventListModel extends SubTabEventListModel
 {
     @Override
     protected void onEntityContentChanged()

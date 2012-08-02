@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
-@SuppressWarnings("unused")
-public class HostEventListModel extends EventListModel
+public class HostEventListModel extends SubTabEventListModel
 {
 
     @Override

@@ -3,11 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
-public class QuotaEventListModel extends EventListModel
+public class QuotaEventListModel extends SubTabEventListModel
 {
     public QuotaEventListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());

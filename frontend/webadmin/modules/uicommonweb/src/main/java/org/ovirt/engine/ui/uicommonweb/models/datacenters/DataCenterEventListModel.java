@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
-@SuppressWarnings("unused")
-public class DataCenterEventListModel extends EventListModel
+public class DataCenterEventListModel extends SubTabEventListModel
 {
 
     @Override
