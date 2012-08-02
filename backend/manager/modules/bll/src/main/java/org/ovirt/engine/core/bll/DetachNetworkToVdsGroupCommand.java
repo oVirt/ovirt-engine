@@ -120,4 +120,10 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     public String getNetworkName() {
         return getParameters().getNetwork().getname();
     }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+    }
 }

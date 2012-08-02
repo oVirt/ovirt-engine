@@ -161,8 +161,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
             return false;
         } else if (!interfaceNetwork.isVmNetwork()) {
-            AddCustomValue("networks", interfaceNetwork.getname());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
+            addCanDoActionMessage(String.format("$networks %1$s", interfaceNetwork.getname()));
             return false;
         }
 
