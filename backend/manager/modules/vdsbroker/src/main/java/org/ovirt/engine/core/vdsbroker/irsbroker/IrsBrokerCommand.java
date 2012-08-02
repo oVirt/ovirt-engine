@@ -1292,6 +1292,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                             .getEventListener()
                                             .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
                                                     true, true, domainId);
+                                    clearVdsFromCache(vdsId, vds.getvds_name());
                                 } else {
                                     log.warnFormat(
                                             "vds {0} reported domain {1}:{2} as in problem, vds is in status {3}, no need to move to nonoperational",
