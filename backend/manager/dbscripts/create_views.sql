@@ -103,10 +103,20 @@ INNER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_i
 INNER JOIN vds_dynamic ON vds_dynamic.vds_id = storage_pool.spm_vds_id
 LEFT OUTER JOIN repo_file_meta_data ON storage_pool_iso_map.storage_id = repo_file_meta_data.repo_domain_id;
 
+CREATE OR REPLACE VIEW storage_for_image_view
+AS
+SELECT images.image_guid as image_id,
+	   array_to_string(array_agg(storage_domain_static.storage), ',') as storage_path,
+	   array_to_string(array_agg(storage_domain_static.id), ',') storage_id,
+	   array_to_string(array_agg(storage_domain_static.storage_name), ',') as storage_name
+FROM images
+LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
+LEFT OUTER JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
+GROUP BY images.image_guid;
 
 CREATE OR REPLACE VIEW vm_images_view
 AS
-SELECT     array_to_string(array_agg(storage_id), ',') as storage_id, array_to_string(array_agg(storage_path), ',') as storage_path, array_to_string(array_agg(storage_name), ',') as storage_name,
+SELECT                storage_for_image_view.storage_id as storage_id, storage_for_image_view.storage_path as storage_path, storage_for_image_view.storage_name as storage_name,
 					  images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
                       images_storage_domain_view.creation_date as creation_date, disk_image_dynamic.actual_size as actual_size, disk_image_dynamic.read_rate as read_rate, 
                       disk_image_dynamic.read_latency_seconds as read_latency_seconds, disk_image_dynamic.write_latency_seconds as write_latency_seconds,
@@ -123,18 +133,8 @@ SELECT     array_to_string(array_agg(storage_id), ',') as storage_id, array_to_s
                       images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable
 FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
-WHERE images_storage_domain_view.active = TRUE
-GROUP BY storage_pool_id,image_guid,creation_date,
-disk_image_dynamic.actual_size,disk_image_dynamic.read_rate, 
-disk_image_dynamic.read_latency_seconds, disk_image_dynamic.write_latency_seconds,
-disk_image_dynamic.flush_latency_seconds,disk_image_dynamic.write_rate,size,
-it_guid,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,
-image_group_id,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,number_of_vms,
-entity_type,vm_names,quota_id,quota_name,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable;
-
-
-
-
+INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
+WHERE images_storage_domain_view.active = TRUE;
 
 
 CREATE OR REPLACE VIEW all_disks
@@ -151,9 +151,9 @@ SELECT storage_impl.*,
 FROM
 (
     SELECT 0 AS disk_storage_type,
-           array_to_string(array_agg(storage_id), ',') as storage_id, -- Storage fields
-           array_to_string(array_agg(storage_path), ',') as storage_path,
-           array_to_string(array_agg(storage_name), ',') as storage_name,
+           storage_for_image_view.storage_id as storage_id, -- Storage fields
+           storage_for_image_view.storage_path as storage_path,
+           storage_for_image_view.storage_name as storage_name,
            storage_pool_id,
            image_guid, -- Image fields
            creation_date,
@@ -190,8 +190,8 @@ FROM
            null AS product_id,
            null AS device_size
     FROM images_storage_domain_view
+    INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
     WHERE active = TRUE
-    GROUP BY storage_pool_id,image_guid,creation_date,actual_size,read_rate,write_rate,read_latency_seconds,write_latency_seconds,flush_latency_seconds,size,it_guid,imageStatus,lastModified,volume_type,volume_format,image_group_id,boot,description,ParentId,app_list,vm_snapshot_id,active,entity_type,number_of_vms,vm_names,quota_id,quota_name,quota_enforcement_type
     UNION
     SELECT 1 AS disk_storage_type,
            null AS storage_id, -- Storage domain fields
