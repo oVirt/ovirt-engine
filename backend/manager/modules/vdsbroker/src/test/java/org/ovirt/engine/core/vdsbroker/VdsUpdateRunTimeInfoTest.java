@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +24,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -119,14 +116,6 @@ public class VdsUpdateRunTimeInfoTest {
     }
 
     @Test
-    public void testLogMtuDiffs() {
-        for (VdsNetworkInterface iface : getInterfaces()) {
-            updater.logMTUDifferences(getClustersMap(), iface);
-        }
-        assertEquals(1, mockAuditLogDao.getAll().size());
-    }
-
-    @Test
     public void updateVmDevicesNull() {
         updater.updateVmDevices(Collections.singletonList(""));
 
@@ -156,24 +145,6 @@ public class VdsUpdateRunTimeInfoTest {
 
         assertEquals("wrong number of new devices", 1, updater.getNewVmDevices().size());
         assertEquals("wrong number of removed devices", 0, updater.getRemovedVmDevices().size());
-    }
-
-    private static List<VdsNetworkInterface> getInterfaces() {
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
-        VdsNetworkInterface nic = new VdsNetworkInterface();
-        nic.setMtu(1500);
-        nic.setNetworkName("oz");
-        ifaces.add(nic);
-        return ifaces;
-    }
-
-    private static Map<String, Network> getClustersMap() {
-        Map<String, Network> map = new HashMap<String, Network>();
-        Network net = new Network();
-        net.setname("oz");
-        net.setMtu(9000);
-        map.put("oz", net);
-        return map;
     }
 
     private void initConditions() {

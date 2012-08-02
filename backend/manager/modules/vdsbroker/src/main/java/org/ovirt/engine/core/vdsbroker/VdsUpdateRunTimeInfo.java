@@ -1,9 +1,5 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import static org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLogKeys.HostNetworkMTU;
-import static org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLogKeys.LogicalNetworkMTU;
-import static org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomAuditLogKeys.NetworkName;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -548,8 +544,6 @@ public class VdsUpdateRunTimeInfo {
 
         try {
             for (VdsNetworkInterface iface : interfaces) {
-                // report if MTU value differ from cluster
-                logMTUDifferences(networksByName, iface);
 
                 // Handle nics that are non bonded and not vlan over bond
                 if (isRequiredInterfaceDown(networksByName, iface)) {
@@ -632,26 +626,6 @@ public class VdsUpdateRunTimeInfo {
                 // no nics are down, remove from list if exists
                 hostDownTimes.remove(_vds.getId());
             }
-        }
-    }
-
-    /**
-     * audit networks which have different values from what the logical network dictates. logical network MTU = 0 is for
-     * using the host default MTU so no need to warn the admin.
-     * @param clusterNetworkByName
-     * @param interfaces
-     */
-    public void logMTUDifferences(Map<String, Network> clusterNetworkByName,
-            VdsNetworkInterface iface) {
-        if (iface.getNetworkName() != null && clusterNetworkByName.containsKey(iface.getNetworkName()) &&
-                clusterNetworkByName.get(iface.getNetworkName()).getMtu() != 0 &&
-                iface.getMtu() != clusterNetworkByName.get(iface.getNetworkName()).getMtu()) {
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.AddCustomValue(NetworkName, iface.getNetworkName());
-            logable.AddCustomValue(HostNetworkMTU, String.valueOf(iface.getMtu()));
-            logable.AddCustomValue(LogicalNetworkMTU,
-                    String.valueOf(clusterNetworkByName.get(iface.getNetworkName()).getMtu()));
-            auditLog(logable, AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK);
         }
     }
 

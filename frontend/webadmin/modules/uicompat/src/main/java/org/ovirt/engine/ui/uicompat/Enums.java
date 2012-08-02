@@ -295,8 +295,6 @@ public interface Enums extends LocalizedEnums {
 
     String Snapshot$SnapshotType___PREVIEW();
 
-    String AuditLogType___VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK();
-
     String VdsSpmStatus___None();
 
     String VdsSpmStatus___Contending();
