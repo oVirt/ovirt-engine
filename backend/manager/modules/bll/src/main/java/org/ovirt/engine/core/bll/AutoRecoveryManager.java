@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -53,24 +54,24 @@ public class AutoRecoveryManager {
         check(dbFacade.getVdsDAO(),
                 VdcActionType.ActivateVds,
                 new DoWithClosure<VDS, VdcActionParametersBase>() {
-                    @Override
-                    public VdcActionParametersBase doWith(final VDS arg) {
-                        final VdsActionParameters params = new VdsActionParameters(arg.getId());
-                        params.setRunSilent(true);
-                        return params;
-                    }
-                }, "hosts");
+            @Override
+            public VdcActionParametersBase doWith(final VDS arg) {
+                final VdsActionParameters params = new VdsActionParameters(arg.getId());
+                params.setRunSilent(true);
+                return params;
+            }
+        }, "hosts");
         check(dbFacade.getStorageDomainDAO(),
                 VdcActionType.ActivateStorageDomain,
                 new DoWithClosure<storage_domains, VdcActionParametersBase>() {
-                    @Override
-                    public VdcActionParametersBase doWith(final storage_domains arg) {
-                        final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(
-                                arg.getId(), new Guid(arg.getstorage_pool_id().getUuid()));
-                        params.setRunSilent(true);
-                        return params;
-                    }
-                }, "storage domains");
+            @Override
+            public VdcActionParametersBase doWith(final storage_domains arg) {
+                final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(
+                        arg.getId(), new Guid(arg.getstorage_pool_id().getUuid()));
+                params.setRunSilent(true);
+                return params;
+            }
+        }, "storage domains");
     }
 
     /**
@@ -85,6 +86,10 @@ public class AutoRecoveryManager {
             final VdcActionType actionType,
             final DoWithClosure<T, VdcActionParametersBase> paramsCallback,
             final String logMsg) {
+        if (!shouldPerformRecoveryOnType(logMsg)) {
+            log.info("Autorecovering " + logMsg + " is disabled, skipping");
+            return;
+        }
         log.info("Checking autorecoverable " + logMsg);
         final List<T> fails = dao.listFailedAutorecoverables();
         final BackendInternal backend = getBackend();
@@ -108,6 +113,17 @@ public class AutoRecoveryManager {
 
     private interface DoWithClosure<T, R> {
         R doWith(T arg);
+    }
+
+    private static boolean shouldPerformRecoveryOnType(String type) {
+        Map<String, String> allowedRecoveryTypesFromConfig =
+                Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes);
+        String isAllowed = allowedRecoveryTypesFromConfig.get(type);
+        if (isAllowed != null) {
+            return Boolean.parseBoolean(isAllowed);
+        }
+
+        return true;
     }
 
 }

@@ -762,17 +762,17 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(" WHERE RowNum BETWEEN %1$s AND %2$s")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
-            realValue = "PagingSyntax")
+    realValue = "PagingSyntax")
     DBPagingSyntax(217),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Range")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
-            realValue = "PagingType")
+    realValue = "PagingType")
     DBPagingType(218),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
-            realValue = "SearchTemplate")
+    realValue = "SearchTemplate")
     DBSearchTemplate(219),
     // Do not use those (used internally)
     @Deprecated
@@ -1036,7 +1036,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
-            realValue = "LikeSyntax")
+    realValue = "LikeSyntax")
     DBLikeSyntax(298),
 
     @Deprecated
@@ -1052,7 +1052,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
-            realValue = "I18NPrefix")
+    realValue = "I18NPrefix")
     DBI18NPrefix(301),
 
     @TypeConverterAttribute(String.class)
@@ -1389,6 +1389,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     SupportBridgesReportByVDSM(370),
+
+    @TypeConverterAttribute(Map.class)
+    @DefaultValueAttribute("{\"storage domains\":\"false\",\"hosts\":\"true\"}")
+    AutoRecoveryAllowedTypes(371),
 
     Invalid(65535);
 

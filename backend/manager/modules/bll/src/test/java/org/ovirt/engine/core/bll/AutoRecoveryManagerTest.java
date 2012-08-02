@@ -4,13 +4,17 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,6 +27,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -31,9 +37,11 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AutoRecoveryManagerTest {
-    @Rule
-    public static MockConfigRule mcr = new MockConfigRule();
     private AutoRecoveryManager manager;
+
+    @Rule
+    public static MockConfigRule mcr =
+    new MockConfigRule(mockConfig(ConfigValues.AutoRecoveryAllowedTypes, new HashMap<String, String>()));
 
     @Mock
     private BackendInternal backendMock;
@@ -64,11 +72,37 @@ public class AutoRecoveryManagerTest {
     }
 
     @Test
-    public void onTimer() {
+    public void onTimerNoConfig() {
         manager.onTimer();
         verify(backendMock, times(vdss.size())).runInternalAction(eq(VdcActionType.ActivateVds),
                 any(VdcActionParametersBase.class));
         verify(backendMock, times(storageDomains.size())).runInternalAction(eq(VdcActionType.ActivateStorageDomain),
+                any(VdcActionParametersBase.class));
+    }
+
+    @Test
+    public void onTimerFullConfig() {
+        Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("storage domains",
+                Boolean.TRUE.toString());
+        Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
+                Boolean.TRUE.toString());
+        manager.onTimer();
+        verify(backendMock, times(vdss.size())).runInternalAction(eq(VdcActionType.ActivateVds),
+                any(VdcActionParametersBase.class));
+        verify(backendMock, times(storageDomains.size())).runInternalAction(eq(VdcActionType.ActivateStorageDomain),
+                any(VdcActionParametersBase.class));
+    }
+
+    @Test
+    public void onTimerFalseConfig() {
+        Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("storage domains",
+                Boolean.FALSE.toString());
+        Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
+                Boolean.FALSE.toString());
+        manager.onTimer();
+        verify(backendMock, never()).runInternalAction(eq(VdcActionType.ActivateVds),
+                any(VdcActionParametersBase.class));
+        verify(backendMock, never()).runInternalAction(eq(VdcActionType.ActivateStorageDomain),
                 any(VdcActionParametersBase.class));
     }
 }
