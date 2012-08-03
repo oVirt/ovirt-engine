@@ -42,11 +42,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.jcraft</groupId>
-      <artifactId>jsch</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
       <version>${mina-core.version}</version>

@@ -37,13 +37,6 @@ public class VdsInstallerSSH {
         this.port = port;
     }
 
-    private Credentials _prepareCredentials(String rootPassword) {
-        Credentials creds = new Credentials();
-        creds.setPassword(rootPassword);
-        creds.setUsername("root");
-        return creds;
-    }
-
     private void _callbackEndTransfer() {
         if (this.callback != null) {
             this.callback.endTransfer();
@@ -74,24 +67,41 @@ public class VdsInstallerSSH {
         }
     }
 
-    private boolean _doConnect(String server, Credentials creds) {
+    private boolean _doConnect(
+        String server,
+        String user,
+        String userPassword,
+        String keyStore,
+        String keyStorePassword
+    ) {
         return _doConnect(
             server,
-            creds,
+            user,
+            userPassword,
+            keyStore,
+            keyStorePassword,
             Config.<Integer>GetValue(
                 ConfigValues.SSHInactivityTimoutSeconds
             ) * 1000
         );
     }
 
-    private boolean _doConnect(String server, Credentials creds, long timeout) {
-
+    private boolean _doConnect(
+        String server,
+        String user,
+        String userPassword,
+        String keyStore,
+        String keyStorePassword,
+        long timeout
+    ) {
         log.debug(
             String.format(
-                "_doConnect enter (%1$s, { %2$s, %3$s }, %4$d)",
+                "_doConnect enter (%1$s, %2$s, %3$s, %4$s, %5$s, %6$d)",
                 server,
-                creds.getUsername(),
-                creds.getCertPath(),
+                user,
+                userPassword,
+                keyStore,
+                keyStorePassword,
                 timeout
             )
         );
@@ -104,11 +114,11 @@ public class VdsInstallerSSH {
             this.client.setHardTimeout(timeout);
             this.client.setSoftTimeout(timeout);
             this.client.setHost(this.host, this.port);
-            this.client.setUser(creds.getUsername());
+            this.client.setUser(user);
 
-            if (creds.getCertPath() == null) {
+            if (keyStore == null) {
                 log.debug("Using password authentication.");
-                this.client.setPassword(creds.getPassword());
+                this.client.setPassword(userPassword);
             }
             else {
                 log.debug("Using Public Key Authentication.");
@@ -116,7 +126,7 @@ public class VdsInstallerSSH {
                 KeyStore.PrivateKeyEntry entry;
                 InputStream in = null;
                 try {
-                    in = new FileInputStream(creds.getCertPath());
+                    in = new FileInputStream(keyStore);
 
                     KeyStore ks = KeyStore.getInstance("JKS");
                     ks.load(in, null);
@@ -124,14 +134,15 @@ public class VdsInstallerSSH {
                     entry = (KeyStore.PrivateKeyEntry)ks.getEntry(
                         alias,
                         new KeyStore.PasswordProtection(
-                            creds.getPassphrase().toCharArray()
+                            keyStorePassword.toCharArray()
                         )
                     );
                 }
                 catch (Exception e) {
                     throw new KeyStoreException(
                         String.format(
-                            "Failed to get certificate entry for alias: %1$s",
+                            "Failed to get certificate entry from key store: %1$s/%2$s",
+                            keyStore,
                             alias
                         ),
                         e
@@ -151,7 +162,8 @@ public class VdsInstallerSSH {
                 if (entry == null) {
                     throw new KeyStoreException(
                         String.format(
-                            "No certificate entry for alias: %1$s",
+                            "Bad key store: %1$s/%2$s",
+                            keyStore,
                             alias
                         )
                     );
@@ -252,24 +264,32 @@ public class VdsInstallerSSH {
     public final boolean connect(String server, String rootPassword) {
         return _doConnect(
             server,
-            _prepareCredentials(rootPassword)
+            "root",
+            rootPassword,
+            null,
+            null
         );
     }
 
     public final boolean connect(String server, String rootPassword, long timeout) {
         return _doConnect(
             server,
-            _prepareCredentials(rootPassword),
+            "root",
+            rootPassword,
+            null,
+            null,
             timeout
         );
     }
 
-    public final boolean connect(String server, String certPath, String password) {
-        Credentials creds = new Credentials();
-        creds.setPassphrase(password);
-        creds.setCertPath(certPath);
-        creds.setUsername("root");
-        return _doConnect(server, creds);
+    public final boolean connect(String server, String keyStore, String keyStorePassword) {
+        return _doConnect(
+            server,
+            "root",
+            null,
+            keyStore,
+            keyStorePassword
+        );
     }
 
     public final boolean executeCommand(String command) {
