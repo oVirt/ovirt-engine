@@ -16,8 +16,14 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("[N/A]")
     String unAvailablePropertyLabel();
 
-    @DefaultStringValue("</br>")
+    @DefaultStringValue("<br/>")
     String lineBreak();
+
+    @DefaultStringValue(", ")
+    String commaBreak();
+
+    @DefaultStringValue(" and ")
+    String andBreak();
 
     @DefaultStringValue(" ")
     String space();
@@ -840,6 +846,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Shareable")
     String shareable();
+
+    @DefaultStringValue("Bootable")
+    String bootable();
 
     @DefaultStringValue("Internal")
     String internalDisk();

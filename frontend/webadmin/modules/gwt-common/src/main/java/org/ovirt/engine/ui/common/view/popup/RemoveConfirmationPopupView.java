@@ -19,9 +19,11 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -39,8 +41,8 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final CommonApplicationMessages messages;
-    private final CommonApplicationConstants constants;
+    protected final CommonApplicationMessages messages;
+    protected final CommonApplicationConstants constants;
 
     @UiField
     protected FlowPanel itemPanel;
@@ -83,9 +85,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     @Override
     public void setItems(Iterable<?> items) {
         if (items != null) {
-            for (Object i : items) {
-                itemPanel.add(new Label(getItemText(i)));
-            }
+            addItems(items);
         } else {
             itemPanel.clear();
         }
@@ -97,8 +97,26 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         }
     }
 
-    String getItemText(Object item) {
-        return "- " + String.valueOf(item); //$NON-NLS-1$
+    void addItems(Iterable<?> items) {
+        for (Object item : items) {
+            addItemText(item);
+        }
+    }
+
+    void addItemText(Object item) {
+        addItemLabel(getItemTextFormatted(String.valueOf(item)));
+    }
+
+    void addItemLabel(String text) {
+        itemPanel.add(new Label(text));
+    }
+
+    void addItemLabel(SafeHtml html) {
+        itemPanel.add(new HTML(html));
+    }
+
+    String getItemTextFormatted(String itemText) {
+        return "- " + itemText; //$NON-NLS-1$
     }
 
     @Override

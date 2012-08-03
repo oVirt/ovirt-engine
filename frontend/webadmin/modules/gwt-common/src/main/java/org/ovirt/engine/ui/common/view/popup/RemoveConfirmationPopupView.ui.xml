@@ -6,7 +6,7 @@
 	<ui:style>
 		.items {
 			margin-top: 20px;
-			line-height: 20px;
+			margin-bottom: 20px;
 			height: 60%;
 			overflow: auto;
 		}

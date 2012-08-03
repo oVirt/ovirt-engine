@@ -37,4 +37,12 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("LUN is already used by a Disk: {0}")
     String lunUsedByDiskWarning(String diskAlias);
 
+    @DefaultMessage("Attached to {0} VM(s) other than {1}")
+    String diskAttachedToOtherVMs(int numberOfVms, String vmName);
+
+    @DefaultMessage("Attached to {0} VM(s)")
+    String diskAttachedToVMs(int numberOfVms);
+
+    @DefaultMessage("Note: {0} is {1}")
+    String diskNote(String diskAlias, String formattedNote);
 }

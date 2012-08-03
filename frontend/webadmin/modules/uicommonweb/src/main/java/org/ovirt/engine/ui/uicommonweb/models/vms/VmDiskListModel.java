@@ -551,11 +551,21 @@ public class VmDiskListModel extends SearchableListModel
 
         model.getLatch().setEntity(false);
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<DiskModel> items = new ArrayList<DiskModel>();
         for (Object item : getSelectedItems())
         {
-            Disk a = (Disk) item;
-            items.add(a.getDiskAlias());
+            Disk disk = (Disk) item;
+
+            DiskModel diskModel = new DiskModel();
+            diskModel.setDisk(disk);
+            diskModel.getIsInVm().setEntity(true);
+
+            items.add(diskModel);
+
+            // A shared disk can only be detached
+            if (disk.getNumberOfVms() > 1) {
+                model.getLatch().setIsChangable(false);
+            }
         }
         model.setItems(items);
 

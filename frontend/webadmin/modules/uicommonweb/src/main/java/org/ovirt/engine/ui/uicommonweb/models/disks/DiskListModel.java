@@ -418,11 +418,21 @@ public class DiskListModel extends ListWithDetailsModel
 
         model.getLatch().setIsAvailable(false);
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<DiskModel> items = new ArrayList<DiskModel>();
         for (Object item : getSelectedItems())
         {
             Disk disk = (Disk) item;
-            items.add(disk.getDiskAlias());
+
+            DiskModel diskModel = new DiskModel();
+            diskModel.setDisk(disk);
+            diskModel.getIsInVm().setEntity(false);
+
+            items.add(diskModel);
+
+            // A shared disk can only be detached
+            if (disk.getNumberOfVms() > 1) {
+                model.getLatch().setIsChangable(false);
+            }
         }
         model.setItems(items);
 
