@@ -19,13 +19,6 @@ usage () {
     return 0
 }
 
-createConf() {
-	cp cert.template cert.conf
-	echo C = $1 >> cert.conf
-	echo O = $2 >> cert.conf
-	echo CN = $3 >> cert.conf
-}
-
 PASS=$5
 if [ -z "$PASS" ]; then
 	PASS=change_it
@@ -41,8 +34,7 @@ if [ ! "$#" -ge 4 ]; then
 	die "Error: wrong argument number: $#.\n"
 fi
 
-createConf
-
+cp cert.template cert.conf
 keytool -certreq -keystore ./.keystore -storepass $PASS -alias $ALIAS -file requests/$4.req
 
 exit $?
