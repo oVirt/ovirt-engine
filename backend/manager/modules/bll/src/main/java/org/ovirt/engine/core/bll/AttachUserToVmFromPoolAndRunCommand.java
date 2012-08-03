@@ -165,6 +165,10 @@ VmPoolUserCommandBase<T> {
             setSucceeded(vdcReturnValue.getSucceeded());
             setActionReturnValue(vmToAttach);
             getReturnValue().getTaskIdList().addAll(getReturnValue().getInternalTaskIdList());
+        } else {
+            // no need to start, just return it
+            setActionReturnValue(vmToAttach);
+            setSucceeded(true);
         }
     }
 
