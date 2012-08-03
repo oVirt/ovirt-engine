@@ -1,13 +1,25 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.template;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
+import com.google.gwt.core.client.GWT;
+
 public class TemplateNewPopupWidget extends AbstractVmPopupWidget {
+
+    interface ViewIdHandler extends ElementIdHandler<TemplateNewPopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     public TemplateNewPopupWidget(CommonApplicationConstants constants) {
         super(constants);
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

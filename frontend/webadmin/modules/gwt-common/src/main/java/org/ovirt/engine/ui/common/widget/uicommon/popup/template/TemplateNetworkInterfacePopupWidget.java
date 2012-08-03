@@ -6,8 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class TemplateNetworkInterfacePopupWidget extends
-        NetworkInterfacePopupWidget {
+public class TemplateNetworkInterfacePopupWidget extends NetworkInterfacePopupWidget {
 
     public TemplateNetworkInterfacePopupWidget(EventBus eventBus,
             CommonApplicationConstants constants) {
@@ -20,4 +19,5 @@ public class TemplateNetworkInterfacePopupWidget extends
         activateCheckBox.setVisible(false);
         portMirroringEditor.setVisible(false);
     }
+
 }

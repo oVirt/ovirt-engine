@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -87,41 +88,46 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     // ==General Tab==
     @UiField
     protected DialogTab generalTab;
+
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
-    ListModelListBoxEditor<Object> dataCenterEditor;
+    @WithElementId("dataCenter")
+    public ListModelListBoxEditor<Object> dataCenterEditor;
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
-    ListModelListBoxEditor<Object> clusterEditor;
+    @WithElementId("cluster")
+    public ListModelListBoxEditor<Object> clusterEditor;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
-    protected ListModelListBoxEditor<Object> quotaEditor;
+    @WithElementId("quota")
+    public ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField
     @Path(value = "name.entity")
-    EntityModelTextBoxEditor nameEditor;
+    @WithElementId("name")
+    public EntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
-    protected EntityModelTextBoxEditor descriptionEditor;
-
-    @UiField
-    @Ignore
-    KeyValueWidget customPropertiesSheetEditor;
+    @WithElementId("description")
+    public EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "template.selectedItem")
-    protected ListModelListBoxEditor<Object> templateEditor;
+    @WithElementId("template")
+    public ListModelListBoxEditor<Object> templateEditor;
 
     @UiField(provided = true)
     @Path(value = "memSize.entity")
-    EntityModelTextBoxEditor memSizeEditor;
+    @WithElementId("memSize")
+    public EntityModelTextBoxEditor memSizeEditor;
 
     @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
-    EntityModelSliderWithTextBoxEditor totalCPUCoresEditor;
+    @WithElementId("totalCPUCores")
+    public EntityModelSliderWithTextBoxEditor totalCPUCoresEditor;
 
     @UiField
     @Ignore
@@ -129,11 +135,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "numOfSockets.entity")
-    EntityModelSliderWithTextBoxEditor numOfSocketsEditor;
+    @WithElementId("numOfSockets")
+    public EntityModelSliderWithTextBoxEditor numOfSocketsEditor;
 
     @UiField(provided = true)
     @Path(value = "oSType.selectedItem")
-    ListModelListBoxEditor<Object> oSTypeEditor;
+    @WithElementId("osType")
+    public ListModelListBoxEditor<Object> oSTypeEditor;
 
     @UiField
     @Ignore
@@ -145,11 +153,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "poolType.selectedItem")
-    ListModelListBoxEditor<Object> poolTypeEditor;
+    @WithElementId("poolType")
+    public ListModelListBoxEditor<Object> poolTypeEditor;
 
     @UiField
     @Path(value = "assignedVms.entity")
-    protected EntityModelTextBoxEditor assignedVmsEditor;
+    @WithElementId("assignedVms")
+    public EntityModelTextBoxEditor assignedVmsEditor;
 
     @UiField
     @Ignore
@@ -157,11 +167,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField
     @Path(value = "numOfDesktops.entity")
-    protected EntityModelTextBoxEditor numOfDesktopsEditor;
+    @WithElementId("numOfDesktops")
+    public EntityModelTextBoxEditor numOfDesktopsEditor;
 
     @UiField
     @Path(value = "prestartedVms.entity")
-    protected EntityModelTextBoxEditor prestartedVmsEditor;
+    @WithElementId("prestartedVms")
+    public EntityModelTextBoxEditor prestartedVmsEditor;
 
     @UiField
     @Ignore
@@ -173,11 +185,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "domain.selectedItem")
-    ListModelListBoxEditor<Object> domainEditor;
+    @WithElementId("domain")
+    public ListModelListBoxEditor<Object> domainEditor;
 
     @UiField(provided = true)
     @Path(value = "timeZone.selectedItem")
-    ListModelListBoxEditor<Object> timeZoneEditor;
+    @WithElementId("timeZone")
+    public ListModelListBoxEditor<Object> timeZoneEditor;
 
     // ==Console Tab==
     @UiField
@@ -185,23 +199,28 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "displayProtocol.selectedItem")
-    ListModelListBoxEditor<Object> displayProtocolEditor;
+    @WithElementId("displayProtocol")
+    public ListModelListBoxEditor<Object> displayProtocolEditor;
 
     @UiField(provided = true)
     @Path(value = "usbPolicy.selectedItem")
-    ListModelListBoxEditor<Object> usbSupportEditor;
+    @WithElementId("usbPolicy")
+    public ListModelListBoxEditor<Object> usbSupportEditor;
 
     @UiField(provided = true)
     @Path(value = "numOfMonitors.selectedItem")
-    protected ListModelListBoxEditor<Object> numOfMonitorsEditor;
+    @WithElementId("numOfMonitors")
+    public ListModelListBoxEditor<Object> numOfMonitorsEditor;
 
     @UiField(provided = true)
     @Path(value = "isStateless.entity")
-    protected EntityModelCheckBoxEditor isStatelessEditor;
+    @WithElementId("isStateless")
+    public EntityModelCheckBoxEditor isStatelessEditor;
 
     @UiField(provided = true)
     @Path(value = "allowConsoleReconnect.entity")
-    protected EntityModelCheckBoxEditor allowConsoleReconnectEditor;
+    @WithElementId("allowConsoleReconnect")
+    public EntityModelCheckBoxEditor allowConsoleReconnectEditor;
 
     // ==Host Tab==
     @UiField
@@ -209,27 +228,33 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "runVMOnSpecificHost.entity")
-    EntityModelCheckBoxEditor runVMOnSpecificHostEditor;
+    @WithElementId("runVMOnSpecificHost")
+    public EntityModelCheckBoxEditor runVMOnSpecificHostEditor;
 
     @UiField(provided = true)
     @Path(value = "dontMigrateVM.entity")
-    protected EntityModelCheckBoxEditor dontMigrateVMEditor;
+    @WithElementId("dontMigrateVM")
+    public EntityModelCheckBoxEditor dontMigrateVMEditor;
 
     @UiField(provided = true)
     @Ignore
-    RadioButton specificHost;
+    @WithElementId("specificHost")
+    public RadioButton specificHost;
 
     @UiField(provided = true)
     @Path(value = "defaultHost.selectedItem")
-    ListModelListBoxEditor<Object> defaultHostEditor;
+    @WithElementId("defaultHost")
+    public ListModelListBoxEditor<Object> defaultHostEditor;
 
     @UiField(provided = true)
     @Path(value = "isAutoAssign.entity")
-    EntityModelRadioButtonEditor isAutoAssignEditor;
+    @WithElementId("isAutoAssign")
+    public EntityModelRadioButtonEditor isAutoAssignEditor;
 
     @UiField
     @Path(value = "cpuPinning.entity")
-    EntityModelTextBoxEditor cpuPinning;
+    @WithElementId("cpuPinning")
+    public EntityModelTextBoxEditor cpuPinning;
 
     // ==High Availability Tab==
     @UiField
@@ -237,12 +262,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "isHighlyAvailable.entity")
-    EntityModelCheckBoxEditor isHighlyAvailableEditor;
+    @WithElementId("isHighlyAvailable")
+    public EntityModelCheckBoxEditor isHighlyAvailableEditor;
 
     // TODO: Priority is a ListModel which is rendered as RadioBox
     @UiField(provided = true)
     @Ignore
-    EntityModelCellTable<ListModel> priorityEditor;
+    @WithElementId("priority")
+    public EntityModelCellTable<ListModel> priorityEditor;
 
     // ==Resource Allocation Tab==
     @UiField
@@ -259,19 +286,23 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField
     @Ignore
-    ListModelListBoxEditor<Object> provisioningEditor;
+    @WithElementId("provisioning")
+    public ListModelListBoxEditor<Object> provisioningEditor;
 
     @UiField(provided = true)
     @Path(value = "minAllocatedMemory.entity")
-    EntityModelTextBoxEditor minAllocatedMemoryEditor;
+    @WithElementId("minAllocatedMemory")
+    public EntityModelTextBoxEditor minAllocatedMemoryEditor;
 
     @UiField(provided = true)
     @Path(value = "provisioningThin_IsSelected.entity")
-    EntityModelRadioButtonEditor provisioningThinEditor;
+    @WithElementId("provisioningThin")
+    public EntityModelRadioButtonEditor provisioningThinEditor;
 
     @UiField(provided = true)
     @Path(value = "provisioningClone_IsSelected.entity")
-    EntityModelRadioButtonEditor provisioningCloneEditor;
+    @WithElementId("provisioningClone")
+    public EntityModelRadioButtonEditor provisioningCloneEditor;
 
     @UiField
     @Ignore
@@ -279,7 +310,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Ignore
-    DisksAllocationView disksAllocationView;
+    @WithElementId("disksAllocation")
+    public DisksAllocationView disksAllocationView;
 
     // ==Boot Options Tab==
     @UiField
@@ -287,46 +319,53 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "firstBootDevice.selectedItem")
-    ListModelListBoxEditor<Object> firstBootDeviceEditor;
+    @WithElementId("firstBootDevice")
+    public ListModelListBoxEditor<Object> firstBootDeviceEditor;
 
     @UiField(provided = true)
     @Path(value = "secondBootDevice.selectedItem")
-    ListModelListBoxEditor<Object> secondBootDeviceEditor;
+    @WithElementId("secondBootDevice")
+    public ListModelListBoxEditor<Object> secondBootDeviceEditor;
 
     @UiField(provided = true)
     @Path(value = "cdImage.selectedItem")
-    ListModelListBoxEditor<Object> cdImageEditor;
+    @WithElementId("cdImage")
+    public ListModelListBoxEditor<Object> cdImageEditor;
 
     @UiField(provided = true)
     @Path(value = "cdAttached.entity")
-    EntityModelCheckBoxEditor cdAttachedEditor;
+    @WithElementId("cdAttached")
+    public EntityModelCheckBoxEditor cdAttachedEditor;
 
     @UiField
     protected FlowPanel linuxBootOptionsPanel;
 
     @UiField
     @Path(value = "kernel_path.entity")
-    EntityModelTextBoxEditor kernel_pathEditor;
+    @WithElementId("kernelPath")
+    public EntityModelTextBoxEditor kernel_pathEditor;
 
     @UiField
     @Path(value = "initrd_path.entity")
-    EntityModelTextBoxEditor initrd_pathEditor;
+    @WithElementId("initrdPath")
+    public EntityModelTextBoxEditor initrd_pathEditor;
 
     @UiField
     @Path(value = "kernel_parameters.entity")
-    EntityModelTextBoxEditor kernel_parametersEditor;
+    @WithElementId("kernelParameters")
+    public EntityModelTextBoxEditor kernel_parametersEditor;
 
     @UiField
     @Ignore
     Label nativeUsbWarningMessage;
 
-    // @UiField
-    // @Path(value = "isHighlyAvailable.entity")
-    // EntityModelCheckBoxEditor ;
-
     // ==Custom Properties Tab==
     @UiField
     protected DialogTab customPropertiesTab;
+
+    @UiField
+    @Ignore
+    KeyValueWidget customPropertiesSheetEditor;
 
     CommonApplicationConstants constants;
 
@@ -362,13 +401,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
-        priorityEditor.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel model) {
-                return model.getTitle();
-            }
-        }, ""); //$NON-NLS-1$
-
         disksAllocationView = new DisksAllocationView(constants);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -379,8 +411,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         localize(constants);
 
+        generateIds();
+        priorityEditor.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
+            @Override
+            public String getValue(EntityModel model) {
+                return model.getTitle();
+            }
+        }, ""); //$NON-NLS-1$
+
         Driver.driver.initialize(this);
     }
+
+    protected abstract void generateIds();
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initListBoxEditors() {

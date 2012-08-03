@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
@@ -22,8 +24,13 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<VmSnapshotCreatePopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     @Path(value = "description.entity")
+    @WithElementId("description")
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField
@@ -32,6 +39,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     public VmSnapshotCreatePopupWidget(CommonApplicationConstants constants) {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         Driver.driver.initialize(this);
     }
 

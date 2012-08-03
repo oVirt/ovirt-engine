@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
@@ -21,6 +23,10 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<VmChangeCDPopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     interface Style extends CssResource {
         String isoImageEditorLabel();
 
@@ -32,11 +38,13 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
 
     @UiField
     @Path(value = "isoImage.selectedItem")
+    @WithElementId("isoImage")
     ListModelListBoxEditor<Object> isoImageEditor;
 
     public VmChangeCDPopupWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         addStyles();
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         Driver.driver.initialize(this);
     }
 

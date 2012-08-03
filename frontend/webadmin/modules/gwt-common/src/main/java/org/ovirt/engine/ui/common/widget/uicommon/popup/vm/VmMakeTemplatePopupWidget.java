@@ -6,6 +6,8 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -32,28 +34,38 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<VmMakeTemplatePopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     @Path(value = "name.entity")
+    @WithElementId("name")
     EntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
+    @WithElementId("description")
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
+    @WithElementId("cluster")
     ListModelListBoxEditor<Object> clusterEditor;
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId("disksAllocation")
     DisksAllocationView disksAllocationView;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
+    @WithElementId("quota")
     ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField(provided = true)
     @Path(value = "isTemplatePrivate.entity")
+    @WithElementId("isTemplatePrivate")
     EntityModelCheckBoxEditor isTemplatePrivateEditor;
 
     @UiField
@@ -69,6 +81,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         disksAllocationView = new DisksAllocationView(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         Driver.driver.initialize(this);
     }
 

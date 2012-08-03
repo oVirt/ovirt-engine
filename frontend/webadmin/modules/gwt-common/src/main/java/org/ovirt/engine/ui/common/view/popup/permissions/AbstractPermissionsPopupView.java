@@ -49,7 +49,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     @UiField(provided = true)
     @Path("domain.selectedItem")
-    @WithElementId
+    @WithElementId("domain")
     public ListModelListBoxEditor<Object> domainSelection;
 
     @UiField
@@ -58,6 +58,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     @UiField(provided = true)
     @Path("role.selectedItem")
+    @WithElementId("role")
     public ListModelListBoxEditor<Object> roleSelection;
 
     @UiField(provided = true)
@@ -67,15 +68,17 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     @UiField
     @Ignore
+    @WithElementId
     public RadioButton everyoneRadio;
 
     @UiField
     @Ignore
+    @WithElementId
     public RadioButton specificUserOrGroupRadio;
 
     @UiField
     @Path("searchString")
-    @WithElementId
+    @WithElementId("searchString")
     public TextBoxChanger searchStringEditor;
 
     @UiField

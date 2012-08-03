@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
@@ -22,7 +24,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisksAllocationItemView extends Composite implements HasEditorDriver<DiskModel> {
+public class DisksAllocationItemView extends Composite implements HasEditorDriver<DiskModel>, HasElementId {
 
     interface Driver extends SimpleBeanEditorDriver<DiskModel, DisksAllocationItemView> {
         Driver driver = GWT.create(Driver.class);
@@ -30,6 +32,16 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     interface ViewUiBinder extends UiBinder<Widget, DisksAllocationItemView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface WidgetStyle extends CssResource {
+        String editorContent();
+
+        String editorContentNarrow();
+
+        String editorWrapper();
+
+        String editorLabel();
     }
 
     @UiField
@@ -120,7 +132,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     public void edit(final DiskModel object) {
         Driver.driver.edit(object);
 
-        diskNameLabel.asValueBox().setValue((String) object.getAlias().getEntity());
+        diskNameLabel.asValueBox().setValue(object.getAlias().getEntity());
         diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Long>(DiskSizeUnit.GIGABYTE).render(
                 (Long) object.getSize().getEntity())));
 
@@ -137,14 +149,22 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         return Driver.driver.flush();
     }
 
-    interface WidgetStyle extends CssResource {
-        String editorContent();
-
-        String editorContentNarrow();
-
-        String editorWrapper();
-
-        String editorLabel();
+    @Override
+    public void setElementId(String elementId) {
+        diskNameLabel.setElementId(
+                ElementIdUtils.createElementId(elementId, "diskName")); //$NON-NLS-1$
+        diskSizeLabel.setElementId(
+                ElementIdUtils.createElementId(elementId, "diskSize")); //$NON-NLS-1$
+        sourceStorageLabel.setElementId(
+                ElementIdUtils.createElementId(elementId, "sourceStorageDomainName")); //$NON-NLS-1$
+        volumeTypeListEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "volumeType")); //$NON-NLS-1$
+        sourceStorageListEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "sourceStorageDomain")); //$NON-NLS-1$
+        storageListEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "storageDomain")); //$NON-NLS-1$
+        quotaListEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "quota")); //$NON-NLS-1$
     }
 
 }

@@ -17,4 +17,5 @@ public class VmNetworkInterfacePopupWidget extends NetworkInterfacePopupWidget {
         super.edit(iface);
         portMirroringEditor.setVisible(false);
     }
+
 }

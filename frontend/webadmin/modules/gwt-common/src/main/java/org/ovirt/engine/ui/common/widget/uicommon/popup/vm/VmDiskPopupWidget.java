@@ -16,6 +16,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
@@ -66,36 +67,48 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<VmDiskPopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     @Path("size.entity")
+    @WithElementId("size")
     EntityModelTextBoxEditor sizeEditor;
 
     @UiField
     @Path("alias.entity")
+    @WithElementId("alias")
     EntityModelTextBoxEditor aliasEditor;
 
     @UiField
     @Path("description.entity")
+    @WithElementId("description")
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
     @Path("interface.selectedItem")
+    @WithElementId("interface")
     ListModelListBoxEditor<Object> interfaceEditor;
 
     @UiField(provided = true)
     @Path("volumeType.selectedItem")
+    @WithElementId("volumeType")
     ListModelListBoxEditor<Object> volumeTypeEditor;
 
     @UiField(provided = true)
     @Path("dataCenter.selectedItem")
+    @WithElementId("dataCenter")
     ListModelListBoxEditor<Object> datacenterEditor;
 
     @UiField(provided = true)
     @Path("storageDomain.selectedItem")
+    @WithElementId("storageDomain")
     ListModelListBoxEditor<Object> storageDomainEditor;
 
     @UiField(provided = true)
     @Path("quota.selectedItem")
+    @WithElementId("quota")
     ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField(provided = true)
@@ -105,34 +118,42 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
     @UiField(provided = true)
     @Path(value = "storageType.selectedItem")
+    @WithElementId("storageType")
     ListModelListBoxEditor<Object> storageTypeEditor;
 
     @UiField(provided = true)
     @Path("wipeAfterDelete.entity")
+    @WithElementId("wipeAfterDelete")
     EntityModelCheckBoxEditor wipeAfterDeleteEditor;
 
     @UiField(provided = true)
     @Path("isBootable.entity")
+    @WithElementId("isBootable")
     EntityModelCheckBoxEditor isBootableEditor;
 
     @UiField(provided = true)
     @Path("isShareable.entity")
+    @WithElementId("isShareable")
     EntityModelCheckBoxEditor isShareableEditor;
 
     @UiField(provided = true)
     @Path("isPlugged.entity")
+    @WithElementId("isPlugged")
     EntityModelCheckBoxEditor isPluggedEditor;
 
     @UiField(provided = true)
     @Path("attachDisk.entity")
+    @WithElementId("attachDisk")
     EntityModelCheckBoxEditor attachEditor;
 
     @UiField
     @Ignore
+    @WithElementId
     RadioButton internalDiskRadioButton;
 
     @UiField
     @Ignore
+    @WithElementId
     RadioButton externalDiskRadioButton;
 
     @UiField
@@ -152,10 +173,12 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     EntityModelCellTable<ListModel> internalDiskTable;
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     EntityModelCellTable<ListModel> externalDiskTable;
 
     @UiField
@@ -186,6 +209,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initInternalDiskTable(constants, resources);
         initExternalDiskTable(constants, resources);
         Driver.driver.initialize(this);

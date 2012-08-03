@@ -4,12 +4,24 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+
+import com.google.gwt.core.client.GWT;
 
 public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
+    interface ViewIdHandler extends ElementIdHandler<PoolEditPopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     public PoolEditPopupWidget(CommonApplicationConstants constants) {
         super(constants);
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override
@@ -44,4 +56,5 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         bootOptionsTab.disableContent();
         customPropertiesTab.disableContent();
     }
+
 }

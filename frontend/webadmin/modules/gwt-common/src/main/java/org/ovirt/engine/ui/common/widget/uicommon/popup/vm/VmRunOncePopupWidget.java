@@ -5,6 +5,8 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -47,6 +49,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<VmRunOncePopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     interface Style extends CssResource {
         String attachImageCheckBoxLabel();
 
@@ -59,17 +65,32 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     Style style;
 
     @UiField
+    @WithElementId
+    DisclosurePanel generalBootOptionsPanel;
+
+    @UiField
+    @WithElementId
+    DisclosurePanel linuxBootOptionsPanel;
+
+    @UiField
+    @WithElementId
+    DisclosurePanel initialRunPanel;
+
+    @UiField
+    @WithElementId
+    DisclosurePanel displayProtocolPanel;
+
+    @UiField
+    @WithElementId
+    DisclosurePanel customPropertiesPanel;
+
+    @UiField
     @Ignore
     Label initialRunLabel;
 
     @UiField
-    DisclosurePanel linuxBootOptionsPanel;
-
-    @UiField
-    DisclosurePanel initialRunPanel;
-
-    @UiField
     @Path(value = "floppyImage.selectedItem")
+    @WithElementId("floppyImage")
     ListModelListBoxEditor<Object> floppyImageEditor;
 
     @UiField
@@ -78,69 +99,87 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @UiField
     @Path(value = "isoImage.selectedItem")
+    @WithElementId("isoImage")
     ListModelListBoxEditor<Object> isoImageEditor;
 
     @UiField(provided = true)
     @Path(value = "attachFloppy.entity")
+    @WithElementId("attachFloppy")
     EntityModelCheckBoxEditor attachFloppyEditor;
 
     @UiField(provided = true)
     @Path(value = "attachIso.entity")
+    @WithElementId("attachIso")
     EntityModelCheckBoxEditor attachIsoEditor;
 
     @UiField(provided = true)
     @Path(value = "runAsStateless.entity")
+    @WithElementId("runAsStateless")
     EntityModelCheckBoxEditor runAsStatelessEditor;
 
     @UiField(provided = true)
     @Path(value = "runAndPause.entity")
+    @WithElementId("runAndPause")
     EntityModelCheckBoxEditor runAndPauseEditor;
 
     @UiField
     @Path(value = "Kernel_path.entity")
+    @WithElementId("kernelPath")
     EntityModelTextBoxEditor kernelPathEditor;
 
     @UiField
     @Path(value = "Initrd_path.entity")
+    @WithElementId("initrdPath")
     EntityModelTextBoxEditor initrdPathEditor;
 
     @UiField
     @Path(value = "Kernel_parameters.entity")
+    @WithElementId("kernelParameters")
     EntityModelTextBoxEditor kernelParamsEditor;
 
     @UiField(provided = true)
+    @WithElementId("sysPrepDomainNameComboBox")
     ComboBox sysPrepDomainNameComboBox;
 
     @Path(value = "sysPrepDomainName.selectedItem")
+    @WithElementId("sysPrepDomainNameListBox")
     ListModelListBoxEditor<Object> sysPrepDomainNameListBoxEditor;
 
     @Path(value = "SysPrepSelectedDomainName.entity")
+    @WithElementId("sysPrepDomainNameTextBox")
     EntityModelTextBoxEditor sysPrepDomainNameTextBoxEditor;
 
     @UiField(provided = true)
     @Path(value = "useAlternateCredentials.entity")
+    @WithElementId("useAlternateCredentials")
     EntityModelCheckBoxEditor useAlternateCredentialsEditor;
 
     @UiField
     @Path(value = "sysPrepUserName.entity")
+    @WithElementId("sysPrepUserName")
     EntityModelTextBoxEditor sysPrepUserNameEditor;
 
     @UiField
     @Path(value = "sysPrepPassword.entity")
+    @WithElementId("sysPrepPassword")
     EntityModelTextBoxEditor sysPrepPasswordEditor;
 
     @UiField(provided = true)
     @Path(value = "displayConsole_Vnc_IsSelected.entity")
+    @WithElementId("displayConsoleVnc")
     EntityModelRadioButtonEditor displayConsoleVncEditor;
 
     @UiField(provided = true)
     @Path(value = "displayConsole_Spice_IsSelected.entity")
+    @WithElementId("displayConsoleSpice")
     EntityModelRadioButtonEditor displayConsoleSpiceEditor;
 
     @UiField
+    @WithElementId
     ButtonBase bootSequenceUpButton;
 
     @UiField
+    @WithElementId
     ButtonBase bootSequenceDownButton;
 
     @UiField
@@ -150,6 +189,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Ignore
     Label bootSequenceLabel;
 
+    @WithElementId("bootSequence")
     ListBox bootSequenceBox;
 
     private BootSequenceModel bootSequenceModel;
@@ -172,6 +212,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
         localize(constants);
         addStyles();
+        ViewIdHandler.idHandler.generateAndSetIds(this);
 
         Driver.driver.initialize(this);
     }

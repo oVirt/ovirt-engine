@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface;
 
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -32,24 +34,33 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<NetworkInterfacePopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     @Path("name.entity")
+    @WithElementId("name")
     EntityModelTextBoxEditor nameEditor;
 
     @UiField(provided = true)
     @Path("network.selectedItem")
+    @WithElementId("network")
     ListModelListBoxEditor<Object> networkEditor;
 
     @UiField(provided = true)
     @Path("nicType.selectedItem")
+    @WithElementId("nicType")
     ListModelListBoxEditor<Object> nicTypeEditor;
 
     @UiField
     @Path("portMirroring.entity")
+    @WithElementId("portMirroring")
     protected EntityModelCheckBoxEditor portMirroringEditor;
 
     @UiField
     @Ignore
+    @WithElementId("enableManualMac")
     CheckBox enableManualMacCheckbox;
 
     @UiField
@@ -58,6 +69,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @UiField
     @Path("MAC.entity")
+    @WithElementId("mac")
     EntityModelTextBoxEditor MACEditor;
 
     @UiField
@@ -66,12 +78,14 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @UiField(provided=true)
     @Path("Active.entity")
+    @WithElementId("activate")
     protected EntityModelCheckBoxEditor activateCheckBox;
 
     public NetworkInterfacePopupWidget(EventBus eventBus, CommonApplicationConstants constants) {
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         Driver.driver.initialize(this);
     }
 

@@ -2,13 +2,25 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
+import com.google.gwt.core.client.GWT;
+
 public class VmClonePopupWidget extends AbstractVmPopupWidget {
+
+    interface ViewIdHandler extends ElementIdHandler<VmClonePopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     public VmClonePopupWidget(CommonApplicationConstants constants) {
         super(constants);
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.userportal.section.main.view.popup.console;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -29,6 +31,14 @@ import com.google.inject.Inject;
 
 public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalConsolePopupModel> implements ConsolePopupPresenterWidget.ViewDef {
 
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ConsolePopupView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<ConsolePopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     interface Style extends CssResource {
 
         String ctrlAltDelContentWidget();
@@ -42,21 +52,27 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     Label consoleTitle;
 
     @UiField(provided = true)
+    @WithElementId
     EntityModelRadioButtonEditor spiceRadioButton;
 
     @UiField(provided = true)
+    @WithElementId
     EntityModelRadioButtonEditor remoteDesktopRadioButton;
 
     @UiField(provided = true)
+    @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> ctrlAltDel;
 
     @UiField(provided = true)
+    @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> enableUsbAutoshare;
 
     @UiField(provided = true)
+    @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> openInFullScreen;
 
     @UiField(provided = true)
+    @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> useLocalDrives;
 
     @UiField
@@ -69,13 +85,10 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     FlowPanel wanOptionsPanel;
 
     @UiField(provided = true)
+    @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> wanEnabled;
 
     private final ApplicationMessages messages;
-
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ConsolePopupView> {
-        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
-    }
 
     @Inject
     public ConsolePopupView(EventBus eventBus,
@@ -176,6 +189,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
         remoteDesktopRadioButton.setLabel(constants.remoteDesktop());
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
 
         spicePanel.setVisible(false);
         rdpPanel.setVisible(false);
@@ -329,4 +343,5 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
             ctrlAltDel.setTitle(reason);
         }
     }
+
 }

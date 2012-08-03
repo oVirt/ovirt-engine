@@ -107,7 +107,7 @@
 	</ui:style>
 
 	<g:FlowPanel>
-		<g:DisclosurePanel label="{constants.runOncePopupBootOptionsLabel}" addStyleNames="{style.panelStyle}">
+		<g:DisclosurePanel ui:field="generalBootOptionsPanel" label="{constants.runOncePopupBootOptionsLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel addStyleNames="{style.bootOptionsPanel}">
 				<g:VerticalPanel addStyleNames="{style.attachImagePanel}">
 					<g:HorizontalPanel>
@@ -160,14 +160,14 @@
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
-		<g:DisclosurePanel label="{constants.runOncePopupDisplayProtocolLabel}" addStyleNames="{style.panelStyle}">
+		<g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.runOncePopupDisplayProtocolLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel>
 				<e:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
 				<e:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
-		<g:DisclosurePanel label="{constants.customPropsVmPopup}" addStyleNames="{style.panelStyle}">
+		<g:DisclosurePanel ui:field="customPropertiesPanel" label="{constants.customPropsVmPopup}" addStyleNames="{style.panelStyle}">
 			<g:ScrollPanel addStyleNames="{style.customPropertiesPanel}">
 				<k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
 			</g:ScrollPanel>

@@ -48,6 +48,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     @UiField
     @Path("RunningVMsPercentage.Entity")
+    @WithElementId("runningVmsPercentage")
     PercentageProgressBar vmsProgressBar;
 
     @UiField
@@ -62,6 +63,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     @UiField
     @Path("UsedCPUsPercentage.Entity")
+    @WithElementId("usedCpusPercentage")
     PercentageProgressBar cpusProgressBar;
 
     @UiField
@@ -76,6 +78,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     @UiField
     @Path("UsedMemoryPercentage.Entity")
+    @WithElementId("memoryUsagePercentage")
     PercentageProgressBar memoryProgressBar;
 
     @UiField

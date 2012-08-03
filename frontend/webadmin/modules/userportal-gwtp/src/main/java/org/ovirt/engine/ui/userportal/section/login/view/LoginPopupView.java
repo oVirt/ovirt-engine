@@ -91,8 +91,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
         errorMessagePanel.setVisible(false);
         passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
-        Driver.driver.initialize(this);
+
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        Driver.driver.initialize(this);
     }
 
     void localize(ApplicationConstants constants) {

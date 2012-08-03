@@ -5,15 +5,25 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
+import com.google.gwt.core.client.GWT;
+
 public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
-    private CommonApplicationConstants constants;
+    interface ViewIdHandler extends ElementIdHandler<PoolNewPopupWidget> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     public PoolNewPopupWidget(CommonApplicationConstants constants) {
         super(constants);
-        this.constants = constants;
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override
@@ -32,13 +42,12 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         numOfVmsLabel.setVisible(true);
 
         if (object.getIsNew()) {
-            object.getNumOfDesktops().setEntity("1");   //$NON-NLS-1$
+            object.getNumOfDesktops().setEntity("1"); //$NON-NLS-1$
             assignedVmsEditor.setVisible(false);
-            numOfDesktopsEditor.setLabel("");   //$NON-NLS-1$
+            numOfDesktopsEditor.setLabel(""); //$NON-NLS-1$
             prestartedVmsEditor.setVisible(false);
             prestartedVmsHintLabel.setVisible(false);
-        }
-        else {
+        } else {
             assignedVmsEditor.addLabelStyleName(style.assignedVmsLabel());
         }
     }
@@ -57,4 +66,5 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
         poolTab.setVisible(true);
     }
+
 }

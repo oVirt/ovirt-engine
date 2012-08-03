@@ -11,6 +11,8 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupSimpleTableResources;
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -32,12 +34,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel> {
+public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel>, HasElementId {
 
     interface Driver extends SimpleBeanEditorDriver<DisksAllocationModel, DisksAllocationView> {
         Driver driver = GWT.create(Driver.class);
@@ -45,6 +48,16 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     interface ViewUiBinder extends UiBinder<Widget, DisksAllocationView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface WidgetStyle extends CssResource {
+        String isSingleStorageEditorContent();
+
+        String editorLabel();
+
+        String editorContent();
+
+        String editorWrapper();
     }
 
     @UiField
@@ -82,6 +95,8 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     IVdcQueryableCellTable<storage_domains, ListModel> storageTable;
 
     CommonApplicationConstants constants;
+
+    private String elementId = DOM.createUniqueId();
 
     @UiConstructor
     public DisksAllocationView() {
@@ -195,10 +210,13 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     void addDiskList(DisksAllocationModel model) {
         diskListPanel.clear();
 
+        int diskIndex = 0;
         for (final DiskModel diskModel : model.getDisks()) {
             DisksAllocationItemView disksAllocationItemView = new DisksAllocationItemView(constants);
             disksAllocationItemView.edit(diskModel);
             disksAllocationItemView.updateStyles(showQuota);
+            disksAllocationItemView.setElementId(
+                    ElementIdUtils.createElementId(elementId, "disk" + (diskIndex++))); //$NON-NLS-1$
             diskListPanel.add(disksAllocationItemView);
         }
 
@@ -266,14 +284,16 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         diskListPanel.addStyleName(style);
     }
 
-    interface WidgetStyle extends CssResource {
-        String isSingleStorageEditorContent();
+    @Override
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
 
-        String editorLabel();
-
-        String editorContent();
-
-        String editorWrapper();
+        isSingleStorageEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "isSingleStorage")); //$NON-NLS-1$
+        singleStorageEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "singleStorage")); //$NON-NLS-1$
+        singleQuotaEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "singleQuota")); //$NON-NLS-1$
     }
 
 }

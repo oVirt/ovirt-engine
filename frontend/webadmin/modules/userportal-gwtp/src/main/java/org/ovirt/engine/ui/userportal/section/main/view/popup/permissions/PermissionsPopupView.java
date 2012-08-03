@@ -37,6 +37,7 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<UserPorta
         Driver.driver.initialize(this);
     }
 
+    @Override
     public void edit(UserPortalAdElementListModel object) {
         super.edit(object);
         Driver.driver.edit(object);
@@ -46,4 +47,5 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<UserPorta
     protected UserPortalAdElementListModel doFlush() {
         return Driver.driver.flush();
     }
+
 }

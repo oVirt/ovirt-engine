@@ -14,12 +14,12 @@ import com.google.inject.Inject;
 
 public class PermissionsPopupView extends AbstractPermissionsPopupView<AdElementListModel> implements PermissionsPopupPresenterWidget.ViewDef {
 
-    interface ViewIdHandler extends ElementIdHandler<PermissionsPopupView> {
-        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
-    }
-
     interface Driver extends SimpleBeanEditorDriver<AdElementListModel, PermissionsPopupView> {
         Driver driver = GWT.create(Driver.class);
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<PermissionsPopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     @Inject
@@ -37,6 +37,7 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<AdElement
         Driver.driver.initialize(this);
     }
 
+    @Override
     public void edit(AdElementListModel object) {
         super.edit(object);
         Driver.driver.edit(object);
@@ -46,4 +47,5 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<AdElement
     protected AdElementListModel doFlush() {
         return Driver.driver.flush();
     }
+
 }
