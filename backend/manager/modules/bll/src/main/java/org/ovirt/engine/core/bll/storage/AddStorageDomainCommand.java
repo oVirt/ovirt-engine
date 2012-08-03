@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
@@ -137,7 +138,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             returnValue = false;
         }
-        if (returnValue && !correctStorageDomainFormat()) {
+
+        boolean isSupportedStorageFormat =
+                isStorageFormatSupportedByStoragePool() && isStorageFormatCompatibleWithDomain();
+        if (returnValue && !isSupportedStorageFormat) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
             getReturnValue().getCanDoActionMessages().add(
                     String.format("$storageFormat %1$s", getStorageDomain().getStorageFormat().toString()));
@@ -146,21 +150,42 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         return returnValue && CanAddDomain();
     }
 
-    private boolean correctStorageDomainFormat() {
-        final Set<StorageFormatType> supportedStorageFormats =
-                getSupportedStorageFormatSet(getVds().getvds_group_compatibility_version());
-        final StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
+    private boolean isStorageFormatSupportedByStoragePool() {
+        StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
+        storage_pool targetStoragePool = getStoragePool();
 
+        if (targetStoragePool == null) {
+            targetStoragePool = getStoragePoolDAO().get(getVds().getstorage_pool_id());
+            if (targetStoragePool == null) {
+                return false;
+            }
+        }
+
+        Set<StorageFormatType> supportedStorageFormats =
+                getSupportedStorageFormatSet(targetStoragePool.getcompatibility_version());
         if (!supportedStorageFormats.contains(storageFormat)) {
             return false;
         }
 
-        if (storageFormat == StorageFormatType.V2) {
-            final StorageType storageType = getStorageDomain().getstorage_type();
+        return true;
+    }
 
-            if (storageType != StorageType.ISCSI && storageType != StorageType.FCP) {
-                return false;
-            }
+    private boolean isStorageFormatCompatibleWithDomain() {
+        StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
+        StorageType storageType = getStorageDomain().getstorage_type();
+        StorageDomainType storageDomainFunction = getStorageDomain().getstorage_domain_type();
+
+        boolean isBlockStorage = storageType == StorageType.ISCSI || storageType == StorageType.FCP;
+        boolean isDataStorageDomain = storageDomainFunction == StorageDomainType.Data;
+
+        // V2 is applicable only for block data storage domains
+        if (storageFormat == StorageFormatType.V2 && (!isBlockStorage || !isDataStorageDomain)) {
+            return false;
+        }
+
+        // V3 is applicable only for data storage domains
+        if (storageFormat == StorageFormatType.V3 && !isDataStorageDomain) {
+            return false;
         }
 
         return true;
