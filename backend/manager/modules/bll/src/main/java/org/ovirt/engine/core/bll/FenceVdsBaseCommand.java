@@ -123,9 +123,13 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             } else {
                 addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL);
             }
+            // retry operation only when fencing is enabled on Host.
+            if (!retValue) {
+                HandleError();
+            }
         }
-        if (!retValue) {
-            HandleError();
+        else {
+            addCanDoActionMessage(VdcBllMessages.VDS_FENCING_DISABLED);
         }
         getReturnValue().setSucceeded(retValue);
         return retValue;
