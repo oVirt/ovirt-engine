@@ -46,6 +46,10 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     SimplePopupPanel popup;
 
     @UiField
+    @Ignore
+    Label headerLabel;
+
+    @UiField
     @Path("userName.entity")
     @WithElementId("userName")
     EntityModelTextBoxEditor userNameEditor;
@@ -97,6 +101,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     }
 
     void localize(ApplicationConstants constants) {
+        headerLabel.setText(constants.loginHeaderLabel());
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         domainEditor.setLabel(constants.loginFormDomainLabel());

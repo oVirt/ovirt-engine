@@ -33,10 +33,20 @@
 			font-size: 13px;
 		}
 		
+		.menuTitle {
+			font-family: Verdana,sans-serif;
+			font-size: 14px;
+			font-weight: bold;
+			text-decoration: underline;
+			position: relative;
+			left: 10px;
+			top: 10px;
+		}
+		
 		.menu {
 			position: relative;
-			left: 16px;
-			top: 20px;
+			left: 10px;
+			top: 5px;
 		}
 		
 		.userName {
@@ -60,23 +70,26 @@
 		<g:HTML addStyleNames="{style.logo}" />
 
 		<g:SimplePanel addStyleNames="{style.barOuter}">
-			<g:FlowPanel addStyleNames="{style.barInner}">
-				<g:HTMLPanel addStyleNames="{style.menu}">
-					<g:InlineLabel text="{constants.loggedInUser}:" />
-					<g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
-					|
-					<g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
-					|
-					<g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" />
-					|
-					<g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
-				</g:HTMLPanel>
+			<g:VerticalPanel addStyleNames="{style.barInner}">
+				<g:InlineLabel addStyleNames="{style.menuTitle}" text="{constants.mainHeaderLabel}" />
+				<g:FlowPanel>
+					<g:HTMLPanel addStyleNames="{style.menu}">
+						<g:InlineLabel text="{constants.loggedInUser}:" />
+						<g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
+						|
+						<g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
+						|
+						<g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" />
+						|
+						<g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
+					</g:HTMLPanel>
 
-				<g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabs}">
-					<g:FlowPanel ui:field="mainTabContainer" />
-					<div style="clear: both;" />
-				</g:HTMLPanel>
-			</g:FlowPanel>
+					<g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabs}">
+						<g:FlowPanel ui:field="mainTabContainer" />
+						<div style="clear: both;" />
+					</g:HTMLPanel>
+				</g:FlowPanel>
+			</g:VerticalPanel>
 		</g:SimplePanel>
 
 		<div style="clear: both;" />

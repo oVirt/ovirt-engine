@@ -15,6 +15,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     // Login section
 
+    @DefaultStringValue("oVirt Engine")
+    String loginHeaderLabel();
+
     @DefaultStringValue("User Name")
     String loginFormUserNameLabel();
 
@@ -285,6 +288,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String editBasicDetails();
 
     // Header
+
+    @DefaultStringValue("oVirt Engine")
+    String mainHeaderLabel();
+
     @DefaultStringValue("Logged in user")
     String loggedInUser();
 

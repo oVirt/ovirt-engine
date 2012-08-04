@@ -101,6 +101,12 @@
 			padding-left: 5px;
 			padding-top: 14px;
 		}
+
+		.headerLabelStyle {
+			font-weight: bold;
+			color: white;
+        }
+
 	</ui:style>
 
 	<d:SimplePopupPanel ui:field="popup" width="420px">
@@ -108,7 +114,7 @@
 			<g:HorizontalPanel styleName="{loginPopupStyle.loginPopupHeader}">
 				<g:Image resource='{resources.loginPopupHeaderLogoImage}' />
 				<g:HTMLPanel styleName="{loginPopupStyle.loginPopupHeaderCenter}">
-					<g:Image resource='{resources.loginPopupHeaderTitleImage}' />
+					<g:Label ui:field="headerLabel" addStyleNames="{loginPopupStyle.headerLabelStyle}"/>
 				</g:HTMLPanel>
 				<g:Image resource='{resources.loginPopupHeaderImage}' />
 			</g:HorizontalPanel>
