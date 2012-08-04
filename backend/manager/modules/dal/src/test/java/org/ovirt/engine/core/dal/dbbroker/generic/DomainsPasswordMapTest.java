@@ -20,8 +20,8 @@ public class DomainsPasswordMapTest {
     public void testPasswordDomainMap() throws Exception {
         String keyStorePassword = "NoSoup4U";
         String clearTextPassword = keyStorePassword;
-        String keyStorePath = URLDecoder.decode(ClassLoader.getSystemResource(".keystore").getPath(), "UTF-8");
-        String alias = "engine";
+        String keyStorePath = URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8");
+        String alias = "1";
         String encryptedPassword =
                 EncryptionUtils.encrypt(clearTextPassword,
                         keyStorePath,

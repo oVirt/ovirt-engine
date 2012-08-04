@@ -3,6 +3,7 @@
 # Imports
 import sys
 import os
+import stat
 import shutil
 import logging
 import traceback
@@ -95,6 +96,8 @@ MSG_ERROR_YUM_TID = "Error: Yum transaction mismatch"
 MSG_ERROR_PGPASS = "Error: DB password file was not found on this system. Verify \
 that this system was previously installed and that there's a password file at %s or %s" % \
 (basedefs.DB_PASS_FILE, basedefs.ORIG_PASS_FILE)
+MSG_ERROR_FAILED_CONVERT_ENGINE_KEY = "Error: Can't convert engine key to PKCS#12 fomat"
+MSG_ERROR_SSH_KEY_SYMLINK = "Error: SSH key should not be symlink"
 
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
@@ -117,6 +120,8 @@ MSG_INFO_CHECK_UPDATE = "Checking for updates... (This may take several minutes)
 MSG_INFO_UPGRADE_OK = "%s upgrade completed successfully!" % basedefs.APP_NAME
 MSG_INFO_STOP_INSTALL_EXIT="Upgrade stopped, Goodbye."
 MSG_INFO_UPDATE_ENGINE_PROFILE="Updating ovirt-engine Profile"
+MSG_INFO_PKI_PREPARE = "Preparing CA"
+MSG_INFO_PKI_ROLLBACK = "Restoring CA"
 
 MSG_ALERT_STOP_ENGINE="\nDuring the upgrade process, %s  will not be accessible.\n\
 All existing running virtual machines will continue but you will not be able to\n\
@@ -542,6 +547,106 @@ class DB():
                 os.remove(self.sqlfile)
             raise
 
+class CA():
+
+    JKSKEYSTORE = "/etc/pki/ovirt-engine/.keystore"
+    TMPAPACHECONF = basedefs.FILE_HTTPD_SSL_CONFIG + ".tmp"
+
+    def prepare(self):
+        if os.path.exists(self.JKSKEYSTORE):
+            logging.debug("PKI: convert JKS to PKCS#12")
+            cmd = [
+                basedefs.EXEC_KEYTOOL,
+                "-importkeystore",
+                "-noprompt",
+                "-srckeystore", self.JKSKEYSTORE,
+                "-srcstoretype", "JKS",
+                "-srcstorepass", basedefs.CONST_KEY_PASS,
+                "-srcalias", "engine",
+                "-srckeypass", basedefs.CONST_KEY_PASS,
+                "-destkeystore", basedefs.FILE_ENGINE_KEYSTORE,
+                "-deststoretype", "PKCS12",
+                "-deststorepass", basedefs.CONST_KEY_PASS,
+                "-destalias", "1",
+                "-destkeypass", basedefs.CONST_KEY_PASS
+            ]
+            output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_FAILED_CONVERT_ENGINE_KEY)
+            utils.chownToEngine(basedefs.FILE_ENGINE_KEYSTORE)
+            os.chmod(basedefs.FILE_ENGINE_KEYSTORE, 0640)
+
+        for src, dst in (
+            (basedefs.FILE_ENGINE_KEYSTORE, basedefs.FILE_APACHE_KEYSTORE),
+            (basedefs.FILE_ENGINE_CERT, basedefs.FILE_APACHE_CERT),
+            (basedefs.FILE_SSH_PRIVATE_KEY, basedefs.FILE_APACHE_PRIVATE_KEY)
+        ):
+            logging.debug("PKI: dup cert for apache")
+            try:
+                utils.copyFile(
+                    src,
+                    dst,
+                    utils.getUsernameId("apache"),
+                    utils.getGroupId("apache"),
+                    0640
+                )
+            except OSError:
+                logging.error("PKI: Cannot dup cert for apache")
+                raise
+
+        if not os.path.exists(basedefs.FILE_APACHE_CA_CRT_SRC):
+            logging.debug("PKI: dup ca for apache")
+            try:
+                os.symlink(
+                    os.path.basename(basedefs.FILE_CA_CRT_SRC),
+                    basedefs.FILE_APACHE_CA_CRT_SRC
+                )
+            except OSError:
+                logging.error("PKI: Cannot dup ca for apache")
+                raise
+
+        shutil.copyfile(
+            basedefs.FILE_HTTPD_SSL_CONFIG,
+            self.TMPAPACHECONF
+        )
+        handler = utils.TextConfigFileHandler(self.TMPAPACHECONF, " ")
+        handler.open()
+        if handler.getParam("SSLCertificateFile") == '/etc/pki/ovirt-engine/certs/engine.cer':
+            handler.editParam("SSLCertificateFile", basedefs.FILE_APACHE_CERT)
+        if handler.getParam("SSLCertificateKeyFile") == '/etc/pki/ovirt-engine/keys/engine_id_rsa':
+            handler.editParam("SSLCertificateKeyFile", basedefs.FILE_APACHE_PRIVATE_KEY)
+
+        if handler.getParam("SSLCertificateChainFile") == '/etc/pki/ovirt-engine/ca.pem':
+            handler.editParam("SSLCertificateChainFile", basedefs.FILE_APACHE_CA_CRT_SRC)
+        handler.close()
+
+        utils.updateVDCOption("keystoreUrl", basedefs.FILE_ENGINE_KEYSTORE, (), "text")
+        utils.updateVDCOption("TruststoreUrl", basedefs.FILE_TRUSTSTORE, (), "text")
+        utils.updateVDCOption("CertAlias", "1", (), "text")
+
+    def commit(self):
+        shutil.move(self.TMPAPACHECONF, basedefs.FILE_HTTPD_SSL_CONFIG)
+
+        if os.path.exists(self.JKSKEYSTORE):
+            logging.debug("PKI: removing JKS keystore")
+            try:
+                os.remove(self.JKSKEYSTORE)
+            except OsError:
+                logging.error("PKI: cannot remove JKS keystore '%s'" % self.JKSKEYSTORE)
+
+    def rollback(self):
+        if os.path.exists(self.JKSKEYSTORE):
+            for f in (
+                self.TMPAPACHECONF,
+                basedefs.FILE_ENGINE_KEYSTORE,
+                basedefs.FILE_APACHE_KEYSTORE,
+                basedefs.FILE_APACHE_CA_CRT_SRC,
+                basedefs.FILE_APACHE_CERT,
+                basedefs.FILE_APACHE_PRIVATE_KEY
+            ):
+                try:
+                    os.remove(f)
+                except OSError:
+                    logging.error("PKI: cannot remove '%s'" % f)
+
 def stopEngine(service=basedefs.ENGINE_SERVICE_NAME):
     logging.debug("stopping %s service.", service)
     cmd = [
@@ -683,6 +788,7 @@ def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION):
 def main(options):
     rhyum = MYum()
     db = DB()
+    ca = CA()
     DB_NAME_TEMP = "%s_%s" % (basedefs.DB_NAME, utils.getCurrentDateTime())
 
     # Handle pgpass
@@ -780,8 +886,11 @@ def main(options):
             # Bring up any services we shut down before db upgrade
             startDbRelatedServices(etlService, notificationService)
 
+        # CA restore
+        runFunc([ca.prepare], MSG_INFO_PKI_PREPARE)
+
         # post install conf
-        runFunc(postFunc, MSG_INFO_RUN_POST)
+        runFunc([ca.commit, postFunc], MSG_INFO_RUN_POST)
 
     except:
         logging.error(traceback.format_exc())
@@ -789,6 +898,9 @@ def main(options):
 
         print MSG_ERROR_UPGRADE
         print MSG_INFO_REASON%(sys.exc_info()[1])
+
+        # CA restore
+        runFunc([ca.rollback], MSG_INFO_PKI_ROLLBACK)
 
         # allow db restore
         if isUpdateRelatedToDb(rhyum):

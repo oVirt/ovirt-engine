@@ -29,9 +29,9 @@ import org.ovirt.engine.core.utils.ssh.SSHD;
 
 /*
  * Test properties
- * $ mvn -Dssh-host=host1 -Dssh-test-port=22 -Dssh-test-user=root -Dssh-test-password=password
+ * $ mvn -Dssh-host=host1 -Dssh-test-port=22 -Dssh-test-user=root -Dssh-test-password=password -Dssh-test-p12=a.p12 -Dssh-test-p12-password=password
  *
- * SSH public key is:
+ * Default SSH public key is:
  * ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCF7Rhlve8ikOono3zHN2kkyCqauNSdX9w6lwq3uLNFi7ryyENSpCsQADjCO5EzABUxU+0RHh6OG6TRFCRbI57NN77isfKyLqjsVOkhPB4D86GhmefmnYKPSAA2JxVB9s0BIA8jAgrEy4QFjmxt1EHAi2UAG3PjCC+qANF7CnR47Q==
  *
  * TODO
@@ -94,8 +94,8 @@ public class VdsInstallerSSHTest {
     static String host;
     static String user;
     static String password;
-    static String hostKstore = "src/test/resources/.hostKstore";
-    static String hostKstorePassword = "NoSoup4U";
+    static String hostKstore;
+    static String hostKstorePassword;
     int port;
 
     SSHD sshd;
@@ -106,6 +106,9 @@ public class VdsInstallerSSHTest {
         IConfigUtilsInterface confInstance = new DefaultValuesConfigUtil();
         Config.setConfigUtils(confInstance);
 
+        hostKstore = System.getProperty("ssh-test-p12", "src/test/resources/key.p12");
+        hostKstorePassword = System.getProperty("ssh-test-p12-password", "NoSoup4U");
+
         host = System.getProperty("ssh-host");
 
         if (host == null) {
@@ -115,8 +118,8 @@ public class VdsInstallerSSHTest {
 
             sshd = new SSHD();
             try {
-                KeyStore ks = KeyStore.getInstance("JKS");
-                ks.load(new FileInputStream(hostKstore), /*hostKstorePassword.toCharArray()*/null);
+                KeyStore ks = KeyStore.getInstance("PKCS12");
+                ks.load(new FileInputStream(hostKstore), hostKstorePassword.toCharArray());
                 sshd.setUser(
                     user,
                     password,

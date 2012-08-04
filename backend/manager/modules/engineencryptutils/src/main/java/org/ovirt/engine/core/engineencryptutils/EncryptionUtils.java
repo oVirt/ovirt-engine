@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 
 public class EncryptionUtils {
     private static String algo = "RSA";
-    private static String certType = "JKS";
+    private static String certType = "PKCS12";
     private static Log log = LogFactory.getLog(EncryptionUtils.class);
 
     /**
@@ -95,7 +95,7 @@ public class EncryptionUtils {
      *            The certificate alias.
      * @return
      *
-     *         Loads a private key from a JKS file using the supplied password and encrypts the value. The string which
+     *         Loads a private key from a PKCS#12 file using the supplied password and encrypts the value. The string which
      *         is returned is first base64 encoded The keyfile is loaded first off of the classpath, then from the file
      *         system.
      */
@@ -128,7 +128,7 @@ public class EncryptionUtils {
      *            The certificate alias.
      * @return
      *
-     *         Loads a private key from a JKS file using the supplied password and decrypts the value. The string to be
+     *         Loads a private key from a PKCS#12 file using the supplied password and decrypts the value. The string to be
      *         decrypted is assumed to have been base64 encoded. The keyfile is loaded from the file system
      */
     public static String decrypt(String source, String keyFile, String passwd, String alias)

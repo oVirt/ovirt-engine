@@ -9,11 +9,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.security.cert.Certificate;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
+import java.security.cert.Certificate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -170,8 +170,8 @@ public class VdsInstallerSSH {
                 try {
                     in = new FileInputStream(keyStore);
 
-                    KeyStore ks = KeyStore.getInstance("JKS");
-                    ks.load(in, null);
+                    KeyStore ks = KeyStore.getInstance("PKCS12");
+                    ks.load(in, keyStorePassword.toCharArray());
 
                     entry = (KeyStore.PrivateKeyEntry)ks.getEntry(
                         alias,
@@ -551,7 +551,6 @@ public class VdsInstallerSSH {
         return ret;
     }
 
-
     public static String getEngineSSHKeyFingerprint() {
         String fingerprint = null;
 
@@ -560,11 +559,12 @@ public class VdsInstallerSSH {
         InputStream in = null;
         try {
             in = new FileInputStream(keystoreFile);
-            KeyStore ks = KeyStore.getInstance("JKS");
+            KeyStore ks = KeyStore.getInstance("PKCS12");
             ks.load(
                 in,
                 Config.<String>GetValue(ConfigValues.keystorePass).toCharArray()
             );
+
             Certificate cert = ks.getCertificate(alias);
             if (cert == null) {
                 throw new KeyStoreException(

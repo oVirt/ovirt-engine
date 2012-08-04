@@ -226,13 +226,13 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
         this.sslcontext = createSSLContext();
     }
 
-    private static KeyStore createKeyStore(final URL url, final String password) throws KeyStoreException,
+    private static KeyStore createKeyStore(final String type, final URL url, final String password) throws KeyStoreException,
             NoSuchAlgorithmException, CertificateException, IOException {
         if (url == null) {
             throw new IllegalArgumentException("Keystore url may not be null");
         }
         LOG.debug("Initializing key store");
-        KeyStore keystore = KeyStore.getInstance("jks");
+        KeyStore keystore = KeyStore.getInstance(type);
         InputStream is = null;
         try {
             is = url.openStream();
@@ -277,7 +277,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             KeyManager[] keymanagers = null;
             TrustManager[] trustmanagers = null;
             if (this.keystoreUrl != null) {
-                KeyStore keystore = createKeyStore(this.keystoreUrl, this.keystorePassword);
+                KeyStore keystore = createKeyStore("PKCS12", this.keystoreUrl, this.keystorePassword);
                 if (LOG.isDebugEnabled()) {
                     Enumeration<String> aliases = keystore.aliases();
                     while (aliases.hasMoreElements()) {
@@ -302,7 +302,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
                 keymanagers = createKeyManagers(keystore, this.keystorePassword);
             }
             if (this.truststoreUrl != null) {
-                KeyStore keystore = createKeyStore(this.truststoreUrl, this.truststorePassword);
+                KeyStore keystore = createKeyStore("JKS", this.truststoreUrl, this.truststorePassword);
                 if (LOG.isDebugEnabled()) {
                     Enumeration<String> aliases = keystore.aliases();
                     while (aliases.hasMoreElements()) {

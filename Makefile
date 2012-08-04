@@ -298,7 +298,6 @@ install_sec:
 
 	# Scripts:
 	install -m 755 backend/manager/conf/ca/*.sh $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 755 backend/manager/conf/ca/generate-ssh-keys $(DESTDIR)$(PKG_PKI_DIR)
 
 install_config:
 	@echo "*** Deploying engine-config & engine-manage-domains"

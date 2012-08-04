@@ -24,8 +24,6 @@ LOG_FILE = "%s-cleanup.log" % (PREFIX)
 # PATH
 LOG_PATH = "/var/log/%s" % (BASE_NAME)
 PKI_DIR = "/etc/pki/%s" % (BASE_NAME)
-TRUSTORE = os.path.join(PKI_DIR, ".truststore")
-KEYSTORE = os.path.join(PKI_DIR, ".keystore")
 PKI_BACKUP_DIR = "/etc/pki/%s-backups" % (BASE_NAME)
 
 # Default DB Configuration
@@ -244,19 +242,20 @@ class CA():
     def remove(self):
         logging.debug("CA Remove started")
 
-        # Remove trustore
-        if os.path.exists(TRUSTORE):
-            logging.debug("Removing %s", TRUSTORE)
-            os.remove(TRUSTORE)
-        else:
-            logging.debug("%s doesn't exists", TRUSTORE)
-
-        # Remove keystore
-        if os.path.exists(KEYSTORE):
-            logging.debug("Removing %s", KEYSTORE)
-            os.remove(KEYSTORE)
-        else:
-            logging.debug("%s doesn't exists", KEYSTORE)
+        for f in (
+            basedefs.FILE_CA_CRT_SRC,
+            basedefs.FILE_APACHE_CA_CRT_SRC,
+            basedefs.FILE_TRUSTSTORE,
+            basedefs.FILE_ENGINE_KEYSTORE,
+            basedefs.FILE_APACHE_KEYSTORE,
+            basedefs.FILE_APACHE_PRIVATE_KEY,
+            basedefs.FILE_SSH_PRIVATE_KEY
+        ):
+            try:
+                logging.debug("Removing %s", f)
+                os.remove(f)
+            except OSError:
+                logging.debug("%s doesn't exists", f)
 
         logging.debug("CA Remove completed successfully")
 

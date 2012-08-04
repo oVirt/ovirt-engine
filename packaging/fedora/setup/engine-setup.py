@@ -685,13 +685,13 @@ def _configureSelinuxBoolean():
 
 def _configureHttpdSslKeys():
     try:
-        logging.debug("Update %s to use engine_id_rsa private key in mod_ssl directives"%(basedefs.FILE_HTTPD_SSL_CONFIG))
-        # Use the engine_id_rsa key in mod_ssl directives
+        logging.debug("Update %s to use engine private key in mod_ssl directives"%(basedefs.FILE_HTTPD_SSL_CONFIG))
+        # Use the apache key in mod_ssl directives
         handler = utils.TextConfigFileHandler(basedefs.FILE_HTTPD_SSL_CONFIG, " ")
         handler.open()
-        handler.editParam("SSLCertificateFile", basedefs.FILE_ENGINE_CERT, uncomment=True)
-        handler.editParam("SSLCertificateKeyFile", basedefs.FILE_PRIVATE_SSH_KEY, uncomment=True)
-        handler.editParam("SSLCertificateChainFile", basedefs.FILE_CA_CRT_SRC, uncomment=True)
+        handler.editParam("SSLCertificateFile", basedefs.FILE_APACHE_CERT, uncomment=True)
+        handler.editParam("SSLCertificateKeyFile", basedefs.FILE_APACHE_PRIVATE_KEY, uncomment=True)
+        handler.editParam("SSLCertificateChainFile", basedefs.FILE_APACHE_CA_CRT_SRC, uncomment=True)
         handler.close()
     except:
         logging.error(traceback.format_exc())
@@ -742,8 +742,7 @@ def _createCA():
 
     try:
         # Create new CA only if none available
-        ksPath = os.path.join(basedefs.DIR_OVIRT_PKI, ".keystore")
-        if not os.path.exists(ksPath):
+        if not os.path.exists(basedefs.FILE_CA_CRT_SRC):
             _updateCaCrtTemplate()
 
             # time.timezone is in seconds
@@ -788,17 +787,38 @@ def _createCA():
 
             out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_CA_PASS])
 
-            # Generate the ssh key
+            # Extract non password key for log collector
             cmd = [
-                os.path.join(basedefs.DIR_OVIRT_PKI, "generate-ssh-keys"),
-                "-s", ksPath,
-                "-p", basedefs.CONST_CA_PASS,
-                "-a",
-                "engine",
-                "-k", basedefs.FILE_PRIVATE_SSH_KEY
+                basedefs.EXEC_OPENSSL,
+                "pkcs12",
+                "-in", basedefs.FILE_ENGINE_KEYSTORE,
+                "-passin", "pass:" + basedefs.CONST_KEY_PASS,
+                "-nodes",
+                "-nocerts",
+                "-out", basedefs.FILE_SSH_PRIVATE_KEY
             ]
 
-            out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_CA_PASS])
+            out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_KEY_PASS])
+            os.chmod(basedefs.FILE_SSH_PRIVATE_KEY, 0600)
+
+            # Extract non password key for apache
+            cmd = [
+                basedefs.EXEC_OPENSSL,
+                "pkcs12",
+                "-in", basedefs.FILE_APACHE_KEYSTORE,
+                "-passin", "pass:" + basedefs.CONST_KEY_PASS,
+                "-nodes",
+                "-nocerts",
+                "-out", basedefs.FILE_APACHE_PRIVATE_KEY
+            ]
+
+            out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_KEY_PASS])
+            os.chmod(basedefs.FILE_APACHE_PRIVATE_KEY, 0600)
+
+            os.symlink(
+                os.path.basename(basedefs.FILE_CA_CRT_SRC),
+                basedefs.FILE_APACHE_CA_CRT_SRC
+            )
 
             # Extract CA fingerprint
             cmd = [
@@ -816,7 +836,7 @@ def _createCA():
             # ExtractSSH fingerprint
             cmd = [
                 basedefs.EXEC_SSH_KEYGEN,
-                "-yf", basedefs.FILE_PRIVATE_SSH_KEY
+                "-yf", basedefs.FILE_SSH_PRIVATE_KEY
             ]
             pubkey, rc = utils.execCmd(cmdList=cmd, failOnError=True)
             pubtempfd, pubtemp = tempfile.mkstemp(suffix=".pub")
@@ -832,7 +852,7 @@ def _createCA():
             controller.MESSAGES.append(msg)
 
             # Set right permissions
-            _changeCaPermissions(basedefs.DIR_OVIRT_PKI)
+            _changeCaPermissions()
         else:
             msg = output_messages.INFO_CA_KEYSTORE_EXISTS
             logging.warn(msg)
@@ -845,17 +865,25 @@ def _createCA():
         if pubtemp != None:
             os.remove(pubtemp)
 
-def _changeCaPermissions(pkiDir):
-    changeList = [os.path.join(pkiDir, "ca.pem"),
-                    os.path.join(pkiDir,".keystore"),
-                    os.path.join(pkiDir, "private"),
-                    os.path.join(pkiDir, "private", "ca.pem"),
-                    os.path.join(pkiDir,".truststore")
-                    ]
+def _changeCaPermissions():
+    changeList = [os.path.join(basedefs.DIR_OVIRT_PKI, "private"),
+                  basedefs.FILE_CA_CRT_SRC,
+                  basedefs.FILE_ENGINE_KEYSTORE,
+                  os.path.join(basedefs.DIR_OVIRT_PKI, "private", "ca.pem"),
+                  os.path.join(basedefs.DIR_OVIRT_PKI, ".truststore")]
     for item in changeList:
         utils.chownToEngine(item)
-        logging.debug("changing file permissions for %s to 0750" % (item))
-        os.chmod(item, 0750)
+        if os.path.isdir(item):
+            logging.debug("changing directory permissions for %s to 0750" % item)
+            os.chmod(item, 0750)
+        else:
+            logging.debug("changing file permissions for %s to 0640" % item)
+            os.chmod(item, 0640)
+
+    os.chown(basedefs.FILE_APACHE_KEYSTORE, utils.getUsernameId("apache"), utils.getGroupId("apache"))
+    os.chmod(basedefs.FILE_APACHE_KEYSTORE, 0640)
+    os.chown(basedefs.FILE_APACHE_PRIVATE_KEY, utils.getUsernameId("apache"), utils.getGroupId("apache"))
+    os.chmod(basedefs.FILE_APACHE_PRIVATE_KEY, 0640)
 
 def _updateCaCrtTemplate():
     for file in [basedefs.FILE_CA_CRT_TEMPLATE, basedefs.FILE_CERT_TEMPLATE]:
@@ -1046,18 +1074,18 @@ def _updateVDCOptions():
     #1st we update the keystore and CA related paths, only then we can set the passwords and the rest options
     options = (
         {
-            "CABaseDirectory":["/etc/pki/ovirt-engine", 'text'],
-            "keystoreUrl":["/etc/pki/ovirt-engine/.keystore", 'text'],
-            "CertificateFileName":["/etc/pki/ovirt-engine/certs/engine.cer", 'text'],
-            "CAEngineKey":["/etc/pki/ovirt-engine/private/ca.pem", 'text'],
-            "TruststoreUrl":["/etc/pki/ovirt-engine/.keystore", 'text'],
+            "CABaseDirectory":[basedefs.DIR_OVIRT_PKI, 'text'],
+            "keystoreUrl":[basedefs.FILE_ENGINE_KEYSTORE, 'text'],
+            "CertificateFileName":[basedefs.FILE_ENGINE_CERT, 'text'],
+            "CAEngineKey":[os.path.join(basedefs.DIR_OVIRT_PKI, "private", "ca.pem"), 'text'],
+            "TruststoreUrl":[basedefs.FILE_TRUSTSTORE, 'text'],
             "ENGINEEARLib":["%s/engine.ear" %(basedefs.DIR_ENGINE), 'text'],
-            "CACertificatePath":["/etc/pki/ovirt-engine/ca.pem", 'text'],
-            "CertAlias":["engine", 'text'],
+            "CACertificatePath":[basedefs.FILE_CA_CRT_SRC, 'text'],
+            "CertAlias":["1", 'text'],
         },
         {
             "TruststorePass":[basedefs.CONST_CA_PASS, 'text'],
-            "keystorePass":[basedefs.CONST_CA_PASS, 'text'],
+            "keystorePass":[basedefs.CONST_KEY_PASS, 'text'],
             "CertificatePassword":[basedefs.CONST_CA_PASS, 'pass'],
             "LocalAdminPassword":[controller.CONF["AUTH_PASS"], 'pass'],
             "SSLEnabled":[ "true", 'text'],
@@ -1881,10 +1909,8 @@ def _findJavaHome():
     controller.CONF["JAVA_HOME"] = javaHome
 
 def isSecondRun():
-    keystore = os.path.join(basedefs.DIR_OVIRT_PKI, ".keystore")
-
-    if os.path.exists(keystore):
-        logging.debug("%s exists, second run detected", keystore)
+    if os.path.exists(basedefs.FILE_ENGINE_KEYSTORE):
+        logging.debug("%s exists, second run detected", basedefs.FILE_ENGINE_KEYSTORE)
         return True
     else:
         return False

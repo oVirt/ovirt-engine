@@ -93,7 +93,7 @@
         <directory>src/test/resources</directory>
         <filtering>true</filtering>
         <excludes>
-          <exclude>**/.keystore</exclude>
+          <exclude>**/key.p12</exclude>
         </excludes>
       </testResource>
     </testResources>
@@ -109,14 +109,14 @@
         <directory>src/test/resources</directory>
         <filtering>true</filtering>
         <excludes>
-          <exclude>**/.keystore</exclude>
+          <exclude>**/key.p12</exclude>
         </excludes>
       </resource>
       <resource>
         <directory>src/test/resources</directory>
         <filtering>false</filtering>
         <includes>
-          <include>**/.keystore</include>
+          <include>**/key.p12</include>
         </includes>
       </resource>
     </resources>

@@ -67,7 +67,7 @@ select fn_db_add_config_value('CBCCertificateScriptName','/usr/share/vdsm-reg/vd
 select fn_db_add_config_value('CbcCheckOnVdsChange','false','general');
 select fn_db_add_config_value('CBCCloseCertificateScriptName','/usr/share/vdsm-reg/vdsm-complete','general');
 --Handling Certificate alias
-select fn_db_add_config_value('CertAlias','engine','general');
+select fn_db_add_config_value('CertAlias','1','general');
 --Handling Certificate File Name
 select fn_db_add_config_value('CertificateFileName','vdc.pfx','general');
 select fn_db_add_config_value('CertificateFingerPrint','73 18 22 44 5d 98 b0 5d c0 f7 36 7d f8 1d 85 da e1 3c f1 c6','general');
@@ -233,7 +233,7 @@ select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
 select fn_db_add_config_value('JobPageSize','100','general');
 select fn_db_add_config_value('keystorePass','NoSoup4U','general');
 --Handling Keystore URL
-select fn_db_add_config_value('keystoreUrl','.keystore','general');
+select fn_db_add_config_value('keystoreUrl','keys/engine.p12','general');
 select fn_db_add_config_value('LdapQueryPageSize','1000','general');
 select fn_db_add_config_value('LDAPQueryTimeout','30','general');
 select fn_db_add_config_value('LDAPConnectTimeout','30','general');
@@ -487,7 +487,7 @@ select fn_db_add_config_value('TimeoutToResetVdsInSeconds','60','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('TruststorePass','NoSoup4U','general');
 --Handling Truststore URL
-select fn_db_add_config_value('TruststoreUrl','.keystore','general');
+select fn_db_add_config_value('TruststoreUrl','.truststore','general');
 select fn_db_add_config_value('UknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserDefinedVMProperties','','2.2');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.0');
@@ -554,6 +554,7 @@ select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\
 --                  Update with override section
 ------------------------------------------------------------------------------------
 
+select fn_db_update_config_value('CertAlias','1','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DebugSearchLogging','false','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
@@ -583,6 +584,7 @@ select fn_db_update_config_value('IPTablesConfig','
 COMMIT
 ','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
+select fn_db_update_config_value('keystoreUrl','keys/engine.p12','general');
 select fn_db_update_config_value('MinimalETLVersion','3.1.0','general');
 select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
@@ -596,6 +598,7 @@ select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spi
 select fn_db_update_config_value('SupportedClusterLevels','2.2,3.0,3.1,3.2','general');
 select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.1');
 select fn_db_update_config_value('SupportedVDSMVersions','4.5,4.9,4.10','general');
+select fn_db_update_config_value('TruststoreUrl','.truststore','general');
 select fn_db_update_config_value('VdcVersion','3.2.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','3.1.0.0','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port','general');

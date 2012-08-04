@@ -824,7 +824,7 @@ public enum ConfigValues {
 
     // JTODO - temporarily using values from 256 for Java specific options
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute(".keystore")
+    @DefaultValueAttribute("keys/engine.p12")
     keystoreUrl(256),
 
     // TODO: handle password behavior
@@ -834,7 +834,7 @@ public enum ConfigValues {
     keystorePass(257),
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute(".keystore")
+    @DefaultValueAttribute(".truststore")
     TruststoreUrl(258),
 
     @TypeConverterAttribute(String.class)
@@ -865,8 +865,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("SignReq.bat")
     SignScriptName(264),
 
+    // PKCS#12 store contains only one key
+    // Alias is almost always "1"
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("engine")
+    @DefaultValueAttribute("1")
     CertAlias(265),
 
     @Reloadable

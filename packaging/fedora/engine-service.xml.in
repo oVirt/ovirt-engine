@@ -244,7 +244,7 @@
       #end if
       #if $getBoolean('ENGINE_HTTPS_ENABLED')
         <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
-          <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/.keystore" key-alias="engine" protocol="TLSv1" verify-client="false"/>
+          <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/keys/apache.p12" keystore-type="PKCS12" key-alias="1" protocol="TLSv1" verify-client="false"/>
         </connector>
       #end if
       #if $getBoolean('ENGINE_AJP_ENABLED')

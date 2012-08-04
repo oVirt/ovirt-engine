@@ -55,7 +55,7 @@ public class EngineMonitorService implements Runnable {
     private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
     private static final String HEALTH_SERVLET_PATH = "/OvirtEngineWeb/HealthStatus";
-    private static final String CERTIFICATION_TYPE = "JKS";
+    private static final String CERTIFICATION_TYPE = "PKCS12";
     private static final String DEFAULT_SSL_PROTOCOL = "TLS";
     private static final long DEFAULT_SERVER_MONITOR_TIMEOUT_IN_SECONDS = 30;
     private static final int DEFAULT_SERVER_MONITOR_RETRIES = 3;
