@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dao.SearchDAO;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
@@ -138,6 +137,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<VM> searchVmsFromDb() {
         List<VM> returnValue = null;
+
         QueryData2 data = InitQueryData(true);
         if (data == null) {
             returnValue = new ArrayList<VM>();
@@ -290,10 +290,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 data.setPreQueryCommand(getDbFacade().getDbEngineDialect().getPreSearchQueryCommand());
                 ISyntaxChecker curSyntaxChecker;
                 String[] splitted = searchText.split("[:@ ]");
-                if ((StringHelper.EqOp(splitted[0].toUpperCase(), SearchObjects.AD_USER_OBJ_NAME))
-                        || (StringHelper.EqOp(splitted[0].toUpperCase(), SearchObjects.AD_USER_PLU_OBJ_NAME))
-                        || (StringHelper.EqOp(splitted[0].toUpperCase(), SearchObjects.AD_GROUP_OBJ_NAME))
-                        || (StringHelper.EqOp(splitted[0].toUpperCase(), SearchObjects.AD_GROUP_PLU_OBJ_NAME))) {
+                final String objectName = splitted[0].toUpperCase();
+                if ((SearchObjects.AD_USER_OBJ_NAME.equals(objectName))
+                        || (SearchObjects.AD_USER_PLU_OBJ_NAME.equals(objectName))
+                        || (SearchObjects.AD_GROUP_OBJ_NAME.equals(objectName))
+                        || (SearchObjects.AD_GROUP_PLU_OBJ_NAME.equals(objectName))) {
                     if (searchText.indexOf('@') > 0 && splitted.length > 1) {
                         data.setDomain(splitted[1]);
                         searchText = searchText.substring(0, searchText.indexOf('@'))
