@@ -143,9 +143,9 @@ public final class NetworkUtils {
             if ((network.getMtu() == 0 || iface.getMtu() == network.getMtu())
                     && ObjectUtils.equals(iface.getVlanId(), network.getvlan_id())
                     && iface.isBridged() == network.isVmNetwork()) {
-                return new VdsNetworkInterface.NetworkImplementationDetails(true);
+                return new VdsNetworkInterface.NetworkImplementationDetails(true, true);
             } else {
-                return new VdsNetworkInterface.NetworkImplementationDetails(false);
+                return new VdsNetworkInterface.NetworkImplementationDetails(false, true);
             }
         }
 

@@ -49,11 +49,11 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNIC, Vd
         HostNIC model = HostNicMapper.map(entity, null);
         assertFalse(model.isSetCustomConfiguration());
 
-        entity.setNetworkImplementationDetails(new VdsNetworkInterface.NetworkImplementationDetails(false));
+        entity.setNetworkImplementationDetails(new VdsNetworkInterface.NetworkImplementationDetails(false, true));
         model = HostNicMapper.map(entity, null);
         assertEquals(entity.getNetworkImplementationDetails().isInSync(), !model.isCustomConfiguration());
 
-        entity.setNetworkImplementationDetails(new VdsNetworkInterface.NetworkImplementationDetails(true));
+        entity.setNetworkImplementationDetails(new VdsNetworkInterface.NetworkImplementationDetails(true, true));
         model = HostNicMapper.map(entity, null);
         assertEquals(entity.getNetworkImplementationDetails().isInSync(), !model.isCustomConfiguration());
     }

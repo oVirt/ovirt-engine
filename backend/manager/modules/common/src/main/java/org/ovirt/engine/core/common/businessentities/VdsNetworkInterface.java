@@ -410,12 +410,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
         private static final long serialVersionUID = 5213991878221362832L;
         private boolean inSync;
+        private boolean managed;
 
         public NetworkImplementationDetails() {
         }
 
-        public NetworkImplementationDetails(boolean inSync) {
+        public NetworkImplementationDetails(boolean inSync, boolean managed) {
             this.inSync = inSync;
+            this.managed = managed;
         }
 
         /**
@@ -423,6 +425,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
          */
         public boolean isInSync() {
             return inSync;
+        }
+
+        /**
+         * @return Is the network that is defined on this interface managed by the engine, or some custom network which
+         *         exists solely on the host.
+         */
+        public boolean isManaged() {
+            return managed;
         }
     }
 }
