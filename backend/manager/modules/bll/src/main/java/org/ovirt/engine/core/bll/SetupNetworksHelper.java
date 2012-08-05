@@ -119,9 +119,10 @@ public class SetupNetworksHelper {
      */
     private void detectSlaveChanges() {
         for (VdsNetworkInterface newIface : params.getInterfaces()) {
-            if (!isBond(newIface) && newIface.getVlanId() == null) {
+            VdsNetworkInterface existingIface = getExistingIfaces().get(newIface.getName());
+            if (existingIface != null && !isBond(existingIface) && existingIface.getVlanId() == null) {
                 String bondNameInNewIface = newIface.getBondName();
-                String bondNameInOldIface = getExistingIfaces().get(newIface.getName()).getBondName();
+                String bondNameInOldIface = existingIface.getBondName();
 
                 if (!StringUtils.equals(bondNameInNewIface, bondNameInOldIface)) {
                     if (bondNameInNewIface != null && !modifiedBonds.containsKey(bondNameInNewIface)) {
