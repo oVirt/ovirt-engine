@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
@@ -9,6 +10,7 @@ import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -48,7 +50,9 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VmSnapshotListModel extends SearchableListModel
@@ -489,51 +493,49 @@ public class VmSnapshotListModel extends SearchableListModel
         model.getCommands().add(tempVar3);
     }
 
-    private void OnNew()
-    {
+    private void OnNew() {
+
         VM vm = (VM) getEntity();
-        if (vm == null)
-        {
+        if (vm == null) {
             return;
         }
 
         SnapshotModel model = (SnapshotModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
-        if (!model.Validate())
-        {
+        if (!model.Validate()) {
             return;
         }
 
         model.StartProgress(null);
 
-        CreateAllSnapshotsFromVmParameters params =
-                new CreateAllSnapshotsFromVmParameters(vm.getId(), (String) model.getDescription().getEntity());
-        params.setQuotaId(vm.getQuotaId());
-        Frontend.RunAction(VdcActionType.CreateAllSnapshotsFromVm, params,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+        ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
+        CreateAllSnapshotsFromVmParameters param = new CreateAllSnapshotsFromVmParameters(vm.getId(), (String) model.getDescription().getEntity());
+        param.setQuotaId(vm.getQuotaId());
+        params.add(param);
 
-                        VmSnapshotListModel localModel = (VmSnapshotListModel) result.getState();
-                        localModel.PostOnNew(result.getReturnValue());
+        Frontend.RunMultipleAction(VdcActionType.CreateAllSnapshotsFromVm, params,
+            new IFrontendMultipleActionAsyncCallback() {
+                @Override
+                public void Executed(FrontendMultipleActionAsyncResult result) {
 
-                    }
-                }, this);
+                    VmSnapshotListModel localModel = (VmSnapshotListModel) result.getState();
+                    localModel.PostOnNew(result.getReturnValue());
+
+                }
+            }, this);
     }
 
-    public void PostOnNew(VdcReturnValueBase returnValue)
-    {
+    public void PostOnNew(List<VdcReturnValueBase> returnValues) {
+
         SnapshotModel model = (SnapshotModel) getWindow();
 
         model.StopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
+        if (returnValues != null && Linq.All(returnValues, new Linq.CanDoActionSucceedPredicate())) {
             Cancel();
         }
     }

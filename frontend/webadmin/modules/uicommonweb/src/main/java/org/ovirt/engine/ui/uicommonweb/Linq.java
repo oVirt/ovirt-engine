@@ -707,6 +707,17 @@ public final class Linq
         return null;
     }
 
+    public static <TSource> boolean All(Iterable<TSource> source, IPredicate<TSource> predicate) {
+
+        for (TSource item : source) {
+            if (!predicate.Match(item)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static <TSource> Iterable<TSource> Where(Iterable<TSource> source, IPredicate<TSource> predicate)
     {
         ArrayList<TSource> list = new ArrayList<TSource>();
@@ -1100,6 +1111,15 @@ public final class Linq
         public boolean Match(storage_pool source)
         {
             return source.getstatus() == status;
+        }
+    }
+
+
+    public final static class CanDoActionSucceedPredicate implements IPredicate<VdcReturnValueBase> {
+
+        @Override
+        public boolean Match(VdcReturnValueBase source) {
+            return source.getCanDoAction();
         }
     }
 
