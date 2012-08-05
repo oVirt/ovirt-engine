@@ -42,4 +42,8 @@ public class ErrorPopupPresenterWidget extends PresenterWidget<ErrorPopupPresent
         getView().setErrorMessage(errorMessage);
     }
 
+    public void hide() {
+        getView().hide();
+    }
+
 }

@@ -30,7 +30,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
 
     private final ITypeResolver typeResolver;
     private final FrontendEventsHandlerImpl frontendEventsHandler;
-    private final FrontendFailureEventListener frontendFailureEventListener;
+    protected final FrontendFailureEventListener frontendFailureEventListener;
 
     protected final CurrentUser user;
     protected final EventBus eventBus;
@@ -86,6 +86,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
     @Override
     public void onLogout() {
         user.onUserLogout();
+        frontendFailureEventListener.hide();
     }
 
     protected void performLogin(T loginModel) {

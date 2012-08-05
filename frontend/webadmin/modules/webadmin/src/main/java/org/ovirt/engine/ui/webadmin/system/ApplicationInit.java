@@ -40,7 +40,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
 
     @Override
     protected void beforeUiCommonInitEvent(LoginModel loginModel) {
-        CommonModelManager.init(eventBus, user, loginModel);
+        CommonModelManager.init(eventBus, user, loginModel, frontendFailureEventListener);
     }
 
     @Override

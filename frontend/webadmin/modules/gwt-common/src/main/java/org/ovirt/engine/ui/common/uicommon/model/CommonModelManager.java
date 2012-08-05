@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 
@@ -21,7 +22,8 @@ public class CommonModelManager {
      * <p>
      * Should be called right after successful user authentication, before redirecting the user to the main section.
      */
-    public static void init(final EventBus eventBus, final CurrentUser user, final LoginModel loginModel) {
+    public static void init(final EventBus eventBus, final CurrentUser user, final LoginModel loginModel,
+            final FrontendFailureEventListener frontendFailureEventListener) {
         commonModel = CommonModel.newInstance();
 
         commonModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
@@ -39,6 +41,7 @@ public class CommonModelManager {
 
                 loginModel.resetAfterLogout();
                 user.onUserLogout();
+                frontendFailureEventListener.hide();
             }
         });
     }

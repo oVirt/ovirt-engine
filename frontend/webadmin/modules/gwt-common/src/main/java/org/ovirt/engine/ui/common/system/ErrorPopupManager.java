@@ -41,4 +41,8 @@ public class ErrorPopupManager implements HasHandlers {
         }
     }
 
+    public void hide(){
+        errorPopup.hide();
+    }
+
 }

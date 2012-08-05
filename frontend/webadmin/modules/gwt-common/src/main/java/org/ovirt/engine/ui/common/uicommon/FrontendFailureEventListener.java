@@ -29,4 +29,8 @@ public class FrontendFailureEventListener implements IEventListener {
             errorPopupManager.show(MESSAGES.uiCommonFrontendFailure(ErrorMessageFormatter.formatMessages(failureArgs.getMessages())));
         }
     }
+
+    public void hide() {
+        errorPopupManager.hide();
+    }
 }
