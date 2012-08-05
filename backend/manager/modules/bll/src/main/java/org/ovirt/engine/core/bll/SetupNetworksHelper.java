@@ -72,7 +72,7 @@ public class SetupNetworksHelper {
 
                     // validate the nic exists on host
                     if (!getExistingIfaces().containsKey(NetworkUtils.StripVlan(name))) {
-                        violations.add(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
+                        addViolation(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
                     }
                 }
 
@@ -89,6 +89,10 @@ public class SetupNetworksHelper {
         detectSlaveChanges();
 
         return translateViolations();
+    }
+
+    private void addViolation(VdcBllMessages violation) {
+        violations.add(violation);
     }
 
     private List<String> translateViolations() {
@@ -109,9 +113,9 @@ public class SetupNetworksHelper {
     private boolean addInterfaceToProcessedList(VdsNetworkInterface iface) {
         if (ifaceNames.contains(iface.getName())) {
             if (isBond(iface)) {
-                violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
+                addViolation(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
             } else {
-                violations.add(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
+                addViolation(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
             }
 
             return false;
@@ -198,7 +202,7 @@ public class SetupNetworksHelper {
 
         // prevent attaching 2 interfaces to 1 network
         if (attachedNetworksNames.contains(networkName)) {
-            violations.add(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
+            addViolation(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
         } else {
             attachedNetworksNames.add(networkName);
 
@@ -214,13 +218,13 @@ public class SetupNetworksHelper {
                     if (networkShouldBeSynced(networkName)) {
                         modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
                     } else if (networkWasModified(iface)) {
-                        violations.add(VdcBllMessages.NETWORK_NOT_IN_SYNC);
+                        addViolation(VdcBllMessages.NETWORK_NOT_IN_SYNC);
                     }
                 } else if (networkWasModified(iface)) {
                     modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
                 }
             } else if (unmanagedNetworkChanged(iface)) {
-                violations.add(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+                addViolation(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
             }
         }
     }
@@ -362,7 +366,7 @@ public class SetupNetworksHelper {
         for (Map.Entry<String, List<VdsNetworkInterface>> bondEntry : bonds.entrySet()) {
             if (bondEntry.getValue().size() < 2) {
                 returnValue = false;
-                violations.add(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
+                addViolation(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
             }
         }
 
