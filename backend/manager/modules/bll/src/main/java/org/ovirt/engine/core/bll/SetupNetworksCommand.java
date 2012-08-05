@@ -63,10 +63,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         }
 
         helper = new SetupNetworksHelper(getParameters(), vds.getvds_group_id());
-        List<VdcBllMessages> validationMesseges = helper.validate();
+        List<String> validationMesseges = helper.validate();
 
         if (!validationMesseges.isEmpty()) {
-            for (VdcBllMessages msg : validationMesseges) {
+            for (String msg : validationMesseges) {
                 addCanDoActionMessage(msg);
             }
             return false;

@@ -649,14 +649,14 @@ public class SetupNetworksHelperTest {
     /* --- Helper methods for tests --- */
 
     private void validateAndExpectNoViolations(SetupNetworksHelper helper) {
-        List<VdcBllMessages> violations = helper.validate();
+        List<String> violations = helper.validate();
         assertTrue("Expected no violations, but got: " + violations, violations.isEmpty());
     }
 
     private void validateAndExpectViolation(SetupNetworksHelper helper, VdcBllMessages violation) {
-        List<VdcBllMessages> violations = helper.validate();
+        List<String> violations = helper.validate();
         assertTrue(MessageFormat.format("Expected violation {0} but only got {1}.", violation, violations),
-                violations.contains(violation));
+                violations.contains(violation.name()));
     }
 
     private void validateAndAssertNoChanges(SetupNetworksHelper helper) {

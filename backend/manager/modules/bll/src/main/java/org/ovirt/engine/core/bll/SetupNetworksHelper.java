@@ -59,7 +59,7 @@ public class SetupNetworksHelper {
      *
      * @return List of violations encountered (if none, list is empty).
      */
-    public List<VdcBllMessages> validate() {
+    public List<String> validate() {
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String name = iface.getName();
             if (addInterfaceToProcessedList(iface)) {
@@ -88,7 +88,15 @@ public class SetupNetworksHelper {
         extractRemovedBonds();
         detectSlaveChanges();
 
-        return violations;
+        return translateViolations();
+    }
+
+    private List<String> translateViolations() {
+        List<String> violationMessages = new ArrayList<String>(violations.size());
+        for (VdcBllMessages v : violations) {
+            violationMessages.add(v.name());
+        }
+        return violationMessages;
     }
 
     /**
