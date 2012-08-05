@@ -19,11 +19,35 @@ public class NetworkUtilsTest {
     public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Test
-    public void calculateNetworkImplementationDetailsUnmamagedNetwork() throws Exception {
+    public void calculateNetworkImplementationDetailsNoNetworkName() throws Exception {
         VdsNetworkInterface iface = createNetworkDevice();
+        iface.setNetworkName(null);
 
         assertNull("Network implementation details should not be filled.",
                 NetworkUtils.calculateNetworkImplementationDetails(Collections.<String, Network> emptyMap(), iface));
+    }
+
+    @Test
+    public void calculateNetworkImplementationDetailsEmptyNetworkName() throws Exception {
+        VdsNetworkInterface iface = createNetworkDevice();
+        iface.setNetworkName("");
+
+        assertNull("Network implementation details should not be filled.",
+                NetworkUtils.calculateNetworkImplementationDetails(Collections.<String, Network> emptyMap(), iface));
+    }
+
+    @Test
+    public void calculateNetworkImplementationDetailsUnmanagedNetwork() throws Exception {
+        VdsNetworkInterface iface = createNetworkDevice();
+        calculateNetworkImplementationDetailsAndAssertManaged(iface, false, Collections.<String, Network> emptyMap());
+    }
+
+    @Test
+    public void calculateNetworkImplementationDetailsManagedNetwork() throws Exception {
+        VdsNetworkInterface iface = createNetworkDevice();
+        calculateNetworkImplementationDetailsAndAssertManaged(iface,
+                true,
+                createNetworksMap(iface.getNetworkName(), iface.isBridged(), iface.getMtu(), iface.getVlanId()));
     }
 
     @Test
@@ -93,6 +117,18 @@ public class NetworkUtilsTest {
                 iface.isBridged(),
                 iface.getMtu(),
                 iface.getVlanId() + 1);
+    }
+
+    private void calculateNetworkImplementationDetailsAndAssertManaged(VdsNetworkInterface iface,
+            boolean expectManaged,
+            Map<String, Network> networks) {
+        NetworkImplementationDetails networkImplementationDetails =
+                NetworkUtils.calculateNetworkImplementationDetails(networks, iface);
+
+        assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
+        assertEquals("Network implementation details should be " + (expectManaged ? "" : "un") + "managed.",
+                expectManaged,
+                networkImplementationDetails.isManaged());
     }
 
     private void calculateNetworkImplementationDetailsAndAssertSync(VdsNetworkInterface iface,

@@ -138,7 +138,11 @@ public final class NetworkUtils {
     public static VdsNetworkInterface.NetworkImplementationDetails calculateNetworkImplementationDetails(
             Map<String, Network> networks,
             VdsNetworkInterface iface) {
-        if (!StringUtils.isEmpty(iface.getNetworkName()) && networks.containsKey(iface.getNetworkName())) {
+        if (StringUtils.isEmpty(iface.getNetworkName())) {
+            return null;
+        }
+
+        if (networks.containsKey(iface.getNetworkName())) {
             Network network = networks.get(iface.getNetworkName());
             if ((network.getMtu() == 0 || iface.getMtu() == network.getMtu())
                     && ObjectUtils.equals(iface.getVlanId(), network.getvlan_id())
@@ -147,8 +151,8 @@ public final class NetworkUtils {
             } else {
                 return new VdsNetworkInterface.NetworkImplementationDetails(false, true);
             }
+        } else {
+            return new VdsNetworkInterface.NetworkImplementationDetails();
         }
-
-        return null;
     }
 }
