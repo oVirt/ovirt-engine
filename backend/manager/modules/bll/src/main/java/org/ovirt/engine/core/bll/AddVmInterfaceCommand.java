@@ -172,7 +172,6 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             }
         }
 
-        // this must be the last check because it adds the mac address to the pool
         if (!StringUtils.isEmpty(getMacAddress())) {
             Regex re = new Regex(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS);
             if (re.IsMatch(getMacAddress())) {
@@ -181,10 +180,9 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             }
 
             Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+            // this must be the last check because it adds the mac address to the pool
             if (!MacPoolManager.getInstance().AddMac(getMacAddress())
                     && !allowDupMacs) {
-                // Free the mac address since canDoAction failed
-                MacPoolManager.getInstance().freeMac(getMacAddress());
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;
             }
@@ -201,7 +199,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             return false;
         }
 
-        return super.canDoAction();
+        return true;
     }
 
     private String getMacAddress() {
