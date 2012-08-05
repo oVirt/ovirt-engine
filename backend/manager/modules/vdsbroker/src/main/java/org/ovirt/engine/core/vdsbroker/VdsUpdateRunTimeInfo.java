@@ -532,12 +532,12 @@ public class VdsUpdateRunTimeInfo {
         if (_vds.getstatus() != VDSStatus.Up) {
             return;
         }
-        Map<String, Boolean> activeBonds = new HashMap<String, Boolean>();
+        Map<String, Boolean> bondsWithStatus = new HashMap<String, Boolean>();
         List<Network> clusterNetworks = getDbFacade().getNetworkDAO()
                 .getAllForCluster(_vds.getvds_group_id());
         List<String> networks = new ArrayList<String>();
         List<String> brokenNics = new ArrayList<String>();
-        Map<String, List<String>> bondNics = new HashMap<String, List<String>>();
+        Map<String, List<String>> bondsWithListOfNics = new HashMap<String, List<String>>();
 
         List<VdsNetworkInterface> interfaces = _vds.getInterfaces();
         Map<String, Network> networksByName = NetworkUtils.networksByName(clusterNetworks);
@@ -553,17 +553,17 @@ public class VdsUpdateRunTimeInfo {
 
                 // Handle bond nics
                 if (iface.getBondName() != null) {
-                    poplate(activeBonds, clusterNetworks, networks, bondNics, iface);
+                    populate(bondsWithStatus, clusterNetworks, networks, bondsWithListOfNics, iface);
                 }
             }
 
             // check the bond statuses, if one is down we set the host to down
             // only if we didn't already set the host to down
             if (brokenNics.isEmpty()) {
-                for (String key : activeBonds.keySet()) {
-                    if (!activeBonds.get(key)) {
+                for (String key : bondsWithStatus.keySet()) {
+                    if (!bondsWithStatus.get(key)) {
                         // add the nics name for audit log
-                        for (String name : bondNics.get(key)) {
+                        for (String name : bondsWithListOfNics.get(key)) {
                             brokenNics.add(name);
                         }
                     }
@@ -629,36 +629,37 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private void poplate(Map<String, Boolean> activeBonds,
+    private void populate(Map<String, Boolean> bondsWithStatus,
             List<Network> clusterNetworks,
             List<String> networks,
-            Map<String, List<String>> bondNics,
+            Map<String, List<String>> bondsWithListOfNics,
             VdsNetworkInterface iface) {
         Pair<Boolean, String> retVal =
-                IsNetworkInCluster(iface.getBondName(), clusterNetworks);
+                isRequiredNetworkInCluster(iface.getBondName(), clusterNetworks);
         String networkName = retVal.getSecond();
         if (retVal.getFirst()) {
-            if (!activeBonds.containsKey(iface.getBondName())) {
-                activeBonds.put(iface.getBondName(), false);
+            if (!bondsWithStatus.containsKey(iface.getBondName())) {
+                bondsWithStatus.put(iface.getBondName(), false);
             }
-            activeBonds.put(iface.getBondName(),
-                    activeBonds.get(iface.getBondName())
+            // It is enough for at least one of the interfaces of the bond to be up
+            bondsWithStatus.put(iface.getBondName(),
+                    bondsWithStatus.get(iface.getBondName())
                             || (iface.getStatistics().getStatus() == InterfaceStatus.Up));
 
             if (!networks.contains(networkName)
-                    && !activeBonds.containsKey(iface.getName())) {
+                    && !bondsWithStatus.containsKey(iface.getName())) {
                 networks.add(networkName);
             }
             // we remove the network from the audit log if the bond
             // is active
             else if (networks.contains(networkName)
-                    && activeBonds.containsKey(iface.getBondName())) {
+                    && bondsWithStatus.containsKey(iface.getBondName())) {
                 networks.remove(networkName);
             }
-            if (!bondNics.containsKey(iface.getBondName())) {
-                bondNics.put(iface.getBondName(), new ArrayList<String>());
+            if (!bondsWithListOfNics.containsKey(iface.getBondName())) {
+                bondsWithListOfNics.put(iface.getBondName(), new ArrayList<String>());
             }
-            bondNics.get(iface.getBondName()).add(iface.getName());
+            bondsWithListOfNics.get(iface.getBondName()).add(iface.getName());
         }
     }
 
@@ -687,13 +688,15 @@ public class VdsUpdateRunTimeInfo {
     // method get bond name, list of cluster network - checks if the specified
     // bonds network is in the clusterNetworks,
     // if so return true and networkName of the bonds
-    private Pair<Boolean, String> IsNetworkInCluster(String bondName, List<Network> clusterNetworks) {
+    private Pair<Boolean, String> isRequiredNetworkInCluster(String bondName, List<Network> clusterNetworks) {
         Pair<Boolean, String> retVal = new Pair<Boolean, String>();
         for (VdsNetworkInterface iface : _vds.getInterfaces()) {
             if (iface.getName().equals(bondName)) {
                 for (Network net : clusterNetworks) {
-                    if (net.getname().equals(iface.getNetworkName())
-                            || isVlanOverBondNetwork(bondName, net.getname())) {
+                    // If this is the network on the bond, or on a vlan over the bond, and the network is required
+                    // we want to check this network
+                    if ((net.getname().equals(iface.getNetworkName())
+                            || isVlanOverBondNetwork(bondName, net.getname())) && net.getCluster().isRequired()) {
                         retVal.setFirst(true);
                         retVal.setSecond(net.getname());
                         return retVal;
