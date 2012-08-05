@@ -545,7 +545,8 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.vmt_guid, vms.v
             vms.usage_network_percent, vms.usage_mem_percent, vms.usage_cpu_percent, vms.run_on_vds_name,
             vms.vds_group_cpu_name, tags_vm_map_view.tag_name, tags_vm_map_view.tag_id, vms.default_display_type, vms.priority,
             vms.vds_group_compatibility_version, vms.initrd_url, vms.kernel_url, vms.kernel_params, vms.pause_status,
-            vms.exit_status, vms.exit_message, vms.min_allocated_mem, storage_domain_static.id AS storage_id
+            vms.exit_status, vms.exit_message, vms.min_allocated_mem, storage_domain_static.id AS storage_id,
+            vms.quota_id as quota_id, vms.quota_name as quota_name
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN
