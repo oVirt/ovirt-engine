@@ -277,13 +277,14 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         clusterNameEditor.setEnabled(false);
         storageNameEditor.setEnabled(false);
 
+        optimizationForServerFormatter(model);
+        optimizationForDesktopFormatter(model);
 
         model.getCluster().getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                optimizationForServerExplanationLabel.setText(StringFormat.format(optimizationForServerExplanationLabel.getText(),
-                    model.getCluster().getOptimizationForServer().getEntity().toString() + "%")); //$NON-NLS-1$
+                optimizationForServerFormatter(model);
             }
         });
 
@@ -291,8 +292,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                optimizationForDesktopExplanationLabel.setText(StringFormat.format(optimizationForDesktopExplanationLabel.getText(),
-                    model.getCluster().getOptimizationForDesktop().getEntity().toString() + "%")); //$NON-NLS-1$
+                optimizationForDesktopFormatter(model);
             }
         });
 
@@ -307,6 +307,22 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
                 }
             }
         });
+    }
+
+    private void optimizationForDesktopFormatter(ConfigureLocalStorageModel model) {
+        if (model.getCluster() != null && model.getCluster().getOptimizationForDesktop() != null
+                && model.getCluster().getOptimizationForDesktop().getEntity() != null) {
+            optimizationForDesktopExplanationLabel.setText(StringFormat.format(optimizationForDesktopExplanationLabel.getText(),
+                    model.getCluster().getOptimizationForDesktop().getEntity().toString() + "%")); //$NON-NLS-1$
+        }
+    }
+
+    private void optimizationForServerFormatter(ConfigureLocalStorageModel model) {
+        if (model.getCluster() != null && model.getCluster().getOptimizationForServer() != null
+                && model.getCluster().getOptimizationForServer().getEntity() != null) {
+            optimizationForServerExplanationLabel.setText(StringFormat.format(optimizationForServerExplanationLabel.getText(),
+                    model.getCluster().getOptimizationForServer().getEntity().toString() + "%")); //$NON-NLS-1$
+        }
     }
 
     @Override
