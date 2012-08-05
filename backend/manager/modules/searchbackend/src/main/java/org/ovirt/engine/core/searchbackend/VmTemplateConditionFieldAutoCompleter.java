@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VmTemplateConditionFieldAutoCompleter() {
@@ -53,9 +52,9 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if (StringHelper.EqOp(fieldName, "CREATIONDATE")) {
+        if ("CREATIONDATE".equals(fieldName)) {
             return TimeConditionRelationAutoCompleter.INSTANCE;
-        } else if (StringHelper.EqOp(fieldName, "CHILDCOUNT") || StringHelper.EqOp(fieldName, "MEM")) {
+        } else if ("CHILDCOUNT".equals(fieldName) || "MEM".equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
@@ -64,18 +63,13 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-        IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "OS")) {
-            retval = new EnumValueAutoCompleter(VmOsType.class);
+        if ("OS".equals(fieldName)) {
+            return new EnumValueAutoCompleter(VmOsType.class);
+        } else if ("CREATIONDATE".equals(fieldName)) {
+            return new DateEnumValueAutoCompleter(DateEnumForSearch.class);
+        } else if ("STATUS".equals(fieldName)) {
+            return new EnumValueAutoCompleter(VmTemplateStatus.class);
         }
-        else if (StringHelper.EqOp(fieldName, "CREATIONDATE")) {
-            retval = new DateEnumValueAutoCompleter(DateEnumForSearch.class);
-        }
-        else if (StringHelper.EqOp(fieldName, "STATUS")) {
-            retval = new EnumValueAutoCompleter(VmTemplateStatus.class);
-
-        } else {
-        }
-        return retval;
+        return null;
     }
 }
