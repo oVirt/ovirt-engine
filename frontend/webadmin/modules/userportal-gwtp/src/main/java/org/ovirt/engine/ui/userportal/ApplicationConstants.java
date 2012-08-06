@@ -10,6 +10,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("About")
     String aboutPopupCaption();
 
+    @DefaultStringValue("oVirt Engine Version:")
+    String ovirtVersionAbout();
+
     @DefaultStringValue("")
     String copyRightNotice();
 
