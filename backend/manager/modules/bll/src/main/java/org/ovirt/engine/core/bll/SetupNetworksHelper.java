@@ -93,10 +93,6 @@ public class SetupNetworksHelper {
         return translateViolations();
     }
 
-    private void addViolation(VdcBllMessages violation) {
-        addViolation(violation, null);
-    }
-
     private void addViolation(VdcBllMessages violation, String violatingEntity) {
         List<String> violatingEntities = violations.get(violation);
         if (violatingEntities == null) {
