@@ -367,7 +367,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(bond));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT);
     }
 
     @Test
@@ -379,7 +379,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForBond(bond, slaves));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT);
     }
 
     @Test

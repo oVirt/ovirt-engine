@@ -378,7 +378,7 @@ public class SetupNetworksHelper {
         for (Map.Entry<String, List<VdsNetworkInterface>> bondEntry : bonds.entrySet()) {
             if (bondEntry.getValue().size() < 2) {
                 returnValue = false;
-                addViolation(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
+                addViolation(VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondEntry.getKey());
             }
         }
 
