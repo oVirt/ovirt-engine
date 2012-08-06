@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
@@ -36,19 +37,7 @@ import com.gwtplatform.mvp.client.View;
 
 public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTabBasicListItemPresenterWidget.ViewDef> implements MouseOutHandler, MouseOverHandler, ClickHandler, DoubleClickHandler {
 
-    private final ConsoleUtils consoleUtils;
-
-    private ConsoleProtocol selectedProtocol;
-
-    private UserPortalItemModel model;
-
-    private UserPortalBasicListModel listModel;
-
-    private final UserPortalBasicListProvider modelProvider;
-
-    private final ConsoleManager consoleManager;
-
-    public interface ViewDef extends View, HasEditorDriver<UserPortalItemModel>, HasMouseOutHandlers, HasMouseOverHandlers, HasClickHandlers, HasDoubleClickHandlers {
+    public interface ViewDef extends View, HasEditorDriver<UserPortalItemModel>, HasMouseOutHandlers, HasMouseOverHandlers, HasClickHandlers, HasDoubleClickHandlers, HasElementId {
 
         void showDoubleClickBanner();
 
@@ -66,6 +55,18 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
         void showErrorDialog(String message);
     }
+
+    private final ConsoleUtils consoleUtils;
+
+    private ConsoleProtocol selectedProtocol;
+
+    private UserPortalItemModel model;
+
+    private UserPortalBasicListModel listModel;
+
+    private final UserPortalBasicListProvider modelProvider;
+
+    private final ConsoleManager consoleManager;
 
     @Inject
     public MainTabBasicListItemPresenterWidget(EventBus eventBus,
@@ -106,7 +107,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!sameEntity((UserPortalItemModel) listModel.getSelectedItem(), model)) {
+                if (!sameEntity(listModel.getSelectedItem(), model)) {
                     getView().setNotSelected(model.IsVmUp());
                 } else {
                     getView().setSelected();
@@ -119,14 +120,14 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     public void setModel(final UserPortalItemModel model) {
         this.model = model;
         this.listModel = modelProvider.getModel();
+
         setupSelectedProtocol(model);
         setupDefaultVmStyles();
         getView().edit(model);
 
-        if (sameEntity((UserPortalItemModel) listModel.getSelectedItem(), model)) {
+        if (sameEntity(listModel.getSelectedItem(), model)) {
             setSelectedItem();
         }
-
     }
 
     protected void setupSelectedProtocol(final UserPortalItemModel model) {
@@ -204,7 +205,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     }
 
     boolean isSelected() {
-        return sameEntity((UserPortalItemModel) listModel.getSelectedItem(), model);
+        return sameEntity(listModel.getSelectedItem(), model);
     }
 
 }

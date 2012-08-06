@@ -6,8 +6,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface ApplicationTemplates extends CommonApplicationTemplates {
 
-    @Template("<span style='font-size: 14px; font-family: Arial,sans-serif; font-weight: bold;'>{0}</span>")
-    SafeHtml vmNameCellItem(String name);
+    @Template("<span id='{0}' style='font-size: 14px; font-family: Arial,sans-serif; font-weight: bold;'>{1}</span>")
+    SafeHtml vmNameCellItem(String id, String name);
 
     @Template(" ({0})")
     SafeHtml vmDescriptionCellItem(String description);

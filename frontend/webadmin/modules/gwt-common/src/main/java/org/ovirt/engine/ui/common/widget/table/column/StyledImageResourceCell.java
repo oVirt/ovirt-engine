@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
 import com.google.gwt.cell.client.ImageResourceCell;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -9,17 +11,30 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class StyledImageResourceCell extends ImageResourceCell {
 
+    interface CellTemplate extends SafeHtmlTemplates {
+        @Template("<div title=\"{0}\" style=\"{1}\">{2}</div>")
+        SafeHtml imageContainer(String title, String style, SafeHtml imageHtml);
+    }
+
     private String style = "line-height: 100%; text-align: center; vertical-align: middle;"; //$NON-NLS-1$
     private String title = ""; //$NON-NLS-1$
+
+    private static CellTemplate template;
+
+    public StyledImageResourceCell() {
+        super();
+
+        // Delay cell template creation until the first time it's needed
+        if (template == null) {
+            template = GWT.create(CellTemplate.class);
+        }
+    }
 
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb) {
         if (value != null) {
-            SafeHtml html = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(value).getHTML());
-
-            sb.appendHtmlConstant("<div title=\"" + title + "\" " + "style=\"" + style + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            sb.append(html);
-            sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
+            sb.append(template.imageContainer(title, style,
+                    SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(value).getHTML())));
         }
     }
 

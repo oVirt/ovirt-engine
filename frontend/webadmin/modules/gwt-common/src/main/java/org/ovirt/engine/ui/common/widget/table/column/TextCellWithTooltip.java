@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+
 import com.google.gwt.cell.client.AbstractSafeHtmlCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -60,7 +62,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
         String rawData = value != null ? value.asString() : ""; //$NON-NLS-1$
 
         sb.append(template.textContainer(
-                getContainerElementId(context),
+                ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context),
                 getRenderedValue(rawData)));
     }
 
@@ -84,18 +86,6 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
         } else {
             parent.setTitle(""); //$NON-NLS-1$
         }
-    }
-
-    /**
-     * Returns the DOM element ID for the text container element.
-     */
-    String getContainerElementId(Cell.Context context) {
-        StringBuilder sb = new StringBuilder(elementIdPrefix);
-        sb.append("_"); //$NON-NLS-1$
-        sb.append(columnId != null ? columnId : "col" + String.valueOf(context.getColumn())); //$NON-NLS-1$
-        sb.append("_row"); //$NON-NLS-1$
-        sb.append(String.valueOf(context.getIndex()));
-        return sb.toString();
     }
 
     /**

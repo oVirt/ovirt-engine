@@ -85,7 +85,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
         this.elementId = elementId;
     }
 
-    protected String getElementId() {
+    public String getElementId() {
         return elementId;
     }
 

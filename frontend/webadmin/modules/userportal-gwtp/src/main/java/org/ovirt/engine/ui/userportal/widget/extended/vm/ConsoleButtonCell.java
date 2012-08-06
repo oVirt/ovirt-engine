@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.widget.extended.vm;
 
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
@@ -13,6 +14,7 @@ import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.DOM;
 
 public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
 
@@ -25,6 +27,10 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
     private final String disabledCss;
 
     private final String title;
+
+    // DOM element ID settings for the text container element
+    private String elementIdPrefix = DOM.createUniqueId();
+    private String columnId;
 
     public ConsoleButtonCell(ConsoleUtils consoleUtils,
             String enabledCss,
@@ -39,6 +45,15 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
         this.command = command;
     }
 
+    public void setElementIdPrefix(String elementIdPrefix) {
+        this.elementIdPrefix = elementIdPrefix;
+    }
+
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    @Override
     public void onBrowserEvent(Context context,
             Element parent,
             final UserPortalItemModel model,
@@ -56,7 +71,7 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
         }
 
         if ("click".equals(event.getType())) { //$NON-NLS-1$
-            // deferred because first the row has to be selected and than the console can be shown
+            // deferred because first the row has to be selected and then the console can be shown
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                 @Override
                 public void execute() {
@@ -69,7 +84,9 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
     @Override
     public void render(Context context, UserPortalItemModel model, SafeHtmlBuilder sb) {
         if (isConsoleEnabled(model)) {
-            sb.appendHtmlConstant("<div title=\"" + title + "\" class=\"" + enabledCss + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            sb.appendHtmlConstant("<div id=\"" //$NON-NLS-1$
+                    + ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context)
+                    + "\" title=\"" + title + "\" class=\"" + enabledCss + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } else {
             sb.appendHtmlConstant("<div class=\"" + disabledCss + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
         }

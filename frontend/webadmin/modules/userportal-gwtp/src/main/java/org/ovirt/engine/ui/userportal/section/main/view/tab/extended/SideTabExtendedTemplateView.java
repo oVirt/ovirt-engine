@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
@@ -19,10 +19,12 @@ import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalSimpleAction
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
 
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.inject.Inject;
 
 public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<VmTemplate, UserPortalTemplateListModel>
@@ -59,25 +61,33 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
     }
 
     private void initTable(final ApplicationTemplates templates, ApplicationConstants constants) {
-        getTable().addColumn(new VmImageColumn<VmTemplate>(new OsTypeExtractor<VmTemplate>() {
+        final String elementIdPrefix = getTable().getContentTableElementId();
 
+        getTable().addColumn(new VmImageColumn<VmTemplate>(new OsTypeExtractor<VmTemplate>() {
             @Override
             public VmOsType extractOsType(VmTemplate item) {
                 return item.getos();
             }
         }), "", "77px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        SafeHtmlColumn<VmTemplate> nameAndDescriptionColumn = new SafeHtmlColumn<VmTemplate>() {
+        Cell<VmTemplate> nameAndDescriptionCell = new AbstractCell<VmTemplate>() {
             @Override
-            public SafeHtml getValue(VmTemplate template) {
-                SafeHtmlBuilder builder = new SafeHtmlBuilder();
-                builder.append(templates.vmNameCellItem(template.getname()));
+            public void render(Context context, VmTemplate template, SafeHtmlBuilder sb) {
+                sb.append(templates.vmNameCellItem(
+                        ElementIdUtils.createTableCellElementId(elementIdPrefix, "name", context), //$NON-NLS-1$
+                        template.getname()));
 
-                if (template.getdescription() != null) {
-                    builder.append(templates.vmDescriptionCellItem(template.getdescription()));
+                String description = template.getdescription();
+                if (description != null && !description.isEmpty()) {
+                    sb.append(templates.vmDescriptionCellItem(description));
                 }
+            }
+        };
 
-                return builder.toSafeHtml();
+        Column<VmTemplate, VmTemplate> nameAndDescriptionColumn = new Column<VmTemplate, VmTemplate>(nameAndDescriptionCell) {
+            @Override
+            public VmTemplate getValue(VmTemplate template) {
+                return template;
             }
         };
         getTable().addColumn(nameAndDescriptionColumn, constants.empty());

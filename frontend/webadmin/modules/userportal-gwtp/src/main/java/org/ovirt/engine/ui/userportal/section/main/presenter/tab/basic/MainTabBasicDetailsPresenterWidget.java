@@ -26,8 +26,6 @@ import com.gwtplatform.mvp.client.View;
 
 public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabBasicDetailsPresenterWidget.ViewDef> {
 
-    private final ConsoleUtils consoleUtils;
-
     public interface ViewDef extends View, HasEditorDriver<UserPortalBasicListModel> {
 
         void editDistItems(Iterable<DiskImage> diskImages);
@@ -40,6 +38,8 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
         HasClickHandlers getEditButton();
     }
+
+    private final ConsoleUtils consoleUtils;
 
     @Inject
     public MainTabBasicDetailsPresenterWidget(EventBus eventBus,
@@ -66,7 +66,6 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             }
 
         });
-
     }
 
     protected void listenOnConsoleModelChangeEvent(EventBus eventBus, final UserPortalBasicListProvider modelProvider) {
@@ -153,4 +152,5 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         return false;
 
     }
+
 }

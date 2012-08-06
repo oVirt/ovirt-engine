@@ -19,13 +19,17 @@ public abstract class ImageResourceColumn<T> extends Column<T, ImageResource> {
     private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
     private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
 
-
     public ImageResourceColumn() {
         super(new StyledImageResourceCell());
     }
 
+    @Override
+    public StyledImageResourceCell getCell() {
+        return (StyledImageResourceCell) super.getCell();
+    }
+
     public void setTitle(String title) {
-        ((StyledImageResourceCell) getCell()).setTitle(title);
+        getCell().setTitle(title);
     }
 
     public void setEnumTitle(Enum<?> enumObj) {

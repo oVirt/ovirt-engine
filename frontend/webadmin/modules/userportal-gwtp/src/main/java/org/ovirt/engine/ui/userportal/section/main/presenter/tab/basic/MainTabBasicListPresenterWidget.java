@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider.DataChangeListener;
@@ -19,7 +20,11 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasicListPresenterWidget.ViewDef> implements DataChangeListener<UserPortalItemModel> {
 
     public interface ViewDef extends View {
+
         void clear();
+
+        String getElementId();
+
     }
 
     @ContentSlot
@@ -47,9 +52,12 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
     @Override
     public void onDataChange(List<UserPortalItemModel> items) {
         // TODO optimize
+        int vmIndex = 0;
         getView().clear();
         for (UserPortalItemModel item : items) {
             MainTabBasicListItemPresenterWidget basicVmPresenterWidget = basicVmPresenterWidgetProvider.get();
+            basicVmPresenterWidget.getView().setElementId(
+                    ElementIdUtils.createElementId(getView().getElementId(), "vm" + vmIndex++)); //$NON-NLS-1$
             basicVmPresenterWidget.setModel(item);
             addToSlot(TYPE_VmListContent, basicVmPresenterWidget);
         }

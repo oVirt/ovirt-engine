@@ -7,8 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
@@ -39,10 +39,11 @@ import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
 
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
@@ -99,12 +100,11 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         return SideTabExtendedVirtualMachinePresenter.TYPE_SetSubTabPanelContent;
     }
 
-    void initTable(final ApplicationTemplates templates,
-            final ConsoleUtils consoleUtils) {
+    void initTable(final ApplicationTemplates templates, final ConsoleUtils consoleUtils) {
+        final String elementIdPrefix = getTable().getContentTableElementId();
 
         VmImageColumn<UserPortalItemModel> vmImageColumn =
                 new VmImageColumn<UserPortalItemModel>(new OsTypeExtractor<UserPortalItemModel>() {
-
                     @Override
                     public VmOsType extractOsType(UserPortalItemModel item) {
                         return item.getOsType();
@@ -119,8 +119,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                     public boolean showMask(UserPortalItemModel value) {
                         return !value.IsVmUp();
                     }
-                }
-                );
+                });
 
         TooltipCell<UserPortalItemModel> vmImageColumnWithMaskAndTooltip = new TooltipCell<UserPortalItemModel>(
                 new UserPortalItemSimpleColumn(vmImageColumnWithMask),
@@ -129,9 +128,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                     public String getTooltip(UserPortalItemModel value) {
                         return value.getOsType().name();
                     }
-
                 });
-
         getTable().addColumn(new UserPortalItemSimpleColumn(vmImageColumnWithMaskAndTooltip), constants.empty(), "77px"); //$NON-NLS-1$
 
         TooltipCell<UserPortalItemModel> statusColumn = new TooltipCell<UserPortalItemModel>(
@@ -141,28 +138,36 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                     public String getTooltip(UserPortalItemModel value) {
                         return statusTranslator.translate(value.getStatus().name());
                     }
-
                 });
+        statusColumn.setElementIdPrefix(elementIdPrefix);
+        statusColumn.setColumnId("status"); //$NON-NLS-1$
 
-        getTable().addColumn(new UserPortalItemSimpleColumn(statusColumn),
-                constants.empty(), "55px"); //$NON-NLS-1$
-        SafeHtmlColumn<UserPortalItemModel> nameAndDescriptionColumn = new SafeHtmlColumn<UserPortalItemModel>() {
+        getTable().addColumn(new UserPortalItemSimpleColumn(statusColumn), constants.empty(), "55px"); //$NON-NLS-1$
+
+        Cell<UserPortalItemModel> nameAndDescriptionCell = new AbstractCell<UserPortalItemModel>() {
             @Override
-            public SafeHtml getValue(UserPortalItemModel item) {
-                SafeHtmlBuilder builder = new SafeHtmlBuilder();
-                builder.append(templates.vmNameCellItem(item.getName()));
+            public void render(Context context, UserPortalItemModel item, SafeHtmlBuilder sb) {
+                sb.append(templates.vmNameCellItem(
+                        ElementIdUtils.createTableCellElementId(elementIdPrefix, "name", context), //$NON-NLS-1$
+                        item.getName()));
 
-                if (item.getDescription() != null) {
-                    builder.append(templates.vmDescriptionCellItem(item.getDescription()));
+                String description = item.getDescription();
+                if (description != null && !description.isEmpty()) {
+                    sb.append(templates.vmDescriptionCellItem(description));
                 }
-
-                return builder.toSafeHtml();
             }
         };
+
+        Column<UserPortalItemModel, UserPortalItemModel> nameAndDescriptionColumn =
+                new Column<UserPortalItemModel, UserPortalItemModel>(nameAndDescriptionCell) {
+                    @Override
+                    public UserPortalItemModel getValue(UserPortalItemModel item) {
+                        return item;
+                    }
+                };
         getTable().addColumn(nameAndDescriptionColumn, constants.empty(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new Column<UserPortalItemModel, UserPortalItemModel>(createActionsCompositeCell()) {
-
+        getTable().addColumn(new Column<UserPortalItemModel, UserPortalItemModel>(createActionsCompositeCell(elementIdPrefix)) {
             @Override
             public UserPortalItemModel getValue(UserPortalItemModel object) {
                 return object;
@@ -175,7 +180,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 applicationResources.sideTabExtendedVmStyle().disabledConsoleButton(),
                 constants.openConsoleLabel(),
                 new ConsoleButtonCommand() {
-
                     @Override
                     public void execute(UserPortalItemModel model) {
                         String message =
@@ -185,6 +189,8 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                         }
                     }
                 });
+        openConsoleCell.setElementIdPrefix(elementIdPrefix);
+        openConsoleCell.setColumnId("openConsoleButton"); //$NON-NLS-1$
 
         getTable().addColumn(new UserPortalItemSimpleColumn(openConsoleCell), constants.empty(), "100px"); //$NON-NLS-1$
 
@@ -194,12 +200,13 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 applicationResources.sideTabExtendedVmStyle().disabledEditConsoleButton(),
                 constants.editConsoleLabel(),
                 new ConsoleButtonCommand() {
-
                     @Override
                     public void execute(UserPortalItemModel model) {
                         getModel().getEditConsoleCommand().Execute();
                     }
                 });
+        consoleEditCell.setElementIdPrefix(elementIdPrefix);
+        consoleEditCell.setColumnId("editConsoleButton"); //$NON-NLS-1$
 
         getTable().addColumn(new UserPortalItemSimpleColumn(consoleEditCell), constants.empty());
 
@@ -286,12 +293,12 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
                 return false;
             }
+
         });
     }
 
-    protected CompositeCell<UserPortalItemModel> createActionsCompositeCell() {
+    protected CompositeCell<UserPortalItemModel> createActionsCompositeCell(String elementIdPrefix) {
         ImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell() {
-
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
@@ -299,7 +306,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                         applicationResources.playIcon(),
                         applicationResources.playDisabledIcon()
                 ) {
-
                     @Override
                     protected UICommand resolveCommand() {
                         return data.getIsPool() ? data.getTakeVmCommand() : data.getRunCommand();
@@ -308,9 +314,10 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 };
             }
         };
+        runCell.setElementIdPrefix(elementIdPrefix);
+        runCell.setColumnId("runButton"); //$NON-NLS-1$
 
         ImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell() {
-
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
@@ -318,7 +325,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                         applicationResources.stopIcon(),
                         applicationResources.stopDisabledIcon()
                 ) {
-
                     @Override
                     protected UICommand resolveCommand() {
                         return data.getIsPool() ? data.getReturnVmCommand() : data.getShutdownCommand();
@@ -327,9 +333,10 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 };
             }
         };
+        shutdownCell.setElementIdPrefix(elementIdPrefix);
+        shutdownCell.setColumnId("shutdownButton"); //$NON-NLS-1$
 
         ImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell() {
-
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
@@ -337,7 +344,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                         applicationResources.pauseIcon(),
                         applicationResources.pauseDisabledIcon()
                 ) {
-
                     @Override
                     protected UICommand resolveCommand() {
                         return data.getPauseCommand();
@@ -346,9 +352,10 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 };
             }
         };
+        suspendCell.setElementIdPrefix(elementIdPrefix);
+        suspendCell.setColumnId("suspendButton"); //$NON-NLS-1$
 
         ImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell() {
-
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
@@ -356,7 +363,6 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                         applicationResources.powerIcon(),
                         applicationResources.powerDisabledIcon()
                 ) {
-
                     @Override
                     protected UICommand resolveCommand() {
                         return data.getStopCommand();
@@ -365,18 +371,16 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 };
             }
         };
+        stopCell.setElementIdPrefix(elementIdPrefix);
+        stopCell.setColumnId("stopButton"); //$NON-NLS-1$
 
-        CompositeCell<UserPortalItemModel> compositeCell =
-                new BorderedCompositeCell<UserPortalItemModel>(
-                        new ArrayList<HasCell<UserPortalItemModel, ?>>(
-                                Arrays.asList(
-                                        new UserPortalItemSimpleColumn(runCell),
-                                        new UserPortalItemSimpleColumn(shutdownCell),
-                                        new UserPortalItemSimpleColumn(suspendCell),
-                                        new UserPortalItemSimpleColumn(stopCell)
-                                        )
-                        )
-                );
+        CompositeCell<UserPortalItemModel> compositeCell = new BorderedCompositeCell<UserPortalItemModel>(
+                new ArrayList<HasCell<UserPortalItemModel, ?>>(Arrays.asList(
+                        new UserPortalItemSimpleColumn(runCell),
+                        new UserPortalItemSimpleColumn(shutdownCell),
+                        new UserPortalItemSimpleColumn(suspendCell),
+                        new UserPortalItemSimpleColumn(stopCell))));
+
         return compositeCell;
     }
 
@@ -397,4 +401,5 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         }
 
     }
+
 }

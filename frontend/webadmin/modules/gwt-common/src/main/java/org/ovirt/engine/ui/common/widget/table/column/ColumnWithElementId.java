@@ -12,8 +12,8 @@ public interface ColumnWithElementId {
      * @param elementIdPrefix
      *            DOM element ID prefix to use for the text container element (must not be {@code null}).
      * @param columnId
-     *            Column ID that will be part of the resulting DOM element ID for the text container element, or
-     *            {@code null} to use column index value.
+     *            Column ID that will be part of the resulting DOM element ID, or {@code null} to use column index
+     *            value.
      */
     public void configureElementId(String elementIdPrefix, String columnId);
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -35,6 +36,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -44,6 +46,39 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class MainTabBasicListItemView extends AbstractView implements MainTabBasicListItemPresenterWidget.ViewDef {
+
+    interface ViewUiBinder extends UiBinder<Widget, MainTabBasicListItemView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface Driver extends SimpleBeanEditorDriver<UserPortalItemModel, MainTabBasicListItemView> {
+        Driver driver = GWT.create(Driver.class);
+    }
+
+    public interface Style extends CssResource {
+
+        String itemOverStyle();
+
+        String itemNotRunningStyle();
+
+        String itemRunningStyle();
+
+        String machineStatusSelectedStyle();
+
+        String machineStatusStyle();
+
+        String itemSelectedStyle();
+
+        String handCursor();
+
+        String defaultCursor();
+
+        String runButtonAdditionalStyle();
+
+        String shutdownButtonAdditionalStyle();
+
+        String suspendButtonAdditionalStyle();
+    }
 
     @UiField
     @Path("osType")
@@ -86,46 +121,14 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     private final ApplicationConstants constants;
 
-    interface Driver extends SimpleBeanEditorDriver<UserPortalItemModel, MainTabBasicListItemView> {
-        Driver driver = GWT.create(Driver.class);
-    }
-
-    public interface Style extends CssResource {
-
-        String itemOverStyle();
-
-        String itemNotRunningStyle();
-
-        String itemRunningStyle();
-
-        String machineStatusSelectedStyle();
-
-        String machineStatusStyle();
-
-        String itemSelectedStyle();
-
-        String handCursor();
-
-        String defaultCursor();
-
-        String runButtonAdditionalStyle();
-
-        String shutdownButtonAdditionalStyle();
-
-        String suspendButtonAdditionalStyle();
-    }
-
-    interface ViewUiBinder extends UiBinder<Widget, MainTabBasicListItemView> {
-        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
-    }
+    private String elementId = DOM.createUniqueId();
 
     @Inject
     public MainTabBasicListItemView(
-            final ApplicationResources applicationResources,
+            ApplicationResources applicationResources,
             final MainTabBasicListItemMessagesTranslator translator,
-            final ApplicationConstants constants,
-            final ErrorPopupManager errorPopupManager) {
-
+            ApplicationConstants constants,
+            ErrorPopupManager errorPopupManager) {
         this.applicationResources = applicationResources;
         this.constants = constants;
         this.errorPopupManager = errorPopupManager;
@@ -154,7 +157,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
                 return model.getIsPool() ? model.getTakeVmCommand() : model.getRunCommand();
             }
 
-        }, style.runButtonAdditionalStyle());
+        }, style.runButtonAdditionalStyle(), ElementIdUtils.createElementId(elementId, "runButton")); //$NON-NLS-1$
 
         addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(
                 constants.shutdownVm(),
@@ -166,7 +169,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
                 return model.getShutdownCommand();
             }
 
-        }, style.shutdownButtonAdditionalStyle());
+        }, style.shutdownButtonAdditionalStyle(), ElementIdUtils.createElementId(elementId, "shutdownButton")); //$NON-NLS-1$
 
         addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(
                 constants.suspendVm(),
@@ -178,17 +181,16 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
                 return model.getPauseCommand();
             }
 
-        }, style.suspendButtonAdditionalStyle());
+        }, style.suspendButtonAdditionalStyle(), ElementIdUtils.createElementId(elementId, "suspendButton")); //$NON-NLS-1$
     }
 
     private void addButton(final UserPortalImageButtonDefinition<UserPortalItemModel> buttonDefinition,
-            String additionalStyle) {
-
+            String additionalStyle, String elementId) {
         final MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton();
         button.initialize(buttonDefinition, additionalStyle);
+        button.setElementId(elementId);
 
         button.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 buttonDefinition.onClick(null);
@@ -198,7 +200,6 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         buttonsPanel.add(button);
 
         buttonDefinition.addInitializeHandler(new InitializeHandler() {
-
             @Override
             public void onInitialize(InitializeEvent event) {
                 updateActionButton(button, buttonDefinition);
@@ -297,6 +298,16 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public void showErrorDialog(String message) {
         errorPopupManager.show(message);
+    }
+
+    @Override
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
+
+        vmName.getElement().setId(
+                ElementIdUtils.createElementId(elementId, "name")); //$NON-NLS-1$
+        vmStatus.getElement().setId(
+                ElementIdUtils.createElementId(elementId, "status")); //$NON-NLS-1$
     }
 
 }

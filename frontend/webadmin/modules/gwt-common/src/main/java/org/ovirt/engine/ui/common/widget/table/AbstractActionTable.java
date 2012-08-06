@@ -404,4 +404,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     public void setExtraRowStyles(RowStyles<T> rowStyles) {
         table.setRowStyles(rowStyles);
     }
+
+    public String getContentTableElementId() {
+        return table.getElementId();
+    }
+
 }
