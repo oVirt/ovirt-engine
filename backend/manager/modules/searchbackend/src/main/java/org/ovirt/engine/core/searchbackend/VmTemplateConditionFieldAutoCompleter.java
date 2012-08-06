@@ -18,6 +18,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         mVerbs.put("STATUS", "STATUS");
         mVerbs.put("CLUSTER", "CLUSTER");
         mVerbs.put("DATACENTER", "DATACENTER");
+        mVerbs.put("QUOTA", "QUOTA");
 
         buildCompletions();
         mVerbs.put("_VMT_ID", "_VMT_ID");
@@ -32,6 +33,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put("STATUS", VmTemplateStatus.class);
         getTypeDictionary().put("CLUSTER", String.class);
         getTypeDictionary().put("DATACENTER", String.class);
+        getTypeDictionary().put("QUOTA", String.class);
         getTypeDictionary().put("_VMT_ID", UUID.class);
 
         // building the ColumnName Dict
@@ -45,6 +47,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         mColumnNameDict.put("STATUS", "status");
         mColumnNameDict.put("CLUSTER", "vds_group_name");
         mColumnNameDict.put("DATACENTER", "storage_pool_name");
+        mColumnNameDict.put("QUOTA", "quota_name");
         mColumnNameDict.put("_VMT_ID", "vmt_guid");
         // Building the validation dict
         buildBasicValidationTable();
@@ -69,6 +72,8 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
             return new DateEnumValueAutoCompleter(DateEnumForSearch.class);
         } else if ("STATUS".equals(fieldName)) {
             return new EnumValueAutoCompleter(VmTemplateStatus.class);
+        } else if ("QUOTA".equals(fieldName)) {
+            return new NullableStringAutoCompleter();
         }
         return null;
     }
