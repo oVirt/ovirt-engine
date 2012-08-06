@@ -633,7 +633,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(parameters);
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST);
     }
 
     @Test

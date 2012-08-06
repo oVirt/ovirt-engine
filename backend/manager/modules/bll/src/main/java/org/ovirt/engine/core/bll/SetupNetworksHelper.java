@@ -72,8 +72,9 @@ public class SetupNetworksHelper {
                     }
 
                     // validate the nic exists on host
-                    if (!getExistingIfaces().containsKey(NetworkUtils.StripVlan(name))) {
-                        addViolation(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
+                    String nameWithoutVlanId = NetworkUtils.StripVlan(name);
+                    if (!getExistingIfaces().containsKey(nameWithoutVlanId)) {
+                        addViolation(VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, nameWithoutVlanId);
                     }
                 }
 
