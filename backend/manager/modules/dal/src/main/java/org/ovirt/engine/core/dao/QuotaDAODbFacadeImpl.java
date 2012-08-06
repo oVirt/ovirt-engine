@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -34,8 +36,6 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      *
      * @param quotaName
      *            - The quota name to find.
-     * @param storagePoolId
-     *            - The storage pool id that the quota is being searched in.
      * @return The quota entity that was found.
      */
     @Override
@@ -480,6 +480,20 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     @Override
     public List<Quota> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, getQuotaMetaDataFromResultSet());
+    }
+
+    @Override
+    public boolean isQuotaInUse(Quota quota){
+
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("quota_id", quota.getId());
+
+        Map<String, Object> dbResults =
+                new SimpleJdbcCall(jdbcTemplate).withFunctionName("IsQuotaInUse").execute(
+                        parameterSource);
+
+        String resultKey = dialect.getFunctionReturnKey();
+        return dbResults.get(resultKey) != null && (Boolean) dbResults.get(resultKey);
     }
 
 }

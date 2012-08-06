@@ -163,4 +163,12 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      * not the usage data.
      */
     public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId);
+
+    /**
+     * Is the Quota in use by any Image or VM (checks only for existence of the quota id in
+     * the 'vm_static' and 'images' tables).
+     * @param quota -quota to look for
+     * @return - True if the Quota is in use by at least ont VM or one Image.
+     */
+    public boolean isQuotaInUse(Quota quota);
 }

@@ -223,3 +223,20 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION IsQuotaInUse(v_quota_id UUID)
+RETURNS boolean
+    AS $BODY$
+DECLARE
+    result boolean := FALSE;
+BEGIN
+    if EXISTS (SELECT quota_id
+                    FROM images
+                    WHERE quota_id = v_quota_id
+    UNION SELECT quota_id
+              FROM vm_static
+              WHERE quota_id = v_quota_id) then
+        result := TRUE;
+    END if;
+    return result;
+END; $BODY$
+LANGUAGE plpgsql;

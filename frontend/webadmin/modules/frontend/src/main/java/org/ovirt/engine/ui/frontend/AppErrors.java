@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.frontend;
 
+import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface AppErrors extends ConstantsWithLookup {
@@ -1656,6 +1657,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Quota with default indication can not be removed while Data Center is at disable mode.")
     String ACTION_TYPE_FAILED_QUOTA_WITH_DEFAULT_INDICATION_CAN_NOT_BE_REMOVED();
+
+    @Constants.DefaultStringValue("Cannot ${action} ${type}. Quota is still in use by a VM or a disk.")
+    String ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Data Center must have at least one quota associated with it. Please try to add another Quota, or change the existing one.")
     String ACTION_TYPE_FAILED_DATA_CENTER_MUST_HAVE_AT_LEAST_ONE_QUOTA();

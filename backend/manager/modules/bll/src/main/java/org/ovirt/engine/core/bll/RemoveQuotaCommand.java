@@ -30,24 +30,19 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
         }
 
         Quota quota = getQuota();
+
         if (quota == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }
 
-        // Check If we try to delete the last quota in the DC.
-        List<Quota> quotaList = getQuotaDAO().getQuotaByStoragePoolGuid(quota.getStoragePoolId());
-        if (quotaList.size() <= 1) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_MUST_HAVE_AT_LEAST_ONE_QUOTA);
+        // If the quota is in use by ether VM or image - return false
+        if (getDbFacade().getQuotaDAO().isQuotaInUse(quota)) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
             return false;
         }
 
-        if (getVmDAO().getAllVmsRelatedToQuotaId(quota.getId()) != null
-                && !getVmDAO().getAllVmsRelatedToQuotaId(quota.getId()).isEmpty()) {
-            // TODO : Add an appropriate message.
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
-            return false;
-        }
+        // Otherwise
         return true;
     }
 
@@ -73,6 +68,6 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-          return getSucceeded() ? AuditLogType.USER_DELETE_QUOTA : AuditLogType.USER_FAILED_DELETE_QUOTA;
+        return getSucceeded() ? AuditLogType.USER_DELETE_QUOTA : AuditLogType.USER_FAILED_DELETE_QUOTA;
     }
 }
