@@ -54,6 +54,7 @@
 		<include name="searchbackend/BiggerOrSmallerRelationAutoCompleter.java" />
 		<include name="searchbackend/DateEnumValueAutoCompleter.java" />
 		<include name="searchbackend/BitValueAutoCompleter.java" />
+		<include name="searchbackend/NullableStringAutoCompleter.java" />
 		<include name="searchbackend/StorageDomainCrossRefAutoCompleter.java" />
 		<include name="searchbackend/DateUtils.java" />
 		<include name="searchbackend/SqlInjectionChecker.java" />
