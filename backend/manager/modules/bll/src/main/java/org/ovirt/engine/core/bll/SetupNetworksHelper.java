@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +23,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 public class SetupNetworksHelper {
     private SetupNetworksParameters params;
     private Guid vdsGroupId;
-    private List<VdcBllMessages> violations = new ArrayList<VdcBllMessages>();
+    private Map<VdcBllMessages, List<String>> violations = new HashMap<VdcBllMessages, List<String>>();
     private Map<String, VdsNetworkInterface> existingIfaces;
     private Map<String, Network> existingClusterNetworks;
 
@@ -92,14 +93,29 @@ public class SetupNetworksHelper {
     }
 
     private void addViolation(VdcBllMessages violation) {
-        violations.add(violation);
+        addViolation(violation, null);
+    }
+
+    private void addViolation(VdcBllMessages violation, String violatingEntity) {
+        List<String> violatingEntities = violations.get(violation);
+        if (violatingEntities == null) {
+            violatingEntities = new ArrayList<String>();
+            violations.put(violation, violatingEntities);
+        }
+
+        violatingEntities.add(violatingEntity);
     }
 
     private List<String> translateViolations() {
-        List<String> violationMessages = new ArrayList<String>(violations.size());
-        for (VdcBllMessages v : violations) {
-            violationMessages.add(v.name());
+        List<String> violationMessages = new ArrayList<String>(violations.size() * 2);
+        for (Map.Entry<VdcBllMessages, List<String>> v : violations.entrySet()) {
+            String violationName = v.getKey().name();
+            violationMessages.add(violationName);
+            violationMessages.add(MessageFormat.format("${0}_LIST {1}",
+                    violationName,
+                    StringUtils.join(v.getValue(), ", ")));
         }
+
         return violationMessages;
     }
 
