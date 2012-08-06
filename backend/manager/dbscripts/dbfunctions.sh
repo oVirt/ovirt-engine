@@ -134,10 +134,22 @@ run_post_upgrade() {
 # The second argument is the label to use while notifying
 # the user about the running of the script
 execute_commands_in_dir() {
-    for sqlfile in $(ls -1 upgrade/$1/*.sql); do
-       echo "Running $2 script $sqlfile ..."
-       execute_file $sqlfile ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    files=$(get_files "upgrade/${1}" 1)
+    for execFile in $(ls $files | sort); do
+       run_file $execFile
     done
+}
+
+run_file() {
+   local execFile=${1}
+   isShellScript=$(file $execFile | grep "shell" | wc -l)
+   if [ $isShellScript -gt 0 ]; then
+      echo "Running $2 upgrade shell script $execFile ..."
+      ./$execFile
+   else
+      echo "Running $2 upgrade sql script $execFile ..."
+     execute_file $execFile ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+   fi
 }
 
 set_version() {
@@ -172,8 +184,16 @@ get_db_time(){
     echo "select now();" | psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
 }
 
+# gets a directory and required depth and return all sql & sh files
+get_files() {
+    sqlFiles=$(find ${1} -maxdepth ${2} -name "*.sql" -print)
+    shFiles=$(find ${1} -maxdepth ${2} -name "*.sh" -print)
+    echo ${sqlFiles} " " ${shFiles}
+}
+
 is_view_or_sp_changed() {
-    md5sum create_*views.sql *_sp.sql upgrade/*.sql upgrade/pre_upgrade/*.sql > .scripts.md5.tmp
+    files=$(get_files "upgrade" 3)
+    md5sum $files > .scripts.md5.tmp
     diff -s -q .scripts.md5 .scripts.md5.tmp >& /dev/null
     result=$?
 
@@ -190,7 +210,8 @@ is_view_or_sp_changed() {
 
 validate_version_uniqueness() {
     prev=""
-    for file in upgrade/??_??_????*.sql; do
+    files=$(get_files "upgrade" 1)
+    for file in $(ls -1 $files) ; do
         ver="${file:8:2}${file:11:2}${file:14:4}"
         if [ "$ver" = "$prev" ]; then
             echo "Operation aborted, found duplicate version : $ver"
@@ -202,7 +223,7 @@ validate_version_uniqueness() {
 
 run_upgrade_files() {
     set_version
-    res=$(find upgrade/ -name "*.sql" | wc -l)
+    res=$(find upgrade/ -name "*" | grep -E ".sql|.sh" | wc -l)
     if [ $res -gt 0 ]; then
         state="FAILED"
         comment=""
@@ -222,7 +243,8 @@ run_upgrade_files() {
         # we should remove leading blank (from select result) and zero in order not to treat number as octal
         last="${current:2:7}"
         disable_gaps_from="3010910"
-        for file in upgrade/??_??_????*.sql; do
+        files=$(get_files "upgrade" 1)
+        for file in $(ls -1 $files); do
             before=$(get_db_time)
             checksum=$(md5sum $file | cut -d " " -f1)
             # upgrade/dd_dd_dddd* => dddddddd
@@ -254,8 +276,7 @@ run_upgrade_files() {
                        run_pre_upgrade
                        updated=1
                     fi
-                    echo "Running upgrade script $file "
-                    execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} 1 > /dev/null
+                    run_file $file
                     code=$?
                     if [ $code -eq 0 ]; then
                         state="INSTALLED"
