@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.widget.HasEnabledForContainter;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -43,7 +44,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
  * @param <E>
  *            The enum type
  */
-public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafValueEditor<E>>, TakesValue<E>, HasValueChangeHandlers<E> {
+public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafValueEditor<E>>, TakesValue<E>, HasValueChangeHandlers<E>, HasEnabledForContainter<E> {
 
     public interface EnumRadioCellTableResources extends CellTable.Resources {
         interface TableStyle extends CellTable.Style {

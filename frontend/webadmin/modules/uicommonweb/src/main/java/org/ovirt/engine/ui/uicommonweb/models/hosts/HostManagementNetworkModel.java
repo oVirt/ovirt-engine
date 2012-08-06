@@ -142,7 +142,7 @@ public class HostManagementNetworkModel extends EntityModel
         }
     }
 
-    private boolean bootProtocolsAvailable;
+    private boolean bootProtocolsAvailable = true;
 
     public boolean getBootProtocolsAvailable()
     {
@@ -154,6 +154,7 @@ public class HostManagementNetworkModel extends EntityModel
         if (bootProtocolsAvailable != value)
         {
             bootProtocolsAvailable = value;
+            UpdateCanSpecify();
             OnPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
         }
     }
@@ -228,8 +229,10 @@ public class HostManagementNetworkModel extends EntityModel
             @Override
             public void setEntity(Object value) {
                 super.setEntity(value);
-                setBootProtocolsAvailable((Boolean) value);
-                UpdateCanSpecify();
+
+                if (getIsToSync().getIsChangable()){
+                    setBootProtocolsAvailable((Boolean) value);
+                }
             }
         });
 

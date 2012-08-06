@@ -1,19 +1,22 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host;
 
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.widget.HasEnabledForContainter;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.inject.Inject;
 
-public class SetupNetworksManagementPopupPresenterWidget extends HostManagementPopupPresenterWidget{
+public class SetupNetworksManagementPopupPresenterWidget extends HostManagementPopupPresenterWidget {
 
     public interface ViewDef extends HostManagementPopupPresenterWidget.ViewDef {
-        HasEnabled getBootProtocol();
+        HasEnabledForContainter<NetworkBootProtocol> getBootProtocol();
+
         HasEnabled getBootProtocolLabel();
     }
 
@@ -34,6 +37,8 @@ public class SetupNetworksManagementPopupPresenterWidget extends HostManagementP
                     boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
                     ((ViewDef) getView()).getBootProtocolLabel().setEnabled(bootProtocolsAvailable);
                     ((ViewDef) getView()).getBootProtocol().setEnabled(bootProtocolsAvailable);
+                    ((ViewDef) getView()).getBootProtocol().setEnabled(NetworkBootProtocol.None,
+                            model.getNoneBootProtocolAvailable());
                 }
             }
         });

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import org.ovirt.engine.ui.common.widget.HasEnabledForContainter;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -31,7 +33,9 @@ public class SetupNetworksManagementPopupView  extends HostManagementPopupView i
         commitChanges.setVisible(false);
 
         isToSync.setVisible(true);
-        isToSyncInfo.setVisible(true);
+        if (object.getIsToSync().getIsChangable()){
+            isToSyncInfo.setVisible(true);
+        }
 
         // resize
         layoutPanel.remove(infoPanel);
@@ -40,10 +44,11 @@ public class SetupNetworksManagementPopupView  extends HostManagementPopupView i
 
         bootProtocolLabel.setEnabled(object.getBootProtocolsAvailable());
         bootProtocol.setEnabled(object.getBootProtocolsAvailable());
+        bootProtocol.setEnabled(NetworkBootProtocol.None, object.getNoneBootProtocolAvailable());
     }
 
     @Override
-    public HasEnabled getBootProtocol() {
+    public HasEnabledForContainter<NetworkBootProtocol> getBootProtocol() {
         return bootProtocol;
     }
 

@@ -287,9 +287,9 @@ public class HostSetupNetworksModel extends EntityModel {
                 mgmntDialogModel.getBondingOptions().setIsAvailable(false);
                 mgmntDialogModel.getInterface().setIsAvailable(false);
                 mgmntDialogModel.setBootProtocol(entity.getBootProtocol());
-                mgmntDialogModel.getIsToSync().setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
 
                 mgmntDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
+                mgmntDialogModel.getIsToSync().setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
 
                 // OK Target
                 okTarget = new BaseCommandTarget() {
@@ -329,9 +329,8 @@ public class HostSetupNetworksModel extends EntityModel {
 
                 networkDialogModel.setBootProtocol(entity.getBootProtocol());
 
-                networkDialogModel.getIsToSync().setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
-
                 networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
+                networkDialogModel.getIsToSync().setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
 
                 // OK Target
                 okTarget = new BaseCommandTarget() {
