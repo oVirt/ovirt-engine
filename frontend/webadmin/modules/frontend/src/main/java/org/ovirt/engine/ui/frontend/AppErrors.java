@@ -1095,6 +1095,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The Network definitions on the Network Interface are different than those on the Logical Network. Please synchronize the Network Interface before editing the network.")
     String NETWORK_NOT_IN_SYNC();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces were specified more than once: ${NETWORK_INTERFACES_ALREADY_SPECIFIED_LIST}.")
+    String NETWORK_INTERFACES_ALREADY_SPECIFIED();
+
     @DefaultStringValue("The currently used VM Snapshot Image cannot be used in Preview command.")
     String CANNOT_PREIEW_CURRENT_IMAGE();
 

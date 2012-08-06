@@ -128,12 +128,7 @@ public class SetupNetworksHelper {
      */
     private boolean addInterfaceToProcessedList(VdsNetworkInterface iface) {
         if (ifaceNames.contains(iface.getName())) {
-            if (isBond(iface)) {
-                addViolation(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
-            } else {
-                addViolation(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
-            }
-
+            addViolation(VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED, iface.getName());
             return false;
         }
 

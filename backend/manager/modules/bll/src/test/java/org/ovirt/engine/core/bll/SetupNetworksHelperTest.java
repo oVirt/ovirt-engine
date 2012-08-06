@@ -389,7 +389,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(bond);
         SetupNetworksHelper helper = createHelper(createParametersForNics(bond, bond));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED);
     }
 
     @Test
