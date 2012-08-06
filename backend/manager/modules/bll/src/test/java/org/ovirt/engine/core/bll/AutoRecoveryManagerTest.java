@@ -72,15 +72,6 @@ public class AutoRecoveryManagerTest {
     }
 
     @Test
-    public void onTimerNoConfig() {
-        manager.onTimer();
-        verify(backendMock, times(vdss.size())).runInternalAction(eq(VdcActionType.ActivateVds),
-                any(VdcActionParametersBase.class));
-        verify(backendMock, times(storageDomains.size())).runInternalAction(eq(VdcActionType.ActivateStorageDomain),
-                any(VdcActionParametersBase.class));
-    }
-
-    @Test
     public void onTimerFullConfig() {
         Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("storage domains",
                 Boolean.TRUE.toString());
