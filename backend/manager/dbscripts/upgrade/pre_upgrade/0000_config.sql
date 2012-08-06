@@ -453,7 +453,7 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 --The default network connectivity check timeout
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
-select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
+select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"false\"}','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
