@@ -213,7 +213,7 @@ public class SetupNetworksHelper {
 
         // prevent attaching 2 interfaces to 1 network
         if (attachedNetworksNames.contains(networkName)) {
-            addViolation(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
+            addViolation(VdcBllMessages.NETWORKS_ALREADY_ATTACHED_TO_IFACES, networkName);
         } else {
             attachedNetworksNames.add(networkName);
 
