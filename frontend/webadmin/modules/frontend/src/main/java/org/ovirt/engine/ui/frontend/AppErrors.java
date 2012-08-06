@@ -1092,8 +1092,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The specified Logical Network doesn't exist in the current Cluster.")
     String NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER();
 
-    @DefaultStringValue("The Network definitions on the Network Interface are different than those on the Logical Network. Please synchronize the Network Interface before editing the network.")
-    String NETWORK_NOT_IN_SYNC();
+    @DefaultStringValue("Cannot ${action} ${type}. The following Networks' definitions on the Network Interfaces are different than those on the Logical Networks. Please synchronize the Network Interfaces before editing the networks: ${NETWORKS_NOT_IN_SYNC}.")
+    String NETWORKS_NOT_IN_SYNC();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces were specified more than once: ${NETWORK_INTERFACES_ALREADY_SPECIFIED_LIST}.")
     String NETWORK_INTERFACES_ALREADY_SPECIFIED();

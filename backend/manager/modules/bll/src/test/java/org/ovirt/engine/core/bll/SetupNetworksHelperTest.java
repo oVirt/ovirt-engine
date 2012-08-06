@@ -249,7 +249,7 @@ public class SetupNetworksHelperTest {
         nic.setBootProtocol(NetworkBootProtocol.Dhcp);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_NOT_IN_SYNC);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC);
     }
 
     @Test
@@ -280,7 +280,7 @@ public class SetupNetworksHelperTest {
         nic1.setNetworkName(null);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic1, nic2));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_NOT_IN_SYNC);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC);
     }
 
     @Test

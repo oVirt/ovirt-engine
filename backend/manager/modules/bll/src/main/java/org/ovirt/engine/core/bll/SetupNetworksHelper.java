@@ -230,7 +230,7 @@ public class SetupNetworksHelper {
                     if (networkShouldBeSynced(networkName)) {
                         modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
                     } else if (networkWasModified(iface)) {
-                        addViolation(VdcBllMessages.NETWORK_NOT_IN_SYNC);
+                        addViolation(VdcBllMessages.NETWORKS_NOT_IN_SYNC, networkName);
                     }
                 } else if (networkWasModified(iface)) {
                     modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
