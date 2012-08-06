@@ -268,6 +268,8 @@ public class VmGuideModel extends GuideModel
         model.getActive().setIsChangable(isActivateSupported);
         model.getActive().setEntity(true);
 
+        model.getPortMirroring().setEntity(false);
+
         UICommand tempVar = new UICommand("OnAddNetwork", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
@@ -326,6 +328,7 @@ public class VmGuideModel extends GuideModel
                     : ""); //$NON-NLS-1$
 
             vmNetworkInterface.setActive((Boolean) model.getActive().getEntity());
+            vmNetworkInterface.setPortMirroring((Boolean)model.getPortMirroring().getEntity());
 
             AddVmInterfaceParameters parameters =
                     new AddVmInterfaceParameters(getEntity().getId(), vmNetworkInterface);
