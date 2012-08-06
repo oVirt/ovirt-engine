@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
@@ -523,6 +524,11 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     private boolean canRemoveNics() {
+        VM vm = (VM)getEntity();
+        if (VMStatus.Down.equals(vm.getstatus())){
+            return true;
+        }
+
         if (!isActivateSupported){
             return false;
         }

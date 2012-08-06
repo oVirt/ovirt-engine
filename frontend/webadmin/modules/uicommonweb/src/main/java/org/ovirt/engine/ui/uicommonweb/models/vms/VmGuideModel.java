@@ -266,12 +266,7 @@ public class VmGuideModel extends GuideModel
         model.getMAC().setIsChangable(false);
 
         model.getActive().setIsChangable(isActivateSupported);
-
-        if (isActivateSupported) {
-            model.getActive().setEntity(true);
-        } else {
-            model.getActive().setEntity(false);
-        }
+        model.getActive().setEntity(true);
 
         UICommand tempVar = new UICommand("OnAddNetwork", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
