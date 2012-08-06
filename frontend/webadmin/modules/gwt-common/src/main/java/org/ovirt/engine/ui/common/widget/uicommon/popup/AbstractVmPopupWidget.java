@@ -667,6 +667,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
+        object.getIsAutoAssign().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean isAutoAssign = (Boolean) object.getIsAutoAssign().getEntity();
+                defaultHostEditor.setEnabled(!isAutoAssign);
+
+                // only this is not bind to the model, so needs to listen to the change explicitly
+                specificHost.setValue(!isAutoAssign);
+            }
+        });
+
         // only for non local storage available
         setupHostTabAvailability(object);
 

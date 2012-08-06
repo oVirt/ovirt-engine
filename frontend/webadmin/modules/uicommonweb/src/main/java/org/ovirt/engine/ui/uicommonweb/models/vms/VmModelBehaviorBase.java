@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -334,6 +335,23 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void ChangeDefualtHost()
     {
 
+    }
+
+    protected void doChangeDefautlHost(NGuid hostGuid) {
+        if (hostGuid != null)
+        {
+            Guid vdsId = hostGuid.getValue();
+            if (getModel().getDefaultHost().getItems() != null)
+            {
+                getModel().getDefaultHost().setSelectedItem(Linq.FirstOrDefault(getModel().getDefaultHost().getItems(),
+                        new Linq.HostPredicate(vdsId)));
+            }
+            getModel().getIsAutoAssign().setEntity(false);
+        }
+        else
+        {
+            getModel().getIsAutoAssign().setEntity(true);
+        }
     }
 
     protected void UpdateDefaultHost()
@@ -878,4 +896,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return res;
     }
 
+    protected void updateHostPinning(MigrationSupport migrationSupport) {
+        getModel().getRunVMOnSpecificHost().setEntity(false);
+        getModel().getDontMigrateVM().setEntity(false);
+        switch (migrationSupport)
+        {
+        case PINNED_TO_HOST:
+            getModel().getRunVMOnSpecificHost().setEntity(true);
+            break;
+        case IMPLICITLY_NON_MIGRATABLE:
+            getModel().getDontMigrateVM().setEntity(true);
+            break;
+        }
+    }
 }

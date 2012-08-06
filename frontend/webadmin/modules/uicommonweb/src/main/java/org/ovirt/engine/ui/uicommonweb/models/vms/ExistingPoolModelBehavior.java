@@ -19,6 +19,13 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
+    protected void ChangeDefualtHost() {
+        super.ChangeDefualtHost();
+
+        doChangeDefautlHost(pool.getdedicated_vm_for_vds());
+    }
+
+    @Override
     protected void setupSelectedTemplate(ListModel model, List<VmTemplate> templates) {
         setupTemplate(pool, model);
     }
@@ -27,6 +34,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     public void Template_SelectedItemChanged() {
         super.Template_SelectedItemChanged();
         getModel().setIsDisksAvailable(true);
+        updateHostPinning(pool.getMigrationSupport());
     }
 
     protected void templateInited() {

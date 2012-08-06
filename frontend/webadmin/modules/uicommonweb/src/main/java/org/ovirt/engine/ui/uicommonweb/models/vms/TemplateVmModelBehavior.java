@@ -9,13 +9,11 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -131,17 +129,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     protected void ChangeDefualtHost() {
         super.ChangeDefualtHost();
 
-        if (template.getdedicated_vm_for_vds() != null) {
-            Guid vdsId = template.getdedicated_vm_for_vds().getValue();
-            if (getModel().getDefaultHost().getItems() != null) {
-                getModel().getDefaultHost().setSelectedItem(Linq.FirstOrDefault(getModel().getDefaultHost().getItems(),
-                        new Linq.HostPredicate(vdsId)));
-            }
-            getModel().getIsAutoAssign().setEntity(false);
-        }
-        else {
-            getModel().getIsAutoAssign().setEntity(true);
-        }
+        doChangeDefautlHost(template.getdedicated_vm_for_vds());
     }
 
     private void InitTemplate()

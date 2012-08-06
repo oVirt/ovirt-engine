@@ -14,7 +14,6 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -157,15 +156,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         // Update domain list
         UpdateDomain();
 
-        switch (vm.getMigrationSupport())
-        {
-        case PINNED_TO_HOST:
-            getModel().getRunVMOnSpecificHost().setEntity(true);
-            break;
-        case IMPLICITLY_NON_MIGRATABLE:
-            getModel().getDontMigrateVM().setEntity(true);
-            break;
-        }
+        updateHostPinning(vm.getMigrationSupport());
 
         // Storage domain and provisioning are not available for an existing VM.
         getModel().getStorageDomain().setIsChangable(false);
@@ -209,21 +200,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     protected void ChangeDefualtHost()
     {
         super.ChangeDefualtHost();
-
-        if (vm.getdedicated_vm_for_vds() != null)
-        {
-            Guid vdsId = vm.getdedicated_vm_for_vds().getValue();
-            if (getModel().getDefaultHost().getItems() != null)
-            {
-                getModel().getDefaultHost().setSelectedItem(Linq.FirstOrDefault(getModel().getDefaultHost().getItems(),
-                        new Linq.HostPredicate(vdsId)));
-            }
-            getModel().getIsAutoAssign().setEntity(false);
-        }
-        else
-        {
-            getModel().getIsAutoAssign().setEntity(true);
-        }
+        doChangeDefautlHost(vm.getdedicated_vm_for_vds());
     }
 
     @Override

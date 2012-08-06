@@ -95,6 +95,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             getModel().setBootSequence(template.getdefault_boot_sequence());
             getModel().getIsHighlyAvailable().setEntity(template.getauto_startup());
 
+            updateHostPinning(template.getMigrationSupport());
+            doChangeDefautlHost(template.getdedicated_vm_for_vds());
+
             if (getModel().getVmType() == VmType.Desktop) {
                 getModel().getIsStateless().setEntity(template.getis_stateless());
                 getModel().getAllowConsoleReconnect().setEntity(template.getAllowConsoleReconnect());
