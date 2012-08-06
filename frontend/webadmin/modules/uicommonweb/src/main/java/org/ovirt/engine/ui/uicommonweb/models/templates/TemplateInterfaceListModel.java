@@ -163,7 +163,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         ArrayList<Network> networks = new ArrayList<Network>();
         for (Network a : network_list)
         {
-            if (a.getCluster().getstatus() == NetworkStatus.Operational)
+            if (a.getCluster().getstatus() == NetworkStatus.Operational && a.isVmNetwork())
             {
                 networks.add(a);
             }
@@ -226,7 +226,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         ArrayList<Network> networks = new ArrayList<Network>();
         for (Network a : network_list)
         {
-            if (a.getCluster().getstatus() == NetworkStatus.Operational)
+            if (a.getCluster().getstatus() == NetworkStatus.Operational && a.isVmNetwork())
             {
                 networks.add(a);
             }
