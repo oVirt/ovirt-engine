@@ -1390,6 +1390,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     SupportBridgesReportByVDSM(370),
 
+    @Reloadable
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"storage domains\":\"false\",\"hosts\":\"false\"}")
     AutoRecoveryAllowedTypes(371),
