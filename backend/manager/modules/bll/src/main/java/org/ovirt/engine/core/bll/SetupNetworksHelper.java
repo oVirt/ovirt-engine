@@ -21,6 +21,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class SetupNetworksHelper {
+    protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
     private SetupNetworksParameters params;
     private Guid vdsGroupId;
     private Map<VdcBllMessages, List<String>> violations = new HashMap<VdcBllMessages, List<String>>();
@@ -108,7 +109,7 @@ public class SetupNetworksHelper {
         for (Map.Entry<VdcBllMessages, List<String>> v : violations.entrySet()) {
             String violationName = v.getKey().name();
             violationMessages.add(violationName);
-            violationMessages.add(MessageFormat.format("${0}_LIST {1}",
+            violationMessages.add(MessageFormat.format(VIOLATING_ENTITIES_LIST_FORMAT,
                     violationName,
                     StringUtils.join(v.getValue(), ", ")));
         }

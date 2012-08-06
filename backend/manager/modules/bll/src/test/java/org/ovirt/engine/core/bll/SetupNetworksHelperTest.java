@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -61,7 +62,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER, nic.getNetworkName());
     }
 
     @Test
@@ -249,7 +250,7 @@ public class SetupNetworksHelperTest {
         nic.setBootProtocol(NetworkBootProtocol.Dhcp);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC, net.getName());
     }
 
     @Test
@@ -280,7 +281,7 @@ public class SetupNetworksHelperTest {
         nic1.setNetworkName(null);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic1, nic2));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC, net.getName());
     }
 
     @Test
@@ -367,7 +368,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(bond));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, bond.getName());
     }
 
     @Test
@@ -379,7 +380,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForBond(bond, slaves));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, bond.getName());
     }
 
     @Test
@@ -389,7 +390,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(bond);
         SetupNetworksHelper helper = createHelper(createParametersForNics(bond, bond));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED, bond.getName());
     }
 
     @Test
@@ -628,12 +629,13 @@ public class SetupNetworksHelperTest {
         List<VdsNetworkInterface> ifacesToBond = createNics(null);
         SetupNetworksParameters parameters = createParametersForBond(bond, ifacesToBond);
 
-        parameters.getInterfaces().add(createVlan(bond.getName() + "1", 100, "net"));
+        String ifaceName = bond.getName() + "1";
+        parameters.getInterfaces().add(createVlan(ifaceName, 100, "net"));
         mockExistingIfacesWithBond(bond, ifacesToBond);
 
         SetupNetworksHelper helper = createHelper(parameters);
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, ifaceName);
     }
 
     @Test
@@ -641,9 +643,27 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface nic = createNic("nic0", null);
         mockExistingIfaces(nic);
 
-        SetupNetworksHelper helper = createHelper(createParametersForNics(nic, createVlan(nic.getName(), 100, "net")));
+        String networkName = "net";
+        SetupNetworksHelper helper = createHelper(
+                createParametersForNics(nic, createVlan(nic.getName(), 100, networkName)));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER, networkName);
+    }
+
+    /* --- Tests for General Violations --- */
+
+    @Test
+    public void violationAppearsTwice() {
+        VdsNetworkInterface nic1 = createNic("nic0", null);
+        VdsNetworkInterface nic2 = createNic("nic1", null);
+        mockExistingIfaces(nic1, nic2);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic1, nic1, nic2, nic2));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED,
+                nic1.getName(),
+                nic2.getName());
     }
 
     /* --- Helper methods for tests --- */
@@ -653,10 +673,18 @@ public class SetupNetworksHelperTest {
         assertTrue("Expected no violations, but got: " + violations, violations.isEmpty());
     }
 
-    private void validateAndExpectViolation(SetupNetworksHelper helper, VdcBllMessages violation) {
+    private void validateAndExpectViolation(SetupNetworksHelper helper,
+            VdcBllMessages violation,
+            String... violatingEntities) {
         List<String> violations = helper.validate();
         assertTrue(MessageFormat.format("Expected violation {0} but only got {1}.", violation, violations),
                 violations.contains(violation.name()));
+        String violatingEntityMessage = MessageFormat.format(SetupNetworksHelper.VIOLATING_ENTITIES_LIST_FORMAT,
+                violation.name(),
+                StringUtils.join(violatingEntities, ", "));
+        assertTrue(MessageFormat.format("Expected violating entity {0} but only got {1}.",
+                violatingEntityMessage, violations),
+                violations.contains(violatingEntityMessage));
     }
 
     private void validateAndAssertNoChanges(SetupNetworksHelper helper) {
