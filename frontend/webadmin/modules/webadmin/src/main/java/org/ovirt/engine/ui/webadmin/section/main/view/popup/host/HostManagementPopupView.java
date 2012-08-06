@@ -20,7 +20,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InfoIcon;
 import org.ovirt.engine.ui.webadmin.widget.editor.EnumRadioEditor;
 
 import com.google.gwt.core.client.GWT;
@@ -86,6 +88,13 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     @Path(value = "checkConnectivity.entity")
     EntityModelCheckBoxEditor checkConnectivity;
 
+    @UiField(provided = true)
+    @Path(value = "isToSync.entity")
+    EntityModelCheckBoxEditor isToSync;
+
+    @UiField(provided = true)
+    InfoIcon isToSyncInfo;
+
     @UiField
     @Ignore
     Label message;
@@ -114,7 +123,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     Style style;
 
     @Inject
-    public HostManagementPopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants) {
+    public HostManagementPopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants, final ApplicationTemplates templates) {
         super(eventBus, resources);
 
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -141,11 +150,14 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isToSync = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isToSyncInfo = new InfoIcon(templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Set Styles
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
+        isToSync.setContentWidgetStyleName(style.syncInfo());
 
         // Localize
         nameEditor.setLabel(constants.networkNameInterface() + ":"); //$NON-NLS-1$
@@ -159,6 +171,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
         gateway.setLabel(constants.defaultGwHostPopup() + ":"); //$NON-NLS-1$
         checkConnectivity.setLabel(constants.checkConHostPopup()); //$NON-NLS-1$
         info.setHTML(constants.changesTempHostPopup());
+        isToSync.setLabel(constants.syncNetwork());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
 
 
@@ -220,22 +233,12 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
         bondingModeEditor.setVisible(true);
         bondingModeEditor.asWidget().setVisible(true);
 
-        if (object.isCompactMode()) {
-            // hide widgets
-            info.setVisible(false);
-            message.setVisible(false);
-            checkConnectivity.setVisible(false);
-            bondingModeEditor.setVisible(false);
-            commitChanges.setVisible(false);
-            // resize
-            layoutPanel.remove(infoPanel);
-            layoutPanel.setWidgetSize(mainPanel, 250);
-            asPopupPanel().setPixelSize(400, 350);
-        }
-
         if (object.getEntity() != null){
             nameEditor.asValueBox().setValue(object.getEntity().getName());
         }
+
+        isToSync.setVisible(false);
+        isToSyncInfo.setVisible(false);
     }
 
     @Override
@@ -255,5 +258,6 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     interface Style extends CssResource {
 
         String checkCon();
+        String syncInfo();
     }
 }

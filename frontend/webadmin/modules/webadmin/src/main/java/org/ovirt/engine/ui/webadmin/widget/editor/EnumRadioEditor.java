@@ -192,6 +192,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
             } else {
                 disabledSet.add(value);
             }
+            redraw();
         }
 
         protected Set<E> getDisabledSet() {

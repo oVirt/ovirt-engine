@@ -19,6 +19,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     private boolean management;
     private NetworkInterfaceModel attachedToNic;
     private NetworkInterfaceModel bridge;
+    private boolean inSync =true;
 
     public LogicalNetworkModel(HostSetupNetworksModel setupModel) {
         super(setupModel);
@@ -67,6 +68,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             bridge.setName(targetNic.getName() + "." + getVlanId()); //$NON-NLS-1$
             bridge.setNetworkName(getName());
             bridge.setVlanId(getVlanId());
+            bridge.setMtu(getEntity().getMtu());
             bridge.setVdsId(targetNicEntity.getVdsId());
             bridge.setVdsName(targetNicEntity.getVdsName());
             if (netParams != null){
@@ -80,6 +82,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             return bridge;
         } else {
             targetNicEntity.setNetworkName(getName());
+            targetNicEntity.setMtu(getEntity().getMtu());
             return null;
         }
     }
@@ -179,5 +182,13 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     public void setSelected(Boolean selected) {
         this.selected = selected;
+    }
+
+    public void setInSync(boolean inSync) {
+        this.inSync = inSync;
+    }
+
+    public boolean isInSync() {
+        return inSync;
     }
 }

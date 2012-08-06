@@ -30,6 +30,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     SafeHtml vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
     SafeHtml monitorImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
     SafeHtml unknownImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.questionMarkImage()).getHTML());
+    SafeHtml notInSyncImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkNotSyncImage()).getHTML());
+
 
     public ItemInfoPopup() {
         super(true);
@@ -67,6 +69,12 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         if (entity.getdescription()!=null && !entity.getdescription().trim().equals("")){ //$NON-NLS-1$
                addRow(SafeHtmlUtils.fromString(entity.getdescription()));
         }
+
+        if (!networkModel.isInSync())
+        {
+            addRow(templates.imageTextSetupNetwork(notInSyncImage, constants.networkNotInSync()));
+        }
+
 
         // Usages
         boolean isDisplay = entity.getCluster() == null ? false : entity.getCluster().getis_display();

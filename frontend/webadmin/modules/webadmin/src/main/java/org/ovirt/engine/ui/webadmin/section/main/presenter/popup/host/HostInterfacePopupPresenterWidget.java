@@ -9,7 +9,6 @@ import com.google.inject.Inject;
 public class HostInterfacePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<HostInterfaceModel, HostInterfacePopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<HostInterfaceModel> {
-
     }
 
     @Inject

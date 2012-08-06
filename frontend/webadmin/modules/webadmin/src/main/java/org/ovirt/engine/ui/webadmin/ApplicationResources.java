@@ -314,6 +314,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/bond.png")
     ImageResource bond();
 
+    @Source("images/network/network_not_sync.png")
+    ImageResource networkNotSyncImage();
+
     @Source("images/disk_bootable.png")
     ImageResource bootableDiskIcon();
 

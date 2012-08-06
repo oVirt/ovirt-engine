@@ -1781,6 +1781,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Verify connectivity between Host and ovirt-engine")
     String checkConHostPopup();
 
+    @DefaultStringValue("Sync network")
+    String syncNetwork();
+
     @DefaultStringValue("<I>Changes done to the Networking configuration are temporary until explicitly saved.<BR>" +
             "Check the check-box below to make the changes persistent.</I>")
     String changesTempHostPopup();
@@ -1879,7 +1882,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("no network assigned")
     String noNetworkAssigned();
 
+
     // Item info
+    @DefaultStringValue("Not synchronized")
+    String networkNotInSync();
+
     @DefaultStringValue("Name")
     String nameItemInfo();
 
@@ -2037,6 +2044,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Check the check-box to make the changes persistent")
     String commitChangesInfoPart2();
+
+    @DefaultStringValue("The logical network definition is not synchronized with the network configuration on the host,")
+    String syncNetworkInfoPart1();
+
+    @DefaultStringValue("To edit this network you need to synchronize it.")
+    String syncNetworkInfoPart2();
 
     // Volume parameter
     @DefaultStringValue("Option Key")

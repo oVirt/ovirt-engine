@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -14,16 +14,16 @@ import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 public class HostManagementNetworkModel extends EntityModel
 {
 
-    private boolean compactMode;
+    private boolean setupNetworkMode;
 
-    public boolean isCompactMode()
+    public boolean isSetupNetworkMode()
     {
-        return compactMode;
+        return setupNetworkMode;
     }
 
-    private void setCompactMode(boolean value)
+    private void setSetupNetworkMode(boolean value)
     {
-        compactMode = value;
+        setupNetworkMode = value;
     }
 
     @Override
@@ -142,6 +142,22 @@ public class HostManagementNetworkModel extends EntityModel
         }
     }
 
+    private boolean bootProtocolsAvailable;
+
+    public boolean getBootProtocolsAvailable()
+    {
+        return bootProtocolsAvailable;
+    }
+
+    public void setBootProtocolsAvailable(boolean value)
+    {
+        if (bootProtocolsAvailable != value)
+        {
+            bootProtocolsAvailable = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
+        }
+    }
+
     public boolean getIsStaticAddress()
     {
         return getBootProtocol() == NetworkBootProtocol.StaticIp;
@@ -182,13 +198,23 @@ public class HostManagementNetworkModel extends EntityModel
         OnPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
     }
 
+    private EntityModel isToSync;
+
+    public EntityModel getIsToSync() {
+        return isToSync;
+    }
+
+    public void setIsToSync(EntityModel isToSync) {
+        this.isToSync = isToSync;
+    }
+
     public HostManagementNetworkModel() {
         this(false);
     }
 
     public HostManagementNetworkModel(boolean compactMode)
     {
-        setCompactMode(compactMode);
+        setSetupNetworkMode(compactMode);
         setInterface(new ListModel());
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
@@ -197,6 +223,15 @@ public class HostManagementNetworkModel extends EntityModel
         setCheckConnectivity(new EntityModel());
         getCheckConnectivity().setEntity(true);
         setBondingOptions(new ListModel());
+
+        setIsToSync(new EntityModel(){
+            @Override
+            public void setEntity(Object value) {
+                super.setEntity(value);
+                setBootProtocolsAvailable((Boolean) value);
+                UpdateCanSpecify();
+            }
+        });
 
         EntityModel tempVar = new EntityModel();
         tempVar.setEntity(false);
@@ -230,9 +265,10 @@ public class HostManagementNetworkModel extends EntityModel
 
     private void UpdateCanSpecify()
     {
-        getAddress().setIsChangable(getIsStaticAddress());
-        getSubnet().setIsChangable(getIsStaticAddress());
-        getGateway().setIsChangable(getIsStaticAddress());
+        boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
+        getAddress().setIsChangable(isChangable);
+        getSubnet().setIsChangable(isChangable);
+        getGateway().setIsChangable(isChangable);
     }
 
     public boolean Validate()

@@ -107,6 +107,8 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private Map<String, LogicalNetworkModel> networkMap;
 
+    private final List<String> networksToSync = new ArrayList<String>();
+
     // The purpose of this map is to keep the network parameters while moving the network from one nic to another
     private final Map<String, NetworkParameters> networkToLastDetachParams;
 
@@ -267,7 +269,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 }
             };
         } else if (item instanceof LogicalNetworkModel){
-            LogicalNetworkModel logicalNetwork = (LogicalNetworkModel)item;
+            final LogicalNetworkModel logicalNetwork = (LogicalNetworkModel)item;
             final VdsNetworkInterface entity = logicalNetwork.hasVlan() ? logicalNetwork.getBridge().getEntity() : logicalNetwork.getAttachedToNic().getEntity();
 
             if (logicalNetwork.isManagement()) {
@@ -285,6 +287,9 @@ public class HostSetupNetworksModel extends EntityModel {
                 mgmntDialogModel.getBondingOptions().setIsAvailable(false);
                 mgmntDialogModel.getInterface().setIsAvailable(false);
                 mgmntDialogModel.setBootProtocol(entity.getBootProtocol());
+                mgmntDialogModel.getIsToSync().setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
+
+                mgmntDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
 
                 // OK Target
                 okTarget = new BaseCommandTarget() {
@@ -297,6 +302,13 @@ public class HostSetupNetworksModel extends EntityModel {
                         entity.setAddress((String) mgmntDialogModel.getAddress().getEntity());
                         entity.setSubnet((String) mgmntDialogModel.getSubnet().getEntity());
                         entity.setGateway((String) mgmntDialogModel.getGateway().getEntity());
+
+                        if ((Boolean) mgmntDialogModel.getIsToSync().getEntity()){
+                            HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());
+                        }else{
+                            HostSetupNetworksModel.this.networksToSync.remove(logicalNetwork.getName());
+                        }
+
                         hostInterfaceListModel.CancelConfirm();
                     }
                 };
@@ -317,6 +329,10 @@ public class HostSetupNetworksModel extends EntityModel {
 
                 networkDialogModel.setBootProtocol(entity.getBootProtocol());
 
+                networkDialogModel.getIsToSync().setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
+
+                networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
+
                 // OK Target
                 okTarget = new BaseCommandTarget() {
                     @Override
@@ -327,6 +343,13 @@ public class HostSetupNetworksModel extends EntityModel {
                         entity.setBootProtocol(networkDialogModel.getBootProtocol());
                         entity.setAddress((String) networkDialogModel.getAddress().getEntity());
                         entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
+
+                        if ((Boolean) networkDialogModel.getIsToSync().getEntity()){
+                            HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());
+                        }else{
+                            HostSetupNetworksModel.this.networksToSync.remove(logicalNetwork.getName());
+                        }
+
                         hostInterfaceListModel.CancelConfirm();
                     }
                 };
@@ -532,6 +555,10 @@ public class HostSetupNetworksModel extends EntityModel {
                     networkModel.getEntity().setMtu(nic.getMtu());
                 }
 
+                if (nic.getNetworkImplementationDetails() != null){
+                    networkModel.setInSync(nic.getNetworkImplementationDetails().isInSync());
+                }
+
                 // is this a management network (from backend)?
                 if (isNicManagement) {
                     networkModel.setManagement(true);
@@ -709,6 +736,10 @@ public class HostSetupNetworksModel extends EntityModel {
 
     public Map<String, NetworkParameters> getNetworkToLastDetachParams() {
         return networkToLastDetachParams;
+    }
+
+    public List<String> getNetworksToSync() {
+        return networksToSync;
     }
 
 

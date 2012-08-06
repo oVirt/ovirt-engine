@@ -28,15 +28,19 @@ public class NetworkPanel extends NetworkItemPanel {
         Image mgmtNetworkImage;
         Image vmImage;
         Image monitorImage;
+        Image notSyncImage;
 
         if (network.getEntity().getCluster() == null){
             monitorImage = new Image(resources.questionMarkImage());
             mgmtNetworkImage = new Image(resources.empty());
             vmImage = new Image(resources.empty());
+            notSyncImage = new Image(resources.empty());
         }else{
+
             monitorImage = new Image(network.getEntity().getCluster().getis_display() ? resources.networkMonitor() : resources.empty());
             mgmtNetworkImage = new Image(network.isManagement() ? resources.mgmtNetwork() : resources.empty());
             vmImage = new Image(network.getEntity().isVmNetwork() ? resources.networkVm() : resources.empty());
+            notSyncImage = new Image(!network.isInSync() ? resources.networkNotSyncImage() : resources.empty());
 
             if (network.isManagement()){
                 mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
@@ -49,9 +53,13 @@ public class NetworkPanel extends NetworkItemPanel {
             if (network.getEntity().getCluster().getis_display()){
                 monitorImage.setStylePrimaryName(style.networkImageBorder());
             }
+
+            if (!network.isInSync()){
+                notSyncImage.setStylePrimaryName(style.networkImageBorder());
+            }
         }
 
-        Grid rowPanel = new Grid(1, 7);
+        Grid rowPanel = new Grid(1, 8);
         rowPanel.setCellSpacing(3);
         rowPanel.setWidth("100%"); //$NON-NLS-1$
         rowPanel.setHeight("100%"); //$NON-NLS-1$
@@ -73,6 +81,7 @@ public class NetworkPanel extends NetworkItemPanel {
         rowPanel.setWidget(0, 4, mgmtNetworkImage);
         rowPanel.setWidget(0, 5, monitorImage);
         rowPanel.setWidget(0, 6, vmImage);
+        rowPanel.setWidget(0, 7, notSyncImage);
         return rowPanel;
     }
 

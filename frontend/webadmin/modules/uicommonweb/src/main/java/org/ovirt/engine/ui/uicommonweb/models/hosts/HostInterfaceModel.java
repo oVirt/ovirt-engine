@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -20,16 +20,16 @@ import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 public class HostInterfaceModel extends EntityModel
 {
 
-    private boolean compactMode;
+    private boolean setupNetworkMode;
 
-    public boolean isCompactMode()
+    public boolean isSetupNetworkMode()
     {
-        return compactMode;
+        return setupNetworkMode;
     }
 
-    private void setCompactMode(boolean value)
+    private void setSetupNetworkMode(boolean value)
     {
-        compactMode = value;
+        setupNetworkMode = value;
     }
 
     private EntityModel privateAddress;
@@ -205,13 +205,23 @@ public class HostInterfaceModel extends EntityModel
         OnPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
     }
 
+    private EntityModel isToSync;
+
+    public EntityModel getIsToSync() {
+        return isToSync;
+    }
+
+    public void setIsToSync(EntityModel isToSync) {
+        this.isToSync = isToSync;
+    }
+
     public HostInterfaceModel() {
         this(false);
     }
 
     public HostInterfaceModel(boolean compactMode)
     {
-        setCompactMode(compactMode);
+        setSetupNetworkMode(compactMode);
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
         setNetwork(new ListModel());
@@ -223,7 +233,18 @@ public class HostInterfaceModel extends EntityModel
 
         setCheckConnectivity(new EntityModel());
         getCheckConnectivity().setEntity(false);
+
         setBondingOptions(new ListModel());
+
+        setIsToSync(new EntityModel(){
+            @Override
+            public void setEntity(Object value) {
+                super.setEntity(value);
+                setBootProtocolsAvailable((Boolean) value);
+                UpdateCanSpecify();
+            }
+        });
+
         // call the Network_ValueChanged method to set all
         // properties according to default value of Network:
         Network_SelectedItemChanged(null);
@@ -277,7 +298,7 @@ public class HostInterfaceModel extends EntityModel
     private void UpdateCanSpecify()
     {
         Network network = (Network) getNetwork().getSelectedItem();
-        boolean isChangable = getIsStaticAddress();
+        boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
         getAddress().setIsChangable(isChangable);
         getSubnet().setIsChangable(isChangable);
     }

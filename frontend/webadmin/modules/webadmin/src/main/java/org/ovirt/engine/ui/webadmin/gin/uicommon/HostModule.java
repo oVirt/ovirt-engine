@@ -47,6 +47,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -144,7 +146,9 @@ public class HostModule extends AbstractGinModule {
             final Provider<DetachConfirmationPopupPresenterWidget> detachConfirmPopupProvider,
             final Provider<HostManagementConfirmationPopupPresenterWidget> hostManagementConfirmationdetachConfirmPopupProvider,
             final Provider<HostInterfacePopupPresenterWidget> hostInterfacePopupProvider,
+            final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
             final Provider<HostManagementPopupPresenterWidget> hostManagementPopupProvider,
+            final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
             final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
         return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(ginjector,
@@ -166,9 +170,21 @@ public class HostModule extends AbstractGinModule {
                     if (windowModel instanceof HostBondInterfaceModel) {
                         return hostBondPopupProvider.get();
                     } else if (windowModel instanceof HostInterfaceModel) {
-                        return hostInterfacePopupProvider.get();
+                        HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) windowModel;
+
+                        if (hostInterfaceModel.isSetupNetworkMode()){
+                            return setupNetworksInterfacePopupProvider.get();
+                        }else{
+                            return hostInterfacePopupProvider.get();
+                        }
                     } else if (windowModel instanceof HostManagementNetworkModel) {
-                        return hostManagementPopupProvider.get();
+                        HostManagementNetworkModel hostManagementNetworkModel  = (HostManagementNetworkModel) windowModel;
+
+                        if (hostManagementNetworkModel.isSetupNetworkMode()){
+                            return setupNetworksManagementPopupProvider.get();
+                        }else{
+                            return hostManagementPopupProvider.get();
+                        }
                     }
                 }
 

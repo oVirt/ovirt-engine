@@ -5,12 +5,16 @@
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
 	xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
-	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
+	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget"
+	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView.Style">
 		.checkCon{
 			width: 370px;
 			padding: 5px;
+		}
+		.syncInfo {
+			width: 110px;
 		}
 	</ui:style>
 
@@ -28,6 +32,10 @@
 						<e:EntityModelTextBoxEditor ui:field="address" />
 						<e:EntityModelTextBoxEditor ui:field="subnet" />
 						<e:EntityModelTextBoxEditor ui:field="gateway" />
+						<g:HorizontalPanel>
+							<e:EntityModelCheckBoxEditor ui:field="isToSync" />
+							<p:InfoIcon ui:field="isToSyncInfo"></p:InfoIcon>
+						</g:HorizontalPanel>
 						<e:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
 						<g:Label ui:field="message" />
 					</g:VerticalPanel>

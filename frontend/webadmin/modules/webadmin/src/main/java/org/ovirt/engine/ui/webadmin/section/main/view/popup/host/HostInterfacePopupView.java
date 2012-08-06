@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -20,7 +20,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InfoIcon;
 import org.ovirt.engine.ui.webadmin.widget.editor.EnumRadioEditor;
 
 import com.google.gwt.core.client.GWT;
@@ -28,6 +30,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -81,6 +84,13 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @Path(value = "checkConnectivity.entity")
     EntityModelCheckBoxEditor checkConnectivity;
 
+    @UiField(provided = true)
+    @Path(value = "isToSync.entity")
+    EntityModelCheckBoxEditor isToSync;
+
+    @UiField(provided = true)
+    InfoIcon isToSyncInfo;
+
     @UiField
     @Ignore
     Label message;
@@ -105,8 +115,11 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @Path(value = "commitChanges.entity")
     EntityModelCheckBoxEditor commitChanges;
 
+    @UiField
+    Style style;
+
     @Inject
-    public HostInterfacePopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants) {
+    public HostInterfacePopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants, final ApplicationTemplates templates) {
         super(eventBus, resources);
 
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -133,9 +146,15 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isToSync = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isToSyncInfo = new InfoIcon(templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
+        // Set Styles
+        isToSync.setContentWidgetStyleName(style.syncInfo());
+
+        // Localize
         nameEditor.setLabel(constants.nameHostPopup() + ":"); //$NON-NLS-1$
         networkEditor.setLabel(constants.networkHostPopup() + ":"); //$NON-NLS-1$
         bondingModeEditor.setLabel(constants.bondingModeHostPopup() + ":"); //$NON-NLS-1$
@@ -145,6 +164,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
         subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
         checkConnectivity.setLabel(constants.checkConHostPopup() + ":"); //$NON-NLS-1$
+        info.setHTML(constants.changesTempHostPopup());
+        isToSync.setLabel(constants.syncNetwork());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
 
         Driver.driver.initialize(this);
@@ -160,6 +181,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
                 HostInterfaceModel model = (HostInterfaceModel) sender;
                 if ("BootProtocolsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
+                    bootProtocolLabel.setEnabled(bootProtocolsAvailable);
                     bootProtocol.setEnabled(bootProtocolsAvailable);
                     checkConnectivity.setEnabled(bootProtocolsAvailable);
                 }
@@ -205,19 +227,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         bondingModeEditor.setVisible(true);
         bondingModeEditor.asWidget().setVisible(true);
 
-        if (object.isCompactMode()) {
-            // hide widgets
-            info.setVisible(false);
-            message.setVisible(false);
-            checkConnectivity.setVisible(false);
-            bondingModeEditor.setVisible(false);
-            commitChanges.setVisible(false);
-            // resize
-            layoutPanel.remove(infoPanel);
-            layoutPanel.setWidgetSize(mainPanel, 200);
-            asPopupPanel().setPixelSize(400, 300);
-        }
-
+        isToSync.setVisible(false);
+        isToSyncInfo.setVisible(false);
     }
 
     @Override
@@ -234,4 +245,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     public void setMessage(String message) {
     }
 
+    interface Style extends CssResource {
+
+        String syncInfo();
+    }
 }

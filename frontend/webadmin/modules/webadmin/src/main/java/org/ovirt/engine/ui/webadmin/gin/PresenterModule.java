@@ -44,6 +44,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
@@ -204,6 +206,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksInterfacePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksManagementPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
@@ -819,9 +823,15 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(HostInterfacePopupPresenterWidget.class,
                 HostInterfacePopupPresenterWidget.ViewDef.class,
                 HostInterfacePopupView.class);
+        bindPresenterWidget(SetupNetworksInterfacePopupPresenterWidget.class,
+                SetupNetworksInterfacePopupPresenterWidget.ViewDef.class,
+                SetupNetworksInterfacePopupView.class);
         bindPresenterWidget(HostManagementPopupPresenterWidget.class,
                 HostManagementPopupPresenterWidget.ViewDef.class,
                 HostManagementPopupView.class);
+        bindPresenterWidget(SetupNetworksManagementPopupPresenterWidget.class,
+                SetupNetworksManagementPopupPresenterWidget.ViewDef.class,
+                SetupNetworksManagementPopupView.class);
         bindPresenterWidget(HostBondPopupPresenterWidget.class,
                 HostBondPopupPresenterWidget.ViewDef.class,
                 HostBondPopupView.class);

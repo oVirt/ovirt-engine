@@ -2171,6 +2171,7 @@ public class HostInterfaceListModel extends SearchableListModel
         params.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
         params.setConectivityTimeout((Integer) model.getConnectivityTimeout().getEntity());
         params.setVdsId(getEntity().getId());
+        params.setNetworksToSync(model.getNetworksToSync());
         IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
 
             @Override
