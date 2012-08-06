@@ -7,6 +7,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
@@ -90,6 +91,14 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @UiField(provided = true)
     @Path(value = "destinationStorage.selectedItem")
     ListModelListBoxEditor<Object> destStorageEditor;
+
+    @UiField(provided = true)
+    @Path(value = "quotaCluster.selectedItem")
+    ListModelListBoxEditor<Object> quotaClusterEditor;
+
+    @UiField(provided = true)
+    @Path(value = "quotaStorage.selectedItem")
+    ListModelListBoxEditor<Object> quotaStorageEditor;
 
     @UiField(provided = true)
     @Path(value = "collapseSnapshots.entity")
@@ -463,6 +472,18 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return ((storage_domains) object).getstorage_name();
             }
         });
+        quotaClusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((Quota) object).getQuotaName();
+            }
+        });
+        quotaStorageEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((Quota) object).getQuotaName();
+            }
+        });
     }
 
     private void initCheckboxes() {
@@ -480,6 +501,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         cloneOnlyDuplicateVMs.setLabel(constants.importVm_cloneOnlyDuplicateVMs());
         cloneVMsSuffix.setLabel(constants.import_cloneSuffix());
         duplicateVmMessage.setText(constants.noteClone_CollapsedSnapshotMsg());
+        quotaClusterEditor.setLabel(constants.quotaCluster());
+        quotaStorageEditor.setLabel(constants.quotaStorage());
     }
 
     @SuppressWarnings("unchecked")

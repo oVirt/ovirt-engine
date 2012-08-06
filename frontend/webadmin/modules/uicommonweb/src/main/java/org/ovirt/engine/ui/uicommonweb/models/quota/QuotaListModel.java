@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -106,6 +106,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     @Override
+    protected void SelectedItemsChanged() {
+        super.SelectedItemsChanged();
+        updateActionAvailability();
+    }
+
+    @Override
     protected void InitDetailModels() {
         super.InitDetailModels();
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
@@ -128,19 +134,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     private void updateActionAvailability() {
-        boolean isOnlyOneItemSelected =
-                (getSelectedItems() == null && getSelectedItem() != null)
-                        || (getSelectedItems() != null && getSelectedItems().size() == 1);
-        getEditQuotaCommand().setIsExecutionAllowed(isOnlyOneItemSelected);
-        getRemoveQuotaCommand().setIsExecutionAllowed(isOnlyOneItemSelected);
-        if (isOnlyOneItemSelected) {
-            Quota quota = (Quota) getSelectedItem();
-            if (quota.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-                getEditQuotaCommand().setIsExecutionAllowed(false);
-                getRemoveQuotaCommand().setIsExecutionAllowed(false);
-            }
-        }
-        getCloneQuotaCommand().setIsExecutionAllowed(isOnlyOneItemSelected);
+        List items =
+                getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
+                        : new ArrayList();
+        getEditQuotaCommand().setIsExecutionAllowed(items.size() == 1);
+        getRemoveQuotaCommand().setIsExecutionAllowed(items.size() == 1);
+        getCloneQuotaCommand().setIsExecutionAllowed(items.size() == 1);
     }
 
     private void createQuota() {

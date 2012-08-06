@@ -73,25 +73,20 @@
 			margin-left: 15px;
 		}
 	</ui:style>
-	<d:SimpleDialogPanel height="650px" width="1000px">
+	<d:SimpleDialogPanel height="670px" width="1000px">
 		<d:content>
 			<g:VerticalPanel>
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel"
 					height="400px" addStyleNames="{style.splitLayoutPanelStyle}" />
 					<g:HorizontalPanel>
-						<g:VerticalPanel>
-							<g:VerticalPanel width="445px">
-								<e:ListModelListBoxEditor ui:field="destClusterEditor" />
-								<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-									<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
-									<e:ListModelListBoxEditor ui:field="destStorageEditor" />
-								</g:HorizontalPanel>
-							</g:VerticalPanel>
-							<g:HorizontalPanel>
-								<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
-								<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
-								<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
+						<g:VerticalPanel width="445px">
+							<e:ListModelListBoxEditor ui:field="destClusterEditor" />
+							<e:ListModelListBoxEditor ui:field="quotaClusterEditor" />
+							<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
+								<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
+								<e:ListModelListBoxEditor ui:field="destStorageEditor" />
 							</g:HorizontalPanel>
+							<e:ListModelListBoxEditor ui:field="quotaStorageEditor" />
 						</g:VerticalPanel>
 						<g:VerticalPanel>
 								<g:HorizontalPanel>
@@ -106,6 +101,11 @@
 									<g:Label ui:field="duplicateVmMessage" addStyleNames="{style.duplicateVmLabelStyle}"/>
 								</g:HorizontalPanel>
 						</g:VerticalPanel>
+					</g:HorizontalPanel>
+					<g:HorizontalPanel>
+						<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
+						<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
+						<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 					</g:HorizontalPanel>
 			</g:VerticalPanel>
 		</d:content>

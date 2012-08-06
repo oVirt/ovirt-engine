@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -180,56 +182,72 @@ public class VmBackupModel extends ManageBackupModel {
             }
         });
 
-        AsyncQuery _AsyncQuery = new AsyncQuery();
-        _AsyncQuery.Model = this;
-        _AsyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object returnModel, Object returnValue) {
-                VmBackupModel vmBackupModel = (VmBackupModel) returnModel;
-                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                ImportVmModel iVmModel = (ImportVmModel) vmBackupModel.getWindow();
-                iVmModel.getCluster().setItems(clusters);
-                iVmModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
-                iVmModel.setSourceStorage(vmBackupModel.getEntity().getStorageStaticData());
+            public void OnSuccess(Object model, Object returnValue) {
+                if (returnValue != null) {
+                    ArrayList<storage_pool> dataCenter = (ArrayList<storage_pool>) returnValue;
+                    if (dataCenter.get(0).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+                        VmBackupModel backupModel = (VmBackupModel) model;
+                        ImportVmModel importModel = (ImportVmModel) backupModel.getWindow();
+                        importModel.getQuotaCluster().setIsAvailable(true);
+                        importModel.getQuotaStorage().setIsAvailable(true);
+                    }
+                }
 
-                AsyncQuery _asyncQuery1 = new AsyncQuery();
-                _asyncQuery1.Model = vmBackupModel;
-                _asyncQuery1.asyncCallback = new INewAsyncCallback() {
+                AsyncQuery _AsyncQuery = new AsyncQuery();
+                _AsyncQuery.Model = model;
+                _AsyncQuery.asyncCallback = new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object returnModel1,
-                            Object returnValue1) {
-                        ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue1;
-                        storage_pool pool = null;
-                        if (pools != null && pools.size() > 0) {
-                            pool = pools.get(0);
-                        }
-                        VmBackupModel vmBackupModel1 = (VmBackupModel) returnModel1;
-                        ImportVmModel iVmModel1 = (ImportVmModel) vmBackupModel1.getWindow();
-                        iVmModel1.setStoragePool(pool);
+                    public void OnSuccess(Object returnModel, Object returnValue) {
+                        VmBackupModel vmBackupModel = (VmBackupModel) returnModel;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                        ImportVmModel iVmModel = (ImportVmModel) vmBackupModel.getWindow();
+                        iVmModel.getCluster().setItems(clusters);
+                        iVmModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                        iVmModel.setSourceStorage(vmBackupModel.getEntity().getStorageStaticData());
 
-                        iVmModel1.setItems(vmBackupModel1.getSelectedItems());
-                        iVmModel1.setSelectedVMsCount(((List) vmBackupModel1.getItems()).size());
+                        AsyncQuery _asyncQuery1 = new AsyncQuery();
+                        _asyncQuery1.Model = vmBackupModel;
+                        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
 
-                        UICommand restoreCommand;
-                        restoreCommand = new UICommand("OnRestore", vmBackupModel1); //$NON-NLS-1$
-                        restoreCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        restoreCommand.setIsDefault(true);
-                        iVmModel1.getCommands().add(restoreCommand);
-                        UICommand tempVar3 = new UICommand("Cancel", vmBackupModel1); //$NON-NLS-1$
-                        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        tempVar3.setIsCancel(true);
-                        iVmModel1.getCommands().add(tempVar3);
+                            @Override
+                            public void OnSuccess(Object returnModel1,
+                                    Object returnValue1) {
+                                ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue1;
+                                storage_pool pool = null;
+                                if (pools != null && pools.size() > 0) {
+                                    pool = pools.get(0);
+                                }
+                                VmBackupModel vmBackupModel1 = (VmBackupModel) returnModel1;
+                                ImportVmModel iVmModel1 = (ImportVmModel) vmBackupModel1.getWindow();
+                                iVmModel1.setStoragePool(pool);
+
+                                iVmModel1.setItems(vmBackupModel1.getSelectedItems());
+                                iVmModel1.setSelectedVMsCount(((List) vmBackupModel1.getItems()).size());
+
+                                UICommand restoreCommand;
+                                restoreCommand = new UICommand("OnRestore", vmBackupModel1); //$NON-NLS-1$
+                                restoreCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                                restoreCommand.setIsDefault(true);
+                                iVmModel1.getCommands().add(restoreCommand);
+                                UICommand tempVar3 = new UICommand("Cancel", vmBackupModel1); //$NON-NLS-1$
+                                tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                                tempVar3.setIsCancel(true);
+                                iVmModel1.getCommands().add(tempVar3);
+                            }
+
+                        };
+                        AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery1,
+                                vmBackupModel.getEntity().getId());
                     }
-
                 };
-                AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery1,
-                        vmBackupModel.getEntity().getId());
+                AsyncDataProvider.GetClusterListByStorageDomain(_AsyncQuery,
+                        getEntity().getId());
             }
-        };
-
-        AsyncDataProvider.GetClusterListByStorageDomain(_AsyncQuery,
+        }),
                 getEntity().getId());
     }
 
@@ -278,6 +296,10 @@ public class VmBackupModel extends ManageBackupModel {
 
             prm.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
 
+            if (model.getQuotaCluster().getIsAvailable() && model.getQuotaCluster().getSelectedItem() != null) {
+                prm.setQuotaId(((Quota) model.getQuotaCluster().getSelectedItem()).getId());
+            }
+
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 Guid key = entry.getKey();
                 DiskImage disk = (DiskImage) entry.getValue();
@@ -287,6 +309,9 @@ public class VmBackupModel extends ManageBackupModel {
                         (storage_domains) model.getDestinationStorage().getSelectedItem()
                         : model.getStorageById(map.get(disk.getId()));
                 disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), domain.getstorage_type()));
+                if (model.getQuotaStorage().getIsAvailable() && model.getQuotaStorage().getSelectedItem() != null) {
+                    disk.setQuotaId(((Quota) model.getQuotaStorage().getSelectedItem()).getId());
+                }
             }
 
             if (!(Boolean) model.getIsSingleDestStorage().getEntity()) {

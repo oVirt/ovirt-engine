@@ -1882,7 +1882,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("no network assigned")
     String noNetworkAssigned();
 
-
     // Item info
     @DefaultStringValue("Not synchronized")
     String networkNotInSync();
@@ -2032,7 +2031,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("No Valid Action")
     String noValidActionSetupNetwork();
 
-
     @DefaultStringValue("Check this checkbox to ensure you won't lose connectivity to the engine.")
     String checkConnectivityInfoPart1();
 
@@ -2172,5 +2170,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("This operation might be unrecoverable and destructive!")
     String storageForceCreatePopupWarningLabel();
+
+    @DefaultStringValue("Quota Cluster")
+    String quotaCluster();
+
+    @DefaultStringValue("Quota Storage")
+    String quotaStorage();
 
 }

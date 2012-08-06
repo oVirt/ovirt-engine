@@ -9,7 +9,9 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -18,6 +20,8 @@ import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
+import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -265,6 +269,26 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
 
     private HashMap<Guid, VM> alreadyInSystem;
 
+    private ListModel quotaCluster;
+
+    public ListModel getQuotaCluster() {
+        return quotaCluster;
+    }
+
+    private void setQuotaCluster(ListModel value) {
+        quotaCluster = value;
+    }
+
+    private ListModel quotaStorage;
+
+    public ListModel getQuotaStorage() {
+        return quotaStorage;
+    }
+
+    private void setQuotaStorage(ListModel value) {
+        quotaStorage = value;
+    }
+
     public ImportVmModel() {
         setProblematicItems(new ArrayList<VM>());
         setCollapseSnapshots(new EntityModel());
@@ -325,6 +349,70 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         setCloneAllVMs_message(new EntityModel());
         setCloneOnlyDuplicateVMs_messageVisible(new EntityModel());
         getCloneOnlyDuplicateVMs_messageVisible().setEntity(false);
+        setQuotaCluster(new ListModel());
+        setQuotaStorage(new ListModel());
+        getQuotaCluster().setIsAvailable(false);
+        getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (getQuotaCluster().getIsAvailable() && getCluster().getSelectedItem() != null) {
+                    Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+                            new GetAllRelevantQuotasForVdsGroupParameters(((VDSGroup) getCluster().getSelectedItem()).getId()),
+                            new AsyncQuery(ImportVmModel.this,
+                                    new INewAsyncCallback() {
+                                        @Override
+                                        public void OnSuccess(Object model, Object returnValue) {
+                                            Quota currentQuota = null;
+                                            if (getQuotaCluster().getSelectedItem() != null) {
+                                                currentQuota = (Quota) getQuotaCluster().getSelectedItem();
+                                            }
+                                            ImportVmModel importModel = (ImportVmModel) model;
+                                            ArrayList<Quota> quotaList =
+                                                    (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                            importModel.getQuotaCluster().setItems(quotaList);
+                                            if (currentQuota != null) {
+                                                for (Quota quota : quotaList) {
+                                                    if (quota.getId().equals(currentQuota.getId())) {
+                                                        importModel.getQuotaCluster().setSelectedItem(quota);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }));
+                }
+            }
+        });
+        getQuotaStorage().setIsAvailable(false);
+        getDestinationStorage().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (getQuotaStorage().getIsAvailable() && getDestinationStorage().getSelectedItem() != null) {
+                    Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
+                            new GetAllRelevantQuotasForStorageParameters(((storage_domains) getDestinationStorage().getSelectedItem()).getId()),
+                            new AsyncQuery(ImportVmModel.this,
+                                    new INewAsyncCallback() {
+                                        @Override
+                                        public void OnSuccess(Object model, Object returnValue) {
+                                            Quota currentQuota = null;
+                                            if (getQuotaStorage().getSelectedItem() != null) {
+                                                currentQuota = (Quota) getQuotaStorage().getSelectedItem();
+                                            }
+                                            ImportVmModel importModel = (ImportVmModel) model;
+                                            ArrayList<Quota> quotaList =
+                                                    (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                            importModel.getQuotaStorage().setItems(quotaList);
+                                            if (currentQuota != null) {
+                                                for (Quota quota : quotaList) {
+                                                    if (quota.getId().equals(currentQuota.getId())) {
+                                                        importModel.getQuotaStorage().setSelectedItem(quota);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }));
+                }
+            }
+        });
     }
 
     public void OnCollapseSnapshotsChanged(AsyncQuery _asyncQuery) {
