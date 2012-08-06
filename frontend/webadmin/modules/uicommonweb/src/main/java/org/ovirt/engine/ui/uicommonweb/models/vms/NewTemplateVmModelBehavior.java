@@ -244,6 +244,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         InitPriority(this.vm.getpriority());
     }
 
+    @Override
     public void InitStorageDomains()
     {
         AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this,
