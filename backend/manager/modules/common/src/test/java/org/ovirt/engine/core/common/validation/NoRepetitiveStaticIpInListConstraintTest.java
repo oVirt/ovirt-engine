@@ -54,16 +54,6 @@ public class NoRepetitiveStaticIpInListConstraintTest {
         validateAndAssertResult(listOfInterfaces, true);
     }
 
-    private class NoRepetitiveStaticIpInListContainer {
-        @SuppressWarnings("unused")
-        @NoRepetitiveStaticIpInList
-        private List<VdsNetworkInterface> value;
-
-        public NoRepetitiveStaticIpInListContainer(List<VdsNetworkInterface> value) {
-            this.value = value;
-        }
-    }
-
     private void validateAndAssertResult(List<VdsNetworkInterface> listOfInterfaces, boolean isValid) {
         NoRepetitiveStaticIpInListContainer container = new NoRepetitiveStaticIpInListContainer(listOfInterfaces);
         Set<ConstraintViolation<NoRepetitiveStaticIpInListContainer>> validate = validator.validate(container);
@@ -75,5 +65,15 @@ public class NoRepetitiveStaticIpInListConstraintTest {
         networkInterface.setAddress(ip);
         networkInterface.setBootProtocol(NetworkBootProtocol.StaticIp);
         return networkInterface;
+    }
+
+    private class NoRepetitiveStaticIpInListContainer {
+        @SuppressWarnings("unused")
+        @NoRepetitiveStaticIpInList
+        private List<VdsNetworkInterface> value;
+
+        public NoRepetitiveStaticIpInListContainer(List<VdsNetworkInterface> value) {
+            this.value = value;
+        }
     }
 }

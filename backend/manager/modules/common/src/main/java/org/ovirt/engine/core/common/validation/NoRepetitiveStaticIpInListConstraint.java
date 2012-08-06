@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.validation;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,7 +18,7 @@ public class NoRepetitiveStaticIpInListConstraint implements ConstraintValidator
 
     @Override
     public boolean isValid(List<VdsNetworkInterface> value, ConstraintValidatorContext context) {
-        HashSet<String> staticIps = new HashSet<String>();
+        Collection<String> staticIps = new HashSet<String>();
         for (VdsNetworkInterface networkInterface : value) {
             if (networkInterface.getBootProtocol() == NetworkBootProtocol.StaticIp
                     && validAddress(networkInterface.getAddress())) {
@@ -43,5 +44,6 @@ public class NoRepetitiveStaticIpInListConstraint implements ConstraintValidator
 
     @Override
     public void initialize(NoRepetitiveStaticIpInList constraintAnnotation) {
+        // Unimplemented method, required for interface ConstraintValidator
     }
 }
