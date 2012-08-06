@@ -236,7 +236,7 @@ public class SetupNetworksHelper {
                     modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
                 }
             } else if (unmanagedNetworkChanged(iface)) {
-                addViolation(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+                addViolation(VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER, networkName);
             }
         }
     }

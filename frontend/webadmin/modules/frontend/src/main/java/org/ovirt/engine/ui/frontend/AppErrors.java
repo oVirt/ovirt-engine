@@ -1104,6 +1104,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces don't exist on the Host: ${NETWORK_INTERFACES_DONT_EXIST_LIST}.")
     String NETWORK_INTERFACES_DONT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks don't exist in the Host's Cluster: ${NETWORKS_DONT_EXIST_IN_CLUSTER_LIST}.")
+    String NETWORKS_DONT_EXIST_IN_CLUSTER();
+
     @DefaultStringValue("The currently used VM Snapshot Image cannot be used in Preview command.")
     String CANNOT_PREIEW_CURRENT_IMAGE();
 

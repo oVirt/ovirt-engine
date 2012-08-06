@@ -61,7 +61,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER);
     }
 
     @Test
@@ -643,7 +643,7 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, createVlan(nic.getName(), 100, "net")));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER);
     }
 
     /* --- Helper methods for tests --- */
