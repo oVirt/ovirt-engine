@@ -1508,7 +1508,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Bond")
     String bondInterface();
 
-    @DefaultStringValue("Vlan")
+    @DefaultStringValue("VLAN")
     String vlanInterface();
 
     @DefaultStringValue("Add / Edit")
