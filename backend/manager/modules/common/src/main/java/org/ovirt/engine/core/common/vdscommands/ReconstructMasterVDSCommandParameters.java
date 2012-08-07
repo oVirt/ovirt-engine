@@ -83,7 +83,7 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
 
     @Override
     public String toString() {
-        return String.format("%s, vdsSpmId = %i, storagePoolId = %s, "
+        return String.format("%s, vdsSpmId = %d, storagePoolId = %s, "
             + "storagePoolName = %s, masterDomainId = %s, masterVersion = %s, "
             + "domainsList = [%s]",
                 super.toString(),
