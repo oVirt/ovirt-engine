@@ -2031,10 +2031,10 @@ def _checkAvailableMemory():
     """
     checks for memory using the "free" command
     """
-    #execute free -g to get output in GB
+    #execute free -m to get output in MB
     logging.debug("checking total memory")
     cmd = [
-        basedefs.EXEC_FREE, "-g"
+        basedefs.EXEC_FREE, "-m"
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_FREE_MEM)
 
@@ -2049,12 +2049,13 @@ def _checkAvailableMemory():
 
     #compare found memory to restrictions
     availableMemory = int(availableMemory)
-    if availableMemory < basedefs.CONST_MIN_MEMORY_GB:
-        logging.error("Availble memory (%s) is lower then the minimum requirments (%s)" % (availableMemory, basedefs.CONST_MIN_MEMORY_GB))
+    #multiplying CONST_MIN_MEMORY by 0.95 to have tolerance of 5%
+    if availableMemory < (basedefs.CONST_MIN_MEMORY_MB * 0.95):
+        logging.error("Availble memory (%s) is lower then the minimum requirments (%s)" % (availableMemory, basedefs.CONST_MIN_MEMORY_MB))
         raise Exception(output_messages.ERR_EXP_NOT_EMOUGH_MEMORY)
 
-    if availableMemory < basedefs.CONST_WARN_MEMORY_GB:
-        logging.warn("There is less then %s available memory " % basedefs.CONST_WARN_MEMORY_GB)
+    if availableMemory < basedefs.CONST_WARN_MEMORY_MB:
+        logging.warn("There is less then %s available memory " % basedefs.CONST_WARN_MEMORY_MB)
         controller.MESSAGES.append(output_messages.WARN_LOW_MEMORY)
 
 def initCmdLineParser():

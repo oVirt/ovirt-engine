@@ -175,7 +175,7 @@ INFO_VAL_ORG_NAME_ILLEGAL_CHARS="Error: organization name can't contain ',', '%'
 #iso domain warning
 WARN_ISO_DOMAIN_SECURITY="A default ISO share has been created on this host.\n\
    If IP based access restrictions are required, please edit %s entry in /etc/exports"
-WARN_LOW_MEMORY="There are less than %s GBs of available free memory on this machine.\nIt is  recommended to have at least %s GBs of available memory to run the %s." % (basedefs.CONST_WARN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB, basedefs.APP_NAME)
+WARN_LOW_MEMORY="There are less than %s MBs of available free memory on this machine.\nIt is  recommended to have at least %s MBs of available memory to run the %s." % (basedefs.CONST_WARN_MEMORY_MB, basedefs.CONST_WARN_MEMORY_MB, basedefs.APP_NAME)
 
 WARN_WEAK_PASS="Warning: Weak Password."
 
@@ -367,8 +367,8 @@ ERR_EXP_LSOF="Error while trying to determine the list of 'open TCP ports' on th
 ERR_EXP_UNKWN_ERROR="Unknown error occurred during validation"
 
 #error running free
-ERR_EXP_FREE_MEM="Internal error occurred when trying to determine the amount of available memory.\nPlease make that there is at least %s GB of memory on the Host" % basedefs.CONST_MIN_MEMORY_GB
-ERR_EXP_NOT_EMOUGH_MEMORY="Error: Not enough available memory on the Host\n(the minimum requirement is %s GB and the recommended is %s GB)." % (basedefs.CONST_MIN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB)
+ERR_EXP_FREE_MEM="Internal error occurred when trying to determine the amount of available memory.\nPlease make that there is at least %s MB of memory on the Host" % basedefs.CONST_MIN_MEMORY_MB
+ERR_EXP_NOT_EMOUGH_MEMORY="Error: Not enough available memory on the Host\n(the minimum requirement is %s MB and the recommended is %s MB)." % (basedefs.CONST_MIN_MEMORY_MB, basedefs.CONST_WARN_MEMORY_MB)
 
 #import iso files
 ERR_FAILED_TO_COPY_FILE_TO_ISO_DOMAIN="Failed to copy files to iso domain"
