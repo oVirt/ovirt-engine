@@ -59,7 +59,7 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
         HotPlugDiskToVmParameters params =
                 new HotPlugDiskToVmParameters(((BackendVmDisksResource) collection).parentId,
                         guid);
-        return performAction(VdcActionType.HotPlugDiskToVm, params);
+        return doAction(VdcActionType.HotPlugDiskToVm, params, action);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
         HotPlugDiskToVmParameters params =
                 new HotPlugDiskToVmParameters(((BackendVmDisksResource) collection).parentId,
                         guid);
-        return performAction(VdcActionType.HotUnPlugDiskFromVm, params);
+        return doAction(VdcActionType.HotUnPlugDiskFromVm, params, action);
     }
 
     @Override
