@@ -98,6 +98,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String ActionGroup___CONNECT_TO_VM();
 
+	String ActionGroup___RECONNECT_TO_VM();
+
 	String ActionGroup___MANIPULATE_VM_SNAPSHOTS();
 
 	String ActionGroup___CREATE_VM_POOL();

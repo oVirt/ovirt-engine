@@ -107,6 +107,7 @@ public class RoleTreeView
         array.add(ActionGroup.LOGIN);
         array.add(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES);
         array.add(ActionGroup.PORT_MIRRORING);
+        array.add(ActionGroup.RECONNECT_TO_VM);
         return array;
 
     }
@@ -350,11 +351,15 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
-                                                                                .allowMigratingVmBetweenHostsInClusterRoleTreeTooltip()),
+                                                                                .allowToChangeVmCustomPropertiesRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.PORT_MIRRORING,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
-                                                                                .allowVmNetworkPortMirroringRoleTreeTooltip()) }) }),
+                                                                                .allowVmNetworkPortMirroringRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.RECONNECT_TO_VM,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowReconnectToVmRoleTreeTooltip()) }) }),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().vmPoolRoleTree(),
                                         new RoleNode[] {
                                                 new RoleNode(ConstantsManager.getInstance()
