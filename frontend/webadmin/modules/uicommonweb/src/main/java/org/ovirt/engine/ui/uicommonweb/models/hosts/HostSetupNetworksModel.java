@@ -554,10 +554,6 @@ public class HostSetupNetworksModel extends EntityModel {
                     networkModel.getEntity().setMtu(nic.getMtu());
                 }
 
-                if (nic.getNetworkImplementationDetails() != null){
-                    networkModel.setInSync(nic.getNetworkImplementationDetails().isInSync());
-                }
-
                 // is this a management network (from backend)?
                 if (isNicManagement) {
                     networkModel.setManagement(true);

@@ -19,7 +19,6 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     private boolean management;
     private NetworkInterfaceModel attachedToNic;
     private NetworkInterfaceModel bridge;
-    private boolean inSync =true;
 
     public LogicalNetworkModel(HostSetupNetworksModel setupModel) {
         super(setupModel);
@@ -184,11 +183,12 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         this.selected = selected;
     }
 
-    public void setInSync(boolean inSync) {
-        this.inSync = inSync;
-    }
 
     public boolean isInSync() {
-        return inSync;
+        return isAttached() && getAttachedToNic().getEntity().getNetworkImplementationDetails() != null ? getAttachedToNic().getEntity().getNetworkImplementationDetails().isInSync() : true;
+    }
+
+    public boolean isManaged(){
+        return isAttached() && getAttachedToNic().getEntity().getNetworkImplementationDetails() != null? getAttachedToNic().getEntity().getNetworkImplementationDetails().isManaged() : true;
     }
 }

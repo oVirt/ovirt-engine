@@ -82,6 +82,11 @@ public class NetworkOperationFactory {
             }
             // op2: nic
             else if (op2 instanceof NetworkInterfaceModel) {
+
+                // not managed
+                if (!network.isManaged()){
+                    return NetworkOperation.NULL_OPERATION;
+                }
                 NetworkInterfaceModel nic = (NetworkInterfaceModel) op2;
                 List<LogicalNetworkModel> nicNetworks = nic.getItems();
                 if (!nicNetworks.contains(network)) {

@@ -26,12 +26,15 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
     private final ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
     final ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
-    SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
+    SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork())
+            .getHTML());
     SafeHtml vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
-    SafeHtml monitorImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
-    SafeHtml unknownImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.questionMarkImage()).getHTML());
-    SafeHtml notInSyncImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkNotSyncImage()).getHTML());
-
+    SafeHtml monitorImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor())
+            .getHTML());
+    SafeHtml unknownImage =
+            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.questionMarkImage()).getHTML());
+    SafeHtml notInSyncImage =
+            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkNotSyncImage()).getHTML());
 
     public ItemInfoPopup() {
         super(true);
@@ -66,41 +69,43 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         Network entity = networkModel.getEntity();
         addRow(templates.titleSetupNetworkTooltip(networkModel.getName()));
 
-        if (entity.getdescription()!=null && !entity.getdescription().trim().equals("")){ //$NON-NLS-1$
-               addRow(SafeHtmlUtils.fromString(entity.getdescription()));
+        // Not managed
+        if (!networkModel.isManaged()) {
+            addRow(templates.imageTextSetupNetworkUsage(unknownImage, constants.unmanagedNetworkItemInfo()));
+            return;
         }
 
+        // Description
+        if (entity.getdescription() != null && !entity.getdescription().trim().equals("")) { //$NON-NLS-1$
+            addRow(SafeHtmlUtils.fromString(entity.getdescription()));
+        }
+
+        // Not in sync
         if (!networkModel.isInSync())
         {
             addRow(templates.imageTextSetupNetwork(notInSyncImage, constants.networkNotInSync()));
         }
 
-
         // Usages
-        boolean isDisplay = entity.getCluster() == null ? false : entity.getCluster().getis_display();
-        if (entity.getCluster() == null || networkModel.isManagement() || isDisplay || entity.isVmNetwork()){
+        if (networkModel.isManagement() || entity.getCluster().getis_display() || entity.isVmNetwork()) {
+
             addRow(SafeHtmlUtils.fromString(constants.usageItemInfo() + ":")); //$NON-NLS-1$
-
-            if (entity.getCluster() == null){
-                addRow(templates.imageTextSetupNetworkUsage(unknownImage, constants.unknownItemInfo()));
-            }else{
-
-                if (networkModel.isManagement()){
-                    addRow(templates.imageTextSetupNetworkUsage(mgmtNetworkImage, constants.managementItemInfo()));
-                }
-
-                if (isDisplay){
-                    addRow(templates.imageTextSetupNetworkUsage(monitorImage, constants.displayItemInfo()));
-                }
-
-                if (entity.isVmNetwork()){
-                    addRow(templates.imageTextSetupNetworkUsage(vmImage, constants.vmItemInfo()));
-                }
+            if (networkModel.isManagement()) {
+                addRow(templates.imageTextSetupNetworkUsage(mgmtNetworkImage, constants.managementItemInfo()));
             }
+
+            if (entity.getCluster().getis_display()) {
+                addRow(templates.imageTextSetupNetworkUsage(monitorImage, constants.displayItemInfo()));
+            }
+
+            if (entity.isVmNetwork()) {
+                addRow(templates.imageTextSetupNetworkUsage(vmImage, constants.vmItemInfo()));
+            }
+
         }
 
         // Mtu
-        if (entity.getMtu() != 0){
+        if (entity.getMtu() != 0) {
             addRow(constants.mtuItemInfo(), String.valueOf(entity.getMtu()));
         }
     }

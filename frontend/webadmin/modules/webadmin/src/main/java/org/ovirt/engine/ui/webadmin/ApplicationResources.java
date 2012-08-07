@@ -290,9 +290,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/network_monitor.png")
     ImageResource networkMonitor();
 
-    @Source("images/network/empty.png")
-    ImageResource empty();
-
     @Source("images/network/network_vm.png")
     ImageResource networkVm();
 
@@ -316,6 +313,12 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/network/network_not_sync.png")
     ImageResource networkNotSyncImage();
+
+    @Source("images/network/but_erase_net_mousedown.png")
+    ImageResource butEraseNetMousedown();
+
+    @Source("images/network/but_erase_net_hover.png")
+    ImageResource butEraseNetHover();
 
     @Source("images/disk_bootable.png")
     ImageResource bootableDiskIcon();

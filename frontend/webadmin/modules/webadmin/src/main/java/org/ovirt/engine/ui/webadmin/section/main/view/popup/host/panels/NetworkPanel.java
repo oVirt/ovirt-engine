@@ -2,6 +2,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Grid;
@@ -19,6 +22,11 @@ public class NetworkPanel extends NetworkItemPanel {
             getElement().addClassName(style.mgmtNetwork());
         }
 
+        // Not managed
+        if (!item.isManaged()) {
+            actionButton.getUpFace().setImage(new Image(resources.butEraseNetHover()));
+            actionButton.getDownFace().setImage(new Image(resources.butEraseNetMousedown()));
+        }
     }
 
     @Override
@@ -30,31 +38,31 @@ public class NetworkPanel extends NetworkItemPanel {
         Image monitorImage;
         Image notSyncImage;
 
-        if (network.getEntity().getCluster() == null){
-            monitorImage = new Image(resources.questionMarkImage());
-            mgmtNetworkImage = new Image(resources.empty());
-            vmImage = new Image(resources.empty());
-            notSyncImage = new Image(resources.empty());
-        }else{
+        if (!network.isManaged()) {
+            monitorImage = null;
+            mgmtNetworkImage = null;
+            vmImage = null;
+            notSyncImage = null;
+        } else {
+            monitorImage = network.getEntity().getCluster().getis_display() ?
+                    new Image(resources.networkMonitor()) : null;
+            mgmtNetworkImage = network.isManagement() ? new Image(resources.mgmtNetwork()) : null;
+            vmImage = network.getEntity().isVmNetwork() ? new Image(resources.networkVm()) : null;
+            notSyncImage = !network.isInSync() ? new Image(resources.networkNotSyncImage()) : null;
 
-            monitorImage = new Image(network.getEntity().getCluster().getis_display() ? resources.networkMonitor() : resources.empty());
-            mgmtNetworkImage = new Image(network.isManagement() ? resources.mgmtNetwork() : resources.empty());
-            vmImage = new Image(network.getEntity().isVmNetwork() ? resources.networkVm() : resources.empty());
-            notSyncImage = new Image(!network.isInSync() ? resources.networkNotSyncImage() : resources.empty());
-
-            if (network.isManagement()){
+            if (network.isManagement()) {
                 mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getEntity().isVmNetwork()){
+            if (network.getEntity().isVmNetwork()) {
                 vmImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getEntity().getCluster().getis_display()){
+            if (network.getEntity().getCluster().getis_display()) {
                 monitorImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (!network.isInSync()){
+            if (!network.isInSync()) {
                 notSyncImage.setStylePrimaryName(style.networkImageBorder());
             }
         }
@@ -88,11 +96,11 @@ public class NetworkPanel extends NetworkItemPanel {
     protected ImageResource getStatusImage() {
         NetworkStatus netStatus = ((LogicalNetworkModel) item).getStatus();
 
-        if (netStatus == NetworkStatus.Operational){
+        if (netStatus == NetworkStatus.Operational) {
             return resources.upImage();
-        } else if (netStatus == NetworkStatus.NonOperational){
+        } else if (netStatus == NetworkStatus.NonOperational) {
             return resources.downImage();
-        }else{
+        } else {
             return resources.questionMarkImage();
         }
     }
@@ -107,7 +115,14 @@ public class NetworkPanel extends NetworkItemPanel {
 
     @Override
     protected void onAction() {
-        item.edit();
+        LogicalNetworkModel network = (LogicalNetworkModel) item;
+        if (network.isManaged()) {
+            item.edit();
+        } else {
+            OperationMap operationMap = item.getSetupModel().commandsFor(item);
+            final NetworkCommand detach = operationMap.get(NetworkOperation.DETACH_NETWORK).get(0);
+            item.getSetupModel().onOperation(NetworkOperation.DETACH_NETWORK, detach);
+        }
     }
 
     @Override
@@ -120,7 +135,7 @@ public class NetworkPanel extends NetworkItemPanel {
     protected void onMouseOver() {
         super.onMouseOver();
         LogicalNetworkModel network = (LogicalNetworkModel) item;
-        if (network!=null && network.getAttachedToNic()!=null) {
+        if (network != null && network.getAttachedToNic() != null) {
             actionButton.setVisible(true);
         }
     }
