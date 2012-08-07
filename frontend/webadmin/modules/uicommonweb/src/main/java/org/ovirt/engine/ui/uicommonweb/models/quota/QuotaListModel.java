@@ -397,34 +397,6 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 } else {
                     quotaModel.getSpecificStorageQuota().setEntity(true);
                 }
-                AsyncDataProvider.GetDataCenterList(new AsyncQuery(outer_quotaListModel, new INewAsyncCallback() {
-
-                    @Override
-                    public void OnSuccess(Object model, Object returnValue) {
-                        ArrayList<storage_pool> dataCenterList = (ArrayList<storage_pool>) returnValue;
-                        if (dataCenterList == null || dataCenterList.size() == 0) {
-                            return;
-                        }
-                        quotaModel.getDataCenter().setItems(dataCenterList);
-                        for (storage_pool storage_pool : dataCenterList) {
-                            if (storage_pool.getId().equals(quota.getStoragePoolId())) {
-                                quotaModel.getDataCenter().setSelectedItem(storage_pool);
-                                break;
-                            }
-                        }
-
-                        if (outer_quotaListModel.getSystemTreeSelectedItem() != null
-                                && outer_quotaListModel.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
-                        {
-                            storage_pool selectDataCenter =
-                                    (storage_pool) outer_quotaListModel.getSystemTreeSelectedItem().getEntity();
-
-                            quotaModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenterList,
-                                    new Linq.DataCenterPredicate(selectDataCenter.getId())));
-                            quotaModel.getDataCenter().setIsChangable(false);
-                        }
-                    }
-                }));
 
                 quotaModel.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
@@ -516,6 +488,15 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
                     }
                 });
+
+                ArrayList<storage_pool> dataCenterList = new ArrayList<storage_pool>();
+                storage_pool dataCenter = new storage_pool();
+                dataCenter.setId(quota.getStoragePoolId());
+                dataCenter.setname(quota.getStoragePoolName());
+                dataCenterList.add(dataCenter);
+                quotaModel.getDataCenter().setItems(dataCenterList);
+                quotaModel.getDataCenter().setSelectedItem(dataCenter);
+
             }
         };
 
