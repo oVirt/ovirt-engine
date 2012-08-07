@@ -8,6 +8,9 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.invocation.MetaData;
 import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
@@ -127,14 +130,23 @@ public class BackendResource extends BaseBackendResource {
     }
 
     protected Response performAction(VdcActionType task, VdcActionParametersBase params) {
+        return performAction(task, params, (Action)null);
+    }
+
+    protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action) {
         try {
             if (QueryHelper.hasMatrixParam(getUriInfo(), ASYNC_CONSTRAINT) ||
                     expectNonBlocking()) {
                 getCurrent().get(MetaData.class).set("async", true);
-                return performNonBlockingAction(task, params);
+                return performNonBlockingAction(task, params, action);
             } else {
                 doAction(task, params);
-                return Response.ok().build();
+                if (action!=null) {
+                    action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
+                    return Response.ok().entity(action).build();
+                } else {
+                    return Response.ok().build();
+                }
             }
         } catch (Exception e) {
             return handleError(Response.class, e, false);
@@ -149,10 +161,15 @@ public class BackendResource extends BaseBackendResource {
         }
         return expectNonBlocking;
     }
-    protected Response performNonBlockingAction(VdcActionType task, VdcActionParametersBase params) {
+    protected Response performNonBlockingAction(VdcActionType task, VdcActionParametersBase params, Action action) {
         try {
             doNonBlockingAction(task, params);
-            return Response.status(Response.Status.ACCEPTED).build();
+            if (action!=null) {
+                action.setStatus(StatusUtils.create(CreationStatus.IN_PROGRESS));
+                return Response.status(Response.Status.ACCEPTED).entity(action).build();
+            }else {
+                return Response.status(Response.Status.ACCEPTED).build();
+            }
         } catch (Exception e) {
             return handleError(Response.class, e, false);
         }

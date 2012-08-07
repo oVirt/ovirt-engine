@@ -329,7 +329,7 @@ public class BackendHostNicsResource
     public Response setupNetworks(Action action) {
         validateParameters(action, "hostNics");
         SetupNetworksParameters parameters = toParameters(action);
-        return performAction(SetupNetworks, parameters);
+        return performAction(SetupNetworks, parameters, action);
     }
 
     private SetupNetworksParameters toParameters(Action action) {
