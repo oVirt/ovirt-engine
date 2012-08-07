@@ -964,13 +964,13 @@ public class VdsUpdateRunTimeInfo {
         for (VmDevice device : devices) {
             if (!processedDevices.contains(device.getDeviceId())) {
                 if (device.getIsManaged()) {
-                    if (device.getIsPlugged()) {
-                        log.errorFormat("VM {0} managed non plugable device was removed unexpetedly from libvirt: {1}",
+                    if (!device.getIsPlugged()) {
+                        log.errorFormat("VM {0} managed non pluggable device was removed unexpectedly from libvirt: {1}",
                                 vmId, device.toString());
                     } else {
                         device.setAddress("");
                         addVmDeviceToList(device);
-                        log.debugFormat("VM {0} unmanaged pluggable device was unplugged : {1}",
+                        log.debugFormat("VM {0} managed pluggable device was unplugged : {1}",
                                 vmId,
                                 device.toString());
                     }
