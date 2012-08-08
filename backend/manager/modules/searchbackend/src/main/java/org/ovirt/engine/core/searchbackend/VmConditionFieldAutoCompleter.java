@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -89,14 +90,12 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if (StringHelper.EqOp(fieldName, "UPTIME") || StringHelper.EqOp(fieldName, "CREATIONDATE")) {
+        if ("UPTIME".equals(fieldName) || "CREATIONDATE".equals(fieldName)) {
             return BiggerOrSmallerRelationAutoCompleter.INTSANCE;
-        }
-        else if (StringHelper.EqOp(fieldName, "CPU_USAGE") || StringHelper.EqOp(fieldName, "MEM_USAGE")
-                || StringHelper.EqOp(fieldName, "MEMORY") || StringHelper.EqOp(fieldName, "NETWORK_USAGE")) {
+        } else if ("CPU_USAGE".equals(fieldName) || "MEM_USAGE".equals(fieldName)
+                || "MEMORY".equals(fieldName) || "NETWORK_USAGE".equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
-        }
-        else if (StringHelper.EqOp(fieldName, "TAG")) {
+        } else if ("TAG".equals(fieldName)) {
             return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
@@ -105,40 +104,36 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-        IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "OS")) {
-            retval = new EnumValueAutoCompleter(VmOsType.class);
+        if ("OS".equals(fieldName)) {
+            return new EnumValueAutoCompleter(VmOsType.class);
+        } else if ("STATUS".equals(fieldName)) {
+            return new EnumValueAutoCompleter(VMStatus.class);
+        } else if ("TYPE".equals(fieldName)) {
+            return new EnumValueAutoCompleter(VmType.class);
         }
-        else if (StringHelper.EqOp(fieldName, "STATUS")) {
-            retval = new EnumValueAutoCompleter(VMStatus.class);
-        }
-        else if (StringHelper.EqOp(fieldName, "TYPE")) {
-            retval = new EnumValueAutoCompleter(VmType.class);
-        } else {
-        }
-        return retval;
+        return null;
     }
 
     @Override
     public void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive) {
-        if (StringHelper.EqOp(fieldName, "APPS")) {
+        if ("APPS".equals(fieldName)) {
             value.argvalue =
                     StringFormat.format(BaseConditionFieldAutoCompleter.getI18NPrefix() + "'%%%1$s%%'",
                             StringHelper.trim(value.argvalue, '\'').replace("N'",
                                     ""));
-            if (StringHelper.EqOp(relations.argvalue, "=")) {
+            if ("=".equals(relations.argvalue)) {
                 relations.argvalue = BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
-            } else if (StringHelper.EqOp(relations.argvalue, "!=")) {
+            } else if ("!=".equals(relations.argvalue)) {
                 relations.argvalue = "NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
             }
         }
-        else if (StringHelper.EqOp(fieldName, "UPTIME")) {
+        else if ("UPTIME".equals(fieldName)) {
             value.argvalue = StringHelper.trim(value.argvalue, '\'');
             TimeSpan ts = TimeSpan.Parse(value.argvalue);
             value.argvalue = StringFormat.format("'%1$s'", ts.TotalSeconds);
         }
-        else if (StringHelper.EqOp(fieldName, "CREATIONDATE")) {
-            java.util.Date tmp = new java.util.Date(java.util.Date.parse(StringHelper.trim(value.argvalue, '\'')));
+        else if ("CREATIONDATE".equals(fieldName)) {
+            Date tmp = new Date(Date.parse(StringHelper.trim(value.argvalue, '\'')));
             value.argvalue = StringFormat.format("'%1$s'", tmp);
         } else {
             super.formatValue(fieldName, relations, value, caseSensitive);
