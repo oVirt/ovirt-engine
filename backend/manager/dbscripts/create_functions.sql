@@ -246,6 +246,16 @@ BEGIN
 			SELECT ds_id AS id
 			UNION
 			SELECT v_entity_id AS id;
+	WHEN v_entity_type = 11 THEN -- Storage Domain
+        -- get data center id
+        ds_id := ( SELECT storage_pool_id FROM storage_pool_iso_map WHERE storage_id = v_entity_id );
+
+		RETURN QUERY
+			SELECT system_root_id AS id
+			UNION
+			SELECT ds_id AS id
+			UNION
+			SELECT v_entity_id AS id;
 	WHEN v_entity_type = 17 THEN -- Quota
 		-- get data center id
 		ds_id := ( SELECT storage_pool_id FROM quota WHERE id = v_entity_id );
@@ -309,7 +319,7 @@ BEGIN
             UNION
             SELECT v_storage_pool_id AS id;
 	ELSE
-		IF v_entity_type IN ( 1,14,11,15,16 ) THEN -- Data Center, storage, users and roles are under system
+		IF v_entity_type IN ( 1,14,15,16 ) THEN -- Data Center, users and roles are under system
 			RETURN QUERY
 				SELECT system_root_id AS id
 				UNION
