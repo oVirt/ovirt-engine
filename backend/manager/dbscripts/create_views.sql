@@ -1040,13 +1040,13 @@ INNER JOIN   permissions_view ON object_id = vm_guid AND object_type_id = 2 AND 
 UNION ALL
 SELECT       vds_group_id, ad_element_id
 FROM         vds_groups
-INNER JOIN   permissions_view ON object_id = vds_groups.storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
+INNER JOIN   permissions_view ON object_id = vds_groups.storage_pool_id AND object_type_id = 14 AND role_type = 2
 -- Or the user has permissions on system;
 UNION ALL
 SELECT       vds_group_id, ad_element_id
 FROM         permissions_view
 CROSS JOIN   vds_groups
-WHERE        object_type_id = 1 AND allows_viewing_children AND role_type=2;
+WHERE        object_type_id = 1 AND role_type=2;
 
 CREATE OR REPLACE VIEW user_vds_groups_permissions_view (entity_id, user_id)
 AS
@@ -1084,7 +1084,7 @@ UNION ALL
 SELECT     storage_pool.id, ad_element_id
 FROM       permissions_view
 CROSS JOIN storage_pool
-WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
+WHERE      object_type_id = 1 AND role_type = 2;
 
 CREATE OR REPLACE VIEW user_storage_pool_permissions_view (entity_id, user_id)
 AS
@@ -1122,13 +1122,13 @@ INNER JOIN permissions_view ON vm_static.vm_guid = object_id AND objecT_type_id 
 UNION ALL
 SELECT     storage_domains.id, ad_element_id
 FROM       storage_domains
-INNER JOIN permissions_view ON object_id = storage_domains.storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
+INNER JOIN permissions_view ON object_id = storage_domains.storage_pool_id AND object_type_id = 14 AND role_type = 2
 -- Or the user has permissions on System
 UNION ALL
 SELECT     storage_domains.id, ad_element_id
 FROM       permissions_view
 CROSS JOIN storage_domains
-WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
+WHERE      object_type_id = 1 AND role_type = 2;
 
 CREATE OR REPLACE VIEW user_storage_domain_permissions_view (entity_id, user_id)
 AS
@@ -1155,7 +1155,7 @@ UNION ALL
 SELECT     vds_id, ad_element_id
 FROM       permissions_view
 CROSS JOIN vds
-WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
+WHERE      object_type_id = 1 AND role_type = 2;
 
 CREATE OR REPLACE VIEW user_vds_permissions_view (entity_id, user_id)
 AS
