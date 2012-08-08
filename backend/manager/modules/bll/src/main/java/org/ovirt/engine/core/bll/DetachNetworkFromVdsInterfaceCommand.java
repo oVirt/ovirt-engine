@@ -14,13 +14,12 @@ import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+@SuppressWarnings("serial")
 public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
     public DetachNetworkFromVdsInterfaceCommand(T paramenters) {
         super(paramenters);
@@ -45,11 +44,11 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             nics.clear();
             bond = NetworkUtils.StripVlan(getParameters().getInterface().getName());
 
-            List<VdsNetworkInterface> interfaces = DbFacade.getInstance()
+            List<VdsNetworkInterface> interfaces = getDbFacade()
                     .getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
 
             for (VdsNetworkInterface i : interfaces) {
-                if (StringHelper.EqOp(i.getBondName(), bond)) {
+                if (StringUtils.equals(i.getBondName(), bond)) {
                     nics.add(NetworkUtils.StripVlan(i.getName()));
                 }
             }
@@ -78,7 +77,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
     @Override
     protected boolean canDoAction() {
-        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDAO()
+        List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDAO()
                 .getAllInterfacesForVds(getParameters().getVdsId());
         VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
@@ -96,7 +95,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
         // set the network object if we don't got in the parameters
         if (getParameters().getNetwork() == null || getParameters().getNetwork().getCluster() == null) {
-            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+            List<Network> networks = getDbFacade().getNetworkDAO()
                             .getAllForCluster(getVdsGroupId());
             for (Network n : networks) {
                 if (n.getname().equals(iface.getNetworkName())) {
@@ -112,20 +111,19 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACCH_TO_NETWORK);
             }
             return false;
-        } else if (!StringHelper.EqOp(getParameters().getInterface().getNetworkName(), getParameters().getNetwork()
+        } else if (!StringUtils.equals(getParameters().getInterface().getNetworkName(), getParameters().getNetwork()
                 .getname())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACCH_TO_NETWORK);
             return false;
         }
 
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = getVdsDAO().get(getParameters().getVdsId());
 
         // check if network in cluster and vds active
         if ((vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing)
                 && getParameters().getNetwork().getCluster() != null
                 && getParameters().getNetwork().getCluster().getstatus() == NetworkStatus.Operational) {
-            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
-                    .getAllForCluster(vds.getvds_group_id());
+            List<Network> networks = getDbFacade().getNetworkDAO().getAllForCluster(vds.getvds_group_id());
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network network) {
