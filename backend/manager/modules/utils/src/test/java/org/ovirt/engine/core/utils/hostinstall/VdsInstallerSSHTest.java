@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.hostinstall;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -193,6 +194,29 @@ public class VdsInstallerSSHTest {
             assertFalse(callbacks.connected);
             assertFalse(callbacks.endTransfer);
             assertEquals("test1\ntest2\n", callbacks.message);
+            assertNull(callbacks.error);
+            assertNull(callbacks.fail);
+        }
+        finally {
+            vssh.shutdown();
+            vssh = null;
+        }
+    }
+
+    @Test
+    public void testCommandOKStdin() throws Exception {
+        MyVdsInstallerCallback callbacks = new MyVdsInstallerCallback();
+        VdsInstallerSSH vssh = new VdsInstallerSSH();
+        vssh.setPort(port);
+        vssh.setCallback(callbacks);
+
+        try {
+            assertTrue(vssh.connect(host, password));
+            callbacks.reset();
+            assertTrue(vssh.executeCommand("cat", new ByteArrayInputStream("Ping".getBytes("UTF-8"))));
+            assertFalse(callbacks.connected);
+            assertFalse(callbacks.endTransfer);
+            assertEquals("Ping\n", callbacks.message);
             assertNull(callbacks.error);
             assertNull(callbacks.fail);
         }

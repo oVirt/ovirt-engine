@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -262,8 +260,14 @@ public class VdsInstaller implements IVdsInstallerCallback {
             String path = Config.resolveBootstrapInstallerPath();
             _executionSucceded = _wrapper.sendFile(path, _remoteBootstrapRunningScriptPath);
             if (isOverrideFirewallAllowed() && _executionSucceded) {
-                _currentInstallStage = VdsInstallStages.UploadScript;
-                _executionSucceded = uploadFirewallRulesConfFile();
+                String ipTablesConfig = Config.<String> GetValue(ConfigValues.IPTablesConfig);
+                if (StringUtils.isNotEmpty(ipTablesConfig)) {
+                    _executionSucceded = uploadStringAsFile(ipTablesConfig, remoteFwRulesFilePath);
+                }
+
+                if (_executionSucceded) {
+                    _currentInstallStage = VdsInstallStages.forValue(_currentInstallStage.getValue() + 1);
+                }
             }
             break;
         }
@@ -327,27 +331,23 @@ public class VdsInstaller implements IVdsInstallerCallback {
         }
     }
 
-    private boolean uploadFirewallRulesConfFile() {
+    private boolean uploadStringAsFile(String str, String remote) {
         boolean isUploaded = false;
-        String ipTableConfig = Config.<String> GetValue(ConfigValues.IPTablesConfig);
-        if (StringUtils.isNotEmpty(ipTableConfig)) {
-            String fwRulesFileNamePath = null;
 
-            try {
-                java.io.File fwRulesFile = java.io.File.createTempFile(FIREWALL_CONFIG_FILENAME_PREFIX, null);
-                fwRulesFileNamePath = fwRulesFile.getAbsolutePath();
-                BufferedWriter out = new BufferedWriter(new FileWriter(fwRulesFile));
-                out.write(ipTableConfig);
-                out.close();
-                isUploaded = _wrapper.sendFile(fwRulesFileNamePath, remoteFwRulesFilePath);
-                fwRulesFile.delete();
-            } catch (IOException e) {
-                log.errorFormat("Error during create and upload firewall rules temp file {0} to destination {1} with error {2}",
-                        fwRulesFileNamePath == null ? FIREWALL_CONFIG_FILENAME_PREFIX : fwRulesFileNamePath,
-                        remoteFwRulesFilePath,
-                        ExceptionUtils.getMessage(e));
-                log.debug(e);
-            }
+        try {
+            _wrapper.executeCommand(
+                String.format("cat > '%1$s'", remote),
+                new ByteArrayInputStream(str.getBytes("UTF-8"))
+            );
+            isUploaded = true;
+        }
+        catch(Exception e) {
+            log.errorFormat(
+                "Error during create remote file '{1}' error: '{2}'",
+                remoteFwRulesFilePath,
+                ExceptionUtils.getMessage(e)
+            );
+            log.debug(e);
         }
         return isUploaded;
     }

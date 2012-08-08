@@ -292,7 +292,7 @@ public class VdsInstallerSSH {
         );
     }
 
-    public final boolean executeCommand(String command) {
+    public final boolean executeCommand(String command, InputStream stdin) {
 
         /**
          * Send status per line recieved from stdout of command.
@@ -386,7 +386,7 @@ public class VdsInstallerSSH {
             try {
                 this.client.executeCommand(
                     command,
-                    new ByteArrayInputStream(new byte[0]),
+                    stdin,
                     new MessageOutputStream(),
                     stderr
                 );
@@ -414,6 +414,10 @@ public class VdsInstallerSSH {
 
         log.debug("executeCommand leave " + ret);
         return ret;
+    }
+
+    public final boolean executeCommand(String command) {
+        return executeCommand(command, new ByteArrayInputStream(new byte[0]));
     }
 
     public final boolean receiveFile(String source, String destination) {
