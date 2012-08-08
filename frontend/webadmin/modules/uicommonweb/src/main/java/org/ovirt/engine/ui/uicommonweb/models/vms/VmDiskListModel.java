@@ -291,7 +291,7 @@ public class VmDiskListModel extends SearchableListModel
                     }
                 }), storageType);
             }
-        }), getEntity().getstorage_pool_id(), ActionGroup.CREATE_VM);
+        }), getEntity().getstorage_pool_id(), ActionGroup.CREATE_DISK);
 
         AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
