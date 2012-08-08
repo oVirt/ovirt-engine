@@ -125,16 +125,16 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     // FIXME Probably Not Hibernate Friendly
-    public String buildFreeTextConditionSql(String tableName, String relations, String value, boolean caseSensitive) {
+    public final String buildFreeTextConditionSql(String tableName, String relations, String value, boolean caseSensitive) {
         StringBuilder sb = new StringBuilder(" ( ");
         boolean firstTime = true;
-        if (!StringHelper.isNullOrEmpty(value) && !StringHelper.EqOp(value, "''")) {
+        if (!StringHelper.isNullOrEmpty(value) && !"''".equals(value)) {
             value = StringFormat.format(getI18NPrefix() + "'%%%1$s%%'", StringHelper.trim(value, '\''));
 
         }
-        if (StringHelper.EqOp(relations, "=")) {
+        if ("=".equals(relations)) {
             relations = getLikeSyntax(caseSensitive);
-        } else if (StringHelper.EqOp(relations, "!=")) {
+        } else if ("!=".equals(relations)) {
             relations = "NOT " + getLikeSyntax(caseSensitive);
         }
         for (String field : mColumnNameDict.keySet()) {
@@ -257,7 +257,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             return;
         }
 
-        if (fieldName.equals("TIME") || fieldName.equals("CREATIONDATE")) {
+        if ("TIME".equals(fieldName) || "CREATIONDATE".equals(fieldName)) {
             Date temp = DateUtils.parse(StringHelper.trim(value.argvalue, '\''));
 
             DateTime result;
@@ -280,7 +280,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             }
 
         }
-        else if (fieldName.equals("TAG")) {
+        else if ("TAG".equals(fieldName)) {
             value.argvalue = value.argvalue.startsWith("N'") ? value.argvalue.substring(2) : value.argvalue;
             if (relations.argvalue != null && relations.argvalue.equals("=")) {
                 relations.argvalue = "IN";
@@ -305,7 +305,6 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             }
         }
     }
-
     // private static final String DATE_FORMAT = "MMM dd,yyyy";
     private static DateTime DealWithDateEnum(String value) {
         DateTime formatedValue = new DateTime();
@@ -334,36 +333,22 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return formatedValue.resetToMidnight();
     }
 
-    public String buildConditionSql(String fieldName, String customizedValue, String customizedRelation,
+    public final String buildConditionSql(String fieldName, String customizedValue, String customizedRelation,
             String tableName, boolean caseSensitive) {
-        String condition;
         RefObject<String> tempRefObject = new RefObject<String>(customizedRelation);
         RefObject<String> tempRefObject2 = new RefObject<String>(customizedValue);
         formatValue(fieldName, tempRefObject, tempRefObject2, caseSensitive);
         customizedRelation = tempRefObject.argvalue;
         customizedValue = tempRefObject2.argvalue;
-        if ((StringHelper.EqOp(customizedValue, "''") || StringHelper.EqOp(customizedValue.toLowerCase(), "n'null'"))
-                && ((StringHelper.EqOp(customizedRelation, "=")) || (StringHelper.EqOp(customizedRelation, "!=")))) // handling
-                                                                                                                    // the
-                                                                                                                    // NULL
-                                                                                                                    // value
-                                                                                                                    // in
-                                                                                                                    // case
-                                                                                                                    // the
-                                                                                                                    // search
-                                                                                                                    // is
-                                                                                                                    // for
-                                                                                                                    // empty
-                                                                                                                    // value;
-        {
-            String nullRelation = (StringHelper.EqOp(customizedRelation, "=")) ? "IS" : "IS NOT";
-            String SqlCond = (StringHelper.EqOp(customizedRelation, "=")) ? "OR" : "AND";
-            condition = StringFormat.format("( %1$s.%2$s %3$s %4$s %5$s  %1$s.%2$s %6$s  NULL)", tableName,
+        if (("''".equals(customizedValue) || "n'null'".equalsIgnoreCase(customizedValue))
+                && (("=".equals(customizedRelation)) || ("!=".equals(customizedRelation)))) {
+            String nullRelation = ("=".equals(customizedRelation)) ? "IS" : "IS NOT";
+            String SqlCond = ("=".equals(customizedRelation)) ? "OR" : "AND";
+            return StringFormat.format("( %1$s.%2$s %3$s %4$s %5$s  %1$s.%2$s %6$s  NULL)", tableName,
                     getDbFieldName(fieldName), customizedRelation, customizedValue, SqlCond, nullRelation);
         } else {
-            condition = StringFormat.format(" %1$s.%2$s %3$s %4$s ", tableName, getDbFieldName(fieldName),
+            return StringFormat.format(" %1$s.%2$s %3$s %4$s ", tableName, getDbFieldName(fieldName),
                     customizedRelation, customizedValue);
         }
-        return condition;
     }
 }
