@@ -927,19 +927,18 @@ public class SyntaxChecker implements ISyntaxChecker {
         IConditionValueAutoCompleter conditionValueAC = null;
         // check for sql injection
         String originalValue = obj.getBody();
-        String customizedRelation;
         String fieldName = "";
         String objName;
         ConditionType conditionType;
-        SyntaxObject prev = objIter.previous();
-        if (prev.getType() != SyntaxObjectType.CONDITION_RELATION) {
+        SyntaxObject previous = objIter.previous();
+        SyntaxObject prev = previous;
+        SyntaxObjectType prevType = prev.getType();
+        if (prevType != SyntaxObjectType.CONDITION_RELATION) {
             // free text of default search object
-            customizedRelation = "=";
             objName = searchObjStr;
             conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(searchObjStr);
             conditionType = ConditionType.FreeText;
         } else {
-            customizedRelation = prev.getBody();
             prev = objIter.previous();
             if (prev.getType() == SyntaxObjectType.CROSS_REF_OBJ) { // free text
                                                                     // search
@@ -975,6 +974,34 @@ public class SyntaxChecker implements ISyntaxChecker {
         final String customizedValue =
                 buildCustomizedValue(obj, issafe, conditionFieldAC, conditionValueAC, originalValue, fieldName, curType);
 
+        final String customizedRelation =
+                buildCustomizedRelation(caseSensitive,
+                        conditionFieldAC,
+                        conditionValueAC,
+                        fieldName,
+                        previous,
+                        prevType);
+
+        return buildCondition(caseSensitive,
+                conditionFieldAC,
+                customizedValue,
+                customizedRelation,
+                fieldName,
+                objName,
+                conditionType);
+    }
+
+    private String buildCustomizedRelation(final boolean caseSensitive,
+            IConditionFieldAutoCompleter conditionFieldAC,
+            IConditionValueAutoCompleter conditionValueAC,
+            String fieldName,
+            SyntaxObject previous,
+            SyntaxObjectType prevType) {
+        String customizedRelation = "=";
+        if (prevType == SyntaxObjectType.CONDITION_RELATION) {
+            customizedRelation = previous.getBody();
+        }
+
         if(conditionValueAC == null && ("".equals(fieldName) ||
                 String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
             /* enable case-insensitive search by changing operation to I/LIKE*/
@@ -984,14 +1011,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 customizedRelation = "NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
             }
         }
-
-        return buildCondition(caseSensitive,
-                conditionFieldAC,
-                customizedValue,
-                customizedRelation,
-                fieldName,
-                objName,
-                conditionType);
+        return customizedRelation;
     }
 
     private String buildCustomizedValue(SyntaxObject obj,
