@@ -171,7 +171,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 getOperationCandidateEvent().raise(this, new OperationCadidateEventArgs(candidate, op1, op2));
             }
         }
-        return candidate != NetworkOperation.NULL_OPERATION;
+        return !candidate.isNullOperation();
     }
 
     public OperationMap commandsFor(NetworkItemModel<?> item) {
@@ -387,7 +387,7 @@ public class HostSetupNetworksModel extends EntityModel {
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
-        if (operation == NetworkOperation.NULL_OPERATION) {
+        if (operation.isNullOperation()) {
             return;
         } else if (operation == NetworkOperation.BOND_WITH) {
             final HostBondInterfaceModel bondPopup = new HostBondInterfaceModel(true);
@@ -416,8 +416,21 @@ public class HostSetupNetworksModel extends EntityModel {
                     hostInterfaceListModel.CancelConfirm();
                     VdsNetworkInterface bond = (VdsNetworkInterface) bondPopup.getBond().getSelectedItem();
                     setBondOptions(bond, bondPopup);
+                    NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
+                    NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
+                    List<LogicalNetworkModel> networks = nic1.getItems().size() != 0 ? new ArrayList<LogicalNetworkModel>(nic1.getItems()) : new ArrayList<LogicalNetworkModel>(nic2.getItems());
                     networkCommand.Execute(bond);
                     redraw();
+
+                    // Attach the previous networks
+                    for (NetworkInterfaceModel nic : getNics()){
+                        if (nic.getName().equals(bond.getName())){
+                            NetworkOperation.attachNetworks(nic, networks, allNics);
+                            redraw();
+                            return;
+                        }
+                    }
+
                 }
             }));
 

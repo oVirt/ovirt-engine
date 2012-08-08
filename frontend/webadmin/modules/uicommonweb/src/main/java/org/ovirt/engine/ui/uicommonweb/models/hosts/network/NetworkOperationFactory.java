@@ -32,7 +32,7 @@ public class NetworkOperationFactory {
 
     /**
      * Gets the valid Operation involving the two operands.<BR>
-     * If no Operation is valid returns {@link NetworkOperation#NULL_OPERATION}
+     * If no Operation is valid returns null operation
      *
      * @param op1
      * @param op2
@@ -61,14 +61,34 @@ public class NetworkOperationFactory {
             else if (op2 instanceof BondNetworkInterfaceModel) {
                 BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op2;
                 if (!nic1.isBonded()) {
-                    return NetworkOperation.ADD_TO_BOND;
-                }
+
+                    boolean containsUnmanaged = containsUnmanaged(nic1) || containsUnmanaged(bond);
+                    if (containsUnmanaged){
+                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                    }
+
+                    if (canBond(nic1, bond)) {
+                        return NetworkOperation.ADD_TO_BOND;
+                    } else {
+                        return NetworkOperation.NULL_OPERATION_BOND;
+                    }
+                 }
             }
             // op2: nic
             else if (op2 instanceof NetworkInterfaceModel) {
                 NetworkInterfaceModel nic2 = (NetworkInterfaceModel) op2;
-                if (nic1 != nic2 && !nic1.isBonded() && !nic2.isBonded()) {
-                    return NetworkOperation.BOND_WITH;
+                if (!nic1.isBonded()) {
+
+                    boolean containsUnmanaged = containsUnmanaged(nic1) || containsUnmanaged(nic2);
+                    if (containsUnmanaged){
+                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                    }
+
+                    if (canBond(nic1, nic2)) {
+                        return NetworkOperation.BOND_WITH;
+                    } else {
+                        return NetworkOperation.NULL_OPERATION_BOND;
+                    }
                 }
             }
             return NetworkOperation.NULL_OPERATION;
@@ -83,17 +103,19 @@ public class NetworkOperationFactory {
             // op2: nic
             else if (op2 instanceof NetworkInterfaceModel) {
 
-                // not managed
-                if (!network.isManaged()){
-                    return NetworkOperation.NULL_OPERATION;
-                }
                 NetworkInterfaceModel nic = (NetworkInterfaceModel) op2;
+
+                // not managed
+                if (!network.isManaged() || containsUnmanaged(nic)) {
+                    return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                }
+
                 List<LogicalNetworkModel> nicNetworks = nic.getItems();
                 if (!nicNetworks.contains(network)) {
                     if (!network.hasVlan()) {
 
                         // non-vlan, bridge - can't be added to a nic that already has networks
-                        if ((nicNetworks.size() > 0) && (network.getEntity().isVmNetwork())){
+                        if ((nicNetworks.size() > 0) && (network.getEntity().isVmNetwork())) {
                             return NetworkOperation.NULL_OPERATION;
                         }
 
@@ -103,7 +125,7 @@ public class NetworkOperationFactory {
                                 return NetworkOperation.NULL_OPERATION;
                             }
                         }
-                    }else{
+                    } else {
                         // vlan- can't be added to a nic that already has non-vlan bridge network
                         for (LogicalNetworkModel nicNetwork : nicNetworks) {
                             if (!nicNetwork.hasVlan() && nicNetwork.getEntity().isVmNetwork()) {
@@ -117,6 +139,20 @@ public class NetworkOperationFactory {
             return NetworkOperation.NULL_OPERATION;
         }
         return NetworkOperation.NULL_OPERATION;
+    }
+
+    private static boolean canBond(NetworkInterfaceModel nic1, NetworkInterfaceModel nic2) {
+        return (nic1.getItems().size() == 0 || nic2.getItems().size() == 0);
+    }
+
+    private static boolean containsUnmanaged(NetworkInterfaceModel nic) {
+        // Check if contains unmanaged networks
+        for (LogicalNetworkModel network : nic.getItems()) {
+            if (!network.isManaged()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private final List<LogicalNetworkModel> allNetworks;
@@ -147,7 +183,7 @@ public class NetworkOperationFactory {
         // with nics
         for (NetworkInterfaceModel nic : nics) {
             NetworkOperation operation = operationFor(item, nic);
-            if (operation != NetworkOperation.NULL_OPERATION) {
+            if (!operation.isNullOperation()) {
                 assertBinary(item, nic, operation);
                 operations.addCommand(operation, operation.getCommand(item, nic, allNics));
             }
@@ -155,14 +191,14 @@ public class NetworkOperationFactory {
         // with networks
         for (LogicalNetworkModel network : allNetworks) {
             NetworkOperation operation = operationFor(item, network);
-            if (operation != NetworkOperation.NULL_OPERATION) {
+            if (!operation.isNullOperation()) {
                 assertBinary(item, network, operation);
                 operations.addCommand(operation, operation.getCommand(item, network, allNics));
             }
         }
         // with self
         NetworkOperation operation = operationFor(item, null);
-        if (operation != NetworkOperation.NULL_OPERATION) {
+        if (!operation.isNullOperation()) {
             assert operation.isUnary() : "Operation " + operation.name() //$NON-NLS-1$
                     + " is Binary, while a Uniary Operation is expected for " + item.getName(); //$NON-NLS-1$
             operations.addCommand(operation, operation.getCommand(item, null, allNics));

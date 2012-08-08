@@ -175,8 +175,14 @@ public enum NetworkOperation {
                     NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
                     BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op2;
 
+                    assert nic.getItems().size() == 0 || bond.getItems().size() == 0;
+                    List<LogicalNetworkModel> networks = nic.getItems().size() != 0 ? new ArrayList<LogicalNetworkModel>(nic.getItems()) : new ArrayList<LogicalNetworkModel>(bond.getItems());
+
                     // detach possible networks from the nic
                     clearNetworks(nic, allNics);
+
+                    // Attach previous networks to bond
+                    attachNetworks(bond, networks, allNics);
 
                     nic.getEntity().setBondName(bond.getEntity().getName());
                 }
@@ -225,6 +231,76 @@ public enum NetworkOperation {
         }
 
         @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
+        @Override
+        protected NetworkOperationCommandTarget getTarget() {
+            return new NetworkOperationCommandTarget() {
+
+                @Override
+                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                        NetworkItemModel<?> op2,
+                        List<VdsNetworkInterface> allNics,
+                        Object... params) {
+                    // NOOP
+
+                }
+            };
+        }
+
+    },
+    NULL_OPERATION_BOND {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return "Networks on both interfaces : Detach all the networks from one the interfaces/bond, if required re-attach to the bond "; //$NON-NLS-1$
+        }
+
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return getVerb(op1);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
+        @Override
+        protected NetworkOperationCommandTarget getTarget() {
+            return new NetworkOperationCommandTarget() {
+
+                @Override
+                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                        NetworkItemModel<?> op2,
+                        List<VdsNetworkInterface> allNics,
+                        Object... params) {
+                    // NOOP
+
+                }
+            };
+        }
+
+    },
+    NULL_OPERATION_UNMANAGED {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return "Invalid operation with unmanaged network: unmanaged network can only be detached"; //$NON-NLS-1$
+        }
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return getVerb(op1);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
+        @Override
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
 
@@ -247,6 +323,12 @@ public enum NetworkOperation {
             for (LogicalNetworkModel networkModel : new ArrayList<LogicalNetworkModel>(attachedNetworks)) {
                 DETACH_NETWORK.getCommand(networkModel, null, allNics).Execute();
             }
+        }
+    }
+
+    public static void attachNetworks(NetworkInterfaceModel nic, List<LogicalNetworkModel> networks, List<VdsNetworkInterface> allNics) {
+        for (LogicalNetworkModel networkModel : networks) {
+            ATTACH_NETWORK.getCommand(networkModel, nic, allNics).Execute();
         }
     }
 
@@ -322,4 +404,8 @@ public enum NetworkOperation {
      * Implement to provide a Command Target for this Operation
      */
     protected abstract NetworkOperationCommandTarget getTarget();
+
+    public boolean isNullOperation(){
+        return false;
+    }
 }
