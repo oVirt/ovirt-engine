@@ -12,11 +12,13 @@ import java.security.KeyStore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assume;
 import static org.junit.Assert.*;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
+import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
 import org.ovirt.engine.core.utils.ssh.SSHD;
 
 /*
@@ -505,6 +507,23 @@ public class VdsInstallerSSHTest {
 
             vssh.shutdown();
             vssh = null;
+        }
+    }
+
+    @Test
+    public void testFingerprint() throws Exception {
+        Assume.assumeNotNull(sshd);
+        VdsInstallerSSH vdsi = new VdsInstallerSSH();
+        vdsi.setPort(port);
+        try {
+            assertEquals(
+                OpenSSHUtils.getKeyFingerprintString(sshd.getKey()),
+                vdsi.getServerKeyFingerprint(host, 5000)
+            );
+        }
+        finally {
+            vdsi.shutdown();
+            vdsi = null;
         }
     }
 }

@@ -89,6 +89,48 @@ public class VdsInstallerSSH {
         );
     }
 
+    private void _openSession(
+        String server,
+        long hardTimeout,
+        long softTimeout
+    ) throws Exception {
+        log.debug(
+            String.format(
+                "_openSession enter (%1$s, %2$d, %3$d)",
+                server,
+                hardTimeout,
+                softTimeout
+            )
+        );
+
+        try {
+            if (this.client != null) {
+                log.debug("_openSession already has client");
+            }
+            else {
+                this.client = new SSHClient();
+                this.client.setHardTimeout(hardTimeout);
+                this.client.setSoftTimeout(softTimeout);
+                this.client.setHost(server, this.port); // port until API supports port
+
+                log.debug("connecting");
+                this.client.connect();
+            }
+        }
+        catch(Exception e) {
+            log.debug(
+                String.format(
+                    "Could not connect to server %1$s: %2$s",
+                    this.client.getDisplayHost()
+                ),
+                e
+            );
+            throw e;
+        }
+
+        log.debug("_openSession return");
+    }
+
     private boolean _doConnect(
         String server,
         String user,
@@ -112,14 +154,10 @@ public class VdsInstallerSSH {
         );
 
         boolean ret = false;
-
         try {
-            this.client = new SSHClient();
-            this.client.setHardTimeout(hardTimeout);
-            this.client.setSoftTimeout(softTimeout);
-            this.client.setHost(server, this.port); // port until API supports port
-            this.client.setUser(user);
+            _openSession(server, hardTimeout, softTimeout);
 
+            this.client.setUser(user);
             if (keyStore == null) {
                 log.debug("Using password authentication.");
                 this.client.setPassword(userPassword);
@@ -180,9 +218,6 @@ public class VdsInstallerSSH {
                     )
                 );
             }
-
-            log.debug("connecting");
-            this.client.connect();
 
             PublicKey serverKey = this.client.getServerKey();
             String fingerprint = "Unknown";
@@ -568,5 +603,32 @@ public class VdsInstallerSSH {
         }
 
         return fingerprint;
+    }
+
+    public String getServerKeyFingerprint(
+        String server,
+        long timeout
+    ) throws Exception {
+        String fingerprint = null;
+
+        _openSession(server, timeout, timeout);
+
+        PublicKey serverKey = this.client.getServerKey();
+        if (serverKey != null) {
+            fingerprint = OpenSSHUtils.getKeyFingerprintString(serverKey);
+        }
+
+        return fingerprint;
+    }
+
+    public String getServerKeyFingerprint(
+        String server
+    ) throws Exception {
+        return getServerKeyFingerprint(
+            server,
+            Config.<Integer>GetValue(
+                ConfigValues.SSHInactivityTimoutSeconds
+            ) * 1000
+        );
     }
 }
