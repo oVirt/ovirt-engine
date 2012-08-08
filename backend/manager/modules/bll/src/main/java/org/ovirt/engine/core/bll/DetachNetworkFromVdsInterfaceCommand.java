@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,7 +10,9 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -135,6 +138,24 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             }
         }
 
+        List<VM> runningVms = getVmDAO().getAllRunningForVds(vds.getId());
+        List<String> vmNames = new ArrayList<String>();
+        for (VM vm : runningVms) {
+            List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
+            for (VmNetworkInterface vmNic : vmInterfaces) {
+                if (StringUtils.equals(vmNic.getNetworkName(), getParameters().getNetwork().getname())) {
+                    vmNames.add(vm.getvm_name());
+                    break;
+                }
+            }
+        }
+
+        if (!vmNames.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS);
+            addCanDoActionMessage(String.format("$VmNames %1$s", StringUtils.join(vmNames, ",")));
+            return false;
+        }
+
         return true;
     }
 
@@ -142,5 +163,11 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_DETACH_NETWORK_FROM_VDS
                 : AuditLogType.NETWORK_DETACH_NETWORK_FROM_VDS_FAILED;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
     }
 }
