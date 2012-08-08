@@ -33,7 +33,7 @@ public class OVirtInstaller extends VdsInstaller {
     protected void RunStage() {
 
         switch (_currentInstallStage) {
-        // Use ConnectToServer method which does not need password (relies
+        // Use connect method which does not need password (relies
         // on public key existing on cbc image)
         // Keep base logic for following states
         case Start:
@@ -49,20 +49,20 @@ public class OVirtInstaller extends VdsInstaller {
         case ConnectToServer: {
             log.infoFormat("Installation of {0}. Executing oVirt installation stage. (Stage: {1})", _serverName,
                     getCurrentInstallStage());
-            _executionSucceded = _wrapper.ConnectToServer(_serverName);
+            _executionSucceded = _wrapper.connect(_serverName);
             break;
         }
         case RunScript: {
             log.infoFormat("Installation of {0}. Executing oVirt installation stage. (Stage: {1})", _serverName,
                     getCurrentInstallStage());
-            _wrapper.RunSSHCommand(createCertReqCommand);
+            _wrapper.executeCommand(createCertReqCommand);
             break;
         }
         case FinishCommand: {
             log.infoFormat(
                     "Installation of {0}. Executing oVirt installation stage, sending SSH Command {1}. (Stage: {2})",
                     _serverName, finishCommandInitial, getCurrentInstallStage());
-            _wrapper.RunSSHCommand(finishCommandInitial);
+            _wrapper.executeCommand(finishCommandInitial);
             break;
         }
             // Ignore unused states : VdsInstallStages.UploadScript,

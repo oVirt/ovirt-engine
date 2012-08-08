@@ -33,25 +33,25 @@ public class OVirtUpgrader extends VdsInstaller {
             super.RunStage();
             break;
         }
-            // Use ConnectToServer method which does not need password
+            // Use connect method which does not need password
             // (relies on public key existing on cbc image)
         case ConnectToServer: {
             log.infoFormat("Installation of {0}. Executing oVirt reinstall/upgrade stage. (Stage: {1})", _serverName,
                     getCurrentInstallStage());
-            _executionSucceded = _wrapper.ConnectToServer(_serverName);
+            _executionSucceded = _wrapper.connect(_serverName);
             break;
         }
         case UploadScript:
             log.infoFormat("Installation of {0}. Executing oVirt reinstall/upgrade stage. (Stage: {1})", _serverName,
                     getCurrentInstallStage());
             String path = Path.Combine(Config.resolveOVirtISOsRepositoryPath(), _oVirtISOFile);
-            _executionSucceded = _wrapper.UploadFile(path, Config.<String> GetValue(ConfigValues.oVirtUploadPath));
+            _executionSucceded = _wrapper.sendFile(path, Config.<String> GetValue(ConfigValues.oVirtUploadPath));
             break;
 
         case RunScript:
             log.infoFormat("Installation of {0}. Executing oVirt reinstall/upgrade stage. (Stage: {1})", _serverName,
                     getCurrentInstallStage());
-            _wrapper.RunSSHCommand(runUpgradeCommand);
+            _wrapper.executeCommand(runUpgradeCommand);
             break;
         // Skip unused states
         default: {

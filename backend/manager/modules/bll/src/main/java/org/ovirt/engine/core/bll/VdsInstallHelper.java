@@ -22,20 +22,20 @@ public class VdsInstallHelper{
     public VdsInstallHelper() {
         callback = new SimpleCallback();
         wrapper = new VdsInstallerSSH();
-        wrapper.InitCallback(callback);
+        wrapper.setCallback(callback);
     }
 
     public boolean connectToServer(String server, String passwd, long timeout) {
-        return wrapper.ConnectToServer(server, passwd, timeout);
+        return wrapper.connect(server, passwd, timeout);
     }
 
     public String getServerUniqueId() {
-        wrapper.RunSSHCommand(VdsInstaller._getUniqueIdCommand);
+        wrapper.executeCommand(VdsInstaller._getUniqueIdCommand);
         return callback.serverUniqueId;
     }
 
-    public void wrapperShutdown() {
-        wrapper.wrapperShutdown();
+    public void shutdown() {
+        wrapper.shutdown();
         wrapper = null;
         callback = null;
     }
@@ -59,24 +59,24 @@ public class VdsInstallHelper{
         String serverUniqueId;
 
         @Override
-        public void AddError(String error) {
+        public void addError(String error) {
         }
 
         @Override
-        public void AddMessage(String message) {
+        public void addMessage(String message) {
             serverUniqueId = message;
         }
 
         @Override
-        public void Connected() {
+        public void connected() {
         }
 
         @Override
-        public void EndTransfer() {
+        public void endTransfer() {
         }
 
         @Override
-        public void Failed(String error) {
+        public void failed(String error) {
         }
 
     }

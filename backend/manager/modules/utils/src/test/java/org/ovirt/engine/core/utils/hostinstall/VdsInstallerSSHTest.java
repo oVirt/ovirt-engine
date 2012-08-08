@@ -65,24 +65,24 @@ public class VdsInstallerSSHTest extends TestCase {
         mina.setPort(port);
         System.out.println("Server port=" + port);
 
-        assertTrue(mina.ConnectToServer("127.0.0.1", "root"));
+        assertTrue(mina.connect("127.0.0.1", "root"));
 
         String cmd = "ls -l /tmp";
         if (WinOS) {
             cmd = "cmd.exe /c dir c:\\";
         }
-        assertTrue(mina.RunSSHCommand(cmd));
+        assertTrue(mina.executeCommand(cmd));
 
-        mina.wrapperShutdown();
+        mina.shutdown();
         mina = null;
 
         System.out.println("Testing public key auth.");
         mina = new VdsInstallerSSH();
         mina.setPort(port);
 
-        assertTrue(mina.ConnectToServer("127.0.0.1", "src/test/resources/.keystore", "NoSoup4U"));
+        assertTrue(mina.connect("127.0.0.1", "src/test/resources/.keystore", "NoSoup4U"));
 
-        mina.wrapperShutdown();
+        mina.shutdown();
         mina = null;
     }
 

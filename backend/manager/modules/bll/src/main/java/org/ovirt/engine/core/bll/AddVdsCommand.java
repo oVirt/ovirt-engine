@@ -365,7 +365,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 }
             } finally {
                 try {
-                    installHelper.wrapperShutdown();
+                    installHelper.shutdown();
                 } catch (Exception e) {
                     log.errorFormat("Failed to terminate session with host {0} with message: {1}",
                             vds.getvds_name(),

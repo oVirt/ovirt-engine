@@ -91,7 +91,7 @@ public class VdsInstallerSSH {
      */
     protected void finalize() throws Throwable {
         try {
-            wrapperShutdown();
+            shutdown();
         } finally {
             super.finalize();
         }
@@ -101,21 +101,21 @@ public class VdsInstallerSSH {
      * Start org.ovirt.engine.core.utils.hostinstall.IVdsInstallWrapper implementation
      */
 
-    public final void InitCallback(IVdsInstallerCallback callback) {
+    public final void setCallback(IVdsInstallerCallback callback) {
         this.callback = callback;
     }
 
-    public final boolean ConnectToServer(String server) {
-        return ConnectToServer(server, Config.resolveKeyStorePath(),
+    public final boolean connect(String server) {
+        return connect(server, Config.resolveKeyStorePath(),
                 Config.<String> GetValue(ConfigValues.keystorePass));
     }
 
-    public final boolean ConnectToServer(String server, String rootPassword) {
+    public final boolean connect(String server, String rootPassword) {
         Credentials creds = prepareCredentials(rootPassword);
         return _do_connect(server, creds);
     }
 
-    public final boolean ConnectToServer(String server, String rootPassword, long timeout) {
+    public final boolean connect(String server, String rootPassword, long timeout) {
         Credentials creds = prepareCredentials(rootPassword);
         return _do_connect(server, creds, timeout);
     }
@@ -127,7 +127,7 @@ public class VdsInstallerSSH {
         return creds;
     }
 
-    public final boolean ConnectToServer(String server, String certPath, String password) {
+    public final boolean connect(String server, String certPath, String password) {
         Credentials creds = new Credentials();
         creds.setPassphrase(password);
         creds.setCertPath(certPath);
@@ -142,7 +142,7 @@ public class VdsInstallerSSH {
      * Note: This method is using piped (in+out streams). This is possible only when producer & consumer are different
      * threads. If it happens to run on the same thread it may create deadlocks.
      */
-    public final boolean RunSSHCommand(String command) {
+    public final boolean executeCommand(String command) {
         boolean fReturn = true;
         log.info(String.format("Invoking %s on %s", command, host));
         ClientChannel channel = null;
@@ -238,7 +238,7 @@ public class VdsInstallerSSH {
                 log.debug("Caught pipe closing exception", e);
             }
         }
-        log.info("RunSSHCommand returns " + fReturn);
+        log.info("executeCommand returns " + fReturn);
         return fReturn;
     }
 
@@ -252,7 +252,7 @@ public class VdsInstallerSSH {
      * @param localDestination
      *            destination file on the local machine. This should be a valid path and file name.
      */
-    public final boolean DownloadFile(String remoteSource, String localDestination) {
+    public final boolean receiveFile(String remoteSource, String localDestination) {
         log.info(String.format("Downloading file %s from %s to %s", remoteSource, host, localDestination));
 
         boolean fReturn = true;
@@ -395,7 +395,7 @@ public class VdsInstallerSSH {
      * @param destination
      *            Destination file on the remote machine. This should be a valid path and file name.
      */
-    public final boolean UploadFile(String source, String destination) {
+    public final boolean sendFile(String source, String destination) {
         log.info(String.format("Uploading file %s to %s on %s", source, destination, host));
         boolean fReturn = true;
         File file = new File(source);
@@ -769,13 +769,13 @@ public class VdsInstallerSSH {
 
     protected void callbackAddError(String message) {
         if (haveCallback()) {
-            callback.AddError(message);
+            callback.addError(message);
         }
     }
 
     protected void callbackAddMessage(String message) {
         if (haveCallback()) {
-            callback.AddMessage(message);
+            callback.addMessage(message);
         }
     }
 
@@ -786,26 +786,26 @@ public class VdsInstallerSSH {
             log.error("Unable to get host fingerprint!");
         }
         if (haveCallback()) {
-            callback.AddMessage(
+            callback.addMessage(
                     String.format(
                             "<BSTRAP component='RHEV_INSTALL' status='OK' message='Connected to Host %s with SSH key fingerprint: %s'/>",
                             host,
                             fingerprint
                             )
                     );
-            callback.Connected();
+            callback.connected();
         }
     }
 
     protected void callbackEndTransfer() {
         if (haveCallback()) {
-            callback.EndTransfer();
+            callback.endTransfer();
         }
     }
 
     protected void callbackFailed(String message) {
         if (haveCallback()) {
-            callback.Failed(message);
+            callback.failed(message);
         }
     }
 
@@ -1114,7 +1114,7 @@ public class VdsInstallerSSH {
         return strOut;
     }
 
-    public void wrapperShutdown() {
+    public void shutdown() {
         if (session != null) {
             session.close(true);
             session = null;

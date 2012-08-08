@@ -40,7 +40,7 @@ public class VdsInstallerSSHTimeoutTest {
         when(client.connect(anyString(), anyInt())).thenReturn(future);
         when(future.await(anyLong())).thenReturn(false);
 
-        assertFalse(wrapper.ConnectToServer("localhost", "foo"));
+        assertFalse(wrapper.connect("localhost", "foo"));
         verify(future).await(anyLong());
     }
 
@@ -58,7 +58,7 @@ public class VdsInstallerSSHTimeoutTest {
         when(authFuture.await(anyLong())).thenReturn(false);
         when(session.authPassword(anyString(), anyString())).thenReturn(authFuture);
 
-        assertFalse(wrapper.ConnectToServer("localhost", "foo"));
+        assertFalse(wrapper.connect("localhost", "foo"));
         verify(future).await(anyLong());
         verify(authFuture).await(anyLong());
 

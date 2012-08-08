@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.utils.hostinstall;
 
 public interface IVdsInstallerCallback {
-    void AddError(String error);
+    void addError(String error);
 
-    void AddMessage(String message);
+    void addMessage(String message);
 
-    void Connected();
+    void connected();
 
-    void EndTransfer();
+    void endTransfer();
 
-    void Failed(String error);
+    void failed(String error);
 }

@@ -157,7 +157,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
         }
         _serverName = vds.gethost_name();
         _rootPassword = rootPassword;
-        _wrapper.InitCallback(this);
+        _wrapper.setCallback(this);
 
         _certFileNameLocal = _serverName + _certFileNameLocal;
     }
@@ -237,7 +237,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
         if (log.isDebugEnabled()) {
             log.debug("Closing installer connections");
         }
-        _wrapper.wrapperShutdown();
+        _wrapper.shutdown();
         return _currentInstallStage != VdsInstallStages.Error;
     }
 
@@ -253,16 +253,16 @@ public class VdsInstaller implements IVdsInstallerCallback {
             break;
         }
         case ConnectToServer: {
-            _executionSucceded = _wrapper.ConnectToServer(_serverName, _rootPassword);
+            _executionSucceded = _wrapper.connect(_serverName, _rootPassword);
             break;
         }
         case CheckUniqueVds: {
-            _wrapper.RunSSHCommand(_getUniqueIdCommand);
+            _wrapper.executeCommand(_getUniqueIdCommand);
             break;
         }
         case UploadScript: {
             String path = Config.resolveBootstrapInstallerPath();
-            _executionSucceded = _wrapper.UploadFile(path, _remoteBootstrapRunningScriptPath);
+            _executionSucceded = _wrapper.sendFile(path, _remoteBootstrapRunningScriptPath);
             if (isOverrideFirewallAllowed() && _executionSucceded) {
                 _currentInstallStage = VdsInstallStages.UploadScript;
                 _executionSucceded = uploadFirewallRulesConfFile();
@@ -272,14 +272,14 @@ public class VdsInstaller implements IVdsInstallerCallback {
         case RunScript: {
             log.infoFormat("Installation of {0}. Sending SSH Command {1}. (Stage: {2})", _serverName,
                     _bootStrapInitialCommand, getCurrentInstallStage());
-            Boolean fRes = _wrapper.RunSSHCommand(_bootStrapInitialCommand);
+            Boolean fRes = _wrapper.executeCommand(_bootStrapInitialCommand);
             log.infoFormat(" RunScript ended:" + fRes.toString());
             break;
         }
         case DownloadCertificateRequest: {
             // First parameter will always run on Linux, so use path.combine
             // just for the second param.
-            Boolean fRes = _wrapper.DownloadFile(_remoteDirectory + "/" + _certRequestFileName,
+            Boolean fRes = _wrapper.receiveFile(_remoteDirectory + "/" + _certRequestFileName,
                     buildCAPath(_requestsDirectory, _certRequestFileName));
             log.infoFormat(" DownloadCertificateRequest ended:" + fRes.toString());
             break;
@@ -309,20 +309,20 @@ public class VdsInstaller implements IVdsInstallerCallback {
         case UploadSignedCertificate: {
             // Second parameter will always run on Linux, so use
             // path.combine just for the first param.
-            Boolean fRes = _wrapper.UploadFile(buildCAPath(_certificatesDirectory, _certFileNameLocal),
+            Boolean fRes = _wrapper.sendFile(buildCAPath(_certificatesDirectory, _certFileNameLocal),
                     _remoteDirectory + "/" + _certFileName);
             log.infoFormat(" UploadSignedCertificate ended:" + fRes.toString());
             break;
         }
         case UploadCA: {
             String path = String.format("%1$s/%2$s", _remoteDirectory, _caFileName);
-            _wrapper.UploadFile(Config.resolveCACertificatePath(), path);
+            _wrapper.sendFile(Config.resolveCACertificatePath(), path);
             break;
         }
         case FinishCommand: {
             log.infoFormat("Installation of {0}. Sending SSH Command {1}. (Stage: {2})", _serverName, _finishCommand,
                     getCurrentInstallStage());
-            Boolean fRes = _wrapper.RunSSHCommand(_finishCommand);
+            Boolean fRes = _wrapper.executeCommand(_finishCommand);
             log.infoFormat(" FinishCommand ended:" + fRes.toString());
             break;
         }
@@ -341,7 +341,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
                 BufferedWriter out = new BufferedWriter(new FileWriter(fwRulesFile));
                 out.write(ipTableConfig);
                 out.close();
-                isUploaded = _wrapper.UploadFile(fwRulesFileNamePath, remoteFwRulesFilePath);
+                isUploaded = _wrapper.sendFile(fwRulesFileNamePath, remoteFwRulesFilePath);
                 fwRulesFile.delete();
             } catch (IOException e) {
                 log.errorFormat("Error during create and upload firewall rules temp file {0} to destination {1} with error {2}",
@@ -355,7 +355,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
     }
 
     @Override
-    public void AddMessage(String message) {
+    public void addMessage(String message) {
         if (message.toUpperCase().indexOf("<BSTRAP COMPONENT='RHEV_INSTALL' STATUS='OK'/>") != -1
                 && (_currentInstallStage == VdsInstallStages.RunScript || _currentInstallStage == VdsInstallStages.FinishCommand)) {
             _executionSucceded = true;
@@ -453,7 +453,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
     }
 
     @Override
-    public void Connected() {
+    public void connected() {
         if (_currentInstallStage == VdsInstallStages.ConnectToServer) {
             log.infoFormat("Installation of {0}. Successfully connected to server ssh. (Stage: {1})", _serverName,
                     getCurrentInstallStage());
@@ -469,7 +469,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
     }
 
     @Override
-    public void EndTransfer() {
+    public void endTransfer() {
         if (_currentInstallStage == VdsInstallStages.UploadScript
                 || _currentInstallStage == VdsInstallStages.DownloadCertificateRequest
                 || _currentInstallStage == VdsInstallStages.UploadSignedCertificate
@@ -486,13 +486,13 @@ public class VdsInstaller implements IVdsInstallerCallback {
     }
 
     @Override
-    public void AddError(String error) {
+    public void addError(String error) {
         log.errorFormat("Installation of {0}. Error: {1}. (Stage: {2})", _serverName, error, getCurrentInstallStage());
         _messages.AddMessage(error);
     }
 
     @Override
-    public void Failed(String error) {
+    public void failed(String error) {
         log.errorFormat("Installation of {0} has failed. Failure details: {1}. (Stage: {2})", _serverName, error,
                 getCurrentInstallStage());
         _messages.AddMessage(error);
