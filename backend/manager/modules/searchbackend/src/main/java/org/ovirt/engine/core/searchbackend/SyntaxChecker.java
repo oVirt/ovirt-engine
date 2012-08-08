@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,11 +31,11 @@ public class SyntaxChecker implements ISyntaxChecker {
     private BaseAutoCompleter mOrAC;
     private BaseAutoCompleter mDotAC;
     private BaseAutoCompleter mSortDirectionAC;
-    private java.util.HashMap<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
+    private Map<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
 
     private Regex mFirstDQRegexp;
     private Regex mNonSpaceRegexp;
-    private java.util.ArrayList<Character> mDisAllowedChars;
+    private List<Character> mDisAllowedChars;
     private static SqlInjectionChecker sqlInjectionChecker;
 
     public SyntaxChecker(int searchReasultsLimit, boolean hasDesktop) {
@@ -47,12 +49,12 @@ public class SyntaxChecker implements ISyntaxChecker {
         mAndAC = new BaseAutoCompleter("AND");
         mOrAC = new BaseAutoCompleter("OR");
         mDotAC = new BaseAutoCompleter(".");
-        mDisAllowedChars = new java.util.ArrayList<Character>(java.util.Arrays.asList(new Character[] { '\'', ';' }));
+        mDisAllowedChars = new ArrayList<Character>(java.util.Arrays.asList(new Character[] { '\'', ';' }));
 
         mFirstDQRegexp = new Regex("^\\s*\"$");
         mNonSpaceRegexp = new Regex("^\\S+$");
 
-        mStateMap = new java.util.HashMap<SyntaxObjectType, SyntaxObjectType[]>();
+        mStateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
         mStateMap.put(SyntaxObjectType.BEGIN, new SyntaxObjectType[] { SyntaxObjectType.SEARCH_OBJECT });
         mStateMap.put(SyntaxObjectType.SEARCH_OBJECT, new SyntaxObjectType[] { SyntaxObjectType.COLON });
         SyntaxObjectType[] afterColon =
@@ -669,11 +671,11 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private String generateFromStatement(SyntaxContainer syntax) {
-        java.util.LinkedList<String> innerJoins = new java.util.LinkedList<String>();
-        java.util.ArrayList<String> refObjList = syntax.getCrossRefObjList();
+        LinkedList<String> innerJoins = new LinkedList<String>();
+        ArrayList<String> refObjList = syntax.getCrossRefObjList();
         String searchObjStr = syntax.getSearchObjectStr();
         if (refObjList.size() > 0) {
-            if (StringHelper.EqOp(searchObjStr, SearchObjects.TEMPLATE_OBJ_NAME)) {
+            if (SearchObjects.TEMPLATE_OBJ_NAME.equals(searchObjStr)) {
                 innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.TEMPLATE_OBJ_NAME,
                         SearchObjects.VM_OBJ_NAME));
                 if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
@@ -695,7 +697,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     refObjList.remove(SearchObjects.AUDIT_OBJ_NAME);
                 }
             }
-            else if (StringHelper.EqOp(searchObjStr, SearchObjects.VDS_OBJ_NAME)) {
+            else if (SearchObjects.VDS_OBJ_NAME.equals(searchObjStr)) {
                 if ((refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME))
                         || (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME))) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
@@ -715,7 +717,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
             }
-            else if (StringHelper.EqOp(searchObjStr, SearchObjects.VDC_USER_OBJ_NAME)) {
+            else if (SearchObjects.VDC_USER_OBJ_NAME.equals(searchObjStr)) {
                 if ((refObjList.contains(SearchObjects.VDS_OBJ_NAME))
                         || (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME))) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
@@ -735,7 +737,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
             }
-            else if (StringHelper.EqOp(searchObjStr, SearchObjects.AUDIT_OBJ_NAME)) {
+            else if (SearchObjects.AUDIT_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.AUDIT_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME));
@@ -768,7 +770,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (syntax.getvalid()) {
             ListIterator<SyntaxObject> objIter = syntax.listIterator(0);
             IConditionFieldAutoCompleter conditionFieldAC;
-            LinkedList<String> whereBuilder = new java.util.LinkedList<String>();
+            LinkedList<String> whereBuilder = new LinkedList<String>();
             String searchObjStr = syntax.getSearchObjectStr();
             String sortByPhrase = "";
             String fromStatement = "";
@@ -812,7 +814,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 boolean found = true;
                 while (found) {
                     found = false;
-                    java.util.ListIterator<String> iter = whereBuilder.listIterator(0);
+                    ListIterator<String> iter = whereBuilder.listIterator(0);
                     while (iter.hasNext()) {
                         String queryPart = iter.next();
                         if (StringHelper.EqOp(queryPart, lookFor[idx])) {
@@ -831,7 +833,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             StringBuilder wherePhrase = new StringBuilder();
             if (whereBuilder.size() > 0) {
                 wherePhrase.append(" WHERE ");
-                java.util.ListIterator<String> iter = whereBuilder.listIterator(0);
+                ListIterator<String> iter = whereBuilder.listIterator(0);
                 while (iter.hasNext()) {
                     String queryPart = iter.next();
                     wherePhrase.append(queryPart);
