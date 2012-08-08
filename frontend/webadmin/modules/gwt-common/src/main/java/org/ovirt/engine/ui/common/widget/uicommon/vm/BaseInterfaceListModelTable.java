@@ -28,7 +28,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
     }
 
     @Override
-    public void initTable(CommonApplicationConstants constants) {
+    public void initTable(final CommonApplicationConstants constants) {
         getTable().addColumn(new NicActivateStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {

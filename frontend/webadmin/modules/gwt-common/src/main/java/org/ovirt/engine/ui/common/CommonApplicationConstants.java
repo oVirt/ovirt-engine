@@ -474,6 +474,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Drops")
     String dropsInterface();
 
+    @DefaultStringValue("Port Mirroring")
+    String portMirroring();
+
+    @DefaultStringValue("Enabled")
+    String portMirroringEnabled();
+
     @DefaultStringValue("(Mbps)")
     String mbps();
 
