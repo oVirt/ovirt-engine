@@ -148,7 +148,7 @@ public enum VdcQueryType implements Serializable {
     GetDefualtTimeZone(VdcQueryAuthType.User),
     GetDiskConfigurationList(VdcQueryAuthType.User),
     GetAvailableClusterVersions,
-    GetAvailableStoragePoolVersions,
+    GetAvailableStoragePoolVersions(VdcQueryAuthType.User),
     GetAvailableClusterVersionsByStoragePool,
 
     // AuditLog

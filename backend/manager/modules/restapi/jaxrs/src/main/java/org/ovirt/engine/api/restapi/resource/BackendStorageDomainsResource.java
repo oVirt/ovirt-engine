@@ -215,18 +215,21 @@ public class BackendStorageDomainsResource
     protected StorageDomain map(storage_domains entity, StorageDomain template) {
         StorageDomain model = super.map(entity, template);
 
-        switch (entity.getstorage_type()) {
-        case ISCSI:
-            mapVolumeGroupIscsi(model, entity);
-            break;
-        case FCP:
-            mapVolumeGroupFcp(model, entity);
-            break;
-        case NFS:
-        case LOCALFS:
-        case POSIXFS:
-            mapNfsOrLocalOrPosix(model, entity);
-            break;
+        // Mapping the connection properties only in case it is a non-filtered session
+        if (!isFiltered()) {
+            switch (entity.getstorage_type()) {
+                case ISCSI:
+                    mapVolumeGroupIscsi(model, entity);
+                    break;
+                case FCP:
+                    mapVolumeGroupFcp(model, entity);
+                    break;
+                case NFS:
+                case LOCALFS:
+                case POSIXFS:
+                    mapNfsOrLocalOrPosix(model, entity);
+                    break;
+                }
         }
 
         return model;

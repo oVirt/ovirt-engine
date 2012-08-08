@@ -24,7 +24,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends GetAvailableStorageP
                     getParameters().getStoragePoolId().getValue());
             if (storagePool != null) {
                 List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(
-                        storagePool.getId());
+                        storagePool.getId(), getUserID(), getParameters().isFiltered());
 
                 for (Version supportedVer : Config
                         .<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
