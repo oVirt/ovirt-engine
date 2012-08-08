@@ -25,6 +25,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.put("DISK_TYPE", "DISK_TYPE");
         mVerbs.put("NUMBER_OF_VMS", "NUMBER_OF_VMS");
         mVerbs.put("VM_NAMES", "VM_NAMES");
+        mVerbs.put("QUOTA", "QUOTA");
 
         // Building the autoCompletion dict.
         buildCompletions();
@@ -43,6 +44,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put("DISK_TYPE", DiskStorageType.class);
         getTypeDictionary().put("NUMBER_OF_VMS", Integer.class);
         getTypeDictionary().put("VM_NAMES", String.class);
+        getTypeDictionary().put("QUOTA", String.class);
 
 
         // building the ColumnName dict.
@@ -59,6 +61,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mColumnNameDict.put("DISK_TYPE", "disk_storage_type");
         mColumnNameDict.put("NUMBER_OF_VMS", "number_of_vms");
         mColumnNameDict.put("VM_NAMES", "vm_names");
+        mColumnNameDict.put("QUOTA", "quota_name");
 
         // Building the validation dict.
         buildBasicValidationTable();
