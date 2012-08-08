@@ -122,7 +122,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/vdsm-reg/vdsm-upgrade")
     oVirtUpgradeScriptName(34),
-    @Reloadable
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Scripts\\vds_installer.py")
     BootstrapInstallerFileName(35),
@@ -1404,6 +1404,43 @@ public enum ConfigValues {
             "sort -u | head -n 1"
     )
     BootstrapNodeIDCommand(372),
+
+    /*
+     * umask is required to allow only self access
+     * --no-same-permissions is required to allow enforcing umask
+     * -o is required so files be owned by current user
+     */
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute(
+        "umask 0077; " +
+        "MYTMP=\"$(mktemp -t ovirt-XXXXXXXXXX)\"; " +
+        "trap \"chmod -R u+rwX \\\"${MYTMP}\\\" > /dev/null 2>&1; rm -fr \\\"${MYTMP}\\\" > /dev/null 2>&1\" 0; " +
+        "rm -fr \"${MYTMP}\" && " +
+        "mkdir \"${MYTMP}\" && " +
+        "tar -C \"${MYTMP}\" --no-same-permissions -o -x && " +
+        "\"${MYTMP}\"/setup " +
+                "-c 'ssl={server_SSL_enabled};management_port={management_port}' " +
+                "-O '{OrganizationName}' -t {utc_time} {OverrideFirewall} " +
+                "-S {SSHKey} {EnginePort} -b {virt-placeholder} " +
+                "{gluster-placeholder} {URL1} {URL1} {vds-server} " +
+                "{GUID} {RunFlag}"
+    )
+    BootstrapCommand(373),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10000")
+    BootstrapCacheRefreshInterval(374),
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("/usr/share/vdsm-bootstrap/interface-2")
+    BootstrapPackageDirectory(375),
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("vdsm-bootstrap-2.tar")
+    BootstrapPackageName(376),
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("ovirt-engine")
+    SSHKeyAlias(377),
 
     Invalid(65535);
 

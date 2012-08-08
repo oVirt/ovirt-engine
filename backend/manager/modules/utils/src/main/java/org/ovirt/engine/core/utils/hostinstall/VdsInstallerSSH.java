@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.security.cert.Certificate;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -495,5 +496,59 @@ public class VdsInstallerSSH {
 
         log.debug("sendFile leave " + ret);
         return ret;
+    }
+
+
+    public static String getEngineSSHKeyFingerprint() {
+        String fingerprint = null;
+
+        String keystoreFile = Config.<String>GetValue(ConfigValues.keystoreUrl);
+        String alias = Config.<String>GetValue(ConfigValues.CertAlias);
+        InputStream in = null;
+        try {
+            in = new FileInputStream(keystoreFile);
+            KeyStore ks = KeyStore.getInstance("JKS");
+            ks.load(
+                in,
+                Config.<String>GetValue(ConfigValues.keystorePass).toCharArray()
+            );
+            Certificate cert = ks.getCertificate(alias);
+            if (cert == null) {
+                throw new KeyStoreException(
+                    String.format(
+                        "Failed to find certificate store '%1$s' using alias '%2%s'",
+                        keystoreFile,
+                        alias
+                    )
+                );
+            }
+
+            fingerprint =  OpenSSHUtils.getKeyString(
+                cert.getPublicKey(),
+                Config.<String>GetValue(ConfigValues.SSHKeyAlias)
+            );
+        }
+        catch (Exception e) {
+            log.error(
+                String.format(
+                    "Failed to send own public key from store '%1$s' using alias '%2%s'",
+                    keystoreFile,
+                    alias
+                ),
+                e
+            );
+        }
+        finally {
+            if (in != null) {
+                try {
+                    in.close();
+                }
+                catch(IOException e) {
+                    log.error("Cannot close key store", e);
+                }
+            }
+        }
+
+        return fingerprint;
     }
 }

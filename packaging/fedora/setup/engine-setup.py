@@ -1088,7 +1088,6 @@ def _updateVDCOptions():
             "ConfigDir":["/etc/ovirt-engine", 'text'],
             "DataDir":["/usr/share/ovirt-engine", 'text'],
             "SignScriptName":["SignReq.sh", 'text'],
-            "BootstrapInstallerFileName":["/usr/share/ovirt-engine/scripts/vds_installer.py", 'text'],
             "PublicURLPort":[controller.CONF["HTTP_PORT"], 'text'],
             "OrganizationName":[controller.CONF["ORG_NAME"], 'text'],
             "ProductRPMVersion":[utils.getRpmVersion(basedefs.ENGINE_RPM_NAME), 'text'],

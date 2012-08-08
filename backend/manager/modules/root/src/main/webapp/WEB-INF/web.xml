@@ -43,60 +43,6 @@
     <url-pattern>/rhevm.ssh.key.txt</url-pattern>
   </servlet-mapping>
 
-  <!-- deployUtil.py -->
-  <servlet>
-    <servlet-name>deployUtil.py</servlet-name>
-    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
-    <init-param>
-      <param-name>type</param-name>
-      <param-value>text/plain</param-value>
-    </init-param>
-    <init-param>
-      <param-name>file</param-name>
-      <param-value>/usr/share/vdsm-bootstrap/deployUtil.py</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>deployUtil.py</servlet-name>
-    <url-pattern>/Components/vds/deployUtil.py</url-pattern>
-  </servlet-mapping>
-
-  <!-- vds_bootstrap.py -->
-  <servlet>
-    <servlet-name>vds_bootstrap.py</servlet-name>
-    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
-    <init-param>
-      <param-name>type</param-name>
-      <param-value>text/plain</param-value>
-    </init-param>
-    <init-param>
-      <param-name>file</param-name>
-      <param-value>/usr/share/vdsm-bootstrap/vds_bootstrap.py</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>vds_bootstrap.py</servlet-name>
-    <url-pattern>/Components/vds/vds_bootstrap.py</url-pattern>
-  </servlet-mapping>
-
-  <!-- vds_bootstrap_complete.py -->
-  <servlet>
-    <servlet-name>vds_bootstrap_complete.py</servlet-name>
-    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
-    <init-param>
-      <param-name>type</param-name>
-      <param-value>text/plain</param-value>
-    </init-param>
-    <init-param>
-      <param-name>file</param-name>
-      <param-value>/usr/share/vdsm-bootstrap/vds_bootstrap_complete.py</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>vds_bootstrap_complete.py</servlet-name>
-    <url-pattern>/Components/vds/vds_bootstrap_complete.py</url-pattern>
-  </servlet-mapping>
-
   <!-- Documentation: -->
   <servlet>
     <servlet-name>docs</servlet-name>

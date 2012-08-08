@@ -159,6 +159,7 @@ def loadConfig():
     global engineTmpDir
     global engineUsrDir
     global engineVarDir
+    global engineCacheDir
     global engineLockDir
     global engineServiceDir
     global engineContentDir
@@ -169,6 +170,7 @@ def loadConfig():
     engineUsrDir = engineConfig.getString("ENGINE_USR", "/usr/share/ovirt-engine")
     engineVarDir = engineConfig.getString("ENGINE_VAR", "/var/lib/ovirt-engine")
     engineLockDir = engineConfig.getString("ENGINE_LOCK", "/var/lock/ovirt-engine")
+    engineCacheDir = engineConfig.getString("ENGINE_CACHE", "/var/cache/ovirt-engine")
     engineServiceDir = os.path.join(engineUsrDir, "service")
     engineContentDir = os.path.join(engineVarDir, "content")
     engineDeploymentsDir = os.path.join(engineVarDir, "deployments")
@@ -349,7 +351,12 @@ def startEngine():
     if os.path.exists(engineTmpDir):
         shutil.rmtree(engineTmpDir)
     os.mkdir(engineTmpDir)
+
+    # Create cache directory if does not exist
     os.chown(engineTmpDir, engineUid, engineGid)
+    if not os.path.exists(engineCacheDir):
+        os.mkdir(engineCacheDir)
+    os.chown(engineCacheDir, engineUid, engineGid)
 
     # Generate the main configuration from the template and copy it to the
     # configuration directory making sure that the application server will be
@@ -477,6 +484,7 @@ def startEngine():
         "ENGINE_TMP": engineTmpDir,
         "ENGINE_USR": engineUsrDir,
         "ENGINE_VAR": engineVarDir,
+        "ENGINE_CACHE": engineCacheDir,
         "ENGINE_LOCK": engineLockDir,
     }
 

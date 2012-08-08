@@ -55,7 +55,6 @@ select fn_db_add_config_value('AutoRecoverySchedule','0 0/5 * * * ?','general');
 select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
 select fn_db_add_config_value('AutoSuspendTimeInMinutes','30','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
-select fn_db_add_config_value('BootstrapInstallerFileName','backend/manager/conf/vds_installer.py','general');
 --Handling CA Base Directory
 select fn_db_add_config_value('CABaseDirectory','ca','general');
 --Handling CA certificate path

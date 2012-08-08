@@ -25,17 +25,6 @@ public final class Config {
     }
 
     /**
-     * Fetch the BootstrapInstallerFileName configuration value and, if it is not an absolute path, resolve it relative
-     * to the DataDir configuration value.
-     *
-     * @return an absolute path for BootstrapInstallerFileName
-     */
-    public static String resolveBootstrapInstallerPath() {
-        return ConfigUtil.resolvePath(Config.<String> GetValue(ConfigValues.DataDir),
-                Config.<String> GetValue(ConfigValues.BootstrapInstallerFileName));
-    }
-
-    /**
      * Fetch the oVirtISOsRepositoryPath configuration value and, if it is not an absolute path, resolve it relative to
      * the DataDir configuration value.
      *

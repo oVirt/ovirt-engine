@@ -351,10 +351,6 @@ install_misc:
 	install -m 640 backend/manager/conf/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
 	install -m 644 backend/manager/conf/jboss-log4j.xml $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 backend/manager/conf/kerberos/* $(DESTDIR)$(DATA_DIR)/kerberos
-	# XXX: Does this script need execution permission? It
-	# needs when copied to the host, but I am not sure it
-	# should it have it in the manager machine.
-	install -m 755 backend/manager/conf/vds_installer.py $(DESTDIR)$(DATA_DIR)/scripts/
 	install -m 644 backend/manager/conf/jboss-log4j.xml $(DESTDIR)$(DATA_DIR)/conf
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/

@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,6 +25,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.VdcException;
+import org.ovirt.engine.core.utils.hostinstall.CachedTar;
 import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.engine.core.utils.hostinstall.IVdsInstallerCallback;
 import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
@@ -38,9 +43,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
     private String _certFileNameLocal;
     private String _caFileName = "ca.pem";
     private static final String FIREWALL_CONFIG_FILENAME_PREFIX = "firewall.conf";
-    // Extract file name, since DB entry may include path parts.
-    private String _bootstrapRunningScript = new java.io.File(
-            Config.<String> GetValue(ConfigValues.BootstrapInstallerFileName)).getName();
+    private static final String SSHKEY_FILENAME_PREFIX = "ovirt-id_rsa";
 
     protected VdsInstallStages _prevInstallStage = VdsInstallStages.Start;
     protected VdsInstallStages _currentInstallStage = VdsInstallStages.Start;
@@ -52,17 +55,17 @@ public class VdsInstaller implements IVdsInstallerCallback {
     private Guid _fileGuid = new Guid();
     private final VDS _vds;
     private String serverInstallationTime;
-    private String _bootStrapInitialCommand =
-            "chmod +x {vdsInstaller}; {vdsInstaller} -c 'ssl={server_SSL_enabled};management_port={management_port}' -O '{OrganizationName}' -t {utc_time} {OverrideFirewall} {EnginePort} -b {virt-placeholder} {gluster-placeholder} {URL1} {URL1} {vds-server} {GUID} {RunFlag}";
 
-    protected String _finishCommand = "";
+    private static CachedTar s_bootstrapPackage;
+    private String _bootstrapCommand;
 
     protected final VdsInstallerSSH _wrapper = new VdsInstallerSSH();
     private final OpenSslCAWrapper _caWrapper = new OpenSslCAWrapper();
     protected String _serverName;
+    private boolean _rebootAfterInstallation;
     private final String _rootPassword;
-    private final String _remoteBootstrapRunningScriptPath;
     private final String remoteFwRulesFilePath;
+    private final String _remoteSSHKey;
     private boolean isAddOvirtFlow = false;
     protected static final java.util.HashMap<VdsInstallStages, String> _translatedMessages =
             new java.util.HashMap<VdsInstallStages, String>();
@@ -94,6 +97,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
         _vds = vds;
         this.overrideFirewall = overrideFirewall;
         _messages = new InstallerMessages(vds.getId());
+        _rebootAfterInstallation = rebootAfterInstallation;
 
         _fileGuid = Guid.NewGuid();
 
@@ -102,18 +106,24 @@ public class VdsInstaller implements IVdsInstallerCallback {
         _certRequestFileName = String.format("cert_%1$s.req", _fileGuid);
         _certFileName = String.format("cert_%1$s.pem", _fileGuid);
         _caFileName = String.format("CA_%1$s.pem", _fileGuid);
-        String[] parts = _bootstrapRunningScript.split("[.]", -1);
-        if (parts.length > 1) {
-            _bootstrapRunningScript = String.format("%1$s_%2$s.%3$s", parts[0], _fileGuid, parts[1]);
-        } else {
-            throw new RuntimeException();
+        remoteFwRulesFilePath = String.format("%s/%s.%s", _remoteDirectory, FIREWALL_CONFIG_FILENAME_PREFIX,_fileGuid);
+        _remoteSSHKey = String.format("%s/%s_%s", _remoteDirectory, SSHKEY_FILENAME_PREFIX, _fileGuid);
+        _bootstrapCommand = InitInitialCommand(
+            vds,
+            Config.<String> GetValue(ConfigValues.BootstrapCommand)
+        );
+
+        if (s_bootstrapPackage == null) {
+            String cache = System.getenv("ENGINE_CACHE");
+            if (cache == null) {
+                log.warn("ENGINE_CACHE environment not found using tmpdir");
+                cache = System.getProperty("java.io.tmpdir");
+            }
+            s_bootstrapPackage = new CachedTar(
+                new File(cache, Config.<String> GetValue(ConfigValues.BootstrapPackageName)),
+                new File(Config.<String> GetValue(ConfigValues.BootstrapPackageDirectory))
+            );
         }
-        _remoteBootstrapRunningScriptPath = _remoteDirectory + "/" + _bootstrapRunningScript; // Always
-                                                                                              // runs
-                                                                                              // on
-                                                                                              // Linux
-        remoteFwRulesFilePath = String.format("%s/%s.%s", _remoteDirectory,FIREWALL_CONFIG_FILENAME_PREFIX,_fileGuid);
-        _bootStrapInitialCommand = InitInitialCommand(vds, _bootStrapInitialCommand);
 
         VdsGroupDAO vdsGroupDao = DbFacade.getInstance().getVdsGroupDAO();
         Guid vdsGroupId = vds.getvds_group_id();
@@ -130,24 +140,18 @@ public class VdsInstaller implements IVdsInstallerCallback {
 
         // We pass -V option if no virt is required on this host
         if (!supportVirt) {
-            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{virt-placeholder}", "-V");
+            _bootstrapCommand = _bootstrapCommand.replace("{virt-placeholder}", "-V");
         } else {
-            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{virt-placeholder}", "");
+            _bootstrapCommand = _bootstrapCommand.replace("{virt-placeholder}", "");
         }
 
         // We pass -g option if gluster is supported on this host
         if (supportGluster) {
-            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{gluster-placeholder}", "-g");
+            _bootstrapCommand = _bootstrapCommand.replace("{gluster-placeholder}", "-g");
         } else {
-            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{gluster-placeholder}", "");
+            _bootstrapCommand = _bootstrapCommand.replace("{gluster-placeholder}", "");
         }
 
-        _finishCommand = _bootStrapInitialCommand;
-        _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{RunFlag}", "False");
-        _finishCommand = _finishCommand.replace("{RunFlag}", "True");
-        if (!rebootAfterInstallation) {
-            _finishCommand = _finishCommand.replace(" -b ", " ");
-        }
         _serverName = vds.gethost_name();
         _rootPassword = rootPassword;
         _wrapper.setCallback(this);
@@ -156,7 +160,6 @@ public class VdsInstaller implements IVdsInstallerCallback {
     }
 
     protected String InitInitialCommand(VDS vds, String initialCommand) {
-        initialCommand = initialCommand.replace("{vdsInstaller}", _remoteBootstrapRunningScriptPath);
         initialCommand = initialCommand.replace("{vds-server}", vds.gethost_name());
         initialCommand = initialCommand.replace("{URL1}", Config.<String> GetValue(ConfigValues.VdcBootStrapUrl));
         initialCommand = initialCommand.replace("{GUID}", _fileGuid.toString());
@@ -176,9 +179,47 @@ public class VdsInstaller implements IVdsInstallerCallback {
             initialCommand = initialCommand.replace("{EnginePort}", String.format("-p %1$s", publicUrlPort));
         }
 
+        initialCommand = initialCommand.replace("{SSHKey}", _remoteSSHKey);
         initialCommand = initialCommand.replace("{OverrideFirewall}", isOverrideFirewallAllowed() ?
                 "-f " + remoteFwRulesFilePath : "");
         return initialCommand;
+    }
+
+    private boolean runBootstrapCommand(boolean doFinal) {
+        boolean fRes = false;
+        String command = _bootstrapCommand.replace("{RunFlag}", doFinal ? "True" : "False");
+        if (doFinal && !_rebootAfterInstallation) {
+            command = command.replace(" -b ", " ");
+        }
+
+        log.infoFormat(
+            "Installation of {0}. Sending SSH Command {1} < {2}. (Stage: {3})",
+            _serverName,
+            command,
+            s_bootstrapPackage.getFileNoUse(),
+            getCurrentInstallStage()
+        );
+        InputStream in = null;
+        try {
+            in = new FileInputStream(s_bootstrapPackage.getFile());
+            fRes = _wrapper.executeCommand(command, in);
+        }
+        catch(Exception e) {
+            log.error("Error during executing bootstrap", e);
+        }
+        finally {
+            if (in != null) {
+                try {
+                    in.close();
+                }
+                catch (IOException e) {
+                    log.error("Cannot close bootstrap file", e);
+                }
+            }
+        }
+
+        log.infoFormat("Script ended, result is {1}", fRes ? "Success" : "Failed");
+        return fRes;
     }
 
     private boolean isOverrideFirewallAllowed() {
@@ -256,25 +297,29 @@ public class VdsInstaller implements IVdsInstallerCallback {
             break;
         }
         case UploadScript: {
-            String path = Config.resolveBootstrapInstallerPath();
-            _executionSucceded = _wrapper.sendFile(path, _remoteBootstrapRunningScriptPath);
-            if (isOverrideFirewallAllowed() && _executionSucceded) {
+            String thumbprint = VdsInstallerSSH.getEngineSSHKeyFingerprint();
+
+            if (thumbprint == null) {
+                _executionSucceded = false;
+            }
+            else {
+                _executionSucceded = uploadStringAsFile(thumbprint, _remoteSSHKey);
+            }
+
+            if (_executionSucceded && isOverrideFirewallAllowed()) {
                 String ipTablesConfig = Config.<String> GetValue(ConfigValues.IPTablesConfig);
                 if (StringUtils.isNotEmpty(ipTablesConfig)) {
                     _executionSucceded = uploadStringAsFile(ipTablesConfig, remoteFwRulesFilePath);
                 }
+            }
 
-                if (_executionSucceded) {
-                    _currentInstallStage = VdsInstallStages.forValue(_currentInstallStage.getValue() + 1);
-                }
+            if (_executionSucceded) {
+                _currentInstallStage = VdsInstallStages.forValue(_currentInstallStage.getValue() + 1);
             }
             break;
         }
         case RunScript: {
-            log.infoFormat("Installation of {0}. Sending SSH Command {1}. (Stage: {2})", _serverName,
-                    _bootStrapInitialCommand, getCurrentInstallStage());
-            Boolean fRes = _wrapper.executeCommand(_bootStrapInitialCommand);
-            log.infoFormat(" RunScript ended:" + fRes.toString());
+            runBootstrapCommand(false);
             break;
         }
         case DownloadCertificateRequest: {
@@ -321,10 +366,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             break;
         }
         case FinishCommand: {
-            log.infoFormat("Installation of {0}. Sending SSH Command {1}. (Stage: {2})", _serverName, _finishCommand,
-                    getCurrentInstallStage());
-            Boolean fRes = _wrapper.executeCommand(_finishCommand);
-            log.infoFormat(" FinishCommand ended:" + fRes.toString());
+            runBootstrapCommand(true);
             break;
         }
         }
@@ -467,7 +509,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
 
     @Override
     public void endTransfer() {
-        if (_currentInstallStage == VdsInstallStages.UploadScript
+        if (_currentInstallStage == VdsInstallStages.UploadScript //iso upload
                 || _currentInstallStage == VdsInstallStages.DownloadCertificateRequest
                 || _currentInstallStage == VdsInstallStages.UploadSignedCertificate
                 || _currentInstallStage == VdsInstallStages.UploadCA) {

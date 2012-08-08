@@ -17,6 +17,7 @@
 %global engine_log %{_localstatedir}/log/%{engine_name}
 %global engine_run %{_localstatedir}/run/%{engine_name}
 %global engine_lock %{_localstatedir}/lock/%{engine_name}
+%global engine_cache %{_localstatedir}/cache/%{engine_name}
 
 %global restapi_war %{engine_ear}/restapi.war
 %global root_war %{engine_ear}/root.war
@@ -94,6 +95,7 @@ BuildRequires: apache-commons-configuration
 BuildRequires: apache-commons-jxpath
 BuildRequires: apache-commons-lang
 BuildRequires: apache-commons-logging
+BuildRequires: apache-commons-compress
 BuildRequires: apache-mina
 BuildRequires: apache-sshd
 BuildRequires: bea-stax-api
@@ -165,7 +167,7 @@ Requires: policycoreutils-python
 Requires: postgresql-jdbc
 Requires: python-configobj
 Requires: python-cheetah
-Requires: vdsm-bootstrap
+Requires: vdsm-bootstrap >= 4.10.0
 Requires: yum-plugin-versionlock
 Requires: ovirt-engine-cli
 
@@ -212,6 +214,7 @@ Requires: apache-commons-beanutils
 Requires: apache-commons-codec
 Requires: apache-commons-collections
 Requires: apache-commons-lang
+Requires: apache-commons-compress
 Requires: apache-mina
 Requires: apache-sshd
 Requires: bea-stax-api
@@ -441,6 +444,7 @@ commons-codec commons-codec
 commons-collections commons-collections
 commons-httpclient commons-httpclient
 commons-lang commons-lang
+commons-compress commons-compress
 dom4j dom4j
 geronimo-validation validation-api
 hibernate/hibernate-commons-annotations hibernate-commons-annotations
@@ -569,6 +573,7 @@ fi
 %postun
 if [ "$1" -eq 0 ]
 then
+    rm -rf "%{engine_cache}"
     rm -rf "%{engine_pki}"
 
     if [[ -f %{_sysconfdir}/yum/pluginconf.d/versionlock.list ]]
@@ -605,9 +610,6 @@ fi
 %dir %{engine_run}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_lock}
-
-# VDS installer script:
-%{engine_data}/scripts/vds_installer.py*
 
 # Log rotation script:
 %{engine_data}/scripts/ovirtlogrot.sh

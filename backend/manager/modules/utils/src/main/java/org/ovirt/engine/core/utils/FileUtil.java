@@ -93,4 +93,34 @@ public class FileUtil {
             throw new CompatException(e);
         }
     }
+
+    /**
+     * Returns the maximum timestamp of directory tree.
+     * @param file directory/file name.
+     * @return max timestamp.
+     */
+    public static long getTimestampRecursive(String file) {
+        return getTimestampRecursive(new File(file));
+    }
+
+    /**
+     * Returns the maximum timestamp of directory tree.
+     * @param file directory/file name.
+     * @return max timestamp.
+     */
+    public static long getTimestampRecursive(File file) {
+        if (file.isDirectory()) {
+            long m = 0;
+            for (String name : file.list()) {
+                m = Math.max(m, getTimestampRecursive(new File(file, name)));
+            }
+            return m;
+        }
+        else if (file.isFile()) {
+            return file.lastModified();
+        }
+        else {
+            return 0;
+        }
+    }
 }

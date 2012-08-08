@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.KeyStore;
@@ -221,6 +222,95 @@ public class VdsInstallerSSHTest {
             assertNull(callbacks.fail);
         }
         finally {
+            vssh.shutdown();
+            vssh = null;
+        }
+    }
+
+    @Test
+    public void testCommandOKTar() throws Exception {
+        MyVdsInstallerCallback callbacks = new MyVdsInstallerCallback();
+        VdsInstallerSSH vssh = new VdsInstallerSSH();
+        vssh.setPort(port);
+        vssh.setCallback(callbacks);
+
+        File tmpTar = null;
+        File tmpDir = null;
+
+        try {
+            tmpTar = File.createTempFile("test1", "tar");
+            tmpDir = File.createTempFile("test1", "tmp");
+            tmpDir.delete();
+            tmpDir.mkdir();
+
+            OutputStream osScript = null;
+            OutputStream osTar = null;
+            try {
+                File script = new File(tmpDir, "script");
+                osScript = new FileOutputStream(script);
+                osScript.write("echo ok\n".getBytes("UTF-8"));
+                osScript.close();
+                osScript = null;
+                script.setExecutable(true);
+
+                osTar = new FileOutputStream(tmpTar);
+                Tar.doTar(osTar, tmpDir);
+            }
+            finally {
+                for (OutputStream os : new OutputStream[] {osScript, osTar}) {
+                    if (os != null) {
+                        try {
+                            os.close();
+                        }
+                        catch(IOException e) {
+                            // ignore
+                        }
+                    }
+                }
+            }
+
+            InputStream is = null;
+            try {
+                is = new FileInputStream(tmpTar);
+                assertTrue(vssh.connect(host, password));
+                callbacks.reset();
+                assertTrue(
+                    vssh.executeCommand(
+                        (
+                            "MYTMP=$(mktemp); " +
+                            "trap \"rm -fr ${MYTMP}\" 0; " +
+                            "rm -fr ${MYTMP} && " +
+                            "mkdir ${MYTMP} && " +
+                            "tar -C ${MYTMP} -x && " +
+                            "${MYTMP}/script"
+                        ),
+                        is
+                    )
+                );
+                assertFalse(callbacks.connected);
+                assertFalse(callbacks.endTransfer);
+                assertEquals("ok\n", callbacks.message);
+                assertNull(callbacks.error);
+                assertNull(callbacks.fail);
+            }
+            finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    }
+                    catch(Exception e) {
+                        // ignore we want test exception
+                    }
+                }
+            }
+        }
+        finally {
+            if (tmpDir != null) {
+                tmpDir.delete();
+            }
+            if (tmpTar != null) {
+                tmpTar.delete();
+            }
             vssh.shutdown();
             vssh = null;
         }
