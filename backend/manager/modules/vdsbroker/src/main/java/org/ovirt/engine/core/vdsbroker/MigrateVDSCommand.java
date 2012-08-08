@@ -32,24 +32,21 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                     new MigrateBrokerVDSCommand<MigrateVDSCommandParameters>(parameters);
             command.Execute();
             VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
+
+            final VM vm = DbFacade.getInstance().getVmDAO().get(parameters.getVmId());
+
             if (vdsReturnValue.getSucceeded()) {
                 retval = VMStatus.MigratingFrom;
+                ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.MigratingFrom);
+                    vm.setmigrating_to_vds(parameters.getDstVdsId());
+                    ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
             } else {
-                log.error("VDS::migrate:: Failed migration setting vm status to ERROR");
-                retval = VMStatus.NotResponding;
+                retval = vm.getstatus();
+                log.error("VDS::migrate:: Failed Vm migration");
                 getVDSReturnValue().setSucceeded(false);
                 getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
                 getVDSReturnValue().setExceptionString(vdsReturnValue.getExceptionString());
                 getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
-            }
-            // update the db
-            // VM vm = _vdsManager.VmDict[parameters.VmId];
-            final VM vm = DbFacade.getInstance().getVmDAO().get(parameters.getVmId());
-
-            ResourceManager.getInstance().InternalSetVmStatus(vm, retval);
-            if (retval == VMStatus.MigratingFrom) {
-                vm.setmigrating_to_vds(parameters.getDstVdsId());
-                ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
             }
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
