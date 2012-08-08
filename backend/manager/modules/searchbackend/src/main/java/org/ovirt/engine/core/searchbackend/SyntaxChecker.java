@@ -927,11 +927,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         IConditionValueAutoCompleter conditionValueAC = null;
         // check for sql injection
         String originalValue = obj.getBody();
-        String customizedValue = originalValue;
-        if (!issafe) {
-            // Enforce escape characters before special characters
-            customizedValue = SqlInjectionChecker.enforceEscapeCharacters(originalValue);
-        }
         String customizedRelation;
         String fieldName = "";
         String objName;
@@ -977,6 +972,40 @@ public class SyntaxChecker implements ISyntaxChecker {
                 (BaseConditionFieldAutoCompleter) ((conditionFieldAC instanceof BaseConditionFieldAutoCompleter) ? conditionFieldAC
                         : null);
         final Class<?> curType = conditionAsBase != null ? conditionAsBase.getTypeDictionary().get(fieldName) : null;
+        final String customizedValue =
+                buildCustomizedValue(obj, issafe, conditionFieldAC, conditionValueAC, originalValue, fieldName, curType);
+
+        if(conditionValueAC == null && ("".equals(fieldName) ||
+                String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
+            /* enable case-insensitive search by changing operation to I/LIKE*/
+            if ("=".equals(customizedRelation)) {
+                customizedRelation = BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
+            } else if ("!=".equals(customizedRelation)) {
+                customizedRelation = "NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
+            }
+        }
+
+        return buildCondition(caseSensitive,
+                conditionFieldAC,
+                customizedValue,
+                customizedRelation,
+                fieldName,
+                objName,
+                conditionType);
+    }
+
+    private String buildCustomizedValue(SyntaxObject obj,
+            final boolean issafe,
+            IConditionFieldAutoCompleter conditionFieldAC,
+            IConditionValueAutoCompleter conditionValueAC,
+            String originalValue,
+            String fieldName,
+            final Class<?> curType) {
+        String customizedValue = originalValue;
+        if (!issafe) {
+            // Enforce escape characters before special characters
+            customizedValue = SqlInjectionChecker.enforceEscapeCharacters(originalValue);
+        }
         if (curType == String.class && !StringHelper.isNullOrEmpty(customizedValue)
                 && !"''".equals(customizedValue) && !"'*'".equals(customizedValue)) {
             customizedValue =
@@ -987,22 +1016,10 @@ public class SyntaxChecker implements ISyntaxChecker {
             customizedValue = StringFormat.format("'%1$s'",
                     conditionValueAC.convertFieldEnumValueToActualValue(obj.getBody()));
         } else if ("".equals(fieldName) /* search on all relevant fields */ ||
-                  (conditionFieldAC.getDbFieldType(fieldName).equals(String.class))) {
+                  (String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
             customizedValue = customizedValue.replace('*', '%');
-            /* enable case-insensitive search by changing operation to I/LIKE*/
-            if ("=".equals(customizedRelation)) {
-                customizedRelation = BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
-            } else if ("!=".equals(customizedRelation)) {
-                customizedRelation = "NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
-            }
         }
-        return buildCondition(caseSensitive,
-                conditionFieldAC,
-                customizedValue,
-                customizedRelation,
-                fieldName,
-                objName,
-                conditionType);
+        return customizedValue;
     }
 
     final String buildCondition(boolean caseSensitive,
