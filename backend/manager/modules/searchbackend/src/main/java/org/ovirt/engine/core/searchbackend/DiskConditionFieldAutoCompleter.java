@@ -66,31 +66,28 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        IAutoCompleter retval;
-        if (StringHelper.EqOp(fieldName, "CREATIONDATE") || StringHelper.EqOp(fieldName, "SIZE")
-                || StringHelper.EqOp(fieldName, "ACTUAL_SIZE")
-                || StringHelper.EqOp(fieldName, "PROVISIONED_SIZE")) {
-            retval = BiggerOrSmallerRelationAutoCompleter.INTSANCE;
+        if ("CREATIONDATE".equals(fieldName) || "SIZE".equals(fieldName)
+                || "ACTUAL_SIZE".equals(fieldName)
+                || "PROVISIONED_SIZE".equals(fieldName)) {
+            return BiggerOrSmallerRelationAutoCompleter.INTSANCE;
         }
-        else if (StringHelper.EqOp(fieldName, "NUMBER_OF_VMS")) {
-            retval = NumericConditionRelationAutoCompleter.INSTANCE;
+        else if ("NUMBER_OF_VMS".equals(fieldName)) {
+            return NumericConditionRelationAutoCompleter.INSTANCE;
         } else {
-            retval = StringConditionRelationAutoCompleter.INSTANCE;
+            return StringConditionRelationAutoCompleter.INSTANCE;
         }
-        return retval;
     }
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-        IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "FORMAT")) {
-            retval = new EnumValueAutoCompleter(VolumeFormat.class);
-        } else if (StringHelper.EqOp(fieldName, "STATUS")) {
-            retval = new EnumValueAutoCompleter(ImageStatus.class);
-        } else if (StringHelper.EqOp(fieldName, "DISK_TYPE")) {
-            retval = new EnumValueAutoCompleter(DiskStorageType.class);
+        if ("FORMAT".equals(fieldName)) {
+            return new EnumValueAutoCompleter(VolumeFormat.class);
+        } else if ("STATUS".equals(fieldName)) {
+            return new EnumValueAutoCompleter(ImageStatus.class);
+        } else if ("DISK_TYPE".equals(fieldName)) {
+            return new EnumValueAutoCompleter(DiskStorageType.class);
         }
-        return retval;
+        return null;
     }
 
     @Override
@@ -98,7 +95,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
             RefObject<String> relations,
             RefObject<String> value,
             boolean caseSensitive) {
-        if (StringHelper.EqOp(fieldName, "CREATIONDATE")) {
+        if ("CREATIONDATE".equals(fieldName)) {
             Date tmp = new Date(Date.parse(StringHelper.trim(value.argvalue, '\'')));
             value.argvalue = StringFormat.format("'%1$s'", tmp);
         } else {
