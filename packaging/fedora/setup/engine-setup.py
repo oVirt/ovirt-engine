@@ -762,6 +762,7 @@ def _configureHttpdSslPort():
         raise Exception(output_messages.ERR_EXP_UPD_HTTPS_LISTEN_PORT%(basedefs.FILE_HTTPD_SSL_CONFIG))
 
 def _createCA():
+    pubtemp = None
 
     try:
         # Create new CA only if none available
@@ -818,7 +819,7 @@ def _createCA():
                 "-p", basedefs.CONST_CA_PASS,
                 "-a",
                 "engine",
-                "-k",os.path.join(basedefs.DIR_OVIRT_PKI, "keys", "engine_id_rsa"),
+                "-k", basedefs.FILE_PRIVATE_SSH_KEY
             ]
 
             out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_CA_PASS])
@@ -839,7 +840,16 @@ def _createCA():
             # ExtractSSH fingerprint
             cmd = [
                 basedefs.EXEC_SSH_KEYGEN,
-                "-lf", basedefs.FILE_PUBLIC_SSH_KEY,
+                "-yf", basedefs.FILE_PRIVATE_SSH_KEY
+            ]
+            pubkey, rc = utils.execCmd(cmdList=cmd, failOnError=True)
+            pubtempfd, pubtemp = tempfile.mkstemp(suffix=".pub")
+            os.close(pubtempfd)
+            with open(pubtemp, "w") as f:
+                f.write(pubkey)
+            cmd = [
+                basedefs.EXEC_SSH_KEYGEN,
+                "-lf", pubtemp
             ]
             finger, rc = utils.execCmd(cmdList=cmd, failOnError=True)
             msg = output_messages.INFO_CA_SSH_FINGERPRINT%(finger.split()[1])
@@ -855,6 +865,9 @@ def _createCA():
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_CREATE_CA)
+    finally:
+        if pubtemp != None:
+            os.remove(pubtemp)
 
 def _changeCaPermissions(pkiDir):
     changeList = [os.path.join(pkiDir, "ca.pem"),

@@ -95,10 +95,5 @@ echo "}}} 2.1. CertificateFileName $WORKDIR/certs/engine.cer"
 echo "}}} 2.2. CABaseDirectory to $WORKDIR"
 echo "}}} 2.3. CAEngineKey to $WORKDIR/private/ca.pem"
 echo " "
-echo "}}} 3. File updates:"
-echo "}}} 3.1. Copy $WORKDIR/keys/engine.ssh.key.txt to root context of JBoss."
-echo "}}}      ie: cp $WORKDIR/keys/engine.ssh.key.txt /usr/local/jboss-as/standalone/deployments/engine.ear/root.war/"
-echo "======================================================"
-echo " "
 
 exit 0

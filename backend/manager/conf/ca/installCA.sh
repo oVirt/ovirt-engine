@@ -84,10 +84,5 @@ echo " "
 echo "} Importing oVirt certificate..."
 ./importToKeyStore.sh $WORKDIR/.keystore $ALIAS certs/engine.der $PASS
 
-# Export oVirt key as ssh key
-echo " "
-echo "} Exporting oVirt key as SSH..."
-./store-utils.sh -pubkey2ssh "$WORKDIR/.keystore" "$PASS" "$ALIAS" > $WORKDIR/keys/engine.ssh.key.txt
-
 exit 0
 

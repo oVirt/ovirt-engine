@@ -81,7 +81,6 @@ FILE_IPTABLES_BACKUP="%s/ovirt-engine/backups/iptables.backup" % DIR_VAR_LIB
 FILE_NFS_SYSCONFIG="%s/ovirt-engine/conf/nfs.sysconfig" % DIR_USR_SHARE
 FILE_NFS_BACKUP="%s/ovirt-engine/backups/nfs.backup" % DIR_VAR_LIB
 FILE_ETC_EXPORTS="/etc/exports"
-FILE_PUBLIC_SSH_KEY="%s/keys/engine.ssh.key.txt"%(DIR_OVIRT_PKI)
 FILE_PRIVATE_SSH_KEY="%s/keys/engine_id_rsa"%(DIR_OVIRT_PKI)
 FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"
 FILE_ISOUPLOADER_CONF="/etc/ovirt-engine/isouploader.conf"

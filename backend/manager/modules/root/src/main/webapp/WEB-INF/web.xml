@@ -8,37 +8,41 @@
 
   <!-- File servlet instance to serve the CA certificate: -->
   <servlet>
-    <servlet-name>ca.crt</servlet-name>
-    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
+    <servlet-name>PKIResourceServlet.ca</servlet-name>
+    <servlet-class>org.ovirt.engine.core.pki.PKIResourceServlet</servlet-class>
     <init-param>
-      <param-name>type</param-name>
-      <param-value>application/x-x509-ca-cert</param-value>
+      <param-name>resource-location</param-name>
+      <param-value>/etc/pki/ovirt-engine/ca.pem</param-value>
     </init-param>
     <init-param>
-      <param-name>file</param-name>
-      <param-value>/etc/pki/ovirt-engine/ca.pem</param-value>
+      <param-name>output-format</param-name>
+      <param-value>X509-PEM</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ca.crt</servlet-name>
+    <servlet-name>PKIResourceServlet.ca</servlet-name>
     <url-pattern>/ca.crt</url-pattern>
   </servlet-mapping>
 
-  <!-- File servlet instance to serve the engine SSH public key: -->
+  <!-- Servlet to serve the engine SSH public key: -->
   <servlet>
-    <servlet-name>engine.ssh.key.txt</servlet-name>
-    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
+    <servlet-name>PKIResourceServlet.engine.ssh</servlet-name>
+    <servlet-class>org.ovirt.engine.core.pki.PKIResourceServlet</servlet-class>
     <init-param>
-      <param-name>type</param-name>
-      <param-value>text/plain</param-value>
+      <param-name>resource-location</param-name>
+      <param-value>/etc/pki/ovirt-engine/certs/engine.cer</param-value>
     </init-param>
     <init-param>
-      <param-name>file</param-name>
-      <param-value>/etc/pki/ovirt-engine/keys/engine.ssh.key.txt</param-value>
+      <param-name>output-alias</param-name>
+      <param-value>ovirt-engine</param-value>
+    </init-param>
+    <init-param>
+      <param-name>output-format</param-name>
+      <param-value>SSH</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
-    <servlet-name>engine.ssh.key.txt</servlet-name>
+    <servlet-name>PKIResourceServlet.engine.ssh</servlet-name>
     <url-pattern>/engine.ssh.key.txt</url-pattern>
     <url-pattern>/rhevm.ssh.key.txt</url-pattern>
   </servlet-mapping>
