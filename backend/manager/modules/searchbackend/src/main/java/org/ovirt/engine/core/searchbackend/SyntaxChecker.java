@@ -919,8 +919,8 @@ public class SyntaxChecker implements ISyntaxChecker {
         ConditionwithSpesificObj;
     }
 
-    private String generateConditionStatment(SyntaxObject obj, java.util.ListIterator<SyntaxObject> objIter,
-            String searchObjStr, boolean caseSensitive, boolean issafe) {
+    private String generateConditionStatment(SyntaxObject obj, ListIterator<SyntaxObject> objIter,
+            final String searchObjStr, final boolean caseSensitive, final boolean issafe) {
         IConditionFieldAutoCompleter conditionFieldAC;
         IConditionValueAutoCompleter conditionValueAC = null;
         // check for sql injection
@@ -971,13 +971,12 @@ public class SyntaxChecker implements ISyntaxChecker {
             conditionValueAC = conditionFieldAC.getFieldValueAutoCompleter(fieldName);
         }
 
-        BaseConditionFieldAutoCompleter conditionAsBase =
+        final BaseConditionFieldAutoCompleter conditionAsBase =
                 (BaseConditionFieldAutoCompleter) ((conditionFieldAC instanceof BaseConditionFieldAutoCompleter) ? conditionFieldAC
                         : null);
-        Class<?> curType = null;
-        if (conditionAsBase != null && (curType = conditionAsBase.getTypeDictionary().get(fieldName)) != null
-                && curType == String.class && !StringHelper.isNullOrEmpty(customizedValue)
-                && !StringHelper.EqOp(customizedValue, "''") && !StringHelper.EqOp(customizedValue, "'*'")) {
+        final Class<?> curType = conditionAsBase != null ? conditionAsBase.getTypeDictionary().get(fieldName) : null;
+        if (curType == String.class && !StringHelper.isNullOrEmpty(customizedValue)
+                && !"''".equals(customizedValue) && !"'*'".equals(customizedValue)) {
             customizedValue =
                     StringFormat.format(BaseConditionFieldAutoCompleter.getI18NPrefix() + "%1$s", customizedValue);
         }
@@ -985,29 +984,43 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (conditionValueAC != null) {
             customizedValue = StringFormat.format("'%1$s'",
                     conditionValueAC.convertFieldEnumValueToActualValue(obj.getBody()));
-        } else if (fieldName.equals("") /* search on all relevant fields */ ||
+        } else if ("".equals(fieldName) /* search on all relevant fields */ ||
                   (conditionFieldAC.getDbFieldType(fieldName).equals(String.class))) {
             customizedValue = customizedValue.replace('*', '%');
             /* enable case-insensitive search by changing operation to I/LIKE*/
-            if (StringHelper.EqOp(customizedRelation, "=")) {
+            if ("=".equals(customizedRelation)) {
                 customizedRelation = BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
-            } else if (StringHelper.EqOp(customizedRelation, "!=")) {
+            } else if ("!=".equals(customizedRelation)) {
                 customizedRelation = "NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
             }
         }
-        String condition = "";
-        String tableName = mSearchObjectAC.getRelatedTableName(objName);
+        return buildCondition(caseSensitive,
+                conditionFieldAC,
+                customizedValue,
+                customizedRelation,
+                fieldName,
+                objName,
+                conditionType);
+    }
+
+    final String buildCondition(boolean caseSensitive,
+            IConditionFieldAutoCompleter conditionFieldAC,
+            String customizedValue,
+            String customizedRelation,
+            String fieldName,
+            String objName,
+            ConditionType conditionType) {
+        final String tableName = mSearchObjectAC.getRelatedTableName(objName);
         switch (conditionType) {
         case FreeText:
         case FreeTextSpecificObj:
-            condition = conditionFieldAC.buildFreeTextConditionSql(tableName, customizedRelation, customizedValue, caseSensitive);
-            break;
+            return conditionFieldAC.buildFreeTextConditionSql(tableName, customizedRelation, customizedValue, caseSensitive);
         case ConditionWithDefaultObj:
         case ConditionwithSpesificObj:
-            condition = conditionFieldAC.buildConditionSql(fieldName, customizedValue, customizedRelation, tableName, caseSensitive);
-            break;
+            return conditionFieldAC.buildConditionSql(fieldName, customizedValue, customizedRelation, tableName, caseSensitive);
+        default:
+            return "";
         }
-        return condition;
     }
 
     private static Log log = LogFactory.getLog(SyntaxChecker.class);
