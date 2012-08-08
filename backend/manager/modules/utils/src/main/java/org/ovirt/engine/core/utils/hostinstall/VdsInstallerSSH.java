@@ -45,11 +45,11 @@ import org.ovirt.engine.core.compat.backendcompat.Path;
  * UploadFile.
  */
 
-public class MinaInstallWrapper implements IVdsInstallWrapper {
+public class VdsInstallerSSH {
 
-    private static Log log = LogFactory.getLog(MinaInstallWrapper.class);
+    private static Log log = LogFactory.getLog(VdsInstallerSSH.class);
 
-    private IVdsInstallCallBack callback;
+    private IVdsInstallerCallback callback;
     private SshClient client = null;
     private ClientSession session = null;
     private HostKeyVerifier hkvVerifier = null;
@@ -64,11 +64,11 @@ public class MinaInstallWrapper implements IVdsInstallWrapper {
     private final static long TWENTY_MBI = 20971520l;
     private final static long MAX_FILE_COUNT = 65536;
 
-    public MinaInstallWrapper() {
+    public VdsInstallerSSH() {
         this(null);
     }
 
-    protected MinaInstallWrapper(final SshClient sshClient) {
+    protected VdsInstallerSSH(final SshClient sshClient) {
         try {
             if(sshClient == null) {
                 this.client = SshClient.setUpDefaultClient();
@@ -101,7 +101,7 @@ public class MinaInstallWrapper implements IVdsInstallWrapper {
      * Start org.ovirt.engine.core.utils.hostinstall.IVdsInstallWrapper implementation
      */
 
-    public final void InitCallback(IVdsInstallCallBack callback) {
+    public final void InitCallback(IVdsInstallerCallback callback) {
         this.callback = callback;
     }
 
@@ -421,7 +421,7 @@ public class MinaInstallWrapper implements IVdsInstallWrapper {
      * End org.ovirt.engine.core.hostinstall.IVdsInstallWrapper implementation
      *
      *
-     * Start supporting methods for MinaInstallWrapper implementation
+     * Start supporting methods for VdsInstallerSSH implementation
      */
 
     /***
@@ -1114,7 +1114,6 @@ public class MinaInstallWrapper implements IVdsInstallWrapper {
         return strOut;
     }
 
-    @Override
     public void wrapperShutdown() {
         if (session != null) {
             session.close(true);

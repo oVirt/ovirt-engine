@@ -12,7 +12,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.FileUtil;
 
-public class OpenSslCAWrapper implements ICAWrapper {
+public class OpenSslCAWrapper {
     public final boolean SignCertificateRequest(String requestFileName, int days, String signedCertificateFileName) {
         log.debug("Entered SignCertificateRequest");
         boolean returnValue = true;

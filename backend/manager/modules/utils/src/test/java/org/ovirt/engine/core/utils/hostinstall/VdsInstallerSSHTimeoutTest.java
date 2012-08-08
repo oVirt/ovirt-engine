@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class MinaInstallWrapperTimeoutTest {
+public class VdsInstallerSSHTimeoutTest {
 
     @Rule
     public static final MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.SSHInactivityTimoutSeconds, 0));
@@ -35,7 +35,7 @@ public class MinaInstallWrapperTimeoutTest {
             fail("Unable to create SSH client. Please check mina jars");
         }
         ConnectFuture future = mock(ConnectFuture.class);
-        MinaInstallWrapper wrapper = new MinaInstallWrapper(client);
+        VdsInstallerSSH wrapper = new VdsInstallerSSH(client);
 
         when(client.connect(anyString(), anyInt())).thenReturn(future);
         when(future.await(anyLong())).thenReturn(false);
@@ -48,7 +48,7 @@ public class MinaInstallWrapperTimeoutTest {
     public void passwordTimeout() throws Exception {
         SshClient client = spy(SshClient.setUpDefaultClient());
         ConnectFuture future = mock(ConnectFuture.class);
-        MinaInstallWrapper wrapper = new MinaInstallWrapper(client);
+        VdsInstallerSSH wrapper = new VdsInstallerSSH(client);
         ClientSession session = mock(ClientSession.class);
         when(client.connect(anyString(), anyInt())).thenReturn(future);
         when(future.await(anyLong())).thenReturn(true);

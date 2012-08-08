@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.utils.hostinstall;
 
-public interface IVdsInstallCallBack {
+public interface IVdsInstallerCallback {
     void AddError(String error);
 
     void AddMessage(String message);

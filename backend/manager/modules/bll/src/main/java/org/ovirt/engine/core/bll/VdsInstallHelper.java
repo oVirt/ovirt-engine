@@ -5,9 +5,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.hostinstall.IVdsInstallCallBack;
-import org.ovirt.engine.core.utils.hostinstall.IVdsInstallWrapper;
-import org.ovirt.engine.core.utils.hostinstall.VdsInstallerFactory;
+import org.ovirt.engine.core.utils.hostinstall.IVdsInstallerCallback;
+import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -17,12 +16,12 @@ import org.ovirt.engine.core.utils.linq.Predicate;
  */
 public class VdsInstallHelper{
 
-    private IVdsInstallWrapper wrapper;
+    private VdsInstallerSSH wrapper;
     private SimpleCallback callback;
 
     public VdsInstallHelper() {
         callback = new SimpleCallback();
-        wrapper = VdsInstallerFactory.CreateVdsInstallWrapper();
+        wrapper = new VdsInstallerSSH();
         wrapper.InitCallback(callback);
     }
 
@@ -55,7 +54,7 @@ public class VdsInstallHelper{
         return getVdssByUniqueId(vdsId, uniqueIdToCheck).isEmpty();
     }
 
-    private class SimpleCallback implements IVdsInstallCallBack {
+    private class SimpleCallback implements IVdsInstallerCallback {
 
         String serverUniqueId;
 

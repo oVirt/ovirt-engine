@@ -24,16 +24,15 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.VdcException;
-import org.ovirt.engine.core.utils.hostinstall.ICAWrapper;
-import org.ovirt.engine.core.utils.hostinstall.IVdsInstallCallBack;
-import org.ovirt.engine.core.utils.hostinstall.IVdsInstallWrapper;
-import org.ovirt.engine.core.utils.hostinstall.VdsInstallerFactory;
+import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
+import org.ovirt.engine.core.utils.hostinstall.IVdsInstallerCallback;
+import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public class VdsInstaller implements IVdsInstallCallBack {
+public class VdsInstaller implements IVdsInstallerCallback {
     private static final String _remoteDirectory = "/tmp";
     private final String _certificatesDirectory = "certs";
     private final String _requestsDirectory = "requests";
@@ -65,8 +64,8 @@ public class VdsInstaller implements IVdsInstallCallBack {
 
     protected String _finishCommand = "";
 
-    protected final IVdsInstallWrapper _wrapper = VdsInstallerFactory.CreateVdsInstallWrapper();
-    private final ICAWrapper _caWrapper = VdsInstallerFactory.CreateCaWrapper();
+    protected final VdsInstallerSSH _wrapper = new VdsInstallerSSH();
+    private final OpenSslCAWrapper _caWrapper = new OpenSslCAWrapper();
     protected String _serverName;
     private final String _rootPassword;
     private final String _remoteBootstrapRunningScriptPath;

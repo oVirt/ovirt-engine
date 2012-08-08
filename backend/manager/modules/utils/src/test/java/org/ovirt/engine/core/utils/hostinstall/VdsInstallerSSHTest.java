@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 
-public class MinaInstallWrapperTest extends TestCase {
+public class VdsInstallerSSHTest extends TestCase {
     private int port = 54321;
     private SshServer sshd;
     private boolean WinOS = false;
@@ -54,14 +54,14 @@ public class MinaInstallWrapperTest extends TestCase {
     }
 
     @Test
-    public void testMinaInstallWrapper() throws Exception {
+    public void testVdsInstallerSSH() throws Exception {
         this.setup();
 
         IConfigUtilsInterface confInstance = new DefaultValuesConfigUtil();
         Config.setConfigUtils(confInstance);
 
         System.out.println("Testing password auth.");
-        MinaInstallWrapper mina = new MinaInstallWrapper();
+        VdsInstallerSSH mina = new VdsInstallerSSH();
         mina.setPort(port);
         System.out.println("Server port=" + port);
 
@@ -77,7 +77,7 @@ public class MinaInstallWrapperTest extends TestCase {
         mina = null;
 
         System.out.println("Testing public key auth.");
-        mina = new MinaInstallWrapper();
+        mina = new VdsInstallerSSH();
         mina.setPort(port);
 
         assertTrue(mina.ConnectToServer("127.0.0.1", "src/test/resources/.keystore", "NoSoup4U"));
