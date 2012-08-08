@@ -144,11 +144,12 @@ run_file() {
    local execFile=${1}
    isShellScript=$(file $execFile | grep "shell" | wc -l)
    if [ $isShellScript -gt 0 ]; then
-      echo "Running $2 upgrade shell script $execFile ..."
+       echo "Running $2 upgrade shell script $execFile ..."
+       export  DATABASE="${DATABASE}" SERVERNAME="${SERVERNAME}" PORT="${PORT}" USERNAME="${USERNAME}"
       ./$execFile
    else
       echo "Running $2 upgrade sql script $execFile ..."
-     execute_file $execFile ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+      execute_file $execFile ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
    fi
 }
 
@@ -364,4 +365,15 @@ check_and_install_uuid_osspa() {
         printf "\nAlternatively, specify the location of the file with -f parameter\n"
         exit 1
     fi
+}
+
+# gets the configuration value of the given option name and version.
+# usage: <some variable>=get_config_value <name> <version>
+get_config_value() {
+   local option_name=${1}
+   local version=${2}
+   cmd="select option_value from vdc_options where option_name ='${option_name}' and version = '${version}';"
+   # remove leading/trailing spaces from the result
+   # current implementation of execute_command use --echo-all flag of psql that outputs the query in 1st line
+   echo $(execute_command "${cmd}" ${DATABASE} ${SERVERNAME} ${PORT} | sed 's/^ *//g' | head -2 | tail -1 | tr -d ' ')
 }
