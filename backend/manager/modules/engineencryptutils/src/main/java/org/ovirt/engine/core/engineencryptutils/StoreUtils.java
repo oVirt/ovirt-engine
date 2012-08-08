@@ -185,7 +185,7 @@ public class StoreUtils {
                         )
                         );
             } else if (parser.hasArg("pubkey2ssh")) {
-                System.out.println(
+                System.out.print(
                         pubkey2ssh(
                                 parser.getArg("store"),
                                 parser.getArg("pass"),

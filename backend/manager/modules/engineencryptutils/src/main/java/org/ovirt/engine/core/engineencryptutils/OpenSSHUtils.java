@@ -113,7 +113,7 @@ public class OpenSSHUtils {
         }
 
         // Return the generated SSH public key:
-        final StringBuilder buffer = new StringBuilder(SSH_RSA.length() + 1 + encoding.length() + (alias != null? 1 + alias.length(): 0));
+        final StringBuilder buffer = new StringBuilder(SSH_RSA.length() + 1 + encoding.length() + (alias != null? 1 + alias.length(): 0) + 1);
         buffer.append(SSH_RSA);
         buffer.append(" ");
         buffer.append(encoding);
@@ -121,6 +121,7 @@ public class OpenSSHUtils {
             buffer.append(" ");
             buffer.append(alias);
         }
+        buffer.append('\n');
         final String keyString = buffer.toString();
         if (log.isDebugEnabled()) {
             log.debug("Key string is \"" + keyString + "\".");
