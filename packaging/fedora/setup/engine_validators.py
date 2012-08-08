@@ -71,19 +71,23 @@ def validatePort(param, options = []):
     if not (port > minVal and port < 65535) :
         logging.warn(output_messages.INFO_VAL_PORT_NOT_RANGE %(minVal))
         print output_messages.INFO_VAL_PORT_NOT_RANGE %(minVal)
+        print output_messages.INFO_VAL_CHOOSE_PORT
         return False
     if isProxyEnabled and param in[basedefs.JBOSS_HTTP_PORT, basedefs.JBOSS_HTTPS_PORT, basedefs.JBOSS_AJP_PORT]:
         logging.warn(output_messages.INFO_VAL_PORT_OCCUPIED_BY_JBOSS %(param))
         print output_messages.INFO_VAL_PORT_OCCUPIED_BY_JBOSS %(param)
+        print output_messages.INFO_VAL_CHOOSE_PORT
         return False
     (portOpen, process, pid) = utils.isTcpPortOpen(param)
     if portOpen:
         logging.warn(output_messages.INFO_VAL_PORT_OCCUPIED % (param, process, pid))
         print output_messages.INFO_VAL_PORT_OCCUPIED % (param, process, pid)
+        print output_messages.INFO_VAL_CHOOSE_PORT
         return False
     if isProxyEnabled and not checkAndSetHttpdPortPolicy(param):
         logging.warn(output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY, port)
         print output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY % port
+        print output_messages.INFO_VAL_CHOOSE_PORT
         return False
     return True
 
