@@ -11,6 +11,7 @@ public class EngineDirectoryServiceException extends Exception {
     private AuthenticationResult result;
 
     public EngineDirectoryServiceException(AuthenticationResult result) {
+        super(result.getDetailedMessage());
         this.result = result;
     }
 
@@ -24,7 +25,7 @@ public class EngineDirectoryServiceException extends Exception {
     }
 
     public EngineDirectoryServiceException(AuthenticationResult result,Throwable cause) {
-        super(cause);
+        super(result.getDetailedMessage(),cause);
         this.result = result;
     }
 

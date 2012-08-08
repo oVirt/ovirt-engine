@@ -12,12 +12,12 @@ import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.CommunicationException;
 
-public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchExceptionHandlingResponse> {
+public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchExceptionHandlingResponse, LdapCredentials> {
 
     private static final Log log = LogFactory.getLog(LdapSearchExceptionHandler.class);
 
     @Override
-    public LdapSearchExceptionHandlingResponse handle(Exception e) {
+    public LdapSearchExceptionHandlingResponse handle(Exception e, LdapCredentials params) {
         LdapSearchExceptionHandlingResponse response = new LdapSearchExceptionHandlingResponse();
         if (e instanceof EngineDirectoryServiceException) {
             handleEngineDirectoryServiceException(response, e);
@@ -35,7 +35,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
                     found = true;
                     break;
                 } else if (throwable instanceof OperationNotSupportedException) {
-                    handleOperationException(response, throwable);
+                    handleOperationException(response, throwable, params);
                     found = true;
                     break;
                 }
@@ -61,11 +61,14 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     }
 
     private void handleOperationException(LdapSearchExceptionHandlingResponse response,
-            Throwable throwable) {
+            Throwable throwable, LdapCredentials credentials) {
         response.setServerScore(Score.HIGH)
                 .setTranslatedException(new EngineDirectoryServiceException(AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED,
                         throwable))
                 .setTryNextServer(false);
+        //Account may get locked between kerberos authentication and ldap querying.
+        //The audit log infrastructure prevents double logging in case the scenario in the above line does not occur (which is in most cases)
+        LdapBrokerUtils.logEventForUser(credentials.getUserName(), AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED.getAuditLogType());
     }
 
     private void handleInterruptException(LdapSearchExceptionHandlingResponse response, Throwable cause) {

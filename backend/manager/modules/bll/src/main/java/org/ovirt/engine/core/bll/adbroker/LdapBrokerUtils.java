@@ -13,6 +13,7 @@ import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.config.Config;
@@ -21,6 +22,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 /**
  * Helper class for AD issues
@@ -359,6 +362,12 @@ public class LdapBrokerUtils {
         // remove the first "." character.
         sb.delete(0, 1);
         return sb.toString();
+    }
+
+    public static void logEventForUser(String userName, AuditLogType auditLogType) {
+        AuditLogableBase msg = new AuditLogableBase();
+        msg.setUserName(userName);
+        AuditLogDirector.log(msg, auditLogType);
     }
 
     public static String getGuidFromNsUniqueId(String nsUniqueId) {

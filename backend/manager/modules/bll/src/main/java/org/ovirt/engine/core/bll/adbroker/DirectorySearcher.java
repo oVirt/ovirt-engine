@@ -20,7 +20,7 @@ public class DirectorySearcher {
 
     private final LdapCredentials ldapCredentials;
     private Exception ex;
-    private static final ExceptionHandler<LdapSearchExceptionHandlingResponse> handler =
+    private static final ExceptionHandler<LdapSearchExceptionHandlingResponse, LdapCredentials> handler =
             new LdapSearchExceptionHandler();
 
     public void setExplicitAuth(boolean explicitAuth) {
@@ -108,7 +108,7 @@ public class DirectorySearcher {
                 domain.scoreLdapServer(ldapURI, Score.HIGH);
                 return response; // No point in continuing to next LDAP server if we have success.
             } catch (Exception exception) {
-                LdapSearchExceptionHandlingResponse handlingResponse = handler.handle(exception);
+                LdapSearchExceptionHandlingResponse handlingResponse = handler.handle(exception,ldapCredentials);
                 Exception translatedException = handlingResponse.getTranslatedException();
                 setException(translatedException);
                 domain.scoreLdapServer(ldapURI, handlingResponse.getServerScore());

@@ -19,8 +19,6 @@ import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
@@ -142,9 +140,7 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
             KerberosReturnCodeParser parser = new KerberosReturnCodeParser();
             AuthenticationResult result = parser.parse(ex.getMessage());
             if (result.getAuditLogType() != null) {
-                AuditLogableBase msg = new AuditLogableBase();
-                msg.AddCustomValue("UserName", userName); // Username is passed in format of user@REALM
-                AuditLogDirector.log(msg, result.getAuditLogType());
+                LdapBrokerUtils.logEventForUser(userName, result.getAuditLogType());
             }
             if (result == AuthenticationResult.OTHER || result == null) {
                 // An error our error parser does not recognize
