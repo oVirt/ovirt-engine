@@ -1467,7 +1467,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Add Network")
     String addNetworkNetwork();
 
-    @DefaultStringValue("Assign/UnAssign Networks")
+    @DefaultStringValue("Assign/Unassign Networks")
     String assignDetatchNetworksNework();
 
     @DefaultStringValue("Set as Display")
@@ -1898,7 +1898,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Display")
     String displayItemInfo();
 
-    @DefaultStringValue("UnManaged Network")
+    @DefaultStringValue("Unmanaged Network")
     String unmanagedNetworkItemInfo();
 
     @DefaultStringValue("Management")

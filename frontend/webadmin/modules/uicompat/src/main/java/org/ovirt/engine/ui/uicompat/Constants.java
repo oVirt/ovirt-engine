@@ -32,7 +32,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Setup Host Networks")
 	String setupHostNetworksTitle();
 
-	@DefaultStringValue("Assign/UnAssign Networks")
+	@DefaultStringValue("Assign/Unassign Networks")
 	String assignDetachNetworksTitle();
 
 	@DefaultStringValue("Clusters")
