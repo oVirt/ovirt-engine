@@ -179,6 +179,7 @@ WARN_ISO_DOMAIN_SECURITY="A default ISO share has been created on this host.\n\
 WARN_LOW_MEMORY="There are less than %s MBs of available free memory on this machine.\nIt is  recommended to have at least %s MBs of available memory to run the %s." % (basedefs.CONST_WARN_MEMORY_MB, basedefs.CONST_WARN_MEMORY_MB, basedefs.APP_NAME)
 
 WARN_WEAK_PASS="Warning: Weak Password."
+WARN_SPACES_IN_PASS = "Error: White spaces are not allowed in passwords"
 
 # General error input messages
 INFO_STRING_LEN_LESS_THAN_MIN="String length is less than the minimum allowed: %s"

@@ -1,9 +1,9 @@
 #!/bin/sh 
-
 die () {
-        printf >&2 "$@"
-        exit 1
+    printf >&2 "$@"
+    exit 1
 }
+
 
 
 usage () {
@@ -15,11 +15,11 @@ usage () {
 	return 0
 }
 
-
 if [ ! "$#" -eq 1 ]; then
-	usage 
-	die "Error: wrong argument number: $#.\n"
+    usage
+    die "Error: wrong argument number: $#.\n"
 fi
+
 
 JAVA_BIN=java
 if [[ "x${JAVA_HOME}" != "x" ]] ;then
@@ -37,7 +37,7 @@ pushd  $JBOSS_HOME
 #        exit 1
 #fi
 
-$JAVA_BIN -cp `build-classpath jboss-logging picketbox/picketbox` org.picketbox.datasource.security.SecureIdentityLoginModule $1
+$JAVA_BIN -cp `build-classpath jboss-logging picketbox/picketbox` org.picketbox.datasource.security.SecureIdentityLoginModule "$1"
 
 popd
 
