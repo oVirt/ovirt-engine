@@ -60,6 +60,9 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
         // Update USB filters
         updateUsbFilter();
+
+        // Update Spice version if needed
+        updateSpiceVersion();
     }
 
     public void updateUsbFilter() {

@@ -45,9 +45,6 @@ public abstract class Configurator {
         setBackendPort("8080"); //$NON-NLS-1$
         setLogLevel("INFO"); //$NON-NLS-1$
         setPollingTimerInterval(5000);
-
-        // Update Spice version if needed
-        updateSpiceVersion();
     }
 
     protected static final String DEFAULT_USB_FILTER = "-1,-1,-1,-1,0"; //$NON-NLS-1$
@@ -361,7 +358,7 @@ public abstract class Configurator {
         fetchFile(getSpiceBaseURL() + "SpiceVersion_x64.txt", getSpiceVersionFileFetchedEvent()); //$NON-NLS-1$
     }
 
-    private void updateSpiceVersion() {
+    protected void updateSpiceVersion() {
         // Update spice version from the text files which are located on the server.
         // If can't update spice version - leave the default value from the Configurator.
         if ((clientOsType().equalsIgnoreCase("Windows")) && (clientBrowserType().equalsIgnoreCase("Explorer"))) { //$NON-NLS-1$ //$NON-NLS-2$

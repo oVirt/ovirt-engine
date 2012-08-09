@@ -43,6 +43,9 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);
         documentationFileFetchedEvent.addListener(this);
+
+        // Update Spice version if needed
+        updateSpiceVersion();
     }
 
     @Override
