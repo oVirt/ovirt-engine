@@ -24,7 +24,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
     private static Log log = LogFactory.getLog(InstallVdsCommand.class);
     protected VdsInstaller _vdsInstaller;
-    private static final String GENERIC_ERROR = "Please refer to log files for further details.";
+    private static final String GENERIC_ERROR = "Please refer to enging.log on engine and log files under /tmp on host for further details.";
 
     public InstallVdsCommand(T parameters) {
         super(parameters);
