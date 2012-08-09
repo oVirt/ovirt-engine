@@ -21,6 +21,7 @@ public class BackendGroupResourceTest
         initResource(resource.getParent());
         resource.getParent().setBackend(backend);
         resource.getParent().setMappingLocator(mapperLocator);
+        resource.getParent().setValidatorLocator(validatorLocator);
         resource.getParent().setSessionHelper(sessionHelper);
         resource.getParent().setMessageBundle(messageBundle);
         resource.getParent().setHttpHeaders(httpHeaders);

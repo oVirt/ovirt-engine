@@ -38,6 +38,7 @@ public class BackendAssignedRolesResource
     @Override
     public Response add(Role role) {
         validateParameters(role, "id|name");
+        validateEnums(Role.class, role);
         if (!role.isSetId()) {
             roles entity = getEntity(roles.class, VdcQueryType.GetRoleByName, new MultilevelAdministrationByRoleNameParameters(role.getName()), role.getName());
             role.setId(entity.getId().toString());

@@ -16,7 +16,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendNicsResource.SUB_COLL
 
 
 public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> implements VmDiskResource {
-
     protected BackendVmDiskResource(String id,
                                   AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> collection,
                                   VdcActionType updateType,
@@ -77,6 +76,7 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
 
     @Override
     public Disk update(Disk resource) {
+        validateEnums(Disk.class, resource);
         return super.update(resource);//explicit call solves REST-Easy confusion
     }
 }

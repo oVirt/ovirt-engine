@@ -77,6 +77,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     @Override
     public Response add(Cluster cluster) {
         validateParameters(cluster, "name", "dataCenter.name|id");
+        validateEnums(Cluster.class, cluster);
         storage_pool pool = getStoragePool(cluster, this);
         VDSGroup entity = map(cluster, map(pool));
         return performCreation(VdcActionType.AddVdsGroup,

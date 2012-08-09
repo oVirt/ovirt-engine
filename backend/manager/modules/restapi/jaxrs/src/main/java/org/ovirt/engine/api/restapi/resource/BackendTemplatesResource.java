@@ -57,6 +57,7 @@ public class BackendTemplatesResource
     @Override
     public Response add(Template template) {
         validateParameters(template, "name", "vm.id|name");
+        validateEnums(Template.class, template);
         VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, getVm(template));
         if (namedCluster(template)) {
             staticVm.setvds_group_id(getClusterId(template));

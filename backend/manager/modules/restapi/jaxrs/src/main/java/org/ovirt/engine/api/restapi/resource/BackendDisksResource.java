@@ -20,7 +20,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendDisksResource extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.Disk> implements DisksResource{
 
     private static final String SUB_COLLECTIONS = "statistics";
-
     public BackendDisksResource() {
         super(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class, SUB_COLLECTIONS);
     }
@@ -28,6 +27,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     @Override
     public Response add(Disk disk) {
         validateParameters(disk, "provisionedSize|size", "format", "interface");
+        validateEnums(Disk.class, disk);
         AddDiskParameters params = new AddDiskParameters();
         params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, null));
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {

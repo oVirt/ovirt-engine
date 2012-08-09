@@ -40,7 +40,11 @@ public class EnumValidator {
      * iff the @name is invalid
      */
     public static <E extends Enum<E>> E validateEnum(Class<E> clz, String name) {
-        return validateEnum(INVALID_ENUM_REASON, INVALID_ENUM_DETAIL, clz, name);
+        return validateEnum(clz, name, false);
+    }
+
+    public static <E extends Enum<E>> E validateEnum(Class<E> clz, String name, boolean toUppercase) {
+        return validateEnum(INVALID_ENUM_REASON, INVALID_ENUM_DETAIL, clz, name, toUppercase);
     }
 
     /* Validate that @name is the name of an enum constant from the
@@ -55,8 +59,12 @@ public class EnumValidator {
      * iff the @name is invalid
      */
     public static <E extends Enum<E>> E validateEnum(String reason, String detail, Class<E> clz, String name) {
+        return validateEnum(reason, detail, clz, name, false);
+    }
+
+    public static <E extends Enum<E>> E validateEnum(String reason, String detail, Class<E> clz, String name, boolean toUppercase) {
         try {
-            return Enum.valueOf(clz, name);
+            return Enum.valueOf(clz, toUppercase ? name.toUpperCase() : name);
         } catch (IllegalArgumentException e) {
             throw new WebApplicationException(response(reason, MessageFormat.format(detail, name, clz.getSimpleName())));
         }

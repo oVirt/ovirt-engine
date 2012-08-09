@@ -52,6 +52,7 @@ public class BackendRoleResource
 
     @Override
     public Role update(Role role) {
+        validateEnums(Role.class, role);
         return performUpdate(role,
                 new QueryIdResolver(VdcQueryType.GetRoleById, MultilevelAdministrationByRoleIdParameters.class),
                 VdcActionType.UpdateRole,

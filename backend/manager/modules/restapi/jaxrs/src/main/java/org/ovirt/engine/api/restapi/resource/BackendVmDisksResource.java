@@ -51,6 +51,7 @@ public class BackendVmDisksResource
 
     @Override
     public Response add(Disk disk) {
+        validateEnums(Disk.class, disk);
         if (disk.isSetId()) {
             return attachDiskToVm(disk);
         }else {

@@ -32,6 +32,7 @@ public class BackendClusterResource extends AbstractBackendSubResource<Cluster, 
 
     @Override
     public Cluster update(Cluster incoming) {
+        validateEnums(Cluster.class, incoming);
         return performUpdate(incoming,
                              new QueryIdResolver(VdcQueryType.GetVdsGroupById, GetVdsGroupByIdParameters.class),
                              VdcActionType.UpdateVdsGroup,

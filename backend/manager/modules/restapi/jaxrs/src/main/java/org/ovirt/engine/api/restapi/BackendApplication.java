@@ -54,6 +54,7 @@ import org.ovirt.engine.api.restapi.resource.BackendTemplatesResource;
 import org.ovirt.engine.api.restapi.resource.BackendUsersResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmsResource;
+import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.security.auth.LoginValidator;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
@@ -67,6 +68,7 @@ public class BackendApplication extends Application {
     // The messages bundle:
     private MessageBundle messageBundle;
     private MappingLocator mappingLocator;
+    private ValidatorLocator validatorLocator;
     private SessionHelper sessionHelper;
 
     // The reference to the backend bean:
@@ -84,6 +86,10 @@ public class BackendApplication extends Application {
         // Create and populate the mapping locator:
         mappingLocator = new MappingLocator();
         mappingLocator.populate();
+
+        // Create and populate the validator locator:
+        validatorLocator = new ValidatorLocator();
+        validatorLocator.populate();
 
         // Create the session helper:
         final Current current = new Current();
@@ -154,6 +160,7 @@ public class BackendApplication extends Application {
         else if (resource instanceof CapabilitiesResource) {
             ((BackendCapabilitiesResource) resource).setMappingLocator(mappingLocator);
         }
+        resource.setValidatorLocator(validatorLocator);
         singletons.add(resource);
     }
 

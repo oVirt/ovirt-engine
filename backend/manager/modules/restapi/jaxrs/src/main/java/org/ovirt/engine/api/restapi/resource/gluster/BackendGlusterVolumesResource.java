@@ -104,12 +104,12 @@ public class BackendGlusterVolumesResource
 
         if (volume.isSetTransportTypes())
         {
-            validateEnums(TransportType.class, volume.getTransportTypes().getTransportTypes());
+            validateEnumValues(TransportType.class, volume.getTransportTypes().getTransportTypes());
         }
 
         if (volume.isSetAccessProtocols())
         {
-            validateEnums(AccessProtocol.class, volume.getAccessProtocols().getAccessProtocols());
+            validateEnumValues(AccessProtocol.class, volume.getAccessProtocols().getAccessProtocols());
         }
     }
 

@@ -29,6 +29,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
+import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
@@ -87,6 +88,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected Principal principal;
     protected SessionHelper sessionHelper;
     protected MappingLocator mapperLocator;
+    protected ValidatorLocator validatorLocator;
     protected Locale locale;
     protected HttpHeaders httpHeaders;
     protected List<Locale> locales;
@@ -115,6 +117,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue).anyTimes();
         mapperLocator = new MappingLocator();
         mapperLocator.populate();
+        validatorLocator = new ValidatorLocator();
+        validatorLocator.populate();
         locale = Locale.getDefault();
         Locale.setDefault(Locale.GERMANY);
         messageBundle = new MessageBundle();

@@ -51,6 +51,7 @@ public class BackendDataCentersResource extends
     @Override
     public Response add(DataCenter dataCenter) {
         validateParameters(dataCenter, "name", "storageType");
+        validateEnums(DataCenter.class, dataCenter);
         validateEnum(StorageType.class, dataCenter.getStorageType().toUpperCase());
         storage_pool entity = map(dataCenter);
         return performCreation(VdcActionType.AddEmptyStoragePool,

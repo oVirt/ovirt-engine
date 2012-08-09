@@ -28,6 +28,7 @@ public class BackendNetworkResource
 
     @Override
     public Network update(Network incoming) {
+        validateEnums(Network.class, incoming);
         return performUpdate(incoming,
                              getParent().getNetworkIdResolver(),
                              VdcActionType.UpdateNetwork,

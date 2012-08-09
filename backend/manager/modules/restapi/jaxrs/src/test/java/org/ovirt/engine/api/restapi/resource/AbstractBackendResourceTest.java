@@ -8,6 +8,7 @@ public abstract class AbstractBackendResourceTest<R extends BaseResource, Q /* e
     protected void initResource(AbstractBackendResource<R, Q> resource) {
         resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
+        resource.setValidatorLocator(validatorLocator);
         resource.setSessionHelper(sessionHelper);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);

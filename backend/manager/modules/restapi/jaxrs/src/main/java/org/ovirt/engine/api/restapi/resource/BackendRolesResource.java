@@ -39,6 +39,7 @@ public class BackendRolesResource
     @Override
     public Response add(Role role) {
         validateParameters(role, "name", "permits.id");
+        validateEnums(Role.class, role);
         return performCreation(VdcActionType.AddRoleWithActionGroups,
                                new RoleWithActionGroupsParameters(map(role), mapPermits(role.getPermits().getPermits())),
                                new QueryIdResolver(VdcQueryType.GetRoleById, MultilevelAdministrationByRoleIdParameters.class));

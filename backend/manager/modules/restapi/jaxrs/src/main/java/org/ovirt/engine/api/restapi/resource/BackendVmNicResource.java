@@ -54,6 +54,7 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
         //TODO: this is temporary mapping between engine boolean port mirroring parameter, and REST
         //      port mirroring network collection, next engine version will support the network collection
         //      in port mirroring
+        validateEnums(NIC.class, device);
         boolean fault = false;
         String faultString = null;
         boolean isPortMirroring = device.isSetPortMirroring() && device.getPortMirroring().isSetNetworks();

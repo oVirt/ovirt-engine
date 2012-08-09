@@ -19,6 +19,7 @@ import org.ovirt.engine.api.common.util.EnumValidator;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -40,6 +41,7 @@ public class BaseBackendResource {
     protected MessageBundle messageBundle;
     protected UriInfo uriInfo;
     protected HttpHeaders httpHeaders;
+    protected ValidatorLocator validatorLocator;
 
     public void setBackend(BackendLocal backend) {
         this.backend = backend;
@@ -85,6 +87,14 @@ public class BaseBackendResource {
 
     protected Current getCurrent() {
         return sessionHelper.getCurrent();
+    }
+
+    protected ValidatorLocator getValidatorLocator() {
+        return validatorLocator;
+    }
+
+    public void setValidatorLocator(ValidatorLocator validatorLocator) {
+        this.validatorLocator = validatorLocator;
     }
 
     protected <P extends VdcQueryParametersBase> P sessionize(P parameters) {
@@ -293,7 +303,7 @@ public class BaseBackendResource {
         return EnumValidator.validateEnum(reason, detail, clz, name);
     }
 
-    public <E extends Enum<E>> List<E> validateEnums(Class<E> clz, List<String> names) {
+    public <E extends Enum<E>> List<E> validateEnumValues(Class<E> clz, List<String> names) {
         ArrayList<E> enumList = new ArrayList<E>();
 
         for (String name : names)

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.api.restapi.resource.validation.Validator;
 
 public class BackendResource extends BaseBackendResource {
     protected static final int NO_LIMIT = -1;
@@ -236,5 +237,13 @@ public class BackendResource extends BaseBackendResource {
 
     static String asString(Version version) {
         return version == null ? null : MessageFormat.format(VERSION_FORMAT, version.getMajor(), version.getMinor());
+    }
+
+    protected <E> Validator<E> getValidator(Class<E> validatedClass) {
+        return (Validator<E>) getValidatorLocator().getValidator(validatedClass);
+    }
+
+    protected <E> void validateEnums(Class<E> validatedClass, E instance) {
+        getValidator(validatedClass).validateEnums(instance);
     }
 }

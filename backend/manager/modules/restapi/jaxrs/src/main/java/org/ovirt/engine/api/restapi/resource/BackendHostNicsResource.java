@@ -79,6 +79,7 @@ public class BackendHostNicsResource
     @Override
     public Response add(final HostNIC nic) {
         validateParameters(nic, "name", "network.id|name", "bonding.slaves.id|name");
+        validateEnums(HostNIC.class, nic);
         return performCreation(VdcActionType.AddBond,
                                new AddBondParameters(asGuid(hostId),
                                                      nic.getName(),

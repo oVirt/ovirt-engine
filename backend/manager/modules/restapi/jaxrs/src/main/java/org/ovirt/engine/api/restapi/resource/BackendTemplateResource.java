@@ -50,6 +50,7 @@ public class BackendTemplateResource
 
     @Override
     public Template update(Template incoming) {
+        validateEnums(Template.class, incoming);
         return performUpdate(incoming,
                              new QueryIdResolver(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
                              VdcActionType.UpdateVmTemplate,

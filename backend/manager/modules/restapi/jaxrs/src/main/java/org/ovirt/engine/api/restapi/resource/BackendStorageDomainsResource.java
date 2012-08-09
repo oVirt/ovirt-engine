@@ -162,8 +162,7 @@ public class BackendStorageDomainsResource
     @Override
     public Response add(StorageDomain storageDomain) {
         validateParameters(storageDomain, "host.id|name", "type", "storage.type");
-        validateEnum(org.ovirt.engine.api.model.StorageDomainType.class, storageDomain.getType().toUpperCase());
-        validateEnum(org.ovirt.engine.api.model.StorageType.class, storageDomain.getStorage().getType().toUpperCase());
+        validateEnums(StorageDomain.class, storageDomain);
 
         storage_domain_static entity = mapToStatic(storageDomain);
         Guid hostId = getHostId(storageDomain);

@@ -37,6 +37,7 @@ public class BackendPermitsResource
     @Override
     public Response add(Permit permit) {
         validateParameters(permit, "name|id");
+        validateEnums(Permit.class, permit);
         ArrayList<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
         actionGroups.add(map(permit));
         return performCreation(VdcActionType.AttachActionGroupsToRole,

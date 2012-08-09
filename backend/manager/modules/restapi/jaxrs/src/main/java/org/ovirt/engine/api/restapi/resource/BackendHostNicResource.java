@@ -94,6 +94,7 @@ public class BackendHostNicResource
     @SuppressWarnings("serial")
     @Override
     public HostNIC update(HostNIC nic) {
+        validateEnums(HostNIC.class, nic);
         VdsNetworkInterface originalInter = parent.lookupInterface(id);
         final VdsNetworkInterface inter = map(nic, originalInter);
         org.ovirt.engine.core.common.businessentities.Network oldNetwork = getOldNetwork(originalInter);

@@ -79,7 +79,7 @@ public class BackendVmsResource extends
     @Override
     public Response add(VM vm) {
         validateParameters(vm, "name", "template.id|name", "cluster.id|name");
-
+        validateEnums(VM.class, vm);
         Guid templateId = getTemplateId(vm);
         VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm,
                                                                     getMapper(VmTemplate.class, VmStatic.class).map(lookupTemplate(templateId), null));

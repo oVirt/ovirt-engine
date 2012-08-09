@@ -60,6 +60,7 @@ public class BackendVmNicsResource
         //      in port mirroring
 
         // if port mirroring exists we check that the network id is equals to the nic network name
+        validateEnums(NIC.class, device);
         if (device.isSetPortMirroring() &&
                 device.getPortMirroring().isSetNetworks()
                 &&

@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.PermitType;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.PermitMapper;
 
@@ -18,10 +19,13 @@ public class BackendPermitResourceTest extends Assert {
     private static final Guid ROLE_ID = new Guid("11111111-1111-1111-1111-111111111111");
 
     private MappingLocator mapperLocator;
+    private ValidatorLocator validatorLocator;
 
     public BackendPermitResourceTest() {
         mapperLocator = new MappingLocator();
         mapperLocator.populate();
+        validatorLocator = new ValidatorLocator();
+        validatorLocator.populate();
     }
 
     @Test
@@ -52,6 +56,8 @@ public class BackendPermitResourceTest extends Assert {
                 new BackendPermitResource(Integer.toString(action.getId()), new BackendPermitsResource(ROLE_ID));
             resource.setMappingLocator(mapperLocator);
             resource.getParent().setMappingLocator(mapperLocator);
+            resource.setValidatorLocator(validatorLocator);
+            resource.getParent().setValidatorLocator(validatorLocator);
             verifyPermit(resource.get(), action);
         }
     }

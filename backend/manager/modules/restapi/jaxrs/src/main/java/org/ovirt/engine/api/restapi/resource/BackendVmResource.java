@@ -66,7 +66,6 @@ public class BackendVmResource extends
         VmResource {
 
     private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
-
     private BackendVmsResource parent;
 
     public BackendVmResource(String id, BackendVmsResource parent) {
@@ -91,6 +90,7 @@ public class BackendVmResource extends
 
     @Override
     public VM update(VM incoming) {
+        validateEnums(VM.class, incoming);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
             if(!clusterId.toString().equals(get().getCluster().getId())){
@@ -215,6 +215,7 @@ public class BackendVmResource extends
         }
 
         if (action.isSetVm()) {
+            validateEnums(VM.class, action.getVm());
             VM vm = action.getVm();
 
             if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {

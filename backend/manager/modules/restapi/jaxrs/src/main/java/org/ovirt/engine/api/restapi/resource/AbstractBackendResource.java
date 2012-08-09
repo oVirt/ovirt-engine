@@ -65,6 +65,7 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
     protected <S extends AbstractBackendResource<?, ?>> S inject(S resource) {
         resource.setBackend(backend);
         resource.setMappingLocator(mappingLocator);
+        resource.setValidatorLocator(validatorLocator);
         resource.setSessionHelper(sessionHelper);
         resource.setMessageBundle(messageBundle);
         resource.setUriInfo(uriInfo);
