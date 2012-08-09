@@ -166,6 +166,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         privateGuideContext = value;
     }
 
+    DataCenterQuotaListModel quotaListModel;
+
     public DataCenterListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
@@ -228,7 +230,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         list.add(new DataCenterStorageListModel());
         list.add(new DataCenterNetworkListModel());
         list.add(new DataCenterClusterListModel());
-        list.add(new DataCenterQuotaListModel());
+        quotaListModel = new DataCenterQuotaListModel();
+        quotaListModel.setIsAvailable(false);
+        list.add(quotaListModel);
         list.add(new PermissionListModel());
         list.add(new DataCenterEventListModel());
         setDetailModels(list);
@@ -730,6 +734,17 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
+        }
+    }
+
+    @Override
+    protected void UpdateDetailsAvailability() {
+        super.UpdateDetailsAvailability();
+        if (getSelectedItem() != null
+                && ((storage_pool) getSelectedItem()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+            quotaListModel.setIsAvailable(true);
+        } else {
+            quotaListModel.setIsAvailable(false);
         }
     }
 
