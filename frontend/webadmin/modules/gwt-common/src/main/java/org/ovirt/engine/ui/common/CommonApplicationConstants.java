@@ -935,7 +935,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("CPU Pinning topology")
     String cpuPinningLabel();
 
-    @DefaultStringValue("Format: v1#p1_v2#p2_..._v<n>#p<n></br></br>Examples:</br>0#0_1#3</br>1#1-4,^2")
+    @DefaultStringValue("Format: v#p[_v#p]</br>Examples:</br>&#149;0#0 => pin vCPU 0 to pCPU 0</br>&#149;0#0_1#3 => pin vCPU 0 to pCPU 0 and pin vCPU 1 to pCPU 3</br>&#149;1#1-4,^2 => pin vCPU 1 to pCPU set 1 to 4, excluding 2</br>")
     String cpuPinningLabelExplanation();
 
     @DefaultStringValue("Migration is NOT currently supported using SPICE Native USB redirection")
