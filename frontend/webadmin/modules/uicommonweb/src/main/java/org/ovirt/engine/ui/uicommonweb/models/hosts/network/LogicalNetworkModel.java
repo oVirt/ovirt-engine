@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
@@ -185,10 +186,21 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
 
     public boolean isInSync() {
-        return isAttached() && getAttachedToNic().getEntity().getNetworkImplementationDetails() != null ? getAttachedToNic().getEntity().getNetworkImplementationDetails().isInSync() : true;
+        NetworkImplementationDetails details = getNetworkImplementationDetails();
+        return details != null ? details.isInSync() : true;
     }
 
     public boolean isManaged(){
-        return isAttached() && getAttachedToNic().getEntity().getNetworkImplementationDetails() != null? getAttachedToNic().getEntity().getNetworkImplementationDetails().isManaged() : true;
+        NetworkImplementationDetails details = getNetworkImplementationDetails();
+        return details != null? details.isManaged() : true;
+    }
+
+    public NetworkImplementationDetails getNetworkImplementationDetails(){
+        if (!isAttached()){
+            return null;
+        }
+
+        VdsNetworkInterface nic = hasVlan() ? getBridge().getEntity() : getAttachedToNic().getEntity();
+        return nic.getNetworkImplementationDetails();
     }
 }
