@@ -125,12 +125,12 @@
 		}
 
 		.checkCon {
-			width: 285px;
+			width: 290px;
 			padding: 5px;
 		}
 
 		.commitChanges{
-			width: 185px;
+			width: 190px;
 			padding: 5px;
 		}
 
