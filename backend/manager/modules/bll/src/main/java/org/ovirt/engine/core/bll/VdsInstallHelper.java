@@ -9,6 +9,8 @@ import org.ovirt.engine.core.utils.hostinstall.IVdsInstallerCallback;
 import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 /**
  * Class designed to provide connectivity to host and retrieval of its unique-id in order to validate host status before
@@ -30,7 +32,9 @@ public class VdsInstallHelper{
     }
 
     public String getServerUniqueId() {
-        wrapper.executeCommand(VdsInstaller._getUniqueIdCommand);
+        wrapper.executeCommand(
+            Config.<String> GetValue(ConfigValues.BootstrapNodeIDCommand)
+        );
         return callback.serverUniqueId;
     }
 

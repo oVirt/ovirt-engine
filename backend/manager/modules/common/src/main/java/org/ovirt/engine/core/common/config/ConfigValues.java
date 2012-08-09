@@ -1395,6 +1395,16 @@ public enum ConfigValues {
     @DefaultValueAttribute("{\"storage domains\":\"false\",\"hosts\":\"false\"}")
     AutoRecoveryAllowedTypes(371),
 
+    // <HW UUID>_<lowest MAC>
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute(
+            "dmidecode | awk ' /UUID/{ print $2; } ' | tr '\n' '_' && " +
+            "cat /sys/class/net/*/address | sed -e '/00:00:00:00/d' -e '/^$/d' | " +
+            "sort -u | head -n 1"
+    )
+    BootstrapNodeIDCommand(372),
+
     Invalid(65535);
 
     private int intValue;
