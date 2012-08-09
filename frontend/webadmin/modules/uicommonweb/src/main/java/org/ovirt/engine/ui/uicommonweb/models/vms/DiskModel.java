@@ -870,7 +870,7 @@ public class DiskModel extends Model
         }
 
         boolean isSanStorageModelValid = true;
-        if (!(Boolean) isInternal.getEntity() && getSanStorageModel() != null) {
+        if (!(Boolean) isInternal.getEntity() && getSanStorageModel() != null && getIsNew()) {
             getSanStorageModel().Validate();
             isSanStorageModelValid = getSanStorageModel().getIsValid();
         }
