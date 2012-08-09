@@ -33,6 +33,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.put("TAG", "TAG");
         mVerbs.put("DATACENTER", "DATACENTER");
         mVerbs.put("TYPE", "TYPE");
+        mVerbs.put("QUOTA", "QUOTA");
         // Building the autoCompletion Dict
         buildCompletions();
         mVerbs.put("_VM_ID", "_VM_ID");
@@ -57,6 +58,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("TAG", String.class);
         getTypeDictionary().put("DATACENTER", String.class);
         getTypeDictionary().put("TYPE", VmType.class);
+        getTypeDictionary().put("QUOTA", String.class);
         getTypeDictionary().put("_VM_ID", UUID.class);
 
         // building the ColumnName Dict
@@ -80,6 +82,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mColumnNameDict.put("TAG", "tag_name");
         mColumnNameDict.put("DATACENTER", "storage_pool_name");
         mColumnNameDict.put("TYPE", "vm_type");
+        mColumnNameDict.put("QUOTA", "quota_name");
         mColumnNameDict.put("_VM_ID", "vm_guid");
         /**
          */
@@ -110,6 +113,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
             return new EnumValueAutoCompleter(VMStatus.class);
         } else if ("TYPE".equals(fieldName)) {
             return new EnumValueAutoCompleter(VmType.class);
+        } else if ("QUOTA".equals(fieldName)) {
+            return new NullableStringAutoCompleter();
         }
         return null;
     }
