@@ -462,11 +462,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = super.getJobMessageProperties();
+            jobProperties = new HashMap<String, String>();
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(),
                     (getVmTemplateName() == null) ? "" : getVmTemplateName());
+            jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), getStoragePoolName());
         }
-
         return jobProperties;
     }
 
