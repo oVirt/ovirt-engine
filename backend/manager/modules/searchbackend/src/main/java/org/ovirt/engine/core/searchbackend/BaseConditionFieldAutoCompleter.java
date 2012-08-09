@@ -340,7 +340,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         formatValue(fieldName, tempRefObject, tempRefObject2, caseSensitive);
         customizedRelation = tempRefObject.argvalue;
         customizedValue = tempRefObject2.argvalue;
-        if (("''".equals(customizedValue) || "n'null'".equalsIgnoreCase(customizedValue))
+        if (("''".equals(customizedValue) || "'null'".equalsIgnoreCase(customizedValue))
                 && (("=".equals(customizedRelation)) || ("!=".equals(customizedRelation)))) {
             String nullRelation = ("=".equals(customizedRelation)) ? "IS" : "IS NOT";
             String SqlCond = ("=".equals(customizedRelation)) ? "OR" : "AND";
