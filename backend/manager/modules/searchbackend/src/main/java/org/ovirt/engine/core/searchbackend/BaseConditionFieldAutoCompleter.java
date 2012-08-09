@@ -343,9 +343,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         if (("''".equals(customizedValue) || "'null'".equalsIgnoreCase(customizedValue))
                 && (("=".equals(customizedRelation)) || ("!=".equals(customizedRelation)))) {
             String nullRelation = ("=".equals(customizedRelation)) ? "IS" : "IS NOT";
-            String SqlCond = ("=".equals(customizedRelation)) ? "OR" : "AND";
-            return StringFormat.format("( %1$s.%2$s %3$s %4$s %5$s  %1$s.%2$s %6$s  NULL)", tableName,
-                    getDbFieldName(fieldName), customizedRelation, customizedValue, SqlCond, nullRelation);
+            return StringFormat.format("(%1$s.%2$s %3$s  NULL)", tableName,
+                    getDbFieldName(fieldName), nullRelation);
         } else {
             return StringFormat.format(" %1$s.%2$s %3$s %4$s ", tableName, getDbFieldName(fieldName),
                     customizedRelation, customizedValue);
