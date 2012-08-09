@@ -175,10 +175,14 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(vm.getvm_os()));
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
-        model.getActive().setIsChangable(isActivateSupported);
 
+        model.getActive().setIsChangable(isActivateSupported);
         model.getActive().setEntity(true);
 
+        Version v31 = new Version(3, 1);
+        boolean isLessThan31 = vm.getvds_group_compatibility_version().compareTo(v31) < 0;
+
+        model.getPortMirroring().setIsChangable(!isLessThan31);
         model.getPortMirroring().setEntity(false);
 
         final UICommand okCommand = new UICommand("OnSave", this); //$NON-NLS-1$

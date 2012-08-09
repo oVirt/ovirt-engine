@@ -268,6 +268,10 @@ public class VmGuideModel extends GuideModel
         model.getActive().setIsChangable(isActivateSupported);
         model.getActive().setEntity(true);
 
+        Version v31 = new Version(3, 1);
+        boolean isLessThan31 = getEntity().getvds_group_compatibility_version().compareTo(v31) < 0;
+
+        model.getPortMirroring().setIsChangable(!isLessThan31);
         model.getPortMirroring().setEntity(false);
 
         UICommand tempVar = new UICommand("OnAddNetwork", this); //$NON-NLS-1$
