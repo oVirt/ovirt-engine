@@ -108,7 +108,7 @@ public class NetworkPanel extends NetworkItemPanel {
     private String getItemTitle() {
         LogicalNetworkModel networkModel = (LogicalNetworkModel) item;
         if (networkModel.hasVlan()) {
-            return networkModel.getName() + " (vlan " + networkModel.getVlanId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            return messages.vlanNetwork(networkModel.getName(), String.valueOf(networkModel.getVlanId()));
         }
         return item.getName();
     }

@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.uicompat;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.client.Messages.DefaultMessage;
-
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("{0} Alerts")
@@ -117,7 +115,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Press {0} to Release Cursor")
     String pressKeyToReleaseCursor(String key);
-    
+
     @DefaultMessage("LUN is already part of storage domain: {0}")
     String lunAlreadyPartOfStorageDomainWarning(String storageDomainName);
 
@@ -129,4 +127,25 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Replica count will be reduced from {0} to {1} on removing the following bricks. Are you sure want to continue?")
     String removeBricksReplicateVolumeMessage(int oldReplicaCount, int newReplicaCount);
+
+    @DefaultMessage("Break Bond {0}")
+    String breakBond(String bondName);
+
+    @DefaultMessage("Detach Network {0}")
+    String detachNetwork(String networkName);
+
+    @DefaultMessage("Attach {0} to")
+    String attachTo(String name);
+
+    @DefaultMessage("Bond {0} with")
+    String bondWith(String name);
+
+    @DefaultMessage("Add {0} to Bond")
+    String addToBond(String name);
+
+    @DefaultMessage("Remove {0} from Bond")
+    String removeFromBond(String name);
+
+    @DefaultMessage("No valid Operation for {0} and ")
+    String noValidOperation(String name);
 }

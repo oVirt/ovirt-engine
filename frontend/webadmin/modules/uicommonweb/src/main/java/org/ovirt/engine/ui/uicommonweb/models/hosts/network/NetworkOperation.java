@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 /**
  * An Enumeration of Setup Network Operations<BR>
@@ -18,7 +19,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Break Bond " + op1.getName(); //$NON-NLS-1$
+            return ConstantsManager.getInstance().getMessages().breakBond(op1.getName());
         }
 
         @Override
@@ -63,7 +64,7 @@ public enum NetworkOperation {
     DETACH_NETWORK {
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Detach Network " + op1.getName(); //$NON-NLS-1$
+            return ConstantsManager.getInstance().getMessages().detachNetwork(op1.getName());
         }
 
         @Override
@@ -90,7 +91,7 @@ public enum NetworkOperation {
     ATTACH_NETWORK {
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Attach " + op1.getName() + " to"; //$NON-NLS-1$ //$NON-NLS-2$
+            return ConstantsManager.getInstance().getMessages().attachTo(op1.getName());
         }
 
         @Override
@@ -121,7 +122,8 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Bond " + op1.getName() + " with"; //$NON-NLS-1$ //$NON-NLS-2$
+            return ConstantsManager.getInstance().getMessages().bondWith(op1.getName());
+
         }
 
         @Override
@@ -159,7 +161,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Add " + op1.getName() + " to Bond"; //$NON-NLS-1$ //$NON-NLS-2$
+            return ConstantsManager.getInstance().getMessages().addToBond(op1.getName());
         }
 
         @Override
@@ -194,7 +196,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Remove " + op1.getName() + " from Bond"; //$NON-NLS-1$ //$NON-NLS-2$
+            return ConstantsManager.getInstance().getMessages().removeFromBond(op1.getName());
         }
 
         @Override
@@ -227,7 +229,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "No valid Operation for " + op1.getName() + " and "; //$NON-NLS-1$ //$NON-NLS-2$
+            return ConstantsManager.getInstance().getMessages().noValidOperation(op1.getName());
         }
 
         @Override
@@ -255,7 +257,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Networks on both interfaces : Detach all the networks from one the interfaces/bond, if required re-attach to the bond "; //$NON-NLS-1$
+            return ConstantsManager.getInstance().getConstants().networksOnBothInterfaces();
         }
 
         @Override
@@ -288,7 +290,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Invalid operation with unmanaged network: unmanaged network can only be detached"; //$NON-NLS-1$
+            return ConstantsManager.getInstance().getConstants().invalidOperationWithUnmanagedNetwork();
         }
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
@@ -381,7 +383,7 @@ public enum NetworkOperation {
     public String getNoun(NetworkItemModel<?> op2) {
         assert !isUnary() : "The Unary Operation " + name() + " has no Noun"; //$NON-NLS-1$ //$NON-NLS-2$
         if (op2 == null){
-            return "Unassigned Logical Networks panel"; //$NON-NLS-1$
+            return ConstantsManager.getInstance().getConstants().unassignedLogicalNetworksPanel();
         }
         return op2.getName();
     }

@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.widget.form.DnDPanel;
@@ -35,6 +36,7 @@ public abstract class NetworkItemPanel extends DnDPanel {
 
     public static final String SETUP_NETWORKS_DATA = "SetupNetworksData"; //$NON-NLS-1$
     final ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
+    final ApplicationMessages messages = ClientGinjectorProvider.instance().getApplicationMessages();
     final Image dragImage = new Image(resources.itemDraggable());
     final PushButton actionButton;
     final NetworkItemModel<?> item;
