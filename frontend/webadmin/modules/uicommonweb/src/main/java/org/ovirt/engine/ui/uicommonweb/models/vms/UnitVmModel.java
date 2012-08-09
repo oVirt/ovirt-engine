@@ -1646,6 +1646,7 @@ public class UnitVmModel extends Model {
         {
             switch (model.getBehavior().getSystemTreeSelectedItem().getType())
             {
+            case Templates:
             case DataCenter:
                 storage_pool selectDataCenter =
                         (storage_pool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
