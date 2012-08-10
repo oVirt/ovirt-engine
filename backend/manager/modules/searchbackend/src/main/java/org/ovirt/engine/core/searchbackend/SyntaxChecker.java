@@ -923,10 +923,18 @@ public class SyntaxChecker implements ISyntaxChecker {
 
     private String generateConditionStatment(SyntaxObject obj, ListIterator<SyntaxObject> objIter,
             final String searchObjStr, final boolean caseSensitive, final boolean issafe) {
+        final String safeValue = issafe ? obj.getBody() : SqlInjectionChecker.enforceEscapeCharacters(obj.getBody());
+        return generateSafeConditionStatement(obj, objIter, searchObjStr, caseSensitive, safeValue);
+    }
+
+    private String generateSafeConditionStatement(final SyntaxObject obj,
+            ListIterator<SyntaxObject> objIter,
+            final String searchObjStr,
+            final boolean caseSensitive,
+            final String safeValue) {
         IConditionFieldAutoCompleter conditionFieldAC;
         IConditionValueAutoCompleter conditionValueAC = null;
         // check for sql injection
-        String originalValue = obj.getBody();
         String fieldName = "";
         String objName;
         ConditionType conditionType;
@@ -972,7 +980,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                         : null);
         final Class<?> curType = conditionAsBase != null ? conditionAsBase.getTypeDictionary().get(fieldName) : null;
         final String customizedValue =
-                buildCustomizedValue(obj, issafe, conditionFieldAC, conditionValueAC, originalValue, fieldName, curType);
+                buildCustomizedValue(obj, conditionFieldAC, conditionValueAC, safeValue, fieldName, curType);
 
         final String customizedRelation =
                 buildCustomizedRelation(caseSensitive,
@@ -1015,17 +1023,12 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private String buildCustomizedValue(SyntaxObject obj,
-            final boolean issafe,
             IConditionFieldAutoCompleter conditionFieldAC,
             IConditionValueAutoCompleter conditionValueAC,
-            String originalValue,
+            String safeValue,
             String fieldName,
             final Class<?> curType) {
-        String customizedValue = originalValue;
-        if (!issafe) {
-            // Enforce escape characters before special characters
-            customizedValue = SqlInjectionChecker.enforceEscapeCharacters(originalValue);
-        }
+        String customizedValue = safeValue;
         if (curType == String.class && !StringHelper.isNullOrEmpty(customizedValue)
                 && !"''".equals(customizedValue) && !"'*'".equals(customizedValue)) {
             customizedValue =
