@@ -194,9 +194,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/tag_pin.png")
     ImageResource tagPinImage();
 
-    @Source("images/templates.png")
-    ImageResource templatesImage();
-
     @Source("images/torn_chain.png")
     ImageResource tornChainImage();
 
@@ -211,9 +208,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/vm.png")
     ImageResource vmImage();
-
-    @Source("images/vms.png")
-    ImageResource vmsImage();
 
     @Source("images/window_bg.png")
     ImageResource windowBgImage();
@@ -319,9 +313,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/network/but_erase_net_hover.png")
     ImageResource butEraseNetHover();
-
-    @Source("images/disk_bootable.png")
-    ImageResource bootableDiskIcon();
 
     @Source("images/cluster_gluster.png")
     ImageResource glusterClusterImage();

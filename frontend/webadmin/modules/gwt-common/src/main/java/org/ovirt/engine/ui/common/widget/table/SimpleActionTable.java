@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -109,6 +110,15 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         if (buttonDef.isSubTitledAction()) {
             item.addStyleName(style.subTitledButton());
         }
+    }
+
+    public void setTableOverhead(Widget widget) {
+        tableOverhead.setWidget(widget);
+    }
+
+    public void setTableTopMargin(int topMargin) {
+        tableHeaderContainer.getElement().getStyle().setMarginTop(topMargin, Unit.PX);
+        tableContainer.getElement().getStyle().setMarginTop(topMargin, Unit.PX);
     }
 
     interface Style extends CssResource {

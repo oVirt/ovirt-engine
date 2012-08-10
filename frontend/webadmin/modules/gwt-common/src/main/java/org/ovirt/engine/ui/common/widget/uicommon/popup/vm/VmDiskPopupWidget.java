@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
@@ -342,10 +344,20 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
-                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
-                return diskImage.isShareable() ? resources.shareableDiskIcon() : null;
+                Disk disk = (Disk) (((DiskModel) (object.getEntity())).getDisk());
+                setTitle(disk.isBoot() ? constants.bootableDisk() : null);
+                return disk.isBoot() ? resources.bootableDiskIcon() : null;
             }
-        }, constants.shareable(), "70px"); //$NON-NLS-1$
+        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
+            @Override
+            public ImageResource getValue(EntityModel object) {
+                Disk disk = (Disk) (((DiskModel) (object.getEntity())).getDisk());
+                setTitle(disk.isShareable() ? constants.shareable() : null);
+                return disk.isShareable() ? resources.shareableDiskIcon() : null;
+            }
+        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         internalDiskTable.setWidth("100%", true); //$NON-NLS-1$
         internalDiskTable.setHeight("100%"); //$NON-NLS-1$
@@ -389,7 +401,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         };
         externalDiskTable.addColumn(idColumn, constants.idVmDiskTable());
 
-        DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>() {
+        DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
             @Override
             protected Long getRawValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -437,10 +449,20 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
+                Disk disk = (Disk) (((DiskModel) (object.getEntity())).getDisk());
+                setTitle(disk.isBoot() ? constants.bootableDisk() : null);
+                return disk.isBoot() ? resources.bootableDiskIcon() : null;
+            }
+        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
+            @Override
+            public ImageResource getValue(EntityModel object) {
+                Disk disk = (Disk) (((DiskModel) (object.getEntity())).getDisk());
+                setTitle(disk.isShareable() ? constants.shareable() : null);
                 return disk.isShareable() ? resources.shareableDiskIcon() : null;
             }
-        }, constants.shareable(), "70px"); //$NON-NLS-1$
+        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         externalDiskTable.setWidth("100%", true); //$NON-NLS-1$
         externalDiskTable.setHeight("100%"); //$NON-NLS-1$

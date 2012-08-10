@@ -107,8 +107,8 @@
 			<r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
 			<div style="clear: both;" />
 		</g:HTMLPanel>
-		<g:SimplePanel ui:field="tableHeaderContainer"
-			addStyleNames="{style.headerContainer}" />
+		<g:SimplePanel ui:field="tableOverhead" />
+		<g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
 		<g:SimplePanel ui:field="tableContainer" addStyleNames="{style.content}" />
 	</g:FlowPanel>
 

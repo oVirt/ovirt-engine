@@ -190,4 +190,12 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/icon_decrease.png")
     ImageResource decreaseIcon();
 
+    @Source("images/disk_bootable.png")
+    ImageResource bootableDiskIcon();
+
+    @Source("images/templates.png")
+    ImageResource templatesImage();
+
+    @Source("images/vms.png")
+    ImageResource vmsImage();
 }

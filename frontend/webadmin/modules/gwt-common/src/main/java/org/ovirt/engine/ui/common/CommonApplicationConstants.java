@@ -570,6 +570,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Storage Domain")
     String storageDomainDisk();
 
+    @DefaultStringValue("Storage Domain(s)")
+    String storageDomainsDisk();
+
+    @DefaultStringValue("SDs")
+    String storageDomainsLabelDisk();
+
     @DefaultStringValue("Type")
     String typeDisk();
 
@@ -970,4 +976,28 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("* It is recommended to keep the default values in the fields below unchanged.")
     String advancedOptionsLabel();
+
+    @DefaultStringValue("disk_type = ")
+    String diskTypeSearchPrefix();
+
+    @DefaultStringValue("Disks:")
+    String disksSearchPrefix();
+
+    @DefaultStringValue("(.)*")
+    String searchRegexAll();
+
+    @DefaultStringValue(" and ")
+    String searchConjunctionAnd();
+
+    @DefaultStringValue("Bootable")
+    String bootableDisk();
+
+    @DefaultStringValue("All")
+    String allDisksLabel();
+
+    @DefaultStringValue("Images")
+    String imageDisksLabel();
+
+    @DefaultStringValue("Direct LUN")
+    String lunDisksLabel();
 }

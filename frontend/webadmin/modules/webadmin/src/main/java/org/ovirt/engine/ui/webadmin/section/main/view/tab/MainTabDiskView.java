@@ -1,32 +1,30 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import java.util.Date;
-
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
+import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
 public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, DiskListModel> implements MainTabDiskPresenter.ViewDef {
@@ -35,121 +33,119 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    @UiField
+    SimplePanel tablePanel;
+
+    private ApplicationConstants constants;
+    private CommonModel commonModel;
+    private DisksViewRadioGroup disksViewRadioGroup;
+
     @Inject
-    public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
+    public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
+
+        this.constants = constants;
+        this.commonModel = CommonModelManager.instance();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(resources, constants);
+        initTableButtons();
+        initTableOverhead();
         initWidget(getTable());
+
+        handleRadioButtonClick(null);
+
+        modelProvider.getModel().getDiskViewType().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                EntityModel diskViewType = (EntityModel) sender;
+                if (!disksViewRadioGroup.getAllButton().getValue()) {
+                    disksViewRadioGroup.getAllButton().setValue(diskViewType.getEntity() == null);
+                    handleRadioButtonClick(null);
+                }
+            }
+        });
     }
 
-    void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
-        getTable().addColumn(new TextColumnWithTooltip<Disk>() {
-            @Override
-            public String getValue(Disk object) {
-                return object.getDiskAlias();
+    final ClickHandler clickHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            if (((RadioButton) event.getSource()).getValue()) {
+                handleRadioButtonClick(event);
             }
-        }, constants.aliasDisk());
+        }
+    };
 
-        getTable().addColumn(new TextColumnWithTooltip<Disk>() {
-            @Override
-            public String getValue(Disk object) {
-                return object.getId().toString();
-            }
-        }, constants.idDisk(), "120px"); //$NON-NLS-1$
+    void handleRadioButtonClick(ClickEvent event) {
+        boolean all = disksViewRadioGroup.getAllButton().getValue();
+        boolean images = disksViewRadioGroup.getImagesButton().getValue();
+        boolean luns = disksViewRadioGroup.getLunsButton().getValue();
 
-        getTable().addColumn(new ImageResourceColumn<Disk>() {
-            @Override
-            public ImageResource getValue(Disk object) {
-                setTitle(object.isBoot() ? constants.bootableDisk() : null);
-                return object.isBoot() ? resources.bootableDiskIcon() : null;
-            }
-        }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+        getMainModel().getDiskViewType().setEntity(disksViewRadioGroup.getDiskStorageType());
+        searchByDiskViewType(disksViewRadioGroup.getDiskStorageType());
 
-        getTable().addColumn(new ImageResourceColumn<Disk>() {
-            @Override
-            public ImageResource getValue(Disk object) {
-                setTitle(object.isShareable() ? constants.shareable() : null);
-                return object.isShareable() ? resources.shareableDiskIcon() : null;
-            }
-        }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns);
 
-        getTable().addColumn(new ImageResourceColumn<Disk>() {
-            @Override
-            public ImageResource getValue(Disk object) {
-                setEnumTitle(object.getDiskStorageType());
-                return object.getDiskStorageType() == DiskStorageType.LUN ?
-                        resources.externalDiskIcon() : null;
-            }
-        }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.idColumn, constants.idDisk(), all || images || luns);
 
-        getTable().addColumn(new ImageResourceColumn<Disk>() {
-            @Override
-            public ImageResource getValue(Disk object) {
-                setEnumTitle(object.getVmEntityType());
-                return object.getVmEntityType() == VmEntityType.VM ? resources.vmsImage() :
-                        object.getVmEntityType() == VmEntityType.TEMPLATE ? resources.templatesImage() : null;
-            }
-        }, "", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.bootableDiskColumn, "", all || images || luns, "40px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        getTable().addColumn(new DiskContainersColumn(), constants.attachedToDisk(), "150px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.shareableDiskColumn, "", all || images || luns, "40px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        DiskSizeColumn<Disk> sizeColumn = new DiskSizeColumn<Disk>() {
-            @Override
-            protected Long getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getsize() :
-                        (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
-            }
-        };
-        getTable().addColumn(sizeColumn, constants.provisionedSizeDisk(), "100px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunDiskColumn, "", all, "40px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        DiskSizeColumn<Disk> actualSizeColumn = new DiskSizeColumn<Disk>() {
-            @Override
-            protected Long getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getactual_size()
-                        : (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
-            }
-        };
-        getTable().addColumn(actualSizeColumn, constants.sizeDisk(), "100px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.diskContainersIconColumn, "", all || images || luns, "40px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        TextColumnWithTooltip<Disk> allocationColumn = new EnumColumn<Disk, VolumeType>() {
-            @Override
-            protected VolumeType getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getvolume_type() : null;
-            }
-        };
-        getTable().addColumn(allocationColumn, constants.allocationDisk(), "100px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns, "120px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Disk> dateCreatedColumn = new FullDateTimeColumn<Disk>() {
-            @Override
-            protected Date getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getcreation_date() : null;
-            }
-        };
-        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "150px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.storageDomainsColumn, constants.storageDomainsDisk(), images, "120px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Disk> statusColumn = new EnumColumn<Disk, ImageStatus>() {
-            @Override
-            protected ImageStatus getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getimageStatus() : null;
-            }
-        };
-        getTable().addColumn(statusColumn, constants.statusDisk(), "100px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(
+                DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns, "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<Disk>() {
-            @Override
-            public String getValue(Disk object) {
-                return object.getDiskDescription();
-            }
-        }, constants.descriptionDisk());
+        getTable().ensureColumnPresent(
+                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), images, "100px"); //$NON-NLS-1$
 
+        getTable().ensureColumnPresent(
+                DisksViewColumns.allocationColumn, constants.allocationDisk(), images, "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images, "150px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.statusColumn, constants.statusDisk(), images, "80px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunSerialColumn, constants.serialSanStorage(), luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunVendorIdColumn, constants.vendorIdSanStorage(), luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns);
+
+    }
+
+    void initTableOverhead() {
+        disksViewRadioGroup = new DisksViewRadioGroup();
+        disksViewRadioGroup.setClickHandler(clickHandler);
+        getTable().setTableOverhead(disksViewRadioGroup);
+        getTable().setTableTopMargin(20);
+    }
+
+    void initTableButtons() {
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.addDisk()) {
             @Override
             protected UICommand resolveCommand() {
@@ -179,4 +175,48 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         });
     }
 
+    void searchByDiskViewType(Object diskViewType) {
+        String diskTypePostfix = diskViewType != null ?
+                ((DiskStorageType) diskViewType).name().toLowerCase() + constants.space() : null;
+        String diskType = diskTypePostfix != null ?
+                constants.diskTypeSearchPrefix() + diskTypePostfix : constants.empty();
+
+        String searchConjunction = !diskType.equals(constants.empty()) ?
+                constants.searchConjunctionAnd() : constants.empty();
+
+        String searchStringPrefixRaw = commonModel.getSearchStringPrefix().replaceAll(
+                constants.diskTypeSearchPrefix() + constants.searchRegexAll(), constants.empty()).replaceAll(
+                constants.searchConjunctionAnd() + constants.searchRegexAll(), constants.empty()).trim();
+
+        String searchStringPrefix;
+        if (diskType.equals(constants.empty())) {
+            searchStringPrefix = searchStringPrefixRaw;
+        }
+        else if (searchStringPrefixRaw.equals(constants.disksSearchPrefix())) {
+            searchStringPrefix = constants.disksSearchPrefix() + constants.space() + diskType;
+        }
+        else {
+            searchStringPrefix = searchStringPrefixRaw.isEmpty() ?
+                    constants.disksSearchPrefix() + constants.space() + diskType :
+                    searchStringPrefixRaw + searchConjunction + diskType;
+        }
+
+        String searchString;
+        if (!commonModel.getSearchString().contains(":")) { //$NON-NLS-1$
+            searchString = searchStringPrefix.isEmpty() ?
+                    constants.disksSearchPrefix() + constants.space() + commonModel.getSearchString() :
+                    commonModel.getSearchString().replace(constants.disksSearchPrefix(), constants.empty());
+        }
+        else {
+            searchString = searchStringPrefix.isEmpty() ? constants.disksSearchPrefix() : constants.empty();
+        }
+
+        commonModel.setSearchStringPrefix(searchStringPrefix);
+        commonModel.setSearchString(searchString);
+
+        getTable().getSelectionModel().clear();
+        getMainModel().setItems(null);
+        getMainModel().setSearchString(commonModel.getEffectiveSearchString());
+        getMainModel().Search();
+    }
 }

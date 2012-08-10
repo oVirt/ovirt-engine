@@ -136,6 +136,8 @@ public class DiskListModel extends ListWithDetailsModel
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+
+        setDiskViewType(new EntityModel());
     }
 
     @Override

@@ -68,7 +68,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Interfaces")
     String extendedVirtualMachineNetworkInterfaceSubTabLabel();
 
-    @DefaultStringValue("Virtual Disks")
+    @DefaultStringValue("Disks")
     String extendedVirtualMachineVirtualDiskSubTabLabel();
 
     @DefaultStringValue("Snapshots")
@@ -92,7 +92,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Interfaces")
     String extendedTemplateNetworkInterfacesSubTabLabel();
 
-    @DefaultStringValue("Virtual Disks")
+    @DefaultStringValue("Disks")
     String extendedTemplateVirtualDisksSubTabLabel();
 
     @DefaultStringValue("Events")

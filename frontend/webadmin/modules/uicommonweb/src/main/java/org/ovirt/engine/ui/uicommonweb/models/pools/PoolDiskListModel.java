@@ -9,12 +9,22 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class PoolDiskListModel extends SearchableListModel
+public class PoolDiskListModel extends VmDiskListModelBase
 {
+    private VM vm;
+
+    public VM getVM() {
+        return vm;
+    }
+
+    public void setVM(VM vm) {
+        this.vm = vm;
+    }
+
     public PoolDiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().virtualDisksTitle());
@@ -41,9 +51,10 @@ public class PoolDiskListModel extends SearchableListModel
                         if (vm == null) {
                             return;
                         }
+
                         PoolDiskListModel poolDiskListModel = (PoolDiskListModel) model;
-                        poolDiskListModel.SyncSearch(VdcQueryType.GetAllDisksByVmId,
-                                new GetAllDisksByVmIdParameters(vm.getId()));
+                        poolDiskListModel.setVM(vm);
+                        poolDiskListModel.SyncSearch();
                     }
                 }
             };
@@ -51,6 +62,17 @@ public class PoolDiskListModel extends SearchableListModel
                     new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
                     _asyncQuery);
         }
+    }
+
+    @Override
+    protected void SyncSearch()
+    {
+        if (getVM() == null)
+        {
+            return;
+        }
+
+        super.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(getVM().getId()));
     }
 
     @Override

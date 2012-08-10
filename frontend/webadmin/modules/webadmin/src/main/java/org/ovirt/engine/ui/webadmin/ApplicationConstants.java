@@ -310,7 +310,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Interfaces")
     String virtualMachineNetworkInterfaceSubTabLabel();
 
-    @DefaultStringValue("Virtual Disks")
+    @DefaultStringValue("Disks")
     String virtualMachineVirtualDiskSubTabLabel();
 
     @DefaultStringValue("Snapshots")
@@ -2021,9 +2021,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Volume Format")
     String volumeFormatDisk();
 
-    @DefaultStringValue("Bootable")
-    String bootableDisk();
-
     // Setup network
     @DefaultStringValue("Drag to make changes")
     String dragToMakeChangesSetupNetwork();
@@ -2176,5 +2173,4 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Quota Storage")
     String quotaStorage();
-
 }

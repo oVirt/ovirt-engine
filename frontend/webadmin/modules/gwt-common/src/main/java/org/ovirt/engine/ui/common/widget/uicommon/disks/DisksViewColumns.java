@@ -1,0 +1,164 @@
+package org.ovirt.engine.ui.common.widget.uicommon.disks;
+
+import java.util.Date;
+
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
+
+public class DisksViewColumns {
+    private static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+
+    public static final TextColumnWithTooltip<Disk> aliasColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            return object.getDiskAlias();
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> idColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            return object.getId().toString();
+        }
+    };
+
+    public static final ImageResourceColumn<Disk> bootableDiskColumn = new ImageResourceColumn<Disk>() {
+        @Override
+        public ImageResource getValue(Disk object) {
+            setTitle(object.isBoot() ? constants.bootableDisk() : null);
+            return object.isBoot() ? resources.bootableDiskIcon() : null;
+        }
+    };
+
+    public static final ImageResourceColumn<Disk> shareableDiskColumn = new ImageResourceColumn<Disk>() {
+        @Override
+        public ImageResource getValue(Disk object) {
+            setTitle(object.isShareable() ? constants.shareable() : null);
+            return object.isShareable() ? resources.shareableDiskIcon() : null;
+        }
+    };
+
+    public static final ImageResourceColumn<Disk> lunDiskColumn = new ImageResourceColumn<Disk>() {
+        @Override
+        public ImageResource getValue(Disk object) {
+            setEnumTitle(object.getDiskStorageType());
+            return object.getDiskStorageType() == DiskStorageType.LUN ?
+                    resources.externalDiskIcon() : null;
+        }
+    };
+
+    public static final ImageResourceColumn<Disk> diskContainersIconColumn = new ImageResourceColumn<Disk>() {
+        @Override
+        public ImageResource getValue(Disk object) {
+            setEnumTitle(object.getVmEntityType());
+            return object.getVmEntityType() == VmEntityType.VM ? resources.vmsImage() :
+                    object.getVmEntityType() == VmEntityType.TEMPLATE ? resources.templatesImage() : null;
+        }
+    };
+
+    public static final DiskStatusColumn diskStatusColumn = new DiskStatusColumn();
+
+    public static final DiskContainersColumn diskContainersColumn = new DiskContainersColumn();
+
+    public static final StorageDomainsColumn storageDomainsColumn = new StorageDomainsColumn();
+
+    public static final DiskSizeColumn<Disk> sizeColumn = new DiskSizeColumn<Disk>() {
+        @Override
+        protected Long getRawValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                    ((DiskImage) object).getsize() :
+                    (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
+        }
+    };
+
+    public static final DiskSizeColumn<Disk> actualSizeColumn = new DiskSizeColumn<Disk>() {
+        @Override
+        protected Long getRawValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                    ((DiskImage) object).getactual_size()
+                    : (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> allocationColumn = new EnumColumn<Disk, VolumeType>() {
+        @Override
+        protected VolumeType getRawValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                    ((DiskImage) object).getvolume_type() : null;
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> dateCreatedColumn = new FullDateTimeColumn<Disk>() {
+        @Override
+        protected Date getRawValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                    ((DiskImage) object).getcreation_date() : null;
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> statusColumn = new EnumColumn<Disk, ImageStatus>() {
+        @Override
+        protected ImageStatus getRawValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                    ((DiskImage) object).getimageStatus() : null;
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> descriptionColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            return object.getDiskDescription();
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> lunIdColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.LUN ?
+                    ((LunDisk) object).getLun().getLUN_id() : null;
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> lunVendorIdColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.LUN ?
+                    ((LunDisk) object).getLun().getVendorId() : null;
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> lunProductIdColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.LUN ?
+                    ((LunDisk) object).getLun().getProductId() : null;
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> lunSerialColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            return object.getDiskStorageType() == DiskStorageType.LUN ?
+                    ((LunDisk) object).getLun().getSerial() : null;
+        }
+    };
+}

@@ -1,128 +1,118 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
-import java.util.Date;
-
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
+import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.RadioButton;
 
-public class BaseVmDiskListModelTable<T extends SearchableListModel> extends AbstractModelBoundTableWidget<Disk, T> {
+public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends AbstractModelBoundTableWidget<Disk, T> {
+
+    private CommonApplicationConstants constants;
+    private DisksViewRadioGroup disksViewRadioGroup;
 
     public BaseVmDiskListModelTable(
             SearchableTableModelProvider<Disk, T> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
+
+        disksViewRadioGroup = new DisksViewRadioGroup();
+    }
+
+    final ClickHandler clickHandler = new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            if (((RadioButton) event.getSource()).getValue()) {
+                handleRadioButtonClick(event);
+            }
+        }
+    };
+
+    void initTableOverhead() {
+        disksViewRadioGroup.setClickHandler(clickHandler);
+        getTable().setTableOverhead(disksViewRadioGroup);
+        getTable().setTableTopMargin(20);
     }
 
     @Override
-    public void initTable(final CommonApplicationConstants constants) {
-        getTable().addColumn(new DiskStatusColumn(), constants.empty(), "70px"); //$NON-NLS-1$
+    public void initTable(CommonApplicationConstants constants) {
+        this.constants = constants;
 
-        TextColumnWithTooltip<Disk> nameColumn = new TextColumnWithTooltip<Disk>() {
+        initTableOverhead();
+        handleRadioButtonClick(null);
+
+        getModel().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
-            public String getValue(Disk object) {
-                return object.getDiskAlias();
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                disksViewRadioGroup.setDiskStorageType((DiskStorageType) getModel().getDiskViewType().getEntity());
             }
-        };
-        getTable().addColumn(nameColumn, constants.aliasDisk());
-
-        DiskSizeColumn<Disk> sizeColumn = new DiskSizeColumn<Disk>() {
-            @Override
-            protected Long getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getsize() :
-                        (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
-            }
-        };
-
-        getTable().addColumn(sizeColumn, constants.provisionedSizeDisk());
-
-        DiskSizeColumn<Disk> actualSizeColumn = new DiskSizeColumn<Disk>() {
-            @Override
-            protected Long getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getactual_size()
-                        : (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
-            }
-        };
-        getTable().addColumn(actualSizeColumn, constants.sizeDisk());
-
-        TextColumnWithTooltip<Disk> storageDomainColumn = new TextColumnWithTooltip<Disk>() {
-            @Override
-            public String getValue(Disk object) {
-                if (object.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    DiskImage diskImage = (DiskImage)object;
-                    if (diskImage.getStoragesNames() != null) {
-                        return diskImage.getStoragesNames().get(0);
-                    }
-                }
-                return constants.notAvailableLabel();
-            }
-        };
-        getTable().addColumn(storageDomainColumn, constants.storageDomainDisk());
-
-        TextColumnWithTooltip<Disk> allocationColumn = new EnumColumn<Disk, VolumeType>() {
-            @Override
-            protected VolumeType getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getvolume_type() : null;
-            }
-        };
-        getTable().addColumn(allocationColumn, constants.allocationDisk(), "120px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<Disk> interfaceColumn = new TextColumnWithTooltip<Disk>() {
-            @Override
-            public String getValue(Disk object) {
-                return object.getDiskInterface().toString();
-            }
-        };
-        getTable().addColumn(interfaceColumn, constants.interfaceDisk(), "100px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<Disk> statusColumn = new EnumColumn<Disk, ImageStatus>() {
-            @Override
-            protected ImageStatus getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getimageStatus() : null;
-            }
-        };
-
-        getTable().addColumn(statusColumn, constants.statusDisk(), "100px"); //$NON-NLS-1$
-
-        getTable().addColumn(new DiskContainersColumn(), constants.attachedToDisk(), "100px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<Disk> dateCreatedColumn = new FullDateTimeColumn<Disk>() {
-            @Override
-            protected Date getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getcreation_date() : null;
-            }
-        };
-        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "140px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<Disk> descriptionColumn = new TextColumnWithTooltip<Disk>() {
-            @Override
-            public String getValue(Disk object) {
-                return object.getDiskDescription();
-            }
-        };
-        getTable().addColumn(descriptionColumn, constants.descriptionDisk());
+        });
     }
 
+    void handleRadioButtonClick(ClickEvent event) {
+        boolean all = disksViewRadioGroup.getAllButton().getValue();
+        boolean images = disksViewRadioGroup.getImagesButton().getValue();
+        boolean luns = disksViewRadioGroup.getLunsButton().getValue();
+
+        getTable().getSelectionModel().clear();
+        getModel().getDiskViewType().setEntity(disksViewRadioGroup.getDiskStorageType());
+        getModel().setItems(null);
+        getModel().Search();
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.diskStatusColumn, constants.empty(), all || images || luns, "70px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns, "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), images, "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.allocationColumn, constants.allocationDisk(), images, "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), images, "120px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images, "150px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.statusColumn, constants.statusDisk(), images, "80px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunSerialColumn, constants.serialSanStorage(), luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunVendorIdColumn, constants.vendorIdSanStorage(), luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns, "120px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns);
+
+    }
 }

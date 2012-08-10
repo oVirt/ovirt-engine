@@ -72,6 +72,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
     @UiField
     public SimplePanel tableHeaderContainer;
 
+    @UiField
+    public SimplePanel tableOverhead;
+
     private final OrderedMultiSelectionModel<T> selectionModel;
 
     @WithElementId("content")
@@ -364,8 +367,21 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
      * Ensures that the given column is added (or removed), unless it's already present (or absent).
      */
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present) {
-        if (present && table.getColumnIndex(column) == -1) {
-            addColumn(column, headerText);
+        ensureColumnPresent(column, headerText, present, null);
+    }
+
+    public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
+        if (present) {
+            if (table.getColumnIndex(column) != -1) {
+                removeColumn(column);
+            }
+
+            if (width == null) {
+                addColumn(column, headerText);
+            }
+            else {
+                addColumn(column, headerText, width);
+            }
         } else if (!present && table.getColumnIndex(column) != -1) {
             removeColumn(column);
         }

@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -58,22 +57,6 @@ public class DiskGeneralModel extends EntityModel
         {
             privateStorageDomain = value;
             OnPropertyChanged(new PropertyChangedEventArgs("Storage Domain")); //$NON-NLS-1$
-        }
-    }
-
-    private VolumeFormat privateVolumeFormat;
-
-    public VolumeFormat getVolumeFormat()
-    {
-        return privateVolumeFormat;
-    }
-
-    public void setVolumeFormat(VolumeFormat value)
-    {
-        if (privateVolumeFormat != value)
-        {
-            privateVolumeFormat = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Volume Format")); //$NON-NLS-1$
         }
     }
 
@@ -193,7 +176,6 @@ public class DiskGeneralModel extends EntityModel
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
-            setVolumeFormat(diskImage.getvolume_format());
             setQuotaName(diskImage.getQuotaName());
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         }

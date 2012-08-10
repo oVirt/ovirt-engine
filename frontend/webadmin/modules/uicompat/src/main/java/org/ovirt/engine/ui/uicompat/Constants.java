@@ -19,7 +19,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     // Titles
     @DefaultStringValue("")
-    String blank();
+    String empty();
+
+    @DefaultStringValue(" ")
+    String space();
 
     @DefaultStringValue("Error")
     String errorTitle();
@@ -1480,4 +1483,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Unassigned Logical Networks panel")
     String unassignedLogicalNetworksPanel();
+
+    @DefaultStringValue("disk_type=")
+    String diskTypeSearchPrefix();
 }
