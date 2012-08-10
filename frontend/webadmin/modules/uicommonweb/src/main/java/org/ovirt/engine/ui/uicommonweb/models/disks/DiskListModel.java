@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -30,17 +29,17 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -51,7 +50,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class DiskListModel extends ListWithDetailsModel
+public class DiskListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
     private UICommand privateNewCommand;
 
@@ -111,6 +110,31 @@ public class DiskListModel extends ListWithDetailsModel
     private void setCopyCommand(UICommand value)
     {
         privateCopyCommand = value;
+    }
+
+    private EntityModel diskViewType;
+
+    public EntityModel getDiskViewType() {
+        return diskViewType;
+    }
+
+    public void setDiskViewType(EntityModel diskViewType) {
+        this.diskViewType = diskViewType;
+    }
+
+    private SystemTreeItemModel systemTreeSelectedItem;
+
+    @Override
+    public SystemTreeItemModel getSystemTreeSelectedItem()
+    {
+        return systemTreeSelectedItem;
+    }
+
+    @Override
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
+    {
+        systemTreeSelectedItem = value;
+        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     private ListModel diskVmListModel;
@@ -217,37 +241,23 @@ public class DiskListModel extends ListWithDetailsModel
 
     private void New()
     {
-        DiskModel model = new DiskModel();
+        DiskModel model = new DiskModel(getSystemTreeSelectedItem());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getIsInVm().setEntity(false);
-        model.StartProgress(null);
+        model.getIsInternal().setEntity(true);
 
-        AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                DiskListModel diskListModel = (DiskListModel) target;
-                DiskModel diskModel = (DiskModel) diskListModel.getWindow();
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
-
-                diskModel.getDataCenter().setItems(dataCenters);
-                diskModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
-
-                ArrayList<UICommand> commands = new ArrayList<UICommand>();
-                UICommand tempVar2 = new UICommand("OnSave", diskListModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar2.setIsDefault(true);
-                diskModel.getCommands().add(tempVar2);
-                UICommand tempVar3 = new UICommand("Cancel", diskListModel); //$NON-NLS-1$
-                tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar3.setIsCancel(true);
-                diskModel.getCommands().add(tempVar3);
-
-                diskModel.StopProgress();
-            }
-        }));
+        ArrayList<UICommand> commands = new ArrayList<UICommand>();
+        UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar2.setIsDefault(true);
+        model.getCommands().add(tempVar2);
+        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar3.setIsCancel(true);
+        model.getCommands().add(tempVar3);
     }
 
     private void Edit()

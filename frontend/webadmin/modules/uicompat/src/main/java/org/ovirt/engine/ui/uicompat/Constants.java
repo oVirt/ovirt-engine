@@ -1176,11 +1176,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The following templates are missing on the target Export Domain:")
     String theFollowingTemplatesAreMissingOnTargetExportDomainMsg();
 
-    @DefaultStringValue("There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.")
-    String noActiveStorageDomains();
+    @DefaultStringValue("There are no active Data-Centers in the system.")
+    String noActiveDataCenters();
 
-    @DefaultStringValue("Error in retrieving the relevant Storage Domain.")
-    String errorRetrievingStorageDomains();
+    @DefaultStringValue("There are no active Storage Domains in the relevant Data-Center.")
+    String noActiveStorageDomainsInDC();
 
     @DefaultStringValue("Host name can't contain blanks or special characters, must be at least one character long, and contain 'a-z', '0-9', '_' or '.' characters.")
     String hostNameValidationMsg();

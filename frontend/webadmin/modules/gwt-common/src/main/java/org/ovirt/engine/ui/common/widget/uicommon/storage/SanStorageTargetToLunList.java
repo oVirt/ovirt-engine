@@ -255,6 +255,11 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 }
             });
         }
+        else {
+            for (LunModel lunModel : items) {
+                table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
+            }
+        }
 
         ScrollPanel panel = new ScrollPanel();
         panel.add(table);

@@ -421,11 +421,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private void DiscoverTargets()
     {
-        if (getContainer().getProgress() != null)
-        {
-            return;
-        }
-
         if (!ValidateDiscoverTargetFields())
         {
             return;

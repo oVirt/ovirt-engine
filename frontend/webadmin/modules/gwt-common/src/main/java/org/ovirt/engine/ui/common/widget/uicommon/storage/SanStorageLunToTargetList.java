@@ -171,6 +171,9 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 }
             });
         }
+        else {
+            table.getSelectionModel().setSelected(rootModel, rootModel.getIsSelected());
+        }
 
         // Create tree item
         HorizontalPanel panel = new HorizontalPanel();
