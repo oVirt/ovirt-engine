@@ -224,6 +224,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterHostAdd(String hostName);
 
+    public Map<String, Object> glusterHostsList();
+
     public Map<String, Object> ping();
 
     @FutureCall(delegeteTo = "ping")

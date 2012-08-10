@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterServersListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -232,5 +233,7 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterHostRemove(String hostName, Boolean force);
 
     StatusOnlyReturnForXmlRpc glusterHostAdd(String hostName);
+
+    GlusterServersListReturnForXmlRpc glusterServersList();
 
 }
