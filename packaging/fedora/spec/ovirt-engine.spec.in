@@ -143,6 +143,7 @@ Requires: python-configobj
 Requires: python-cheetah
 Requires: vdsm-bootstrap
 Requires: yum-plugin-versionlock
+Requires: ovirt-engine-cli
 
 # For local database:
 Requires: postgresql-server >= 8.4.7
