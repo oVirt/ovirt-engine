@@ -28,8 +28,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTaskDAO {
     private static final Guid[] EMPTY_GUIDS_ARRAY = new Guid[0];
-    private static Log log = LogFactory
-                                            .getLog(AsyncTaskDAODbFacadeImpl.class);
+    private static final Log log = LogFactory.getLog(AsyncTaskDAODbFacadeImpl.class);
 
     private static class IdRowMapper implements ParameterizedRowMapper<Guid> {
 
