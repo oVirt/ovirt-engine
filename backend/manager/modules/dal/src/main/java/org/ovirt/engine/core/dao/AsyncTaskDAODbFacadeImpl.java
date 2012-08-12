@@ -9,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -46,17 +48,12 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         @Override
         public async_tasks mapRow(ResultSet rs, int rowNum) throws SQLException {
             async_tasks entity = new async_tasks();
-            entity.setaction_type(VdcActionType.forValue(rs
-                            .getInt("action_type")));
-            entity.setresult(org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum
-                            .forValue(rs.getInt("result")));
-            entity.setstatus(org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum
-                            .forValue(rs.getInt("status")));
-            entity.settask_id(Guid.createGuidFromString(rs
-                            .getString("task_id")));
+            entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
+            entity.setresult(AsyncTaskResultEnum.forValue(rs.getInt("result")));
+            entity.setstatus(AsyncTaskStatusEnum.forValue(rs.getInt("status")));
+            entity.settask_id(Guid.createGuidFromString(rs.getString("task_id")));
             entity.setaction_parameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
-            entity.setStepId(NGuid.createGuidFromString(rs
-                    .getString("step_id")));
+            entity.setStepId(NGuid.createGuidFromString(rs.getString("step_id")));
             entity.setCommandId(Guid.createGuidFromString(rs.getString("command_id")));
             return entity;
         }
@@ -138,8 +135,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     private static void logNullParameters(async_tasks task) {
         if (task.getaction_parameters() == null) {
             StringBuilder sb = new StringBuilder("Null action_parameters:\n");
-            java.lang.StackTraceElement[] st = java.lang.Thread.currentThread()
-                    .getStackTrace();
+            StackTraceElement[] st = Thread.currentThread().getStackTrace();
 
             for (int i = 0; i < st.length; i++) {
                 sb.append(String.format("\tMethod: %1$s\n",
