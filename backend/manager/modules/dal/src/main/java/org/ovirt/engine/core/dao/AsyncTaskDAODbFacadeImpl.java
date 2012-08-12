@@ -62,7 +62,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         }
 
         @SuppressWarnings("unchecked")
-        private VdcActionParametersBase deserializeParameters(String payload, String className) {
+        private static VdcActionParametersBase deserializeParameters(String payload, String className) {
             if (className == null) {
                 return null;
             }
@@ -85,7 +85,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("command_id", task.getCommandId());
         }
 
-        private String serializeParameters(VdcActionParametersBase params) {
+        private static String serializeParameters(VdcActionParametersBase params) {
             VdcActionParametersBase parentParams = params.getParentParameters();
             params.setParentParemeters(null);
             String jsonStr = new JsonObjectSerializer().serialize(params);
@@ -135,7 +135,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         getCallsHandler().executeModification("Updateasync_tasks", parameterSource);
     }
 
-    private void logNullParameters(async_tasks task) {
+    private static void logNullParameters(async_tasks task) {
         if (task.getaction_parameters() == null) {
             StringBuilder sb = new StringBuilder("Null action_parameters:\n");
             java.lang.StackTraceElement[] st = java.lang.Thread.currentThread()
