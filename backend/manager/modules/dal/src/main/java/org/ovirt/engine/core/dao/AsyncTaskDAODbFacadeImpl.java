@@ -31,6 +31,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     private static final Log log = LogFactory.getLog(AsyncTaskDAODbFacadeImpl.class);
 
     private static class IdRowMapper implements ParameterizedRowMapper<Guid> {
+        public static final IdRowMapper instance = new IdRowMapper();
 
         @Override
         public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -162,16 +163,13 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     public List<Guid> getAsyncTaskIdsByEntity(Guid entityId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         parameterSource.addValue("entity_id", entityId);
-        ParameterizedRowMapper<Guid> mapper = new IdRowMapper();
-        return getCallsHandler().executeReadList("GetAsyncTasksByEntityId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAsyncTasksByEntityId", IdRowMapper.instance, parameterSource);
     }
 
     @Override
     public List<Guid> getAsyncTaskIdsByStoragePoolId(Guid storagePoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         parameterSource.addValue("storage_pool_id", storagePoolId);
-        ParameterizedRowMapper<Guid> mapper = new IdRowMapper();
-        return getCallsHandler().executeReadList("GetAsyncTasksByStoragePoolId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAsyncTasksByStoragePoolId", IdRowMapper.instance, parameterSource);
     }
-
 }
