@@ -590,7 +590,8 @@ public class VmGeneralModel extends EntityModel
         setName(vm.getvm_name());
         setDescription(vm.getvm_description());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
-        setQuotaAvailable(!vm.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
+        setQuotaAvailable(vm.getQuotaEnforcementType() != null
+                && !vm.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         setTemplate(vm.getvmt_name());
         setDefinedMemory(vm.getvm_mem_size_mb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$

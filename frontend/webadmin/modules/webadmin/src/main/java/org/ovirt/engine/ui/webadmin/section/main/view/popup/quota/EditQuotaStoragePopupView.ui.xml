@@ -6,7 +6,7 @@
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView.WidgetStyle">
 		.textBoxWidth {
-			width: 30px;
+			width: 60px;
 		}
 		.radioButtonWidth {
 			width: 120px;
