@@ -52,7 +52,7 @@ public interface TemplateResource extends UpdatableResource<Template>, Asynchron
     public TemplateDisksResource getDisksResource();
 
     @Path("nics")
-    public ReadOnlyDevicesResource<NIC, Nics> getNicsResource();
+    public DevicesResource<NIC, Nics> getNicsResource();
 
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();

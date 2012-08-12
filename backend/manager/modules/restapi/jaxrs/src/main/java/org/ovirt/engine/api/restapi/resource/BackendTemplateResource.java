@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
+import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
@@ -97,7 +98,7 @@ public class BackendTemplateResource
     }
 
     @Override
-    public ReadOnlyDevicesResource<NIC, Nics> getNicsResource() {
+    public DevicesResource<NIC, Nics> getNicsResource() {
         return inject(new BackendTemplateNicsResource(guid));
     }
 
