@@ -41,6 +41,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     private static class AsyncTaskRowMapper implements ParameterizedRowMapper<async_tasks> {
+        public static final AsyncTaskRowMapper instance = new AsyncTaskRowMapper();
 
         @Override
         public async_tasks mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -98,16 +99,14 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("task_id", id);
 
-        AsyncTaskRowMapper mapper = new AsyncTaskRowMapper();
-        return getCallsHandler().executeRead("Getasync_tasksBytask_id", mapper, parameterSource);
+        return getCallsHandler().executeRead("Getasync_tasksBytask_id", AsyncTaskRowMapper.instance, parameterSource);
     }
 
     @Override
     public List<async_tasks> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        AsyncTaskRowMapper mapper = new AsyncTaskRowMapper();
-        return getCallsHandler().executeReadList("GetAllFromasync_tasks", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromasync_tasks", AsyncTaskRowMapper.instance, parameterSource);
     }
 
     private AsyncTaskParameterSource getTaskParameterSource(async_tasks task) {
