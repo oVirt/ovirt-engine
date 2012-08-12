@@ -445,7 +445,7 @@ public class QuotaManager {
                 double newMemoryPercent = (double) newMemory / (double) quotaVdsGroup.getMemSizeMB() * 100;
                 success &= checkQuotaVdsGroupLimits(storagePool.getQuotaEnforcementType(),
                         quota,
-                        quotaVdsGroup.getVirtualCpu(),
+                        quotaVdsGroup.getMemSizeMB(),
                         newMemoryPercent,
                         true,
                         canDoActionMessages,

@@ -213,6 +213,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return DbFacade.getInstance().getStorageDomainStaticDAO();
     }
 
+    @Override
     protected SnapshotDao getSnapshotDao() {
         return DbFacade.getInstance().getSnapshotDao();
     }
@@ -475,6 +476,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
             quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
         }
+    }
+
+    @Override
+    protected void EndWithFailure() {
+        super.EndWithFailure();
+        rollbackQuota();
     }
 
 }
