@@ -37,7 +37,7 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
         }
 
         // If the quota is in use by ether VM or image - return false
-        if (getDbFacade().getQuotaDAO().isQuotaInUse(quota)) {
+        if (getQuotaDAO().isQuotaInUse(quota)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
             return false;
         }

@@ -66,6 +66,7 @@ public class RemoveQuotaCommandTest {
         quotaList.add(new Quota());
         quotaList.add(new Quota());
         when(quotaDAO.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(quotaList);
+        when(quotaDAO.isQuotaInUse(any(Quota.class))).thenReturn(false);
     }
 
     private void mockStoragePoolDAO() {
