@@ -249,7 +249,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> listPermissionSubjects;
-        if (getParameters().getVmId() == null) {
+        if (getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId())) {
             listPermissionSubjects = new ArrayList<PermissionSubject>();
         } else {
             listPermissionSubjects = super.getPermissionCheckSubjects();
