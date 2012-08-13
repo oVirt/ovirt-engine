@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -670,6 +671,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         addVmTemplateParameters.setPublicUse((Boolean) model.getIsTemplatePublic().getEntity());
 
+        if (model.getQuota().getSelectedItem() != null) {
+            newvm.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+        }
+
         addVmTemplateParameters.setDiskInfoDestinationMap(
                 model.getDisksAllocationModel()
                         .getImageToDestinationDomainMap((Boolean) model.getDisksAllocationModel()
@@ -1304,6 +1309,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
         gettempVm().setpriority((Integer) prioritySelectedItem.getEntity());
 
+        if (model.getQuota().getSelectedItem() != null) {
+            gettempVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+        }
+
         VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
         if ((Boolean) model.getIsAutoAssign().getEntity())
         {
@@ -1598,7 +1607,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
-
     private Integer cachedMaxPriority;
 
     private void VmModel_Priority_ItemsChanged()
@@ -1612,7 +1620,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             @Override
                             public void OnSuccess(Object target, Object returnValue) {
                                 cachedMaxPriority = (Integer) returnValue;
-                                updatePriority((UnitVmModel)target);
+                                updatePriority((UnitVmModel) target);
                             }
                         }, model.getHash()));
             } else {
@@ -1626,7 +1634,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         VM vm = (VM) selectedItem.getEntity();
         int roundPriority = AsyncDataProvider.GetRoundedPriority(vm.getpriority(), cachedMaxPriority);
         EntityModel priority = null;
-
 
         for (Object item : model.getPriority().getItems())
         {
