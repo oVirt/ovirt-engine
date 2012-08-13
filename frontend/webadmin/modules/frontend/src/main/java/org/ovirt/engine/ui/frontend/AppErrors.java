@@ -433,6 +433,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There are no available running Hosts with enough cores in VM's Cluster .")
     String ACTION_TYPE_FAILED_VDS_VM_CPUS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. There are no available running Hosts with all the networks used by the VM.")
+    String ACTION_TYPE_FAILED_VDS_VM_NETWORKS();
+
     @DefaultStringValue("The following Hosts have running VMs and cannot be switched to maintenance mode: ${HostsList}.Please ensure that the following Clusters have at least one Host in UP state: ${ClustersList}.")
     String CANNOT_MAINTANANCE_VDS_RUN_VMS_NO_OTHER_RUNNING_VDS();
 

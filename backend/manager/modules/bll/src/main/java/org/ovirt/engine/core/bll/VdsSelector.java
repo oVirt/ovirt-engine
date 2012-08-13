@@ -27,6 +27,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsSelector {
     private final List<Guid> privateRunVdssList = new ArrayList<Guid>();
+    private List<VmNetworkInterface> vmNICs;
 
     public List<Guid> getRunVdssList() {
         return privateRunVdssList;
@@ -239,6 +240,9 @@ public class VdsSelector {
         else if (!IsVMSwapValueLegal(vds)) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP);
         }
+        else if (!areRequiredNetworksAvailable(vds.getId())) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS);
+        }
         return ValidationResult.VALID;
     }
 
@@ -286,7 +290,6 @@ public class VdsSelector {
 
     private Guid getVdsToRunOn(Iterable<VDS> vdss) {
         final List<VDS> readyToRun = new ArrayList<VDS>();
-        final List<VmNetworkInterface> vmNICs = getVmNetworkInterfaceDAO().getAllForVm(getVm().getId());
         for (VDS curVds : vdss) {
             // vds must be in the correct group
             if (!curVds.getvds_group_id().equals(getVm().getvds_group_id()))
@@ -315,7 +318,7 @@ public class VdsSelector {
             if (!IsVMSwapValueLegal(curVds))
                 continue;
 
-            if(!areRequiredNetworksAvailable(vmNICs, getInterfaceDAO().getAllInterfacesForVds(curVds.getId())))
+            if(!areRequiredNetworksAvailable(curVds.getId()))
                 continue;
 
             readyToRun.add(curVds);
@@ -324,9 +327,9 @@ public class VdsSelector {
         return readyToRun.isEmpty() ? Guid.Empty : getBestVdsToRun(readyToRun);
     }
 
-    boolean areRequiredNetworksAvailable(final List<VmNetworkInterface> vmNetworkInterfaces,
-            final List<VdsNetworkInterface> allInterfacesForVds) {
-        for (final VmNetworkInterface vmIf : vmNetworkInterfaces) {
+    boolean areRequiredNetworksAvailable(Guid vdsId) {
+        final List<VdsNetworkInterface> allInterfacesForVds = getInterfaceDAO().getAllInterfacesForVds(vdsId);
+        for (final VmNetworkInterface vmIf : getVmNICs()) {
             boolean found = false;
             for (final VdsNetworkInterface vdsIf : allInterfacesForVds) {
                 if (StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
@@ -367,6 +370,13 @@ public class VdsSelector {
         comparer.BestVdsProcedure(bestVDS);
         getRunVdssList().add(bestVDS.getId());
         return bestVDS.getId();
+    }
+
+    private List<VmNetworkInterface> getVmNICs() {
+        if (vmNICs == null) {
+            vmNICs = getVmNetworkInterfaceDAO().getAllForVm(getVm().getId());
+        }
+        return vmNICs;
     }
 
     private static Log log = LogFactory.getLog(VdsSelector.class);
