@@ -113,6 +113,32 @@ public class UpdateStoragePoolCommandTest {
     }
 
     @Test
+    public void testValidateAllClustersLevel() {
+        storagePoolWithVersionHigherThanCluster();
+        List<VDSGroup> clusterList = createClusterList();
+        // Create new supported cluster.
+        VDSGroup secondCluster = new VDSGroup();
+        secondCluster.setcompatibility_version(VERSION_1_2);
+        secondCluster.setname("secondCluster");
+        clusterList.add(secondCluster);
+
+        // Create new unsupported cluster.
+        VDSGroup thirdCluster = new VDSGroup();
+        thirdCluster.setcompatibility_version(VERSION_1_1);
+        thirdCluster.setname("thirdCluster");
+        clusterList.add(thirdCluster);
+
+        // Test upgrade
+        when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusterList);
+        assertFalse(cmd.checkAllClustersLevel());
+        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        assertTrue(messages.contains(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString()));
+        assertTrue(messages.get(0).contains("firstCluster"));
+        assertFalse(messages.get(0).contains("secondCluster"));
+        assertTrue(messages.get(0).contains("thirdCluster"));
+    }
+
+    @Test
     public void poolHasDefaultCluster() {
         addDefaultClusterToPool();
         storagePoolWithLocalFS();
@@ -199,6 +225,7 @@ public class UpdateStoragePoolCommandTest {
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         VDSGroup cluster = new VDSGroup();
         cluster.setcompatibility_version(VERSION_1_0);
+        cluster.setname("firstCluster");
         clusters.add(cluster);
         return clusters;
     }

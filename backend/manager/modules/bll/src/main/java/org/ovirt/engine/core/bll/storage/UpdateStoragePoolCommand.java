@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -181,19 +183,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
             } else {
-                // check all clusters has at least the same compatibility
-                // version
-                List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
-                for (VDSGroup cluster : clusters) {
-                    if (getStoragePool().getcompatibility_version().compareTo(cluster.getcompatibility_version()) > 0) {
-                        returnValue = false;
-                        getReturnValue()
-                                .getCanDoActionMessages()
-                                .add(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS
-                                        .toString());
-                        break;
-                    }
-                }
+                // Check all clusters has at least the same compatibility version.
+                returnValue = checkAllClustersLevel();
             }
         }
 
@@ -205,6 +196,27 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             returnValue = validator.isPosixDcAndMatchingCompatiblityVersion();
         }
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        return returnValue;
+    }
+
+    protected boolean checkAllClustersLevel() {
+        boolean returnValue = true;
+        List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
+        List<String> lowLevelClusters = new ArrayList<String>();
+        for (VDSGroup cluster : clusters) {
+            if (getStoragePool().getcompatibility_version().compareTo(cluster.getcompatibility_version()) > 0) {
+                lowLevelClusters.add(cluster.getname());
+            }
+        }
+        if (!lowLevelClusters.isEmpty()) {
+            returnValue = false;
+            getReturnValue().getCanDoActionMessages().add(String.format("$ClustersList %1$s",
+                    StringUtils.join(lowLevelClusters, ",")));
+            getReturnValue()
+                    .getCanDoActionMessages()
+                    .add(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS
+                            .toString());
+        }
         return returnValue;
     }
 

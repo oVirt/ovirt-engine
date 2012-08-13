@@ -1036,7 +1036,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Only Storage Domain name is updateable.")
     String ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS();
 
-    @DefaultStringValue("Cannot update Data Center compatibility version to a value that is greater than its Cluster's version.")
+    @DefaultStringValue("Cannot update Data Center compatibility version to a value that is greater than its Cluster's version. The following clusters should be upgraded ${ClustersList}.")
     String ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS();
 
     @DefaultStringValue("Cannot import Storage Domain. Internal Error: The connection data is illegal.")
