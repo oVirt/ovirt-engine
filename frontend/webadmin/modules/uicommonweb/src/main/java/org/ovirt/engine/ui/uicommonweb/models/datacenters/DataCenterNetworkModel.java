@@ -17,8 +17,4 @@ public class DataCenterNetworkModel extends NetworkModel
         privateIsNew = value;
     }
 
-    public DataCenterNetworkModel()
-    {
-    }
-
 }

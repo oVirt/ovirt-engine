@@ -27,7 +27,7 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
 
         void setMessageLabel(String label);
 
-        void setInputFieldsEnabled(boolean enabled);
+        void postModelEnabled(boolean enabled);
 
         HasClickHandlers getApply();
 
@@ -103,7 +103,7 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 EntityModel entity = (EntityModel) sender;
                 boolean inputFieldsEnabled = (Boolean) entity.getEntity();
-                getView().setInputFieldsEnabled(inputFieldsEnabled);
+                getView().postModelEnabled(inputFieldsEnabled);
             }
         });
 

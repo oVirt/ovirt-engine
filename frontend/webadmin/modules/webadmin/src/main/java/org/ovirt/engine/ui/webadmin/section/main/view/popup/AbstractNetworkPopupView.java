@@ -150,15 +150,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     @Override
-    public void setInputFieldsEnabled(boolean enabled) {
-        nameEditor.setEnabled(enabled);
-        descriptionEditor.setEnabled(enabled);
-        isVmNetworkEditor.setEnabled(enabled);
-        vlanTagging.setEnabled(enabled);
-        vlanTag.setEnabled(enabled);
-        hasMtuEditor.setEnabled(enabled);
-        mtuEditor.setEnabled(enabled);
-        messageLabel.setVisible(!enabled);
+    public void postModelEnabled(boolean enabled) {
+          messageLabel.setVisible(!enabled);
     }
 
     @Override
@@ -254,6 +247,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     public void updateVisibility() {
+        messageLabel.setVisible(false);
     }
 
     @Override

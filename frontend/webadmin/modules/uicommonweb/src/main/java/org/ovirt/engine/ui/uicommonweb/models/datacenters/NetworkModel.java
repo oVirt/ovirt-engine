@@ -209,8 +209,20 @@ public class NetworkModel extends Model
 
         setNetworkClusterList(new ListModel());
         setOriginalClusters(new ArrayList<VDSGroup>());
-        setIsEnabled(new EntityModel());
-        getIsEnabled().setEntity(true);
+        setIsEnabled(new EntityModel() {
+            @Override
+            public void setEntity(Object value) {
+                super.setEntity(value);
+                getName().setIsChangable((Boolean) value);
+                getDescription().setIsChangable((Boolean) value);
+                getIsVmNetwork().setIsChangable((Boolean) value);
+                getHasVLanTag().setIsChangable((Boolean) value);
+                getVLanTag().setIsChangable((Boolean) value);
+                getHasMtu().setIsChangable((Boolean) value);
+                getMtu().setIsChangable((Boolean) value);
+            }
+
+        });
     }
 
     public boolean Validate()

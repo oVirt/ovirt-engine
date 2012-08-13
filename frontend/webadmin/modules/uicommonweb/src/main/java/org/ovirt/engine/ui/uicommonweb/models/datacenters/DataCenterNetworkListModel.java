@@ -823,9 +823,15 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         if (networkHasAttachedClusters)
         {
             model.getIsEnabled().setEntity(false);
+        }else{
+            model.getIsEnabled().setEntity(true);
+            if (StringHelper.stringsEqual(network.getname(), ENGINE_NETWORK)){
+                model.getName().setIsChangable(false);
+            }
         }
 
         model.setNetworkClusterList(getNetworkClusterList());
+
         if (StringHelper.stringsEqual(network.getname(), ENGINE_NETWORK) && networkClusterList.size() > 0)
         {
             UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
