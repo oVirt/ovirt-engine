@@ -1,24 +1,25 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HotPlugUnplgNicVDSParameters extends VdsIdVDSCommandParametersBase {
 
-    private final Guid vmId;
+    private final VM vm;
     private final VmNetworkInterface nic;
     private final VmDevice vmDevice;
 
-    public HotPlugUnplgNicVDSParameters(Guid vdsId, Guid vmId, VmNetworkInterface nic, VmDevice vmDevice) {
+    public HotPlugUnplgNicVDSParameters(Guid vdsId, VM vm, VmNetworkInterface nic, VmDevice vmDevice) {
         super(vdsId);
-        this.vmId = vmId;
+        this.vm = vm;
         this.nic = nic;
         this.vmDevice = vmDevice;
     }
 
-    public Guid getVmId() {
-        return vmId;
+    public VM getVm() {
+        return vm;
     }
 
     public VmNetworkInterface getNic() {
@@ -28,5 +29,4 @@ public class HotPlugUnplgNicVDSParameters extends VdsIdVDSCommandParametersBase 
     public VmDevice getVmDevice() {
         return vmDevice;
     }
-
 }

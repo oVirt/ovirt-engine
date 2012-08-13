@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -317,22 +318,38 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (ifaceType == VmInterfaceType.rtl8139_pv) {
                     if (!useRtl8139_pv) {
                         if (vm.getHasAgent()) {
-                            addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.pv.name());
+                            addNetworkInterfaceProperties(struct,
+                                    vmInterface,
+                                    vmDevice,
+                                    VmInterfaceType.pv.name(),
+                                    vm.getvds_group_compatibility_version());
                         } else {
-                            addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.rtl8139.name());
+                            addNetworkInterfaceProperties(struct,
+                                    vmInterface,
+                                    vmDevice,
+                                    VmInterfaceType.rtl8139.name(),
+                                    vm.getvds_group_compatibility_version());
                         }
                     } else {
-                        addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.pv.name());
+                        addNetworkInterfaceProperties(struct,
+                                vmInterface,
+                                vmDevice,
+                                VmInterfaceType.pv.name(),
+                                vm.getvds_group_compatibility_version());
                         // Doual Mode: in this case we have to insert 2 interfaces with the same entries except nicModel
                         XmlRpcStruct rtl8139Struct = new XmlRpcStruct();
                         addNetworkInterfaceProperties(rtl8139Struct,
                                 vmInterface,
                                 vmDevice,
-                                VmInterfaceType.rtl8139.name());
+                                VmInterfaceType.rtl8139.name(), vm.getvds_group_compatibility_version());
                         devices.add(rtl8139Struct);
                     }
                 } else {
-                    addNetworkInterfaceProperties(struct, vmInterface, vmDevice, ifaceType.toString());
+                    addNetworkInterfaceProperties(struct,
+                            vmInterface,
+                            vmDevice,
+                            ifaceType.toString(),
+                            vm.getvds_group_compatibility_version());
                 }
                 devices.add(struct);
                 addToManagedDevices(vmDevice);
@@ -461,7 +478,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static void addNetworkInterfaceProperties(XmlRpcStruct struct,
             VmNetworkInterface vmInterface,
             VmDevice vmDevice,
-            String nicModel) {
+            String nicModel,
+            Version clusterVersion) {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
         struct.add(VdsProperties.network, vmInterface.getNetworkName());
@@ -475,6 +493,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             List<String> networks = new ArrayList<String>();
             networks.add(vmInterface.getNetworkName());
             struct.add(VdsProperties.portMirroring, networks);
+        }
+
+        addNetworkFiltersToNic(struct, clusterVersion);
+    }
+
+    public static void addNetworkFiltersToNic(XmlRpcStruct struct, Version clusterVersion) {
+        if (Config.<Boolean> GetValue(ConfigValues.EnableMACAntiSpoofingFilterRules, clusterVersion.getValue())) {
+            struct.add(VdsProperties.NW_FILTER, NetworkFilters.NO_MAC_SPOOFING.getFilterName());
         }
     }
 

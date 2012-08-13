@@ -142,6 +142,7 @@ public final class VdsProperties {
     public static final String nic_type = "nicModel";
     public static final String portMirroring = "portMirroring";
     public static final String bridge = "bridge";
+    public static final String NW_FILTER = "filter";
     public static final String num_of_monitors = "spiceMonitors";
     public static final String num_of_cpus = "smp";
     public static final String cores_per_socket = "smpCoresPerSocket";

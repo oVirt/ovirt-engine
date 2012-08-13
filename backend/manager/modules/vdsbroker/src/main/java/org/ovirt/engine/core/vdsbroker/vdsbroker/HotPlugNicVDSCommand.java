@@ -25,7 +25,7 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
     }
 
     protected void init() {
-        struct.add("vmId",getParameters().getVmId().toString());
+        struct.add("vmId", getParameters().getVm().getId().toString());
         struct.add("nic", initNicStructure());
     }
 
@@ -44,9 +44,12 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
         if (vmDevice.getBootOrder() > 0) {
             map.add("bootOrder", String.valueOf(vmDevice.getBootOrder()));
         }
+
         if (nic.isPortMirroring()) {
             map.add(VdsProperties.portMirroring, Collections.singletonList(nic.getNetworkName()));
         }
+
+        VmInfoBuilder.addNetworkFiltersToNic(map, getParameters().getVm().getvds_group_compatibility_version());
         return map;
     }
 

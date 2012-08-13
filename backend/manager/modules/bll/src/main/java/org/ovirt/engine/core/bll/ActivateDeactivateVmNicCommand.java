@@ -72,7 +72,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getstatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),
-                    new HotPlugUnplgNicVDSParameters(getVdsId(), getVm().getId(),
+                    new HotPlugUnplgNicVDSParameters(getVdsId(),
+                            getVm(),
                             DbFacade.getInstance().getVmNetworkInterfaceDAO().get(getParameters().getNicId()),
                             vmDevice));
         }
