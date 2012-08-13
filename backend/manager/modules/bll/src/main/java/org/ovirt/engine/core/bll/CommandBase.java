@@ -688,12 +688,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Get identifiers and types of the objects whose permissions have to be
         // checked:
         final List<PermissionSubject> permSubjects = getPermissionCheckSubjects();
+
         if (permSubjects == null || permSubjects.isEmpty()) {
             if (log.isDebugEnabled()) {
                 log.debugFormat("The set of objects to check is null or empty for action {0}.", getActionType());
             }
             addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
             return false;
+        }
+
+        if (this instanceof Quotable) {
+            ((Quotable) this).addQuotaPermissionSubject(permSubjects);
         }
 
         for (PermissionSubject permSubject : permSubjects) {
@@ -1342,12 +1347,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (jobProperties == null) {
             jobProperties = new HashMap<String, String>();
             List<PermissionSubject> subjects = getPermissionCheckSubjects();
-            if (this instanceof Quotable) {
-                if (subjects == null) {
-                    subjects = new ArrayList<PermissionSubject>();
-                }
-                ((Quotable) this).addQuotaPermissionSubject(subjects);
-            }
             if (!subjects.isEmpty()) {
                 VdcObjectType entityType;
                 Guid entityId;
