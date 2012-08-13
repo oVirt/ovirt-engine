@@ -5,8 +5,8 @@ public enum UsbPolicy {
     DISABLED,
     ENABLED_NATIVE;
 
-    private static String oldEnabledValue;
-    private static String oldDisabledValue;
+    private static final String oldEnabledValue = "Enabled";
+    private static final String oldDisabledValue = "Disabled";
 
     public int getValue() {
         return this.ordinal();

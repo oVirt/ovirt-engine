@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
@@ -456,6 +457,13 @@ public class VmHandler {
                 VmPropertiesUtils.getInstance().generateErrorMessages(validationErrors, invalidSyntaxMsg,
                         failureReasonsToVdcBllMessagesMap, failureReasonsToFormatMessages);
         message.addAll(errorMessages);
+    }
+
+    public static void updateImportedVmUsbPolicy(VmBase vmBase) {
+        //Enforce disabled USB policy for Linux OS with legacy policy.
+        if (vmBase.getos().isLinux() &&  vmBase.getusb_policy().equals(UsbPolicy.ENABLED_LEGACY)) {
+            vmBase.setusb_policy(UsbPolicy.DISABLED);
+        }
     }
 
     private static final Log log = LogFactory.getLog(VmHandler.class);

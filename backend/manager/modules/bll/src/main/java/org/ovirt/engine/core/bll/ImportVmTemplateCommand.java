@@ -316,6 +316,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getVmTemplate().setvds_group_id(getParameters().getVdsGroupId());
         getVmTemplate().setstatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
+        VmHandler.updateImportedVmUsbPolicy(getVmTemplate());
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;

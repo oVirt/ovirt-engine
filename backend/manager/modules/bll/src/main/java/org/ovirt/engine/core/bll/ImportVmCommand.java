@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -356,11 +355,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         // Check that the USB policy is legal
         if (retVal) {
-            //Enforce disabled USB policy for Linux OS with legacy policy.
-            if (vm.getos().isLinux() &&  vm.getusb_policy().equals(UsbPolicy.ENABLED_LEGACY)) {
-                vm.setusb_policy(UsbPolicy.DISABLED);
-            }
-
+            VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
             retVal = VmHandler.isUsbPolicyLegal(vm.getusb_policy(), vm.getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
         }
 
