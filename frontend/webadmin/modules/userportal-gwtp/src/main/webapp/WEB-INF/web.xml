@@ -28,6 +28,12 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
+	<!-- Error page to present -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404.html</location>
+	</error-page>
+
 	<!-- confidentiality -->
 	<security-constraint>
 		<web-resource-collection>
