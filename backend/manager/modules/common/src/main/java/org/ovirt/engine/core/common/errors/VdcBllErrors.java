@@ -337,7 +337,7 @@ public enum VdcBllErrors {
     GlusterVolumeReplaceBrickStartFailed(4142),
     GlusterHostRemoveFailed(4406),
     GlusterAddHostFailed(4404),
-    GlusterPeerListFailed(4405),
+    GlusterPeerListFailed(4407),
 
 
     UnicodeArgumentException(4900),

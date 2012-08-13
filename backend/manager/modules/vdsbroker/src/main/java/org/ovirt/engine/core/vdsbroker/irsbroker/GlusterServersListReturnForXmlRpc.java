@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
@@ -18,27 +18,27 @@ public final class GlusterServersListReturnForXmlRpc extends StatusReturnForXmlR
 
     private static final String PEER_STATUS = "status";
 
-    private Set<GlusterServerInfo> servers;
+    private List<GlusterServerInfo> servers = new ArrayList<GlusterServerInfo>();
 
-    public Set<GlusterServerInfo> getServers() {
+    public List<GlusterServerInfo> getServers() {
         return servers;
     }
 
-    public void setServer(Set<GlusterServerInfo> servers) {
-        this.servers = servers;
-    }
-
+    @SuppressWarnings("unchecked")
     public GlusterServersListReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        Set<GlusterServerInfo> glusterServers = new HashSet<GlusterServerInfo>();
+
+        if (mStatus.mCode != 0) {
+            return;
+        }
+
         Object[] serversArr = (Object[]) innerMap.get(GLUSTER_HOSTS);
 
         if (serversArr != null) {
             for (int i = 0; i < serversArr.length; i++) {
-                glusterServers.add(prepareServerInfo((Map<String, Object>) serversArr[i]));
+                this.servers.add(prepareServerInfo((Map<String, Object>) serversArr[i]));
             }
         }
-        setServer(glusterServers);
     }
 
     private GlusterServerInfo prepareServerInfo(Map<String, Object> map) {

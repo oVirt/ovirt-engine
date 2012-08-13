@@ -90,6 +90,10 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
                 return AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER;
         case VM_NETWORK_IS_BRIDGELESS:
                 return AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS;
+        case GLUSTER_PEER_LIST_FAILED:
+            return AuditLogType.GLUSTER_SERVERS_LIST_FAILED;
+        case GLUSTER_PEER_PROBE_FAILED:
+            return AuditLogType.GLUSTER_HOST_ADD_FAILED;
             default:
                 return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         }
