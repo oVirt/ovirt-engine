@@ -262,6 +262,10 @@ select fn_db_add_config_value('SupportBridgesReportByVDSM','false','2.2');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.0');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.1');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','true','3.2');
+select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','false', '2.2');
+select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','false', '3.0');
+select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','false', '3.1');
+select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','true', '3.2');
 --Handling Organization Name
 select fn_db_add_config_value('OrganizationName','oVirt','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');
@@ -485,6 +489,7 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
 select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"false\"}','general');
+
 
 ------------------------------------------------------------------------------------
 --                  Update with override section

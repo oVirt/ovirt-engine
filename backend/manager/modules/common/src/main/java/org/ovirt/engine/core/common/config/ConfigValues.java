@@ -1459,6 +1459,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     AllowClusterWithVirtGlusterEnabled(380),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    EnableMACAntiSpoofingFilterRules(381),
+
     Invalid(65535);
 
     private int intValue;
