@@ -344,6 +344,7 @@ make %{make_common_opts} install DESTDIR=%{buildroot}
 
 install -dm 755 %{buildroot}/%{engine_state}/deployments
 install -dm 755 %{buildroot}/%{engine_state}/content
+install -dm 755 %{buildroot}/%{engine_state}/backups
 install -dm 755 %{buildroot}/%{engine_log}/{notifier,engine-manage-domains}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 install -dm 755 %{buildroot}/%{engine_lock}
@@ -651,9 +652,9 @@ fi
 %{_mavenpomdir}/JPP.%{name}-vdsbroker.pom
 %endif
 
-# Directories for the deployments and contents files need to be
-# owned by the engine user because the application server needs to
-# write to them:
+# Directories for the backup, deployments and contents files need to be
+# owned by the engine user because the setup/upgrade wizard or applications
+# server need to write to them:
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
 
 # The backend owns the directory of the ear and most of its contents,

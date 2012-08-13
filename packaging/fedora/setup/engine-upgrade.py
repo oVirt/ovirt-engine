@@ -44,7 +44,7 @@ SERVER_NAME = basedefs.DB_HOST
 SERVER_PORT = basedefs.DB_PORT
 SERVER_ADMIN = basedefs.DB_ADMIN
 
-BACKUP_DIR = "/usr/share/ovirt-engine/db-backups"
+BACKUP_DIR = "/var/lib/ovirt-engine/backups"
 BACKUP_FILE = "ovirt-engine_db_backup"
 LOG_PATH = "/var/log/ovirt-engine"
 LOG_FILE = "ovirt-engine-upgrade.log"
