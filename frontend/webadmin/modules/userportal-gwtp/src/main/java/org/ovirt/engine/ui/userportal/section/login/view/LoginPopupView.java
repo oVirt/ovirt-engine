@@ -49,7 +49,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Ignore
     Label headerLabel;
 
-    @UiField
+    @UiField(provided = true)
     @Path("userName.entity")
     @WithElementId("userName")
     EntityModelTextBoxEditor userNameEditor;
@@ -87,6 +87,18 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
             ApplicationConstants constants,
             ApplicationMessages messages) {
         super(eventBus, resources);
+
+        // We need this code because resetAndFocus is called when userNameEditor is Disabled
+        userNameEditor = new EntityModelTextBoxEditor() {
+            @Override
+            public void setEnabled(boolean enabled) {
+                super.setEnabled(enabled);
+                if (enabled) {
+                    userNameEditor.asValueBox().selectAll();
+                    userNameEditor.setFocus(true);
+                }
+            }
+        };
 
         connectAutomatically = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
