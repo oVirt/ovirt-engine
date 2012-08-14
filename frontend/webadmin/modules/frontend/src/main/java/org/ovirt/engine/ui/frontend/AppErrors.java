@@ -637,6 +637,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action confirm 'Host has been rebooted'")
     String VAR__ACTION__MANUAL_FENCE();
 
+    @DefaultStringValue("$action maintenance")
+    String VAR__ACTION__MAINTENANCE();
+
     @DefaultStringValue("$action setup")
     String VAR__ACTION__SETUP();
 

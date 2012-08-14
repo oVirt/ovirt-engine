@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -12,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -25,11 +30,14 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
     protected Guid _newMasterStorageDomainId = Guid.Empty;
     private storage_domains _newMaster;
+    protected boolean _isLastMaster;
+    private VDS spm;
 
     protected storage_domains getNewMaster(boolean duringReconstruct) {
         if (_newMaster == null && Guid.Empty.equals(_newMasterStorageDomainId)) {
@@ -43,9 +51,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     protected void setNewMaster(storage_domains value) {
         _newMaster = value;
     }
-
-    protected boolean _isLastMaster;
-    private VDS spm;
 
     public DeactivateStorageDomainCommand(T parameters) {
         super(parameters);
@@ -62,9 +67,13 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     @Override
-    protected boolean canDoAction() {
-        super.canDoAction();
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DEACTIVATE);
+    }
+
+    @Override
+    protected boolean canDoAction() {
         if (!(CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {
             return false;
         }
@@ -166,64 +175,55 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             getStorageDomain().getStorageDynamicData().setavailable_disk_size(null);
             getStorageDomain().getStorageDynamicData().setused_disk_size(null);
         }
-        boolean succeeded = getBackend().getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.DeactivateStorageDomain,
-                        new DeactivateStorageDomainVDSCommandParameters(getStoragePool().getId(),
-                                getStorageDomain()
-                                        .getId(),
-                                _newMasterStorageDomainId,
-                                getStoragePool().getmaster_domain_version()))
-                .getSucceeded();
-        if (succeeded) {
-            runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
-                    _isLastMaster,
-                    _newMasterStorageDomainId);
-            if (_isLastMaster && spm != null) {
-                final VDSReturnValue stopSpmReturnValue = getBackend()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.SpmStopOnIrs,
-                                new IrsBaseVDSCommandParameters(getStoragePool().getId()));
-                if (!stopSpmReturnValue.getSucceeded()) {
-                    // no need to continue because DisconnectStoragePool will
-                    // fail if host is SPM
-                    log.error("Aborting execution due to failure stopping SPM." +
-                            " Stop SPM failed due to "
-                            + stopSpmReturnValue.getExceptionString());
-                    setSucceeded(false);
-                    return;
-                }
-                getBackend().getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.DisconnectStoragePool,
-                                new DisconnectStoragePoolVDSCommandParameters(spm.getId(),
-                                        getStoragePool().getId(), spm.getvds_spm_id()));
+        runVdsCommand(VDSCommandType.DeactivateStorageDomain,
+                new DeactivateStorageDomainVDSCommandParameters(getStoragePool().getId(),
+                        getStorageDomain()
+                                .getId(),
+                        _newMasterStorageDomainId,
+                        getStoragePool().getmaster_domain_version()));
+        freeLock();
+        runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
+                _isLastMaster,
+                _newMasterStorageDomainId);
+        if (_isLastMaster && spm != null) {
+            final VDSReturnValue stopSpmReturnValue = runVdsCommand(VDSCommandType.SpmStopOnIrs,
+                    new IrsBaseVDSCommandParameters(getStoragePool().getId()));
+            if (!stopSpmReturnValue.getSucceeded()) {
+                // no need to continue because DisconnectStoragePool will
+                // fail if host is SPM
+                log.error("Aborting execution due to failure stopping SPM." +
+                        " Stop SPM failed due to "
+                        + stopSpmReturnValue.getExceptionString());
+                setSucceeded(false);
+                return;
             }
-
-            getStorageHelper(getStorageDomain()).DisconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
-
-            executeInNewTransaction(new TransactionMethod<Object>() {
-                @Override
-                public Object runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(map, map.getstatus());
-                    if (getParameters().isInactive()) {
-                        map.setstatus(StorageDomainStatus.InActive);
-                    } else {
-                        map.setstatus(StorageDomainStatus.Maintenance);
-                    }
-                    getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
-                    if (!Guid.Empty.equals(_newMasterStorageDomainId)) {
-                        storage_pool_iso_map mapOfNewMaster = getNewMaster(false).getStoragePoolIsoMapData();
-                        getCompensationContext().snapshotEntityStatus(mapOfNewMaster, mapOfNewMaster.getstatus());
-                        mapOfNewMaster.setstatus(StorageDomainStatus.Active);
-                        getStoragePoolIsoMapDAO().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getstatus());
-                    }
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
-            });
-            setSucceeded(true);
+            runVdsCommand(VDSCommandType.DisconnectStoragePool,
+                    new DisconnectStoragePoolVDSCommandParameters(spm.getId(),
+                            getStoragePool().getId(), spm.getvds_spm_id()));
         }
+
+        if (spm != null) {
+            getStorageHelper(getStorageDomain()).DisconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
+        }
+
+        executeInNewTransaction(new TransactionMethod<Object>() {
+            @Override
+            public Object runInTransaction() {
+                if (getParameters().isInactive()) {
+                    map.setstatus(StorageDomainStatus.InActive);
+                } else {
+                    map.setstatus(StorageDomainStatus.Maintenance);
+                }
+                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                if (!Guid.Empty.equals(_newMasterStorageDomainId)) {
+                    storage_pool_iso_map mapOfNewMaster = getNewMaster(false).getStoragePoolIsoMapData();
+                    mapOfNewMaster.setstatus(StorageDomainStatus.Active);
+                    getStoragePoolIsoMapDAO().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getstatus());
+                }
+                return null;
+            }
+        });
+        setSucceeded(true);
     }
 
     /**
@@ -273,7 +273,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
     }
 
-    AsyncTaskDAO getAsyncTaskDao() {
+    protected AsyncTaskDAO getAsyncTaskDao() {
         return DbFacade.getInstance().getAsyncTaskDAO();
     }
 
@@ -283,5 +283,30 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 : AuditLogType.SYSTEM_DEACTIVATE_STORAGE_DOMAIN_FAILED
                 : getSucceeded() ? AuditLogType.USER_DEACTIVATED_STORAGE_DOMAIN
                         : AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED;
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        storage_domains storageDomain = getStorageDomain();
+        if (storageDomain != null) {
+            Map<String, String> locks = new HashMap<String, String>();
+            locks.put(storageDomain.getId().toString(), LockingGroup.STORAGE.name());
+            if (storageDomain.getstorage_domain_type() == StorageDomainType.Master) {
+                locks.put(storageDomain.getstorage_pool_id().toString(), LockingGroup.POOL.name());
+            }
+            return locks;
+        }
+        return null;
+    }
+
+    @Override
+    protected Map<String, String> getSharedLocks() {
+        storage_domains storageDomain = getStorageDomain();
+        if (storageDomain != null && storageDomain.getstorage_domain_type() == StorageDomainType.Data
+                && storageDomain.getstorage_domain_type() != StorageDomainType.Master
+                && storageDomain.getstorage_pool_id() != null) {
+            return Collections.singletonMap(storageDomain.getstorage_pool_id().toString(), LockingGroup.POOL.name());
+        }
+        return null;
     }
 }

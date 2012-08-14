@@ -32,14 +32,11 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends VdsCommand<T> {
 
     private static final long serialVersionUID = -7604781532599945079L;
-    private static Log log = LogFactory.getLog(MaintananceVdsCommand.class);
     private final boolean _isInternal;
     private List<VM> vms;
 
@@ -196,5 +193,4 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, tempVar);
         }
     }
-
 }
