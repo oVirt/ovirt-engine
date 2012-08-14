@@ -11,6 +11,8 @@ public class GetAllRelevantQuotasForStorageQuery<P extends GetAllRelevantQuotasF
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getQuotaDAO()
-                .getAllRelevantQuotasForStorage(getParameters().getStorageId()));
+                .getAllRelevantQuotasForStorage(getParameters().getStorageId(),
+                        getUserID(),
+                        getParameters().isFiltered()));
     }
 }

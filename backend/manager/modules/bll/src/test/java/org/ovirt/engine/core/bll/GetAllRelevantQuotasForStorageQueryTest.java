@@ -28,7 +28,7 @@ public class GetAllRelevantQuotasForStorageQueryTest extends AbstractQueryTest<G
         // Set up the DAOs
         List<Quota> expected = Collections.singletonList(new Quota());
         QuotaDAO quotaDAOMock = mock(QuotaDAO.class);
-        when(quotaDAOMock.getAllRelevantQuotasForStorage(quotaID)).thenReturn(expected);
+        when(quotaDAOMock.getAllRelevantQuotasForStorage(quotaID, null, false)).thenReturn(expected);
         when(getDbFacadeMockInstance().getQuotaDAO()).thenReturn(quotaDAOMock);
 
         // Run the query

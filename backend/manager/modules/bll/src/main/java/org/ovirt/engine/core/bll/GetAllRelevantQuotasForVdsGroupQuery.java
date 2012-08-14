@@ -11,6 +11,8 @@ public class GetAllRelevantQuotasForVdsGroupQuery<P extends GetAllRelevantQuotas
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getQuotaDAO()
-                .getAllRelevantQuotasForVdsGroup(getParameters().getVdsGroupId()));
+                .getAllRelevantQuotasForVdsGroup(getParameters().getVdsGroupId(),
+                        getUserID(),
+                        getParameters().isFiltered()));
     }
 }

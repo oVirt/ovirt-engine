@@ -172,7 +172,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAllThinQuotasByStorageId(v_storage_id UUID)
+Create or replace FUNCTION GetAllThinQuotasByStorageId(v_storage_id UUID, v_user_id UUID, v_is_filtered boolean)
 RETURNS SETOF quota_view
    AS $procedure$
 BEGIN
@@ -188,17 +188,25 @@ BEGIN
     grace_storage_percentage,
     quota_enforcement_type
    FROM   quota_limitations_view
-   WHERE  storage_id = v_storage_id
+   WHERE  (storage_id = v_storage_id
    OR     (is_global AND
            NOT is_empty AND
            storage_size_gb IS NOT null AND
            storage_pool_id IN (SELECT storage_pool_id FROM storage_pool_iso_map
-               WHERE  storage_id = v_storage_id));
+               WHERE  storage_id = v_storage_id)))
+   AND (NOT v_is_filtered OR
+          EXISTS (SELECT 1 FROM permissions p
+                  JOIN user_flat_groups u ON
+                  u.granted_id = p.ad_element_id WHERE
+                  u.user_id = v_user_id AND
+                  p.object_type_id = 17 AND -- quota object
+                  p.role_id = 'def0000a-0000-0000-0000-def00000000a' AND -- consume quota
+                  quota_id = p.object_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllThinQuotasByVDSGroupId(v_vds_group_id UUID)
+Create or replace FUNCTION GetAllThinQuotasByVDSGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered boolean)
 RETURNS SETOF quota_view
    AS $procedure$
 BEGIN
@@ -214,12 +222,20 @@ BEGIN
     grace_storage_percentage,
     quota_enforcement_type
    FROM   quota_limitations_view
-   WHERE  vds_group_id = v_vds_group_id
+   WHERE  (vds_group_id = v_vds_group_id
    OR     (is_global AND
            NOT is_empty AND
            virtual_cpu IS NOT null AND
            storage_pool_id IN (SELECT storage_pool_id FROM vds_groups
-               WHERE  vds_group_id = v_vds_group_id));
+               WHERE  vds_group_id = v_vds_group_id)))
+   AND (NOT v_is_filtered OR
+          EXISTS (SELECT 1 FROM permissions p
+                  JOIN user_flat_groups u ON
+                  u.granted_id = p.ad_element_id WHERE
+                  u.user_id = v_user_id AND
+                  p.object_type_id = 17 AND -- quota object
+                  p.role_id = 'def0000a-0000-0000-0000-def00000000a' AND -- consume quota
+                  quota_id = p.object_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
