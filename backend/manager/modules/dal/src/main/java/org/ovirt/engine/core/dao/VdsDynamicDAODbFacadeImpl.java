@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -54,6 +55,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                         .getObject("guest_overhead"));
                 entity.setsoftware_version(rs.getString("software_version"));
                 entity.setversion_name(rs.getString("version_name"));
+                entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
                 entity.setbuild_name(rs.getString("build_name"));
                 entity.setprevious_status(VDSStatus.forValue(rs
                         .getInt("previous_status")));
@@ -108,6 +110,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("vm_migrating", vds.getvm_migrating())
                 .addValue("reserved_mem", vds.getreserved_mem())
                 .addValue("guest_overhead", vds.getguest_overhead())
+                .addValue("rpm_version",vds.getVersion().getRpmName())
                 .addValue("software_version", vds.getsoftware_version())
                 .addValue("version_name", vds.getversion_name())
                 .addValue("build_name", vds.getbuild_name())
@@ -156,6 +159,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("vm_migrating", vds.getvm_migrating())
                 .addValue("reserved_mem", vds.getreserved_mem())
                 .addValue("guest_overhead", vds.getguest_overhead())
+                .addValue("rpm_version",vds.getVersion().getRpmName())
                 .addValue("software_version", vds.getsoftware_version())
                 .addValue("version_name", vds.getversion_name())
                 .addValue("build_name", vds.getbuild_name())

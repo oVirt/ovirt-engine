@@ -21,7 +21,6 @@ import java.util.ArrayList;
 @SuppressWarnings("unused")
 public class MoveHost extends ListModel
 {
-
     private ListModel privateCluster;
 
     public ListModel getCluster()
@@ -66,19 +65,20 @@ public class MoveHost extends ListModel
     {
         if (getCluster().getSelectedItem() != null)
         {
-            AsyncDataProvider.GetHostList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
-                            MoveHost moveHost = (MoveHost) target;
-                            ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
-                            moveHost.PostGetHostList(hosts);
-                        }
-                    }));
+            AsyncDataProvider.GetHostList(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+
+                    MoveHost moveHost = (MoveHost) target;
+                    ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
+                    moveHost.PostGetHostList(hosts);
+                }
+            }));
         }
     }
 
     private void PostGetHostList(ArrayList<VDS> hosts) {
+
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getCluster().getItems();
         ArrayList<EntityModel> items = new ArrayList<EntityModel>();
@@ -86,9 +86,8 @@ public class MoveHost extends ListModel
         for (VDS vds : hosts)
         {
             if (Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vds.getvds_group_id())) == null
-                    && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                    && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
-                            .getFullVersion()).compareTo(cluster.getcompatibility_version()) >= 0))
+                && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+                && (vds.getVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()).compareTo(cluster.getcompatibility_version()) >= 0))
             {
                 EntityModel entity = new EntityModel();
                 entity.setEntity(vds);

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -214,9 +215,9 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setreserved_mem((Integer) rs.getObject("reserved_mem"));
             entity.setguest_overhead((Integer) rs
                     .getObject("guest_overhead"));
+            entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
             entity.setsoftware_version(rs.getString("software_version"));
             entity.setversion_name(rs.getString("version_name"));
-            entity.setbuild_name(rs.getString("build_name"));
             entity.setprevious_status(VDSStatus.forValue(rs
                     .getInt("previous_status")));
             entity.setmem_available(rs.getLong("mem_available"));

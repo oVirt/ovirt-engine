@@ -12,12 +12,12 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VdsVersion;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.InterfaceDAO;
@@ -176,7 +176,7 @@ public class VdsSelector {
         /**
          * save vdsVersion in order to know vds version that was wrong
          */
-        VdsVersion vdsVersion = null;
+        RpmVersion vdsVersion = null;
         boolean noVDSs = true;
         for (VDS curVds : vdss) {
             if (isMigrate && getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getId())) {
@@ -214,7 +214,7 @@ public class VdsSelector {
             if (messageToReturn == VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_VERSION && vdsVersion != null) {
                 VmHandler.UpdateVmGuestAgentVersion(getVm());
                 messages.add("$toolsVersion " + getVm().getPartialVersion());
-                messages.add("$serverVersion " + vdsVersion.getPartialVersion());
+                messages.add("$serverVersion " + vdsVersion.getRpmName());
 
             }
         }

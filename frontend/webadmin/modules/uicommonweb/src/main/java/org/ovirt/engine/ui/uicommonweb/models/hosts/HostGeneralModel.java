@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.VdsVersion;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
@@ -771,10 +770,10 @@ public class HostGeneralModel extends EntityModel
                 );
     }
 
-    private VdsVersion GetHostVersion(Guid hostId)
+    private RpmVersion GetHostVersion(Guid hostId)
     {
         VDS host = DataProvider.GetHostById(hostId);
-        return host != null ? host.getVersion() : new VdsVersion();
+        return host != null ? host.getVersion() : new RpmVersion();
     }
 
     public void Cancel()
@@ -825,7 +824,7 @@ public class HostGeneralModel extends EntityModel
         setOS(vds.gethost_os());
         setKernelVersion(vds.getkernel_version());
         setKvmVersion(vds.getkvm_version());
-        setVdsmVersion(vds.getVersion().getFullVersion());
+        setVdsmVersion(vds.getVersion());
         setSpiceVersion(vds.getspice_version());
         setIScsiInitiatorName(vds.getIScsiInitiatorName());
         setActiveVms(vds.getvm_active());

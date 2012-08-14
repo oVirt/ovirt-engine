@@ -283,17 +283,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         for (VDS vds : allHosts)
         {
             if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id())
-                    && (vds.getVersion() == null || vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
-                            .getFullVersion())
-                            .compareTo(minimalClusterVersion) >= 0))
+                && (vds.getVersion() == null || vds.getVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()).compareTo(minimalClusterVersion) >= 0))
             {
                 hosts.add(vds);
             }
 
             if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
-                    && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                    && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
-                            .getFullVersion()).compareTo(minimalClusterVersion) >= 0))
+                && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+                && (vds.getVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()).compareTo(minimalClusterVersion) >= 0))
             {
                 availableHosts.add(vds);
             }

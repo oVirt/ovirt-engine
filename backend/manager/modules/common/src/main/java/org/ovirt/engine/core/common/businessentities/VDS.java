@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
@@ -209,7 +210,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.setmem_shared(mem_shared);
         this.setsoftware_version(software_version);
         this.setversion_name(version_name);
-        this.setbuild_name(build_name);
         this.setserver_SSL_enabled(server_SSL_enabled);
         this.vds_group_cpu_nameField = vds_group_cpu_name;
         this.setcpu_flags(getcpu_flags());
@@ -1118,13 +1118,17 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mImagesLastDelay = value;
     }
 
-    public void setVersion(VdsVersion value) {
+    public void setVersion(RpmVersion value) {
         mVdsDynamic.setVersion(value);
         OnPropertyChanged(new PropertyChangedEventArgs("Version"));
     }
 
-    public VdsVersion getVersion() {
+    public RpmVersion getVersion() {
         return mVdsDynamic.getVersion();
+    }
+
+    public String getPartialVersion() {
+        return mVdsDynamic.getVersion().getValue().substring(0, 2);
     }
 
     private ServerCpu _cpuName;

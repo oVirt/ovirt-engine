@@ -1198,6 +1198,7 @@
         <column>vm_migrating</column>
         <column>reserved_mem</column>
         <column>guest_overhead</column>
+        <column>rpm_version</column>
         <column>software_version</column>
         <column>version_name</column>
         <column>build_name</column>
@@ -1236,6 +1237,7 @@
             <value>0</value>
             <value>256</value>
             <value>65</value>
+            <value>4.9.6-24.0.el6_3</value>
             <value>4.9.0.25</value>
             <value>Snow Man</value>
             <null />
@@ -1275,6 +1277,7 @@
             <value>0</value>
             <value>256</value>
             <value>65</value>
+            <value>4.9.6-24.0.el6_3</value>
             <value>4.9.0.25</value>
             <value>Snow Man</value>
             <null />

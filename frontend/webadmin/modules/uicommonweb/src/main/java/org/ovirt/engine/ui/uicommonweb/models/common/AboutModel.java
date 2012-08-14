@@ -95,7 +95,6 @@ public class AboutModel extends Model
 
     public AboutModel()
     {
-
         // var licenseProperties = DataProvider.GetLicenseProperties();
         // Enterprise = licenseProperties.ContainsKey("EnterpriseProperty") ? licenseProperties["EnterpriseProperty"] :
         // string.Empty;
@@ -187,67 +186,60 @@ public class AboutModel extends Model
         // }
         // }
 
-        UICommand tempVar = new UICommand("CopyToClipboard", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().copytoClipboardTitle());
-        tempVar.setIsAvailable(true);
-        setCopyToClipboardCommand(tempVar);
-        this.getCommands().add(getCopyToClipboardCommand());
+        UICommand command = new UICommand("CopyToClipboard", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().copytoClipboardTitle());
+        command.setIsAvailable(true);
+        setCopyToClipboardCommand(command);
+        getCommands().add(getCopyToClipboardCommand());
 
         setShowOnlyVersion(true);
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+
+        AsyncDataProvider.GetRpmVersionViaPublic(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
-            {
+            public void OnSuccess(Object model, Object returnValue) {
+
                 AboutModel aboutModel = (AboutModel) model;
-                aboutModel.setProductVersion((String) result);
+                aboutModel.setProductVersion((String) returnValue);
             }
-        };
-        AsyncDataProvider.GetRpmVersionViaPublic(_asyncQuery);
+        }));
     }
 
-    private void ShowOnlyVersionChanged()
-    {
-        if (!getShowOnlyVersion())
-        {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+    private void ShowOnlyVersionChanged() {
+
+        if (!getShowOnlyVersion()) {
+
+            AsyncDataProvider.GetHostList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
-                {
+                public void OnSuccess(Object model, Object returnValue) {
+
                     AboutModel aboutModel = (AboutModel) model;
                     ArrayList<HostInfo> list = new ArrayList<HostInfo>();
-                    for (VDS a : (List<VDS>) result)
-                    {
-                        HostInfo tempVar = new HostInfo();
-                        tempVar.setHostName(a.getvds_name() + ":"); //$NON-NLS-1$
-                        HostInfo hi = tempVar;
-                        if (!StringHelper.isNullOrEmpty(a.gethost_os()))
-                        {
-                            hi.setOSVersion(ConstantsManager.getInstance().getConstants().osVersionAbout()
-                                    + " " + a.gethost_os()); //$NON-NLS-1$
+
+                    for (VDS a : (List<VDS>) returnValue) {
+
+                        HostInfo item = new HostInfo();
+                        item.setHostName(a.getvds_name() + ":"); //$NON-NLS-1$
+
+                        if (!StringHelper.isNullOrEmpty(a.gethost_os())) {
+                            item.setOSVersion(ConstantsManager.getInstance().getConstants().osVersionAbout()
+                                + " " + a.gethost_os()); //$NON-NLS-1$
                         }
 
-                        if (a.getVersion().getFullVersion() != null)
-                        {
-                            hi.setVDSMVersion(ConstantsManager.getInstance().getConstants().VDSMVersionAbout() + " " //$NON-NLS-1$
-                                    + Extensions.GetFriendlyVersion(a.getVersion().getFullVersion()) + " " //$NON-NLS-1$
-                                    + a.getVersion().getBuildName());
+                        if (a.getVersion() != null) {
+                            item.setVDSMVersion(ConstantsManager.getInstance().getConstants().VDSMVersionAbout() + " " //$NON-NLS-1$
+                                + Extensions.GetFriendlyVersion(a.getVersion()) + " " //$NON-NLS-1$
+                                + a.getVersion());
                         }
 
-                        list.add(hi);
+                        list.add(item);
                     }
                     aboutModel.setHosts(list);
                 }
-            };
-            AsyncDataProvider.GetHostList(_asyncQuery);
+            }));
         }
     }
 
-    public void CopyToClipboard()
-    {
+    public void CopyToClipboard() {
         String data = BuildClipboardData();
         CopyToClipboard(data);
     }

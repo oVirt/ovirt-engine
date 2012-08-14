@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -50,9 +51,10 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         Version partialVdcVersion = new Version(
                 new Version(Config.<String> GetValue(ConfigValues.VdcVersion)).toString(2));
         // check that vdc support vds OR vds support vdc
+        RpmVersion vdsVersion = vds.getVersion();
+        Version vdsmVersion = new Version(vdsVersion.getMajor(),vdsVersion.getMinor());
         boolean vdsmVersionSupported =
-                Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vds.getVersion()
-                        .getPartialVersion());
+                Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion);
         if (!vdsmVersionSupported && !StringUtils.isEmpty(vds.getsupported_engines())) {
             try {
                 vdsmVersionSupported = vds.getSupportedENGINESVersionsSet().contains(partialVdcVersion);

@@ -24,4 +24,8 @@ public class RpmVersion extends Version {
     public String getRpmName() {
         return this.rpmName;
     }
+
+    public void setRpmName(String rpmName) {
+        this.rpmName = rpmName;
+    }
 }

@@ -81,11 +81,15 @@ public final class VdsProperties {
     public static final String package_name = "name";
     public static final String package_version = "version";
     public static final String package_release = "release";
+    public static final String version_name = "version_name";
+    public static final String build_name = "build_name";
+    public static final String software_version = "software_version";
     public static final String kvmPackageName = "kvm";
     public static final String spicePackageName = "qspice-libs";
     public static final String kernelPackageName = "kernel";
     public static final String iSCSIInitiatorName = "ISCSIInitiatorName";
     public static final String qemuKvmPackageName = "qemu-kvm";
+    public static final String vdsmPackageName = "vdsm";
     public static final String spiceServerPackageName = "spice-server";
 
     public static final String mem_available = "memAvailable";

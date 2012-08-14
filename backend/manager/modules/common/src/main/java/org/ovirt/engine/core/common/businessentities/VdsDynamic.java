@@ -14,6 +14,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -132,6 +133,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Column(name = "hooks")
     private String hooksStr;
 
+
     @Column(name = "non_operational_reason")
     private NonOperationalReason nonOperationalReason = NonOperationalReason.NONE;
 
@@ -139,7 +141,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     private Integer pending_vmem_size;
 
     @Transient
-    private VdsVersion mVdsVersion;
+    private RpmVersion rpmVersion;
 
     @Transient
     private java.util.HashSet<Version> _supportedClusterVersionsSet;
@@ -147,16 +149,16 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Transient
     private java.util.HashSet<Version> _supportedENGINESVersionsSet;
 
-    public void setVersion(VdsVersion value) {
-        mVdsVersion = value;
+    public void setVersion(RpmVersion value) {
+        rpmVersion = value;
     }
 
-    public VdsVersion getVersion() {
-        return mVdsVersion;
+    public RpmVersion getVersion() {
+        return rpmVersion;
     }
 
     public VdsDynamic() {
-        mVdsVersion = new VdsVersion();
+        rpmVersion = new RpmVersion();
         mem_commited = 0;
         reserved_mem = 1024;
         pending_vcpus_count = 0;
@@ -170,7 +172,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                       VDSStatus previous_status, String software_version, String version_name, String build_name,
                       Date cpu_over_commit_time_stamp, HypervisorType hypervisor_type, Integer pending_vcpus_count,
                       Integer pending_vmem_sizeField, Boolean net_config_dirty) {
-        mVdsVersion = new VdsVersion();
+        rpmVersion = new RpmVersion();
         this.cpu_cores = cpu_cores;
         this.cpu_model = cpu_model;
         this.cpu_speed_mh = BigDecimal.valueOf(cpu_speed_mh);
@@ -188,7 +190,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.previous_status = previous_status;
         this.setsoftware_version(software_version);
         this.setversion_name(version_name);
-        this.setbuild_name(build_name);
         this.setcpu_over_commit_time_stamp(cpu_over_commit_time_stamp);
         this.sethypervisor_type(hypervisor_type);
         this.pending_vcpus_count = pending_vcpus_count;
@@ -336,43 +337,19 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     }
 
     public String getsoftware_version() {
-        if (this.getVersion().getFullVersion() == null) {
-            return null;
-        }
-        return this.getVersion().getFullVersion().toString();
+       return this.softwareVersion;
     }
 
     public void setsoftware_version(String value) {
         this.softwareVersion = value;
-        if (!StringHelper.isNullOrEmpty(value)) {
-            String[] vers = value.split("[.]", -1);
-            this.getVersion().setSoftwareVersion(vers[0]);
-            if (vers.length > 1) {
-                this.getVersion().setSoftwareVersion(this.getVersion().getSoftwareVersion() + "." + vers[1]);
-            }
-
-            if (vers.length > 3) {
-                this.getVersion().setSoftwareRevision(StringFormat.format("%s.%s", vers[2], vers[3]));
-            }
-        }
     }
 
     public String getversion_name() {
-        return this.getVersion().getVersionName();
+        return versionName;
     }
 
     public void setversion_name(String value) {
         this.versionName = value;
-        this.getVersion().setVersionName(value);
-    }
-
-    public String getbuild_name() {
-        return this.getVersion().getBuildName();
-    }
-
-    public void setbuild_name(String value) {
-        this.buildName = value;
-        this.getVersion().setBuildName(value);
     }
 
     public String getcpu_flags() {
@@ -511,6 +488,14 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.kernel_version = value;
     }
 
+    public String getbuild_name() {
+        return this.buildName;
+    }
+
+    public void setbuild_name(String value) {
+        this.buildName = value;
+    }
+
     public String getIScsiInitiatorName() {
         return this.iScsiInitiatorName;
     }
@@ -576,7 +561,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         result = prime * result + ((kernel_version == null) ? 0 : kernel_version.hashCode());
         result = prime * result + ((kvm_enabled == null) ? 0 : kvm_enabled.hashCode());
         result = prime * result + ((kvm_version == null) ? 0 : kvm_version.hashCode());
-        result = prime * result + ((mVdsVersion == null) ? 0 : mVdsVersion.hashCode());
+        result = prime * result + ((rpmVersion == null) ? 0 : rpmVersion.hashCode());
         result = prime * result + ((mem_commited == null) ? 0 : mem_commited.hashCode());
         result = prime * result + ((net_config_dirty == null) ? 0 : net_config_dirty.hashCode());
         result = prime * result + ((nonOperationalReason == null) ? 0 : nonOperationalReason.hashCode());
@@ -702,10 +687,10 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                 return false;
         } else if (!kvm_version.equals(other.kvm_version))
             return false;
-        if (mVdsVersion == null) {
-            if (other.mVdsVersion != null)
+        if (rpmVersion == null) {
+            if (other.rpmVersion != null)
                 return false;
-        } else if (!mVdsVersion.equals(other.mVdsVersion))
+        } else if (!rpmVersion.equals(other.rpmVersion))
             return false;
         if (mem_commited == null) {
             if (other.mem_commited != null)

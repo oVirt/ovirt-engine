@@ -161,9 +161,8 @@ public class ClusterGuideModel extends GuideModel
         for (VDS vds : allHosts)
         {
             if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
-                    && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                    && (vds.getVersion().getFullVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()
-                            .getFullVersion()).compareTo(minimalClusterVersion) >= 0))
+                && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+                && (vds.getVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()).compareTo(minimalClusterVersion) >= 0))
             {
                 availableHosts.add(vds);
             }

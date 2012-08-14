@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VdsInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
-import org.ovirt.engine.core.common.businessentities.VdsVersion;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -42,6 +41,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.FormatException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LongCompat;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -308,7 +308,6 @@ public class VdsBrokerObjectsBuilder {
         vds.setreserved_mem(AssignIntValue(xmlRpcStruct, VdsProperties.reservedMem));
         Integer guestOverhead = AssignIntValue(xmlRpcStruct, VdsProperties.guestOverhead);
         vds.setguest_overhead(guestOverhead != null ? guestOverhead : 0);
-        updateVdsStaticVersion(vds, xmlRpcStruct);
 
         vds.setcpu_flags(AssignStringValue(xmlRpcStruct, VdsProperties.cpu_flags));
 
@@ -334,6 +333,10 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static void UpdatePackagesVersions(VDS vds, XmlRpcStruct xmlRpcStruct) {
+
+        vds.setversion_name(AssignStringValue(xmlRpcStruct, VdsProperties.version_name));
+        vds.setsoftware_version(AssignStringValue(xmlRpcStruct, VdsProperties.software_version));
+        vds.setbuild_name(AssignStringValue(xmlRpcStruct, VdsProperties.build_name));
         if (xmlRpcStruct.contains(VdsProperties.host_os)) {
             vds.sethost_os(GetPackageVersionFormated(
                     new XmlRpcStruct((Map) xmlRpcStruct.getItem(VdsProperties.host_os)), true));
@@ -355,6 +358,10 @@ public class VdsBrokerObjectsBuilder {
         } else if (xmlRpcStruct.contains(VdsProperties.packages2)) {
             Map packages = (Map) xmlRpcStruct.getItem(VdsProperties.packages2);
 
+            if (packages.containsKey(VdsProperties.vdsmPackageName)) {
+                Map vdsm = (Map) packages.get(VdsProperties.vdsmPackageName);
+                vds.setVersion(getPackageRpmVersion("vdsm",vdsm));
+            }
             if (packages.containsKey(VdsProperties.qemuKvmPackageName)) {
                 Map kvm = (Map) packages.get(VdsProperties.qemuKvmPackageName);
                 vds.setkvm_version(getPackageVersionFormated2(kvm));
@@ -393,6 +400,35 @@ public class VdsBrokerObjectsBuilder {
             }
         }
         return sb.toString();
+    }
+
+    private static RpmVersion getPackageRpmVersion(String packageName, Map hostPackage) {
+
+        String packageVersion = (hostPackage.get(VdsProperties.package_version) != null) ? (String) hostPackage
+                .get(VdsProperties.package_version) : null;
+        String packageRelease = (hostPackage.get(VdsProperties.package_release) != null) ? (String) hostPackage
+                .get(VdsProperties.package_release) : null;
+
+        StringBuilder sb = new StringBuilder();
+        if (!StringUtils.isEmpty(packageName)) {
+            sb.append(packageName);
+        }
+        boolean hasPackageVersion = StringUtils.isEmpty(packageVersion);
+        boolean hasPackageRelease = StringUtils.isEmpty(packageRelease);
+        if (!hasPackageVersion || !hasPackageRelease) {
+            sb.append("-");
+        }
+        if (!hasPackageVersion) {
+            sb.append(packageVersion);
+        }
+        if (!hasPackageRelease) {
+            if (sb.length() > 0) {
+                sb.append(String.format("-%1$s", packageRelease));
+            } else {
+                sb.append(packageRelease);
+            }
+        }
+        return new RpmVersion(sb.toString());
     }
 
     private static String GetPackageVersionFormated(XmlRpcStruct hostPackage, boolean getName) {
@@ -781,24 +817,6 @@ public class VdsBrokerObjectsBuilder {
                 vm.setapp_list("");
             }
         }
-    }
-
-    private static void updateVdsStaticVersion(VDS vds, XmlRpcStruct xmlRpcStruct) {
-        VdsVersion version = new VdsVersion();
-        version.setVersionName(AssignStringValue(xmlRpcStruct, "version_name"));
-        version.setSoftwareVersion(AssignStringValue(xmlRpcStruct, "software_version"));
-        version.setSoftwareRevision(AssignStringValue(xmlRpcStruct, "software_revision"));
-        version.setBuildName(AssignStringValue(xmlRpcStruct, "build_name"));
-        try {
-            version.parseFullVersion();
-        } catch (RuntimeException e) {
-            log.infoFormat("Couldn't parse vds version: {0} , {1} for Host {2}, {3}",
-                    version.getSoftwareVersion(),
-                    version.getSoftwareRevision(),
-                    vds.getId(),
-                    vds.getvds_name());
-        }
-        vds.setVersion(version);
     }
 
     private static VMStatus convertToVmStatus(String statusName) {
