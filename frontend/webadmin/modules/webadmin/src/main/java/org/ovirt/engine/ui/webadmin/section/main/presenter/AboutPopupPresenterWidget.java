@@ -57,7 +57,6 @@ public class AboutPopupPresenterWidget extends PresenterWidget<AboutPopupPresent
             public void onKeyPress(NativeEvent event) {
                 if (KeyCodes.KEY_ESCAPE == event.getKeyCode()) {
                     getView().hide();
-                    unbind();
                 }
             }
         });
