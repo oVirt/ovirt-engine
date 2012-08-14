@@ -205,7 +205,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         storageQuotaTableContainer.add(quotaStorageTable);
 
         isStorageInQuotaColumn = new Column<QuotaStorage, Boolean>(
-                new CheckboxCell(false, true)) {
+                new CheckboxCell(true, true)) {
             @Override
             public Boolean getValue(QuotaStorage object) {
                 if (selectedStorageGuid.contains(object.getStorageId()) || object.getStorageSizeGB() != null) {
