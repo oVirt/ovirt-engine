@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendQueryAsyncCallback;
@@ -51,6 +52,7 @@ public class HostModel extends Model
     public static final String EndTestStage = "EndTest"; //$NON-NLS-1$
 
     private UICommand privateTestCommand;
+    Constants constants = ConstantsManager.getInstance().getConstants();
 
     public UICommand getTestCommand()
     {
@@ -533,13 +535,13 @@ public class HostModel extends Model
         }
 
         int neverValue = -1;
-        EntityModel neverItem = new EntityModel("Never", neverValue); //$NON-NLS-1$
+        EntityModel neverItem = new EntityModel(constants.neverTitle(), neverValue);
         items.add(neverItem);
         int lowValue = defaultSpmPriority / 2;
-        items.add(new EntityModel("Low (" + lowValue + ")", lowValue)); //$NON-NLS-1$ //$NON-NLS-2$
-        items.add(new EntityModel("Normal (" + defaultSpmPriority + ")", defaultSpmPriority)); //$NON-NLS-1$ //$NON-NLS-2$
+        items.add(new EntityModel(constants.lowTitle(), lowValue));
+        items.add(new EntityModel(constants.normalTitle(), defaultSpmPriority));
         int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
-        items.add(new EntityModel("High (" + highValue + ")", highValue)); //$NON-NLS-1$ //$NON-NLS-2$
+        items.add(new EntityModel(constants.highTitle(), highValue));
 
         // Determine whether to set custom SPM priority, and where.
         EntityModel selectedItem = null;

@@ -178,28 +178,24 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                     int lowValue = defaultSpmPriority / 2;
                     int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
 
+                    if (object.getspm_status() != VdsSpmStatus.None){
+                        return object.getspm_status().name();
+                    }
+
                     if (value == -1) {
                         return constants.spmNeverText();
                     } else if (value == lowValue) {
-                        return constants.spmLowText() + " (" + lowValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                        return constants.spmLowText();
                     } else if (value == defaultSpmPriority) {
-                        return constants.spmNormalText() + " (" + defaultSpmPriority + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                        return constants.spmNormalText();
                     } else if (value == highValue) {
-                        return constants.spmHighText() + " (" + highValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                        return constants.spmHighText();
                     }
 
-                    return "Custom (" + value + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    return constants.spmCustomText();
                 }
             };
             getTable().addColumn(spmColumn, constants.spmPriorityHost(), "80px"); //$NON-NLS-1$
-
-            TextColumnWithTooltip<VDS> spmStatusColumn = new EnumColumn<VDS, VdsSpmStatus>() {
-                @Override
-                public VdsSpmStatus getRawValue(VDS object) {
-                    return object.getspm_status();
-                }
-            };
-            getTable().addColumn(spmStatusColumn, constants.spmStatusHost());
         }
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {

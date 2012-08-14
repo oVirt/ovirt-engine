@@ -379,6 +379,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("High")
     String highTitle();
 
+    @DefaultStringValue("Never")
+    String neverTitle();
+
+    @DefaultStringValue("Normal")
+    String normalTitle();
+
     @DefaultStringValue("[None]")
     String noneTitle();
 

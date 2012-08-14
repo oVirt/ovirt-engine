@@ -959,11 +959,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network")
     String networkHost();
 
-    @DefaultStringValue("SPM priority")
+    @DefaultStringValue("SPM")
     String spmPriorityHost();
-
-    @DefaultStringValue("SpmStatus")
-    String spmStatusHost();
 
     @DefaultStringValue("New")
     String newHost();
