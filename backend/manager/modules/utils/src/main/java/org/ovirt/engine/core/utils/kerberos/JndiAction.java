@@ -30,7 +30,7 @@ public class JndiAction implements PrivilegedAction {
 
     private String userName;
     private final String domainName;
-    private LdapProviderType ldapProviderType = LdapProviderType.activeDirectory;
+    private final LdapProviderType ldapProviderType;
     private final StringBuffer userGuid;
     private final static Logger log = Logger.getLogger(JndiAction.class);
 
