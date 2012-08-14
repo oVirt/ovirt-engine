@@ -13,7 +13,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
- * Plug or unplug a virtual network interface to the VM either its running or not.
+ * Attach or detach a virtual network interface to the VM in case it is in a valid status. If the VM is down, simply
+ * update the device, if it is Up - HotPlug / HotUnPlug the virtual network interface
  */
 @NonTransactiveCommandAttribute
 public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> extends VmCommand<T> {
@@ -29,9 +30,15 @@ public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> e
     protected boolean canDoAction() {
         boolean returnValue = true;
 
-        if (getVm().getstatus() == VMStatus.Up) {
+        if (isActivateDeactivateAllowedForVmStatus(getVm().getstatus())) {
             setVdsId(getVm().getrun_on_vds().getValue());
-            returnValue = isHotPlugSupported() && isOSSupportingHotPlug();
+            // HotPlug in the host needs to be called only if the Vm is UP
+            if (VmHandler.isHotPlugNicAllowedForVmStatus(getVm().getstatus())) {
+                returnValue = canPerformHotPlug();
+            }
+        } else {
+            addCanDoActionMessage(VdcBllMessages.HOT_PLUG_NIC_VM_STATUS_ILLEGAL);
+            returnValue = false;
         }
 
         if (returnValue) {
@@ -47,13 +54,15 @@ public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> e
 
     @Override
     protected void ExecuteVmCommand() {
-        if (getVm().getstatus() == VMStatus.Up) {
+        // HotPlug in the host is called only if the Vm is UP
+        if (VmHandler.isHotPlugNicAllowedForVmStatus(getVm().getstatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new HotPlugUnplgNicVDSParameters(getVm().getrun_on_vds().getValue(),
                             getVm().getId(),
                             DbFacade.getInstance().getVmNetworkInterfaceDAO().get(getParameters().getNicId()),
                             vmDevice));
         }
+        // In any case, the device is updated
         TransactionSupport.executeInNewTransaction(updateDevice());
         VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
         setSucceeded(true);
@@ -77,4 +86,9 @@ public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> e
                 VdcBllMessages.VAR__ACTION__ACTIVATE : VdcBllMessages.VAR__ACTION__DEACTIVATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
+
+    private boolean isActivateDeactivateAllowedForVmStatus(VMStatus vmStatus) {
+        return vmStatus == VMStatus.Up || vmStatus == VMStatus.Down;
+    }
+
 }

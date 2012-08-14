@@ -466,6 +466,16 @@ public class VmHandler {
         }
     }
 
+    /**
+     * Checks whether the VM status is valid for hot plugging/unplugging a nic
+     * @param vmStatus
+     *            The VM's Status
+     * @return
+     */
+    public static boolean isHotPlugNicAllowedForVmStatus(VMStatus vmStatus) {
+        return vmStatus == VMStatus.Up;
+    }
+
     private static final Log log = LogFactory.getLog(VmHandler.class);
 
 }

@@ -76,7 +76,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
 
         boolean succeded = true;
         VmDynamic vmDynamic = getVm().getDynamicData();
-        if (getParameters().getInterface().isActive() && vmDynamic.getstatus() == VMStatus.Up) {
+        if (getParameters().getInterface().isActive()
+                && VmHandler.isHotPlugNicAllowedForVmStatus(vmDynamic.getstatus())) {
             succeded = hotPlugNic(vmDevice, vmDynamic);
             if (!succeded) {
                 getReturnValue().getExecuteFailedMessages().add("Failed hot-plugging nic to VM");
@@ -86,12 +87,15 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
     }
 
     private boolean hotPlugNic(VmDevice vmDevice, VmDynamic vmDynamic) {
-        return runVdsCommand(VDSCommandType.HotPlugNic,
-                new HotPlugUnplgNicVDSParameters(vmDynamic.getrun_on_vds().getValue(),
-                vmDynamic.getId(),
-                getParameters().getInterface(),
-                        vmDevice)).getSucceeded();
-
+        if (!canPerformHotPlug()) {
+            return false;
+        } else {
+            return runVdsCommand(VDSCommandType.HotPlugNic,
+                    new HotPlugUnplgNicVDSParameters(vmDynamic.getrun_on_vds().getValue(),
+                            vmDynamic.getId(),
+                            getParameters().getInterface(),
+                            vmDevice)).getSucceeded();
+        }
     }
 
     @Override

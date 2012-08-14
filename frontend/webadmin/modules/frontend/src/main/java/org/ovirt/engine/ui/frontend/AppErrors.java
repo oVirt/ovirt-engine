@@ -1837,6 +1837,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Disk is already activated.")
     String HOT_PLUG_DISK_IS_NOT_UNPLUGGED();
 
+    @DefaultStringValue("Cannot activate/deactivate interface due to VM status. The VM status must be Down or Up.")
+    String HOT_PLUG_NIC_VM_STATUS_ILLEGAL();
+
     @DefaultStringValue("Disk is already deactivated.")
     String HOT_UNPLUG_DISK_IS_NOT_PLUGGED();
 
