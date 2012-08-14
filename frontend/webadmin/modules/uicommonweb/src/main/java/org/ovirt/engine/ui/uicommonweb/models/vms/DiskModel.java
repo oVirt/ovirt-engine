@@ -546,7 +546,7 @@ public class DiskModel extends Model
         });
     }
 
-    private void getStorageQuota(final Guid defaultQuotaId) {
+    private void getStorageQuota(final Guid defaultQuota) {
         storage_domains storageDomain = (storage_domains) getStorageDomain().getSelectedItem();
         if (storageDomain != null) {
             Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
@@ -556,17 +556,29 @@ public class DiskModel extends Model
 
                                 @Override
                                 public void OnSuccess(Object innerModel, Object innerReturnValue) {
-                                    ArrayList<Quota> list =
+                                    ArrayList<Quota> quotaList =
                                             (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
-                                    if (list != null) {
-                                        getQuota().setItems(list);
-                                        if (defaultQuotaId != null) {
-                                            for (Quota quota : list) {
-                                                if (quota.getId().equals(defaultQuotaId)) {
-                                                    getQuota().setSelectedItem(quota);
-                                                    break;
-                                                }
+                                    if (quotaList != null && !quotaList.isEmpty()) {
+                                        getQuota().setItems(quotaList);
+                                    }
+                                    if (defaultQuota != null) {
+                                        boolean hasQuotaInList = false;
+                                        for (Quota quota : quotaList) {
+                                            if (quota.getId().equals(defaultQuota)) {
+                                                getQuota().setSelectedItem(quota);
+                                                hasQuotaInList = true;
+                                                break;
                                             }
+                                        }
+                                        if (!hasQuotaInList) {
+                                            Quota quota = new Quota();
+                                            quota.setId(defaultQuota);
+                                            if (getDisk() instanceof DiskImageBase) {
+                                                quota.setQuotaName(((DiskImageBase) getDisk()).getQuotaName());
+                                            }
+                                            quotaList.add(quota);
+                                            getQuota().setItems(quotaList);
+                                            getQuota().setSelectedItem(quota);
                                         }
                                     }
                                 }

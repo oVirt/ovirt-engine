@@ -106,7 +106,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     {
         UpdateDefaultHost();
         UpdateNumOfSockets();
-        updateQuotaByCluster(template.getQuotaId());
+        updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
     }
 
     @Override

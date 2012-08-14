@@ -185,7 +185,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         UpdateDefaultHost();
         UpdateCustomProperties();
         UpdateNumOfSockets();
-        updateQuotaByCluster(vm.getQuotaId());
+        updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
         updateCpuPinningVisibility();
     }
 

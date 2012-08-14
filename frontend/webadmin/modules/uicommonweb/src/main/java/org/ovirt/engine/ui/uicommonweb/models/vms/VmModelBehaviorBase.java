@@ -139,7 +139,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    private List<Iterable<Entry<String, String>>> cachedTimeZones = Arrays.asList(null, null);
+    private final List<Iterable<Entry<String, String>>> cachedTimeZones = Arrays.asList(null, null);
 
     final int windowsTimezones = 0;
     final int generalTimezones = 1;
@@ -647,7 +647,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return list;
     }
 
-    protected void updateQuotaByCluster(final Guid defaultQuota) {
+    protected void updateQuotaByCluster(final Guid defaultQuota, final String quotaName) {
         if (getModel().getQuota().getIsAvailable()) {
             VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
             if (cluster == null) {
@@ -662,13 +662,25 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                     UnitVmModel vmModel = (UnitVmModel) model;
                                     ArrayList<Quota> quotaList =
                                             (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                    vmModel.getQuota().setItems(quotaList);
+                                    if (quotaList != null && !quotaList.isEmpty()) {
+                                        vmModel.getQuota().setItems(quotaList);
+                                    }
                                     if (defaultQuota != null) {
+                                        boolean hasQuotaInList = false;
                                         for (Quota quota : quotaList) {
                                             if (quota.getId().equals(defaultQuota)) {
                                                 vmModel.getQuota().setSelectedItem(quota);
+                                                hasQuotaInList = true;
                                                 break;
                                             }
+                                        }
+                                        if (!hasQuotaInList) {
+                                            Quota quota = new Quota();
+                                            quota.setId(defaultQuota);
+                                            quota.setQuotaName(quotaName);
+                                            quotaList.add(quota);
+                                            vmModel.getQuota().setItems(quotaList);
+                                            vmModel.getQuota().setSelectedItem(quota);
                                         }
                                     }
                                 }

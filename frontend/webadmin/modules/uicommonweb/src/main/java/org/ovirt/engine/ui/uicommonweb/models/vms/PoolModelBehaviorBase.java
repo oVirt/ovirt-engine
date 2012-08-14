@@ -107,7 +107,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     protected void setupWindowModelFrom(VmBase vmBase) {
         if (vmBase != null) {
-            updateQuotaByCluster(vmBase.getQuotaId());
+            updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
             // Copy VM parameters from template.
             getModel().getOSType().setSelectedItem(vmBase.getos());
             getModel().getTotalCPUCores().setEntity(Integer.toString(vmBase.getnum_of_cpus()));
@@ -216,7 +216,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         UpdateMinAllocatedMemory();
         UpdateNumOfSockets();
         if ((VmTemplate) getModel().getTemplate().getSelectedItem() != null) {
-            updateQuotaByCluster(((VmTemplate) getModel().getTemplate().getSelectedItem()).getQuotaId());
+            VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+            updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
     }
 

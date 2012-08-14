@@ -153,7 +153,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage diskImage = (DiskImage) disk;
-
                 EntityModel size = new EntityModel();
                 size.setEntity(diskImage.getSizeInGigabytes());
                 diskModel.setSize(size);
@@ -179,7 +178,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     @Override
     public void Cluster_SelectedItemChanged()
     {
-        updateQuotaByCluster(vm.getQuotaId());
+        updateQuotaByCluster(null, null);
     }
 
     @Override
