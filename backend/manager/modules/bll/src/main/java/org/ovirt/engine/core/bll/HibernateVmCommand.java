@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -378,7 +377,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
      * @return - VolumeType of allocation type to use.
      */
     private VolumeType getVolumeType() {
-        return (getStoragePool().getstorage_pool_type() == StorageType.NFS || getStoragePool().getstorage_pool_type() == StorageType.LOCALFS) ? VolumeType.Sparse
+        return (getStoragePool().getstorage_pool_type().isFileDomain()) ? VolumeType.Sparse
                 : VolumeType.Preallocated;
     }
 

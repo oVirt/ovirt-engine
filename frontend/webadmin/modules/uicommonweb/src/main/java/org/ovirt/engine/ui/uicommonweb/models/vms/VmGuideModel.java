@@ -735,7 +735,7 @@ public class VmGuideModel extends GuideModel
 
     private void UpdateWipeAfterDelete(StorageType storageType, EntityModel wipeAfterDeleteModel, boolean isNew)
     {
-        if (storageType == StorageType.NFS || storageType == StorageType.LOCALFS)
+        if (storageType.isFileDomain())
         {
             wipeAfterDeleteModel.setIsChangable(false);
         }

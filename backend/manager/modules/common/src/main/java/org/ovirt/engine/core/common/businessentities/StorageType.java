@@ -40,4 +40,13 @@ public enum StorageType {
     public static StorageType forValue(int value) {
         return mappings.get(value);
     }
+
+    public boolean isFileDomain() {
+        return this == NFS || this == POSIXFS || this == LOCALFS;
+    }
+
+    public boolean isBlockDomain() {
+        return this == FCP || this == ISCSI;
+    }
+
 }

@@ -707,7 +707,7 @@ public class DiskModel extends Model
 
     private void UpdateWipeAfterDelete(StorageType storageType, EntityModel wipeAfterDeleteModel)
     {
-        if (storageType == StorageType.NFS || storageType == StorageType.LOCALFS || storageType == StorageType.POSIXFS) {
+        if (storageType.isFileDomain()) {
             wipeAfterDeleteModel.setIsChangable(false);
         }
         else {
