@@ -127,6 +127,10 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
 
     private boolean autoRecoverable = true;
 
+    @Size(max = BusinessEntitiesDefinitions.SSH_KEY_FINGERPRINT_SIZE)
+    @Column(name = "sshKeyFingerprint")
+    private String sshKeyFingerprint;
+
     public boolean isAutoRecoverable() {
         return autoRecoverable;
     }
@@ -317,6 +321,14 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.vdsSpmPriority = value;
     }
 
+    public String getSSHKeyFingerprint() {
+        return sshKeyFingerprint;
+    }
+
+    public void setSSHKeyFingerprint(String sshKeyFingerprint) {
+        this.sshKeyFingerprint = sshKeyFingerprint;
+    }
+
     /**
      * Converts a PM Options map to string
      *
@@ -476,6 +488,11 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         } else if (!vdsStrength.equals(other.vdsStrength))
             return false;
         if (vdsType != other.vdsType)
+            return false;
+        if (sshKeyFingerprint == null) {
+            if (other.sshKeyFingerprint != null)
+                return false;
+        } else if (!sshKeyFingerprint.equals(other.sshKeyFingerprint))
             return false;
         return true;
     }

@@ -1229,4 +1229,13 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     public void setAutoRecoverable(boolean autoRecoverable) {
         mVdsStatic.setAutoRecoverable(autoRecoverable);
     }
+
+    public String getSSHKeyFingerprint() {
+        return mVdsStatic.getSSHKeyFingerprint();
+    }
+
+    public void setSSHKeyFingerprint(String sshKeyFingerprint) {
+        mVdsStatic.setSSHKeyFingerprint(sshKeyFingerprint);
+    }
+
 }

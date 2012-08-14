@@ -607,7 +607,7 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       CASE WHEN storage_pool.spm_vds_id = vds_static.vds_id THEN CASE WHEN storage_pool.status = 5 THEN 1 ELSE 2 END ELSE 0 END as spm_status, vds_dynamic.supported_cluster_levels as supported_cluster_levels, vds_dynamic.supported_engines as supported_engines, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vds_dynamic.host_os as host_os, vds_dynamic.kvm_version as kvm_version, vds_dynamic.spice_version as spice_version, vds_dynamic.kernel_version as kernel_version, vds_dynamic.iscsi_initiator_name as iscsi_initiator_name,
                       vds_dynamic.transparent_hugepages_state as transparent_hugepages_state, vds_dynamic.anonymous_hugepages as anonymous_hugepages, vds_dynamic.non_operational_reason as non_operational_reason,
-			vds_static.recoverable as recoverable
+			vds_static.recoverable as recoverable, vds_static.sshKeyFingerprint as sshKeyFingerprint
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN

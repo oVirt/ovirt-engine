@@ -98,7 +98,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("pm_options", vds.getpm_options())
                 .addValue("pm_enabled", vds.getpm_enabled())
                 .addValue("otp_validity", vds.getOtpValidity())
-                .addValue("vds_spm_priority", vds.getVdsSpmPriority());
+                .addValue("vds_spm_priority", vds.getVdsSpmPriority())
+                .addValue("sshKeyFingerprint", vds.getSSHKeyFingerprint());
     }
 
     @Override
@@ -122,7 +123,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
         String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
         try {
-            return EncryptionUtils.encrypt((String) password, keyFile, passwd, alias);
+            return EncryptionUtils.encrypt(password, keyFile, passwd, alias);
         } catch (Exception e) {
             throw new SecurityException(e);
         }
@@ -136,7 +137,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
         String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
         try {
-            return EncryptionUtils.decrypt((String) password, keyFile, passwd, alias);
+            return EncryptionUtils.decrypt(password, keyFile, passwd, alias);
         } catch (Exception e) {
             log.debugFormat("Failed to decrypt password, error message: {0}", e.getMessage());
             return password;
@@ -170,6 +171,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setpm_options(rs.getString("pm_options"));
             entity.setpm_enabled(rs.getBoolean("pm_enabled"));
             entity.setOtpValidity(rs.getLong("otp_validity"));
+            entity.setSSHKeyFingerprint(rs.getString("sshKeyFingerprint"));
 
             return entity;
         }

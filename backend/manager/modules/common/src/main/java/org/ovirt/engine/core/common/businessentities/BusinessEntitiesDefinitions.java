@@ -30,6 +30,7 @@ public final class BusinessEntitiesDefinitions {
     public static final int HOST_PM_TYPE_SIZE = 20;
     public static final int HOST_MIN_SPM_PRIORITY = -1;
     public static final int HOST_MAX_SPM_PRIORITY = 10;
+    public static final int SSH_KEY_FINGERPRINT_SIZE = 128;
 
     // Network Interface (vm_interface)
     public static final int NETWORK_NAME_SIZE = 50;

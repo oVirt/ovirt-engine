@@ -736,6 +736,7 @@
         <column>_create_date</column>
         <column>_update_date</column>
         <column>vds_spm_priority</column>
+        <column>sshKeyFingerprint</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>magenta-vdsc</value>
@@ -756,7 +757,7 @@
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>8</value>
-            <value>21</value>
+            <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -778,7 +779,7 @@
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>6</value>
-            <value>21</value>
+            <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
         </row>
     </table>
 
@@ -3938,5 +3939,9 @@
 		<value>vds</value>
 		<value>vms_cores_count</value>
 	</row>
+		<row>
+		<value>vds</value>
+		<value>sshkeyfingerprint</value>
+		</row>
 </table>
 </dataset>

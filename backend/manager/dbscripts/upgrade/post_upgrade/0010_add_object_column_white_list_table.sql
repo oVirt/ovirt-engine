@@ -54,7 +54,7 @@ BEGIN
           'otp_validity', 'spm_status', 'supported_cluster_levels', 'supported_engines',
           'vds_group_compatibility_version', 'host_os', 'kvm_version', 'spice_version', 'kernel_version',
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
-          'non_operational_reason', 'recoverable'));
+          'non_operational_reason', 'recoverable', 'sshKeyFingerprint'));
 -- pm_options are missing
    end if;
 END; $function$
