@@ -356,7 +356,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (getStoragePool() != null &&
                 getQuotaId() != null &&
                 !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+            if (canPerformQuotaValidation()) {
+                quotaPermissionList.add(new PermissionSubject(getQuotaId(),
+                        VdcObjectType.Quota,
+                        ActionGroup.CONSUME_QUOTA));
+            }
         }
     }
 

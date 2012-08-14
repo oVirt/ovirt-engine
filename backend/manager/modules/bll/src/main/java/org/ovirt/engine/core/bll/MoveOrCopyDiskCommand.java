@@ -432,9 +432,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (getStoragePool() != null &&
                 getQuotaId() != null &&
                 !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            quotaPermissionList.add(new PermissionSubject(getQuotaId(),
-                    VdcObjectType.Quota,
-                    ActionGroup.CONSUME_QUOTA));
+            if (!getQuotaId().equals(getDiskImage().getQuotaId())) {
+                quotaPermissionList.add(new PermissionSubject(getQuotaId(),
+                        VdcObjectType.Quota,
+                        ActionGroup.CONSUME_QUOTA));
+            }
         }
     }
 

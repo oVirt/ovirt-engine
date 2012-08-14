@@ -372,7 +372,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (getStoragePool() != null &&
                 getQuotaId() != null &&
                 !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+            VM vm = getVm();
+            if (vm != null && !getQuotaId().equals(vm.getQuotaId())) {
+                quotaPermissionList.add(new PermissionSubject(getQuotaId(),
+                        VdcObjectType.Quota,
+                        ActionGroup.CONSUME_QUOTA));
+            }
         }
     }
 

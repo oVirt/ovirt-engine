@@ -136,7 +136,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (getStoragePool() != null &&
                 getQuotaId() != null &&
                 !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+            VmTemplate template = getVmTemplate();
+            if (template != null && !getQuotaId().equals(template.getQuotaId())) {
+                quotaPermissionList.add(new PermissionSubject(getQuotaId(),
+                        VdcObjectType.Quota,
+                        ActionGroup.CONSUME_QUOTA));
+            }
         }
     }
 
