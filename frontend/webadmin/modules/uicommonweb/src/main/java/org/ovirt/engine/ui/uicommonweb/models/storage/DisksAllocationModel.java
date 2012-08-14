@@ -233,9 +233,28 @@ public class DisksAllocationModel extends EntityModel
                                             diskAllocationModel.getQuota().setItems(list);
                                             for (DiskModel diskModel : diskAllocationModel.getDisks()) {
                                                 diskModel.getQuota().setItems(list);
+                                                for (Quota quota : list) {
+                                                    if (diskModel.getDisk() instanceof DiskImage
+                                                            &&
+                                                            quota.getId()
+                                                                    .equals(((DiskImage) diskModel.getDisk()).getQuotaId())) {
+                                                        diskModel.getQuota().setSelectedItem(quota);
+                                                    }
+                                                }
                                             }
                                         } else {
+                                            Quota selectedQuota = null;
+                                            if (isItem.getSelectedItem() != null) {
+                                                selectedQuota = (Quota) isItem.getSelectedItem();
+                                            }
                                             isItem.setItems(list);
+                                            if (selectedQuota != null && list.size() > 1) {
+                                                for (Quota quota : list) {
+                                                    if (quota.getId().equals(selectedQuota.getId())) {
+                                                        isItem.setSelectedItem(quota);
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
