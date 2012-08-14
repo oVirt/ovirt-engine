@@ -56,7 +56,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         Driver.driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 5);
+        formBuilder = new FormBuilder(formPanel, 1, 6);
 
         formBuilder.setColumnsWidth("300px"); //$NON-NLS-1$
         formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0));
