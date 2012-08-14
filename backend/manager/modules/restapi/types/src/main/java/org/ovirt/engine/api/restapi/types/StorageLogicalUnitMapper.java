@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.api.common.util.SizeConverter;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LunStatus;
@@ -65,15 +67,45 @@ public class StorageLogicalUnitMapper {
         return model;
     }
 
+    /**
+     * This mapping exists for adding a lun-disk, and assumes that 'storage' entity contains exactly one lun.
+     */
     @Mapping(from = Storage.class, to = LUNs.class)
     public static LUNs map(Storage model, LUNs template) {
         LUNs entity = template != null ? template : new LUNs();
-        entity.setLUN_id(model.getId());
+        if (model.isSetLogicalUnits()) {
+            LogicalUnit logicalUnit = model.getLogicalUnits().get(0);
+            entity.setLUN_id(logicalUnit.getId());
+            ArrayList<storage_server_connections> connections = new ArrayList<storage_server_connections>();
+            connections.add(map(logicalUnit, null));
+            entity.setLunConnections(connections);
+        }
         if (model.isSetType()) {
             StorageType storageType = StorageType.fromValue(model.getType());
             if (storageType != null) {
                 entity.setLunType(StorageDomainMapper.map(storageType, null));
             }
+        }
+        return entity;
+    }
+
+    @Mapping(from = LogicalUnit.class, to = storage_server_connections.class)
+    public static storage_server_connections map(LogicalUnit logicalUnit, storage_server_connections connection) {
+        storage_server_connections entity = connection != null ? connection : new storage_server_connections();
+        if (logicalUnit.isSetAddress()) {
+            entity.setconnection(logicalUnit.getAddress());
+        }
+        if (logicalUnit.isSetTarget()) {
+            entity.setiqn(logicalUnit.getTarget());
+        }
+        if (logicalUnit.isSetPort()) {
+            entity.setport(logicalUnit.getPort().toString());
+        }
+        if (logicalUnit.isSetUsername()) {
+            entity.setuser_name(logicalUnit.getUsername());
+        }
+        if (logicalUnit.isSetPassword()) {
+            entity.setpassword(logicalUnit.getPassword());
         }
         return entity;
     }
