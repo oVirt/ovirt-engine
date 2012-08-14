@@ -5,8 +5,8 @@ import java.util.Set;
 import java.util.Vector;
 
 public class CLIParser {
-    private Vector<String> argv = new Vector<String>();
-    private HashMap<String, String> argsMap = new HashMap<String, String>();
+    private final Vector<String> argv = new Vector<String>();
+    private final HashMap<String, String> argsMap = new HashMap<String, String>();
     private int argvIndex = 0;
 
     public CLIParser(String[] args) {
