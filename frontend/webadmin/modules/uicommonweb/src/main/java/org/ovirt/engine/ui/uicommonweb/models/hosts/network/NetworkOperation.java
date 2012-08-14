@@ -178,12 +178,12 @@ public enum NetworkOperation {
                     BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op2;
 
                     assert nic.getItems().size() == 0 || bond.getItems().size() == 0;
-                    List<LogicalNetworkModel> networks = nic.getItems().size() != 0 ? new ArrayList<LogicalNetworkModel>(nic.getItems()) : new ArrayList<LogicalNetworkModel>(bond.getItems());
 
                     // detach possible networks from the nic
                     clearNetworks(nic, allNics);
 
                     // Attach previous networks to bond
+                    List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>(nic.getItems());
                     attachNetworks(bond, networks, allNics);
 
                     nic.getEntity().setBondName(bond.getEntity().getName());
@@ -237,21 +237,6 @@ public enum NetworkOperation {
             return true;
         }
 
-        @Override
-        protected NetworkOperationCommandTarget getTarget() {
-            return new NetworkOperationCommandTarget() {
-
-                @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
-                        NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics,
-                        Object... params) {
-                    // NOOP
-
-                }
-            };
-        }
-
     },
     NULL_OPERATION_BOND {
 
@@ -268,21 +253,6 @@ public enum NetworkOperation {
         @Override
         public boolean isNullOperation() {
             return true;
-        }
-
-        @Override
-        protected NetworkOperationCommandTarget getTarget() {
-            return new NetworkOperationCommandTarget() {
-
-                @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
-                        NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics,
-                        Object... params) {
-                    // NOOP
-
-                }
-            };
         }
 
     },
@@ -302,19 +272,38 @@ public enum NetworkOperation {
             return true;
         }
 
+    },
+    NULL_OPERATION_ADD_TO_BOND_UNMANAGED {
+
         @Override
-        protected NetworkOperationCommandTarget getTarget() {
-            return new NetworkOperationCommandTarget() {
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().cannotAddNicWithUnmanagedNetworkToBond();
+        }
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return getVerb(op1);
+        }
 
-                @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
-                        NetworkItemModel<?> op2,
-                        List<VdsNetworkInterface> allNics,
-                        Object... params) {
-                    // NOOP
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
 
-                }
-            };
+    },
+    NULL_OPERATION_BOND_WITH_UNMANAGED {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().cannotCreateBondIfNicsContainsUnmanagedNetwork();
+        }
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return getVerb(op1);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
         }
 
     };
@@ -405,7 +394,19 @@ public enum NetworkOperation {
     /**
      * Implement to provide a Command Target for this Operation
      */
-    protected abstract NetworkOperationCommandTarget getTarget();
+    protected NetworkOperationCommandTarget getTarget(){
+        return new NetworkOperationCommandTarget() {
+
+            @Override
+            protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                    NetworkItemModel<?> op2,
+                    List<VdsNetworkInterface> allNics,
+                    Object... params) {
+                // NOOP
+
+            }
+        };
+    }
 
     public boolean isNullOperation(){
         return false;

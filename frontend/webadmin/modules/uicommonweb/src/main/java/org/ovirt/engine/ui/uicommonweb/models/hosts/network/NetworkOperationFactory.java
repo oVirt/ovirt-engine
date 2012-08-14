@@ -62,9 +62,9 @@ public class NetworkOperationFactory {
                 BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op2;
                 if (!nic1.isBonded()) {
 
-                    boolean containsUnmanaged = containsUnmanaged(nic1) || containsUnmanaged(bond);
+                    boolean containsUnmanaged = containsUnmanaged(nic1);
                     if (containsUnmanaged){
-                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                        return NetworkOperation.NULL_OPERATION_ADD_TO_BOND_UNMANAGED;
                     }
 
                     if (canBond(nic1, bond)) {
@@ -81,7 +81,7 @@ public class NetworkOperationFactory {
 
                     boolean containsUnmanaged = containsUnmanaged(nic1) || containsUnmanaged(nic2);
                     if (containsUnmanaged){
-                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                        return NetworkOperation.NULL_OPERATION_BOND_WITH_UNMANAGED;
                     }
 
                     if (canBond(nic1, nic2)) {
@@ -106,7 +106,7 @@ public class NetworkOperationFactory {
                 NetworkInterfaceModel nic = (NetworkInterfaceModel) op2;
 
                 // not managed
-                if (!network.isManaged() || containsUnmanaged(nic)) {
+                if (!network.isManaged()) {
                     return NetworkOperation.NULL_OPERATION_UNMANAGED;
                 }
 

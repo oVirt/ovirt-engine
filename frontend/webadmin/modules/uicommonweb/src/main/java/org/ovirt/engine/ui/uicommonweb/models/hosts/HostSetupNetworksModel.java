@@ -466,11 +466,13 @@ public class HostSetupNetworksModel extends EntityModel {
         getNetworksChangedEvent().raise(this, EventArgs.Empty);
     }
 
-    private LogicalNetworkModel createErrorNetworkModel(String networkName, Integer vlanId) {
-        Network errorNetwork = new Network();
-        errorNetwork.setname(networkName);
-        errorNetwork.setvlan_id(vlanId);
-        LogicalNetworkModel networkModel = new LogicalNetworkModel(errorNetwork, this);
+    private LogicalNetworkModel createUnmanagedNetworkModel(String networkName, VdsNetworkInterface nic) {
+        Network unmanagedNetwork = new Network();
+        unmanagedNetwork.setname(networkName);
+        unmanagedNetwork.setvlan_id(nic.getVlanId());
+        unmanagedNetwork.setMtu(nic.getMtu());
+        unmanagedNetwork.setVmNetwork(nic.isBridged());
+        LogicalNetworkModel networkModel = new LogicalNetworkModel(unmanagedNetwork, this);
         networkModel.setError(ConstantsManager.getInstance().getConstants().thisNetworkDoesNotExistInTheClusterErr());
         networkMap.put(networkName, networkModel);
         return networkModel;
@@ -519,7 +521,6 @@ public class HostSetupNetworksModel extends EntityModel {
         Map<String, VdsNetworkInterface> physicalNics = new HashMap<String, VdsNetworkInterface>();
         Map<String, List<String>> bondToNic = new HashMap<String, List<String>>();
         Map<String, List<String>> nicToNetwork = new HashMap<String, List<String>>();
-        Map<String, Integer> networkToVlanId = new HashMap<String, Integer>();
 
         // map all nics
         for (VdsNetworkInterface nic : allNics) {
@@ -559,12 +560,13 @@ public class HostSetupNetworksModel extends EntityModel {
                 LogicalNetworkModel networkModel = networkMap.get(networkName);
 
                 if (networkModel == null) {
-                    networkModel = createErrorNetworkModel(networkName, nic.getVlanId());
+                    networkModel = createUnmanagedNetworkModel(networkName, nic);
                 }else{
-                    // The real vlanId and mtu configured on the host can be not synced with the values configured in the networks table (dc networks).
+                    // The real vlanId, isBridged and mtu configured on the host can be not synced with the values configured in the networks table (dc networks).
                     // The real values configured on the host should be displayed.
                     networkModel.getEntity().setvlan_id(nic.getVlanId());
                     networkModel.getEntity().setMtu(nic.getMtu());
+                    networkModel.getEntity().setVmNetwork(nic.isBridged());
                 }
 
                 // is this a management network (from backend)?
@@ -572,7 +574,6 @@ public class HostSetupNetworksModel extends EntityModel {
                     networkModel.setManagement(true);
                 }
 
-                networkToVlanId.put(networkName, vlanId);
                 // bridge name is either <nic>, <nic.vlanid> or <bond.vlanid>
                 String ifName;
                 if (dotpos > 0) {
@@ -608,13 +609,8 @@ public class HostSetupNetworksModel extends EntityModel {
             List<String> networkNames = nicToNetwork.get(nicName);
             if (networkNames != null) {
                 for (String networkName : networkNames) {
-                    Integer vlanId = networkToVlanId.get(networkName);
                     LogicalNetworkModel networkModel;
                     networkModel = networkMap.get(networkName);
-                    if (networkModel == null) {
-                        // the network does not exist in this cluster
-                        networkModel = createErrorNetworkModel(networkName, vlanId);
-                    }
                     nicNetworks.add(networkModel);
                 }
             }

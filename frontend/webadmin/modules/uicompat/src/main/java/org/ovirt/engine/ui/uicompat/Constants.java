@@ -1468,6 +1468,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Invalid operation with unmanaged network: unmanaged network can only be detached")
     String invalidOperationWithUnmanagedNetwork();
 
+    @DefaultStringValue("Cannot add nic with unmanaged network/s to a bond")
+    String cannotAddNicWithUnmanagedNetworkToBond();
+
+    @DefaultStringValue("Cannot create a bond if one of the nics contains unmanaged network/s")
+    String cannotCreateBondIfNicsContainsUnmanagedNetwork();
+
     @DefaultStringValue("Unassigned Logical Networks panel")
     String unassignedLogicalNetworksPanel();
 }

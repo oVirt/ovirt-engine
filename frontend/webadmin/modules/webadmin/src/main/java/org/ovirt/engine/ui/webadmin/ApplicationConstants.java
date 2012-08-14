@@ -1901,6 +1901,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Unmanaged Network")
     String unmanagedNetworkItemInfo();
 
+    @DefaultStringValue("Doesn't exist in the Cluster")
+    String unmanagedNetworkDescriptionItemInfo();
+
     @DefaultStringValue("Management")
     String managementItemInfo();
 

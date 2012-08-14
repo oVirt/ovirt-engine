@@ -71,30 +71,31 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         // Not managed
         if (!networkModel.isManaged()) {
-            addRow(templates.imageTextSetupNetworkUsage(unknownImage, constants.unmanagedNetworkItemInfo()));
-            return;
+            addRow(templates.imageTextSetupNetwork(unknownImage, constants.unmanagedNetworkItemInfo()));
+            addRow(SafeHtmlUtils.fromString(constants.unmanagedNetworkDescriptionItemInfo()));
+        }
+        else {
+            // Description
+            if (entity.getdescription() != null && !entity.getdescription().trim().equals("")) { //$NON-NLS-1$
+                addRow(SafeHtmlUtils.fromString(entity.getdescription()));
+            }
+            // Not in sync
+            if (!networkModel.isInSync())
+            {
+                addRow(templates.imageTextSetupNetwork(notInSyncImage, constants.networkNotInSync()));
+            }
         }
 
-        // Description
-        if (entity.getdescription() != null && !entity.getdescription().trim().equals("")) { //$NON-NLS-1$
-            addRow(SafeHtmlUtils.fromString(entity.getdescription()));
-        }
-
-        // Not in sync
-        if (!networkModel.isInSync())
-        {
-            addRow(templates.imageTextSetupNetwork(notInSyncImage, constants.networkNotInSync()));
-        }
-
+        boolean isDisplay = entity.getCluster() != null ? entity.getCluster().getis_display() : false;
         // Usages
-        if (networkModel.isManagement() || entity.getCluster().getis_display() || entity.isVmNetwork()) {
+        if (networkModel.isManagement() || isDisplay || entity.isVmNetwork()) {
 
             addRow(SafeHtmlUtils.fromString(constants.usageItemInfo() + ":")); //$NON-NLS-1$
             if (networkModel.isManagement()) {
                 addRow(templates.imageTextSetupNetworkUsage(mgmtNetworkImage, constants.managementItemInfo()));
             }
 
-            if (entity.getCluster().getis_display()) {
+            if (isDisplay) {
                 addRow(templates.imageTextSetupNetworkUsage(monitorImage, constants.displayItemInfo()));
             }
 
