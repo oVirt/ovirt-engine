@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
 public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
@@ -34,9 +33,8 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "TYPE")) {
+        if ("TYPE".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VmPoolType.class);
-        } else {
         }
         return retval;
     }
