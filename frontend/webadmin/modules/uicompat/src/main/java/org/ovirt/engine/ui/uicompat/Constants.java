@@ -1,17 +1,15 @@
 package org.ovirt.engine.ui.uicompat;
 
-
-
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
-	@DefaultStringValue("OK")
-	String ok();
+    @DefaultStringValue("OK")
+    String ok();
 
-	@DefaultStringValue("Cancel")
-	String cancel();
+    @DefaultStringValue("Cancel")
+    String cancel();
 
-	@DefaultStringValue("Close")
-	String close();
+    @DefaultStringValue("Close")
+    String close();
 
     @DefaultStringValue("N/A")
     String notAvailableLabel();
@@ -19,1267 +17,1267 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Not Specified")
     String notSpecifiedLabel();
 
-	// Titles
+    // Titles
     @DefaultStringValue("")
     String blank();
 
-	@DefaultStringValue("Error")
-	String errorTitle();
+    @DefaultStringValue("Error")
+    String errorTitle();
 
-	@DefaultStringValue("Create New Bond")
-	String createNewBondTitle();
+    @DefaultStringValue("Create New Bond")
+    String createNewBondTitle();
 
-	@DefaultStringValue("Setup Host Networks")
-	String setupHostNetworksTitle();
+    @DefaultStringValue("Setup Host Networks")
+    String setupHostNetworksTitle();
 
-	@DefaultStringValue("Assign/Unassign Networks")
-	String assignDetachNetworksTitle();
+    @DefaultStringValue("Assign/Unassign Networks")
+    String assignDetachNetworksTitle();
 
-	@DefaultStringValue("Clusters")
-	String clustersTitle();
+    @DefaultStringValue("Clusters")
+    String clustersTitle();
 
-	@DefaultStringValue("New Cluster - Guide Me")
-	String newClusterGuideMeTitle();
+    @DefaultStringValue("New Cluster - Guide Me")
+    String newClusterGuideMeTitle();
 
-	@DefaultStringValue("Edit Cluster")
-	String editClusterTitle();
+    @DefaultStringValue("Edit Cluster")
+    String editClusterTitle();
 
-	@DefaultStringValue("Remove Cluster(s)")
-	String removeClusterTitle();
+    @DefaultStringValue("Remove Cluster(s)")
+    String removeClusterTitle();
 
-	@DefaultStringValue("Change Cluster Compatibility Version")
-	String changeClusterCompatibilityVersionTitle();
+    @DefaultStringValue("Change Cluster Compatibility Version")
+    String changeClusterCompatibilityVersionTitle();
 
-	@DefaultStringValue("General")
-	String generalTitle();
+    @DefaultStringValue("General")
+    String generalTitle();
 
-	@DefaultStringValue("Edit Policy")
-	String editPolicyTitle();
+    @DefaultStringValue("Edit Policy")
+    String editPolicyTitle();
 
-	@DefaultStringValue("Copy to Clipboard")
-	String copytoClipboardTitle();
+    @DefaultStringValue("Copy to Clipboard")
+    String copytoClipboardTitle();
 
-	// Tag
-	@DefaultStringValue("Root")
-	String rootTag();
+    // Tag
+    @DefaultStringValue("Root")
+    String rootTag();
 
-	@DefaultStringValue("Remove Bookmark(s)")
-	String removeBookmarksTitle();
+    @DefaultStringValue("Remove Bookmark(s)")
+    String removeBookmarksTitle();
 
-	@DefaultStringValue("Edit Bookmark")
-	String editBookmarkTitle();
+    @DefaultStringValue("Edit Bookmark")
+    String editBookmarkTitle();
 
-	@DefaultStringValue("New Bookmark")
-	String newBookmarkTitle();
+    @DefaultStringValue("New Bookmark")
+    String newBookmarkTitle();
 
-	@DefaultStringValue("Add Local Storage")
-	String addLocalStorageTitle();
+    @DefaultStringValue("Add Local Storage")
+    String addLocalStorageTitle();
 
-	@DefaultStringValue("New Local Domain")
-	String newLocalDomainTitle();
+    @DefaultStringValue("New Local Domain")
+    String newLocalDomainTitle();
 
-	@DefaultStringValue("New Cluster")
-	String newClusterTitle();
+    @DefaultStringValue("New Cluster")
+    String newClusterTitle();
 
-	@DefaultStringValue("Select Host")
-	String selectHostTitle();
+    @DefaultStringValue("Select Host")
+    String selectHostTitle();
 
-	@DefaultStringValue("New Host")
-	String newHostTitle();
+    @DefaultStringValue("New Host")
+    String newHostTitle();
 
-	@DefaultStringValue("Power Management Configuration")
-	String powerManagementConfigurationTitle();
+    @DefaultStringValue("Power Management Configuration")
+    String powerManagementConfigurationTitle();
 
-	@DefaultStringValue("Data Centers")
-	String dataCentersTitle();
+    @DefaultStringValue("Data Centers")
+    String dataCentersTitle();
 
-	@DefaultStringValue("New Data Center - Guide Me")
-	String newDataCenterGuideMeTitle();
+    @DefaultStringValue("New Data Center - Guide Me")
+    String newDataCenterGuideMeTitle();
 
-	@DefaultStringValue("Configure Later")
-	String configureLaterTitle();
+    @DefaultStringValue("Configure Later")
+    String configureLaterTitle();
 
-	@DefaultStringValue("New Data Center")
-	String newDataCenterTitle();
+    @DefaultStringValue("New Data Center")
+    String newDataCenterTitle();
 
-	@DefaultStringValue("Edit Data Center")
-	String editDataCenterTitle();
+    @DefaultStringValue("Edit Data Center")
+    String editDataCenterTitle();
 
-	@DefaultStringValue("Remove Data Center(s)")
-	String removeDataCenterTitle();
+    @DefaultStringValue("Remove Data Center(s)")
+    String removeDataCenterTitle();
 
-	@DefaultStringValue("Force Remove Data Center")
-	String forceRemoveDataCenterTitle();
+    @DefaultStringValue("Force Remove Data Center")
+    String forceRemoveDataCenterTitle();
 
-	@DefaultStringValue("Data Center Re-Initialize")
-	String dataCenterReInitializeTitle();
+    @DefaultStringValue("Data Center Re-Initialize")
+    String dataCenterReInitializeTitle();
 
-	@DefaultStringValue("Change Data Center Compatibility Version")
-	String changeDataCenterCompatibilityVersionTitle();
+    @DefaultStringValue("Change Data Center Compatibility Version")
+    String changeDataCenterCompatibilityVersionTitle();
 
-	@DefaultStringValue("Logical Networks")
-	String logicalNetworksTitle();
+    @DefaultStringValue("Logical Networks")
+    String logicalNetworksTitle();
 
-	@DefaultStringValue("Remove Logical Network(s)")
-	String removeLogicalNetworkTitle();
+    @DefaultStringValue("Remove Logical Network(s)")
+    String removeLogicalNetworkTitle();
 
-	@DefaultStringValue("Edit Logical Network")
-	String editLogicalNetworkTitle();
+    @DefaultStringValue("Edit Logical Network")
+    String editLogicalNetworkTitle();
 
-	@DefaultStringValue("New Logical Network")
-	String newLogicalNetworkTitle();
+    @DefaultStringValue("New Logical Network")
+    String newLogicalNetworkTitle();
 
-	@DefaultStringValue("Attach/Detach Network to/from Clusters")
-	String attachDetachNetworkToFromClustersTitle();
+    @DefaultStringValue("Attach/Detach Network to/from Clusters")
+    String attachDetachNetworkToFromClustersTitle();
 
-	@DefaultStringValue("Storage")
-	String storageTitle();
+    @DefaultStringValue("Storage")
+    String storageTitle();
 
-	@DefaultStringValue("Detach Storage")
-	String detachStorageTitle();
+    @DefaultStringValue("Detach Storage")
+    String detachStorageTitle();
 
-	@DefaultStringValue("Event Notifier")
-	String eventNotifierTitle();
+    @DefaultStringValue("Event Notifier")
+    String eventNotifierTitle();
 
-	@DefaultStringValue("Add Event Notification")
-	String addEventNotificationTitle();
+    @DefaultStringValue("Add Event Notification")
+    String addEventNotificationTitle();
 
-	@DefaultStringValue("Users")
-	String usersTitle();
+    @DefaultStringValue("Users")
+    String usersTitle();
 
-	@DefaultStringValue("Assign Tags")
-	String assignTagsTitle();
+    @DefaultStringValue("Assign Tags")
+    String assignTagsTitle();
 
-	@DefaultStringValue("Add Users and Groups")
-	String addUsersAndGroupsTitle();
+    @DefaultStringValue("Add Users and Groups")
+    String addUsersAndGroupsTitle();
 
-	@DefaultStringValue("Remove User(s)")
-	String removeUsersTitle();
+    @DefaultStringValue("Remove User(s)")
+    String removeUsersTitle();
 
-	@DefaultStringValue("Directory Groups")
-	String directoryGroupsTitle();
+    @DefaultStringValue("Directory Groups")
+    String directoryGroupsTitle();
 
-	@DefaultStringValue("Quota")
-	String quotaTitle();
+    @DefaultStringValue("Quota")
+    String quotaTitle();
 
-	@DefaultStringValue("Volumes")
-	String volumesTitle();
+    @DefaultStringValue("Volumes")
+    String volumesTitle();
 
-	@DefaultStringValue("Create Volume")
-	String createVolumeTitle();
+    @DefaultStringValue("Create Volume")
+    String createVolumeTitle();
 
-	@DefaultStringValue("Parameters")
-	String parameterTitle();
+    @DefaultStringValue("Parameters")
+    String parameterTitle();
 
-	@DefaultStringValue("Bricks")
-	String bricksTitle();
+    @DefaultStringValue("Bricks")
+    String bricksTitle();
 
-	@DefaultStringValue("Virtual Machines")
-	String virtualMachinesTitle();
+    @DefaultStringValue("Virtual Machines")
+    String virtualMachinesTitle();
 
-	@DefaultStringValue("Add Desktop(s) to User/AD Group")
-	String addDesktopsToUserADGroupTitle();
+    @DefaultStringValue("Add Desktop(s) to User/AD Group")
+    String addDesktopsToUserADGroupTitle();
 
-	@DefaultStringValue("Detach Virtual Machine(s)")
-	String detachVirtualMachinesTitle();
+    @DefaultStringValue("Detach Virtual Machine(s)")
+    String detachVirtualMachinesTitle();
 
-	@DefaultStringValue("Permissions")
-	String permissionsTitle();
+    @DefaultStringValue("Permissions")
+    String permissionsTitle();
 
-	@DefaultStringValue("Disks")
-	String disksTitle();
+    @DefaultStringValue("Disks")
+    String disksTitle();
 
-	@DefaultStringValue("Remove Permission")
-	String removePermissionTitle();
+    @DefaultStringValue("Remove Permission")
+    String removePermissionTitle();
 
-	@DefaultStringValue("Remove Template Disk(s)")
-	String removeTemplateDisksTitle();
+    @DefaultStringValue("Remove Template Disk(s)")
+    String removeTemplateDisksTitle();
 
-	@DefaultStringValue("Virtual Disks")
-	String virtualDisksTitle();
+    @DefaultStringValue("Virtual Disks")
+    String virtualDisksTitle();
 
-	@DefaultStringValue("Copy Disk(s)")
-	String copyDisksTitle();
+    @DefaultStringValue("Copy Disk(s)")
+    String copyDisksTitle();
 
-	@DefaultStringValue("Network Interfaces")
-	String networkInterfacesTitle();
+    @DefaultStringValue("Network Interfaces")
+    String networkInterfacesTitle();
 
-	@DefaultStringValue("New Network Interface")
-	String newNetworkInterfaceTitle();
+    @DefaultStringValue("New Network Interface")
+    String newNetworkInterfaceTitle();
 
-	@DefaultStringValue("Edit Network Interface")
-	String editNetworkInterfaceTitle();
+    @DefaultStringValue("Edit Network Interface")
+    String editNetworkInterfaceTitle();
 
-	@DefaultStringValue("Remove Network Interface(s)")
-	String removeNetworkInterfacesTitle();
+    @DefaultStringValue("Remove Network Interface(s)")
+    String removeNetworkInterfacesTitle();
 
-	@DefaultStringValue("Copy Template")
-	String copyTemplateTitle();
+    @DefaultStringValue("Copy Template")
+    String copyTemplateTitle();
 
-	@DefaultStringValue("Backup Template")
-	String backupTemplateTitle();
+    @DefaultStringValue("Backup Template")
+    String backupTemplateTitle();
 
-	@DefaultStringValue("Edit Template")
-	String editTemplateTitle();
+    @DefaultStringValue("Edit Template")
+    String editTemplateTitle();
 
-	@DefaultStringValue("Remove Template(s)")
-	String removeTemplatesTitle();
+    @DefaultStringValue("Remove Template(s)")
+    String removeTemplatesTitle();
 
-	@DefaultStringValue("Data Center")
-	String dataCenterTitle();
+    @DefaultStringValue("Data Center")
+    String dataCenterTitle();
 
-	@DefaultStringValue("Attach to Data Center")
-	String attachToDataCenterTitle();
+    @DefaultStringValue("Attach to Data Center")
+    String attachToDataCenterTitle();
 
-	@DefaultStringValue("Images")
-	String imagesTitle();
+    @DefaultStringValue("Images")
+    String imagesTitle();
 
-	@DefaultStringValue("Template Import")
-	String templateImportTitle();
+    @DefaultStringValue("Template Import")
+    String templateImportTitle();
 
-	@DefaultStringValue("Remove Backed up Template(s)")
-	String removeBackedUpTemplatesTitle();
+    @DefaultStringValue("Remove Backed up Template(s)")
+    String removeBackedUpTemplatesTitle();
 
-	@DefaultStringValue("Templates")
-	String templatesTitle();
+    @DefaultStringValue("Templates")
+    String templatesTitle();
 
-	@DefaultStringValue("New Domain")
-	String newDomainTitle();
+    @DefaultStringValue("New Domain")
+    String newDomainTitle();
 
-	@DefaultStringValue("Edit Domain")
-	String editDomainTitle();
+    @DefaultStringValue("Edit Domain")
+    String editDomainTitle();
 
-	@DefaultStringValue("Import Pre-Configured Domain")
-	String importPreConfiguredDomainTitle();
+    @DefaultStringValue("Import Pre-Configured Domain")
+    String importPreConfiguredDomainTitle();
 
-	@DefaultStringValue("Remove Storage(s)")
-	String removeStoragesTitle();
+    @DefaultStringValue("Remove Storage(s)")
+    String removeStoragesTitle();
 
-	@DefaultStringValue("Destroy Storage Domain")
-	String destroyStorageDomainTitle();
+    @DefaultStringValue("Destroy Storage Domain")
+    String destroyStorageDomainTitle();
 
-	@DefaultStringValue("VM Import")
-	String vmImportTitle();
+    @DefaultStringValue("VM Import")
+    String vmImportTitle();
 
-	@DefaultStringValue("Remove Backed up VM(s)")
-	String removeBackedUpVMsTitle();
+    @DefaultStringValue("Remove Backed up VM(s)")
+    String removeBackedUpVMsTitle();
 
-	@DefaultStringValue("Import Virtual Machine(s)")
-	String importVirtualMachinesTitle();
+    @DefaultStringValue("Import Virtual Machine(s)")
+    String importVirtualMachinesTitle();
 
-	@DefaultStringValue("About oVirt Engine")
-	String aboutOVirtEngineTitle();
+    @DefaultStringValue("About oVirt Engine")
+    String aboutOVirtEngineTitle();
 
-	@DefaultStringValue("Configure")
-	String ConfigureTitle();
+    @DefaultStringValue("Configure")
+    String ConfigureTitle();
 
-	@DefaultStringValue("Events")
-	String eventsTitle();
+    @DefaultStringValue("Events")
+    String eventsTitle();
 
-	@DefaultStringValue("New Quota")
-	String newQuotaTitle();
+    @DefaultStringValue("New Quota")
+    String newQuotaTitle();
 
-	@DefaultStringValue("Edit Quota")
-	String editQuotaTitle();
+    @DefaultStringValue("Edit Quota")
+    String editQuotaTitle();
 
     @DefaultStringValue("Copy Quota")
     String cloneQuotaTitle();
 
-	@DefaultStringValue("Remove Quota(s)")
-	String removeQuotasTitle();
+    @DefaultStringValue("Remove Quota(s)")
+    String removeQuotasTitle();
 
-	@DefaultStringValue("Assign Users and Groups to Quota")
-	String assignUsersAndGroupsToQuotaTitle();
+    @DefaultStringValue("Assign Users and Groups to Quota")
+    String assignUsersAndGroupsToQuotaTitle();
 
-	@DefaultStringValue("Remove Quota Assignment from User(s)")
-	String removeQuotaAssignmentFromUsersTitle();
+    @DefaultStringValue("Remove Quota Assignment from User(s)")
+    String removeQuotaAssignmentFromUsersTitle();
 
-	@DefaultStringValue("Edit Quota")
-	String defineClusterQuotaOnDataCenterTitle();
+    @DefaultStringValue("Edit Quota")
+    String defineClusterQuotaOnDataCenterTitle();
 
-	@DefaultStringValue("Edit Quota")
-	String defineStorageQuotaOnDataCenterTitle();
+    @DefaultStringValue("Edit Quota")
+    String defineStorageQuotaOnDataCenterTitle();
 
-	@DefaultStringValue("Host Hooks")
-	String hostHooksTitle();
+    @DefaultStringValue("Host Hooks")
+    String hostHooksTitle();
 
-	@DefaultStringValue("Edit Management Network")
-	String editManagementNetworkTitle();
+    @DefaultStringValue("Edit Management Network")
+    String editManagementNetworkTitle();
 
-	@DefaultStringValue("InterfaceList")
-	String interfaceListTitle();
+    @DefaultStringValue("InterfaceList")
+    String interfaceListTitle();
 
-	@DefaultStringValue("Confirm")
-	String confirmTitle();
+    @DefaultStringValue("Confirm")
+    String confirmTitle();
 
-	@DefaultStringValue("Bond Network Interfaces")
-	String bondNetworkInterfacesTitle();
+    @DefaultStringValue("Bond Network Interfaces")
+    String bondNetworkInterfacesTitle();
 
-	@DefaultStringValue("Detach Network Interfaces")
-	String detachNetworkInterfacesTitle();
+    @DefaultStringValue("Detach Network Interfaces")
+    String detachNetworkInterfacesTitle();
 
-	@DefaultStringValue("Edit Management Network Interface")
-	String editManagementNetworkInterfaceTitle();
+    @DefaultStringValue("Edit Management Network Interface")
+    String editManagementNetworkInterfaceTitle();
 
-	@DefaultStringValue("Install Host")
-	String installHostTitle();
+    @DefaultStringValue("Install Host")
+    String installHostTitle();
 
-	@DefaultStringValue("Are you sure?")
-	String areYouSureTitle();
+    @DefaultStringValue("Are you sure?")
+    String areYouSureTitle();
 
-	@DefaultStringValue("Edit Host")
-	String editHostTitle();
+    @DefaultStringValue("Edit Host")
+    String editHostTitle();
 
-	@DefaultStringValue("Remove Host(s)")
-	String removeHostsTitle();
+    @DefaultStringValue("Remove Host(s)")
+    String removeHostsTitle();
 
-	@DefaultStringValue("Maintenance Host(s)")
-	String maintenanceHostsTitle();
+    @DefaultStringValue("Maintenance Host(s)")
+    String maintenanceHostsTitle();
 
-	@DefaultStringValue("Edit and Approve Host")
-	String editAndApproveHostTitle();
+    @DefaultStringValue("Edit and Approve Host")
+    String editAndApproveHostTitle();
 
-	@DefaultStringValue("Restart Host(s)")
-	String restartHostsTitle();
+    @DefaultStringValue("Restart Host(s)")
+    String restartHostsTitle();
 
-	@DefaultStringValue("Stop Host(s)")
-	String stopHostsTitle();
+    @DefaultStringValue("Stop Host(s)")
+    String stopHostsTitle();
 
-	@DefaultStringValue("Configure Local Storage")
-	String configureLocalStorageTitle();
+    @DefaultStringValue("Configure Local Storage")
+    String configureLocalStorageTitle();
 
-	@DefaultStringValue("System")
-	String systemTitle();
+    @DefaultStringValue("System")
+    String systemTitle();
 
-	@DefaultStringValue("Hosts")
-	String hostsTitle();
+    @DefaultStringValue("Hosts")
+    String hostsTitle();
 
-	@DefaultStringValue("VMs")
-	String vmsTitle();
+    @DefaultStringValue("VMs")
+    String vmsTitle();
 
-	@DefaultStringValue("Hard Disk")
-	String hardDiskTitle();
+    @DefaultStringValue("Hard Disk")
+    String hardDiskTitle();
 
-	@DefaultStringValue("CD-ROM")
-	String cdromTitle();
+    @DefaultStringValue("CD-ROM")
+    String cdromTitle();
 
-	@DefaultStringValue("Network (PXE)")
-	String networkPXETitle();
+    @DefaultStringValue("Network (PXE)")
+    String networkPXETitle();
 
-	@DefaultStringValue("Thin")
-	String thinTitle();
+    @DefaultStringValue("Thin")
+    String thinTitle();
 
-	@DefaultStringValue("Clone")
-	String cloneTitle();
+    @DefaultStringValue("Clone")
+    String cloneTitle();
 
-	@DefaultStringValue("Low")
-	String lowTitle();
+    @DefaultStringValue("Low")
+    String lowTitle();
 
-	@DefaultStringValue("Medium")
-	String mediumTitle();
+    @DefaultStringValue("Medium")
+    String mediumTitle();
 
-	@DefaultStringValue("High")
-	String highTitle();
+    @DefaultStringValue("High")
+    String highTitle();
 
-	@DefaultStringValue("[None]")
-	String noneTitle();
+    @DefaultStringValue("[None]")
+    String noneTitle();
 
-	@DefaultStringValue("Remove Virtual Machine")
-	String removeVirtualMachineTitle();
+    @DefaultStringValue("Remove Virtual Machine")
+    String removeVirtualMachineTitle();
 
-	@DefaultStringValue("Remove Tag(s)")
-	String removeTagsTitle();
+    @DefaultStringValue("Remove Tag(s)")
+    String removeTagsTitle();
 
-	@DefaultStringValue("Edit Tag")
-	String editTagTitle();
+    @DefaultStringValue("Edit Tag")
+    String editTagTitle();
 
-	@DefaultStringValue("New Tag")
-	String newTagTitle();
+    @DefaultStringValue("New Tag")
+    String newTagTitle();
 
-	@DefaultStringValue("Roles")
-	String rolesTitle();
+    @DefaultStringValue("Roles")
+    String rolesTitle();
 
-	@DefaultStringValue("Remove Role(s)")
-	String removeRolesTitle();
+    @DefaultStringValue("Remove Role(s)")
+    String removeRolesTitle();
 
-	@DefaultStringValue("Reset")
-	String resetTitle();
+    @DefaultStringValue("Reset")
+    String resetTitle();
 
-	@DefaultStringValue("Role's Permissions")
-	String rolesPermissionsTitle();
+    @DefaultStringValue("Role's Permissions")
+    String rolesPermissionsTitle();
 
-	@DefaultStringValue("System Permission")
-	String systemPermissionTitle();
+    @DefaultStringValue("System Permission")
+    String systemPermissionTitle();
 
-	@DefaultStringValue("Add System Permission to User")
-	String addSystemPermissionToUserTitle();
+    @DefaultStringValue("Add System Permission to User")
+    String addSystemPermissionToUserTitle();
 
-	@DefaultStringValue("Remove System Permission(s)")
-	String removeSystemPermissionsTitle();
+    @DefaultStringValue("Remove System Permission(s)")
+    String removeSystemPermissionsTitle();
 
-	@DefaultStringValue("Add Permission to User")
-	String addPermissionToUserTitle();
+    @DefaultStringValue("Add Permission to User")
+    String addPermissionToUserTitle();
 
-	@DefaultStringValue("Automatic")
-	String automaticTitle();
+    @DefaultStringValue("Automatic")
+    String automaticTitle();
 
-	@DefaultStringValue("Manual")
-	String manualTitle();
+    @DefaultStringValue("Manual")
+    String manualTitle();
 
-	@DefaultStringValue("Pools")
-	String poolsTitle();
+    @DefaultStringValue("Pools")
+    String poolsTitle();
 
-	@DefaultStringValue("New Pool")
-	String newPoolTitle();
+    @DefaultStringValue("New Pool")
+    String newPoolTitle();
 
-	@DefaultStringValue("Edit Pool")
-	String editPoolTitle();
+    @DefaultStringValue("Edit Pool")
+    String editPoolTitle();
 
-	@DefaultStringValue("Remove Pool(s)")
-	String removePoolsTitle();
+    @DefaultStringValue("Remove Pool(s)")
+    String removePoolsTitle();
 
-	@DefaultStringValue("Add Virtual Disk")
-	String addVirtualDiskTitle();
+    @DefaultStringValue("Add Virtual Disk")
+    String addVirtualDiskTitle();
 
-	@DefaultStringValue("New Virtual Disk")
-	String newVirtualDiskTitle();
+    @DefaultStringValue("New Virtual Disk")
+    String newVirtualDiskTitle();
 
-	@DefaultStringValue("Edit Virtual Disk")
-	String editVirtualDiskTitle();
+    @DefaultStringValue("Edit Virtual Disk")
+    String editVirtualDiskTitle();
 
-	@DefaultStringValue("Remove Disk(s)")
-	String removeDisksTitle();
+    @DefaultStringValue("Remove Disk(s)")
+    String removeDisksTitle();
 
-	@DefaultStringValue("Move Disk(s)")
-	String moveDisksTitle();
+    @DefaultStringValue("Move Disk(s)")
+    String moveDisksTitle();
 
-	@DefaultStringValue("Snapshots")
-	String snapshotsTitle();
+    @DefaultStringValue("Snapshots")
+    String snapshotsTitle();
 
-	@DefaultStringValue("Delete Snapshot")
-	String deleteSnapshotTitle();
+    @DefaultStringValue("Delete Snapshot")
+    String deleteSnapshotTitle();
 
-	@DefaultStringValue("Create Snapshot")
-	String createSnapshotTitle();
+    @DefaultStringValue("Create Snapshot")
+    String createSnapshotTitle();
 
-	@DefaultStringValue("Applications")
-	String applicationsTitle();
+    @DefaultStringValue("Applications")
+    String applicationsTitle();
 
-	@DefaultStringValue("Monitor")
-	String monitorTitle();
+    @DefaultStringValue("Monitor")
+    String monitorTitle();
 
-	@DefaultStringValue("RDP")
-	String RDPTitle();
+    @DefaultStringValue("RDP")
+    String RDPTitle();
 
-	@DefaultStringValue("Retrieving CDs...")
-	String retrievingCDsTitle();
+    @DefaultStringValue("Retrieving CDs...")
+    String retrievingCDsTitle();
 
-	@DefaultStringValue("New Virtual Machine - Guide Me")
-	String newVirtualMachineGuideMeTitle();
+    @DefaultStringValue("New Virtual Machine - Guide Me")
+    String newVirtualMachineGuideMeTitle();
 
-	@DefaultStringValue("Remove Virtual Machine(s)")
-	String removeVirtualMachinesTitle();
+    @DefaultStringValue("Remove Virtual Machine(s)")
+    String removeVirtualMachinesTitle();
 
-	@DefaultStringValue("Move Virtual Machine")
-	String moveVirtualMachineTitle();
+    @DefaultStringValue("Move Virtual Machine")
+    String moveVirtualMachineTitle();
 
-	@DefaultStringValue("Export Virtual Machine")
-	String exportVirtualMachineTitle();
+    @DefaultStringValue("Export Virtual Machine")
+    String exportVirtualMachineTitle();
 
-	@DefaultStringValue("Export Template")
+    @DefaultStringValue("Export Template")
     String exportTemplateTitle();
 
-	@DefaultStringValue("Template(s) not Found on Export Domain")
-	String templatesNotFoundOnExportDomainTitle();
+    @DefaultStringValue("Template(s) not Found on Export Domain")
+    String templatesNotFoundOnExportDomainTitle();
 
-	@DefaultStringValue("Run Virtual Machine(s)")
-	String runVirtualMachinesTitle();
+    @DefaultStringValue("Run Virtual Machine(s)")
+    String runVirtualMachinesTitle();
 
-	@DefaultStringValue("VNC")
-	String VNCTitle();
+    @DefaultStringValue("VNC")
+    String VNCTitle();
 
-	@DefaultStringValue("Spice")
-	String spiceTitle();
+    @DefaultStringValue("Spice")
+    String spiceTitle();
 
-	@DefaultStringValue("New Template")
-	String newTemplateTitle();
+    @DefaultStringValue("New Template")
+    String newTemplateTitle();
 
-	@DefaultStringValue("Migrate Virtual Machine(s)")
-	String migrateVirtualMachinesTitle();
+    @DefaultStringValue("Migrate Virtual Machine(s)")
+    String migrateVirtualMachinesTitle();
 
-	@DefaultStringValue("Shut down Virtual Machine(s)")
-	String shutdownVirtualMachinesTitle();
+    @DefaultStringValue("Shut down Virtual Machine(s)")
+    String shutdownVirtualMachinesTitle();
 
-	@DefaultStringValue("Stop Virtual Machine(s)")
-	String stopVirtualMachinesTitle();
+    @DefaultStringValue("Stop Virtual Machine(s)")
+    String stopVirtualMachinesTitle();
 
-	@DefaultStringValue("Change CD")
-	String changeCDTitle();
+    @DefaultStringValue("Change CD")
+    String changeCDTitle();
 
-	@DefaultStringValue("No CDs")
-	String noCDsTitle();
+    @DefaultStringValue("No CDs")
+    String noCDsTitle();
 
-	@DefaultStringValue("Console Disconnected")
-	String consoleDisconnectedTitle();
+    @DefaultStringValue("Console Disconnected")
+    String consoleDisconnectedTitle();
 
-	@DefaultStringValue("Import Template(s)")
-	String importTemplatesTitle();
+    @DefaultStringValue("Import Template(s)")
+    String importTemplatesTitle();
 
-	@DefaultStringValue("Clone VM from Snapshot")
-	String cloneVmFromSnapshotTitle();
+    @DefaultStringValue("Clone VM from Snapshot")
+    String cloneVmFromSnapshotTitle();
 
-	// Messages
-	@DefaultStringValue("There are no available Bonds")
-	String thereAreNoAvailableBondsMsg();
+    // Messages
+    @DefaultStringValue("There are no available Bonds")
+    String thereAreNoAvailableBondsMsg();
 
-	@DefaultStringValue("Bookmark(s):")
-	String bookmarsMsg();
+    @DefaultStringValue("Bookmark(s):")
+    String bookmarsMsg();
 
-	@DefaultStringValue("Cluster(s)")
-	String clustersMsg();
+    @DefaultStringValue("Cluster(s)")
+    String clustersMsg();
 
-	@DefaultStringValue("You are about to change the Cluster Compatibility Version. Are you sure you want to continue?")
-	String youAreAboutChangeClusterCompatibilityVersionMsg();
+    @DefaultStringValue("You are about to change the Cluster Compatibility Version. Are you sure you want to continue?")
+    String youAreAboutChangeClusterCompatibilityVersionMsg();
 
-	@DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.")
-	String asciiNameValidationMsg();
+    @DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.")
+    String asciiNameValidationMsg();
 
-	@DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set are allowed.")
-	String asciiOrNoneValidationMsg();
+    @DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set are allowed.")
+    String asciiOrNoneValidationMsg();
 
-	@DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set and UTF letters are allowed.")
-	String specialAsciiOrNoneValidationMsg();
+    @DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set and UTF letters are allowed.")
+    String specialAsciiOrNoneValidationMsg();
 
-	@DefaultStringValue("Name can contain only alphanumeric characters, '0-9', '_' or '-' characters.")
-	String i18NNameValidationMsg();
+    @DefaultStringValue("Name can contain only alphanumeric characters, '0-9', '_' or '-' characters.")
+    String i18NNameValidationMsg();
 
-	@DefaultStringValue("UTF characters are not allowed.")
-	String nonUtfValidationMsg();
+    @DefaultStringValue("UTF characters are not allowed.")
+    String nonUtfValidationMsg();
 
-	@DefaultStringValue("You haven't configured Power Management for this Host. Are you sure you want to continue?")
-	String youHavntConfigPmMsg();
+    @DefaultStringValue("You haven't configured Power Management for this Host. Are you sure you want to continue?")
+    String youHavntConfigPmMsg();
 
-	@DefaultStringValue("Name must contain alphanumeric characters or '_' (maximum length 15 characters).")
-	String nameMustContainAlphanumericMaxLenMsg();
+    @DefaultStringValue("Name must contain alphanumeric characters or '_' (maximum length 15 characters).")
+    String nameMustContainAlphanumericMaxLenMsg();
 
-	@DefaultStringValue("Network name shouldn't start with 'bond'.")
-	String networkNameStartMsg();
+    @DefaultStringValue("Network name shouldn't start with 'bond'.")
+    String networkNameStartMsg();
 
-	@DefaultStringValue("Data Center(s)")
-	String dataCentersMsg();
+    @DefaultStringValue("Data Center(s)")
+    String dataCentersMsg();
 
-	@DefaultStringValue("There are no compatible Storage Domains to attach to this Data Center. Please add new Storage from the Storage tab.")
-	String thereAreNoCompatibleStorageDomainsAttachThisDcMsg();
+    @DefaultStringValue("There are no compatible Storage Domains to attach to this Data Center. Please add new Storage from the Storage tab.")
+    String thereAreNoCompatibleStorageDomainsAttachThisDcMsg();
 
-	@DefaultStringValue("You are about to change the Data Center Compatibility Version. Are you sure you want to continue?")
-	String youAreAboutChangeDcCompatibilityVersionMsg();
+    @DefaultStringValue("You are about to change the Data Center Compatibility Version. Are you sure you want to continue?")
+    String youAreAboutChangeDcCompatibilityVersionMsg();
 
-	@DefaultStringValue("Logical Network(s)")
-	String logicalNetworksMsg();
+    @DefaultStringValue("Logical Network(s)")
+    String logicalNetworksMsg();
 
-	@DefaultStringValue("Cannot edit Management Network when there are Clusters in the Data Center")
-	String cannotDetachManagementNetworkFromClustersMsg();
+    @DefaultStringValue("Cannot edit Management Network when there are Clusters in the Data Center")
+    String cannotDetachManagementNetworkFromClustersMsg();
 
-	@DefaultStringValue("You are about to attach the network to all the selected clusters and to detach the network from all the unselected clusters.\n\nAre you sure you want to continue?")
-	String youAreAboutToAttachDetachNetworkToFromTheClustersMsg();
+    @DefaultStringValue("You are about to attach the network to all the selected clusters and to detach the network from all the unselected clusters.\n\nAre you sure you want to continue?")
+    String youAreAboutToAttachDetachNetworkToFromTheClustersMsg();
 
-	@DefaultStringValue("Are you sure you want to Detach the following storage(s)?")
-	String areYouSureYouWantDetachFollowingStoragesMsg();
+    @DefaultStringValue("Are you sure you want to Detach the following storage(s)?")
+    String areYouSureYouWantDetachFollowingStoragesMsg();
 
-	@DefaultStringValue("User(s)")
-	String usersMsg();
+    @DefaultStringValue("User(s)")
+    String usersMsg();
 
-	@DefaultStringValue("Are you sure you want to Detach from the user the following Virtual Machine(s)")
-	String areYouSureYouWantDetachFromUserFollowingVmsMsg();
+    @DefaultStringValue("Are you sure you want to Detach from the user the following Virtual Machine(s)")
+    String areYouSureYouWantDetachFromUserFollowingVmsMsg();
 
-	@DefaultStringValue("Permission")
-	String permissionMsg();
+    @DefaultStringValue("Permission")
+    String permissionMsg();
 
-	@DefaultStringValue("No Storage Domain is available - check Storage Domains and Hosts status.")
-	String noSDAvailableMsg();
+    @DefaultStringValue("No Storage Domain is available - check Storage Domains and Hosts status.")
+    String noSDAvailableMsg();
 
-	@DefaultStringValue("Disks already exist on all available Storage Domains.")
-	String disksAlreadyExistMsg();
+    @DefaultStringValue("Disks already exist on all available Storage Domains.")
+    String disksAlreadyExistMsg();
 
-	@DefaultStringValue("Templates reside on several Data Centers. Make sure the exported Templates reside on the same Data Center.")
-	String templatesResideOnSeveralDcsMakeSureExportedTemplatesResideOnSameDcMsg();
+    @DefaultStringValue("Templates reside on several Data Centers. Make sure the exported Templates reside on the same Data Center.")
+    String templatesResideOnSeveralDcsMakeSureExportedTemplatesResideOnSameDcMsg();
 
-	@DefaultStringValue("There is no Export Domain to export the Template into. Please attach an Export Domain to the Template's Data Center.")
-	String thereIsNoExportDomainToExportTheTemplateIntoMsg();
+    @DefaultStringValue("There is no Export Domain to export the Template into. Please attach an Export Domain to the Template's Data Center.")
+    String thereIsNoExportDomainToExportTheTemplateIntoMsg();
 
-	@DefaultStringValue("Template(s)")
-	String templatesMsg();
+    @DefaultStringValue("Template(s)")
+    String templatesMsg();
 
-	@DefaultStringValue("There are No Data Centers to which the Storage Domain can be attached")
-	String thereAreNoDataCenterStorageDomainAttachedMsg();
+    @DefaultStringValue("There are No Data Centers to which the Storage Domain can be attached")
+    String thereAreNoDataCenterStorageDomainAttachedMsg();
 
-	@DefaultStringValue("Are you sure you want to Detach storage from the following Data Center(s)?")
-	String areYouSureYouWantDetachStorageFromDcsMsg();
+    @DefaultStringValue("Are you sure you want to Detach storage from the following Data Center(s)?")
+    String areYouSureYouWantDetachStorageFromDcsMsg();
 
-	@DefaultStringValue("There is no Data Storage Domain to import the Template into. Please attach a Data Storage Domain to the Template's Data Center.")
-	String thereIsNoDataStorageDomainToImportTemplateIntoMsg();
+    @DefaultStringValue("There is no Data Storage Domain to import the Template into. Please attach a Data Storage Domain to the Template's Data Center.")
+    String thereIsNoDataStorageDomainToImportTemplateIntoMsg();
 
-	@DefaultStringValue("The Export Domain is inactive. Data can be retrieved only when the Domain is activated")
-	String theExportDomainIsInactiveMsg();
+    @DefaultStringValue("The Export Domain is inactive. Data can be retrieved only when the Domain is activated")
+    String theExportDomainIsInactiveMsg();
 
-	@DefaultStringValue("Export Domain is not attached to any Data Center. Data can be retrieved only when the Domain is attached to a Data Center and is active")
-	String ExportDomainIsNotAttachedToAnyDcMsg();
+    @DefaultStringValue("Export Domain is not attached to any Data Center. Data can be retrieved only when the Domain is attached to a Data Center and is active")
+    String ExportDomainIsNotAttachedToAnyDcMsg();
 
-	@DefaultStringValue("Are you sure you want to Remove the Storage Domain?")
-	String areYouSureYouWantToRemoveTheStorageDomainMsg();
+    @DefaultStringValue("Are you sure you want to Remove the Storage Domain?")
+    String areYouSureYouWantToRemoveTheStorageDomainMsg();
 
-	@DefaultStringValue("VM(s)")
-	String vmsMsg();
+    @DefaultStringValue("VM(s)")
+    String vmsMsg();
 
-	@DefaultStringValue("Quota")
-	String quotasMsg();
+    @DefaultStringValue("Quota")
+    String quotasMsg();
 
-	@DefaultStringValue("Assignment(s)")
-	String assignmentsMsg();
+    @DefaultStringValue("Assignment(s)")
+    String assignmentsMsg();
 
-	@DefaultStringValue("There are no networks available. Please add additional networks.")
-	String thereAreNoNetworksAvailablePleaseAddAdditionalNetworksMsg();
+    @DefaultStringValue("There are no networks available. Please add additional networks.")
+    String thereAreNoNetworksAvailablePleaseAddAdditionalNetworksMsg();
 
-	@DefaultStringValue("There are no ISO versions that are compatible with the Host's current version.")
-	String thereAreNoISOversionsVompatibleWithHostCurrentVerMsg();
+    @DefaultStringValue("There are no ISO versions that are compatible with the Host's current version.")
+    String thereAreNoISOversionsVompatibleWithHostCurrentVerMsg();
 
-	@DefaultStringValue("Host(s)")
-	String hostsMsg();
+    @DefaultStringValue("Host(s)")
+    String hostsMsg();
 
-	@DefaultStringValue("Are you sure you want to place the following host(s) into maintenance mode?")
-	String areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg();
+    @DefaultStringValue("Are you sure you want to place the following host(s) into maintenance mode?")
+    String areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg();
 
-	@DefaultStringValue("Are you sure you want to Restart the following Host(s)?")
-	String areYouSureYouWantToRestartTheFollowingHostsMsg();
+    @DefaultStringValue("Are you sure you want to Restart the following Host(s)?")
+    String areYouSureYouWantToRestartTheFollowingHostsMsg();
 
-	@DefaultStringValue("Are you sure you want to Stop the following Host(s)?")
-	String areYouSureYouWantToStopTheFollowingHostsMsg();
+    @DefaultStringValue("Are you sure you want to Stop the following Host(s)?")
+    String areYouSureYouWantToStopTheFollowingHostsMsg();
 
-	@DefaultStringValue("Host doesn't support Local Storage configuration")
-	String hostDoesntSupportLocalStorageConfigurationMsg();
+    @DefaultStringValue("Host doesn't support Local Storage configuration")
+    String hostDoesntSupportLocalStorageConfigurationMsg();
 
-	@DefaultStringValue("Testing in progress. It will take a few seconds. Please wait...")
-	String testingInProgressItWillTakeFewSecondsPleaseWaitMsg();
+    @DefaultStringValue("Testing in progress. It will take a few seconds. Please wait...")
+    String testingInProgressItWillTakeFewSecondsPleaseWaitMsg();
 
-	@DefaultStringValue("Virtual Machine")
-	String virtualMachineMsg();
+    @DefaultStringValue("Virtual Machine")
+    String virtualMachineMsg();
 
-	@DefaultStringValue("Name must be up to 126 characters and start with any word character.")
-	String nameMustBeUpToAndStartWithMsg();
+    @DefaultStringValue("Name must be up to 126 characters and start with any word character.")
+    String nameMustBeUpToAndStartWithMsg();
 
-	@DefaultStringValue("Could not connect to oVirt Engine Service, please try to refresh the page. If the problem persists contact your System Administrator.")
-	String couldNotConnectToOvirtEngineServiceMsg();
+    @DefaultStringValue("Could not connect to oVirt Engine Service, please try to refresh the page. If the problem persists contact your System Administrator.")
+    String couldNotConnectToOvirtEngineServiceMsg();
 
-	@DefaultStringValue("Are you sure you want to detach selected Virtual Machine(s)?")
-	String areYouSurYouWantToDetachSelectedVirtualMachinesMsg();
+    @DefaultStringValue("Are you sure you want to detach selected Virtual Machine(s)?")
+    String areYouSurYouWantToDetachSelectedVirtualMachinesMsg();
 
-	@DefaultStringValue("Pool(s)")
-	String poolsMsg();
+    @DefaultStringValue("Pool(s)")
+    String poolsMsg();
 
-	@DefaultStringValue("Disk(s)")
-	String disksMsg();
+    @DefaultStringValue("Disk(s)")
+    String disksMsg();
 
-	@DefaultStringValue("Snapshot cannot be created since the VM has no Virtual Disks")
-	String snapshotCannotBeCreatedSinceTheVMHasNoDisksMsg();
+    @DefaultStringValue("Snapshot cannot be created since the VM has no Virtual Disks")
+    String snapshotCannotBeCreatedSinceTheVMHasNoDisksMsg();
 
-	@DefaultStringValue("At least one disk must be marked.")
-	String atLeastOneDiskMustBeMarkedMsg();
+    @DefaultStringValue("At least one disk must be marked.")
+    String atLeastOneDiskMustBeMarkedMsg();
 
-	@DefaultStringValue("Network Interface(s)")
-	String networkInterfacesMsg();
+    @DefaultStringValue("Network Interface(s)")
+    String networkInterfacesMsg();
 
-	@DefaultStringValue("Name must contain alphanumeric characters only.")
-	String nameMustContainAlphanumericCharactersOnlyMsg();
+    @DefaultStringValue("Name must contain alphanumeric characters only.")
+    String nameMustContainAlphanumericCharactersOnlyMsg();
 
-	@DefaultStringValue("Virtual Machine(s)")
-	String virtualMachinesMsg();
+    @DefaultStringValue("Virtual Machine(s)")
+    String virtualMachinesMsg();
 
-	@DefaultStringValue("Virtual Machines reside on several Data Centers. Make sure the exported Virtual Machines reside on the same Data Center.")
-	String vmsResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg();
+    @DefaultStringValue("Virtual Machines reside on several Data Centers. Make sure the exported Virtual Machines reside on the same Data Center.")
+    String vmsResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg();
 
-	@DefaultStringValue("There is no Export Domain to Backup the Virtual Machine into. Attach an Export Domain to the Virtual Machine(s) Data Center.")
-	String thereIsNoExportDomainBackupVmAttachExportDomainToVmsDcMsg();
+    @DefaultStringValue("There is no Export Domain to Backup the Virtual Machine into. Attach an Export Domain to the Virtual Machine(s) Data Center.")
+    String thereIsNoExportDomainBackupVmAttachExportDomainToVmsDcMsg();
 
-	@DefaultStringValue("The relevant Export Domain is not active. Please activate it.")
-	String theRelevantExportDomainIsNotActivePleaseActivateItMsg();
+    @DefaultStringValue("The relevant Export Domain is not active. Please activate it.")
+    String theRelevantExportDomainIsNotActivePleaseActivateItMsg();
 
-	@DefaultStringValue("Are you sure you want to Shut down the following Virtual Machines?")
-	String areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg();
+    @DefaultStringValue("Are you sure you want to Shut down the following Virtual Machines?")
+    String areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg();
 
-	@DefaultStringValue("Are you sure you want to Stop the following Virtual Machines?")
-	String areYouSureYouWantToStopTheFollowingVirtualMachinesMsg();
+    @DefaultStringValue("Are you sure you want to Stop the following Virtual Machines?")
+    String areYouSureYouWantToStopTheFollowingVirtualMachinesMsg();
 
-	@DefaultStringValue("This field must contain an IP address in format xxx.xxx.xxx.xxx")
-	String thisFieldMustContainIPaddressInFormatMsg();
+    @DefaultStringValue("This field must contain an IP address in format xxx.xxx.xxx.xxx")
+    String thisFieldMustContainIPaddressInFormatMsg();
 
-	@DefaultStringValue("This field can't contain spaces.")
-	String thisFieldCantConatainSpacesMsg();
+    @DefaultStringValue("This field can't contain spaces.")
+    String thisFieldCantConatainSpacesMsg();
 
-	@DefaultStringValue("Invalid MAC address")
-	String invalidMacAddressMsg();
+    @DefaultStringValue("Invalid MAC address")
+    String invalidMacAddressMsg();
 
-	@DefaultStringValue("Role(s):")
-	String rolesMsg();
+    @DefaultStringValue("Role(s):")
+    String rolesMsg();
 
-	@DefaultStringValue("System Permission(s):")
-	String systemPermissionsMsg();
+    @DefaultStringValue("System Permission(s):")
+    String systemPermissionsMsg();
 
-	@DefaultStringValue("Note: Local Storage is already configured for this Host. The Host belongs to")
-	String noteLocalStorageAlreadyConfiguredForThisHostMsg();
+    @DefaultStringValue("Note: Local Storage is already configured for this Host. The Host belongs to")
+    String noteLocalStorageAlreadyConfiguredForThisHostMsg();
 
-	@DefaultStringValue("with local Storage Domain. If OK is clicked - this Host will be moved to a new Data Center, and a new Local Storage Domain will be created. Hit Cancel to abort the operation.")
-	String withLocalStorageDomainMsg();
+    @DefaultStringValue("with local Storage Domain. If OK is clicked - this Host will be moved to a new Data Center, and a new Local Storage Domain will be created. Hit Cancel to abort the operation.")
+    String withLocalStorageDomainMsg();
 
-	@DefaultStringValue("Mount path is illegal, please use [/path] convention.")
-	String localfsMountPashIsIllegalMsg();
+    @DefaultStringValue("Mount path is illegal, please use [/path] convention.")
+    String localfsMountPashIsIllegalMsg();
 
-	@DefaultStringValue("NFS mount path is illegal, please use [IP:/path or FQDN:/path] convention.")
-	String nfsMountPashIsIllegalMsg();
+    @DefaultStringValue("NFS mount path is illegal, please use [IP:/path or FQDN:/path] convention.")
+    String nfsMountPashIsIllegalMsg();
 
-	@DefaultStringValue("No new devices were found. This may be due to either: incorrect multipath configuration on the Host or wrong address of the iscsi target or a failure to authenticate on the target device. Please consult your Storage Administrator.")
-	String noNewDevicesWereFoundMsg();
+    @DefaultStringValue("No new devices were found. This may be due to either: incorrect multipath configuration on the Host or wrong address of the iscsi target or a failure to authenticate on the target device. Please consult your Storage Administrator.")
+    String noNewDevicesWereFoundMsg();
 
-	@DefaultStringValue("Tag(s):")
-	String tagsMsg();
+    @DefaultStringValue("Tag(s):")
+    String tagsMsg();
 
-	@DefaultStringValue("The system could not find available target Storage Domain.\nPossible reasons:\n  - No active Storage Domain available\n  - The Template that the VM is based on does not exist on active Storage Domain")
-	String theSystemCouldNotFindAvailableTargetStorageDomainMsg();
+    @DefaultStringValue("The system could not find available target Storage Domain.\nPossible reasons:\n  - No active Storage Domain available\n  - The Template that the VM is based on does not exist on active Storage Domain")
+    String theSystemCouldNotFindAvailableTargetStorageDomainMsg();
 
-	@DefaultStringValue("Field value should follow: <parameter=value;parameter=value;...>")
-	String fieldValueShouldFollowMsg();
+    @DefaultStringValue("Field value should follow: <parameter=value;parameter=value;...>")
+    String fieldValueShouldFollowMsg();
 
-	@DefaultStringValue("Note that all snapshots will be collapsed due to different storage types")
-	String noteThatAllSnapshotsCollapsedDueDifferentStorageTypesMsg();
+    @DefaultStringValue("Note that all snapshots will be collapsed due to different storage types")
+    String noteThatAllSnapshotsCollapsedDueDifferentStorageTypesMsg();
 
-	@DefaultStringValue("Use a separate import operation for the marked VMs or\nApply \"Collapse Snapshots\" for all VMs")
-	String useSeparateImportOperationForMarkedVMsMsg();
+    @DefaultStringValue("Use a separate import operation for the marked VMs or\nApply \"Collapse Snapshots\" for all VMs")
+    String useSeparateImportOperationForMarkedVMsMsg();
 
-	@DefaultStringValue("Template Disk(s)")
-	String templateDisksMsg();
+    @DefaultStringValue("Template Disk(s)")
+    String templateDisksMsg();
 
-	@DefaultStringValue("OS Version -")
-	String osVersionAbout();
+    @DefaultStringValue("OS Version -")
+    String osVersionAbout();
 
-	@DefaultStringValue("VDSM Version -")
-	String VDSMVersionAbout();
+    @DefaultStringValue("VDSM Version -")
+    String VDSMVersionAbout();
 
-	@DefaultStringValue("oVirt Engine Hypervisor Hosts:")
-	String oVirtEnterpriseVirtualizationEngineHypervisorHostsAbout();
+    @DefaultStringValue("oVirt Engine Hypervisor Hosts:")
+    String oVirtEnterpriseVirtualizationEngineHypervisorHostsAbout();
 
-	@DefaultStringValue("[No Hosts]")
-	String noHostsAbout();
+    @DefaultStringValue("[No Hosts]")
+    String noHostsAbout();
 
-	@DefaultStringValue("oVirt Engine for Servers and Desktops:")
-	String oVirtEngineForServersAndDesktopsAbout();
+    @DefaultStringValue("oVirt Engine for Servers and Desktops:")
+    String oVirtEngineForServersAndDesktopsAbout();
 
-	@DefaultStringValue("The field contains special characters. Only numbers, letters, '-' and '_' are allowed.")
-	String theFieldContainsSpecialCharactersInvalidReason();
+    @DefaultStringValue("The field contains special characters. Only numbers, letters, '-' and '_' are allowed.")
+    String theFieldContainsSpecialCharactersInvalidReason();
 
-	@DefaultStringValue("Configure Host")
-	String configureHostClusterGuide();
+    @DefaultStringValue("Configure Host")
+    String configureHostClusterGuide();
 
-	@DefaultStringValue("Add another Host")
-	String addAnotherHostClusterGuide();
+    @DefaultStringValue("Add another Host")
+    String addAnotherHostClusterGuide();
 
-	@DefaultStringValue("Select Hosts")
-	String selectHostsClusterGuide();
+    @DefaultStringValue("Select Hosts")
+    String selectHostsClusterGuide();
 
-	@DefaultStringValue("The Cluster isn't attached to a Data Center")
-	String theClusterIsntAttachedToADcClusterGuide();
+    @DefaultStringValue("The Cluster isn't attached to a Data Center")
+    String theClusterIsntAttachedToADcClusterGuide();
 
-	@DefaultStringValue("This Cluster belongs to a Local Data Center which already contain a Host")
-	String thisClusterBelongsToALocalDcWhichAlreadyContainHostClusterGuide();
+    @DefaultStringValue("This Cluster belongs to a Local Data Center which already contain a Host")
+    String thisClusterBelongsToALocalDcWhichAlreadyContainHostClusterGuide();
 
-	@DefaultStringValue("Name must be unique.")
-	String nameMustBeUniqueInvalidReason();
+    @DefaultStringValue("Name must be unique.")
+    String nameMustBeUniqueInvalidReason();
 
-	@DefaultStringValue("You must approve the action by clicking on this checkbox.")
-	String youMustApproveTheActionByClickingOnThisCheckboxInvalidReason();
+    @DefaultStringValue("You must approve the action by clicking on this checkbox.")
+    String youMustApproveTheActionByClickingOnThisCheckboxInvalidReason();
 
-	@DefaultStringValue("Configure Cluster")
-	String dataCenterConfigureClustersAction();
+    @DefaultStringValue("Configure Cluster")
+    String dataCenterConfigureClustersAction();
 
-	@DefaultStringValue("Add another Cluster")
-	String dataCenterAddAnotherClusterAction();
+    @DefaultStringValue("Add another Cluster")
+    String dataCenterAddAnotherClusterAction();
 
-	@DefaultStringValue("Configure Host")
-	String dataCenterConfigureHostsAction();
+    @DefaultStringValue("Configure Host")
+    String dataCenterConfigureHostsAction();
 
-	@DefaultStringValue("Select Hosts")
-	String dataCenterSelectHostsAction();
+    @DefaultStringValue("Select Hosts")
+    String dataCenterSelectHostsAction();
 
-	@DefaultStringValue("Configure Storage")
-	String dataCenterConfigureStorageAction();
+    @DefaultStringValue("Configure Storage")
+    String dataCenterConfigureStorageAction();
 
-	@DefaultStringValue("Add more Storage")
-	String dataCenterAddMoreStorageAction();
+    @DefaultStringValue("Add more Storage")
+    String dataCenterAddMoreStorageAction();
 
-	@DefaultStringValue("Attach Storage")
-	String dataCenterAttachStorageAction();
+    @DefaultStringValue("Attach Storage")
+    String dataCenterAttachStorageAction();
 
-	@DefaultStringValue("Attach more Storage")
-	String dataCenterAttachMoreStorageAction();
+    @DefaultStringValue("Attach more Storage")
+    String dataCenterAttachMoreStorageAction();
 
-	@DefaultStringValue("Configure ISO Library")
-	String dataCenterConfigureISOLibraryAction();
+    @DefaultStringValue("Configure ISO Library")
+    String dataCenterConfigureISOLibraryAction();
 
-	@DefaultStringValue("Attach ISO Library")
-	String dataCenterAttachISOLibraryAction();
+    @DefaultStringValue("Attach ISO Library")
+    String dataCenterAttachISOLibraryAction();
 
-	@DefaultStringValue("There should be at least one active Host in the Data Center")
-	String noUpHostReason();
+    @DefaultStringValue("There should be at least one active Host in the Data Center")
+    String noUpHostReason();
 
-	@DefaultStringValue("Cannot create an ISO domain in a non-active Data Center")
-	String noDataDomainAttachedReason();
+    @DefaultStringValue("Cannot create an ISO domain in a non-active Data Center")
+    String noDataDomainAttachedReason();
 
-	@DefaultStringValue("Local Data Center already contains a Host")
-	String localDataCenterAlreadyContainsAHostDcGuide();
+    @DefaultStringValue("Local Data Center already contains a Host")
+    String localDataCenterAlreadyContainsAHostDcGuide();
 
-	@DefaultStringValue("Data Center was already initialized")
-	String dataCenterWasAlreadyInitializedDcGuide();
+    @DefaultStringValue("Data Center was already initialized")
+    String dataCenterWasAlreadyInitializedDcGuide();
 
-	@DefaultStringValue("New ISO Library")
-	String newISOLibraryTitle();
+    @DefaultStringValue("New ISO Library")
+    String newISOLibraryTitle();
 
-	@DefaultStringValue("New Storage")
-	String newStorageTitle();
+    @DefaultStringValue("New Storage")
+    String newStorageTitle();
 
-	@DefaultStringValue("Attach ISO Library")
-	String attachISOLibraryTitle();
+    @DefaultStringValue("Attach ISO Library")
+    String attachISOLibraryTitle();
 
-	@DefaultStringValue("Attach Storage")
-	String attachStorageTitle();
+    @DefaultStringValue("Attach Storage")
+    String attachStorageTitle();
 
-	@DefaultStringValue("Attach Export Domain")
-	String attachExportDomainTitle();
+    @DefaultStringValue("Attach Export Domain")
+    String attachExportDomainTitle();
 
-	@DefaultStringValue("Invalid E-Mail address")
-	String invalidEmailAddressInvalidReason();
+    @DefaultStringValue("Invalid E-Mail address")
+    String invalidEmailAddressInvalidReason();
 
-	@DefaultStringValue("Address is not a valid host name or IP address.")
-	String addressIsNotValidHostNameOrIpAddressInvalidReason();
+    @DefaultStringValue("Address is not a valid host name or IP address.")
+    String addressIsNotValidHostNameOrIpAddressInvalidReason();
 
-	@DefaultStringValue("Switch to maintenance mode to enable Upgrade.")
-	String switchToMaintenanceModeToEnableUpgradeReason();
+    @DefaultStringValue("Switch to maintenance mode to enable Upgrade.")
+    String switchToMaintenanceModeToEnableUpgradeReason();
 
-	@DefaultStringValue("Configuring Local Storage...")
-	String configuringLocalStorageHost();
+    @DefaultStringValue("Configuring Local Storage...")
+    String configuringLocalStorageHost();
 
-	@DefaultStringValue("Configuring local Storage is permitted only to Administrators with System-level permissions")
-	String configuringLocalStoragePermittedOnlyAdministratorsWithSystemLevelPermissionsReason();
+    @DefaultStringValue("Configuring local Storage is permitted only to Administrators with System-level permissions")
+    String configuringLocalStoragePermittedOnlyAdministratorsWithSystemLevelPermissionsReason();
 
-	@DefaultStringValue("Test Failed (unknown error).")
-	String testFailedUnknownErrorMsg();
+    @DefaultStringValue("Test Failed (unknown error).")
+    String testFailedUnknownErrorMsg();
 
-	@DefaultStringValue("Error while retrieving list of domains. Please consult your Storage Administrator.")
-	String errorWhileRetrievingListOfDomains();
+    @DefaultStringValue("Error while retrieving list of domains. Please consult your Storage Administrator.")
+    String errorWhileRetrievingListOfDomains();
 
-	@DefaultStringValue("Please select a Storage Domain to import")
-	String pleaseSelectStorageDomainToImportImportSanStorage();
+    @DefaultStringValue("Please select a Storage Domain to import")
+    String pleaseSelectStorageDomainToImportImportSanStorage();
 
-	@DefaultStringValue("Error while retrieving list of domains. Please consult your Storage Administrator.")
-	String errorWhileRetrievingListOfDomainsImportSanStorage();
+    @DefaultStringValue("Error while retrieving list of domains. Please consult your Storage Administrator.")
+    String errorWhileRetrievingListOfDomainsImportSanStorage();
 
-	@DefaultStringValue("Value doesn't not match pattern: key=value,key=value...")
-	String valueDoesntNotMatchPatternKeyValueKeyValueInvalidReason();
+    @DefaultStringValue("Value doesn't not match pattern: key=value,key=value...")
+    String valueDoesntNotMatchPatternKeyValueKeyValueInvalidReason();
 
-	@DefaultStringValue("Value doesn't not match pattern: key=value,key,key=value...")
-	String valueDoesntNotNatchPatternKeyValueKeyKeyValueInvalidReason();
+    @DefaultStringValue("Value doesn't not match pattern: key=value,key,key=value...")
+    String valueDoesntNotNatchPatternKeyValueKeyKeyValueInvalidReason();
 
-	@DefaultStringValue("Data Center is not accessible.")
-	String dataCenterIsNotAccessibleMsg();
+    @DefaultStringValue("Data Center is not accessible.")
+    String dataCenterIsNotAccessibleMsg();
 
-	@DefaultStringValue("Cannot create Template. VM has no disks.")
-	String cannotCreateTemplateVmHasNoDisksMsg();
+    @DefaultStringValue("Cannot create Template. VM has no disks.")
+    String cannotCreateTemplateVmHasNoDisksMsg();
 
-	@DefaultStringValue("This field can't be empty.")
-	String thisFieldCantBeEmptyInvalidReason();
+    @DefaultStringValue("This field can't be empty.")
+    String thisFieldCantBeEmptyInvalidReason();
 
-	@DefaultStringValue("New Role")
-	String newRoleTitle();
+    @DefaultStringValue("New Role")
+    String newRoleTitle();
 
-	@DefaultStringValue("Edit Role")
-	String editRoleTitle();
+    @DefaultStringValue("Edit Role")
+    String editRoleTitle();
 
-	@DefaultStringValue("Copy Role")
-	String copyRoleTitle();
+    @DefaultStringValue("Copy Role")
+    String copyRoleTitle();
 
-	@DefaultStringValue("This field must contain integer number")
-	String thisFieldMustContainIntegerNumberInvalidReason();
+    @DefaultStringValue("This field must contain integer number")
+    String thisFieldMustContainIntegerNumberInvalidReason();
 
-	// Role tree tooltip
-	@DefaultStringValue("Allow to Add/Remove Users from the System")
-	String allowToAddRemoveUsersFromTheSystemRoleTreeTooltip();
+    // Role tree tooltip
+    @DefaultStringValue("Allow to Add/Remove Users from the System")
+    String allowToAddRemoveUsersFromTheSystemRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to add/remove permissions for Users on objects in the system")
-	String allowToAddRemovePermissionsForUsersOnObjectsInTheSystemRoleTreeTooltip();
+    @DefaultStringValue("Allow to add/remove permissions for Users on objects in the system")
+    String allowToAddRemovePermissionsForUsersOnObjectsInTheSystemRoleTreeTooltip();
 
     @DefaultStringValue("Allow to login to the system")
     String allowToLoginToTheSystemRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to define/configure roles in the System")
-	String allowToDefineConfigureRolesInTheSystemRoleTreeTooltip();
+    @DefaultStringValue("Allow to define/configure roles in the System")
+    String allowToDefineConfigureRolesInTheSystemRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to get or set System Configuration")
-	String allowToGetOrSetSystemConfigurationRoleTreeTooltip();
+    @DefaultStringValue("Allow to get or set System Configuration")
+    String allowToGetOrSetSystemConfigurationRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to create Data Center")
-	String allowToCreateDataCenterRoleTreeTooltip();
+    @DefaultStringValue("Allow to create Data Center")
+    String allowToCreateDataCenterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to remove Data Center")
-	String allowToRemoveDataCenterRoleTreeTooltip();
+    @DefaultStringValue("Allow to remove Data Center")
+    String allowToRemoveDataCenterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to modify Data Center properties")
-	String allowToModifyDataCenterPropertiesRoleTreeTooltip();
+    @DefaultStringValue("Allow to modify Data Center properties")
+    String allowToModifyDataCenterPropertiesRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to configure Logical Network per Data Center")
-	String allowToConfigureLogicalNetworkPerDataCenterRoleTreeTooltip();
+    @DefaultStringValue("Allow to configure Logical Network per Data Center")
+    String allowToConfigureLogicalNetworkPerDataCenterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to create Storage Domain")
-	String allowToCreateStorageDomainRoleTreeTooltip();
+    @DefaultStringValue("Allow to create Storage Domain")
+    String allowToCreateStorageDomainRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to delete Storage Domain")
-	String allowToDeleteStorageDomainRoleTreeTooltip();
+    @DefaultStringValue("Allow to delete Storage Domain")
+    String allowToDeleteStorageDomainRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to modify Storage Domain properties")
-	String allowToModifyStorageDomainPropertiesRoleTreeTooltip();
+    @DefaultStringValue("Allow to modify Storage Domain properties")
+    String allowToModifyStorageDomainPropertiesRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to change Storage Domain status:  maintenance/activate; attach/detach")
-	String allowToChangeStorageDomainStatusRoleTreeTooltip();
+    @DefaultStringValue("Allow to change Storage Domain status:  maintenance/activate; attach/detach")
+    String allowToChangeStorageDomainStatusRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to create new Cluster")
-	String allowToCreateNewClusterRoleTreeTooltip();
+    @DefaultStringValue("Allow to create new Cluster")
+    String allowToCreateNewClusterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to remove Cluster")
-	String allowToRemoveClusterRoleTreeTooltip();
+    @DefaultStringValue("Allow to remove Cluster")
+    String allowToRemoveClusterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to Edit Cluster properties")
-	String allowToEditClusterPropertiesRoleTreeTooltip();
+    @DefaultStringValue("Allow to Edit Cluster properties")
+    String allowToEditClusterPropertiesRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to add/remove Logical Networks for the Cluster (from the list of Networks defined by the Data Center)")
-	String allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip();
+    @DefaultStringValue("Allow to add/remove Logical Networks for the Cluster (from the list of Networks defined by the Data Center)")
+    String allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to add new Host to the Cluster")
-	String allowToAddNewHostToTheClusterRoleTreeTooltip();
+    @DefaultStringValue("Allow to add new Host to the Cluster")
+    String allowToAddNewHostToTheClusterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to remove existing Host from the Cluster")
-	String allowToRemoveExistingHostFromTheClusterRoleTreeTooltip();
+    @DefaultStringValue("Allow to remove existing Host from the Cluster")
+    String allowToRemoveExistingHostFromTheClusterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to Edit Host properties; upgrade/install")
-	String allowToEditHostPropertiesRoleTreeTooltip();
+    @DefaultStringValue("Allow to Edit Host properties; upgrade/install")
+    String allowToEditHostPropertiesRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to change Host status: activate/maintenance")
-	String allowToChangeHostStatusRoleTreeTooltip();
+    @DefaultStringValue("Allow to change Host status: activate/maintenance")
+    String allowToChangeHostStatusRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to configure Host's Network physical interfaces (Nics)")
-	String allowToConfigureHostsNetworkPhysicalInterfacesRoleTreeTooltip();
+    @DefaultStringValue("Allow to configure Host's Network physical interfaces (Nics)")
+    String allowToConfigureHostsNetworkPhysicalInterfacesRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to change Template properties")
-	String allowToChangeTemplatePropertiesRoleTreeTooltip();
+    @DefaultStringValue("Allow to change Template properties")
+    String allowToChangeTemplatePropertiesRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to configure Temlate Network")
-	String allowToConfigureTemlateNetworkRoleTreeTooltip();
+    @DefaultStringValue("Allow to configure Temlate Network")
+    String allowToConfigureTemlateNetworkRoleTreeTooltip();
 
-	@DefaultStringValue("note: Permissions containig these operations should be associated with Storage Domain Object (or above)")
-	String notePermissionsContainigTheseOperationsShuoldAssociatSdOrAboveRoleTreeTooltip();
+    @DefaultStringValue("note: Permissions containig these operations should be associated with Storage Domain Object (or above)")
+    String notePermissionsContainigTheseOperationsShuoldAssociatSdOrAboveRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to create new Template")
-	String allowToCreateNewTemplateRoleTreeTooltip();
+    @DefaultStringValue("Allow to create new Template")
+    String allowToCreateNewTemplateRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to remove existing Template")
-	String allowToRemoveExistingTemplateRoleTreeTooltip();
+    @DefaultStringValue("Allow to remove existing Template")
+    String allowToRemoveExistingTemplateRoleTreeTooltip();
 
-	@DefaultStringValue("Allow import/export operations")
-	String allowImportExportOperationsRoleTreeTooltip();
+    @DefaultStringValue("Allow import/export operations")
+    String allowImportExportOperationsRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to copy Template between Storage Domains")
-	String allowToCopyTemplateBetweenStorageDomainsRoleTreeTooltip();
+    @DefaultStringValue("Allow to copy Template between Storage Domains")
+    String allowToCopyTemplateBetweenStorageDomainsRoleTreeTooltip();
 
-	@DefaultStringValue("Allow basic VM operations - Run/Stop/Pause")
-	String allowBasicVmOperationsRoleTreeTooltip();
+    @DefaultStringValue("Allow basic VM operations - Run/Stop/Pause")
+    String allowBasicVmOperationsRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to attach CD to the VM")
-	String allowToAttachCdToTheVmRoleTreeTooltip();
+    @DefaultStringValue("Allow to attach CD to the VM")
+    String allowToAttachCdToTheVmRoleTreeTooltip();
 
-	@DefaultStringValue("Allow viewing the VM Console Screen")
-	String allowViewingTheVmConsoleScreenRoleTreeTooltip();
+    @DefaultStringValue("Allow viewing the VM Console Screen")
+    String allowViewingTheVmConsoleScreenRoleTreeTooltip();
 
-	@DefaultStringValue("Allow setting port mirroring to VMs networks")
-	String allowVmNetworkPortMirroringRoleTreeTooltip();
+    @DefaultStringValue("Allow setting port mirroring to VMs networks")
+    String allowVmNetworkPortMirroringRoleTreeTooltip();
 
-	@DefaultStringValue("Allow Change VM properties")
-	String allowChangeVmPropertiesRoleTreeTooltip();
+    @DefaultStringValue("Allow Change VM properties")
+    String allowChangeVmPropertiesRoleTreeTooltip();
 
-	@DefaultStringValue("Allow changing VM custom properties")
-	String allowToChangeVmCustomPropertiesRoleTreeTooltip();
+    @DefaultStringValue("Allow changing VM custom properties")
+    String allowToChangeVmCustomPropertiesRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to override the currently opened remote console session")
-	String allowReconnectToVmRoleTreeTooltip();
+    @DefaultStringValue("Allow to override the currently opened remote console session")
+    String allowReconnectToVmRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to create new Vms")
-	String allowToCreateNewVmsRoleTreeTooltip();
+    @DefaultStringValue("Allow to create new Vms")
+    String allowToCreateNewVmsRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to remove Vms from the system")
-	String allowToRemoveVmsFromTheSystemRoleTreeTooltip();
+    @DefaultStringValue("Allow to remove Vms from the system")
+    String allowToRemoveVmsFromTheSystemRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to configure VMs network")
-	String allowToConfigureVMsNetworkRoleTreeTooltip();
+    @DefaultStringValue("Allow to configure VMs network")
+    String allowToConfigureVMsNetworkRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to add/remove disk to the VM")
-	String allowToAddRemoveDiskToTheVmRoleTreeTooltip();
+    @DefaultStringValue("Allow to add/remove disk to the VM")
+    String allowToAddRemoveDiskToTheVmRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to create/delete snapshots of the VM")
-	String allowToCreateDeleteSnapshotsOfTheVmRoleTreeTooltip();
+    @DefaultStringValue("Allow to create/delete snapshots of the VM")
+    String allowToCreateDeleteSnapshotsOfTheVmRoleTreeTooltip();
 
-	@DefaultStringValue("note: Permissions containing these operations should be associated with Data Center Object (or equivalent)")
-	String notePermissionsContainigTheseOperationsShuoldAssociatDcOrEqualRoleTreeTooltip();
+    @DefaultStringValue("note: Permissions containing these operations should be associated with Data Center Object (or equivalent)")
+    String notePermissionsContainigTheseOperationsShuoldAssociatDcOrEqualRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to move VM image to another Storage Domain")
-	String allowToMoveVmImageToAnotherStorageDomainRoleTreeTooltip();
+    @DefaultStringValue("Allow to move VM image to another Storage Domain")
+    String allowToMoveVmImageToAnotherStorageDomainRoleTreeTooltip();
 
-	@DefaultStringValue("Allow migrating VM between Hosts in a Cluster")
-	String allowMigratingVmBetweenHostsInClusterRoleTreeTooltip();
+    @DefaultStringValue("Allow migrating VM between Hosts in a Cluster")
+    String allowMigratingVmBetweenHostsInClusterRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to Run/Pause/Stop a VM from VM-Pool")
-	String allowToRunPauseStopVmFromVmPoolRoleTreeTooltip();
+    @DefaultStringValue("Allow to Run/Pause/Stop a VM from VM-Pool")
+    String allowToRunPauseStopVmFromVmPoolRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to create VM-Pool")
-	String allowToCreateVmPoolRoleTreeTooltip();
+    @DefaultStringValue("Allow to create VM-Pool")
+    String allowToCreateVmPoolRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to delete VM-Pool")
-	String allowToDeleteVmPoolRoleTreeTooltip();
+    @DefaultStringValue("Allow to delete VM-Pool")
+    String allowToDeleteVmPoolRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to change properties of the VM-Pool")
-	String allowToChangePropertiesOfTheVmPoolRoleTreeTooltip();
+    @DefaultStringValue("Allow to change properties of the VM-Pool")
+    String allowToChangePropertiesOfTheVmPoolRoleTreeTooltip();
 
-	@DefaultStringValue("Disk")
-	String diskRoleTree();
+    @DefaultStringValue("Disk")
+    String diskRoleTree();
 
-	@DefaultStringValue("note: Permissions containing these operations should be associated with Disk or Storage Domain Object (or above)")
-	String notePermissionsContainingOperationsRoleTreeTooltip();
+    @DefaultStringValue("note: Permissions containing these operations should be associated with Disk or Storage Domain Object (or above)")
+    String notePermissionsContainingOperationsRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to create Disk")
-	String allowToCreateDiskRoleTreeTooltip();
+    @DefaultStringValue("Allow to create Disk")
+    String allowToCreateDiskRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to delete Disk")
-	String allowToDeleteDiskRoleTreeTooltip();
+    @DefaultStringValue("Allow to delete Disk")
+    String allowToDeleteDiskRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to move Disk to another Storage Domain")
-	String allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip();
+    @DefaultStringValue("Allow to move Disk to another Storage Domain")
+    String allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to attach Disk to a VM")
-	String allowToAttachDiskToVmRoleTreeTooltip();
+    @DefaultStringValue("Allow to attach Disk to a VM")
+    String allowToAttachDiskToVmRoleTreeTooltip();
 
-	@DefaultStringValue("Allow to change properties of the Disk")
-	String allowToChangePropertiesOfTheDiskRoleTreeTooltip();
+    @DefaultStringValue("Allow to change properties of the Disk")
+    String allowToChangePropertiesOfTheDiskRoleTreeTooltip();
 
-	@DefaultStringValue("No")
-	String noAlerts();
+    @DefaultStringValue("No")
+    String noAlerts();
 
-	@DefaultStringValue("Storage Domain must be specified.")
-	String storageDomainMustBeSpecifiedInvalidReason();
+    @DefaultStringValue("Storage Domain must be specified.")
+    String storageDomainMustBeSpecifiedInvalidReason();
 
-	@DefaultStringValue("The field must contain a time value")
-	String theFieldMustContainTimeValueInvalidReason();
+    @DefaultStringValue("The field must contain a time value")
+    String theFieldMustContainTimeValueInvalidReason();
 
-	@DefaultStringValue("Note: This action will remove the Template permanently from all Storage Domains.")
-	String noteThisActionWillRemoveTemplatePermanentlyFromStorageDomains();
+    @DefaultStringValue("Note: This action will remove the Template permanently from all Storage Domains.")
+    String noteThisActionWillRemoveTemplatePermanentlyFromStorageDomains();
 
-	@DefaultStringValue("Blank Template cannot be edited")
-	String blankTemplateCannotBeEdited();
+    @DefaultStringValue("Blank Template cannot be edited")
+    String blankTemplateCannotBeEdited();
 
-	@DefaultStringValue("Blank Template cannot be removed")
-	String blankTemplateCannotBeRemoved();
+    @DefaultStringValue("Blank Template cannot be removed")
+    String blankTemplateCannotBeRemoved();
 
-	@DefaultStringValue("Blank Template cannot be exported")
-	String blankTemplateCannotBeExported();
+    @DefaultStringValue("Blank Template cannot be exported")
+    String blankTemplateCannotBeExported();
 
-	@DefaultStringValue("Blank Template cannot be copied")
-	String blankTemplateCannotBeCopied();
+    @DefaultStringValue("Blank Template cannot be copied")
+    String blankTemplateCannotBeCopied();
 
-	@DefaultStringValue("Note: The deleted items might still appear on the sub-tab, since the remove operation might be long. Use the Refresh button, to get the updated status.")
-	String noteTheDeletedItemsMightStillAppearOntheSubTab();
+    @DefaultStringValue("Note: The deleted items might still appear on the sub-tab, since the remove operation might be long. Use the Refresh button, to get the updated status.")
+    String noteTheDeletedItemsMightStillAppearOntheSubTab();
 
-	@DefaultStringValue("NOTE:\n  - Removing the tag will also remove all of its descendants.\n  - Tag and descendants will be erased from all objects that are attached to them.")
-	String noteRemovingTheTagWillAlsoRemoveAllItsDescendants();
+    @DefaultStringValue("NOTE:\n  - Removing the tag will also remove all of its descendants.\n  - Tag and descendants will be erased from all objects that are attached to them.")
+    String noteRemovingTheTagWillAlsoRemoveAllItsDescendants();
 
-	@DefaultStringValue("Failed to retrieve existing storage domain information.")
-	String failedToRetrieveExistingStorageDomainInformationMsg();
+    @DefaultStringValue("Failed to retrieve existing storage domain information.")
+    String failedToRetrieveExistingStorageDomainInformationMsg();
 
-	@DefaultStringValue("There is no storage domain under the specified path. Please check path.")
-	String thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
+    @DefaultStringValue("There is no storage domain under the specified path. Please check path.")
+    String thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
 
-	@DefaultStringValue("Importing Storage Domain...")
-	String importingStorageDomainProgress();
+    @DefaultStringValue("Importing Storage Domain...")
+    String importingStorageDomainProgress();
 
-	@DefaultStringValue("Play")
-	String playSpiceConsole();
+    @DefaultStringValue("Play")
+    String playSpiceConsole();
 
-	@DefaultStringValue("Suspend")
-	String suspendSpiceConsole();
+    @DefaultStringValue("Suspend")
+    String suspendSpiceConsole();
 
-	@DefaultStringValue("Stop")
-	String stopSpiceConsole();
+    @DefaultStringValue("Stop")
+    String stopSpiceConsole();
 
-	@DefaultStringValue("No LUNs selected. Please select LUNs.")
-	String noLUNsSelectedInvalidReason();
+    @DefaultStringValue("No LUNs selected. Please select LUNs.")
+    String noLUNsSelectedInvalidReason();
 
-	@DefaultStringValue("Could not retrieve LUNs, please check your storage.")
-	String couldNotRetrieveLUNsLunsFailure();
+    @DefaultStringValue("Could not retrieve LUNs, please check your storage.")
+    String couldNotRetrieveLUNsLunsFailure();
 
-	@DefaultStringValue("a kernel parameter argument")
-	String kernelInvalid();
+    @DefaultStringValue("a kernel parameter argument")
+    String kernelInvalid();
 
-	@DefaultStringValue("or")
-	String or();
+    @DefaultStringValue("or")
+    String or();
 
-	@DefaultStringValue("an initrd path")
-	String inetdInvalid();
+    @DefaultStringValue("an initrd path")
+    String inetdInvalid();
 
-	@DefaultStringValue("Allocation can be modified only when importing a single VM")
-	String allocCanBeModifiedOnlyWhenImportSingleVm();
+    @DefaultStringValue("Allocation can be modified only when importing a single VM")
+    String allocCanBeModifiedOnlyWhenImportSingleVm();
 
-	@DefaultStringValue("Configure Network Interfaces")
-	String vmConfigureNetworkInterfacesAction();
+    @DefaultStringValue("Configure Network Interfaces")
+    String vmConfigureNetworkInterfacesAction();
 
-	@DefaultStringValue("Add another Network Interface")
-	String vmAddAnotherNetworkInterfaceAction();
+    @DefaultStringValue("Add another Network Interface")
+    String vmAddAnotherNetworkInterfaceAction();
 
-	@DefaultStringValue("Configure Virtual Disks")
-	String vmConfigureVirtualDisksAction();
+    @DefaultStringValue("Configure Virtual Disks")
+    String vmConfigureVirtualDisksAction();
 
-	@DefaultStringValue("Add another Virtual Disk")
-	String vmAddAnotherVirtualDiskAction();
+    @DefaultStringValue("Add another Virtual Disk")
+    String vmAddAnotherVirtualDiskAction();
 
-	@DefaultStringValue("There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.")
-	String thereIsNoActiveStorageDomainCreateDiskInMsg();
+    @DefaultStringValue("There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.")
+    String thereIsNoActiveStorageDomainCreateDiskInMsg();
 
-	@DefaultStringValue("Error in retrieving the relevant Storage Domain.")
-	String errorRetrievingRelevantStorageDomainMsg();
+    @DefaultStringValue("Error in retrieving the relevant Storage Domain.")
+    String errorRetrievingRelevantStorageDomainMsg();
 
-	@DefaultStringValue("Server")
-	String serverVmType();
+    @DefaultStringValue("Server")
+    String serverVmType();
 
-	@DefaultStringValue("Desktop")
-	String desktopVmType();
+    @DefaultStringValue("Desktop")
+    String desktopVmType();
 
-	@DefaultStringValue("Could not read templates from Export Domain")
-	String couldNotReadTemplatesFromExportDomainMsg();
+    @DefaultStringValue("Could not read templates from Export Domain")
+    String couldNotReadTemplatesFromExportDomainMsg();
 
-	@DefaultStringValue("The following templates are missing on the target Export Domain:")
-	String theFollowingTemplatesAreMissingOnTargetExportDomainMsg();
+    @DefaultStringValue("The following templates are missing on the target Export Domain:")
+    String theFollowingTemplatesAreMissingOnTargetExportDomainMsg();
 
-	@DefaultStringValue("There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.")
-	String noActiveStorageDomains();
+    @DefaultStringValue("There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.")
+    String noActiveStorageDomains();
 
-	@DefaultStringValue("Error in retrieving the relevant Storage Domain.")
+    @DefaultStringValue("Error in retrieving the relevant Storage Domain.")
     String errorRetrievingStorageDomains();
 
-	@DefaultStringValue("Host name can't contain blanks or special characters, must be at least one character long, and contain 'a-z', '0-9', '_' or '.' characters.")
-	String hostNameValidationMsg();
+    @DefaultStringValue("Host name can't contain blanks or special characters, must be at least one character long, and contain 'a-z', '0-9', '_' or '.' characters.")
+    String hostNameValidationMsg();
 
-	// Role tree
+    // Role tree
 
-	@DefaultStringValue("root")
-	String rootRoleTree();
+    @DefaultStringValue("root")
+    String rootRoleTree();
 
-	@DefaultStringValue("System")
-	String systemRoleTree();
+    @DefaultStringValue("System")
+    String systemRoleTree();
 
-	@DefaultStringValue("Configure System")
-	String configureSystemRoleTree();
+    @DefaultStringValue("Configure System")
+    String configureSystemRoleTree();
 
-	@DefaultStringValue("Data Center")
-	String dataCenterRoleTree();
+    @DefaultStringValue("Data Center")
+    String dataCenterRoleTree();
 
-	@DefaultStringValue("Configure Data Center")
-	String configureDataCenterRoleTree();
+    @DefaultStringValue("Configure Data Center")
+    String configureDataCenterRoleTree();
 
-	@DefaultStringValue("Storage Domain")
-	String storageDomainRoleTree();
+    @DefaultStringValue("Storage Domain")
+    String storageDomainRoleTree();
 
-	@DefaultStringValue("Configure Storage Domain")
-	String configureStorageDomainRoleTree();
+    @DefaultStringValue("Configure Storage Domain")
+    String configureStorageDomainRoleTree();
 
-	@DefaultStringValue("Cluster")
-	String clusterRoleTree();
+    @DefaultStringValue("Cluster")
+    String clusterRoleTree();
 
-	@DefaultStringValue("Configure Cluster")
-	String configureClusterRoleTree();
+    @DefaultStringValue("Configure Cluster")
+    String configureClusterRoleTree();
 
-	@DefaultStringValue("Host")
-	String hostRoleTree();
+    @DefaultStringValue("Host")
+    String hostRoleTree();
 
-	@DefaultStringValue("Gluster")
-	String glusterRoleTree();
+    @DefaultStringValue("Gluster")
+    String glusterRoleTree();
 
-	@DefaultStringValue("Configure Volumes")
-	String configureVolumesRoleTree();
+    @DefaultStringValue("Configure Volumes")
+    String configureVolumesRoleTree();
 
-	@DefaultStringValue("Allow to create Gluster Volumes")
-	String allowToCreateGlusterVolumesRoleTree();
+    @DefaultStringValue("Allow to create Gluster Volumes")
+    String allowToCreateGlusterVolumesRoleTree();
 
-	@DefaultStringValue("Allow to manipulate Gluster Volumes")
-	String allowToManipulateGlusterVolumesRoleTree();
+    @DefaultStringValue("Allow to manipulate Gluster Volumes")
+    String allowToManipulateGlusterVolumesRoleTree();
 
-	@DefaultStringValue("Configure Host")
-	String configureHostRoleTree();
+    @DefaultStringValue("Configure Host")
+    String configureHostRoleTree();
 
-	@DefaultStringValue("Template")
-	String templateRoleTree();
+    @DefaultStringValue("Template")
+    String templateRoleTree();
 
-	@DefaultStringValue("Basic Operations")
-	String basicOperationsRoleTree();
+    @DefaultStringValue("Basic Operations")
+    String basicOperationsRoleTree();
 
-	@DefaultStringValue("Provisioning Operations")
-	String provisioningOperationsRoleTree();
+    @DefaultStringValue("Provisioning Operations")
+    String provisioningOperationsRoleTree();
 
-	@DefaultStringValue("VM")
-	String vmRoleTree();
+    @DefaultStringValue("VM")
+    String vmRoleTree();
 
-	@DefaultStringValue("Administration Operations")
-	String administrationOperationsRoleTree();
+    @DefaultStringValue("Administration Operations")
+    String administrationOperationsRoleTree();
 
-	@DefaultStringValue("VM Pool")
-	String vmPoolRoleTree();
+    @DefaultStringValue("VM Pool")
+    String vmPoolRoleTree();
 
-	// Error
-	@DefaultStringValue("This Network does not exist in the Cluster")
-	String thisNetworkDoesNotExistInTheClusterErr();
+    // Error
+    @DefaultStringValue("This Network does not exist in the Cluster")
+    String thisNetworkDoesNotExistInTheClusterErr();
 
-	@DefaultStringValue("Subnet Mask is not Valid")
-	String subnetMaskIsNotValid();
+    @DefaultStringValue("Subnet Mask is not Valid")
+    String subnetMaskIsNotValid();
 
-	// Fronted
-	@DefaultStringValue("A Request to the Server failed with the following Status Code")
-	String requestToServerFailedWithCode();
+    // Fronted
+    @DefaultStringValue("A Request to the Server failed with the following Status Code")
+    String requestToServerFailedWithCode();
 
-	@DefaultStringValue("A Request to the Server failed")
-	String requestToServerFailed();
+    @DefaultStringValue("A Request to the Server failed")
+    String requestToServerFailed();
 
-	// Volume
-	@DefaultStringValue("Add Bricks")
-	String addBricksVolume();
+    // Volume
+    @DefaultStringValue("Add Bricks")
+    String addBricksVolume();
 
-	@DefaultStringValue("Add")
-	String AddVolume();
+    @DefaultStringValue("Add")
+    String AddVolume();
 
-	@DefaultStringValue("Edit")
-	String editVolume();
+    @DefaultStringValue("Edit")
+    String editVolume();
 
     @DefaultStringValue("Reset")
     String resetVolume();
 
-	@DefaultStringValue("Reset All")
-	String resetAllVolume();
+    @DefaultStringValue("Reset All")
+    String resetAllVolume();
 
-	@DefaultStringValue("Add Option")
-	String addOptionVolume();
+    @DefaultStringValue("Add Option")
+    String addOptionVolume();
 
-	@DefaultStringValue("Edit Option")
-	String editOptionVolume();
+    @DefaultStringValue("Edit Option")
+    String editOptionVolume();
 
-	@DefaultStringValue("Configure Local Storage")
+    @DefaultStringValue("Configure Local Storage")
     String configuringLocalStorage();
 
     @DefaultStringValue("Reset Option")
@@ -1303,7 +1301,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("NOTE:\n -Stopping volume will make its data inaccessible.")
     String stopVolumeWarning();
 
-	@DefaultStringValue("Remove Volume")
+    @DefaultStringValue("Remove Volume")
     String removeVolumesTitle();
 
     @DefaultStringValue("Volume(s)?")
@@ -1372,10 +1370,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Templates already exist")
     String templateAlreadyExistsMsg();
 
-	@DefaultStringValue("No VMs exist")
-	String vmNoExistsMsg();
+    @DefaultStringValue("No VMs exist")
+    String vmNoExistsMsg();
 
-	@DefaultStringValue("No Templates exist")
+    @DefaultStringValue("No Templates exist")
     String templateNoExistsMsg();
 
     @DefaultStringValue("DefaultQuota")
