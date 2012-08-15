@@ -5,12 +5,15 @@ import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -24,7 +27,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VM, DiskImage> {
+public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VM, Disk> {
 
     ApplicationResources resources;
     ApplicationConstants constants;
@@ -55,27 +58,36 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
     }
 
     @Override
-    protected TreeItem getNodeItem(DiskImage disk) {
-        return getDiskOrSnapshotNode(new ArrayList<DiskImage>(Arrays.asList(disk)), true);
+    protected TreeItem getNodeItem(Disk disk) {
+        //return getDiskOrSnapshotNode(new ArrayList<Disk>(Arrays.asList(disk)), true);
+        return getDiskNode(new ArrayList<Disk>(Arrays.asList(disk)));
     }
 
     @Override
-    protected TreeItem getLeafItem(DiskImage disk) {
-        return getDiskOrSnapshotNode(disk.getSnapshots(), false);
-    }
-
-    @Override
-    protected ArrayList<DiskImage> getNodeObjects(VM vm) {
-        ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
-        for (Disk disk : vm.getDiskMap().values()) {
-            diskImages.add((DiskImage) disk);
+    protected TreeItem getLeafItem(Disk disk) {
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            return getSnapshotNode(((DiskImage)disk).getSnapshots());
+        } else {
+            return null;
         }
-        return diskImages;
     }
 
     @Override
-    protected boolean getIsNodeEnabled(DiskImage disk) {
-        return disk.getstorage_ids().get(0).equals(((BusinessEntity) listModel.getEntity()).getId());
+    protected ArrayList<Disk> getNodeObjects(VM vm) {
+        ArrayList<Disk> disks = new ArrayList<Disk>();
+        for (Disk disk : vm.getDiskMap().values()) {
+            disks.add((Disk) disk);
+        }
+        return disks;
+    }
+
+    @Override
+    protected boolean getIsNodeEnabled(Disk disk) {
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            return ((DiskImage)disk).getstorage_ids().get(0).equals(((BusinessEntity) listModel.getEntity()).getId());
+        } else {
+            return true;
+        }
     }
 
     @Override
@@ -83,20 +95,15 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         return constants.differentStorageDomainWarning();
     }
 
-    private TreeItem getDiskOrSnapshotNode(ArrayList<DiskImage> disks, final boolean isDisk) {
-        if (disks.isEmpty()) {
-            return null;
-        }
-
+    private TreeItem getSnapshotNode(ArrayList<DiskImage> disks) {
         VerticalPanel vPanel = new VerticalPanel();
         vPanel.setWidth("100%"); //$NON-NLS-1$
 
         for (DiskImage disk : disks) {
             HorizontalPanel panel = new HorizontalPanel();
 
-            ImageResource image =
-                    isDisk ? resources.diskImage() : resources.snapshotImage();
-            String name = isDisk ? disk.getDiskAlias() : disk.getdescription();
+            ImageResource image = resources.snapshotImage();
+            String name = disk.getdescription();
 
             addItemToPanel(panel, new Image(image), "25px"); //$NON-NLS-1$
             addTextBoxToPanel(panel, new TextBoxLabel(), name, ""); //$NON-NLS-1$
@@ -113,16 +120,49 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         }
 
         TreeItem treeItem = new TreeItem(vPanel);
-        treeItem.setUserObject(disks.get(0).getImageId());
+        treeItem.setUserObject(disks.get(0).getId() + "snapshot"); //$NON-NLS-1$
         return treeItem;
     }
 
-    private TreeItem getDiskNode(DiskImage disk) {
-        return getDiskOrSnapshotNode(new ArrayList<DiskImage>(Arrays.asList(disk)), true);
-    }
+    private TreeItem getDiskNode(ArrayList<Disk> disks) {
+        if (disks.isEmpty()) {
+            return null;
+        }
 
-    private TreeItem getSnapshotsNode(ArrayList<DiskImage> disks) {
-        return getDiskOrSnapshotNode(disks, false);
-    }
+        VerticalPanel vPanel = new VerticalPanel();
+        vPanel.setWidth("100%"); //$NON-NLS-1$
 
+        for (Disk disk : disks) {
+            HorizontalPanel panel = new HorizontalPanel();
+
+            ImageResource image = resources.diskImage();
+            String name = disk.getDiskAlias();
+
+            addItemToPanel(panel, new Image(image), "25px"); //$NON-NLS-1$
+            addTextBoxToPanel(panel, new TextBoxLabel(), name, ""); //$NON-NLS-1$
+            addTextBoxToPanel(panel, new TextBoxLabel(), "", "80px"); //$NON-NLS-1$ //$NON-NLS-2$
+            addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
+
+            boolean isDiskImage = disk.getDiskStorageType() == DiskStorageType.IMAGE;
+            Double actualSize =
+                    isDiskImage ? ((DiskImage) disk).getActualDiskWithSnapshotsSize()
+                            : (long) (((LunDisk) disk).getLun().getDeviceSize() * Math.pow(1024, 3));
+            Long virtualSize = isDiskImage ? ((DiskImage) disk).getsize() :
+                    (long) (((LunDisk) disk).getLun().getDeviceSize() * Math.pow(1024, 3));
+
+            addValueLabelToPanel(panel, new DiskSizeLabel<Long>(DiskSizeUnit.BYTE), virtualSize, "110px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(DiskSizeUnit.BYTE), actualSize, "110px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getDiskStorageType() == DiskStorageType.IMAGE ?
+                    ((DiskImage) disk).getcreation_date() : null, "140px"); //$NON-NLS-1$
+
+            panel.setSpacing(1);
+            panel.setWidth("100%"); //$NON-NLS-1$
+
+            vPanel.add(panel);
+        }
+
+        TreeItem treeItem = new TreeItem(vPanel);
+        treeItem.setUserObject(disks.get(0).getId());
+        return treeItem;
+    }
 }
