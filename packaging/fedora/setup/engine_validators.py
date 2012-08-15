@@ -162,8 +162,8 @@ def validatePassword(param, options=[]):
     if not validateStringNotEmpty(param, options):
         return False
     if re.search("\s", param):
-        logging.warn(output_messages.WARN_SPACES_IN_PASS)
-        print output_messages.WARN_SPACES_IN_PASS
+        logging.error(output_messages.ERR_SPACES_IN_PASS)
+        print output_messages.ERR_SPACES_IN_PASS
         return False
     try:
         cracklib.FascistCheck(param)
