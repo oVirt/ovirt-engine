@@ -53,8 +53,11 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Disk ")
     String diskNamePrefix();
 
-    @DefaultStringValue("Single Destination Storage")
+    @DefaultStringValue("Storage")
     String singleDestinationStorage();
+
+    @DefaultStringValue("Default Storage Domain")
+    String defaultStorage();
 
     @DefaultStringValue(" and Quota")
     String singleQuota();
@@ -1001,7 +1004,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Direct LUN")
     String lunDisksLabel();
 
-    @DefaultStringValue("Currnet")
+    @DefaultStringValue("Current")
     String currentQuota();
 
     @DefaultStringValue("Name")

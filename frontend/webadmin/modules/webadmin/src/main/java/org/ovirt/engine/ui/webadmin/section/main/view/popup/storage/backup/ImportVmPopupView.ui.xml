@@ -6,6 +6,7 @@
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 	<ui:with field='resources'
 		type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 	<ui:style
 		type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmPopupView.WidgetStyle">
 		@external .gwt-TabLayoutPanel;
@@ -39,8 +40,8 @@
 		.labelStyle {
 			color: red;
 			vertical-align: bottom;
-			height: 100px;
-			line-height: 25px;
+			height: 45px;
+			line-height: 20px;
 			margin-left: 5px;
 		}
 
@@ -53,10 +54,6 @@
 			padding: 0px;
  		}
 		
-		.isSingleDestStorageEditorStyle {
-			display: none;	
-		}
-
 		.imageStyle {
 			vertical-align: bottom;
 			height: 30px;
@@ -67,46 +64,35 @@
 		.cellSelectBox {
 			width: 100%;
 		}
-
-		.duplicateVmLabelStyle {
-			width: 100%;
-			margin-left: 15px;
+		
+		.destStorageQuotaEditor {
+			visibility: hidden;
 		}
 	</ui:style>
-	<d:SimpleDialogPanel height="670px" width="1000px">
+	<d:SimpleDialogPanel height="650px" width="1000px">
 		<d:content>
 			<g:VerticalPanel>
+				<g:HorizontalPanel>
+					<g:VerticalPanel>
+						<g:HorizontalPanel>
+							<g:VerticalPanel>
+								<e:ListModelListBoxEditor ui:field="destStorageEditor" />
+								<e:ListModelListBoxEditor ui:field="destClusterEditor" />
+							</g:VerticalPanel>
+							<g:VerticalPanel>
+								<e:ListModelListBoxEditor ui:field="destStorageQuotaEditor" addStyleNames="{style.destStorageQuotaEditor}"/>
+								<e:ListModelListBoxEditor ui:field="destClusterQuotaEditor" />
+							</g:VerticalPanel>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel>
+							<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
+							<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</g:HorizontalPanel>
+				<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel"
 					height="400px" addStyleNames="{style.splitLayoutPanelStyle}" />
-					<g:HorizontalPanel>
-						<g:VerticalPanel width="445px">
-							<e:ListModelListBoxEditor ui:field="destClusterEditor" />
-							<e:ListModelListBoxEditor ui:field="quotaClusterEditor" />
-							<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-								<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
-								<e:ListModelListBoxEditor ui:field="destStorageEditor" />
-							</g:HorizontalPanel>
-							<e:ListModelListBoxEditor ui:field="quotaStorageEditor" />
-						</g:VerticalPanel>
-						<g:VerticalPanel>
-								<g:HorizontalPanel>
-									<g:VerticalPanel>
-										<e:EntityModelCheckBoxEditor ui:field="cloneAllVMs" />
-										<e:EntityModelLabelEditor ui:field="cloneAllVMs_message" />
-										<e:EntityModelCheckBoxEditor ui:field="cloneOnlyDuplicateVMs" />
-									</g:VerticalPanel>
-									<e:EntityModelTextBoxEditor ui:field="cloneVMsSuffix" />
-								</g:HorizontalPanel>
-								<g:HorizontalPanel>
-									<g:Label ui:field="duplicateVmMessage" addStyleNames="{style.duplicateVmLabelStyle}"/>
-								</g:HorizontalPanel>
-						</g:VerticalPanel>
-					</g:HorizontalPanel>
-					<g:HorizontalPanel>
-						<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
-						<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
-						<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
-					</g:HorizontalPanel>
 			</g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

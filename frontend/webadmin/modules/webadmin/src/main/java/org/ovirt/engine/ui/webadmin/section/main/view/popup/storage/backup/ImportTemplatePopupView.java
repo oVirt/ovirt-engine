@@ -352,7 +352,6 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
         Collections.sort(storageDomains);
 
         customSelectionCell = new CustomSelectionCell(storageDomains);
-        customSelectionCell.setEnabledWithToolTip(false, constants.importVmTemplateSingleStorageCheckedLabel());
         customSelectionCell.setStyle(style.cellSelectBox());
 
         if (storageDomainsColumn != null) {

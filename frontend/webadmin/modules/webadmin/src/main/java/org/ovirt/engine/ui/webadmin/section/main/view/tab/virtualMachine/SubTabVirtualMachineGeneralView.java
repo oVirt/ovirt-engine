@@ -55,6 +55,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
         resources = ClientGinjectorProvider.instance().getApplicationResources();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        clearAlerts();
     }
 
     @Override

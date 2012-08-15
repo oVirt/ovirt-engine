@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -14,20 +13,17 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -35,12 +31,16 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -58,6 +58,9 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     private VmAppListModel privateAppListModel;
+    private Map<Guid, VM> vmsInSetupMap;
+    private Map<Guid, VM> cloneVmMap;
+    private ImportVmModel importModel;
 
     public VmAppListModel getAppListModel() {
         return privateAppListModel;
@@ -174,164 +177,206 @@ public class VmBackupModel extends ManageBackupModel {
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
         model.setHashName("import_virtual_machine"); //$NON-NLS-1$
+        model.StartProgress(null);
+        UICommand restoreCommand;
+        restoreCommand = new UICommand("OnRestore", this); //$NON-NLS-1$
+        restoreCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        restoreCommand.setIsDefault(true);
+        model.getCommands().add(restoreCommand);
+        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar3.setIsCancel(true);
+        model.getCommands().add(tempVar3);
+        model.setItems(getSelectedItems());
+        model.init(getEntity().getId());
 
-        model.getDestinationStorage().getItemsChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                OnDestinationStorageItemsChanged();
-            }
-        });
-
-        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
-
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                if (returnValue != null) {
-                    ArrayList<storage_pool> dataCenter = (ArrayList<storage_pool>) returnValue;
-                    if (dataCenter.get(0).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-                        VmBackupModel backupModel = (VmBackupModel) model;
-                        ImportVmModel importModel = (ImportVmModel) backupModel.getWindow();
-                        importModel.getQuotaCluster().setIsAvailable(true);
-                        importModel.getQuotaStorage().setIsAvailable(true);
-                    }
-                }
-
-                AsyncQuery _AsyncQuery = new AsyncQuery();
-                _AsyncQuery.Model = model;
-                _AsyncQuery.asyncCallback = new INewAsyncCallback() {
-
-                    @Override
-                    public void OnSuccess(Object returnModel, Object returnValue) {
-                        VmBackupModel vmBackupModel = (VmBackupModel) returnModel;
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        ImportVmModel iVmModel = (ImportVmModel) vmBackupModel.getWindow();
-                        iVmModel.getCluster().setItems(clusters);
-                        iVmModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
-                        iVmModel.setSourceStorage(vmBackupModel.getEntity().getStorageStaticData());
-
-                        AsyncQuery _asyncQuery1 = new AsyncQuery();
-                        _asyncQuery1.Model = vmBackupModel;
-                        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-
-                            @Override
-                            public void OnSuccess(Object returnModel1,
-                                    Object returnValue1) {
-                                ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue1;
-                                storage_pool pool = null;
-                                if (pools != null && pools.size() > 0) {
-                                    pool = pools.get(0);
-                                }
-                                VmBackupModel vmBackupModel1 = (VmBackupModel) returnModel1;
-                                ImportVmModel iVmModel1 = (ImportVmModel) vmBackupModel1.getWindow();
-                                iVmModel1.setStoragePool(pool);
-
-                                iVmModel1.setItems(vmBackupModel1.getSelectedItems());
-                                iVmModel1.setSelectedVMsCount(((List) vmBackupModel1.getItems()).size());
-
-                                UICommand restoreCommand;
-                                restoreCommand = new UICommand("OnRestore", vmBackupModel1); //$NON-NLS-1$
-                                restoreCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                                restoreCommand.setIsDefault(true);
-                                iVmModel1.getCommands().add(restoreCommand);
-                                UICommand tempVar3 = new UICommand("Cancel", vmBackupModel1); //$NON-NLS-1$
-                                tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                                tempVar3.setIsCancel(true);
-                                iVmModel1.getCommands().add(tempVar3);
-                            }
-
-                        };
-                        AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery1,
-                                vmBackupModel.getEntity().getId());
-                    }
-                };
-                AsyncDataProvider.GetClusterListByStorageDomain(_AsyncQuery,
-                        getEntity().getId());
-            }
-        }),
-                getEntity().getId());
-    }
-
-    private void OnDestinationStorageItemsChanged() {
-        ImportVmModel iVmModel = (ImportVmModel) getWindow();
-
-        if (((List) iVmModel.getItems()).size() == 0) {
-            return;
-        }
-
-        if (((List) iVmModel.getDestinationStorage().getItems()).size() == 0) {
-            iVmModel.getDestinationStorage().setIsChangable(false);
-            iVmModel.getIsSingleDestStorage().setIsChangable(false);
-            iVmModel.getIsSingleDestStorage().setEntity(false);
-        }
-        else {
-            iVmModel.getIsSingleDestStorage().setIsChangable(true);
-        }
+        // Add 'Close' command
+        UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        closeCommand.setIsDefault(true);
+        closeCommand.setIsCancel(true);
+        model.setCloseCommand(closeCommand);
     }
 
     public void OnRestore() {
-        ImportVmModel model = (ImportVmModel) getWindow();
+        importModel = (ImportVmModel) getWindow();
 
-        if (model.getProgress() != null) {
+        if (importModel.getProgress() != null) {
             return;
         }
 
-        if (!model.Validate()) {
+        if (!importModel.Validate()) {
             return;
         }
+        cloneVmMap = new HashMap<Guid, VM>();
 
+        vmsInSetupMap = new HashMap<Guid, VM>();
+        for (VM vm : (ArrayList<VM>) importModel.getItems()) {
+            if (importModel.isObjectInSetup(vm)) {
+                vmsInSetupMap.put(vm.getId(), vm);
+            }
+        }
+        executeImportClone();
+    }
+
+    private void executeImportClone() {
+        //TODO: support running numbers (for suffix)
+        if (vmsInSetupMap.size() == 0) {
+            executeImport();
+            return;
+        }
+        ImportCloneModel entity = new ImportCloneModel();
+        VM vm = (VM) vmsInSetupMap.values().toArray()[0];
+        entity.setEntity(vm);
+        entity.setTitle("Import Virtual Machine Conflict"); //$NON-NLS-1$
+        entity.setHashName("import_virtual_machine_conflict"); //$NON-NLS-1$
+        UICommand command = new UICommand("onClone", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        command.setIsDefault(true);
+        entity.getCommands().add(command);
+        command = new UICommand("closeClone", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        entity.getCommands().add(command);
+
+        setConfirmWindow(entity);
+
+    }
+
+    private void onClone() {
+        ImportCloneModel cloneModel = (ImportCloneModel) getConfirmWindow();
+        if ((Boolean) cloneModel.getApplyToAll().getEntity()) {
+            if (!(Boolean) cloneModel.getNoClone().getEntity()) {
+                String suffix = (String) cloneModel.getSuffix().getEntity();
+                if (!validateSuffix(suffix, cloneModel.getSuffix())) {
+                    return;
+                }
+                for (VM vm : vmsInSetupMap.values()) {
+                    vm.setvm_name(vm.getvm_name() + suffix);
+                    cloneVmMap.put(vm.getId(), vm);
+                }
+            }
+            vmsInSetupMap.clear();
+        } else {
+            VM vm = (VM) cloneModel.getEntity();
+            if (!(Boolean) cloneModel.getNoClone().getEntity()) {
+                String vmName = (String) cloneModel.getName().getEntity();
+                if (!validateVmName(vmName, vm.getos(), cloneModel.getName())) {
+                    return;
+                }
+
+                vm.setvm_name(vmName);
+                cloneVmMap.put(vm.getId(), vm);
+            }
+            vmsInSetupMap.remove(vm.getId());
+        }
+
+        setConfirmWindow(null);
+        executeImportClone();
+    }
+
+    private boolean validateSuffix(String suffix, EntityModel entityModel) {
+        for (VM vm : vmsInSetupMap.values()) {
+            if (!validateVmName(vm.getvm_name() + suffix, vm.getos(), entityModel)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean validateVmName(String newVmName, VmOsType osType, EntityModel entity) {
+        String nameExpr;
+        String nameMsg;
+        if (DataProvider.IsWindowsOsType(osType))
+        {
+            nameExpr = "^[0-9a-zA-Z-_]{1," + UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+            nameMsg =
+                    ConstantsManager.getInstance()
+                            .getMessages()
+                            .newNameWithSuffixCannotContainBlankOrSpecialChars(UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT);
+        }
+        else
+        {
+            nameExpr = "^[-\\w]{1," + UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+            nameMsg =
+                    ConstantsManager.getInstance()
+                            .getMessages()
+                            .newNameWithSuffixCannotContainBlankOrSpecialChars(UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT);
+        }
+        EntityModel temp = new EntityModel();
+        temp.setIsValid(true);
+        temp.setEntity(newVmName);
+        temp.ValidateEntity(
+                new IValidation[] {
+                        new NotEmptyValidation(),
+                        new RegexValidation(nameExpr, nameMsg)
+                });
+        if (!temp.getIsValid()) {
+            entity.setInvalidityReasons(temp.getInvalidityReasons());
+            entity.setIsValid(false);
+        }
+        return temp.getIsValid();
+    }
+
+    private void closeClone() {
+        setConfirmWindow(null);
+    }
+
+    private void executeImport() {
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
 
-        for (Object item : model.getItems()) {
+        for (Object item : importModel.getItems()) {
             VM vm = (VM) item;
 
-            storage_domains destinationStorage = ((storage_domains) model.getDestinationStorage().getSelectedItem());
-            boolean isSingleDestStorage = (Boolean) model.getIsSingleDestStorage().getEntity();
-            Guid destinationStorageId = destinationStorage != null && isSingleDestStorage ?
-                    destinationStorage.getId() : Guid.Empty;
+            storage_domains destinationStorage =
+                    ((storage_domains) importModel.getStorage().getSelectedItem());
 
-            ImportVmParameters prm = new ImportVmParameters(vm, model.getSourceStorage().getId(),
-                    destinationStorageId, model.getStoragePool().getId(),
-                    ((VDSGroup) model.getCluster().getSelectedItem()).getId());
-            prm.setForceOverride(true);
+            ImportVmParameters prm = new ImportVmParameters(vm, getEntity().getId(),
+                    Guid.Empty, importModel.getStoragePool().getId(),
+                    ((VDSGroup) importModel.getCluster().getSelectedItem()).getId());
 
-            prm.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
-
-            if (model.getQuotaCluster().getIsAvailable() && model.getQuotaCluster().getSelectedItem() != null) {
-                prm.setQuotaId(((Quota) model.getQuotaCluster().getSelectedItem()).getId());
+            if (importModel.getClusterQuota().getSelectedItem() != null &&
+                    importModel.getClusterQuota().getIsAvailable()) {
+                prm.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
             }
 
+            prm.setForceOverride(true);
+            prm.setCopyCollapse((Boolean) importModel.getCollapseSnapshots().getEntity());
+
+            Map<Guid, Guid> map = new HashMap<Guid, Guid>();
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 Guid key = entry.getKey();
                 DiskImage disk = (DiskImage) entry.getValue();
+                map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
+                disk.setvolume_format(
+                        DataProvider.GetDiskVolumeFormat(
+                                importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
+                                importModel.getDiskImportData(
+                                        disk.getId()).getSelectedStorageDomain().getstorage_type()));
+                disk.setvolume_type(importModel.getDiskImportData(disk.getId()).getSelectedVolumeType());
 
-                HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
-                storage_domains domain = (Boolean) model.getIsSingleDestStorage().getEntity() ?
-                        (storage_domains) model.getDestinationStorage().getSelectedItem()
-                        : model.getStorageById(map.get(disk.getId()));
-                disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), domain.getstorage_type()));
-                if (model.getQuotaStorage().getIsAvailable() && model.getQuotaStorage().getSelectedItem() != null) {
-                    disk.setQuotaId(((Quota) model.getQuotaStorage().getSelectedItem()).getId());
+                if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
+                    disk.setQuotaId(
+                            importModel.getDiskImportData(disk.getId()).getSelectedQuota().getId());
                 }
             }
 
-            if (!(Boolean) model.getIsSingleDestStorage().getEntity()) {
-                HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
-                prm.setImageToDestinationDomainMap(map);
-            }
+            prm.setImageToDestinationDomainMap(map);
 
-            if ((Boolean) model.getCloneAllVMs().getEntity()
-                    || ((Boolean) model.getCloneOnlyDuplicateVMs().getEntity()
-                    && model.isObjectInSetup(vm))) {
+            if (importModel.isObjectInSetup(vm)) {
+                if (!cloneVmMap.containsKey(vm.getId())) {
+                    continue;
+                }
                 prm.setImportAsNewEntity(true);
                 prm.setCopyCollapse(true);
-                prm.getVm().setvm_name(prm.getVm().getvm_name() + model.getCloneVMsSuffix().getEntity());
+                prm.getVm().setvm_name(cloneVmMap.get(vm.getId()).getvm_name());
             }
 
             prms.add(prm);
 
         }
 
-        model.StartProgress(null);
+        importModel.StartProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ImportVm, prms,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -454,10 +499,14 @@ public class VmBackupModel extends ManageBackupModel {
     public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) { //$NON-NLS-1$
+        if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             OnRemove();
-        } else if (StringHelper.stringsEqual(command.getName(), "OnRestore")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnRestore")) { //$NON-NLS-1$
             OnRestore();
+        } else if (command.getName().equals("onClone")) { //$NON-NLS-1$
+            onClone();
+        } else if (command.getName().equals("closeClone")) { //$NON-NLS-1$
+            closeClone();
         }
     }
 

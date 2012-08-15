@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	
+<ui:style>
+</ui:style>
+<d:SimpleDialogPanel height="400px" width="500px">
+	<d:content>
+		<g:VerticalPanel>
+			<g:Label ui:field="dialogLabelEditor"/>
+			<g:Label ui:field="selectLabelEditor"/>
+			<e:EntityModelRadioButtonEditor ui:field="noCloneEditor"/>
+			<e:EntityModelRadioButtonEditor ui:field="cloneEditor"/>
+			<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+			<e:EntityModelCheckBoxEditor ui:field="applyToAllEditor" />
+			<e:EntityModelTextBoxEditor ui:field="suffixEditor" />
+		</g:VerticalPanel>
+	</d:content>
+</d:SimpleDialogPanel>
+</ui:UiBinder>

@@ -79,7 +79,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
         // Get the view data.
         Object key = context.getKey();
         String viewData = getViewData(key);
-        if (viewData != null && viewData.equals(value)) {
+        if (viewData != null) {
             clearViewData(key);
             viewData = null;
         }

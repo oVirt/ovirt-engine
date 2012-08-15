@@ -710,8 +710,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Host:")
     String vmMigratePopupHostsListLabel();
 
-    @DefaultStringValue("Destination Cluster")
+    @DefaultStringValue("Cluster")
     String importVm_destCluster();
+
+    @DefaultStringValue("Cluster Quota")
+    String importVm_destClusterQuota();
 
     @DefaultStringValue("Collapse All Snapshots")
     String importVm_collapseSnapshots();
@@ -767,16 +770,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Storage domain can be modified only when 'Single Destination Domain' is unchecked")
     String importVmTemplateSingleStorageCheckedLabel();
 
-    @DefaultStringValue("Some Templates' disks which the selected VMs are based on are missing from the Data-Center.<br/>"
-            + "Suggested solutions: "
-            + "1. Preserving Template-Based structure: "
-            + "a. Make sure the relevant Templates (on which the VMs are based) exist on the relevant Data-Center. "
-            + "b. Import the VMs one by one. "
-            + "2. Using non-Template-Based structure (less optimal storage-wise): "
-            + "a. Export the VMs again using the Collapse Snapshots option. "
-            + "b. Import the VMs.")
-    String importMissingStorages();
-
     @DefaultStringValue("Allocation can be modified only when importing a single VM")
     String importAllocationModifiedSingleVM();
 
@@ -787,7 +780,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String preallocatedAllocation();
 
     @DefaultStringValue("Thin Provision")
-    String thisAllocation();
+    String thinAllocation();
 
     @DefaultStringValue("Clusters")
     String quotaClusterSubTabLabel();
@@ -1254,7 +1247,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Detach")
     String detachVm();
 
-    @DefaultStringValue("Restore")
+    @DefaultStringValue("Import")
     String restoreVm();
 
     // Pool
@@ -1340,7 +1333,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("CPUs")
     String cpusTemplate();
 
-    @DefaultStringValue("Restore")
+    @DefaultStringValue("Import")
     String restoreTemplate();
 
     // User
@@ -2141,14 +2134,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clone All Templates")
     String importTemplate_cloneAllTemplates();
 
-    @DefaultStringValue("Clone Only Duplicated VMs")
-    String importVm_cloneOnlyDuplicateVMs();
-
     @DefaultStringValue("Clone Only Duplicated Templates")
     String importTemplate_cloneOnlyDuplicateTemplates();
 
     @DefaultStringValue("Suffix:")
     String import_cloneSuffix();
+
+    @DefaultStringValue("New Name:")
+    String import_newName();
 
     @DefaultStringValue("VM in System")
     String vmInSetup();
@@ -2168,12 +2161,34 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("This operation might be unrecoverable and destructive!")
     String storageForceCreatePopupWarningLabel();
 
-    @DefaultStringValue("Quota Cluster")
+    @DefaultStringValue("Cluster Quota")
     String quotaCluster();
 
-    @DefaultStringValue("Quota Storage")
+    @DefaultStringValue("Storage Quota")
     String quotaStorage();
 
     @DefaultStringValue("Assign Quota")
     String assignQuota();
+
+    @DefaultStringValue("Extended")
+    String extendedPanelLabel();
+
+    @DefaultStringValue("select:")
+    String cloneSelect();
+
+    @DefaultStringValue("Apply to all")
+    String cloneApplyToAll();
+
+    @DefaultStringValue("Don't import")
+    String cloneDontImport();
+
+    @DefaultStringValue("Clone")
+    String clone();
+
+    @DefaultStringValue("There is already a VM(s) with the same name")
+    String sameVmNameExists();
+
+    @DefaultStringValue("There is already a Template(s) with the same name")
+    String sameTemplateNameExists();
+
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicompat;
 
+
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("OK")
@@ -1495,4 +1496,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Assign Disk Quota")
     String assignQuotaForDisk();
+
+    @DefaultStringValue("Some imported VMs depend on one or more templates which are " +
+    "not available in the system. Either: 1. Import VMs with 'collapse snapshots' "+
+    "option 2. Import missing templates first and then try importing the VMs again")
+    String importMissingStorages();
+
+    @DefaultStringValue("The selected default Storage Domain is not applicable for all disks " +
+            "(i.e. some disks will be imported to a different Storage Domain).")
+    String importNotApplicableForDefaultStorage();
+
 }
