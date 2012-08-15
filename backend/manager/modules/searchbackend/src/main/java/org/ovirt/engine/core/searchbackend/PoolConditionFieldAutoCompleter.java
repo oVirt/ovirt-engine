@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VmPoolType;
 
 public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public PoolConditionFieldAutoCompleter() {
