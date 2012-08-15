@@ -443,7 +443,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     protected void endSuccessfullySynchronous() {
         VM vm = getVm();
-        VmHandler.UnLockVm(vm.getId());
+        VmHandler.UnLockVm(vm);
         this.updateSnapshotOvf(vm);
         setSucceeded(true);
     }
