@@ -3,18 +3,22 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
 
-	<ui:style>
+	<ui:style  type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmMakeTemplatePopupWidget.WidgetStyle">
 		.content {
 			
 		}
 		
+		.editorLabel {
+			width: 300px;
+		}
+
 		.errorMessageLabel {
 			color: #CD2127;
 			position: absolute;
 			bottom: 10px;
 		}
 		
-		.isTemplatePrivateEditor {
+		.isTemplatePublicEditor {
 			position: absolute;
 			bottom: 30px;
 		}
@@ -39,7 +43,7 @@
 		<g:Label ui:field="disksAllocationLabel" addStyleNames="{style.disksAllocationLabel}" />
 		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />			
 		<g:VerticalPanel>
-			<e:EntityModelCheckBoxEditor ui:field="isTemplatePrivateEditor" addStyleNames="{style.isTemplatePrivateEditor}" />
+			<e:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" addStyleNames="{style.isTemplatePublicEditor}" />
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
 		</g:VerticalPanel>
 	</g:FlowPanel>

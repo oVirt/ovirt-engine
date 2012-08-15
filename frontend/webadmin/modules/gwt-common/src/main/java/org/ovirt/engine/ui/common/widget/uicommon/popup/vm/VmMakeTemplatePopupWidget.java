@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -64,9 +65,9 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField(provided = true)
-    @Path(value = "isTemplatePrivate.entity")
-    @WithElementId("isTemplatePrivate")
-    EntityModelCheckBoxEditor isTemplatePrivateEditor;
+    @Path(value = "isTemplatePublic.entity")
+    @WithElementId("isTemplatePublic")
+    EntityModelCheckBoxEditor isTemplatePublicEditor;
 
     @UiField
     Label message;
@@ -74,6 +75,13 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @UiField
     @Ignore
     Label disksAllocationLabel;
+
+    interface WidgetStyle extends CssResource {
+        String editorLabel();
+    }
+
+    @UiField
+    WidgetStyle style;
 
     public VmMakeTemplatePopupWidget(CommonApplicationConstants constants) {
         initListBoxEditors();
@@ -83,6 +91,11 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         Driver.driver.initialize(this);
+        addStyle();
+    }
+
+    void addStyle() {
+        isTemplatePublicEditor.setContentWidgetStyleName(style.editorLabel());
     }
 
     void initListBoxEditors() {
@@ -102,7 +115,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     }
 
     void initCheckBoxEditors() {
-        isTemplatePrivateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isTemplatePublicEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize(CommonApplicationConstants constants) {
@@ -110,7 +123,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         descriptionEditor.setLabel(constants.makeTemplatePopupDescriptionLabel());
         clusterEditor.setLabel(constants.makeTemplateClusterLabel());
         quotaEditor.setLabel(constants.makeTemplateQuotaLabel());
-        isTemplatePrivateEditor.setLabel(constants.makeTemplateIsTemplatePrivateEditorLabel());
+        isTemplatePublicEditor.setLabel(constants.makeTemplateIsTemplatePublicEditorLabel());
         disksAllocationLabel.setText(constants.disksAllocation());
     }
 

@@ -560,6 +560,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         windowModel.setIsNew(true);
         windowModel.setVmType(vm.getvm_type());
         windowModel.Initialize(null);
+        windowModel.getIsTemplatePublic().setEntity(false);
 
         UICommand tempVar = new UICommand("OnNewTemplate", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());

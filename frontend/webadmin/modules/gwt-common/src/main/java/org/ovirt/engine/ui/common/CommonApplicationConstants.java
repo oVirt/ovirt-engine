@@ -133,8 +133,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Storage Domain")
     String makeTemplateStorageDomainLabel();
 
-    @DefaultStringValue("Make Private")
-    String makeTemplateIsTemplatePrivateEditorLabel();
+    @DefaultStringValue("Allow all users to access this Template")
+    String makeTemplateIsTemplatePublicEditorLabel();
 
     @DefaultStringValue("Description")
     String virtualMachineSnapshotCreatePopupDescriptionLabel();

@@ -759,18 +759,6 @@ public class UnitVmModel extends Model {
         privateIsTemplatePublic = value;
     }
 
-    private EntityModel privateIsTemplatePrivate;
-
-    public EntityModel getIsTemplatePrivate()
-    {
-        return privateIsTemplatePrivate;
-    }
-
-    private void setIsTemplatePrivate(EntityModel value)
-    {
-        privateIsTemplatePrivate = value;
-    }
-
     private boolean privateIsFirstRun;
 
     public boolean getIsFirstRun()
@@ -985,7 +973,6 @@ public class UnitVmModel extends Model {
         setIsHighlyAvailable(new EntityModel());
         setDontMigrateVM(new EntityModel());
         setIsTemplatePublic(new EntityModel());
-        setIsTemplatePrivate(new EntityModel());
         setKernel_parameters(new EntityModel());
         setKernel_path(new EntityModel());
         setInitrd_path(new EntityModel());
@@ -1040,8 +1027,8 @@ public class UnitVmModel extends Model {
         setIsAutoAssign(new EntityModel());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
-        setIsTemplatePrivate(new EntityModel());
-        getIsTemplatePrivate().getEntityChangedEvent().addListener(this);
+        setIsTemplatePublic(new EntityModel());
+        getIsTemplatePublic().getEntityChangedEvent().addListener(this);
 
         setIsHostTabValid(true);
         setIsCustomPropertiesTabValid(getIsHostTabValid());
@@ -1107,8 +1094,7 @@ public class UnitVmModel extends Model {
         getIsHighlyAvailable().setEntity(false);
         getDontMigrateVM().setEntity(false);
         getIsAutoAssign().setEntity(true);
-        getIsTemplatePublic().setEntity(false);
-        getIsTemplatePrivate().setEntity(true);
+        getIsTemplatePublic().setEntity(true);
 
         getRunVMOnSpecificHost().setEntity(false);
         getRunVMOnSpecificHost().setIsChangable(false);
@@ -1204,10 +1190,6 @@ public class UnitVmModel extends Model {
             else if (sender == getIsAutoAssign())
             {
                 IsAutoAssign_EntityChanged(sender, args);
-            }
-            else if (sender == getIsTemplatePrivate())
-            {
-                IsTemplatePrivate_EntityChanged(sender, args);
             }
 
             else if (sender == getProvisioning())
@@ -1596,11 +1578,6 @@ public class UnitVmModel extends Model {
         {
             getRunVMOnSpecificHost().setIsChangable(true);
         }
-    }
-
-    private void IsTemplatePrivate_EntityChanged(Object sender, EventArgs args)
-    {
-        getIsTemplatePublic().setEntity(!(Boolean) getIsTemplatePrivate().getEntity());
     }
 
     private void UpdateNumOfMonitors()
