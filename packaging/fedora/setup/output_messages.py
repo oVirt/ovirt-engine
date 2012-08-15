@@ -147,7 +147,7 @@ INFO_CONF_PARAMS_DB_ADMIN_PROMPT="Enter DB admin user name"
 INFO_CONF_PARAMS_REMOTE_DB_PASSWD_USAGE="Password for the remote database administrator"
 INFO_CONF_PARAMS_REMOTE_DB_PASSWD_PROMPT="Remote database password"
 INFO_CONF_PARAMS_DB_SECURE_CONNECTION_USAGE="Should the connection to the DB be secure? (The support must be configured on remote DB server)"
-INFO_CONF_PARAMS_DB_SECURE_CONNECTION_PROMPT="Configure secure connection?"
+INFO_CONF_PARAMS_DB_SECURE_CONNECTION_PROMPT="Configure secure connection? (make sure ssl is configured on remote DB)"
 
 
 #Auth domain
