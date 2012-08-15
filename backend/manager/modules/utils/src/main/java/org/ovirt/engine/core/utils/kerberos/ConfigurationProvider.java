@@ -56,7 +56,6 @@ public class ConfigurationProvider {
         setConfigValue(enumValue, entry, true);
     }
 
-
     protected File createPassFile(String value) throws IOException {
         File temp = File.createTempFile("ovirt", ".tmp");
         String filePath = temp.getAbsolutePath();
@@ -65,7 +64,8 @@ public class ConfigurationProvider {
         try {
             int chmodExitCode = chmodProcess.waitFor();
             if (chmodExitCode != 0) {
-                throw new IOException("Failed to change permissions for file \"" + filePath + "\", the chmod command returns exit code " + chmodExitCode + "\".");
+                throw new IOException("Failed to change permissions for file \"" + filePath
+                        + "\", the chmod command returns exit code " + chmodExitCode + "\".");
             }
         } catch (InterruptedException ie) {
             throw new IOException("Failed to change permissions for file \"" + filePath + "\"", ie);
@@ -105,14 +105,10 @@ public class ConfigurationProvider {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION,
                         enumValue.name());
             }
-        } catch (IOException e) {
+        } catch (Throwable e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,
                     new String[] { enumValue.name(), e.getMessage() });
-        } catch (InterruptedException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,
-                    new String[] { enumValue.name(), e.getMessage() });
-        }
-        finally {
+        } finally {
             disposePassFile(passFile);
         }
     }

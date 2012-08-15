@@ -1,27 +1,79 @@
 package org.ovirt.engine.core.utils.kerberos;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+/*
+ * Exception during configure domains. If this exception occurred its probably because
+ * DB errors. This class define handling of configure exceptions
+ */
 public class ManageDomainsResult extends Exception {
     private static final long serialVersionUID = -2897637328396868452L;
     private ManageDomainsResultEnum enumResult;
     private int exitCode;
     private String detailedMessage;
+    private final static Logger log = Logger.getLogger(ManageDomainsResult.class);
 
+    /**
+     * This constructor is present exception without additional params. we use this one without additional info, only
+     * enum result type with default detailed massage.
+     * @param enumResult
+     *            - enum result type
+     */
     public ManageDomainsResult(ManageDomainsResultEnum enumResult) {
         this.exitCode = enumResult.getExitCode();
         this.detailedMessage = enumResult.getDetailedMessage();
         this.enumResult = enumResult;
     }
 
-    public ManageDomainsResult(ManageDomainsResultEnum enumResult, String param) {
+    /**
+     * This constructor gets params for enum result and defaultMsg for a case that params are wrong or include
+     * misleading variables (like empty string)
+     * @param enumResult
+     *            - the error to publish
+     * @param defaultMsg
+     *            - default output when error found in input.
+     * @param params
+     *            - enumResult additional params
+     */
+    public ManageDomainsResult(String defaultMsg, ManageDomainsResultEnum enumResult, String... params) {
         this.exitCode = enumResult.getExitCode();
-        this.detailedMessage = String.format(enumResult.getDetailedMessage(), param);
         this.enumResult = enumResult;
+        boolean validParams = true;
+
+        // setting detailed message
+        // check params validation
+        if (params.length == 0) {
+            log.debug("Wrong exception's params recevied.");
+            validParams = false;
+        }
+        else {
+            // Verify parameters value
+            for (String param : params) {
+                if (StringUtils.isEmpty(param)) {
+                    log.debug("Got null value.");
+                    validParams = false;
+                }
+            }
+        }
+
+        // if all ok. we have params verified
+        if (validParams) {
+            this.detailedMessage = String.format(enumResult.getDetailedMessage(), params);
+        }
+        else {
+            if (StringUtils.isEmpty(defaultMsg)) {
+                log.debug("No default param passed.");
+                this.detailedMessage = "Error with output, no default message to show. sorry..";
+            }
+            else {
+                this.detailedMessage = defaultMsg;
+            }
+        }
     }
 
     public ManageDomainsResult(ManageDomainsResultEnum enumResult, String... params) {
-        this.exitCode = enumResult.getExitCode();
-        this.detailedMessage = String.format(enumResult.getDetailedMessage(), params);
-        this.enumResult = enumResult;
+        this("", enumResult, params);
     }
 
     public int getExitCode() {

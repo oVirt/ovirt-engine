@@ -32,7 +32,7 @@ public class ManageDomains {
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
     private final String WARNING_NOT_ADDING_PERMISSIONS =
-        "WARNING: No permissions were added to the Engine. Login either with the internal admin user or with another configured user.";
+            "WARNING: No permissions were added to the Engine. Login either with the internal admin user or with another configured user.";
 
     private final String SERVICE_RESTART_MESSAGE =
             "oVirt Engine restart is required in order for the changes to take place (service ovirt-engine restart).";
@@ -126,7 +126,9 @@ public class ManageDomains {
         try {
             daoImpl = new ManageDomainsDAOImpl();
         } catch (SQLException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.DB_EXCEPTION, e.getMessage());
+            throw new ManageDomainsResult("Please verify the following:\n1. Your database credentials are valid.\n2. The database machine is accessible.\n3. The database service is running",
+                    ManageDomainsResultEnum.DB_EXCEPTION,
+                    e.getMessage());
         }
     }
 
@@ -201,7 +203,8 @@ public class ManageDomains {
                             ConfigValues.LDAPSecurityAuthentication);
             String domainName = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.DomainName);
             String adUserId = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserId);
-            String ldapServers = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LdapServers);
+            String ldapServers =
+                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LdapServers);
             String ldapProviderTypes =
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPProviderTypes);
 
@@ -216,11 +219,7 @@ public class ManageDomains {
                             utilityConfiguration.getEngineConfigExecutablePath(),
                             engineConfigProperties);
 
-        } catch (IOException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CURRENT_CONFIGURATION, e.getMessage());
-        } catch (InterruptedException e) {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CURRENT_CONFIGURATION, e.getMessage());
-        } catch (FailedReadingConfigValueException e) {
+        } catch (Throwable e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CURRENT_CONFIGURATION, e.getMessage());
         }
     }
@@ -346,7 +345,7 @@ public class ManageDomains {
         DomainsConfigurationEntry authModeEntry =
                 new DomainsConfigurationEntry(currentAuthModeEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry adUserIdEntry =
-            new DomainsConfigurationEntry(currentAdUserIdEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+                new DomainsConfigurationEntry(currentAdUserIdEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry ldapProviderTypeEntry =
                 new DomainsConfigurationEntry(currentLdapProviderTypesEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
@@ -568,10 +567,10 @@ public class ManageDomains {
         }
 
         setConfigurationEntries(domainNameEntry,
-                        adUserNameEntry,
-                        adUserPasswordEntry,
-                        authModeEntry,
-                        ldapServersEntry,
+                adUserNameEntry,
+                adUserPasswordEntry,
+                authModeEntry,
+                ldapServersEntry,
                 adUserIdEntry,
                 ldapProviderTypeEntry);
 
@@ -633,9 +632,9 @@ public class ManageDomains {
                 }
                 log.info("Successfully tested kerberos configuration for domain: " + domain);
             } catch (Exception e) {
-                ManageDomainsResult result = new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN, new String[] {
-                        domain,
-                        e.getMessage() });
+                ManageDomainsResult result =
+                        new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN,
+                                new String[] { domain, e.getMessage() });
                 if ((isValidate && reportAllErrors) || ((domainName != null) && !domain.equals(domainName))) {
                     System.out.println("WARNING, domain: " + domain + " may not be functional: "
                             + result.getDetailedMessage());
@@ -676,8 +675,8 @@ public class ManageDomains {
         ReturnStatus returnStatus =
                 simpleAuthenticationCheck.printUserGuid(domain, userName, password, address, userGuid, ldapProviderType);
         if (!returnStatus.equals(ReturnStatus.OK)) {
-            return new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN, new String[] { domain,
-                    returnStatus.getDetailedMessage() });
+            return new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN,
+                    new String[] { domain, returnStatus.getDetailedMessage() });
         }
         log.info("Successfully tested domain " + domain);
         return OK_RESULT;
@@ -751,14 +750,14 @@ public class ManageDomains {
             }
         }
 
-                checkSimpleDomains(domainName,
-                        users,
-                        passwords,
-                        simpleDomains,
-                        userIds,
-                        ldapProviderType,
-                        utilityConfiguration.getLocalHostEntry(),
-                        isValidate);
+        checkSimpleDomains(domainName,
+                users,
+                passwords,
+                simpleDomains,
+                userIds,
+                ldapProviderType,
+                utilityConfiguration.getLocalHostEntry(),
+                isValidate);
 
         boolean domainIsGssapi = gssapiDomains.doesDomainExist(domainName);
 
@@ -879,7 +878,8 @@ public class ManageDomains {
                 try {
                     actionType = ActionType.valueOf(action);
                 } catch (IllegalArgumentException ex) {
-                    throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION, action);
+                    throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION,
+                            action);
                 }
                 if (actionType.equals(ActionType.add)) {
                     requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
@@ -914,7 +914,7 @@ public class ManageDomains {
     }
 
     private void requireArgs(CLIParser parser, Arguments... args) throws ManageDomainsResult {
-        for (Arguments arg: args) {
+        for (Arguments arg : args) {
             if (!parser.hasArg(arg.name())) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.ARGUMENT_IS_REQUIRED, arg.name());
             }
