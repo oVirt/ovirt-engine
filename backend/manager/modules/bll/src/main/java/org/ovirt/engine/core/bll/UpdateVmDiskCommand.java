@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -49,12 +48,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
         _oldDisk = getDiskDao().get(getParameters().getDiskId());
-    }
-
-    @Override
-    public NGuid getStoragePoolId() {
-        return ((DiskImage) getParameters().getDiskInfo()).getstorage_pool_id()
-                .getValue();
     }
 
     @Override
