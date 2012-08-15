@@ -26,9 +26,7 @@ public class VLanPanel extends VerticalPanel {
             add(new VLanElementPanel(hostVLan));
         }
 
-        if (lineModel.getVLans().isEmpty()) {
-            add(new VLanElementPanel(lineModel));
-        }
+        add(new VLanElementPanel(lineModel));
     }
 
 }
@@ -70,7 +68,14 @@ class VLanElementPanel extends TogglePanel {
         row.setWidget(0, 0, chekboxPanel);
 
         // Network name
-        row.setWidget(0, 1, new Label(hostVLan.getNetworkName()));
+        Label networkName = new Label(hostVLan.getNetworkName());
+
+        if (hostVLan.getInterface().getIsManagement()) {
+            networkName.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+            networkName.setText("* " + hostVLan.getNetworkName()); //$NON-NLS-1$
+        }
+
+        row.setWidget(0, 1, networkName);
 
         return row;
     }

@@ -39,7 +39,7 @@ public class SetupNetworksManagementPopupView  extends HostManagementPopupView i
 
         // resize
         layoutPanel.remove(infoPanel);
-        layoutPanel.setWidgetSize(mainPanel, 260);
+        layoutPanel.setWidgetSize(mainPanel, 270);
         asPopupPanel().setPixelSize(400, 350);
 
         bootProtocolLabel.setEnabled(object.getBootProtocolsAvailable());
