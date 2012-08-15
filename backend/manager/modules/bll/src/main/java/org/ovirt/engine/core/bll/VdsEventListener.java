@@ -243,25 +243,32 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port) {
         IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmid);
-        if (command != null && command.getAutoStart() && command.getAutoStartVdsId() != null) {
-            try {
-                String otp64 = Ticketing.GenerateOTP();
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.SetVmTicket,
-                                new SetVmTicketVDSCommandParameters(vds_id, vmid, otp64, 60, "", Guid.Empty));
-                log.infoFormat(
-                        "VdsEventListener.ProcessOnVmPoweringUp - Auto start logic, starting spice to vm - {0} ", vmid);
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.StartSpice,
-                                new StartSpiceVDSCommandParameters(command.getAutoStartVdsId(), display_ip,
-                                        display_port, otp64));
-            } catch (RuntimeException ex) {
-                log.errorFormat(
-                        "VdsEventListener.ProcessOnVmPoweringUp - failed to start spice on VM - {0} - {1} - {2}", vmid,
-                        ex.getMessage(), ex.getStackTrace());
+
+        if (command != null) {
+            command.onPowerringUp();
+            if (command.getAutoStart() && command.getAutoStartVdsId() != null) {
+                try {
+                    String otp64 = Ticketing.GenerateOTP();
+                    Backend.getInstance()
+                            .getResourceManager()
+                            .RunVdsCommand(VDSCommandType.SetVmTicket,
+                                    new SetVmTicketVDSCommandParameters(vds_id, vmid, otp64, 60, "", Guid.Empty));
+                    log.infoFormat(
+                            "VdsEventListener.ProcessOnVmPoweringUp - Auto start logic, starting spice to vm - {0} ",
+                            vmid);
+                    Backend.getInstance()
+                            .getResourceManager()
+                            .RunVdsCommand(
+                                    VDSCommandType.StartSpice,
+                                    new StartSpiceVDSCommandParameters(command.getAutoStartVdsId(), display_ip,
+                                            display_port, otp64));
+                } catch (RuntimeException ex) {
+                    log.errorFormat(
+                            "VdsEventListener.ProcessOnVmPoweringUp - failed to start spice on VM - {0} - {1} - {2}",
+                            vmid,
+                            ex.getMessage(),
+                            ex.getStackTrace());
+                }
             }
         }
     }

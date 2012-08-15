@@ -37,7 +37,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     public MigrateVmCommand(T parameters) {
         super(parameters);
-        setVdsSelector(new VdsSelector(getVm(), getVdsDestinationId(), true));
+        setVdsSelector(new VdsSelector(getVm(), getVdsDestinationId(), true, new VdsFreeMemoryChecker(this)));
         forcedMigrationForNonMigratableVM = parameters.isForceMigrationForNonMigratableVM();
     }
 

@@ -119,7 +119,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (getVm() != null) {
             Guid destVdsId = (getDestinationVds() != null) ? (Guid) getDestinationVds().getId() : null;
-            setVdsSelector(new VdsSelector(getVm(), destVdsId, true));
+            setVdsSelector(new VdsSelector(getVm(), destVdsId, true, new VdsFreeMemoryChecker(this)));
 
             refreshBootParameters(runVmParameters);
             // set vm disks
@@ -247,6 +247,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             _isRerun = false;
         }
     }
+
 
     @Override
     protected void executeVmCommand() {
@@ -888,4 +889,5 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
     }
+
 }

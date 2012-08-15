@@ -50,7 +50,8 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 public class VdsManager {
     private VDS _vds;
-    private long lastUpdate = System.currentTimeMillis();
+    private long lastUpdate;
+    private long updateStartTime;
 
     private static Log log = LogFactory.getLog(VdsManager.class);
 
@@ -201,6 +202,7 @@ public class VdsManager {
     }
 
     private VdsUpdateRunTimeInfo _vdsUpdater;
+    private final VdsMonitor vdsMonitor = new VdsMonitor();
 
     @OnTimerMethodAnnotation("OnTimer")
     public void OnTimer() {
@@ -230,10 +232,11 @@ public class VdsManager {
                                     _refreshIteration++;
                                 }
                                 if (isMonitoringNeeded()) {
+                                    setStartTime();
                                     _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds);
                                     _vdsUpdater.Refresh();
                                     mUnrespondedAttempts.set(0);
-                                    lastUpdate = System.currentTimeMillis();
+                                    setLastUpdate();
                                 }
                                 if (!getInitialized() && getVds().getstatus() != VDSStatus.NonResponsive
                                         && getVds().getstatus() != VDSStatus.PendingApproval) {
@@ -666,6 +669,27 @@ public class VdsManager {
 
     public boolean isSetNonOperationalExecuted() {
         return isSetNonOperationalExecuted;
+    }
+
+    private void setStartTime() {
+        updateStartTime = System.currentTimeMillis();
+    }
+    private void setLastUpdate() {
+        lastUpdate = System.currentTimeMillis();
+    }
+
+    /**
+     * @return elapsed time in milliseconds it took to update the Host run-time info. 0 means the updater never ran.
+     */
+    public long getLastUpdateElapsed() {
+        return lastUpdate - updateStartTime;
+    }
+
+    /**
+     * @return VdsMonitor a class with means for lock and conditions for signaling
+     */
+    public VdsMonitor getVdsMonitor() {
+        return vdsMonitor;
     }
 
 }

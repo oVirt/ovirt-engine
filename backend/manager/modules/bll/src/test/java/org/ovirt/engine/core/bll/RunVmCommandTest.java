@@ -337,7 +337,8 @@ public class RunVmCommandTest {
 
         final VM vm = new VM();
         doReturn(vm).when(command).getVm();
-        doReturn(new VdsSelector(vm, new Guid(), true)).when(command).getVdsSelector();
+        doReturn(new VdsSelector(vm, new Guid(), true, new VdsFreeMemoryChecker(command))).when(command)
+                .getVdsSelector();
 
         assertFalse(command.canRunVm());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK"));
@@ -353,7 +354,8 @@ public class RunVmCommandTest {
         final VM vm = new VM();
         vm.setstatus(VMStatus.Up);
         doReturn(vm).when(command).getVm();
-        doReturn(new VdsSelector(vm, new NGuid(), true)).when(command).getVdsSelector();
+        doReturn(new VdsSelector(vm, new NGuid(), true, new VdsFreeMemoryChecker(command))).when(command)
+                .getVdsSelector();
 
         assertFalse(command.canRunVm());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains("ACTION_TYPE_FAILED_VM_IS_RUNNING"));

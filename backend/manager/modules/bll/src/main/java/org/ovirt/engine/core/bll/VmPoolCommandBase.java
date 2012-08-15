@@ -245,7 +245,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         RunVmParams runVmParams = tempVar;
         VdsSelector vdsSelector = new VdsSelector(vm,
                 ((runVmParams.getDestinationVdsId()) != null) ? runVmParams.getDestinationVdsId()
-                        : vm.getdedicated_vm_for_vds(), true);
+                        : vm.getdedicated_vm_for_vds(), true, new VdsFreeMemoryChecker(new NonWaitingDelayer()));
         return VmRunHandler.getInstance().canRunVm(vm,
                 messages,
                 runVmParams,

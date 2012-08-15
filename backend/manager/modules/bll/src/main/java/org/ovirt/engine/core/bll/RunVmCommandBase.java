@@ -1,8 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.common.config.ConfigValues.VdsRefreshRate;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -35,16 +40,17 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsMonitor;
 
 /**
  * Base class for asynchronous running process handling
  */
 public abstract class RunVmCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> implements
-        IVdsAsyncCommand {
+        IVdsAsyncCommand, RunVmDelayer {
 
     private static Log log = LogFactory.getLog(RunVmCommandBase.class);
     protected static final HashMap<Guid, Integer> _vds_pending_vm_count = new HashMap<Guid, Integer>();
-    private final Object _decreaseLock = new Object();
     private VdsSelector privateVdsSelector;
     protected boolean _isRerun = false;
     protected VDS _destinationVds;
@@ -273,8 +279,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      */
     @Override
     public void runningSucceded() {
-        decreasePendingVms(getCurrentVdsId());
-
         setSucceeded(true);
         setActionReturnValue(VMStatus.Up);
         log();
@@ -363,7 +367,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected void decreasePendingVms(Guid vdsId) {
-        synchronized (_decreaseLock) {
+        getDecreaseLock(vdsId).lock();
+        try {
             boolean updateDynamic = false;
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null)
@@ -409,7 +414,60 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                             vds.getvds_name(), vds.getpending_vmem_size(), getVm().getvm_name());
                 }
             }
+            getDecreseCondition(vdsId).signal();
+        } finally {
+            getDecreaseLock(vdsId).unlock();
         }
     }
 
+    /**
+     * throttle bulk run of VMs by waiting for the update of run-time to kick in and fire <br>
+     * the DecreasePendingVms event.
+     * @see VdsEventListener
+     * @See VdsUpdateRunTimeInfo
+     */
+    @Override
+    public void delay(Guid vdsId) {
+        log.debug("try to wait for te engine update the host memory and cpu stats");
+
+        getDecreaseLock(vdsId).lock();
+        try {
+            // time out waiting for an update is the highest between the refresh rate and the last update elapsed time
+            // but still no higher than a configurable max to prevent very long updates to stall command.
+            long t =   Math.max(
+                    ResourceManager.getInstance().GetVdsManager(vdsId).getLastUpdateElapsed(),
+                    TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(VdsRefreshRate)));
+            t = Math.max(Config.<Integer> GetValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
+
+            // wait for the run-time refresh to decrease any current powering-up VMs
+            getDecreseCondition(vdsId).await(t, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            // ignore
+        } finally {
+            getDecreaseLock(vdsId).unlock();
+        }
+    }
+
+    private Condition getDecreseCondition(Guid vdsId) {
+        return getMonitor(vdsId).getDecreasedMemoryCondition();
+    }
+
+    private Lock getDecreaseLock(Guid vdsId) {
+        return getMonitor(vdsId).getLock();
+    }
+
+    /**
+     * get the monitor object of this host. VDSs have monitors exposed by their {@link VdsManager}
+     *
+     * @param vdsId
+     * @return {@link VdsMonitor} for signaling on thread actions
+     */
+    private VdsMonitor getMonitor(Guid vdsId) {
+        return ResourceManager.getInstance().GetVdsManager(vdsId).getVdsMonitor();
+    }
+
+    @Override
+    public void onPowerringUp() {
+        decreasePendingVms(getCurrentVdsId());
+    }
 }

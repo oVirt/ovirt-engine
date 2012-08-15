@@ -481,6 +481,7 @@ select fn_db_add_config_value('SysPrepWindows7Path','backend/manager/conf/syspre
 select fn_db_add_config_value('SysPrepWindows7x64Path','backend/manager/conf/sysprep/sysprep.w7x64','general');
 --Handling Path to an XP machine Sys-Prep file.
 select fn_db_add_config_value('SysPrepXPPath','backend/manager/conf/sysprep/sysprep.xp','general');
+select fn_db_add_config_value('ThrottlerMaxWaitForVdsUpdateInMillis','10000','general');
 select fn_db_add_config_value('TimeoutToResetVdsInSeconds','60','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('TruststorePass','NoSoup4U','general');

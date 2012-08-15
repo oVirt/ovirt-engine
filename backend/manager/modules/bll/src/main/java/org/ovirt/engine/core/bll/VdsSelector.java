@@ -55,6 +55,7 @@ public class VdsSelector {
     }
 
     private VM privateVm;
+    private VdsFreeMemoryChecker memoryChecker;
 
     private VM getVm() {
         return privateVm;
@@ -64,10 +65,11 @@ public class VdsSelector {
         privateVm = value;
     }
 
-    public VdsSelector(VM vm, NGuid destinationVdsId, boolean dedicatedFirst) {
+    public VdsSelector(VM vm, NGuid destinationVdsId, boolean dedicatedFirst, VdsFreeMemoryChecker memoryChecker) {
         setVm(vm);
         setDestinationVdsId(destinationVdsId);
         setCheckDestinationFirst(dedicatedFirst);
+        this.memoryChecker = memoryChecker;
     }
 
     public Guid GetVdsToRunOn() {
@@ -233,7 +235,7 @@ public class VdsSelector {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER);
         }
         // If Vm in Paused mode - no additional memory allocation needed
-        else if (getVm().getstatus() != VMStatus.Paused && !RunVmCommandBase.hasMemoryToRunVM(vds, getVm())) {
+        else if (getVm().getstatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
             // not enough memory
             // In case we are using this function in migration we make sure we
             // don't allocate the same VDS

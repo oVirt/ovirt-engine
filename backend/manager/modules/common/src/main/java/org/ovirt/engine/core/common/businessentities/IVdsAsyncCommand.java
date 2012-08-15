@@ -15,4 +15,6 @@ public interface IVdsAsyncCommand {
      * Assures the Job/Step are completed.
      */
     void reportCompleted();
+
+    void onPowerringUp();
 }

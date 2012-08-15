@@ -1524,6 +1524,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("300")
     HostTimeDriftInSec(390),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10000")
+    ThrottlerMaxWaitForVdsUpdateInMillis(391),
+
     Invalid(65535);
 
     private int intValue;
