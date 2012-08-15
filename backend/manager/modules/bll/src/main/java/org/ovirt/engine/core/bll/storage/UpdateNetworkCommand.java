@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.AttachNetworkToVdsGroupCommand;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -123,6 +124,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         return RemoveNetworkCommand.CommonNetworkValidation(oldNetwork, getReturnValue().getCanDoActionMessages());
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.NETWORK_UPDATE_NETWORK : AuditLogType.NETWORK_UPDATE_NETWORK_FAILED;
     }
 
     @Override

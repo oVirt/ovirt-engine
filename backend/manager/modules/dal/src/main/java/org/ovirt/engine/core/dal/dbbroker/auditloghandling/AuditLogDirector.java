@@ -627,6 +627,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.NETWORK_ADD_NETWORK_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.NETWORK_REMOVE_NETWORK, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.NETWORK_REMOVE_NETWORK_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.NETWORK_UPDATE_NETWORK, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.NETWORK_UPDATE_NETWORK_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.NETWORK_DETACH_NETWORK_TO_VDS_GROUP, AuditLogSeverity.NORMAL);
