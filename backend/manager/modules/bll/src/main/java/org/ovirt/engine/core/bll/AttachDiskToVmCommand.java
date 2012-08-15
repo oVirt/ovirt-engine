@@ -14,8 +14,9 @@ import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -55,6 +56,11 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
+        boolean isImageDisk = disk.getDiskStorageType() == DiskStorageType.IMAGE;
+        if (isImageDisk && ((DiskImage) disk).getimageStatus() == ImageStatus.ILLEGAL) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
+            return false;
+        }
         retValue =
                 retValue && acquireLockInternal() && isVmExist() && isVmUpOrDown() && isDiskCanBeAddedToVm(disk)
                         && isDiskPassPCIAndIDELimit(disk);
@@ -70,13 +76,12 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
-        if (retValue && disk.getDiskStorageType() == DiskStorageType.IMAGE
-                && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-                        ((DiskImage) disk).getstorage_ids().get(0), getVm().getstorage_pool_id())) == null) {
+        if (retValue && isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
+                ((DiskImage) disk).getstorage_ids().get(0), getVm().getstorage_pool_id())) == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
-        if (retValue && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (retValue && isImageDisk) {
             retValue = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId()));
         }
         if (retValue && getParameters().isPlugUnPlug()

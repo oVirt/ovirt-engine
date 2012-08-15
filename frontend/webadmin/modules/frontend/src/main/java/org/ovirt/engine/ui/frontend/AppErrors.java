@@ -712,6 +712,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The disk is already attached to VM.")
     String ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Disk is Illegal. Illegal disks can only be deleted.")
+    String ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION();
+
     @DefaultStringValue("Cannot ${action} ${type}. The disk is already detached from VM.")
     String ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED();
 
