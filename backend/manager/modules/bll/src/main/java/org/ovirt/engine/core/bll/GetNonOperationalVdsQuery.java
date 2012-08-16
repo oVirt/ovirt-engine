@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.NetworkNonOperationalQueryParamenters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -27,7 +27,7 @@ public class GetNonOperationalVdsQuery<P extends NetworkNonOperationalQueryParam
             if (LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface i) {
-                    return StringHelper.EqOp(i.getNetworkName(), getParameters().getNetwork().getname());
+                    return StringUtils.equals(i.getNetworkName(), getParameters().getNetwork().getname());
                 }
             }) == null) {
                 retVal.add(vds);
