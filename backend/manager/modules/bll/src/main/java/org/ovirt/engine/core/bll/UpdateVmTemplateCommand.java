@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.quota.Quotable;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -40,7 +40,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (mOldTemplate != null) {
             if (VmTemplateHandler.BlankVmTemplateId.equals(mOldTemplate.getId())) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_EDIT_BLANK_TEMPLATE.toString());
-            } else if (!StringHelper.EqOp(mOldTemplate.getname(), getVmTemplate().getname())
+            } else if (!StringUtils.equals(mOldTemplate.getname(), getVmTemplate().getname())
                     && isVmTemlateWithSameNameExist(getVmTemplateName())) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_DUPLICATE_NAME);
             } else {
