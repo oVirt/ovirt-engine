@@ -41,10 +41,20 @@
 			padding-left: 5px;
 			padding-top: 10px;
 		}
-
+		.explanationLabel {
+            font-style: italic;
+            margin: 10px 5px;
+        }
+        .fingerprintLabel textarea{
+			height: 35px;
+		}
+        .editorContentWidget{
+			width: 350px;
+			margin-top: 10px;
+		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="600px" height="500px">
+	<d:SimpleDialogPanel width="600px" height="530px">
 		<d:content>
 			<t:DialogTabPanel height="100%">
 				<t:tab>
@@ -60,6 +70,11 @@
 								<e:ListModelListBoxEditor ui:field="versionEditor" />
 								<e:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" />
 								<e:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" />
+								<e:EntityModelCheckBoxEditor ui:field="importGlusterConfigurationEditor"/>
+								<g:Label ui:field="importGlusterExplanationLabel" addStyleNames="{style.explanationLabel}"/>
+								<e:EntityModelTextBoxEditor ui:field="glusterHostAddressEditor" />
+								<e:EntityModelTextAreaLabelEditor addStyleNames="{style.fingerprintLabel}" ui:field="glusterHostFingerprintEditor" />
+								<e:EntityModelPasswordBoxEditor ui:field="glusterHostPasswordEditor" />
 								<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
 							</g:FlowPanel>
 						</t:content>

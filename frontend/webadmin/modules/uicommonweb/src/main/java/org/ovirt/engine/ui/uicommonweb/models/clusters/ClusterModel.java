@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -210,6 +211,56 @@ public class ClusterModel extends Model
 
     public void setEnableGlusterService(EntityModel value) {
         this.privateEnableGlusterService = value;
+    }
+
+    private EntityModel isImportGlusterConfiguration;
+
+    public EntityModel getIsImportGlusterConfiguration() {
+        return isImportGlusterConfiguration;
+    }
+
+    public void setIsImportGlusterConfiguration(EntityModel value) {
+        this.isImportGlusterConfiguration = value;
+    }
+
+    private EntityModel glusterHostAddress;
+
+    public EntityModel getGlusterHostAddress() {
+        return glusterHostAddress;
+    }
+
+    public void setGlusterHostAddress(EntityModel glusterHostAddress) {
+        this.glusterHostAddress = glusterHostAddress;
+    }
+
+    private EntityModel glusterHostFingerprint;
+
+    public EntityModel getGlusterHostFingerprint() {
+        return glusterHostFingerprint;
+    }
+
+    public void setGlusterHostFingerprint(EntityModel glusterHostFingerprint) {
+        this.glusterHostFingerprint = glusterHostFingerprint;
+    }
+
+    private Boolean isFingerprintVerified;
+
+    public Boolean isFingerprintVerified() {
+        return isFingerprintVerified;
+    }
+
+    public void setIsFingerprintVerified(Boolean value) {
+        this.isFingerprintVerified = value;
+    }
+
+    private EntityModel glusterHostPassword;
+
+    public EntityModel getGlusterHostPassword() {
+        return glusterHostPassword;
+    }
+
+    public void setGlusterHostPassword(EntityModel glusterHostPassword) {
+        this.glusterHostPassword = glusterHostPassword;
     }
 
     private EntityModel privateOptimizationNone;
@@ -482,7 +533,7 @@ public class ClusterModel extends Model
     {
     }
 
-    public void Init(boolean isEdit)
+    public void Init(final boolean isEdit)
     {
         setIsEdit(isEdit);
         setName(new EntityModel());
@@ -492,7 +543,35 @@ public class ClusterModel extends Model
         getEnableOvirtService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.VirtOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
+        initImportCluster(isEdit);
+
         setEnableGlusterService(new EntityModel());
+        getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!isEdit
+                        && getEnableGlusterService().getEntity() != null
+                        && (Boolean) getEnableGlusterService().getEntity())
+                {
+                    getIsImportGlusterConfiguration().setIsAvailable(true);
+
+                    getGlusterHostAddress().setIsAvailable(true);
+                    getGlusterHostFingerprint().setIsAvailable(true);
+                    getGlusterHostPassword().setIsAvailable(true);
+                }
+                else
+                {
+                    getIsImportGlusterConfiguration().setIsAvailable(false);
+                    getIsImportGlusterConfiguration().setEntity(false);
+
+                    getGlusterHostAddress().setIsAvailable(false);
+                    getGlusterHostFingerprint().setIsAvailable(false);
+                    getGlusterHostPassword().setIsAvailable(false);
+                }
+            }
+        });
+
         getEnableGlusterService().setEntity(ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly);
         getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
@@ -605,6 +684,69 @@ public class ClusterModel extends Model
 
         setIsGeneralTabValid(true);
         setIsResiliencePolicyTabAvailable(true);
+    }
+
+    private void initImportCluster(boolean isEdit)
+    {
+        setGlusterHostAddress(new EntityModel());
+        getGlusterHostAddress().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                setIsFingerprintVerified(false);
+                fetchFingerprint((String) getGlusterHostAddress().getEntity());
+            }
+        });
+
+        setGlusterHostFingerprint(new EntityModel());
+        getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
+        setIsFingerprintVerified(false);
+        setGlusterHostPassword(new EntityModel());
+
+        setIsImportGlusterConfiguration(new EntityModel());
+        getIsImportGlusterConfiguration().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (getIsImportGlusterConfiguration().getEntity() != null
+                        && (Boolean) getIsImportGlusterConfiguration().getEntity())
+                {
+                    getGlusterHostAddress().setIsChangable(true);
+                    getGlusterHostPassword().setIsChangable(true);
+                }
+                else
+                {
+                    getGlusterHostAddress().setIsChangable(false);
+                    getGlusterHostPassword().setIsChangable(false);
+                }
+            }
+        });
+        getIsImportGlusterConfiguration().setEntity(false);
+    }
+
+    private void fetchFingerprint(String hostAddress) {
+        AsyncQuery aQuery = new AsyncQuery();
+        aQuery.setModel(this);
+        aQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                String fingerprint = (String) result;
+                if (fingerprint != null && fingerprint.length() > 0)
+                {
+                    getGlusterHostFingerprint().setEntity(result);
+                    setIsFingerprintVerified(true);
+                }
+                else
+                {
+                    getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance()
+                            .getConstants()
+                            .errorLoadingFingerprint());
+                    setIsFingerprintVerified(false);
+                }
+            }
+        };
+        AsyncDataProvider.GetHostFingerprint(aQuery, hostAddress);
+        getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
     }
 
     private void postInit()
@@ -858,16 +1000,27 @@ public class ClusterModel extends Model
         {
             setMessage(ConstantsManager.getInstance().getConstants().clusterServiceValidationMsg());
         }
+        else if (((Boolean) getIsImportGlusterConfiguration().getEntity()) && !isFingerprintVerified())
+        {
+            setMessage(ConstantsManager.getInstance().getConstants().fingerprintNotVerified());
+        }
         else
         {
             setMessage(null);
         }
 
+        getGlusterHostAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        getGlusterHostPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+
         setIsGeneralTabValid(getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
-                && getVersion().getIsValid() && validService);
+                && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
+                && getGlusterHostPassword().getIsValid()
+                && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? isFingerprintVerified() : true));
 
         return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
-                && getVersion().getIsValid() && validService;
+                && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
+                && getGlusterHostPassword().getIsValid()
+                && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? isFingerprintVerified() : true);
     }
 
 }

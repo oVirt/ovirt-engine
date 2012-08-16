@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
 import java.util.Date;
+import java.util.List;
 
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
@@ -164,4 +165,16 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Refresh Interval: {0} sec")
     String refreshInterval(int intervalSec);
+
+    @DefaultMessage("Name field is empty for host with address {0}")
+    String importClusterHostNameEmpty(String address);
+
+    @DefaultMessage("Root Password field is empty for host with address {0}")
+    String importClusterHostPasswordEmpty(String address);
+
+    @DefaultMessage("Fingerprint field is empty for host with address {0}")
+    String importClusterHostFingerprintEmpty(String address);
+
+    @DefaultMessage("Unable to fetch the Fingerprint of the host(s) {0,list,text}")
+    String unreachableGlusterHosts(List<String> hosts);
 }

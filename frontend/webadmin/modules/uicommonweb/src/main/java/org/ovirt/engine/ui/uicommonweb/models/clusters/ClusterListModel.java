@@ -1,13 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -35,6 +38,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -93,6 +98,18 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         privateGuideCommand = value;
     }
 
+    private UICommand privateAddMultipleHostsCommand;
+
+    public UICommand getAddMultipleHostsCommand()
+    {
+        return privateAddMultipleHostsCommand;
+    }
+
+    private void setAddMultipleHostsCommand(UICommand value)
+    {
+        privateAddMultipleHostsCommand = value;
+    }
+
     // get { return SelectedItems == null ? new object[0] : SelectedItems.Cast<VDSGroup>().Select(a =>
     // a.ID).Cast<object>().ToArray(); }
     protected Object[] getSelectedKeys()
@@ -137,6 +154,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
+        setAddMultipleHostsCommand(new UICommand("AddHosts", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -438,6 +456,22 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             tempVar2.setIsCancel(true);
             getConfirmWindow().getCommands().add(tempVar2);
         }
+        else if (model.getIsNew())
+        {
+            OnPreSaveInternal(model);
+        }
+        else
+        {
+            OnSaveInternal();
+        }
+    }
+
+    public void OnPreSaveInternal(ClusterModel model)
+    {
+        if ((Boolean) model.getIsImportGlusterConfiguration().getEntity())
+        {
+            fetchAndImportClusterHosts(model);
+        }
         else
         {
             OnSaveInternal();
@@ -456,6 +490,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         // cancel confirm window if there is
         CancelConfirmation();
 
+        OnSaveInternalWithModel(model);
+    }
+
+    private void OnSaveInternalWithModel(final ClusterModel model) {
         VDSGroup cluster = model.getIsNew() ? new VDSGroup() : (VDSGroup) Cloner.clone(getSelectedItem());
 
         Version version = (Version) model.getVersion().getSelectedItem();
@@ -483,11 +521,116 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     public void Executed(FrontendActionAsyncResult result) {
 
                         ClusterListModel localModel = (ClusterListModel) result.getState();
-                        localModel.PostOnSaveInternal(result.getReturnValue());
-
+                        if ((Boolean) model.getIsImportGlusterConfiguration().getEntity()) {
+                            localModel.postOnSaveInternalWithImport(result.getReturnValue());
+                        }
+                        else {
+                            localModel.PostOnSaveInternal(result.getReturnValue());
+                        }
                     }
                 },
                 this);
+    }
+
+    private void fetchAndImportClusterHosts(final ClusterModel clusterModel)
+    {
+        getWindow().StartProgress(null);
+        AsyncQuery aQuery = new AsyncQuery();
+        aQuery.setModel(this);
+        aQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                getWindow().StopProgress();
+                Map<String, String> hostMap = (Map<String, String>) result;
+                if (hostMap == null)
+                {
+                    onEmptyGlusterHosts(clusterModel);
+                    return;
+                }
+                if (hostMap.containsValue(null) || hostMap.containsValue(""))//$NON-NLS-1$
+                {
+                    onGlusterHostsWithoutFingerprint(hostMap, clusterModel);
+                    return;
+                }
+                ArrayList<EntityModel> list = new ArrayList<EntityModel>();
+                for (Map.Entry<String, String> host : hostMap.entrySet())
+                {
+                    HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
+                    hostModel.setName(host.getKey());
+                    hostModel.setPassword("");//$NON-NLS-1$
+                    EntityModel entityModel = new EntityModel(hostModel);
+                    list.add(entityModel);
+                }
+                importClusterHosts(clusterModel, list);
+            }
+        };
+        AsyncDataProvider.GetGlusterHosts(aQuery,
+                (String) clusterModel.getGlusterHostAddress().getEntity(),
+                (String) clusterModel.getGlusterHostPassword().getEntity(),
+                (String) clusterModel.getGlusterHostFingerprint().getEntity());
+    }
+
+    private void onEmptyGlusterHosts(ClusterModel clusterModel)
+    {
+        clusterModel.setMessage(ConstantsManager.getInstance().getConstants().emptyGlusterHosts());
+    }
+
+    private void onGlusterHostsWithoutFingerprint(Map<String, String> hostMap, ClusterModel clusterModel)
+    {
+        ArrayList<String> problematicHosts = new ArrayList<String>();
+        for (Map.Entry<String, String> host : hostMap.entrySet())
+        {
+            if (host.getValue() == null || host.getValue().equals("")) //$//$NON-NLS-1$
+            {
+                problematicHosts.add(host.getKey());
+            }
+        }
+
+        clusterModel.setMessage(ConstantsManager.getInstance().getMessages().unreachableGlusterHosts(problematicHosts));
+    }
+
+    private void importClusterHosts(ClusterModel clusterModel, ArrayList<EntityModel> hostList)
+    {
+        setWindow(null);
+        getAddMultipleHostsCommand().Execute();
+
+        final MultipleHostsModel hostsModel = new MultipleHostsModel();
+        setWindow(hostsModel);
+        hostsModel.setTitle(ConstantsManager.getInstance().getConstants().addMultipleHostsTitle());
+        hostsModel.setHashName("add_hosts"); //$NON-NLS-1$
+        hostsModel.setClusterModel(clusterModel);
+        hostsModel.getHosts().setItems(hostList);
+
+        UICommand command = new UICommand("OnSaveHosts", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        hostsModel.getCommands().add(command);
+
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        hostsModel.getCommands().add(command);
+    }
+
+    private void onSaveHosts()
+    {
+        MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
+        if(hostsModel == null)
+        {
+            return;
+        }
+        if (!hostsModel.validate())
+        {
+            return;
+        }
+        if (hostsModel.getClusterModel().getClusterId() != null)
+        {
+            addHosts(hostsModel);
+        }
+        else
+        {
+            OnSaveInternalWithModel(hostsModel.getClusterModel());
+        }
     }
 
     public void PostOnSaveInternal(VdcReturnValueBase returnValue)
@@ -507,6 +650,63 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 getGuideCommand().Execute();
             }
         }
+    }
+
+    public void postOnSaveInternalWithImport(VdcReturnValueBase returnValue)
+    {
+        MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
+        hostsModel.getClusterModel().setClusterId((Guid) returnValue.getActionReturnValue());
+        addHosts(hostsModel);
+    }
+
+    private void addHosts(final MultipleHostsModel hostsModel) {
+        hostsModel.StartProgress(null);
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+        for (Object object : hostsModel.getHosts().getItems()) {
+            HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
+
+            VDS host = new VDS();
+            host.setvds_name(hostDetailModel.getName());
+            host.sethost_name(hostDetailModel.getAddress());
+            host.setSSHKeyFingerprint(hostDetailModel.getFingerprint());
+            host.setport(54321);
+
+            host.setvds_group_id((Guid) hostsModel.getClusterModel().getClusterId());
+            host.setpm_enabled(false);
+
+            AddVdsActionParameters parameters = new AddVdsActionParameters();
+            parameters.setVdsId(host.getId());
+            parameters.setvds(host);
+            parameters.setRootPassword(hostDetailModel.getPassword());
+            parameters.setOverrideFirewall(false);
+
+            parametersList.add(parameters);
+        }
+
+
+        Frontend.RunMultipleAction(VdcActionType.AddVds,
+                parametersList,
+                true,
+                new IFrontendMultipleActionAsyncCallback() {
+
+            @Override
+            public void Executed(FrontendMultipleActionAsyncResult result) {
+                        hostsModel.StopProgress();
+                        boolean isAllCanDoPassed = true;
+                        for (VdcReturnValueBase returnValueBase : result.getReturnValue())
+                        {
+                            isAllCanDoPassed = isAllCanDoPassed && returnValueBase.getCanDoAction();
+                            if (!isAllCanDoPassed)
+                            {
+                                break;
+                            }
+                        }
+                        if (isAllCanDoPassed)
+                        {
+                            Cancel();
+                        }
+            }
+        }, null);
     }
 
     public void Cancel()
@@ -612,6 +812,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
             CancelConfirmation();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnSaveHosts")) //$NON-NLS-1$
+        {
+            onSaveHosts();
         }
     }
 

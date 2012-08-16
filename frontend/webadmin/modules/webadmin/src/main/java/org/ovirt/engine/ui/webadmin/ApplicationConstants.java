@@ -364,6 +364,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Address")
     String hostPopupHostAddressLabel();
 
+    @DefaultStringValue("Fingerprint")
+    String hostPopupHostFingerprintLabel();
+
     @DefaultStringValue("Root Password")
     String hostPopupRootPasswordLabel();
 
@@ -793,6 +796,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Enable Gluster Service")
     String clusterEnableGlusterServiceLabel();
+
+    @DefaultStringValue("Import existing gluster configuration")
+    String clusterImportGlusterConfigurationLabel();
+
+    @DefaultStringValue("Enter the details of any server in the cluster")
+    String clusterImportGlusterConfigurationExplanationLabel();
+
+    @DefaultStringValue("Please verify the fingerprint of the host before proceeding")
+    String clusterImportGlusterFingerprintInfoLabel();
 
     @DefaultStringValue("Storage")
     String quotaStorageSubTabLabel();
@@ -1811,6 +1823,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("to proceeed with connectivity check.")
     String toProceeedWithConnectivityCheckManageConfirmPopup();
+
+    // Import Cluster Hosts popup
+    @DefaultStringValue("Use a common password")
+    String hostsPopupUseCommonPassword();
+
+    @DefaultStringValue("Root Password")
+    String hostsPopupRootPassword();
+
+    @DefaultStringValue("Apply")
+    String hostsPopupApply();
+
+    @DefaultStringValue("Fingerprint")
+    String hostsPopupFingerprint();
 
     // Tag
     @DefaultStringValue("New")

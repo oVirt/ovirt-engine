@@ -350,6 +350,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Restart Host(s)")
     String restartHostsTitle();
 
+    @DefaultStringValue("Add Hosts")
+    String addMultipleHostsTitle();
+
     @DefaultStringValue("Stop Host(s)")
     String stopHostsTitle();
 
@@ -1527,4 +1530,16 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Template cannot be found in the system, VM(s) cannot be imported")
     String errorTemplateCannotBeFoundMessage();
 
+    // Import Gluster Cluster
+    @DefaultStringValue("fetching fingerprint...")
+    String loadingFingerprint();
+
+    @DefaultStringValue("Error in fetching fingerprint")
+    String errorLoadingFingerprint();
+
+    @DefaultStringValue("Fingerprint needs to be verified before importing the gluster configuration")
+    String fingerprintNotVerified();
+
+    @DefaultStringValue("Unable to fetch the gluster hosts. Please verify the host IP Address and password")
+    String emptyGlusterHosts();
 }

@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupN
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
@@ -210,6 +211,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetwor
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksManagementPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.MultipleHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPopupView;
@@ -854,6 +856,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(HostManagementConfirmationPopupPresenterWidget.class,
                 HostManagementConfirmationPopupPresenterWidget.ViewDef.class,
                 HostManagementConfirmationPopupView.class);
+        bindPresenterWidget(MultipleHostsPopupPresenterWidget.class,
+                MultipleHostsPopupPresenterWidget.ViewDef.class,
+                MultipleHostsPopupView.class);
 
         // Storage
         bindPresenterWidget(StoragePopupPresenterWidget.class,

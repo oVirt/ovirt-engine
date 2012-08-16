@@ -10,10 +10,13 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -93,6 +96,30 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId("enableGlusterService")
     EntityModelCheckBoxEditor enableGlusterServiceEditor;
 
+    @UiField(provided = true)
+    @Path(value = "isImportGlusterConfiguration.entity")
+    @WithElementId("isImportGlusterConfiguration")
+    EntityModelCheckBoxEditor importGlusterConfigurationEditor;
+
+    @UiField
+    @Ignore
+    Label importGlusterExplanationLabel;
+
+    @UiField
+    @Path(value = "glusterHostAddress.entity")
+    @WithElementId
+    EntityModelTextBoxEditor glusterHostAddressEditor;
+
+    @UiField
+    @Path(value = "glusterHostFingerprint.entity")
+    @WithElementId
+    EntityModelTextAreaLabelEditor glusterHostFingerprintEditor;
+
+    @UiField
+    @Path(value = "glusterHostPassword.entity")
+    @WithElementId
+    EntityModelPasswordBoxEditor glusterHostPasswordEditor;
+
     @UiField
     @Ignore
     Label messageLabel;
@@ -164,6 +191,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         this.messages = messages;
         initListBoxEditors();
         initRadioButtonEditors();
+        initCheckBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
@@ -173,6 +201,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     }
 
     private void addStyles() {
+        importGlusterConfigurationEditor.addContentWidgetStyleName(style.editorContentWidget());
         migrateOnErrorOption_NOEditor.addContentWidgetStyleName(style.label());
         migrateOnErrorOption_YESEditor.addContentWidgetStyleName(style.label());
         migrateOnErrorOption_HA_ONLYEditor.addContentWidgetStyleName(style.label());
@@ -188,6 +217,12 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         versionEditor.setLabel(constants.clusterPopupVersionLabel());
         enableOvirtServiceEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
         enableGlusterServiceEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
+
+        importGlusterConfigurationEditor.setLabel(constants.clusterImportGlusterConfigurationLabel());
+        importGlusterExplanationLabel.setText(constants.clusterImportGlusterConfigurationExplanationLabel());
+        glusterHostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
+        glusterHostFingerprintEditor.setLabel(constants.hostPopupHostFingerprintLabel());
+        glusterHostPasswordEditor.setLabel(constants.hostPopupRootPasswordLabel());
 
         memoryOptimizationTab.setLabel(constants.clusterPopupMemoryOptimizationTabLabel());
 
@@ -244,6 +279,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     }
 
+    private void initCheckBoxEditors()
+    {
+        importGlusterConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+    }
+
     private void applyModeCustomizations() {
         if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
         {
@@ -294,6 +334,16 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 applyModeCustomizations();
             }
         });
+        object.getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                importGlusterExplanationLabel.setVisible((Boolean) object.getEnableGlusterService().getEntity()
+                        && object.getIsNew());
+            }
+        });
+        importGlusterExplanationLabel.setVisible((Boolean) object.getEnableGlusterService().getEntity()
+                && object.getIsNew());
     }
 
     @Override
@@ -311,6 +361,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         String label();
 
         String generalTabTopDecoratorEmpty();
+
+        String editorContentWidget();
     }
 
 }

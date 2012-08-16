@@ -82,6 +82,7 @@ import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementI
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -92,6 +93,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
+import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
@@ -1049,6 +1051,32 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeOptionsInfo, new GlusterParameters(clusterId), aQuery);
+    }
+
+    public static void GetHostFingerprint(AsyncQuery aQuery, String hostAddress) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (String) source : ""; //$NON-NLS-1$
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetServerSSHKeyFingerprint, new ServerParameters(hostAddress), aQuery);
+    }
+
+    public static void GetGlusterHosts(AsyncQuery aQuery, String hostAddress, String rootPassword, String fingerprint) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        GlusterServersQueryParameters parameters = new GlusterServersQueryParameters(hostAddress, rootPassword);
+        parameters.setFingerprint(fingerprint);
+        Frontend.RunQuery(VdcQueryType.GetGlusterServers,
+                parameters,
+                aQuery);
     }
 
     public static void GetRpmVersionViaPublic(AsyncQuery aQuery) {

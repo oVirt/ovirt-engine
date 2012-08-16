@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Cluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -48,7 +49,8 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<ClusterPopupPresenterWidget> popupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<ReportPresenterWidget> reportWindowProvider) {
+            final Provider<ReportPresenterWidget> reportWindowProvider,
+            final Provider<MultipleHostsPopupPresenterWidget> addMultipleHostsPopupProvider) {
         return new MainTabModelProvider<VDSGroup, ClusterListModel>(ginjector, ClusterListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel source,
@@ -58,6 +60,8 @@ public class ClusterModule extends AbstractGinModule {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getGuideCommand()) {
                     return guidePopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getAddMultipleHostsCommand()) {
+                    return addMultipleHostsPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
