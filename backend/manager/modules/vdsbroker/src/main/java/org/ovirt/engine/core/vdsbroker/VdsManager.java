@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -51,6 +50,9 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 public class VdsManager {
     private VDS _vds;
+    private long lastUpdate = System.currentTimeMillis();
+
+    private static Log log = LogFactory.getLog(VdsManager.class);
 
     protected VDS getVds() {
         return _vds;
@@ -90,8 +92,6 @@ public class VdsManager {
             }
         }
     }
-
-    public DateTime mLastUpdate = DateTime.getNow();
 
     private final AtomicInteger mFailedToRunVmAttempts;
     private final AtomicInteger mUnrespondedAttempts;
@@ -233,7 +233,7 @@ public class VdsManager {
                                     _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds);
                                     _vdsUpdater.Refresh();
                                     mUnrespondedAttempts.set(0);
-                                    mLastUpdate = DateTime.getNow();
+                                    lastUpdate = System.currentTimeMillis();
                                 }
                                 if (!getInitialized() && getVds().getstatus() != VDSStatus.NonResponsive
                                         && getVds().getstatus() != VDSStatus.PendingApproval) {
@@ -598,8 +598,7 @@ public class VdsManager {
     public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
         if (vds.getstatus() != VDSStatus.Down) {
             if (mUnrespondedAttempts.get() < Config.<Integer> GetValue(ConfigValues.VDSAttemptsToResetCount)
-                    || mLastUpdate.AddSeconds(Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds))
-                            .compareTo(new java.util.Date()) > 0) {
+                    || lastUpdate + (Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds) * 1000) > System.currentTimeMillis()) {
                 boolean result = false;
                 if (vds.getstatus() != VDSStatus.Connecting && vds.getstatus() != VDSStatus.PreparingForMaintenance
                         && vds.getstatus() != VDSStatus.NonResponsive) {
@@ -668,7 +667,5 @@ public class VdsManager {
     public boolean isSetNonOperationalExecuted() {
         return isSetNonOperationalExecuted;
     }
-
-    private static Log log = LogFactory.getLog(VdsManager.class);
 
 }
