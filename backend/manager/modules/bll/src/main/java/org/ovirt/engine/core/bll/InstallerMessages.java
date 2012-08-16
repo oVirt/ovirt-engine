@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -18,7 +18,7 @@ public class InstallerMessages {
     }
 
     public void AddMessage(String message) {
-        if (StringHelper.isNullOrEmpty(message)) {
+        if (StringUtils.isEmpty(message)) {
             return;
         }
         String[] msgs = message.split("[\\n]", -1);
@@ -29,7 +29,7 @@ public class InstallerMessages {
             return;
         }
 
-        if (!StringHelper.isNullOrEmpty(message)) {
+        if (StringUtils.isNotEmpty(message)) {
             if (message.charAt(0) == '<') {
                 try {
                     parseMessage(message);
@@ -63,23 +63,23 @@ public class InstallerMessages {
             }
 
             if ((node.Attributes.get("component") != null)
-                    && (!StringHelper.isNullOrEmpty(node.Attributes.get("component").getValue()))) {
+                    && (StringUtils.isNotEmpty(node.Attributes.get("component").getValue()))) {
                 sb.append("Step: " + node.Attributes.get("component").getValue());
             }
 
             if ((node.Attributes.get("message") != null)
-                    && (!StringHelper.isNullOrEmpty(node.Attributes.get("message").getValue()))) {
+                    && (StringUtils.isNotEmpty(node.Attributes.get("message").getValue()))) {
                 sb.append("; ");
                 sb.append("Details: " + node.Attributes.get("message").getValue());
                 sb.append(" ");
             }
 
             if ((node.Attributes.get("result") != null)
-                    && (!StringHelper.isNullOrEmpty(node.Attributes.get("result").getValue()))) {
+                    && (StringUtils.isNotEmpty(node.Attributes.get("result").getValue()))) {
                 sb.append(" (" + node.Attributes.get("result").getValue() + ")");
             }
             AuditLogableBase logable = new AuditLogableBase(_vdsId);
-            logable.AddCustomValue("Message", StringHelper.trimEnd(sb.toString(), ' '));
+            logable.AddCustomValue("Message", StringUtils.stripEnd(sb.toString(), " "));
             AuditLogDirector.log(logable, logType);
         }
     }
