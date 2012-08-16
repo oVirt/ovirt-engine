@@ -90,6 +90,7 @@ FILE_PSQL_CONF="/var/lib/pgsql/data/postgresql.conf"
 FILE_OVIRT_HTTPD_CONF="/etc/httpd/conf.d/ovirt-engine.conf"
 FILE_HTTPD_SSL_CONFIG="/etc/httpd/conf.d/ssl.conf"
 FILE_HTTPD_CONF="/etc/httpd/conf/httpd.conf"
+FILE_IMAGE_UPLOADER_CONF="/etc/ovirt-engine/imageuploader.conf"
 
 # ISO FILES
 FILE_VIRTIO_WIN_VFD="/usr/share/virtio-win/virtio-win.vfd"

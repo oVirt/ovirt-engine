@@ -1762,7 +1762,7 @@ def _editToolsConfFile():
     """
     add the user & host:secrue_port values to logcollector.conf and isouploader.conf
     """
-    for confFile in [basedefs.FILE_LOGCOLLECTOR_CONF, basedefs.FILE_ISOUPLOADER_CONF]:
+    for confFile in [basedefs.FILE_LOGCOLLECTOR_CONF, basedefs.FILE_ISOUPLOADER_CONF, basedefs.FILE_IMAGE_UPLOADER_CONF]:
         if os.path.isfile(confFile):
             logging.debug("Editing %s" % confFile)
             fileHandler = utils.TextConfigFileHandler(confFile)
