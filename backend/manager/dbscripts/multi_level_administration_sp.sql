@@ -517,6 +517,21 @@ RETURNS SETOF permissions_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
+   FROM permissions_view
+   WHERE object_id = v_id
+   AND   (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM   GetUserPermissionsByEntityId(v_id, v_user_id, v_is_filtered)));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetUserPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF permissions_view
+    -- SET NOCOUNT ON added to prevent extra result sets from
+    -- interfering with SELECT statements.
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
    FROM permissions_view p
    WHERE object_id = v_id
    AND   (NOT v_is_filtered OR EXISTS (SELECT 1
@@ -525,8 +540,6 @@ BEGIN
                                        AND    u.user_id       = v_user_id));
 END; $procedure$
 LANGUAGE plpgsql;
-
-
 
 
 
