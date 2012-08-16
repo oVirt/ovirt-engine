@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.FileUtil;
@@ -171,7 +170,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
         initialCommand = initialCommand.replace("{management_port}", (Integer.toString(vds.getport())));
 
         String publicUrlPort = Config.<String> GetValue(ConfigValues.PublicURLPort);
-        if (StringHelper.isNullOrEmpty(publicUrlPort)) {
+        if (StringUtils.isEmpty(publicUrlPort)) {
             initialCommand = initialCommand.replace("{EnginePort}", "");
         } else {
             initialCommand = initialCommand.replace("{EnginePort}", String.format("-p %1$s", publicUrlPort));
