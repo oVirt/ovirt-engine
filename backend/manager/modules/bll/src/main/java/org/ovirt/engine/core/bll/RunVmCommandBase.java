@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmMonitorCommandVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -177,7 +177,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 return;
             } else {
                 String compression_enabled = "on";
-                if (StringHelper.EqOp(vds.gethost_name(), vm.getclient_ip())) {
+                if (StringUtils.equals(vds.gethost_name(), vm.getclient_ip())) {
                     compression_enabled = "off";
                 }
                 log.infoFormat(
@@ -290,7 +290,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         if (getVm().getlast_vds_run_on() == null || !getVm().getlast_vds_run_on().equals(getCurrentVdsId())) {
             getVm().setlast_vds_run_on(getCurrentVdsId());
         }
-        if (!StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())) {
+        if (StringUtils.isNotEmpty(getVm().gethibernation_vol_handle())) {
             HandleHibernatedVm(getActionType(), true);
             // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
             // this method (which is a part of the cached VM command,
