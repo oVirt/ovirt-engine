@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -9,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.event_notification_methods;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -37,10 +37,10 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
 
         switch (notificationMethod) {
         case EMAIL:
-            String mailAdress = (StringHelper.isNullOrEmpty(event_subscriber.getmethod_address())) ? user.getemail()
+            String mailAdress = (StringUtils.isEmpty(event_subscriber.getmethod_address())) ? user.getemail()
                     : event_subscriber.getmethod_address();
 
-            if (StringHelper.isNullOrEmpty(mailAdress) || !ValidatMailAddress(mailAdress)) {
+            if (StringUtils.isEmpty(mailAdress) || !ValidatMailAddress(mailAdress)) {
                 addCanDoActionMessage(VdcBllMessages.USER_DOES_NOT_HAVE_A_VALID_EMAIL);
                 retValue = false;
             }
@@ -71,7 +71,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         boolean retValue = ValidateNotificationMethod(event_notification_methods, event_subscriber, user);
 
         // validate tag name if exists
-        if (retValue && !StringHelper.isNullOrEmpty(tagName)) {
+        if (retValue && StringUtils.isNotEmpty(tagName)) {
             retValue = ValidateTag(tagName);
         }
         return retValue;
@@ -95,7 +95,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
                 retValue = ValidateNotificationMethod(event_notification_methods, event_subscriber, user);
 
                 // validate tag name if exists
-                if (retValue && !StringHelper.isNullOrEmpty(tagName)) {
+                if (retValue && StringUtils.isNotEmpty(tagName)) {
                     retValue = ValidateTag(tagName);
                 }
             }
@@ -140,7 +140,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         boolean retValue = false;
         for (event_subscriber event_subscriber : subscriptions) {
             if (event_subscriber.getsubscriber_id().equals(current.getsubscriber_id())
-                    && StringHelper.EqOp(event_subscriber.getevent_up_name(), current.getevent_up_name())
+                    && StringUtils.equals(event_subscriber.getevent_up_name(), current.getevent_up_name())
                     && event_subscriber.getmethod_id() == current.getmethod_id()) {
                 retValue = true;
                 break;
