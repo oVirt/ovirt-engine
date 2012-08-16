@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -8,7 +9,6 @@ import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -40,10 +40,10 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         getStorageDomain().setstorage("");
         AddStorageDomainInDb();
         getStorageDomain().setstorage(storage);
-        if (StringHelper.isNullOrEmpty(getStorageDomain().getstorage())) {
+        if (StringUtils.isEmpty(getStorageDomain().getstorage())) {
             getStorageDomain().setstorage(CreateVG());
         }
-        if (!StringHelper.isNullOrEmpty(getStorageDomain().getstorage()) && (AddStorageDomainInIrs())) {
+        if (StringUtils.isNotEmpty(getStorageDomain().getstorage()) && (AddStorageDomainInIrs())) {
             DbFacade.getInstance().getStorageDomainStaticDAO().update(getStorageDomain().getStorageStaticData());
             UpdateStorageDomainDynamicFromIrs();
             ProceedVGLunsInDb();
@@ -88,8 +88,8 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     protected boolean CanAddDomain() {
         boolean returnValue = true;
         // !AddSANStorageDomainParametersValue.IsExistingStorageDomain &&
-        if (((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringHelper
-                .isNullOrEmpty(getStorageDomain().getstorage()))) {
+        if (((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringUtils
+                .isEmpty(getStorageDomain().getstorage()))) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
         }
