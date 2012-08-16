@@ -1289,15 +1289,17 @@ INNER JOIN user_vm_template_permissions_view ON user_vm_template_permissions_vie
 WHERE      type = 'disk' and device = 'disk'
 -- Or the user has permissions on the storage domain containing the disk
 UNION ALL
-SELECT     image_id, ad_element_id
+SELECT     images.image_group_id, ad_element_id
 FROM       image_storage_domain_map
+INNER JOIN images ON images.image_guid = image_storage_domain_map.image_id
 INNER JOIN permissions_view ON object_id = storage_domain_id AND object_type_id = 11 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on the data center containing the storage pool constaining the disk
 UNION ALL
-SELECT     image_id, ad_element_id
+SELECT     images.image_group_id, ad_element_id
 FROM       image_storage_domain_map
 INNER JOIN storage_pool_iso_map ON image_storage_domain_map.storage_domain_id = storage_pool_iso_map.storage_id
-INNER JOIN permissions_view ON object_id = storage_id AND object_type_id = 11 AND allows_viewing_children AND role_type = 2
+INNER JOIN images ON images.image_guid = image_storage_domain_map.image_id
+INNER JOIN permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on system
 UNION ALL
 SELECT     device_id, ad_element_id
