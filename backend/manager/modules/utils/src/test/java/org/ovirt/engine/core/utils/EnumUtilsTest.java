@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 
 public class EnumUtilsTest {
 
-    protected enum EnumForTest {
+    protected enum EnumForTesting {
         ENUM1, ENUM2
     }
 
@@ -23,13 +23,13 @@ public class EnumUtilsTest {
     }
 
     @Test
-    public void nameOrNullForNull() throws Exception {
-        assertNull(EnumUtils.<EnumForTest>nameOrNull(null));
+    public void nameOrNullForNull() {
+        assertNull(EnumUtils.<EnumForTesting>nameOrNull(null));
     }
 
     @Test
-    public void nameOrNullForEnum() throws Exception {
-        assertEquals(EnumForTest.ENUM1.name(), EnumUtils.nameOrNull(EnumForTest.ENUM1));
+    public void nameOrNullForEnum() {
+        assertEquals(EnumForTesting.ENUM1.name(), EnumUtils.nameOrNull(EnumForTesting.ENUM1));
     }
 
     @Test
@@ -39,14 +39,14 @@ public class EnumUtilsTest {
 
     @Test
     public void testEnumCollectionToStringList() {
-        List<EnumForTest> enumCollection = new ArrayList<EnumForTest>();
-        enumCollection.add(EnumForTest.ENUM1);
-        enumCollection.add(EnumForTest.ENUM2);
+        List<EnumForTesting> enumCollection = new ArrayList<EnumForTesting>();
+        enumCollection.add(EnumForTesting.ENUM1);
+        enumCollection.add(EnumForTesting.ENUM2);
 
         List<String> stringList = EnumUtils.enumCollectionToStringList(enumCollection);
         assertNotNull(stringList);
         assertEquals(2, stringList.size());
-        assertTrue(stringList.contains(EnumForTest.ENUM1.name()));
-        assertTrue(stringList.contains(EnumForTest.ENUM2.name()));
+        assertTrue(stringList.contains(EnumForTesting.ENUM1.name()));
+        assertTrue(stringList.contains(EnumForTesting.ENUM2.name()));
     }
 }
