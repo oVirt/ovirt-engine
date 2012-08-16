@@ -2,13 +2,13 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -51,7 +51,7 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            if (StringHelper.isNullOrEmpty(getVdsName())) {
+            if (StringUtils.isEmpty(getVdsName())) {
                 setVdsName("Unavailable");
             }
             return getParameters().getAuditLogType();
