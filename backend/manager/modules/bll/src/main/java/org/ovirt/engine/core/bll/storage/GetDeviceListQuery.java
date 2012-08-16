@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends QueriesCommandBase<P> {
 
@@ -45,7 +45,7 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
         for (LUNs lun : luns) {
             // Filtering code should be deprecated once DC level 3.0 is no longer supported
             if (filteringLUNsEnabled) {
-                if (!StringHelper.isNullOrEmpty(lun.getvolume_group_id())) {
+                if (StringUtils.isNotEmpty(lun.getvolume_group_id())) {
                     log.debugFormat("LUN with GUID {0} already has VG ID {1}, so not returning it.",
                             lun.getLUN_id(), lun.getvolume_group_id());
                 } else if (lunsFromDbById.containsKey(lun.getLUN_id())) {
