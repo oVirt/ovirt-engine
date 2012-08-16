@@ -1316,7 +1316,7 @@ NATURAL JOIN user_flat_groups;
 -- Permissions on permissions
 CREATE OR REPLACE VIEW user_permissions_permissions_view (entity_id, user_id)
 AS
-SELECT       DISTINCT id, ad_element_id
+SELECT       DISTINCT id, user_id
 FROM         permissions_view
 JOIN         user_flat_groups ON granted_id = ad_element_id;
 
