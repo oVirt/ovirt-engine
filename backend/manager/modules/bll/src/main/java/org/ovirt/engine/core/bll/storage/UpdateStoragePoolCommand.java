@@ -61,6 +61,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 );
             }
         }
+
+        copyUnchangedStoragePoolProperties(getStoragePool(), _oldStoragePool);
+
         getStoragePoolDAO().updatePartial(getStoragePool());
 
         updateStoragePoolFormatType();
@@ -236,5 +239,15 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
         return DbFacade.getInstance().getStorageDomainStaticDAO();
+    }
+
+    /**
+     * Copy properties from old entity which assumed not to be available in the param object.
+     *
+     * @param oldStoragePool
+     * @param newStoragePool
+     */
+    private static void copyUnchangedStoragePoolProperties(storage_pool newStoragePool, storage_pool oldStoragePool) {
+        newStoragePool.setStoragePoolFormatType(oldStoragePool.getStoragePoolFormatType());
     }
 }
