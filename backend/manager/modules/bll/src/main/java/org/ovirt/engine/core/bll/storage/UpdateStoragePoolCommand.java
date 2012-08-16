@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSComm
 import org.ovirt.engine.core.common.vdscommands.UpgradeStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -54,7 +53,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     protected void executeCommand() {
         updateQuotaCache();
         if (_oldStoragePool.getstatus() == StoragePoolStatus.Up) {
-            if (!StringHelper.EqOp(_oldStoragePool.getname(), getStoragePool().getname())) {
+            if (!StringUtils.equals(_oldStoragePool.getname(), getStoragePool().getname())) {
                 runVdsCommand(VDSCommandType.SetStoragePoolDescription,
                     new SetStoragePoolDescriptionVDSCommandParameters(
                         getStoragePool().getId(), getStoragePool().getname())
@@ -158,7 +157,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction() && checkStoragePool();
         _oldStoragePool = getStoragePoolDAO().get(getStoragePool().getId());
-        if (returnValue && !StringHelper.EqOp(_oldStoragePool.getname(), getStoragePool().getname())
+        if (returnValue && !StringUtils.equals(_oldStoragePool.getname(), getStoragePool().getname())
                 && getStoragePoolDAO().getByName(getStoragePool().getname()) != null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
