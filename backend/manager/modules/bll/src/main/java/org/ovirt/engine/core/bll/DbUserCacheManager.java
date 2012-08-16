@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -107,40 +107,40 @@ public class DbUserCacheManager {
                 dbUser.setstatus(1);
                 succeded = true;
             }
-            if (!StringHelper.EqOp(dbUser.getname(), adUser.getName())) {
+            if (!StringUtils.equals(dbUser.getname(), adUser.getName())) {
                 dbUser.setname(adUser.getName());
                 succeded = true;
             }
-            if (!StringHelper.EqOp(dbUser.getsurname(), adUser.getSurName())) {
+            if (!StringUtils.equals(dbUser.getsurname(), adUser.getSurName())) {
                 dbUser.setsurname(adUser.getSurName());
                 succeded = true;
             }
-            if (!StringHelper.EqOp(dbUser.getdomain(), adUser.getDomainControler())) {
+            if (!StringUtils.equals(dbUser.getdomain(), adUser.getDomainControler())) {
                 dbUser.setdomain(adUser.getDomainControler());
                 succeded = true;
             }
-            if (!StringHelper.EqOp(dbUser.getusername(), adUser.getUserName())) {
+            if (!StringUtils.equals(dbUser.getusername(), adUser.getUserName())) {
                 dbUser.setusername(adUser.getUserName());
                 succeded = true;
             }
-            if (!StringHelper.EqOp(dbUser.getgroups(), adUser.getGroup())) {
+            if (!StringUtils.equals(dbUser.getgroups(), adUser.getGroup())) {
                 dbUser.setgroups(adUser.getGroup());
                 succeded = true;
                 updatedUsers.add(dbUser.getuser_id());
             }
-            if (!StringHelper.EqOp(dbUser.getdepartment(), adUser.getDepartment())) {
+            if (!StringUtils.equals(dbUser.getdepartment(), adUser.getDepartment())) {
                 dbUser.setdepartment(adUser.getDepartment());
                 succeded = true;
             }
-            if (!StringHelper.EqOp(dbUser.getrole(), adUser.getTitle())) {
+            if (!StringUtils.equals(dbUser.getrole(), adUser.getTitle())) {
                 dbUser.setrole(adUser.getTitle());
                 succeded = true;
             }
-            if (!StringHelper.EqOp(dbUser.getemail(), adUser.getEmail())) {
+            if (!StringUtils.equals(dbUser.getemail(), adUser.getEmail())) {
                 dbUser.setemail(adUser.getEmail());
                 succeded = true;
             }
-            if (!StringHelper.EqOp(dbUser.getGroupIds(), adUser.getGroupIds())) {
+            if (!StringUtils.equals(dbUser.getGroupIds(), adUser.getGroupIds())) {
                 dbUser.setGroupIds(adUser.getGroupIds());
                 succeded = true;
             }
@@ -281,9 +281,9 @@ public class DbUserCacheManager {
                         group.setstatus(AdRefStatus.Inactive);
                         DbFacade.getInstance().getAdGroupDAO().update(group);
                     } else if (groupFromAD != null
-                                && (!StringHelper.EqOp(group.getname(), groupFromAD.getname())
+                                && (!StringUtils.equals(group.getname(), groupFromAD.getname())
                                         || group.getstatus() != groupFromAD
-                                                .getstatus() || !StringHelper.EqOp(group.getDistinguishedName(),
+                                                .getstatus() || !StringUtils.equals(group.getDistinguishedName(),
                                         groupFromAD.getDistinguishedName()))) {
                         DbFacade.getInstance().getAdGroupDAO().update(groupFromAD);
                     }
