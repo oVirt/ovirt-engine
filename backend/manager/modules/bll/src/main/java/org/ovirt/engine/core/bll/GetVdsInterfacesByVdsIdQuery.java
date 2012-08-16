@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -53,7 +53,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
                             && LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
                                 @Override
                                 public boolean eval(VdsNetworkInterface bond) {
-                                    return StringHelper.EqOp(bond.getBondName(), i.getName());
+                                    return StringUtils.equals(bond.getBondName(), i.getName());
                                 }
                             }).size() > 0) {
                     interfaces.add(i);
