@@ -404,9 +404,22 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     targets.add(item);
                 }
 
-                if (Linq.FirstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null)
-                {
+                LunModel currLun = Linq.FirstOrDefault(item.getLuns(), new Linq.LunPredicate(lun));
+                if (currLun == null) {
                     item.getLuns().add(lun);
+                } else {
+                    currLun.setLunId(lun.getLunId());
+                    currLun.setVendorId(lun.getVendorId());
+                    currLun.setProductId(lun.getProductId());
+                    currLun.setSerial(lun.getSerial());
+                    currLun.setMultipathing(lun.getMultipathing());
+                    currLun.setTargets((ArrayList) targets);
+                    currLun.setSize(lun.getSize());
+                    currLun.setIsAccessible(lun.getIsAccessible());
+                    currLun.setStatus(lun.getStatus());
+                    currLun.setIsIncluded(lun.getIsIncluded());
+                    currLun.setIsSelected(lun.getIsSelected());
+                    currLun.setEntity(lun.getEntity());
                 }
             }
 
