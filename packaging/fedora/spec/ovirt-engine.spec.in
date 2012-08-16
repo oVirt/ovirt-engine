@@ -21,15 +21,39 @@
 %global restapi_war %{engine_ear}/restapi.war
 %global root_war %{engine_ear}/root.war
 
-# The name of the engine user and group:
+# The name and ids of the engine user and group:
 %global engine_user ovirt
 %global engine_group ovirt
+%global engine_gid 108
 %global engine_uid 108
 
-# Macro to create the engine user:
+# The name and ids of the VDSM user and group:
+%global vdsm_description Node Virtualization Manager
+%global vdsm_user vdsm
+%global vdsm_group kvm
+%global vdsm_uid 36
+%global vdsm_gid 36
+
+# Macro to create an user:
+#
+# %1 user name
+# %2 user id
+# %3 primary group name
+# %4 primary group id
+# %5 description
+# %6 home directory
+#
+%global create_user() \
+getent group %3 >/dev/null || groupadd -r -g %4 %3; \
+getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d %6 %1
+
+# Macro to create the engine user and group:
 %global create_engine_user \
-/usr/bin/getent group %{engine_group} >/dev/null || /usr/sbin/groupadd -r %{engine_group}; \
-/usr/bin/getent passwd %{engine_user} >/dev/null || /usr/sbin/useradd -c "%{user_description}" -u %{engine_uid} -g %{engine_group} -M -d %{engine_state} %{engine_user}
+%create_user %{engine_user} %{engine_uid} %{engine_group} %{engine_gid} "%{user_description}" %{engine_state}
+
+# Macro to create the VDSM user and group:
+%global create_vdsm_user \
+%create_user %{vdsm_user} %{vdsm_uid} %{vdsm_group} %{vdsm_gid} "%{vdsm_description}" /var/lib/vdsm
 
 %global make_common_opts \\\
 	-j1 \\\
@@ -564,6 +588,10 @@ fi
 
 %pre notification-service
 %create_engine_user
+
+
+%pre setup
+%create_vdsm_user
 
 
 %files
