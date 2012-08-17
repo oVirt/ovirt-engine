@@ -31,6 +31,11 @@ public class MultipleActionsRunner {
     protected boolean isInternal;
 
     /**
+     * Execute the actions only if CanDo of all the requests returns true
+     */
+    protected boolean isRunOnlyIfAllCanDoPass = false;
+
+    /**
      * The context by which each command should be executed (monitored or non-monitored).
      */
     private ExecutionContext executionContext;
@@ -78,12 +83,25 @@ public class MultipleActionsRunner {
             } else {
                 CheckCanDoActionsAsyncroniousely(returnValues);
             }
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    RunCommands();
+
+            boolean canRunActions = true;
+            if (isRunOnlyIfAllCanDoPass) {
+                for (VdcReturnValueBase value : returnValues) {
+                    if (!value.getCanDoAction()) {
+                        canRunActions = false;
+                        break;
+                    }
                 }
-            });
+            }
+
+            if (canRunActions) {
+                ThreadPoolUtil.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        RunCommands();
+                    }
+                });
+            }
         } catch (RuntimeException e) {
             log.error("Failed to execute multiple actions of type: " + _actionType, e);
         }
@@ -185,6 +203,10 @@ public class MultipleActionsRunner {
 
     public void setExecutionContext(ExecutionContext executionContext) {
         this.executionContext = executionContext;
+    }
+
+    public void setIsRunOnlyIfAllCanDoPass(boolean isRunOnlyIfAllCanDoPass) {
+        this.isRunOnlyIfAllCanDoPass = isRunOnlyIfAllCanDoPass;
     }
 
 }

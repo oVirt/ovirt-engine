@@ -410,20 +410,21 @@ public class Backend implements BackendInternal {
 
     @Override
     public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters) {
-        return runMultipleActionsImpl(actionType, parameters, false);
+            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass) {
+        return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllCanDoPass);
     }
 
     @Override
     @ExcludeClassInterceptors
     public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters) {
-        return runMultipleActionsImpl(actionType, parameters, true);
+        return runMultipleActionsImpl(actionType, parameters, true, false);
     }
 
     public ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             boolean isInternal,
+            boolean isRunOnlyIfAllCanDoPass,
             ExecutionContext executionContext) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
         if (!StringUtils.isEmpty(sessionId)) {
@@ -436,6 +437,7 @@ public class Backend implements BackendInternal {
         MultipleActionsRunner runner = MultipleActionsRunnersFactory.CreateMultipleActionsRunner(actionType,
                 parameters, isInternal);
         runner.setExecutionContext(executionContext);
+        runner.setIsRunOnlyIfAllCanDoPass(isRunOnlyIfAllCanDoPass);
         return runner.Execute();
     }
 
@@ -444,13 +446,14 @@ public class Backend implements BackendInternal {
     public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             ExecutionContext executionContext) {
-        return runMultipleActionsImpl(actionType, parameters, true, executionContext);
+        return runMultipleActionsImpl(actionType, parameters, true, false, executionContext);
     }
 
     private ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
-            boolean isInternal) {
-        return runMultipleActionsImpl(actionType, parameters, isInternal, null);
+            boolean isInternal,
+            boolean isRunOnlyIfAllCanDoPass) {
+        return runMultipleActionsImpl(actionType, parameters, isInternal, isRunOnlyIfAllCanDoPass, null);
     }
 
     @Override

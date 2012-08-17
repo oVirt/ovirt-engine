@@ -92,14 +92,15 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
 
     @Override
     public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> multipleParams) {
+            ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllCanDoPass) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         for (VdcActionParametersBase params : multipleParams) {
             params.setSessionId(getSessionId());
         }
 
-        ArrayList<VdcReturnValueBase> returnValues = getBackend().RunMultipleActions(actionType, multipleParams);
+        ArrayList<VdcReturnValueBase> returnValues =
+                getBackend().RunMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass);
 
         return returnValues;
     }

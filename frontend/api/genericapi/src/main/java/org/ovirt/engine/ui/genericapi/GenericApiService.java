@@ -33,9 +33,9 @@ public class GenericApiService {
     }
 
     public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters) {
+            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass) {
         java.util.ArrayList<VdcReturnValueBase> returnValue = backend.RunMultipleActions(
-                actionType, parameters);
+                actionType, parameters, isRunOnlyIfAllCanDoPass);
         return returnValue;
     }
 

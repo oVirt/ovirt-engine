@@ -23,7 +23,8 @@ public interface BackendLocal {
     ErrorTranslator getVdsErrorsTranslator();
 
     java.util.ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters);
+            java.util.ArrayList<VdcActionParametersBase> parameters,
+            boolean isRunOnlyIfAllCanDoPass);
 
     void Initialize();
 

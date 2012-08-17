@@ -493,9 +493,17 @@ public class Frontend {
             final ArrayList<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
+        RunMultipleAction(actionType, parameters, false, callback, state);
+    }
+
+    public static void RunMultipleAction(final VdcActionType actionType,
+            final ArrayList<VdcActionParametersBase> parameters,
+            boolean isRunOnlyIfAllCanDoPass,
+            final IFrontendMultipleActionAsyncCallback callback,
+            final Object state) {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
 
-        service.RunMultipleActions(actionType, parameters, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
+        service.RunMultipleActions(actionType, parameters, isRunOnlyIfAllCanDoPass, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
             @Override
             public void onFailure(Throwable caught) {
                 logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
