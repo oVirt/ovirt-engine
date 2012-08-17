@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
@@ -40,7 +40,7 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
     }
 
     @Override
-    public void updateBrickStatus(Guid brickId, GlusterBrickStatus status) {
+    public void updateBrickStatus(Guid brickId, GlusterStatus status) {
         getCallsHandler().executeModification("UpdateGlusterVolumeBrickStatus",
                 getCustomMapSqlParameterSource()
                 .addValue("id", brickId)
@@ -98,7 +98,7 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
 
             brick.setBrickDirectory(rs.getString("brick_dir"));
             brick.setBrickOrder(rs.getInt("brick_order"));
-            brick.setStatus(GlusterBrickStatus.valueOf(rs.getString("status")));
+            brick.setStatus(GlusterStatus.valueOf(rs.getString("status")));
             return brick;
         }
 

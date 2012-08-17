@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -92,13 +92,13 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     }
 
     @Override
-    public void updateVolumeStatus(Guid volumeId, GlusterVolumeStatus status) {
+    public void updateVolumeStatus(Guid volumeId, GlusterStatus status) {
         getCallsHandler().executeModification("UpdateGlusterVolumeStatus",
                 createVolumeIdParams(volumeId).addValue("status", EnumUtils.nameOrNull(status)));
     }
 
     @Override
-    public void updateVolumeStatusByName(Guid clusterId, String volumeName, GlusterVolumeStatus status) {
+    public void updateVolumeStatusByName(Guid clusterId, String volumeName, GlusterStatus status) {
         getCallsHandler().executeModification("UpdateGlusterVolumeStatusByName",
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", clusterId)
@@ -236,7 +236,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                     .getString("cluster_id")));
             entity.setName(rs.getString("vol_name"));
             entity.setVolumeType(GlusterVolumeType.valueOf(rs.getString("vol_type")));
-            entity.setStatus(GlusterVolumeStatus.valueOf(rs.getString("status")));
+            entity.setStatus(GlusterStatus.valueOf(rs.getString("status")));
             entity.setReplicaCount(rs.getInt("replica_count"));
             entity.setStripeCount(rs.getInt("stripe_count"));
             return entity;

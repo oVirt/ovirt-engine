@@ -13,9 +13,8 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
@@ -112,14 +111,14 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     public void testUpdateVolumeStatus() {
         assertTrue(existingDistVol.isOnline());
 
-        dao.updateVolumeStatus(existingDistVol.getId(), GlusterVolumeStatus.DOWN);
+        dao.updateVolumeStatus(existingDistVol.getId(), GlusterStatus.DOWN);
         GlusterVolumeEntity volume = dao.getById(existingDistVol.getId());
 
         assertNotNull(volume);
         assertFalse(volume.isOnline());
 
         assertFalse(volume.equals(existingDistVol));
-        existingDistVol.setStatus(GlusterVolumeStatus.DOWN);
+        existingDistVol.setStatus(GlusterStatus.DOWN);
         assertEquals(existingDistVol, volume);
     }
 
@@ -129,14 +128,14 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
 
         dao.updateVolumeStatusByName(existingDistVol.getClusterId(),
                 existingDistVol.getName(),
-                GlusterVolumeStatus.DOWN);
+                GlusterStatus.DOWN);
         GlusterVolumeEntity volume = dao.getById(existingDistVol.getId());
 
         assertNotNull(volume);
         assertFalse(volume.isOnline());
 
         assertFalse(volume.equals(existingDistVol));
-        existingDistVol.setStatus(GlusterVolumeStatus.DOWN);
+        existingDistVol.setStatus(GlusterStatus.DOWN);
         assertEquals(existingDistVol, volume);
     }
 
@@ -266,13 +265,13 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         volume.addTransportType(TransportType.TCP);
         volume.setReplicaCount(0);
         volume.setStripeCount(0);
-        volume.setStatus(GlusterVolumeStatus.UP);
+        volume.setStatus(GlusterStatus.UP);
         volume.setOption("auth.allow", "*");
         volume.addAccessProtocol(AccessProtocol.GLUSTER);
         volume.addAccessProtocol(AccessProtocol.NFS);
 
         GlusterBrickEntity brick =
-                new GlusterBrickEntity(volumeId, server, "/export/testVol1", GlusterBrickStatus.UP);
+                new GlusterBrickEntity(volumeId, server, "/export/testVol1", GlusterStatus.UP);
         volume.addBrick(brick);
 
         dao.save(volume);

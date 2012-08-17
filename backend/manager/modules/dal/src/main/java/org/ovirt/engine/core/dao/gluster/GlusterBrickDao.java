@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
 
@@ -21,7 +21,7 @@ public interface GlusterBrickDao extends DAO {
 
     public void replaceBrick(GlusterBrickEntity oldBrick, GlusterBrickEntity newBrick);
 
-    public void updateBrickStatus(Guid brickId, GlusterBrickStatus status);
+    public void updateBrickStatus(Guid brickId, GlusterStatus status);
 
     public void updateBrickOrder(Guid brickId, int brickOrder);
 

@@ -36,14 +36,14 @@ public class GlusterBrickEntity extends IVdcQueryable {
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.BRICK_DIR.NOT_NULL", groups = { CreateEntity.class })
     private String brickDirectory;
 
-    private GlusterBrickStatus status = GlusterBrickStatus.DOWN;
+    private GlusterStatus status = GlusterStatus.DOWN;
 
     private Integer brickOrder;
 
     public GlusterBrickEntity() {
     }
 
-    public GlusterBrickEntity(Guid volumeId, VdsStatic server, String brickDirectory, GlusterBrickStatus brickStatus) {
+    public GlusterBrickEntity(Guid volumeId, VdsStatic server, String brickDirectory, GlusterStatus brickStatus) {
         setVolumeId(volumeId);
         setServerId(server.getId());
         setServerName(server.gethost_name());
@@ -83,16 +83,16 @@ public class GlusterBrickEntity extends IVdcQueryable {
         return brickDirectory;
     }
 
-    public GlusterBrickStatus getStatus() {
+    public GlusterStatus getStatus() {
         return status;
     }
 
-    public void setStatus(GlusterBrickStatus status) {
+    public void setStatus(GlusterStatus status) {
         this.status = status;
     }
 
     public boolean isOnline() {
-        return status == GlusterBrickStatus.UP;
+        return status == GlusterStatus.UP;
     }
 
     public String getQualifiedName() {

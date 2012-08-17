@@ -30,7 +30,7 @@ import org.ovirt.engine.core.compat.StringHelper;
  *
  * @see GlusterVolumeType
  * @see TransportType
- * @see GlusterVolumeStatus
+ * @see GlusterStatus
  * @see GlusterBrickEntity
  * @see GlusterBrickStatus
  * @see GlusterVolumeOptionEntity
@@ -64,7 +64,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     @Valid
     private List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
 
-    private GlusterVolumeStatus status = GlusterVolumeStatus.DOWN;
+    private GlusterStatus status = GlusterStatus.DOWN;
 
     // Gluster and NFS are enabled by default
     private Set<AccessProtocol> accessProtocols = new LinkedHashSet<AccessProtocol>(Arrays.asList(new AccessProtocol[] {
@@ -128,16 +128,16 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         setVolumeType(GlusterVolumeType.valueOf(volumeType));
     }
 
-    public GlusterVolumeStatus getStatus() {
+    public GlusterStatus getStatus() {
         return status;
     }
 
-    public void setStatus(GlusterVolumeStatus status) {
+    public void setStatus(GlusterStatus status) {
         this.status = status;
     }
 
     public boolean isOnline() {
-        return this.status == GlusterVolumeStatus.UP;
+        return this.status == GlusterStatus.UP;
     }
 
     public Integer getReplicaCount() {

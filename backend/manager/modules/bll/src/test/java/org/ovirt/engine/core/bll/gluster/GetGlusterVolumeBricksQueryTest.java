@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.gluster.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,7 +41,7 @@ AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParamete
         brickEntity.setId(Guid.NewGuid());
         brickEntity.setServerId(Guid.NewGuid());
         brickEntity.setBrickDirectory("/tmp/b1");
-        brickEntity.setStatus(GlusterBrickStatus.DOWN);
+        brickEntity.setStatus(GlusterStatus.DOWN);
         bricks.add(brickEntity);
         expected.setBricks(bricks);
     }

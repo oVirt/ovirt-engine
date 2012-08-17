@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -334,12 +334,12 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
         {
-            if (volume.getStatus() == GlusterVolumeStatus.UP)
+            if (volume.getStatus() == GlusterStatus.UP)
             {
                 getRemoveVolumeCommand().setIsExecutionAllowed(false);
                 getStartCommand().setIsExecutionAllowed(false);
             }
-            else if (volume.getStatus() == GlusterVolumeStatus.DOWN)
+            else if (volume.getStatus() == GlusterStatus.DOWN)
             {
                 getStopCommand().setIsExecutionAllowed(false);
                 getRebalanceCommand().setIsExecutionAllowed(false);

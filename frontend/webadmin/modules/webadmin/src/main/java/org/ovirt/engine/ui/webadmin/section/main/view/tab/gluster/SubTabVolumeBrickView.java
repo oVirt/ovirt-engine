@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -43,10 +43,10 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick());
 
         TextColumnWithTooltip<GlusterBrickEntity> statusColumn =
-                new EnumColumn<GlusterBrickEntity, GlusterBrickStatus>() {
+                new EnumColumn<GlusterBrickEntity, GlusterStatus>() {
 
                     @Override
-                    protected GlusterBrickStatus getRawValue(GlusterBrickEntity object) {
+                    protected GlusterStatus getRawValue(GlusterBrickEntity object) {
                         return object.getStatus();
                     }
                 };

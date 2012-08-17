@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -373,7 +373,7 @@ public class ClusterPolicyModel extends EntityModel
                 int volumesDown = 0;
                 for (GlusterVolumeEntity volumeEntity : volumeList)
                 {
-                    if (volumeEntity.getStatus() == GlusterVolumeStatus.UP)
+                    if (volumeEntity.getStatus() == GlusterStatus.UP)
                     {
                         volumesUp++;
                     }

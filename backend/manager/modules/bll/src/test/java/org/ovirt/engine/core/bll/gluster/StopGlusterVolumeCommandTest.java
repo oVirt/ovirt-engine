@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,7 +59,7 @@ public class StopGlusterVolumeCommandTest {
         volumeEntity.addAccessProtocol(AccessProtocol.GLUSTER);
         volumeEntity.addTransportType(TransportType.TCP);
         volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);
-        volumeEntity.setStatus((volumeId.equals(startedVolumeId)) ? GlusterVolumeStatus.UP : GlusterVolumeStatus.DOWN);
+        volumeEntity.setStatus((volumeId.equals(startedVolumeId)) ? GlusterStatus.UP : GlusterStatus.DOWN);
         volumeEntity.setClusterId(CLUSTER_ID);
         return volumeEntity;
     }

@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.TransportType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 
 public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<GlusterVolume, GlusterVolumeEntity, GlusterVolumeEntity> {
 
@@ -71,11 +71,11 @@ public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<Glust
      */
     @Test
     public void testFromBackendToRest() {
-        testStatusMapping(GlusterVolumeStatus.UP, GlusterState.UP);
-        testStatusMapping(GlusterVolumeStatus.DOWN, GlusterState.DOWN);
+        testStatusMapping(GlusterStatus.UP, GlusterState.UP);
+        testStatusMapping(GlusterStatus.DOWN, GlusterState.DOWN);
     }
 
-    private void testStatusMapping(GlusterVolumeStatus backendStatus, GlusterState restStatus) {
+    private void testStatusMapping(GlusterStatus backendStatus, GlusterState restStatus) {
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setStatus(backendStatus);
         GlusterVolume restVolume = GlusterVolumeMapper.map(volume, null);

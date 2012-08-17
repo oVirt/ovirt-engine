@@ -19,9 +19,8 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
@@ -82,7 +81,7 @@ public class AddBricksToGlusterVolumeCommandTest {
                                     true,
                                     VDSType.oVirtNode),
                             "/tmp/s" + i.toString(),
-                            GlusterBrickStatus.UP);
+                            GlusterStatus.UP);
             bricks.add(brick);
         }
         return bricks;
@@ -104,7 +103,7 @@ public class AddBricksToGlusterVolumeCommandTest {
                                     true,
                                     VDSType.oVirtNode),
                             "/tmp/s" + i.toString(),
-                            GlusterBrickStatus.UP);
+                            GlusterStatus.UP);
             bricks.add(brick);
         }
         return bricks;
@@ -139,7 +138,7 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     private GlusterVolumeEntity getSingleBrickVolume(Guid volumeId) {
         GlusterVolumeEntity volume = getGlusterVolume(volumeId);
-        volume.setStatus(GlusterVolumeStatus.UP);
+        volume.setStatus(GlusterStatus.UP);
         volume.setBricks(getBricks(volumeId, 1));
         volume.setClusterId(clusterId);
         return volume;
@@ -147,7 +146,7 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     private GlusterVolumeEntity getMultiBrickVolume(Guid volumeId) {
         GlusterVolumeEntity volume = getGlusterVolume(volumeId);
-        volume.setStatus(GlusterVolumeStatus.UP);
+        volume.setStatus(GlusterStatus.UP);
         volume.setBricks(getBricks(volumeId, 2));
         volume.setClusterId(clusterId);
         return volume;

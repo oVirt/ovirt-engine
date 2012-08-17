@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import java.util.Iterator;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -98,9 +98,9 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         getTable().addColumn(transportColumn, constants.transportTypesVolume());
 
         TextColumnWithTooltip<GlusterVolumeEntity> statusColumn =
-                new EnumColumn<GlusterVolumeEntity, GlusterVolumeStatus>() {
+                new EnumColumn<GlusterVolumeEntity, GlusterStatus>() {
                     @Override
-                    protected GlusterVolumeStatus getRawValue(GlusterVolumeEntity object) {
+                    protected GlusterStatus getRawValue(GlusterVolumeEntity object) {
                         return object.getStatus();
                     }
                 };

@@ -3,9 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSParameters;
@@ -71,8 +70,8 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
     }
 
     private void updateVolumeStatusInDb(Guid volumeId) {
-        getGlusterVolumeDao().updateVolumeStatus(volumeId, GlusterVolumeStatus.DOWN);
-        updateBrickStatus(GlusterBrickStatus.DOWN);
+        getGlusterVolumeDao().updateVolumeStatus(volumeId, GlusterStatus.DOWN);
+        updateBrickStatus(GlusterStatus.DOWN);
     }
 
 }

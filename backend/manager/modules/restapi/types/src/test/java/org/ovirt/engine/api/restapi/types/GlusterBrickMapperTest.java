@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 
 public class GlusterBrickMapperTest extends AbstractInvertibleMappingTest<GlusterBrick, GlusterBrickEntity, GlusterBrickEntity> {
 
@@ -29,11 +29,11 @@ public class GlusterBrickMapperTest extends AbstractInvertibleMappingTest<Gluste
      */
     @Test
     public void testFromBackendToRest() {
-        testStatusMapping(GlusterBrickStatus.UP, GlusterState.UP);
-        testStatusMapping(GlusterBrickStatus.DOWN, GlusterState.DOWN);
+        testStatusMapping(GlusterStatus.UP, GlusterState.UP);
+        testStatusMapping(GlusterStatus.DOWN, GlusterState.DOWN);
     }
 
-    private void testStatusMapping(GlusterBrickStatus backendStatus, GlusterState restStatus) {
+    private void testStatusMapping(GlusterStatus backendStatus, GlusterState restStatus) {
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setStatus(backendStatus);
         GlusterBrick restVolume = GlusterBrickMapper.map(brick, null);

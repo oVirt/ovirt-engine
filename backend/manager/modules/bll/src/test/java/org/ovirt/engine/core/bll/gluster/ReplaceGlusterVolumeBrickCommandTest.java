@@ -19,10 +19,9 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskOperation;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
@@ -81,7 +80,7 @@ public class ReplaceGlusterVolumeBrickCommandTest {
 
     private GlusterVolumeEntity getDistributedVolume(Guid volumeId) {
         GlusterVolumeEntity volume = getVolume(volumeId);
-        volume.setStatus((volumeId == volumeId1) ? GlusterVolumeStatus.UP : GlusterVolumeStatus.DOWN);
+        volume.setStatus((volumeId == volumeId1) ? GlusterStatus.UP : GlusterStatus.DOWN);
         volume.setBricks(getBricks(volumeId, "distrib", 2));
         volume.setVolumeType(GlusterVolumeType.DISTRIBUTE);
         volume.setClusterId(clusterId);
@@ -90,7 +89,7 @@ public class ReplaceGlusterVolumeBrickCommandTest {
 
     private GlusterVolumeEntity getReplicatedVolume(Guid volumeId, int brickCount) {
         GlusterVolumeEntity volume = getVolume(volumeId);
-        volume.setStatus(GlusterVolumeStatus.UP);
+        volume.setStatus(GlusterStatus.UP);
         volume.setBricks(getBricks(volumeId, "repl", brickCount));
         volume.setVolumeType(GlusterVolumeType.REPLICATE);
         volume.setReplicaCount(brickCount);
@@ -123,7 +122,7 @@ public class ReplaceGlusterVolumeBrickCommandTest {
                                     true,
                                     VDSType.oVirtNode),
                             "/tmp/" + dirPrefix + i.toString(),
-                            GlusterBrickStatus.UP);
+                            GlusterStatus.UP);
             bricks.add(brick);
         }
         return bricks;

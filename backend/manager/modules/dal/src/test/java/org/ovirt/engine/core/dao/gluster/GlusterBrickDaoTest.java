@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
 
@@ -33,7 +33,7 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
         GlusterBrickEntity brickToAdd = new GlusterBrickEntity(EXISTING_VOL_ID,
                 server,
                 "/export/test-vol-distribute-1/dir3",
-                GlusterBrickStatus.UP);
+                GlusterStatus.UP);
 
         dao.save(brickToAdd);
 
@@ -67,7 +67,7 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
                 new GlusterBrickEntity(EXISTING_VOL_ID,
                         server,
                         "/export/test-vol-distribute-1/dir3",
-                        GlusterBrickStatus.UP);
+                        GlusterStatus.UP);
 
         assertNull(dao.getById(newBrick.getId()));
 
@@ -84,12 +84,12 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
     public void testUpdateBrickStatus() {
         GlusterBrickEntity existingBrick = dao.getById(EXISTING_BRICK_ID);
         assertNotNull(existingBrick);
-        assertEquals(GlusterBrickStatus.UP, existingBrick.getStatus());
+        assertEquals(GlusterStatus.UP, existingBrick.getStatus());
 
-        dao.updateBrickStatus(EXISTING_BRICK_ID, GlusterBrickStatus.DOWN);
+        dao.updateBrickStatus(EXISTING_BRICK_ID, GlusterStatus.DOWN);
 
         existingBrick = dao.getById(EXISTING_BRICK_ID);
         assertNotNull(existingBrick);
-        assertEquals(GlusterBrickStatus.DOWN, existingBrick.getStatus());
+        assertEquals(GlusterStatus.DOWN, existingBrick.getStatus());
     }
 }

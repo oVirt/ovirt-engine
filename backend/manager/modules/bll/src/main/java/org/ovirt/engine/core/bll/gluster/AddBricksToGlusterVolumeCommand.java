@@ -7,9 +7,8 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -178,9 +177,8 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         }
     }
 
-    private GlusterBrickStatus getBrickStatus() {
-        return (getGlusterVolume().getStatus() == GlusterVolumeStatus.UP) ? GlusterBrickStatus.UP
-                : GlusterBrickStatus.DOWN;
+    private GlusterStatus getBrickStatus() {
+        return getGlusterVolume().getStatus();
     }
 
     private boolean validateBricks(List<GlusterBrickEntity> newBricks) {

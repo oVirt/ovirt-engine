@@ -3,7 +3,7 @@ package org.ovirt.engine.core.searchbackend.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
@@ -21,7 +21,7 @@ import org.ovirt.engine.core.searchbackend.StringConditionRelationAutoCompleter;
  * <li>transport_type - {@link TransportType} - transport_type<br>
  * <li>replica_count - {@link Integer} - replica_count<br>
  * <li>stripe_count - {@link Integer} - stripe_count<br>
- * <li>status - {@link GlusterVolumeStatus} - status<br>
+ * <li>status - {@link GlusterStatus} - status<br>
  */
 public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public final static GlusterVolumeConditionFieldAutoCompleter INSTANCE = new GlusterVolumeConditionFieldAutoCompleter();
@@ -45,7 +45,7 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
         addField(FIELDS.TRANSPORT_TYPE.toString(), TransportType.class, "transport_type");
         addField(FIELDS.REPLICA_COUNT.toString(), Integer.class, "replica_count");
         addField(FIELDS.STRIPE_COUNT.toString(), Integer.class, "stripe_count");
-        addField(FIELDS.STATUS.toString(), GlusterVolumeStatus.class, "status");
+        addField(FIELDS.STATUS.toString(), GlusterStatus.class, "status");
     }
 
     private GlusterVolumeConditionFieldAutoCompleter() {
@@ -83,7 +83,7 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
             case TRANSPORT_TYPE:
                 return new EnumNameAutoCompleter(TransportType.class);
             case STATUS:
-                return new EnumNameAutoCompleter(GlusterVolumeStatus.class);
+                return new EnumNameAutoCompleter(GlusterStatus.class);
             default:
                 return null;
             }

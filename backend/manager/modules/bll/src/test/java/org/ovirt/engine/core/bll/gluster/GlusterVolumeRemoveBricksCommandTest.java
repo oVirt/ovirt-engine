@@ -17,9 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
@@ -54,7 +53,7 @@ public class GlusterVolumeRemoveBricksCommandTest {
             GlusterBrickEntity brick1 = new GlusterBrickEntity();
             brick1.setVolumeId(volumeId);
             brick1.setServerName("server1");
-            brick1.setStatus(GlusterBrickStatus.UP);
+            brick1.setStatus(GlusterStatus.UP);
             brick1.setBrickDirectory("/tmp/s" + i.toString());
             bricks.add(brick1);
         }
@@ -80,7 +79,7 @@ public class GlusterVolumeRemoveBricksCommandTest {
 
     private GlusterVolumeEntity getSingleBrickVolume(Guid volumeId) {
         GlusterVolumeEntity volume = getGlusterVolume(volumeId);
-        volume.setStatus(GlusterVolumeStatus.UP);
+        volume.setStatus(GlusterStatus.UP);
         volume.setBricks(getBricks(volumeId, 1));
         volume.setClusterId(CLUSTER_ID);
         return volume;
@@ -88,7 +87,7 @@ public class GlusterVolumeRemoveBricksCommandTest {
 
     private GlusterVolumeEntity getMultiBrickVolume(Guid volumeId) {
         GlusterVolumeEntity volume = getGlusterVolume(volumeId);
-        volume.setStatus(GlusterVolumeStatus.UP);
+        volume.setStatus(GlusterStatus.UP);
         volume.setBricks(getBricks(volumeId, 2));
         volume.setClusterId(CLUSTER_ID);
         return volume;
