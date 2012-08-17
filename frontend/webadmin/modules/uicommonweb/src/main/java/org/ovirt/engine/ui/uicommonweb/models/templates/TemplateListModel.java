@@ -359,7 +359,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             return;
         }
 
-        UnitVmModel model = new UnitVmModel(new TemplateVmModelBehavior(template));
+        UnitVmModel model = new UnitVmModel(createBehavior(template));
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
         model.setHashName("edit_template"); //$NON-NLS-1$
@@ -378,6 +378,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsCancel(true);
         model.getCommands().add(command);
+    }
+
+    protected TemplateVmModelBehavior createBehavior(VmTemplate template) {
+        return new TemplateVmModelBehavior(template);
     }
 
     private void remove()

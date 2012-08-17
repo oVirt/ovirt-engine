@@ -15,6 +15,8 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionList
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalTemplateVmModelBehavior;
 
 public class UserPortalTemplateListModel extends TemplateListModel
 {
@@ -58,5 +60,10 @@ public class UserPortalTemplateListModel extends TemplateListModel
         list.add(2, new UserPortalTemplateDiskListModel());
         list.add(new UserPortalTemplateEventListModel());
         list.add(new UserPortalPermissionListModel());
+    }
+
+    @Override
+    protected TemplateVmModelBehavior createBehavior(VmTemplate template) {
+        return new UserPortalTemplateVmModelBehavior(template);
     }
 }

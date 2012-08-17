@@ -1313,6 +1313,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             gettempVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
 
+        gettempVm().setCpuPinning((String) model.getCpuPinning()
+                .getEntity());
+
         VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
         if ((Boolean) model.getIsAutoAssign().getEntity())
         {

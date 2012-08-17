@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -162,6 +163,20 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                         : new Linq.TemplatePredicate(NGuid.Empty)));
 
         UpdateIsDisksAvailable();
+    }
+
+    /**
+     * Disabled to change this in userportal
+     */
+    @Override
+    protected void updateHostPinning(MigrationSupport migrationSupport) {
+    }
+
+    /**
+     * Disabled to change this in userportal
+     */
+    @Override
+    protected void doChangeDefautlHost(NGuid hostGuid) {
     }
 
     @Override
