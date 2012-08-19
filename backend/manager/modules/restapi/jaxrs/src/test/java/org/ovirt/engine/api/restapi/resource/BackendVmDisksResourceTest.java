@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -20,8 +21,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -215,9 +216,11 @@ public class BackendVmDisksResourceTest
                                      new String[] { "VmId" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
-        storage_domains sd = new storage_domains();
-        sd.setId(GUIDS[2]);
-        setUpGetEntityExpectations("Storage: name=Storage_Domain_1", SearchType.StorageDomain, sd);
+        setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                getStorageDomains());
         setUpCreationExpectations(VdcActionType.AddDisk,
                                   AddDiskParameters.class,
                                   new String[] { "VmId", "StorageDomainId" },
@@ -242,6 +245,15 @@ public class BackendVmDisksResourceTest
         assertTrue(response.getEntity() instanceof Disk);
         verifyModel((Disk)response.getEntity(), 0);
         assertNull(((Disk)response.getEntity()).getCreationStatus());
+    }
+
+    private Object getStorageDomains() {
+        List<storage_domains> sds = new LinkedList<storage_domains>();
+        storage_domains sd = new storage_domains();
+        sd.setstorage_name("Storage_Domain_1");
+        sd.setId(GUIDS[2]);
+        sds.add(sd);
+        return sds;
     }
 
     @Test

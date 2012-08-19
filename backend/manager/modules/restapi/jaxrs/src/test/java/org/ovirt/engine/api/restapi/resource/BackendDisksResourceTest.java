@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDisksResourceTest extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDisksResource> {
@@ -100,9 +102,11 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         Disk model = getModel(0);
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
-        storage_domains sd = new storage_domains();
-        sd.setId(GUIDS[2]);
-        setUpGetEntityExpectations("Storage: name=Storage_Domain_1", SearchType.StorageDomain, sd);
+        setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                getStorageDomains());
         setUpCreationExpectations(VdcActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {},
@@ -122,6 +126,15 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         assertTrue(response.getEntity() instanceof Disk);
         verifyModel((Disk)response.getEntity(), 0);
         assertNull(((Disk)response.getEntity()).getCreationStatus());
+    }
+
+    private Object getStorageDomains() {
+        List<storage_domains> sds = new LinkedList<storage_domains>();
+        storage_domains sd = new storage_domains();
+        sd.setstorage_name("Storage_Domain_1");
+        sd.setId(GUIDS[2]);
+        sds.add(sd);
+        return sds;
     }
 
     static Disk getModel(int index) {

@@ -6,6 +6,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -33,13 +35,28 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             params.setStorageDomainId(Guid.createGuidFromString(disk.getStorageDomains().getStorageDomains().get(0).getId()));
         } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
-            params.setStorageDomainId(
-                    getEntity(storage_domains.class,
-                            SearchType.StorageDomain,
-                            "Storage: name=" + disk.getStorageDomains().getStorageDomains().get(0).getName()).getId());
+            Guid storageDomainId = getStorageDomainId(disk.getStorageDomains().getStorageDomains().get(0).getName());
+            if (storageDomainId == null) {
+                notFound(StorageDomain.class);
+            } else {
+                params.setStorageDomainId(storageDomainId);
+            }
         }
         return performCreation(VdcActionType.AddDisk, params,
                 new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class));
+    }
+
+    private Guid getStorageDomainId(String storageDomainName) {
+        List<storage_domains> storageDomains =
+                getBackendCollection(storage_domains.class,
+                        VdcQueryType.GetAllStorageDomains,
+                        new VdcQueryParametersBase());
+        for (storage_domains storageDomain : storageDomains) {
+            if (storageDomain.getstorage_name().equals(storageDomainName)) {
+                return storageDomain.getId();
+            }
+        }
+        return null;
     }
 
     @Override
