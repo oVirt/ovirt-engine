@@ -38,4 +38,13 @@ public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends St
 
         return retVal;
     }
+
+    protected boolean validateStpProperty() {
+        boolean stpIsAllowed = true;
+        if (!getParameters().getNetwork().isVmNetwork() && getParameters().getNetwork().getstp()) {
+            addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_CANNOT_SUPPORT_STP);
+            stpIsAllowed = false;
+        }
+        return stpIsAllowed;
+    }
 }

@@ -49,6 +49,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return false;
         }
 
+        if (!validateStpProperty()) {
+            return false;
+        }
+
         // check that network name not start with 'bond'
         if (getParameters().getNetwork().getname().toLowerCase().startsWith("bond")) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME);

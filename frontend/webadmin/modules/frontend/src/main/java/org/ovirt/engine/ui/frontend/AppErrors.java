@@ -1120,6 +1120,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following VMs are actively using the Logical Network: ${VmNames}. Please stop the VMs and try again.")
     String NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. STP can only be enabled on VM Networks.")
+    String NON_VM_NETWORK_CANNOT_SUPPORT_STP();
+
     @DefaultStringValue("The currently used VM Snapshot Image cannot be used in Preview command.")
     String CANNOT_PREIEW_CURRENT_IMAGE();
 
