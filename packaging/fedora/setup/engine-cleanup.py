@@ -170,6 +170,55 @@ def _verifyUserPermissions():
         print MSG_ERROR_USER_NOT_ROOT % (username)
         sys.exit(1)
 
+def cleanPgpass():
+    '''
+    This function cleans engine entries from pgpass file
+    '''
+
+    # Nothing to do if the .pgpass file doesn't exist:
+    if not os.path.exists(basedefs.DB_PASS_FILE):
+        logging.debug("The %s file doesn't exist." % basedefs.DB_PASS_FILE)
+        return
+
+    backupFile = None
+    # Cleaning .pgpass
+    try:
+        backupFile = "%s.%s" % (basedefs.DB_PASS_FILE, utils.getCurrentDateTime())
+        logging.debug("Found %s file, backing current to %s" % (basedefs.DB_PASS_FILE, backupFile))
+        shutil.copyfile(basedefs.DB_PASS_FILE, backupFile)
+
+        lines = []
+        with open(basedefs.DB_PASS_FILE, 'r') as f:
+            lines = f.read().split('\n')
+            inEngine = None
+            newLines = lines[:]
+            for line in newLines:
+                if basedefs.PGPASS_FILE_HEADER_LINE.split('\n')[0] in line:
+                    inEngine=True
+
+                if basedefs.PGPASS_FILE_CLOSING_LINE in line:
+                    lines.remove(line)
+                    inEngine=False
+
+                if inEngine:
+                    lines.remove(line)
+
+        with open(basedefs.DB_PASS_FILE, 'w') as f:
+            for line in lines:
+                f.write("%s\n" % line)
+
+    except:
+        logging.error("Failed to clean %s" % basedefs.DB_PASS_FILE)
+        logging.debug("Restoring original %s file from backup %s" % (basedefs.DB_PASS_FILE, backupFile))
+        shutil.copyfile(backupFile, basedefs.DB_PASS_FILE)
+        raise Exception("Failed to clean %s" % basedefs.DB_PASS_FILE)
+
+    # if cleaning ok, remove backup
+    logging.debug("Removing %s" % backupFile)
+    os.remove(backupFile)
+    logging.debug("Cleaning %s completed successfully" % basedefs.DB_PASS_FILE)
+
+
 class CA():
 
     def exists(self):
@@ -275,6 +324,7 @@ class DB():
         self.dropped = True
         logging.debug("DB Drop completed successfully")
 
+
     def exists(self):
         """
         check that db exists
@@ -366,9 +416,9 @@ def main(options):
     # Stop JBoss
     runFunc(stopJboss, MSG_INFO_STOP_JBOSS)
 
-    # Backup and drop DB (only if 'basedefs.DB_NAME' db exists)
+    # Backup DB, drop DB and clean .pgpass file (only if 'basedefs.DB_NAME' db exists)
     if db.exists() and options.drop_db:
-        runFunc([db.backup, db.drop], MSG_INFO_REMOVE_DB)
+        runFunc([db.backup, db.drop, cleanPgpass], MSG_INFO_REMOVE_DB)
 
     # Remove CA
     if ca.exists() and options.remove_ca:
