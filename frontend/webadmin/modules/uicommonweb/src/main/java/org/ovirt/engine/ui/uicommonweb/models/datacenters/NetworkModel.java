@@ -188,6 +188,16 @@ public class NetworkModel extends Model
         privateOriginalClusters = value;
     }
 
+    private boolean isSupportBridgesReportByVDSM = true;
+
+    public boolean isSupportBridgesReportByVDSM() {
+        return isSupportBridgesReportByVDSM;
+    }
+
+    public void setSupportBridgesReportByVDSM(boolean isSupportBridgesReportByVDSM) {
+        this.isSupportBridgesReportByVDSM = isSupportBridgesReportByVDSM;
+    }
+
     public NetworkModel()
     {
         setName(new EntityModel());
@@ -215,7 +225,7 @@ public class NetworkModel extends Model
                 super.setEntity(value);
                 getName().setIsChangable((Boolean) value);
                 getDescription().setIsChangable((Boolean) value);
-                getIsVmNetwork().setIsChangable((Boolean) value);
+                getIsVmNetwork().setIsChangable(isSupportBridgesReportByVDSM() && (Boolean) value);
                 getHasVLanTag().setIsChangable((Boolean) value);
                 getVLanTag().setIsChangable((Boolean) value);
                 getHasMtu().setIsChangable((Boolean) value);

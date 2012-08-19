@@ -2355,4 +2355,19 @@ public final class AsyncDataProvider {
         Frontend.RunMultipleQueries(queryTypeList, parametersList, callback);
     }
 
+    public static void IsSupportBridgesReportByVDSM(AsyncQuery aQuery, String version) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? ((Boolean) source).booleanValue() : true;
+            }
+        };
+        GetConfigurationValueParameters tempVar =
+                new GetConfigurationValueParameters(ConfigurationValues.SupportBridgesReportByVDSM);
+        tempVar.setVersion(version);
+        GetConfigFromCache(tempVar, aQuery);
+    }
+
+
 }

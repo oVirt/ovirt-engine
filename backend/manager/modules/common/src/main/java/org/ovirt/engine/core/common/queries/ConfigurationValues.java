@@ -70,6 +70,7 @@ public enum ConfigurationValues {
     CustomPublicConfig_AppsWebSite(ConfigAuthType.User),
     DocsURL(ConfigAuthType.User),
     HotPlugEnabled(ConfigAuthType.User),
+    SupportBridgesReportByVDSM(ConfigAuthType.User),
     ManagementNetwork,
     ApplicationMode(ConfigAuthType.User),
     ShareableDiskEnabled(ConfigAuthType.User),
