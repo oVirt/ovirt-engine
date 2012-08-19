@@ -10,7 +10,7 @@
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView.Style">
 		.syncInfo {
-			width: 110px;
+			width: 100%;
 		}
 	</ui:style>
 
