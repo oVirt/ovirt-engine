@@ -597,7 +597,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.IMPORTEXPORT_STARTING_REMOVE_VM, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE, AuditLogSeverity.WARNING);
-        mSeverities.put(AuditLogType.IMPORTEXPORT_IMPORT_VM_INTERFACES_ON_NON_VM_NETWORKS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_INVALID_INTERFACES, AuditLogSeverity.NORMAL);
     }
 
     private static void initNetworkSeverities() {

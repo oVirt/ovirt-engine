@@ -33,6 +33,8 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -493,7 +495,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             public Void runInTransaction() {
                 AddVmStatic();
                 AddVmDynamic();
-                AddVmNetwork();
+                addVmInterfaces();
                 AddVmStatistics();
                 getCompensationContext().stateChanged();
                 return null;
@@ -808,25 +810,35 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     protected boolean macAdded = false;
 
-    protected void AddVmNetwork() {
-        addInterfacesFromTemplate();
-        auditInvalidInterfaces();
-    }
-
-    private void addInterfacesFromTemplate() {
+    protected void addVmInterfaces() {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
+        List<String> invalidNetworkNames = new ArrayList<String>();
+        List<String> invalidIfaceNames = new ArrayList<String>();
+        Map<String, Network> networksInVdsByName =
+                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVm().getvds_group_id()));
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
-            if (iface.getId() == null) {
-                iface.setId(Guid.NewGuid());
+            initInterface(iface);
+            if (!vmInterfaceManager.isValidVmNetwork(iface, networksInVdsByName)) {
+                invalidNetworkNames.add(iface.getNetworkName());
+                invalidIfaceNames.add(iface.getName());
+                iface.setNetworkName(StringUtils.EMPTY);
             }
-            fillMacAddressIfMissing(iface);
-            iface.setVmTemplateId(null);
-            iface.setVmId(getVmId());
-            iface.setVmName(getVm().getvm_name());
 
             macAdded = vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity());
         }
+
+        auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
+    }
+
+    private void initInterface(VmNetworkInterface iface) {
+        if (iface.getId() == null) {
+            iface.setId(Guid.NewGuid());
+        }
+        fillMacAddressIfMissing(iface);
+        iface.setVmTemplateId(null);
+        iface.setVmId(getVmId());
+        iface.setVmName(getVm().getvm_name());
     }
 
     private void AddVmDynamic() {
@@ -929,29 +941,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return super.getAuditLogTypeValue();
     }
 
-    /**
-     * log to audit-log if VmInterfaces are attached on non VmNetworks
-     */
-    private void auditInvalidInterfaces() {
-        List<VmNetworkInterface> interfaces = getVm().getInterfaces();
-        StringBuilder networks = new StringBuilder();
-        StringBuilder ifaces = new StringBuilder();
-        for (VmNetworkInterface iface : interfaces) {
-            if (!VmInterfaceManager.isValidVmNetwork(iface, getVm().getvds_group_id())) {
-                networks.append(iface.getNetworkName()).append(",");
-                ifaces.append(iface.getName()).append(",");
-            }
-        }
-
-        if (networks.length() > 0) {
-            networks.deleteCharAt(networks.length() - 1); // remove the last comma
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.AddCustomValue("Newtorks", networks.toString());
-            logable.AddCustomValue("Interfaces", ifaces.toString());
-            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_INTERFACES_ON_NON_VM_NETWORKS);
-        }
-    }
-
     private static Log log = LogFactory.getLog(ImportVmCommand.class);
 
     @Override
@@ -1046,4 +1035,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
     }
 
+    @Override
+    protected AuditLogType getAuditLogTypeForInvalidInterfaces() {
+        return AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES;
+    }
 }

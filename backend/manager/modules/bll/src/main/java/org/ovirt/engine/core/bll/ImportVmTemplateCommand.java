@@ -25,6 +25,8 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -341,7 +343,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected void AddVmInterfaces() {
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
         List<VmNetworkInterface> interfaces = getVmTemplate().getInterfaces();
+        List<String> invalidNetworkNames = new ArrayList<String>();
+        List<String> invalidIfaceNames = new ArrayList<String>();
+        Map<String, Network> networksInVdsByName =
+                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVm().getvds_group_id()));
         String networkName;
         for (VmNetworkInterface iface : interfaces) {
             if (iface.getId() == null) {
@@ -357,11 +364,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             iStat.setVmId(getVmTemplateId());
             iDynamic.setVmTemplateId(getVmTemplateId());
             iDynamic.setName(iface.getName());
-            if (VmInterfaceManager.isValidVmNetwork(iface, getVmTemplate().getvds_group_id())) {
+            if (vmInterfaceManager.isValidVmNetwork(iface, networksInVdsByName)) {
                 iDynamic.setNetworkName(networkName);
-            }
-            else {
-                log.warnFormat("Imported template interface {0} has an invalid network name {1}, network name was set to empty string" , iface.getName(), networkName);
+            } else {
+                invalidNetworkNames.add(iface.getNetworkName());
+                invalidIfaceNames.add(iface.getName());
                 iDynamic.setNetworkName(StringUtils.EMPTY);
             }
             iDynamic.setSpeed(iface.getSpeed());
@@ -372,6 +379,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             DbFacade.getInstance().getVmNetworkStatisticsDAO().save(iStat);
             getCompensationContext().snapshotNewEntity(iStat);
         }
+
+        auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
     }
 
     @Override
@@ -523,5 +532,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 }
             }
         }
+    }
+
+    @Override
+    protected AuditLogType getAuditLogTypeForInvalidInterfaces() {
+        return AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_INVALID_INTERFACES;
     }
 }

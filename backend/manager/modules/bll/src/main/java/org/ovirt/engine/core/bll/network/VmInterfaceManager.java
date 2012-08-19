@@ -6,9 +6,8 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -78,16 +77,12 @@ public class VmInterfaceManager {
     }
 
     /**
-     * Checks if a Network belongs to the cluster and is a VM Network
+     * Checks if a Network is in the given list and is a VM Network
      * @param iface
-     * @param clusterId
+     * @param networksByName
      * @return
      */
-    public static boolean isValidVmNetwork(VmNetworkInterface iface, Guid clusterId) {
-        Map<String, Network> networksByName =
-            Entities.entitiesByName(DbFacade.getInstance()
-                    .getNetworkDAO()
-                    .getAllForCluster(clusterId));
+    public boolean isValidVmNetwork(VmNetworkInterface iface, Map<String, Network> networksByName) {
         String networkName = iface.getNetworkName();
         return (networksByName.containsKey(networkName) && networksByName.get(networkName).isVmNetwork());
     }

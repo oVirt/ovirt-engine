@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.network;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -11,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -22,6 +25,7 @@ import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -30,6 +34,8 @@ import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class VmInterfaceManagerTest {
+
+    private final String NETWORK_NAME = "networkName";
 
     @Mock
     private MacPoolManager macPoolManager;
@@ -103,6 +109,29 @@ public class VmInterfaceManagerTest {
         runRemoveAllAndVerify(false, never());
     }
 
+    @Test
+    public void isValidVmNetworkForValidNetwork() {
+        Network network = createNewNetwork(true, NETWORK_NAME);
+        VmNetworkInterface iface = createNewInterface();
+        iface.setNetworkName(network.getName());
+        assertTrue(vmInterfaceManager.isValidVmNetwork(iface, Collections.singletonMap(network.getName(), network)));
+    }
+
+    @Test
+    public void isValidVmNetworkForNonVmNetwork() {
+        Network network = createNewNetwork(false, NETWORK_NAME);
+        VmNetworkInterface iface = createNewInterface();
+        iface.setNetworkName(network.getName());
+        assertFalse(vmInterfaceManager.isValidVmNetwork(iface, Collections.singletonMap(network.getName(), network)));
+    }
+
+    @Test
+    public void isValidVmNetworkForNetworkNotInVds() {
+        VmNetworkInterface iface = createNewInterface();
+        iface.setNetworkName(NETWORK_NAME);
+        assertFalse(vmInterfaceManager.isValidVmNetwork(iface, Collections.<String, Network> emptyMap()));
+    }
+
     protected void runRemoveAllAndVerify(boolean removeFromPool, VerificationMode freeMacVerification) {
         List<VmNetworkInterface> interfaces = Arrays.asList(createNewInterface(), createNewInterface());
 
@@ -151,5 +180,12 @@ public class VmInterfaceManagerTest {
         iface.setId(Guid.NewGuid());
         iface.setMacAddress(RandomUtils.instance().nextString(10));
         return iface;
+    }
+
+    private Network createNewNetwork(boolean isVmNetwork, String networkName) {
+        Network network = new Network();
+        network.setVmNetwork(isVmNetwork);
+        network.setname(networkName);
+        return network;
     }
 }
