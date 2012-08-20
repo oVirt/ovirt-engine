@@ -15,7 +15,6 @@ import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -25,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.event_notification_methods;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
@@ -68,9 +67,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.test.annotation.NotTransactional;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -78,9 +75,10 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * <code>BaseDAOTestCase</code> provides a foundation for creating unit tests for the persistence layer.
- *
- *
+ * <code>BaseDAOTestCase</code> provides a foundation for creating unit tests for the persistence layer. The annotation
+ * <code>@Transactional</code>, and the listener <code>TransactionalTestExecutionListener</code> ensure that all test
+ * cases (<code>@Test</code> methods) are executed inside a transaction, and the transaction is automatically rolled
+ * back on completion of the test.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners({ TransactionalTestExecutionListener.class })
@@ -98,23 +96,19 @@ public abstract class BaseDAOTestCase {
     protected static DataSource dataSource;
     private static IDataSet dataset;
 
-    @NotTransactional
     @BeforeClass
     public static void initTestCase() throws Exception {
-        dataSource = createDataSource();
-        dataset = initDataSet();
-        dbFacade = new DbFacade();
-        dbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
-        dbFacade.setTemplate(dbFacade.getDbEngineDialect().createJdbcTemplate(dataSource));
+        if(dataSource == null) {
+            dataSource = createDataSource();
 
-        // load data from fixtures to DB
-        DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
-    }
+            dataset = initDataSet();
+            dbFacade = new DbFacade();
+            dbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
+            dbFacade.setTemplate(dbFacade.getDbEngineDialect().createJdbcTemplate(dataSource));
 
-    @NotTransactional
-    @AfterClass
-    public static void tearDownTestCase() throws Exception {
-        ((DisposableBean) getDataSource()).destroy();
+            // load data from fixtures to DB
+            DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
+        }
     }
 
     @Before
