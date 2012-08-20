@@ -273,6 +273,11 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getMAC().setIsChangable(false);
         model.getMAC().setEntity(nic.getMacAddress());
         model.getActive().setIsAvailable(false);
+
+        Version v31 = new Version(3, 1);
+        boolean isLessThan31 = vm.getvds_group_compatibility_version().compareTo(v31) < 0;
+
+        model.getPortMirroring().setIsChangable(!isLessThan31);
         model.getPortMirroring().setEntity(nic.isPortMirroring());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
