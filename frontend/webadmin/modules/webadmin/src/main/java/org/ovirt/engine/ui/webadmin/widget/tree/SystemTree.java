@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.tree;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
@@ -34,6 +37,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         this.modelProvider = modelProvider;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         addActionButtons(modelProvider, constants);
+        addModelListeners(modelProvider);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -69,6 +73,16 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
             }
         });
 
+    }
+
+    private void addModelListeners(SystemTreeModelProvider modelProvider) {
+        modelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                // Collapse tree on refresh
+                expandTree(display.getRootTreeNode(), false);
+            }
+        });
     }
 
     @Override
