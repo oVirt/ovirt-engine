@@ -279,14 +279,14 @@ SELECT     	id AS vm_interface_id,
             _update_date AS update_date
 FROM         vm_interface
 WHERE     vmt_guid IS NULL AND
-         (_create_date >
+         ((_create_date >
                           (SELECT     var_datetime
                            FROM          dwh_history_timekeeping
                            WHERE      (var_name = 'lastSync'))) OR
           (_update_date >
                           (SELECT     var_datetime
                            FROM          dwh_history_timekeeping AS history_timekeeping_1
-                           WHERE      (var_name = 'lastSync')));
+                           WHERE      (var_name = 'lastSync'))));
 
 CREATE OR REPLACE VIEW dwh_vm_interface_history_view
 AS
@@ -322,14 +322,14 @@ FROM   images as i
                                LEFT OUTER JOIN vm_static ON vm_static.vm_guid = vm_device.vm_id
 WHERE     i.active = true AND
           (vm_static.entity_type = 'VM' OR vm_static.entity_type IS NULL) AND
-          (i._create_date >
+          ((i._create_date >
                           (SELECT     var_datetime
                            FROM         dwh_history_timekeeping
                            WHERE      (var_name = 'lastSync'))) OR
           (i._update_date >
                           (SELECT     var_datetime
                            FROM         dwh_history_timekeeping AS history_timekeeping_1
-                           WHERE      (var_name = 'lastSync')));
+                           WHERE      (var_name = 'lastSync'))));
 
 CREATE OR REPLACE VIEW dwh_disk_vm_map_history_view
 AS
@@ -356,12 +356,12 @@ SELECT device_id,
 WHERE  ((type = 'disk' AND
        device = 'disk') OR
        (type = 'interface')) AND
-       (_create_date >  (SELECT     var_datetime
+       ((_create_date >  (SELECT     var_datetime
                          FROM         dwh_history_timekeeping
                          WHERE      (var_name = 'lastSync'))) OR
        (_update_date >  (SELECT     var_datetime
                          FROM         dwh_history_timekeeping AS history_timekeeping_1
-                         WHERE      (var_name = 'lastSync')));
+                         WHERE      (var_name = 'lastSync'))));
 
 CREATE OR REPLACE VIEW dwh_vm_disks_history_view
 AS
