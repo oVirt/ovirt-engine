@@ -164,25 +164,6 @@ public class HostInterfaceListModel extends SearchableListModel
         return (VDS) super.getEntity();
     }
 
-    public void setEntity(VDS value)
-    {
-        if (super.getEntity() != null)
-        {
-            VDS currentItem = ((VDS) super.getEntity());
-            VDS newItem = value;
-
-            Guid currentItemId = currentItem.getId().getValue();
-            Guid newItemId = newItem.getId().getValue();
-
-            if (currentItemId.equals(newItemId))
-            {
-                return;
-            }
-        }
-
-        super.setEntity(value);
-    }
-
     private ArrayList<VdsNetworkInterface> GetSelectedItems(boolean withVlans)
     {
         ArrayList<VdsNetworkInterface> list = new ArrayList<VdsNetworkInterface>();
