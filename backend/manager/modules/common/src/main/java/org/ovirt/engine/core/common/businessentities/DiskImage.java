@@ -307,6 +307,11 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private double actualSize;
 
+    /**
+     * Get the actual Size of the DiskImage in GB.
+     * The actual size is the size the DiskImage actually occupies on storage.
+     * @return - Actual size used by this DiskImage in GB
+     */
     public double getActualSize() {
         return actualSize;
     }

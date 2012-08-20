@@ -95,7 +95,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getImageId());
                 tempVar.setDescription(getParameters().getDescription());
                 tempVar.setSessionId(getParameters().getSessionId());
-                tempVar.setQuotaId(getParameters().getQuotaId());
+                tempVar.setQuotaId(image.getQuotaId());
                 tempVar.setVmSnapshotId(newActiveSnapshotId);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentCommand(getParameters().getParentCommand() != VdcActionType.Unknown ? getParameters()
@@ -310,7 +310,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     : getVm().getQuotaId(),
                     //TODO: shared disk?
                     disk.getstorage_ids().get(0),
-                    disk.getSizeInGigabytes()));
+                    disk.getActualSize()));
         }
         return list;
     }

@@ -136,6 +136,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                         tempVar.setVmSnapshotId(newActiveSnapshotId);
                         tempVar.setEntityId(getParameters().getEntityId());
                         tempVar.setParentParemeters(getParameters());
+                        tempVar.setQuotaId(image.getQuotaId());
                         ImagesContainterParametersBase p = tempVar;
                         VdcReturnValueBase vdcReturnValue =
                                 Backend.getInstance().runInternalAction(VdcActionType.TryBackToSnapshot,

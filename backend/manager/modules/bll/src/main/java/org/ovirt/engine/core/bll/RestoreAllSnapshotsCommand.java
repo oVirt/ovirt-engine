@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -41,7 +41,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * since this command can only handle the aforementioned cases.
  */
 @LockIdNameAttribute
-public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> {
+public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> implements Quotable{
 
     private static final long serialVersionUID = -461387501474222174L;
 
@@ -117,8 +117,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         boolean noImagesRemovedYet = getTaskIdList().isEmpty();
         List<Guid> deletedDisksIds = new ArrayList<Guid>();
         for (DiskImage image : getDiskImageDAO().getImagesWithNoDisk(getVm().getId())) {
-            if (!deletedDisksIds.contains(image.getimage_group_id())) {
-                deletedDisksIds.add(image.getimage_group_id());
+            if (!deletedDisksIds.contains(image.getId())) {
+                deletedDisksIds.add(image.getId());
                 returnValue = runAsyncTask(VdcActionType.RemoveImage,
                         new RemoveImageParameters(image.getImageId()));
                 if (!returnValue.getSucceeded() && noImagesRemovedYet) {
@@ -239,7 +239,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             NGuid snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
 
             while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)) {
-                if (snapshotToRemove != null && !snapshotsToRemove.contains(snapshotToRemove.getValue())) {
+                if (!snapshotsToRemove.contains(snapshotToRemove.getValue())) {
                     snapshotsToRemove.add(snapshotToRemove.getValue());
                 }
 
@@ -327,5 +327,35 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     @Override
     protected Map<String, String> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
+    }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        this.rollbackQuota();
+
+        //Since quota utilization is always reduced here
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        for (DiskImage image : getImagesList()) {
+            Guid quotaId = image.getQuotaId();
+            if (quotaId != null) {
+                // Uncache the details of this quota. next time the quota will be called, a new calculation
+                // would be done base on the DB.
+                QuotaManager.getInstance().rollbackQuota(getStoragePool(), Arrays.asList(quotaId));
+            }
+        }
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return null; // The command handles numerous Images, and thus have no single Quota.
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        //
     }
 }
