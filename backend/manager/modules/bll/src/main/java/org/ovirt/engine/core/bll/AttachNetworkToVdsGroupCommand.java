@@ -104,7 +104,16 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected boolean canDoAction() {
-        return super.canDoAction() && VdsGroupExists() && changesAreClusterCompatible();
+        return super.canDoAction() && VdsGroupExists() && changesAreClusterCompatible() && logicalNetworkExists();
+    }
+
+    private boolean logicalNetworkExists() {
+        if (getNetworkDAO().get(getParameters().getNetworkCluster().getnetwork_id()) != null) {
+            return true;
+        }
+
+        addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS);
+        return false;
     }
 
     private boolean changesAreClusterCompatible() {

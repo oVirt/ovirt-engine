@@ -18,13 +18,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
+import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -41,6 +42,9 @@ public class AttachNetworkToVdsGroupCommandTest {
     @Mock
     VdsGroupDAO vdsGroupDAO;
 
+    @Mock
+    NetworkDAO networkDao;
+
     @Before
     public void setup() {
         existingGroup.setcompatibility_version(Version.v3_1);
@@ -50,7 +54,14 @@ public class AttachNetworkToVdsGroupCommandTest {
     @Test
     public void networkExists() {
         simulateVdsGroupExists();
+        when(networkDao.get(any(Guid.class))).thenReturn(getNetwork());
         assertCanDoActionSucceeds();
+    }
+
+    @Test
+    public void networkDoesntExist() {
+        simulateVdsGroupExists();
+        assertCanDoActionFailure(VdcBllMessages.NETWROK_NOT_EXISTS.toString());
     }
 
     @Test
@@ -90,6 +101,11 @@ public class AttachNetworkToVdsGroupCommandTest {
             @Override
             protected NetworkClusterDAO getNetworkClusterDAO() {
                 return networkClusterDAO;
+            }
+
+            @Override
+            protected NetworkDAO getNetworkDAO() {
+                return networkDao;
             }
         };
     }
