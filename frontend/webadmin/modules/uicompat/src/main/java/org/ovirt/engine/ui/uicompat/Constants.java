@@ -1486,4 +1486,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("disk_type=")
     String diskTypeSearchPrefix();
+
+    @DefaultStringValue("Assign Disk Quota")
+    String assignQuotaForDisk();
 }

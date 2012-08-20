@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
@@ -210,6 +211,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksIn
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksManagementPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.QuotaPopupView;
@@ -870,6 +872,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(DisksAllocationPopupPresenterWidget.class,
                 DisksAllocationPopupPresenterWidget.ViewDef.class,
                 DisksAllocationPopupView.class);
+        bindPresenterWidget(ChangeQuotaPopupPresenterWidget.class,
+                ChangeQuotaPopupPresenterWidget.ViewDef.class,
+                ChangeQuotaPopupView.class);
 
         // Storage Remove
         bindPresenterWidget(StorageRemovePopupPresenterWidget.class,

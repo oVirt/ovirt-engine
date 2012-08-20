@@ -173,6 +173,13 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 return getMainModel().getCopyCommand();
             }
         });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.assignQuota()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getChangeQuotaCommand();
+            }
+        });
     }
 
     void searchByDiskViewType(Object diskViewType) {

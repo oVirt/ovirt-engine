@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.quota">
+
+	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+	<ui:style>
+		.ChangeQuotaViewPanel {
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="340px" height="300px">
+		<d:content>
+			<g:FlowPanel>
+				<w:ChangeQuotaView ui:field="changeQuotaView" addStyleNames="{style.ChangeQuotaViewPanel}" />
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

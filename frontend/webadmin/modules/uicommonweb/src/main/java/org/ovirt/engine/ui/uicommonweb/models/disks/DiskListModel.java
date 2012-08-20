@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -18,10 +19,12 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -40,7 +43,10 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
@@ -100,6 +106,18 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         privateMoveCommand = value;
     }
 
+    private UICommand privateChangeQuotaCommand;
+
+    public UICommand getChangeQuotaCommand()
+    {
+        return privateChangeQuotaCommand;
+    }
+
+    private void setChangeQuotaCommand(UICommand value)
+    {
+        privateChangeQuotaCommand = value;
+    }
+
     private UICommand privateCopyCommand;
 
     public UICommand getCopyCommand()
@@ -154,6 +172,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
+        setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
@@ -396,6 +415,62 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         model.StartProgress(null);
     }
 
+    private void changeQuota()
+    {
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+
+        if (disks == null || getWindow() != null)
+        {
+            return;
+        }
+
+        ChangeQuotaModel model = new ChangeQuotaModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
+        model.setHashName("change_quota_disks"); //$NON-NLS-1$
+        model.StartProgress(null);
+        model.init(disks);
+
+        UICommand command = new UICommand("onChangeQuota", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        command.setIsDefault(true);
+        model.getCommands().add(command);
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        model.getCommands().add(command);
+    }
+
+    private void onChangeQuota() {
+        ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+
+        for (Object item : model.getItems())
+        {
+            ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
+            DiskImage disk = (DiskImage) itemModel.getEntity();
+            VdcActionParametersBase parameters =
+                    new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
+                            disk.getId(),
+                            disk.getstorage_ids().get(0),
+                            disk.getstorage_pool_id().getValue());
+            paramerterList.add(parameters);
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        DiskListModel localModel = (DiskListModel) result.getState();
+                        localModel.StopProgress();
+                        Cancel();
+                    }
+                },
+                this);
+    }
+
     private void Copy()
     {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
@@ -498,6 +573,24 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         getRemoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isRemoveCommandAvailable());
         getMoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isMoveCommandAvailable());
         getCopyCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isCopyCommandAvailable());
+        getChangeQuotaCommand().setIsAvailable(false);
+        if (getSystemTreeSelectedItem() != null
+                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter
+                &&
+                ((storage_pool) getSystemTreeSelectedItem().getEntity()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+            getChangeQuotaCommand().setIsAvailable(true);
+            getChangeQuotaCommand().setIsExecutionAllowed(true);
+            if (disks != null && !disks.isEmpty()) {
+                for (Disk diskItem : disks) {
+                    if (diskItem.getDiskStorageType() != DiskStorageType.IMAGE) {
+                        getChangeQuotaCommand().setIsExecutionAllowed(false);
+                        break;
+                    }
+                }
+            } else {
+                getChangeQuotaCommand().setIsExecutionAllowed(false);
+            }
+        }
     }
 
     private boolean isMoveCommandAvailable() {
@@ -609,6 +702,10 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
+        } else if (command == getChangeQuotaCommand()) {
+            changeQuota();
+        } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
+            onChangeQuota();
         }
     }
 

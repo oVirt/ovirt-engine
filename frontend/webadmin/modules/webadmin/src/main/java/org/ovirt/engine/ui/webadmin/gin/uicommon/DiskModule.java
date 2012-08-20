@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
@@ -42,7 +43,8 @@ public class DiskModule extends AbstractGinModule {
     public MainModelProvider<Disk, DiskListModel> getDiskListProvider(ClientGinjector ginjector,
             final Provider<VmDiskPopupPresenterWidget> newPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<DisksAllocationPopupPresenterWidget> moveOrCopyPopupProvider) {
+            final Provider<DisksAllocationPopupPresenterWidget> moveOrCopyPopupProvider,
+            final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider) {
         return new MainTabModelProvider<Disk, DiskListModel>(ginjector, DiskListModel.class) {
 
             @Override
@@ -54,6 +56,8 @@ public class DiskModule extends AbstractGinModule {
                 else if (lastExecutedCommand == getModel().getMoveCommand()
                         || lastExecutedCommand == getModel().getCopyCommand()) {
                     return moveOrCopyPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getChangeQuotaCommand()) {
+                    return changeQutoaPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }

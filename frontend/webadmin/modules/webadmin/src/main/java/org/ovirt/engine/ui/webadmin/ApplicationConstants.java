@@ -2173,4 +2173,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Quota Storage")
     String quotaStorage();
+
+    @DefaultStringValue("Assign Quota")
+    String assignQuota();
 }
