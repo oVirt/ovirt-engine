@@ -210,8 +210,6 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/security/limits.d
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d
 
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/resources/jboss/modules/org
-
 	@install -dm 755 $(DESTDIR)/usr/lib/systemd/system
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/tmpfiles.d
 
