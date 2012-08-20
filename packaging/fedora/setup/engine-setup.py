@@ -724,9 +724,11 @@ def _configureHttpdSslKeys():
 
 def _redirectUrl():
     try:
-        # Redirect everything to the application server using the AJP protocol
+        # Redirect everything to the application server using the
+        # AJP protocol and configuring the proxy so that it will
+        # retry a failed connection after a short time interval:
         logging.debug("Redirect oVirt URLs using AJP protocol")
-        redirectStr="ProxyPass / ajp://localhost:%s/"%(basedefs.JBOSS_AJP_PORT)
+        redirectStr="ProxyPass / ajp://localhost:%s/ retry=5" %(basedefs.JBOSS_AJP_PORT)
 
         fd = open(basedefs.FILE_OVIRT_HTTPD_CONF, 'w')
         fd.write(redirectStr)
