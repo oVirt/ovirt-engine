@@ -91,13 +91,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             if (returnValue && DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
                 returnValue = checkIfLunDiskCanBeAdded();
             }
-            if (returnValue
-                    && getParameters().getDiskInfo().isShareable()
-                    && !isVersionSupportedForShareable(getParameters().getDiskInfo(),
-                            getStoragePool().getcompatibility_version().getValue())) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-            }
         }
         return returnValue;
     }
@@ -134,6 +127,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             getReturnValue().getCanDoActionMessages().add(
                     String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize)));
             returnValue = false;
+        }
+        if (returnValue && getParameters().getDiskInfo().isShareable()
+                && !Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled,
+                        getStoragePool().getcompatibility_version().getValue())) {
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
         return returnValue && (vm == null || validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())));
     }
