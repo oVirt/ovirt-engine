@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -29,6 +29,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -110,6 +111,9 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     @Path(value = "commitChanges.entity")
     EntityModelCheckBoxEditor commitChanges;
 
+    @UiField
+    Style style;
+
     @Inject
     public HostBondPopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants) {
         super(eventBus, resources);
@@ -148,6 +152,10 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
+        // Set Styles
+        checkConnectivity.setContentWidgetStyleName(style.checkCon());
+
+        // Localize
         bondEditor.setLabel(constants.bondNameHostPopup() + ":"); //$NON-NLS-1$
         networkEditor.setLabel(constants.networkHostPopup() + ":"); //$NON-NLS-1$
         bondingModeEditor.setLabel(constants.bondingModeHostPopup() + ":"); //$NON-NLS-1$
@@ -157,7 +165,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
         subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
         gateway.setLabel(constants.defaultGwHostPopup() + ":"); //$NON-NLS-1$
-        checkConnectivity.setLabel(constants.checkConHostPopup() + ":"); //$NON-NLS-1$
+        checkConnectivity.setLabel(constants.checkConHostPopup());
         info.setHTML(constants.changesTempHostPopup());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
 
@@ -251,6 +259,11 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         } else {
             customEditor.setVisible(false);
         }
+    }
+
+    interface Style extends CssResource {
+
+        String checkCon();
     }
 
 }
