@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -164,12 +165,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
                 @Override
                 public Void runInTransaction() {
+                    List<Disk> pluggedDisks = VmRunHandler.getInstance().getPluggedDisks(getVm());
                     runVdsCommand(VDSCommandType.Snapshot,
                             new SnapshotVDSCommandParameters(getVm().getrun_on_vds().getValue(),
                                     getVm().getId(),
-                                    ImagesHandler.filterImageDisks(DbFacade.getInstance()
-                                            .getDiskDao()
-                                            .getAllForVm(getVm().getId()), false, true)));
+                                    ImagesHandler.filterImageDisks(pluggedDisks, false, true)));
                     return null;
                 }
             });
