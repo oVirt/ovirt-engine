@@ -191,7 +191,8 @@ public class VdsHandler extends BaseHandler {
      * @return true is version matches or if a any version isn't provided, else false.
      */
     public static boolean isIsoVersionCompatibleForUpgrade(RpmVersion ovirtOsVersion, RpmVersion isoVersion) {
-        return isoVersion.getMajor() == ovirtOsVersion.getMajor()
+        return (isoVersion.getMajor() == ovirtOsVersion.getMajor() &&
+                ovirtOsVersion.getMinor() <= isoVersion.getMinor())
                 || ovirtOsVersion.getMajor() == -1
                 || isoVersion.getMajor() == -1;
     }

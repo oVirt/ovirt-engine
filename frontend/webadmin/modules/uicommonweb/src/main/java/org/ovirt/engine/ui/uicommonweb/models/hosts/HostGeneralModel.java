@@ -701,7 +701,7 @@ public class HostGeneralModel extends EntityModel
                             getWindow().StopProgress();
                         }
                     }),
-                    null);
+                    getEntity().getId());
         } else {
             model.getRootPassword().setIsAvailable(true);
             model.getRootPassword().setIsChangable(true);

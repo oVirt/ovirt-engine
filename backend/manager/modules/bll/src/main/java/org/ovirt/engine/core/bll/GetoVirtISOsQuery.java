@@ -29,7 +29,9 @@ import org.ovirt.engine.core.compat.Version;
  */
 public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCommandBase<P> {
     private static Pattern isoPattern;
-    private static final String OVIRT_ISO_VERSION_PATTERN = "version-.*.txt";
+    private static final String OVIRT_ISO_VERSION_PREFIX = "version";
+    private static final String OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX = "vdsm-compatibility";
+    private static final String OVIRT_ISO_VERSION_PATTERN = OVIRT_ISO_VERSION_PREFIX + "-.*.txt";
     private static final Pattern isoVersionPattern = Pattern.compile(OVIRT_ISO_VERSION_PATTERN);
 
     public GetoVirtISOsQuery(P parameters) {
@@ -52,7 +54,12 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
                 for (File versionFile : ovirtVersionFiles) {
                     try {
-                        String isoVersionText = readIsoVersion(versionFile);
+                        IsoData isoData = new IsoData();
+                        isoData.setVersion(readIsoVersion(versionFile));
+                        String isoVersionText = isoData.getVersion();
+                        isoData.setVdsmCompitibilityVersion(readVdsmCompatibiltyVersion((
+                                versionFile.getAbsolutePath().replace(OVIRT_ISO_VERSION_PREFIX,
+                                        OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX))));
 
                         if (StringUtils.isBlank(isoVersionText)) {
                             log.debugFormat("Iso version file {0} is empty.", versionFile.getAbsolutePath());
@@ -79,8 +86,11 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
                         RpmVersion isoVersion = parseIsoFileVersion(isoFileName, majorVersionStr);
                         boolean shouldAdd = false;
+
                         if (isoVersion != null && isIsoVersionSupported(isoVersion)) {
-                            if (vdsOsVersion != null) {
+                            if (isoData.getVdsmCompatibilityVersion() != null) {
+                                shouldAdd = isIsoCompatibleForUpgradeByClusterVersion(isoData);
+                            } else if (vdsOsVersion != null) {
                                 if (VdsHandler.isIsoVersionCompatibleForUpgrade(vdsOsVersion, isoVersion)) {
                                     shouldAdd = true;
                                 }
@@ -105,6 +115,22 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         }
         Collections.sort(availableISOsList);
         getQueryReturnValue().setReturnValue(availableISOsList);
+    }
+
+    private boolean isIsoCompatibleForUpgradeByClusterVersion(IsoData isoData) {
+        for (String v : isoData.getVdsmCompatibilityVersion()) {
+            Version isoClusterVersion = new Version(v);
+            if (isNewerVersion(isoClusterVersion)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isNewerVersion(Version isoClusterVersion) {
+        VDS vds = getVdsByVdsId(getParameters().getVdsId());
+        Version vdsClusterVersion = vds.getvds_group_compatibility_version();
+        return (vdsClusterVersion.getMajor() == isoClusterVersion.getMajor() && vdsClusterVersion.getMinor() <= isoClusterVersion.getMinor());
     }
 
     private RpmVersion getOvirtOsVersion() {
@@ -150,12 +176,42 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         return isoFileList;
     }
 
+    private String[] readVdsmCompatibiltyVersion(String fileName) {
+        File file = new File(fileName);
+        String[] versions = null;
+        if (file.exists()) {
+            BufferedReader input = null;
+            try {
+                input = new BufferedReader(new FileReader(file));
+                versions = input.readLine().split(",");
+            } catch (FileNotFoundException e) {
+                log.errorFormat("Failed to open version file {0} with error {1}",
+                        file.getParent(),
+                        ExceptionUtils.getMessage(e));
+            } catch (IOException e1) {
+                log.errorFormat("Failed to read version from {0} with error {1}",
+                        file.getAbsolutePath(),
+                        ExceptionUtils.getMessage(e1));
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException ignored) {
+                        // Ignore exception on closing a file
+                    }
+                }
+            }
+        }
+        return versions;
+    }
+
     private String readIsoVersion(File versionFile) {
         String isoVersionText = null;
         BufferedReader input = null;
         try {
             input = new BufferedReader(new FileReader(versionFile));
             isoVersionText = input.readLine();
+
         } catch (FileNotFoundException e) {
             log.errorFormat("Failed to open version file {0} with error {1}",
                     versionFile.getAbsolutePath(),
@@ -217,4 +273,24 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         return isoPattern;
     }
 
+    private class IsoData {
+        private String version;
+        private String[] vdsmCompatibilityVersion;
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVdsmCompitibilityVersion(String[] supportedClusterVersion) {
+            this.vdsmCompatibilityVersion = supportedClusterVersion;
+        }
+
+        public String[] getVdsmCompatibilityVersion() {
+            return vdsmCompatibilityVersion;
+        }
+    }
 }
