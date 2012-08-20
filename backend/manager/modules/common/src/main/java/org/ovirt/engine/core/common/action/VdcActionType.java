@@ -159,6 +159,7 @@ public enum VdcActionType {
     AddQuota(601, ActionGroup.CONFIGURE_QUOTA, false),
     UpdateQuota(602, ActionGroup.CONFIGURE_QUOTA, false),
     RemoveQuota(603, ActionGroup.CONFIGURE_QUOTA, false),
+    ChangeQuotaForDisk(604, ActionGroup.CONSUME_QUOTA, false),
 
     // bookmarks
     AddBookmark(701),

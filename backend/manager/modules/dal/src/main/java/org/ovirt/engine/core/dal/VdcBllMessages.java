@@ -60,6 +60,7 @@ public enum VdcBllMessages {
     VAR__ACTION__LOGON,
     VAR__ACTION__LOGOFF,
     VAR__ACTION__REBALANCE_START,
+    VAR__ACTION__ASSIGN,
 
     // Host statuses replacements
     VAR__HOST_STATUS__UP,
