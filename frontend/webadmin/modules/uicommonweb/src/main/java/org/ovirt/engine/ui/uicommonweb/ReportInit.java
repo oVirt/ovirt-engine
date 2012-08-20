@@ -95,10 +95,11 @@ public class ReportInit {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
                     try {
-                        ReportParser.getInstance().parseReport(response.getText());
-                        resourceMap = ReportParser.getInstance().getResourceMap();
-                        dashboardMap = ReportParser.getInstance().getDashboardMap();
-                        isCommunityEdition = ReportParser.getInstance().isCommunityEdition();
+                        if (ReportParser.getInstance().parseReport(response.getText())) {
+                            resourceMap = ReportParser.getInstance().getResourceMap();
+                            dashboardMap = ReportParser.getInstance().getDashboardMap();
+                            isCommunityEdition = ReportParser.getInstance().isCommunityEdition();
+                        }
                     } catch (DOMParseException e) {
                     } finally {
                         setXmlInitialized();

@@ -37,16 +37,22 @@ public class ReportParser {
     public Map<String, Dashboard> getDashboardMap() {
         return dashboardMap;
     }
-    public void parseReport(String xmlPath) {
-        // parse the XML document into a DOM
-        Document messageDom = XMLParser.parse(xmlPath);
 
-        Element reportsElement = (Element) messageDom.getElementsByTagName("reports").item(0); //$NON-NLS-1$
-        NodeList dashboradsNodeList = reportsElement.getElementsByTagName("dashboard"); //$NON-NLS-1$
-        initDashboards(dashboradsNodeList);
-        NodeList resourcesNodeList = reportsElement.getElementsByTagName("resource"); //$NON-NLS-1$
+    public boolean parseReport(String xmlPath) {
+        try {
+            // parse the XML document into a DOM
+            Document messageDom = XMLParser.parse(xmlPath);
 
-        initResources(resourcesNodeList);
+            Element reportsElement = (Element) messageDom.getElementsByTagName("reports").item(0); //$NON-NLS-1$
+            NodeList dashboradsNodeList = reportsElement.getElementsByTagName("dashboard"); //$NON-NLS-1$
+            initDashboards(dashboradsNodeList);
+            NodeList resourcesNodeList = reportsElement.getElementsByTagName("resource"); //$NON-NLS-1$
+
+            initResources(resourcesNodeList);
+        } catch (Throwable e) {
+            return false;
+        }
+        return true;
     }
 
     private void initDashboards(NodeList dashboardNodeList) {
@@ -65,6 +71,7 @@ public class ReportParser {
             i++;
         }
     }
+
     private void initResources(NodeList nodeList) {
         Node resourceNode;
         int i = 0;
@@ -123,7 +130,6 @@ public class ReportParser {
             i++;
         }
     }
-
 
     public static class Resource {
         private final String type;
