@@ -356,7 +356,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                                     if (a.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
                                             && dcStorageModel.getEntity()
                                                     .getcompatibility_version()
-                                                    .compareTo(version3_0) < 0)
+                                                    .compareTo(version3_0) <= 0)
                                     {
                                         continue;
                                     }
