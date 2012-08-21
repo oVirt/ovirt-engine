@@ -229,11 +229,11 @@ public class QuotaManager {
                                     hasStorageId = true;
                                     if (quotaStorage.getStorageSizeGB() != UNLIMITED) {
                                         double storageUsagePercentage = quotaStorage.getStorageSizeGBUsage()
-                                                / quota.getGlobalQuotaStorage().getStorageSizeGB() * 100;
+                                                / quotaStorage.getStorageSizeGB() * 100;
                                         double storageRequestPercentage =
                                                 desiredStorageSizeQuotaMap.get(quotaId)
                                                         .get(storageId)
-                                                        / quota.getGlobalQuotaStorage().getStorageSizeGB() * 100;
+                                                        / quotaStorage.getStorageSizeGB() * 100;
 
                                         if (!checkQuotaStorageLimits(storagePool.getQuotaEnforcementType(),
                                                 quota,
