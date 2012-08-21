@@ -671,14 +671,12 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
                 getFormat().setIsChangable(true);
 
+                formats.add(StorageFormatType.V1);
+
                 if ((getSelectedItem().getType() == StorageType.FCP || getSelectedItem().getType() == StorageType.ISCSI)
                         && getSelectedItem().getRole() == StorageDomainType.Data)
                 {
                     formats.add(StorageFormatType.V2);
-                }
-                else
-                {
-                    formats.add(StorageFormatType.V1);
                 }
 
                 formats.add(StorageFormatType.V3);
