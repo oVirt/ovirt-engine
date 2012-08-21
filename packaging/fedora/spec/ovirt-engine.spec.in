@@ -77,8 +77,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
 Name: ovirt-engine
-Version: 3.1.0
-Release: 3%{?dist}
+Version: @PACKAGE_VERSION@
+Release: @PACKAGE_RELEASE@%{?dist}
 Summary: Management server for Open Virtualization
 Group: Virtualization/Management
 License: ASL 2.0

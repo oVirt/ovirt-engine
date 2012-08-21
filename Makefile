@@ -146,8 +146,8 @@ install_without_maven: \
 	install_service
 
 tarball:
-	sed -e 's/^Version:.*/Version: $(RPM_VERSION)/' \
-            -e 's/^Release:.*/Release: $(RPM_RELEASE_VERSION)%{?dist}/' $(SPEC_FILE_IN) > $(SPEC_FILE)
+	sed -e 's/@PACKAGE_VERSION@/$(RPM_VERSION)/g' \
+            -e 's/@PACKAGE_RELEASE@/$(RPM_RELEASE_VERSION)/g' $(SPEC_FILE_IN) > $(SPEC_FILE)
 	tar zcf $(TARBALL) `git ls-files` $(SPEC_FILE)
 	rm -f $(SPEC_FILE)
 	@echo
