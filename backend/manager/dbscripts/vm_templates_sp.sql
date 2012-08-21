@@ -312,9 +312,11 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION fn_perms_get_templates_with_permitted_action(v_user_id UUID, v_action_group_id integer) RETURNS SETOF vm_templates_view
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT * 
-      FROM vm_templates_view 
-      WHERE (SELECT get_entity_permissions(v_user_id, v_action_group_id, vm_templates_view.vmt_guid, 4)) IS NOT NULL;
+      RETURN QUERY SELECT vm_templates_view.*
+      FROM vm_templates_view, user_vm_template_permissions_view
+      WHERE vm_templates_view.vmt_guid = user_vm_template_permissions_view.entity_id AND
+            user_vm_template_permissions_view.user_id = v_user_id AND
+            (SELECT get_entity_permissions(v_user_id, v_action_group_id, vm_templates_view.vmt_guid, 4) IS NOT NULL);
 END; $procedure$
 LANGUAGE plpgsql;
 
