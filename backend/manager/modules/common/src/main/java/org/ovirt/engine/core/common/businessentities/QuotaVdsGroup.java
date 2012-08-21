@@ -12,6 +12,9 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
  */
 public class QuotaVdsGroup extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
 
+    public static final Long UNLIMITED_MEM = -1L;
+    public static final Integer UNLIMITED_VCPU = -1;
+
     /**
      * Automatic generated serial version ID.
      */

@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
@@ -17,6 +18,9 @@ import com.google.gwt.core.client.GWT;
 
 public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, QuotaStorage, QuotaListModel, QuotaStorageListModel>
         implements SubTabQuotaStoragePresenter.ViewDef {
+
+    private static final DiskSizeRenderer<Number> diskSizeRenderer =
+            new DiskSizeRenderer<Number>(DiskSizeRenderer.DiskSizeUnit.GIGABYTE);
 
     interface ViewIdHandler extends ElementIdHandler<SubTabQuotaStorageView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -35,7 +39,7 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                return object.getStorageName() == null || object.getStorageName() == "" ? constants.utlQuotaAllStoragesQuotaPopup()
+                return object.getStorageName() == null || object.getStorageName().equals("") ? constants.utlQuotaAllStoragesQuotaPopup()
                         : object.getStorageName();
             }
         },
@@ -44,9 +48,16 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + constants.outOfQuota() //$NON-NLS-1$
-                        + (object.getStorageSizeGB() == -1 ? constants.unlimitedQuota() : object.getStorageSizeGB()
-                                .toString()) + " GB"; //$NON-NLS-1$
+                String str;
+                if (object.getStorageSizeGB() == null) {
+                    return ""; //$NON-NLS-1$
+                } else if (object.getStorageSizeGB().equals(QuotaStorage.UNLIMITED)) {
+                    str = constants.outOfQuota() + constants.unlimitedQuota();
+                } else {
+                    str = constants.outOfQuota() + diskSizeRenderer.render(object.getStorageSizeGB());
+                }
+                return (object.getStorageSizeGBUsage() == 0 ? 0
+                        : diskSizeRenderer.render(object.getStorageSizeGBUsage())) + str;
             }
         },
                 constants.usedStorageTotalQuotaStorage());

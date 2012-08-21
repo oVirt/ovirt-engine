@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.form.Slider.SliderValueChange;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -55,6 +56,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     private static final String MAX_COLOR = "#4E9FDD"; //$NON-NLS-1$
 
     private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
+
+    private static final DiskSizeRenderer<Number> diskSizeRenderer =
+            new DiskSizeRenderer<Number>(DiskSizeRenderer.DiskSizeUnit.GIGABYTE);
 
     @UiField
     WidgetStyle style;
@@ -223,7 +227,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             public void update(int index, QuotaStorage object, Boolean value) {
                 if (value) {
                     selectedStorageGuid.add(object.getStorageId());
-                    object.setStorageSizeGB((long) -1);
+                    object.setStorageSizeGB(QuotaStorage.UNLIMITED);
                 } else {
                     selectedStorageGuid.remove(object.getStorageId());
                     object.setStorageSizeGB(null);
@@ -249,15 +253,16 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaStorageTable.addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                String str = ""; //$NON-NLS-1$
+                String str;
                 if (object.getStorageSizeGB() == null) {
                     return ""; //$NON-NLS-1$
-                } else if (object.getStorageSizeGB() == -1) {
+                } else if (object.getStorageSizeGB().equals(QuotaStorage.UNLIMITED)) {
                     str = constants.outOfQuota() + constants.unlimitedQuota();
                 } else {
-                    str = constants.outOfQuota() + object.getStorageSizeGB();
+                    str = constants.outOfQuota() + diskSizeRenderer.render(object.getStorageSizeGB());
                 }
-                return object.getStorageSizeGBUsage() + str + " GB"; //$NON-NLS-1$
+                return (object.getStorageSizeGBUsage() == 0 ? 0
+                        : diskSizeRenderer.render(object.getStorageSizeGBUsage())) + str;
             }
         }, constants.quota());
 
@@ -306,8 +311,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             public void update(int index, QuotaVdsGroup object, Boolean value) {
                 if (value) {
                     selectedClusterGuid.add(object.getVdsGroupId());
-                    object.setVirtualCpu(-1);
-                    object.setMemSizeMB((long) -1);
+                    object.setVirtualCpu(QuotaVdsGroup.UNLIMITED_VCPU);
+                    object.setMemSizeMB(QuotaVdsGroup.UNLIMITED_MEM);
                 } else {
                     selectedClusterGuid.remove(object.getVdsGroupId());
                     object.setVirtualCpu(null);
@@ -334,10 +339,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaClusterTable.addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                String str = ""; //$NON-NLS-1$
+                String str;
                 if (object.getMemSizeMB() == null) {
                     return ""; //$NON-NLS-1$
-                } else if (object.getMemSizeMB() == -1) {
+                } else if (object.getMemSizeMB().equals(QuotaVdsGroup.UNLIMITED_MEM)) {
                     str = constants.outOfQuota() + constants.unlimitedQuota();
                 } else {
                     str = constants.outOfQuota() + object.getMemSizeMB();
@@ -349,10 +354,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaClusterTable.addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                String str = ""; //$NON-NLS-1$
+                String str;
                 if (object.getVirtualCpu() == null) {
                     return ""; //$NON-NLS-1$
-                } else if (object.getVirtualCpu() == -1) {
+                } else if (object.getVirtualCpu().equals(QuotaVdsGroup.UNLIMITED_VCPU)) {
                     str = constants.outOfQuota() + constants.unlimitedQuota();
                 } else {
                     str = constants.outOfQuota() + object.getVirtualCpu();

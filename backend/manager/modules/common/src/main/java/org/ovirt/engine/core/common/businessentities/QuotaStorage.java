@@ -13,6 +13,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 @SuppressWarnings("unused")
 public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
 
+    public static final Long UNLIMITED = -1L;
     /**
      * Automatic generated serial version ID.
      */
