@@ -167,9 +167,6 @@ public class VdsInstaller implements IVdsInstallerCallback {
                 Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers).toString());
         initialCommand = initialCommand.replace("{OrganizationName}",
                 HandleOrganizationNameString(Config.<String> GetValue(ConfigValues.OrganizationName)));
-        DateTime utcNow = DateTime.getUtcNow();
-        serverInstallationTime = utcNow.toString("yyyy-MM-ddTHH:mm:ss");
-        initialCommand = initialCommand.replace("{utc_time}", serverInstallationTime);
         initialCommand = initialCommand.replace("{management_port}", (Integer.toString(vds.getport())));
 
         String publicUrlPort = Config.<String> GetValue(ConfigValues.PublicURLPort);
@@ -188,9 +185,18 @@ public class VdsInstaller implements IVdsInstallerCallback {
     private boolean runBootstrapCommand(boolean doFinal) {
         boolean fRes = false;
         String command = _bootstrapCommand.replace("{RunFlag}", doFinal ? "True" : "False");
-        if (doFinal && !_rebootAfterInstallation) {
-            command = command.replace(" -b ", " ");
+        if (!doFinal) {
+            serverInstallationTime = DateTime.getUtcNow().toString("yyyy-MM-ddTHH:mm:ss");
         }
+        else {
+            if (!_rebootAfterInstallation) {
+                command = command.replace(" -b ", " ");
+            }
+        }
+
+        // NOTICE: the time is also used as ticket for registration
+        // time will be correct only at !doFinal
+        command = command.replace("{utc_time}", serverInstallationTime);
 
         log.infoFormat(
             "Installation of {0}. Sending SSH Command {1} < {2}. (Stage: {3})",
