@@ -4,8 +4,9 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractLoginPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
-import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimplePopupPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.userportal.section.login.presenter.LoginPopupPresente
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -66,7 +66,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
     @UiField
     @WithElementId
-    SimpleDialogButton loginButton;
+    UiCommandButton loginButton;
 
     @UiField
     @Ignore
@@ -118,7 +118,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         domainEditor.setLabel(constants.loginFormDomainLabel());
         connectAutomatically.setLabel(constants.loginFormConnectAutomaticallyLabel());
-        loginButton.setText(constants.loginButtonLabel());
+        loginButton.setLabel(constants.loginButtonLabel());
     }
 
     @Override
@@ -142,7 +142,6 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     public void setErrorMessage(String text) {
         errorMessage.setText(text);
         errorMessage.setVisible(text != null);
-
         if (errorMessage.isVisible()) {
             errorMessagePanel.setVisible(true);
         }
@@ -154,7 +153,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     }
 
     @Override
-    public HasClickHandlers getLoginButton() {
+    public HasUiCommandClickHandlers getLoginButton() {
         return loginButton;
     }
 

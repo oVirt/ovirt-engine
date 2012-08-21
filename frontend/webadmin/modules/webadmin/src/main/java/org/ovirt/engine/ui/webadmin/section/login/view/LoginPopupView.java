@@ -3,8 +3,9 @@ package org.ovirt.engine.ui.webadmin.section.login.view;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractLoginPopupView;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
-import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimplePopupPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -64,7 +64,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
     @UiField
     @WithElementId
-    SimpleDialogButton loginButton;
+    UiCommandButton loginButton;
 
     @UiField
     @Ignore
@@ -117,7 +117,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         domainEditor.setLabel(constants.loginFormDomainLabel());
-        loginButton.setText(constants.loginButtonLabel());
+        loginButton.setLabel(constants.loginButtonLabel());
     }
 
     @Override
@@ -152,7 +152,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     }
 
     @Override
-    public HasClickHandlers getLoginButton() {
+    public HasUiCommandClickHandlers getLoginButton() {
         return loginButton;
     }
 
@@ -160,4 +160,5 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     public void setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler) {
         popup.setKeyPressHandler(keyPressHandler);
     }
+
 }

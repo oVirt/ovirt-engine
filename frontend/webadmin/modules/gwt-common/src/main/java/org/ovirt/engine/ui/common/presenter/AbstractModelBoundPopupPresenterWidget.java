@@ -278,9 +278,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                     beforeCommandExecuted(button.getCommand());
                     button.getCommand().Execute();
                 }
-
             }));
-
         }
     }
 

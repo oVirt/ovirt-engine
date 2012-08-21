@@ -175,11 +175,12 @@ public class UserPortalLoginModel extends LoginModel
     public void Login()
     {
         // Completely override the base class functionality.
-
         if (!Validate())
         {
             return;
         }
+
+        StartProgress(null);
 
         getUserName().setIsChangable(false);
         getPassword().setIsChangable(false);
@@ -221,7 +222,7 @@ public class UserPortalLoginModel extends LoginModel
                             getIsAutoConnect().setIsChangable(true);
                             model.getLoginFailedEvent().raise(this, EventArgs.Empty);
                         }
-
+                        StopProgress();
                     }
                 },
                 this);

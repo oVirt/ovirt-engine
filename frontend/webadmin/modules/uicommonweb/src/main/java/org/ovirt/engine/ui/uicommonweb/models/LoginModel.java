@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Event;
@@ -18,8 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.common.AboutModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.List;
 
 public class LoginModel extends Model
 {
@@ -268,6 +268,7 @@ public class LoginModel extends Model
             return;
         }
 
+        StartProgress(null);
         disableLoginScreen();
 
         // Clear config cache on login (to make sure we don't use old config in a new session)
@@ -309,6 +310,7 @@ public class LoginModel extends Model
                     {
                         loginModel.getLoggedInEvent().raise(this, EventArgs.Empty);
                     }
+                    StopProgress();
                 }
             }
         };
@@ -391,6 +393,7 @@ public class LoginModel extends Model
         getDomain().setIsChangable(true);
         getLoginCommand().setIsExecutionAllowed(true);
         loggingInAutomatically = false;
+        StopProgress();
     }
 
 }

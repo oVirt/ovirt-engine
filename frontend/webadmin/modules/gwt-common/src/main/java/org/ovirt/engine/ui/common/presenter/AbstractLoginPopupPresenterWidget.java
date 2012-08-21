@@ -9,15 +9,17 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 
@@ -39,7 +41,7 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
 
         void clearErrorMessage();
 
-        HasClickHandlers getLoginButton();
+        HasUiCommandClickHandlers getLoginButton();
 
         void setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler);
 
@@ -76,10 +78,12 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
             }
         });
 
+        getView().getLoginButton().setCommand(loginModel.getLoginCommand());
         registerHandler(getView().getLoginButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                loginModel.getLoginCommand().Execute();
+                getView().flush();
+                getView().getLoginButton().getCommand().Execute();
             }
         }));
 
@@ -115,7 +119,24 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
                 }
             }
         });
+
+        loginModel.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
+
+                if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+                    if (loginModel.getProgress() != null) {
+                        RootPanel.getBodyElement().getStyle().setCursor(Cursor.WAIT);
+                    } else {
+                        RootPanel.getBodyElement().getStyle().clearCursor();
+                    }
+                }
+            }
+        });
     }
+
+
 
     /**
      * Returns the key used to store and retrieve selected domain from {@link ClientStorage}.
