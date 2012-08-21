@@ -33,6 +33,10 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         setVmId(getParameters().getMasterVmId());
     }
 
+    protected AddImageFromScratchCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     protected void executeCommand() {
         setImageGroupId(getParameters().getDiskInfo().getId());

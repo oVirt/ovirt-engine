@@ -35,6 +35,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extends BaseImagesCommand<T> {
     protected DiskImage mNewCreatedDiskImage;
 
+    protected CreateSnapshotCommand(Guid commandId) {
+        super(commandId);
+    }
+
     public CreateSnapshotCommand(T parameters) {
         super(parameters);
         setSnapshotName(parameters.getDescription());
