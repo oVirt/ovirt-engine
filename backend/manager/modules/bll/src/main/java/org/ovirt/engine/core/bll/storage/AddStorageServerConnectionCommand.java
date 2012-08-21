@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -42,7 +41,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected storage_server_connections getConnection() {
-        if (StringHelper.isNullOrEmpty(getParameters().getStorageServerConnection().getid())) {
+        if (StringUtils.isEmpty(getParameters().getStorageServerConnection().getid())) {
             List<storage_server_connections> connections;
             if ((connections = DbFacade.getInstance().getStorageServerConnectionDAO().getAllForStorage(
                     getParameters().getStorageServerConnection().getconnection())).size() != 0) {
