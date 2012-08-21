@@ -160,27 +160,34 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
     protected boolean canDoAction() {
         String ifaceGateway = null;
         interfaces = getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
-        VdsNetworkInterface updatedIface = null;
 
-        // check that interface exists
         for (final VdsNetworkInterface i : getParameters().getInterfaces()) {
+            VdsNetworkInterface updatedIface = null;
             for (VdsNetworkInterface iface : interfaces) {
                 if (iface.getName().equals(i.getName())) {
                     updatedIface = iface;
+                }
+
+                if (NetworkUtils.interfaceBasedOn(iface.getName(), i.getName())
+                        && StringUtils.isNotEmpty(iface.getNetworkName())) {
+                    if (oldNetworkName != null) {
+                        addCanDoActionMessage(VdcBllMessages.MORE_THAN_ONE_NETWORK_ATTACHED);
+                        return false;
+                    }
+
+                    oldNetworkName = iface.getNetworkName();
                 }
             }
             if (updatedIface == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
                 return false;
             }
+
             ifaceGateway = updatedIface.getGateway();
         }
 
         boolean managementNetworkUpdated =
                 StringUtils.equals(getParameters().getNetwork().getname(), NetworkUtils.getEngineNetwork());
-
-        // obtain the network name from the host interface and check that the old network name is not null
-        oldNetworkName = StringUtils.isEmpty(updatedIface.getNetworkName()) ? null : updatedIface.getNetworkName();
 
         if (oldNetworkName == null) {
             if (managementNetworkUpdated) {
