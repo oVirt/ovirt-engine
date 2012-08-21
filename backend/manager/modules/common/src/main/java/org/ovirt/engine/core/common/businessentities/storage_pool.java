@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
 @Entity
@@ -149,9 +148,7 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
     }
 
     public void setname(String value) {
-        if (!StringHelper.EqOp(this.name, value)) {
-            this.name = value;
-        }
+        this.name = value;
     }
 
     public StorageType getstorage_pool_type() {
