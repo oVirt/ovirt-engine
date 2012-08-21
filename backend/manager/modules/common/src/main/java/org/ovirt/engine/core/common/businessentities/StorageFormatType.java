@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum StorageFormatType {
 
@@ -8,9 +9,8 @@ public enum StorageFormatType {
     V2("2"),
     V3("3");
 
-    private String intValue;
-    private static java.util.HashMap<String, StorageFormatType> mappings = new HashMap<String, StorageFormatType>();
-
+    private final String value;
+    private final static Map<String, StorageFormatType> mappings = new HashMap<String, StorageFormatType>();
     static {
         for (StorageFormatType storageDomainFormat : values()) {
             mappings.put(storageDomainFormat.getValue(), storageDomainFormat);
@@ -18,11 +18,11 @@ public enum StorageFormatType {
     }
 
     private StorageFormatType(String value) {
-        intValue = value;
+        this.value = value;
     }
 
     public String getValue() {
-        return intValue;
+        return value;
     }
 
     public static StorageFormatType forValue(String value) {
