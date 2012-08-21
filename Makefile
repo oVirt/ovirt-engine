@@ -199,7 +199,6 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/db-backups
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/engine-config
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/engine-manage-domains
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/kerberos
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ovirt-isos
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/plugins
 	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
@@ -347,8 +346,6 @@ install_misc:
 	@echo "*** Copying additional files"
 	install -m 644 backend/manager/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf
 	install -m 640 backend/manager/conf/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
-	install -m 644 backend/manager/conf/jboss-log4j.xml $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 backend/manager/conf/kerberos/* $(DESTDIR)$(DATA_DIR)/kerberos
 	install -m 644 backend/manager/conf/jboss-log4j.xml $(DESTDIR)$(DATA_DIR)/conf
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/

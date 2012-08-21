@@ -826,7 +826,6 @@ fi
 # Scripts:
 %{engine_data}/engine-config
 %{engine_data}/engine-manage-domains
-%{engine_data}/kerberos
 
 # Configuration files for the configuration tool:
 %dir %{engine_etc}/engine-config
