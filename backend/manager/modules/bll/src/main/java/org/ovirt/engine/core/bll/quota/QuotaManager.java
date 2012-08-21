@@ -45,8 +45,8 @@ public class QuotaManager {
     }
 
     private AuditLogableBase getLoggableQuotaStorageParams(String quotaName,
-                                                           double storageUsagePercentage,
-                                                           double storageRequestedPercentage) {
+            double storageUsagePercentage,
+            double storageRequestedPercentage) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.AddCustomValue("QuotaName", quotaName);
         logable.AddCustomValue("CurrentStorage", percentageFormatter.format(storageUsagePercentage));
@@ -56,30 +56,29 @@ public class QuotaManager {
     }
 
     private AuditLogableBase getLogableQuotaVdsGroupParams(String quotaName,
-                                                           double cpuCurrentPercentage,
-                                                           double cpuRequestPercentage,
-                                                           double memCurrentPercentage,
-                                                           double memRequestPercentage,
-                                                           boolean cpuOverLimit,
-                                                           boolean memOverLimit) {
+            double cpuCurrentPercentage,
+            double cpuRequestPercentage,
+            double memCurrentPercentage,
+            double memRequestPercentage,
+            boolean cpuOverLimit,
+            boolean memOverLimit) {
 
         AuditLogableBase logable = new AuditLogableBase();
         logable.AddCustomValue("QuotaName", quotaName);
 
         StringBuilder currentUtilization = new StringBuilder();
-        if (cpuOverLimit){
+        if (cpuOverLimit) {
             currentUtilization.append("vcpu:").append(percentageFormatter.format(cpuCurrentPercentage)).append("% ");
         }
         if (memOverLimit) {
             currentUtilization.append("mem:").append(percentageFormatter.format(memCurrentPercentage)).append("%");
         }
 
-
         StringBuilder request = new StringBuilder();
-        if (cpuOverLimit){
+        if (cpuOverLimit) {
             request.append("vcpu:").append(percentageFormatter.format(cpuRequestPercentage)).append("% ");
         }
-        if (memOverLimit){
+        if (memOverLimit) {
             request.append("mem:").append(percentageFormatter.format(memRequestPercentage)).append("%");
         }
 
@@ -90,8 +89,8 @@ public class QuotaManager {
     }
 
     public boolean validateAndSetStorageQuota(storage_pool storagePool,
-                                              List<StorageQuotaValidationParameter> parameters,
-                                              ArrayList<String> canDoActionMessages) {
+            List<StorageQuotaValidationParameter> parameters,
+            ArrayList<String> canDoActionMessages) {
         lock.readLock().lock();
         try {
             return validateAndSetStorageQuotaHelper(storagePool, parameters, canDoActionMessages, true);
@@ -122,7 +121,7 @@ public class QuotaManager {
     }
 
     public void decreaseStorageQuota(storage_pool storagePool,
-                                     List<StorageQuotaValidationParameter> parameters) {
+            List<StorageQuotaValidationParameter> parameters) {
         lock.readLock().lock();
         try {
             if (!storagePoolQuotaMap.containsKey(storagePool.getId())) {
@@ -143,8 +142,8 @@ public class QuotaManager {
     }
 
     private boolean validateAndSetStorageQuotaHelper(storage_pool storagePool,
-                                                     List<StorageQuotaValidationParameter> parameters,
-                                                     ArrayList<String> canDoActionMessages, boolean isIncrease) {
+            List<StorageQuotaValidationParameter> parameters,
+            ArrayList<String> canDoActionMessages, boolean isIncrease) {
         Pair<AuditLogType, AuditLogableBase> logPair = new Pair<AuditLogType, AuditLogableBase>();
         lock.readLock().lock();
         try {
@@ -295,12 +294,12 @@ public class QuotaManager {
     }
 
     private boolean checkQuotaStorageLimits(QuotaEnforcementTypeEnum quotaEnforcementTypeEnum,
-                                            Quota quota,
-                                            double limit,
-                                            double storageUsagePercentage,
-                                            double storageRequestPercentage,
-                                            ArrayList<String> canDoActionMessages,
-                                            Pair<AuditLogType, AuditLogableBase> log) {
+            Quota quota,
+            double limit,
+            double storageUsagePercentage,
+            double storageRequestPercentage,
+            ArrayList<String> canDoActionMessages,
+            Pair<AuditLogType, AuditLogableBase> log) {
         double storageTotalPercentage = storageUsagePercentage + storageRequestPercentage;
 
         if (limit == UNLIMITED || storageTotalPercentage <= quota.getThresholdStoragePercentage()) {
@@ -329,12 +328,12 @@ public class QuotaManager {
     }
 
     private boolean checkQuotaClusterLimits(QuotaEnforcementTypeEnum quotaEnforcementTypeEnum,
-                                            Quota quota,
-                                            QuotaVdsGroup quotaVdsGroup,
-                                            long memToAdd,
-                                            int vcpuToAdd,
-                                            ArrayList<String> canDoActionMessages,
-                                            Pair<AuditLogType, AuditLogableBase> log) {
+            Quota quota,
+            QuotaVdsGroup quotaVdsGroup,
+            long memToAdd,
+            int vcpuToAdd,
+            ArrayList<String> canDoActionMessages,
+            Pair<AuditLogType, AuditLogableBase> log) {
         if (quotaVdsGroup.getVirtualCpu() == 0 || quotaVdsGroup.getMemSizeMB() == 0) {
             return false;
         }
@@ -408,9 +407,9 @@ public class QuotaManager {
     }
 
     public boolean validateQuotaForStoragePool(storage_pool storagePool,
-                                               Guid vdsGroupId,
-                                               Guid quotaId,
-                                               ArrayList<String> canDoActionMessages) {
+            Guid vdsGroupId,
+            Guid quotaId,
+            ArrayList<String> canDoActionMessages) {
         lock.readLock().lock();
         try {
             if (QuotaEnforcementTypeEnum.DISABLED.equals(storagePool.getQuotaEnforcementType())) {
@@ -468,11 +467,11 @@ public class QuotaManager {
     }
 
     public boolean validateAndSetClusterQuota(storage_pool storagePool,
-                                              Guid vdsGroupId,
-                                              Guid quotaId,
-                                              int vcpu,
-                                              long mem,
-                                              ArrayList<String> canDoActionMessages) {
+            Guid vdsGroupId,
+            Guid quotaId,
+            int vcpu,
+            long mem,
+            ArrayList<String> canDoActionMessages) {
         Pair<AuditLogType, AuditLogableBase> logPair = new Pair<AuditLogType, AuditLogableBase>();
         try {
             if (QuotaEnforcementTypeEnum.DISABLED.equals(storagePool.getQuotaEnforcementType())) {
