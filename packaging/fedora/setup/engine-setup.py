@@ -1875,6 +1875,7 @@ def _editSysconfig():
     utils.editEngineSysconfig(proxyEnabled=proxyEnabled,
                               dbUrl=dbUrl,
                               dbUser=utils.getDbUser(),
+                              fqdn=controller.CONF["HOST_FQDN"],
                               http=controller.CONF["HTTP_PORT"],
                               https=controller.CONF["HTTPS_PORT"])
 

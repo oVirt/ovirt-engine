@@ -71,6 +71,11 @@
 #ENGINE_AJP_ENABLED=false
 
 #
+# Engine host fully qualified domain name:
+#
+#ENGINE_FQDN=localhost.localdomain
+
+#
 # Ports used by the web server (the proxy) and by the connectors
 # of the application server:
 #

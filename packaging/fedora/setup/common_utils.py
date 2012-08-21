@@ -919,7 +919,7 @@ def getHostParams():
 
     return (values["fqdn"], values["httpPort"], values["httpsPort"])
 
-def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, http, https):
+def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, fqdn, http, https):
     # Load the file:
     logging.debug("Loading text file handler")
     handler = TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
@@ -928,6 +928,9 @@ def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, http, https):
     handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
     handler.editParam("ENGINE_DB_URL", dbUrl)
     handler.editParam("ENGINE_DB_USER", dbUser)
+
+    # Put FQDN for use by other components
+    handler.editParam("ENGINE_FQDN", fqdn)
 
     # Save port numbers and enabled/disabled state:
     if proxyEnabled:
