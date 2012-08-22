@@ -398,28 +398,29 @@ public class BackendApiResource
     }
 
     private API addSummary(API api) {
-        HashMap<String, Integer> stats = getSystemStatistics();
+        if (!isFiltered()) {
+            HashMap<String, Integer> stats = getSystemStatistics();
 
-        ApiSummary summary = new ApiSummary();
+            ApiSummary summary = new ApiSummary();
 
-        summary.setVMs(new VMs());
-        summary.getVMs().setTotal(get(stats, "total_vms"));
-        summary.getVMs().setActive(get(stats, "active_vms"));
+            summary.setVMs(new VMs());
+            summary.getVMs().setTotal(get(stats, "total_vms"));
+            summary.getVMs().setActive(get(stats, "active_vms"));
 
-        summary.setHosts(new Hosts());
-        summary.getHosts().setTotal(get(stats, "total_vds"));
-        summary.getHosts().setActive(get(stats, "active_vds"));
+            summary.setHosts(new Hosts());
+            summary.getHosts().setTotal(get(stats, "total_vds"));
+            summary.getHosts().setActive(get(stats, "active_vds"));
 
-        summary.setUsers(new Users());
-        summary.getUsers().setTotal(get(stats, "total_users"));
-        summary.getUsers().setActive(get(stats, "active_users"));
+            summary.setUsers(new Users());
+            summary.getUsers().setTotal(get(stats, "total_users"));
+            summary.getUsers().setActive(get(stats, "active_users"));
 
-        summary.setStorageDomains(new StorageDomains());
-        summary.getStorageDomains().setTotal(get(stats, "total_storage_domains"));
-        summary.getStorageDomains().setActive(get(stats, "active_storage_domains"));
+            summary.setStorageDomains(new StorageDomains());
+            summary.getStorageDomains().setTotal(get(stats, "total_storage_domains"));
+            summary.getStorageDomains().setActive(get(stats, "active_storage_domains"));
 
-        api.setSummary(summary);
-
+            api.setSummary(summary);
+        }
         return api;
     }
 
