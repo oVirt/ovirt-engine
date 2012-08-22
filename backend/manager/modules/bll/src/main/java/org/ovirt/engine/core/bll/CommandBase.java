@@ -823,14 +823,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             log.error(String.format("Command %1$s throw Database exception", getClass().getName()), e);
             ProcessExceptionToClient(new VdcFault(e, VdcBllErrors.DB));
         }
-        // catch (LicenseException e)
-        // {
-        // log.error(
-        // string.Format("Command {0} throw License exception", GetType().Name),
-        // e);
-        // ProcessExceptionToClient(new VdcFault(e, VdcBllErrors.LICENSE));
-
-        // }
         catch (VdcBLLException e) {
             log.error(String.format("Command %1$s throw Vdc Bll exception. With error message %2$s",
                     getClass().getName(),
@@ -964,8 +956,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void LogCommand() {
         Class<?> type = getClass();
-        // Object[] attributes = new Object[] {}; // FIXED
-        // type.GetCustomAttributes(InternalCommandAttribute.class, false);
         InternalCommandAttribute annotation = type.getAnnotation(InternalCommandAttribute.class);
         if (annotation == null) {
             log();
@@ -973,9 +963,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private boolean getTransactive() {
-        // Object[] attributes = new Object[] {}; // FIXED
-        // getClass().GetCustomAttributes(NonTransactiveCommandAttribute.class,
-        // true);
         NonTransactiveCommandAttribute annotation = getClass().getAnnotation(NonTransactiveCommandAttribute.class);
         return annotation == null;
     }
