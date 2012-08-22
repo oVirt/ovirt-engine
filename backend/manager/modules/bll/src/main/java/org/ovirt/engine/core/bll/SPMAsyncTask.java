@@ -208,7 +208,7 @@ public class SPMAsyncTask {
      * Cleared Failed , and log appropriate message.
      */
     private void HandleEndedTask() {
-        // If task state is different from Ended chnage it to Ended and set the
+        // If task state is different from Ended change it to Ended and set the
         // last access time to now.
         if (getState() != AsyncTaskState.Ended) {
             setState(AsyncTaskState.Ended);
