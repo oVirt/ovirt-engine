@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -106,6 +107,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             return Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled, compVersion);
         }
         return true;
+    }
+
+    protected boolean isVolumeFormatSupportedForShareable(VolumeFormat volumeFormat) {
+        return volumeFormat == VolumeFormat.RAW;
     }
 
     protected boolean isVmUpOrDown() {

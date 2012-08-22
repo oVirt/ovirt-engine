@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -57,7 +58,8 @@ public class AddDiskToVmCommandTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
             mockConfig(ConfigValues.FreeSpaceLow, FREE_SPACE_LOW),
-            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, FREE_SPACE_CRITICAL_LOW_IN_GB)
+            mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, FREE_SPACE_CRITICAL_LOW_IN_GB),
+            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true)
             );
 
     @Mock
@@ -282,6 +284,49 @@ public class AddDiskToVmCommandTest {
     }
 
     /**
+     * CanDoAction should succeed when creating a Shareable Disk with RAW volume format
+     */
+    @Test
+    public void canDoActionShareableDiskVolumeFormatSucceeds() {
+        DiskImage image = createShareableDiskImage();
+        image.setvolume_format(VolumeFormat.RAW);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(image);
+        Guid storageId = Guid.NewGuid();
+        initializeCommand(storageId, parameters);
+
+        mockVm();
+        mockStorageDomain(storageId, Version.v3_1);
+        mockStoragePoolIsoMap();
+
+        runAndAssertCanDoActionSuccess();
+    }
+
+    /**
+     * CanDoAction should fail when creating a Shareable Disk with COW volume format
+     */
+    @Test
+    public void canDoActionShareableDiskVolumeFormatFails() {
+        DiskImage image = createShareableDiskImage();
+        image.setvolume_format(VolumeFormat.COW);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(image);
+        Guid storageId = Guid.NewGuid();
+        initializeCommand(storageId, parameters);
+
+        mockVm();
+        mockStorageDomain(storageId, Version.v3_1);
+        mockStoragePoolIsoMap();
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT.toString()));
+    }
+
+    /**
      * Initialize the command for testing, using the given storage domain id for the parameters.
      *
      * @param storageId
@@ -358,28 +403,47 @@ public class AddDiskToVmCommandTest {
     }
 
     /**
+     * Mock a {@link storage_pool}.
+     *
+     * @param compatibilityVersion
+     * @return
+     */
+    private storage_pool mockStoragePool(Version compatibilityVersion) {
+        Guid storagePoolId = Guid.NewGuid();
+        storage_pool storagePool = new storage_pool();
+        storagePool.setId(storagePoolId);
+        storagePool.setcompatibility_version(compatibilityVersion);
+        when(storagePoolDAO.get(storagePoolId)).thenReturn(storagePool);
+
+        return storagePool;
+    }
+
+    /**
      * Mock a {@link storage_domains}.
      *
      * @param storageId
      *            Id of the domain.
      */
     private storage_domains mockStorageDomain(Guid storageId) {
-        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN);
+        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN, new Version());
     }
 
     private storage_domains mockStorageDomain(Guid storageId, StorageType storageType) {
-        return mockStorageDomain(storageId, 6, 4, storageType);
+        return mockStorageDomain(storageId, 6, 4, storageType, new Version());
     }
 
     private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize) {
-        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN);
+        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN, new Version());
     }
 
-    private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize, StorageType storageType) {
-        Guid storagePoolId = Guid.NewGuid();
-        storage_pool sp = new storage_pool();
-        sp.setId(storagePoolId);
-        when(storagePoolDAO.get(storagePoolId)).thenReturn(sp);
+    private storage_domains mockStorageDomain(Guid storageId, Version version) {
+        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN, version);
+    }
+
+    private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize,
+            StorageType storageType, Version version) {
+        storage_pool storagePool = mockStoragePool(version);
+        Guid storagePoolId = storagePool.getId();
 
         storage_domains sd = new storage_domains();
         sd.setavailable_disk_size(availableSize);
@@ -431,6 +495,12 @@ public class AddDiskToVmCommandTest {
     private static DiskImage createDiskImage(long sizeInGigabytes) {
         DiskImage image = new DiskImage();
         image.setSizeInGigabytes(sizeInGigabytes);
+        return image;
+    }
+
+    private static DiskImage createShareableDiskImage() {
+        DiskImage image = new DiskImage();
+        image.setShareable(true);
         return image;
     }
 

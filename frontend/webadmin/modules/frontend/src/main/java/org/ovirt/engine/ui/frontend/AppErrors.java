@@ -1864,6 +1864,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk cannot be shareable if it depends on a snapshot. In order to share it, remove the disk's snapshots.")
     String SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Disk's volume format is not supported for shareable disk.")
+    String SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT();
+
     @DefaultStringValue("Cannot ${action} ${type}. The disk is already configured in a snapshot. In order to detach it, remove the disk's snapshots.")
     String ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT();
 

@@ -5,11 +5,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -20,14 +23,22 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateVmDiskCommandTest {
@@ -43,6 +54,19 @@ public class UpdateVmDiskCommandTest {
     private DiskDao diskDao;
     @Mock
     private VmNetworkInterfaceDAO vmNetworkInterfaceDAO;
+    @Mock
+    private SnapshotDao snapshotDao;
+    @Mock
+    private DiskImageDAO diskImageDao;
+    @Mock
+    private StoragePoolDAO storagePoolDao;
+    @Mock
+    private DbFacade dbFacade;
+
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true)
+            );
 
     /**
      * The command under test.
@@ -70,8 +94,28 @@ public class UpdateVmDiskCommandTest {
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
     }
 
-    protected void initializeCommand() {
-        command = spy(new UpdateVmDiskCommand<UpdateVmDiskParameters>(createParameters()) {
+    @Test
+    public void canDoActionFailedShareableDiskVolumeFormatUnsupported() throws Exception {
+        UpdateVmDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(createShareableCowDisk());
+
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        initializeCommand(parameters);
+
+        mockVmStatusUp();
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT.toString()));
+    }
+
+    private void initializeCommand() {
+        initializeCommand(createParameters());
+    }
+
+    protected void initializeCommand(UpdateVmDiskParameters params) {
+        command = spy(new UpdateVmDiskCommand<UpdateVmDiskParameters>(params) {
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override
@@ -80,13 +124,18 @@ public class UpdateVmDiskCommandTest {
             }
 
         });
+        doReturn(true).when(command).acquireLockInternal();
         doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDAO();
+        doReturn(snapshotDao).when(command).getSnapshotDao();
+        doReturn(diskImageDao).when(command).getDiskImageDao();
+        doReturn(storagePoolDao).when(command).getStoragePoolDAO();
         mockVds();
     }
 
     private void mockNullVm() {
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
         mockGetForDisk(null);
+        mockGetVmsListForDisk(null);
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
     }
 
@@ -97,8 +146,12 @@ public class UpdateVmDiskCommandTest {
         VM vm = new VM();
         vm.setstatus(VMStatus.Down);
         vm.setguest_os("rhel6");
+        vm.setId(vmId);
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
-        mockGetForDisk(new VM());
+        mockGetForDisk(vm);
+        mockGetVmsListForDisk(vm);
+        storage_pool storagePool = mockStoragePool(Version.v3_1);
+        vm.setstorage_pool_id(storagePool.getId());
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
         return vm;
     }
@@ -111,6 +164,12 @@ public class UpdateVmDiskCommandTest {
         when(vmDAO.getForDisk(diskImageGuid)).thenReturn(vmsMap);
     }
 
+    private void mockGetVmsListForDisk(VM vm) {
+        List<VM> vms = new ArrayList<VM>();
+        vms.add(vm);
+        when(vmDAO.getVmsListForDisk(diskImageGuid)).thenReturn(vms);
+    }
+
     /**
      * Mock VDS
      */
@@ -120,6 +179,22 @@ public class UpdateVmDiskCommandTest {
         command.setVdsId(Guid.Empty);
         doReturn(vdsDao).when(command).getVdsDAO();
         when(vdsDao.get(Guid.Empty)).thenReturn(vds);
+    }
+
+    /**
+     * Mock a {@link storage_pool}.
+     *
+     * @param compatibilityVersion
+     * @return
+     */
+    private storage_pool mockStoragePool(Version compatibilityVersion) {
+        Guid storagePoolId = Guid.NewGuid();
+        storage_pool storagePool = new storage_pool();
+        storagePool.setId(storagePoolId);
+        storagePool.setcompatibility_version(compatibilityVersion);
+        when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
+
+        return storagePool;
     }
 
     /**
@@ -135,6 +210,26 @@ public class UpdateVmDiskCommandTest {
      */
     private void createNullDisk() {
         when(diskDao.get(diskImageGuid)).thenReturn(null);
+    }
+
+    /**
+     * The following method will create a new DiskImage
+     */
+    private DiskImage createDiskImage() {
+        DiskImage disk = new DiskImage();
+        disk.setId(diskImageGuid);
+        return disk;
+    }
+
+    /**
+     * The following method will create a Shareable DiskImage that is COW formatted
+     */
+    private DiskImage createShareableCowDisk() {
+        DiskImage disk = new DiskImage();
+        disk.setId(diskImageGuid);
+        disk.setvolume_format(VolumeFormat.COW);
+        disk.setShareable(true);
+        return disk;
     }
 
     /**

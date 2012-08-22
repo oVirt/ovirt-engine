@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -168,7 +169,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         boolean isDiskShareable = _oldDisk.isShareable();
 
         // Check if VM is not during snapshot.
-        if (ImagesHandler.isVmInPreview(getVmId())) {
+        if (getSnapshotDao().exists(getVmId(), SnapshotStatus.IN_PREVIEW)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
             return false;
         }
@@ -191,7 +192,13 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return false;
             }
 
-            ((DiskImage)_oldDisk).setvm_snapshot_id(null);
+            DiskImage diskImage = (DiskImage) getParameters().getDiskInfo();
+            if (!isVolumeFormatSupportedForShareable(diskImage.getvolume_format())) {
+                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
+                return false;
+            }
+
+            diskImage.setvm_snapshot_id(null);
         } else if (isDiskShareable && !isDiskUpdatedToShareable) {
             if (getVmDAO().getVmsListForDisk(_oldDisk.getId()).size() > 1) {
                 addCanDoActionMessage(VdcBllMessages.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);

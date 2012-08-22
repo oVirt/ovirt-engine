@@ -784,17 +784,16 @@ public class DiskModel extends Model
         }
     }
 
-    private void UpdateVolumeFormat()
+    private void updateVolumeFormat(VolumeType volumeType, StorageType storageType)
     {
-        VolumeType volumeType =
-                getVolumeType().getSelectedItem() == null ? org.ovirt.engine.core.common.businessentities.VolumeType.Unassigned
-                        : (VolumeType) getVolumeType().getSelectedItem();
-
-        StorageType storageType =
-                getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
-                        : ((storage_domains) getStorageDomain().getSelectedItem()).getstorage_type();
-
         setVolumeFormat(DataProvider.GetDiskVolumeFormat(volumeType, storageType));
+    }
+
+    private void updateShareable(VolumeType volumeType, StorageType storageType) {
+        getIsShareable().setEntity(false);
+        getIsShareable().setIsChangable(!(storageType.isBlockDomain() && volumeType == VolumeType.Sparse));
+        getIsShareable().getChangeProhibitionReasons().add(
+                ConstantsManager.getInstance().getConstants().shareableDiskNotSupportedByConfiguration());
     }
 
     private boolean isDatacenterAvailable(storage_pool dataCenter)
@@ -858,7 +857,16 @@ public class DiskModel extends Model
 
     private void VolumeType_SelectedItemChanged()
     {
-        UpdateVolumeFormat();
+        VolumeType volumeType =
+                getVolumeType().getSelectedItem() == null ? VolumeType.Unassigned
+                        : (VolumeType) getVolumeType().getSelectedItem();
+
+        StorageType storageType =
+                getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
+                        : ((storage_domains) getStorageDomain().getSelectedItem()).getstorage_type();
+
+        updateVolumeFormat(volumeType, storageType);
+        updateShareable(volumeType, storageType);
     }
 
     private void WipeAfterDelete_EntityChanged(EventArgs e)

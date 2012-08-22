@@ -128,11 +128,17 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize)));
             returnValue = false;
         }
-        if (returnValue && getParameters().getDiskInfo().isShareable()
-                && !Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled,
-                        getStoragePool().getcompatibility_version().getValue())) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+        if (returnValue && getParameters().getDiskInfo().isShareable()) {
+            if (!Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled,
+                            getStoragePool().getcompatibility_version().getValue())) {
+                returnValue = false;
+                addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            }
+            else if (!isVolumeFormatSupportedForShareable(
+                    ((DiskImage) getParameters().getDiskInfo()).getvolume_format())) {
+                returnValue = false;
+                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
+            }
         }
         return returnValue && (vm == null || validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())));
     }
