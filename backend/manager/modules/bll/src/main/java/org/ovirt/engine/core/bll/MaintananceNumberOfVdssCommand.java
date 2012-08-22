@@ -82,6 +82,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
             // ParametersCurrentUser = CurrentUser
             MaintananceVdsParameters tempVar = new MaintananceVdsParameters(vdsId, getParameters().getIsInternal());
             tempVar.setSessionId(getParameters().getSessionId());
+            tempVar.setCorrelationId(getParameters().getCorrelationId());
             VdcReturnValueBase result =
                     Backend.getInstance().runInternalAction(VdcActionType.MaintananceVds,
                             tempVar,
