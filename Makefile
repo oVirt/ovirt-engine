@@ -148,7 +148,7 @@ install_without_maven: \
 tarball:
 	sed -e 's/@PACKAGE_VERSION@/$(RPM_VERSION)/g' \
             -e 's/@PACKAGE_RELEASE@/$(RPM_RELEASE_VERSION)/g' $(SPEC_FILE_IN) > $(SPEC_FILE)
-	tar zcf $(TARBALL) `git ls-files` $(SPEC_FILE)
+	git ls-files | tar --files-from /proc/self/fd/0 -czf $(TARBALL) $(SPEC_FILE)
 	rm -f $(SPEC_FILE)
 	@echo
 	@echo You can use $(RPMBUILD) -tb $(TARBALL) to produce rpms
