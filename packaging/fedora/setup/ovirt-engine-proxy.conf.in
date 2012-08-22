@@ -4,3 +4,9 @@
 # and making sure that the connections will be recovered in a short time
 # interval (5 seconds at the moment):
 ProxyPass / ajp://localhost:${basedefs.JBOSS_AJP_PORT}/ retry=5
+
+# Remove the Expect headers from API requests (this is needed to fix a
+# problem with some API clients):
+<IfModule mod_headers.c>
+  RequestHeader unset Expect early
+</IfModule>
