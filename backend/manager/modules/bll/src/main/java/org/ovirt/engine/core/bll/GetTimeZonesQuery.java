@@ -116,7 +116,12 @@ public class GetTimeZonesQuery<P extends TimeZoneQueryParams> extends QueriesCom
             if (match2.matches() && match2.groupCount() > 0) {
                 b = Integer.parseInt(match2.group(1).substring(3).replace(":", "").replace("+", ""));
             }
-            return (a > b) ? 1 : 0;
+
+            if (a == b) {
+                return 0;
+            }
+
+            return (a > b) ? 1 : -1;
         }
     }
 }
