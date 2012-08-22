@@ -1165,7 +1165,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void RevertTasks() {
         if (getParameters().getTaskIds() != null) {
-            // list to send to the PollTasks mathod
+            // list to send to the PollTasks method
             ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();
 
             for (Guid taskId : getParameters().getTaskIds()) {
