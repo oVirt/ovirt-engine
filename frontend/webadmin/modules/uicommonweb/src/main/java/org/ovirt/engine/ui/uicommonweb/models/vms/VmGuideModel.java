@@ -102,6 +102,8 @@ public class VmGuideModel extends GuideModel
     }
 
     private void UpdateOptionsData() {
+        nics = null;
+        disks = null;
         AsyncDataProvider.GetVmNicList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -196,6 +198,8 @@ public class VmGuideModel extends GuideModel
     }
 
     private void AddNetworkUpdateData() {
+        nics = null;
+        networks = null;
         AsyncDataProvider.GetVmNicList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
