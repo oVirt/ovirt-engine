@@ -162,6 +162,7 @@ public class SPMAsyncTask {
      * @param returnTaskStatus
      *            - Task status returned from VDSM.
      */
+    @SuppressWarnings("incomplete-switch")
     public void UpdateTask(AsyncTaskStatus returnTaskStatus) {
         try {
             switch (getState()) {
