@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -116,8 +117,6 @@ public class VmDeviceUtils {
             id = Guid.NewGuid();
             Map<String, Object> specParams = new HashMap<String, Object>();
             if (srcId.equals(Guid.Empty)) {
-                // update number of monitors
-                updateNumOfMonitorsInVmDevice(null, vmBase);
                 //add CD if not exists
                 if (addCD) {
                     setCdPath(specParams, "", isoPath);
@@ -127,8 +126,6 @@ public class VmDeviceUtils {
                 updateUSBSlots(null, vmBase);
                 // add mem balloon if defined
                 updateMemoryBalloon(null, vmBase, vm.isBalloonEnabled());
-
-                break; // skip other Blank template devices
             }
             if (VmDeviceType.DISK.getName().equals(device.getType())
                     && VmDeviceType.DISK.getName().equals(device.getDevice())) {
@@ -140,9 +137,14 @@ public class VmDeviceUtils {
                     id = ifaces.get(ifaceCount++).getId();
                 }
             } else if (VmDeviceType.VIDEO.getName().equals(device.getType())) {
-                specParams.putAll(getMemExpr(vmBase.getnum_of_monitors()));
-            }
-            else  if (VmDeviceType.DISK.getName().equals(device.getType())
+                if (isVm) {
+                    // src is template and target is VM. video devices will be created according
+                    // to the new VMStatic params
+                    continue;
+                } else {
+                    specParams.putAll(getMemExpr(vmBase.getnum_of_monitors()));
+                }
+            } else if (VmDeviceType.DISK.getName().equals(device.getType())
                     && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
                 // check here is source VM had CD (Vm from snapshot)
                 String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
@@ -165,9 +167,11 @@ public class VmDeviceUtils {
         if (!shouldHaveCD) {
             addEmptyCD(dstId);
         }
-        // if destination is a VM , update devices boot order
+
         if (isVm) {
+            //  update devices boot order
             updateBootOrderInVmDevice(vmBase);
+
             // create sound card for a desktop VM if not exists
             if (vmBase.getvm_type() == VmType.Desktop) {
                 List<VmDevice> list = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceType.SOUND.getName());
@@ -181,7 +185,23 @@ public class VmDeviceUtils {
                             true);
                 }
             }
+            int numOfMonitors = (vm.getdisplay_type() == DisplayType.vnc) ? Math.max(1, vm.getnum_of_monitors()) : vm.getnum_of_monitors();
+            // create Video device. Multiple if display type is spice
+            for (int i = 0; i < numOfMonitors; i++) {
+                addVideoDevice(vm);
+            }
+
         }
+    }
+
+    private static void addVideoDevice(VM vm) {
+        VmDevice entity = addManagedDevice(
+                new VmDeviceId(Guid.NewGuid(),vm.getId()),
+                VmDeviceType.VIDEO,
+                vm.getdefault_display_type().getVmDeviceType(),
+                getMemExpr(vm.getnum_of_monitors()),
+                true,
+                true);
     }
 
     private static void setCdPath(Map<String, Object> specParams, String srcCdPath, String isoPath) {

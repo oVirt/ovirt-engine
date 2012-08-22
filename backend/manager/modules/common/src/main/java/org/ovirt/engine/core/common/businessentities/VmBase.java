@@ -166,6 +166,10 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Type(type = "guid")
     private NGuid dedicated_vm_for_vds;
 
+    @Column(name = "default_display_type")
+    @Enumerated
+    protected DisplayType defaultDisplayType = DisplayType.qxl;
+
     public VmBase(Guid id,
             Guid vds_group_id,
             VmOsType mOs,
@@ -750,5 +754,13 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     public void setdedicated_vm_for_vds(NGuid value) {
         dedicated_vm_for_vds = value;
+    }
+
+    public DisplayType getdefault_display_type() {
+        return defaultDisplayType;
+    }
+
+    public void setdefault_display_type(DisplayType value) {
+        defaultDisplayType = value;
     }
 }

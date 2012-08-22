@@ -41,9 +41,6 @@ public class VmStatic extends VmBase {
     @Column(name = "is_initialized")
     private boolean is_initialized;
 
-    @Column(name = "default_display_type")
-    private DisplayType default_display_type = DisplayType.qxl;
-
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "userdefined_properties")
@@ -77,7 +74,7 @@ public class VmStatic extends VmBase {
         setis_auto_suspend(false);
         setnice_level(0);
         setdefault_boot_sequence(BootSequence.C);
-        default_display_type = DisplayType.qxl;
+        defaultDisplayType = DisplayType.qxl;
         setvm_type(VmType.Desktop);
         sethypervisor_type(HypervisorType.KVM);
         setoperation_mode(OperationMode.FullVirtualized);
@@ -231,14 +228,6 @@ public class VmStatic extends VmBase {
         is_initialized = value;
     }
 
-    public DisplayType getdefault_display_type() {
-        return default_display_type;
-    }
-
-    public void setdefault_display_type(DisplayType value) {
-        default_display_type = value;
-    }
-
     public int getMinAllocatedMem() {
         if (minAllocatedMemField > 0) {
             return minAllocatedMemField;
@@ -273,7 +262,7 @@ public class VmStatic extends VmBase {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((default_display_type == null) ? 0 : default_display_type.hashCode());
+        result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
         result = prime * result + (is_initialized ? 1231 : 1237);
         result = prime * result + m_nDiskSize;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -295,7 +284,7 @@ public class VmStatic extends VmBase {
             return false;
         }
         VmStatic other = (VmStatic) obj;
-        if (default_display_type != other.default_display_type) {
+        if (defaultDisplayType != other.defaultDisplayType) {
             return false;
         }
         if (is_initialized != other.is_initialized) {

@@ -72,10 +72,6 @@ public class VmTemplate extends VmBase {
     @Transient
     private String storagePoolName;
 
-    @Column(name = "default_display_type", nullable = false)
-    @Enumerated
-    private DisplayType defaultDisplayType = DisplayType.vnc;
-
     @Transient
     private Map<Guid, DiskImage> diskMap = new HashMap<Guid, DiskImage>();
 
@@ -199,14 +195,6 @@ public class VmTemplate extends VmBase {
 
     public void setstorage_pool_name(String value) {
         storagePoolName = value;
-    }
-
-    public DisplayType getdefault_display_type() {
-        return defaultDisplayType;
-    }
-
-    public void setdefault_display_type(DisplayType value) {
-        defaultDisplayType = value;
     }
 
     public double getSizeGB() {
