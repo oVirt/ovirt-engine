@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.asynctasks;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.compat.Guid;
 
 public class AsyncTaskParameters {
     private async_tasks privateDbAsyncTask;
