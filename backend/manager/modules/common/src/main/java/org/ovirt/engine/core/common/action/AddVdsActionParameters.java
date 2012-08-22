@@ -14,6 +14,8 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
 
     private boolean privateAddPending;
 
+    private boolean glusterPeerProbeNeeded = true;
+
     public boolean getAddPending() {
         return privateAddPending;
     }
@@ -31,5 +33,13 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
 
     public Guid getVdsForUniqueId() {
         return vdsId;
+    }
+
+    public void setGlusterPeerProbeNeeded(boolean glusterPeerProbeNeeded) {
+        this.glusterPeerProbeNeeded = glusterPeerProbeNeeded;
+    }
+
+    public boolean isGlusterPeerProbeNeeded() {
+        return this.glusterPeerProbeNeeded;
     }
 }

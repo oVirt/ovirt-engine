@@ -164,7 +164,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         } else {
             // If cluster supports gluster service do gluster peer probe
             // only on non vds installation mode.
-            if (getVdsGroup().supportsGlusterService() && getAllVds(getVdsGroupId()).size() > 1) {
+            // Also gluster peer probe is not needed when importing an existing gluster cluster
+            if (isGlusterSupportEnabled() && getAllVds(getVdsGroupId()).size() > 1) {
                 String hostName =
                         (getParameters().getvds().gethost_name().isEmpty()) ? getParameters().getvds().getManagmentIp()
                                 : getParameters().getvds().gethost_name();
@@ -182,6 +183,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 }
             }
         }
+    }
+
+    private boolean isGlusterSupportEnabled() {
+        return getVdsGroup().supportsGlusterService() && getParameters().isGlusterPeerProbeNeeded();
     }
 
     /**
@@ -319,7 +324,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 }
             }
         }
-        if (getVdsGroup().supportsGlusterService()) {
+        if (isGlusterSupportEnabled()) {
             if (clusterHasServers()) {
                 upServer = ClusterUtils.getInstance().getUpServer(getVdsGroupId());
                 if (upServer == null) {
