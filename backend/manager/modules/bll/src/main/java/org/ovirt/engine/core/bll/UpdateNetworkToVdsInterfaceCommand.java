@@ -164,12 +164,11 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         // check that interface exists
         for (final VdsNetworkInterface i : getParameters().getInterfaces()) {
-            updatedIface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-                @Override
-                public boolean eval(VdsNetworkInterface x) {
-                    return x.getName().equals(i.getName());
+            for (VdsNetworkInterface iface : interfaces) {
+                if (iface.getName().equals(i.getName())) {
+                    updatedIface = iface;
                 }
-            });
+            }
             if (updatedIface == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
                 return false;
