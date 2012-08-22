@@ -52,6 +52,6 @@ public class AsyncTaskUtils {
 
     }
 
-    protected static Log log = LogFactory.getLog(AsyncTaskUtils.class);
+    private static final Log log = LogFactory.getLog(AsyncTaskUtils.class);
 
 }
