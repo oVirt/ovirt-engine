@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -31,6 +32,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -49,6 +51,9 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
 
     @UiField
     WidgetStyle style;
+
+    @UiField
+    HorizontalPanel discoverTargetsLabelPanel;
 
     @UiField
     @Ignore
@@ -215,6 +220,11 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
                 loginAllButton.getCommand().Execute();
             }
         });
+    }
+
+    public void setEnabled(boolean enabled) {
+        Visibility visibility = enabled ? Visibility.VISIBLE : Visibility.HIDDEN;
+        discoverTargetsLabelPanel.getElement().getStyle().setVisibility(visibility);
     }
 
     @Override

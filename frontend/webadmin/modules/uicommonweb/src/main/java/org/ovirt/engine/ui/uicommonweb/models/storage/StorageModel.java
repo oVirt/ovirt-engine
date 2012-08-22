@@ -719,4 +719,10 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     {
         privateSystemTreeSelectedItem = value;
     }
+
+    public boolean isStorageActive() {
+        return getStorage() == null
+                || getStorage().getstorage_domain_shared_status() == StorageDomainSharedStatus.Active
+                || getStorage().getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed;
+    }
 }

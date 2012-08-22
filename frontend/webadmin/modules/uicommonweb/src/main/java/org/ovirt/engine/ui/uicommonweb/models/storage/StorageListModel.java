@@ -349,6 +349,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getDataCenter().setIsChangable(false);
         model.getFormat().setIsChangable(false);
 
+        boolean isStorageActive = model.isStorageActive();
+        model.getName().setIsChangable(isStorageActive);
+        model.getHost().setIsChangable(isStorageActive);
+        model.getAvailableStorageItems().setIsChangable(isStorageActive);
+        model.setIsChangable(isStorageActive);
+
         IStorageModel item = null;
         switch (storage.getstorage_type()) {
             case NFS:
@@ -389,17 +395,24 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             }
         }
 
-
         UICommand command;
-        command = new UICommand("OnSave", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        model.getCommands().add(command);
+        if (isStorageActive) {
+            command = new UICommand("OnSave", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            command.setIsDefault(true);
+            model.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+            command = new UICommand("Cancel", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            command.setIsCancel(true);
+            model.getCommands().add(command);
+        }
+        else {
+            command = new UICommand("Cancel", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().close());
+            command.setIsCancel(true);
+            model.getCommands().add(command);
+        }
     }
 
     private IStorageModel PrepareNfsStorageForEdit(storage_domains storage)
@@ -502,29 +515,33 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private void PrepareSanStorageForEdit(SanStorageModel model)
+    private void PrepareSanStorageForEdit(final SanStorageModel model)
     {
         StorageModel storageModel = (StorageModel) getWindow();
-        final SanStorageModel sanStorageModel = model;
-        storageModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PostPrepareSanStorageForEdit(sanStorageModel);
-            }
-        });
+        storage_domains storage = (storage_domains) getSelectedItem();
+        boolean isStorageActive = storageModel.isStorageActive();
+
+        if (isStorageActive) {
+            storageModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    PostPrepareSanStorageForEdit(model, true);
+                }
+            });
+        }
+        else {
+            PostPrepareSanStorageForEdit(model, false);
+        }
     }
 
-    private void PostPrepareSanStorageForEdit(SanStorageModel model)
+    private void PostPrepareSanStorageForEdit(SanStorageModel model, boolean isStorageActive)
     {
         StorageModel storageModel = (StorageModel) getWindow();
         storage_domains storage = (storage_domains) getSelectedItem();
         model.setStorageDomain(storage);
 
         VDS host = (VDS) storageModel.getHost().getSelectedItem();
-
-        if (host == null) {
-            return;
-        }
+        Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
         AsyncDataProvider.GetLunsByVgId(new AsyncQuery(model, new INewAsyncCallback() {
             @Override
@@ -533,7 +550,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
                 sanStorageModel.ApplyData(lunList, true);
             }
-        }), storage.getstorage(), host.getId());
+        }, storageModel.getHash()), storage.getstorage(), hostId);
     }
 
     private void ImportDomain()
@@ -1035,9 +1052,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getNewDomainCommand().setIsAvailable(true);
 
-        getEditCommand().setIsExecutionAllowed(item != null
-                && items.size() == 1
-                && (item.getstorage_domain_shared_status() == StorageDomainSharedStatus.Active || item.getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed));
+        getEditCommand().setIsExecutionAllowed(items.size() == 1 && isEditAvailable(item));
 
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
                 && Linq.FindAllStorageDomainsBySharedStatus(items, StorageDomainSharedStatus.Unattached).size() == items.size());
@@ -1050,6 +1065,18 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getNewDomainCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
+    }
+
+    private boolean isEditAvailable(storage_domains storageDomain) {
+        if (storageDomain == null) {
+            return false;
+        }
+
+        boolean isActive = storageDomain.getstorage_domain_shared_status() == StorageDomainSharedStatus.Active
+                || storageDomain.getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed;
+        boolean isBlockStorage = storageDomain.getstorage_type().isBlockDomain();
+
+        return isBlockStorage ? true : isActive;
     }
 
     @Override

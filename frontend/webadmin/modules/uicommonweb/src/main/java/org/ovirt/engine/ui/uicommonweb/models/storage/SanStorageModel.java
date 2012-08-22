@@ -123,6 +123,10 @@ public abstract class SanStorageModel extends SanStorageModelBase
     {
         super.UpdateInternal();
 
+        if (!getContainer().isStorageActive()) {
+            return;
+        }
+
         VDS host = (VDS) getContainer().getHost().getSelectedItem();
         if (host == null)
         {

@@ -99,6 +99,9 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
         // Add view widgets to panel
         targetsToLunsDiscoverPanel.add(iscsiDiscoverTargetsView);
         targetsListPanel.add(sanStorageTargetToLunList);
+
+        // Disable Discover widget in view-only mode
+        iscsiDiscoverTargetsView.setEnabled(object.getContainer().getIsChangable());
     }
 
     @Override

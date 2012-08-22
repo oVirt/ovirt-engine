@@ -100,7 +100,7 @@
 	</ui:style>	
 
 	<g:FlowPanel>
-		<g:HorizontalPanel addStyleNames="{style.discoverTargetsLabelPanel}">	
+		<g:HorizontalPanel ui:field="discoverTargetsLabelPanel" addStyleNames="{style.discoverTargetsLabelPanel}">
 			<g:ToggleButton ui:field="discoverTargetsImageButton" addStyleNames="{style.discoverTargetsImageButton}" />
 		</g:HorizontalPanel>		
 		<g:VerticalPanel ui:field="discoverTargetsPanel" addStyleNames="{style.collapsedDiscoverTargetsPanel}">
