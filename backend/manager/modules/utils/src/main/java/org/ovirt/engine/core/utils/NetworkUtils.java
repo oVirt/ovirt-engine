@@ -87,6 +87,22 @@ public final class NetworkUtils {
         return retVal;
     }
 
+    /**
+     * Check if the proposed interface name represents a VLAN of the given interface name or is equal to it.<br>
+     * If either of the parameters is null, <code>false</code> is returned.
+     *
+     * @param proposedIface
+     *            The interface to check if it's a VLAN of the other interface or it is the other interface.
+     * @param iface
+     *            The interface to check for.
+     *
+     * @return <code>true</code> if the proposed interface is a VLAN on the interface or if it is the same name,
+     *         <code>false</code> otherwise.
+     */
+    public static boolean interfaceBasedOn(String proposedIface, String iface) {
+        return iface != null && proposedIface != null && iface.equals(StripVlan(proposedIface));
+    }
+
     public static boolean interfaceHasVlan(VdsNetworkInterface iface, List<VdsNetworkInterface> allIfaces) {
         for (VdsNetworkInterface i : allIfaces) {
             if (i.getVlanId() != null && NetworkUtils.StripVlan(i.getName()).equals(iface.getName())) {

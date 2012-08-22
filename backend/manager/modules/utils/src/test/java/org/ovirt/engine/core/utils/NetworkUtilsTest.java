@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Map;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface.Network
 
 public class NetworkUtilsTest {
 
+    private static final String IFACE_NAME = "eth1";
     @Rule
     public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
@@ -117,6 +120,40 @@ public class NetworkUtilsTest {
                 iface.isBridged(),
                 iface.getMtu(),
                 iface.getVlanId() + 1);
+    }
+
+    @Test
+    public void interfaceBasedOn() {
+        assertTrue(NetworkUtils.interfaceBasedOn(generateVlanName(IFACE_NAME), IFACE_NAME));
+    }
+
+    @Test
+    public void interfaceBasedOnSameName() {
+        assertTrue(NetworkUtils.interfaceBasedOn(IFACE_NAME, IFACE_NAME));
+    }
+
+    @Test
+    public void interfaceBasedOnNotAVlanOfIface() {
+        assertFalse(NetworkUtils.interfaceBasedOn(generateVlanName(IFACE_NAME + "1"), IFACE_NAME));
+    }
+
+    @Test
+    public void interfaceBasedOnNotAVlanAtAll() {
+        assertFalse(NetworkUtils.interfaceBasedOn(IFACE_NAME + "1", IFACE_NAME));
+    }
+
+    @Test
+    public void interfaceBasedOnNullIface() {
+        assertFalse(NetworkUtils.interfaceBasedOn(generateVlanName(IFACE_NAME), null));
+    }
+
+    @Test
+    public void interfaceBasedOnNullProposedVlan() {
+        assertFalse(NetworkUtils.interfaceBasedOn(null, IFACE_NAME));
+    }
+
+    private String generateVlanName(String iface) {
+        return iface + "." + RandomUtils.instance().nextInt(100);
     }
 
     private void calculateNetworkImplementationDetailsAndAssertManaged(VdsNetworkInterface iface,
