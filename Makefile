@@ -247,6 +247,7 @@ install_setup:
 	install -m 644 packaging/fedora/setup/engine-config-install.properties $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/iptables.default $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/nfs.sysconfig $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/fedora/setup/ovirt-engine-proxy.conf.in $(DESTDIR)$(DATA_DIR)/conf
 
 	# Shared python modules:
 	install -m 644 packaging/fedora/setup/nfsutils.py $(DESTDIR)$(DATA_DIR)/scripts

@@ -86,6 +86,7 @@ FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"
 FILE_ISOUPLOADER_CONF="/etc/ovirt-engine/isouploader.conf"
 FILE_LOGCOLLECTOR_CONF="/etc/ovirt-engine/logcollector.conf"
 FILE_PSQL_CONF="/var/lib/pgsql/data/postgresql.conf"
+FILE_OVIRT_HTTPD_CONF_TEMPLATE="%s/conf/ovirt-engine-proxy.conf.in" % DIR_ENGINE
 FILE_OVIRT_HTTPD_CONF="/etc/httpd/conf.d/ovirt-engine.conf"
 FILE_HTTPD_SSL_CONFIG="/etc/httpd/conf.d/ssl.conf"
 FILE_HTTPD_CONF="/etc/httpd/conf/httpd.conf"

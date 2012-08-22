@@ -1,0 +1,6 @@
+#import basedefs
+
+# Redirect all requests to the application server using the AJP protocol
+# and making sure that the connections will be recovered in a short time
+# interval (5 seconds at the moment):
+ProxyPass / ajp://localhost:${basedefs.JBOSS_AJP_PORT}/ retry=5

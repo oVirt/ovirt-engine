@@ -24,6 +24,7 @@ import random
 import tempfile
 from optparse import OptionParser, OptionGroup
 from setup_controller import Controller
+from Cheetah.Template import Template
 
 # Globals
 controller = Controller()
@@ -724,14 +725,13 @@ def _configureHttpdSslKeys():
 
 def _redirectUrl():
     try:
-        # Redirect everything to the application server using the
-        # AJP protocol and configuring the proxy so that it will
-        # retry a failed connection after a short time interval:
-        logging.debug("Redirect oVirt URLs using AJP protocol")
-        redirectStr="ProxyPass / ajp://localhost:%s/ retry=5" %(basedefs.JBOSS_AJP_PORT)
+        # Create the Apache configuration fragment from the template:
+        confTemplate = Template(file=basedefs.FILE_OVIRT_HTTPD_CONF_TEMPLATE)
+        confText = str(confTemplate)
 
+        # Save the text produced by the template:
         fd = open(basedefs.FILE_OVIRT_HTTPD_CONF, 'w')
-        fd.write(redirectStr)
+        fd.write(confText)
         fd.close()
     except:
         logging.error(traceback.format_exc())
