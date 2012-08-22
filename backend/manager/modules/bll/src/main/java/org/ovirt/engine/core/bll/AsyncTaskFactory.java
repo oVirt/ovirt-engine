@@ -74,5 +74,5 @@ public final class AsyncTaskFactory {
         }
     }
 
-    private static Log log = LogFactory.getLog(AsyncTaskFactory.class);
+    private static final Log log = LogFactory.getLog(AsyncTaskFactory.class);
 }
