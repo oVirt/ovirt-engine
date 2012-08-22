@@ -77,7 +77,7 @@ public final class NetworkUtils {
         if (iface.getVlanId() != null) {
             for (VdsNetworkInterface i : interfaces) {
                 if (i.getBonded() != null && i.getBonded() == true
-                        && StringHelper.EqOp(i.getName(), StripVlan(iface.getName()))) {
+                        && interfaceBasedOn(iface.getName(), i.getName())) {
                     retVal = true;
                     break;
                 }
@@ -105,7 +105,7 @@ public final class NetworkUtils {
 
     public static boolean interfaceHasVlan(VdsNetworkInterface iface, List<VdsNetworkInterface> allIfaces) {
         for (VdsNetworkInterface i : allIfaces) {
-            if (i.getVlanId() != null && NetworkUtils.StripVlan(i.getName()).equals(iface.getName())) {
+            if (i.getVlanId() != null && interfaceBasedOn(i.getName(), iface.getName())) {
                 return true;
             }
         }

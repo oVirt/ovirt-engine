@@ -53,7 +53,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             if (i.getBonded() != null && i.getBonded() || NetworkUtils.IsBondVlan(interfaces, i)) {
                 getParameters().setBondName(NetworkUtils.StripVlan(i.getName()));
                 for (VdsNetworkInterface ix : interfaces) {
-                    if (StringUtils.equals(ix.getBondName(), NetworkUtils.StripVlan(i.getName()))) {
+                    if (NetworkUtils.interfaceBasedOn(i.getName(), ix.getBondName())) {
                         interfaceNames.add(NetworkUtils.StripVlan(ix.getName()));
                     }
                 }

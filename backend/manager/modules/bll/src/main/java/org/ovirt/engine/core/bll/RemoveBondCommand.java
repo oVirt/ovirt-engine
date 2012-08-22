@@ -116,10 +116,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         vdsInterfaces = LinqUtils.filter(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {
-                if (i.getBondName() != null) {
-                    return i.getBondName().equals(NetworkUtils.StripVlan(bond.getName()));
-                }
-                return false;
+                return NetworkUtils.interfaceBasedOn(bond.getName(), i.getBondName());
             }
         });
         _interfaces = new ArrayList<String>();
