@@ -64,23 +64,6 @@ public final class AsyncTaskFactory {
                 result = new EntityAsyncTask(asyncTaskParams);
             }
             return result;
-            // java.lang.Class type =
-            // java.lang.Class.forName(GetAsyncTaskTypeName(taskType));
-            //
-            // java.lang.Class[] types = new java.lang.Class[2];
-            // types[0] =
-            // BaseAsyncTaskParameters.class;//asyncTaskParams.getClass();
-            // types[1] = boolean.class;
-            //
-            // java.lang.reflect.Constructor info = type.getConstructor(types);
-            //
-            // Object[] taskCtorParams = new Object[2];
-            // taskCtorParams[0] = asyncTaskParams;
-            // taskCtorParams[1] = pollingEnabled;
-            //
-            // Object TempAsCast = info.newInstance(taskCtorParams);
-            // return (BaseAsyncTask)((TempAsCast instanceof BaseAsyncTask) ?
-            // TempAsCast : null);
         }
 
         catch (Exception e) {
@@ -91,12 +74,5 @@ public final class AsyncTaskFactory {
         }
     }
 
-    // private static String GetAsyncTaskTypeName(AsyncTaskType taskType)
-    // {
-    // return String.format("%1$s.%2$s%3$s",
-    // AsyncTaskClassContainerAssemblyName, (taskType == AsyncTaskType.unknown ?
-    // SpmAsyncTaskPrefix : EntityAsyncTaskPrefix), AsyncTaskClassPostfix);
-    // }
     private static Log log = LogFactory.getLog(AsyncTaskFactory.class);
-
 }
