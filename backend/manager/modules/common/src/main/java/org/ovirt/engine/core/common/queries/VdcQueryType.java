@@ -277,6 +277,7 @@ public enum VdcQueryType implements Serializable {
     GetGlusterBrickById,
     GetServerSSHKeyFingerprint,
     GetGlusterServers,
+    GetAddedGlusterServers,
 
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
