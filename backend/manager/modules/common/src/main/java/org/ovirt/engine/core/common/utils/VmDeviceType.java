@@ -15,7 +15,7 @@ public enum VmDeviceType {
     CIRRUS("cirrus"),
     SOUND("sound"),
     ICH6("ich6"),
-    AC97("act97"),
+    AC97("ac97"),
     MEMBALLOON("memballoon"),
     BALLOON("balloon"),
     OTHER("other", "0"),
