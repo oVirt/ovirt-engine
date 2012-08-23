@@ -6,8 +6,10 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
@@ -80,13 +82,28 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                     executeInNewTransaction(new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
-                            getCompensationContext().snapshotEntityStatus(map, map.getstatus());
+                            final StorageDomainType sdType = getStorageDomain().getstorage_domain_type();
+
                             map.setstatus(StorageDomainStatus.Maintenance);
                             getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
-                            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+
+                            if (sdType == StorageDomainType.Master) {
                                 calcStoragePoolStatusByDomainsStatus();
                             }
-                            getCompensationContext().stateChanged();
+
+                            // upgrade the domain format to the storage pool format
+                            if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
+                                final storage_domain_static domain = getStorageDomain().getStorageStaticData();
+                                final StorageFormatType targetFormat = getStoragePool().getStoragePoolFormatType();
+
+                                if (domain.getStorageFormat() != targetFormat) {
+                                    log.infoFormat("Updating storage domain {0} (type {1}) to format {2}",
+                                        getStorageDomain().getId(), sdType, targetFormat);
+                                    domain.setStorageFormat(targetFormat);
+                                    getStorageDomainStaticDAO().update(domain);
+                                }
+                            }
+
                             return null;
                         }
                     });

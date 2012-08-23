@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -148,19 +150,37 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         if (existingInDb) {
                             getCompensationContext().snapshotEntity(mapFromDB);
                         }
+                        final storage_domain_static staticDomain = storageDomain.getStorageStaticData();
+                        boolean staticDomainChanged = false;
+                        // for data centers >= 3.1 we enforce the domain version to V3
+                        // this strictly needs to be before selecting the masterStorageDomain because the pool master
+                        // version (setmaster_domain_version) depends on the domain upgrade.
+                        if (getStoragePool().getcompatibility_version().compareTo(Version.v3_1) >= 0
+                                && staticDomain.getStorageFormat() != StorageFormatType.V3) {
+                            if (!staticDomainChanged) {
+                                getCompensationContext().snapshotEntity(staticDomain);
+                            }
+                            staticDomain.setStorageFormat(StorageFormatType.V3);
+                            staticDomainChanged = true;
+                        }
                         storageDomain.setstorage_pool_id(getStoragePool().getId());
                         if (masterStorageDomain == null
                                 && storageDomain.getstorage_domain_type() == StorageDomainType.Data) {
+                            if (!staticDomainChanged) {
+                                getCompensationContext().snapshotEntity(staticDomain);
+                            }
                             // increase master domain version - no need to snapshot, as we would like
                             // the master domain version to grow monotonously even if the wrapping transaction fails
                             getStoragePool().setmaster_domain_version(getStoragePool().getmaster_domain_version() + 1);
-                            getCompensationContext().snapshotEntity(storageDomain.getStorageStaticData());
                             storageDomain.setstorage_domain_type(StorageDomainType.Master);
-                            DbFacade.getInstance().getStorageDomainStaticDAO().update(storageDomain.getStorageStaticData());
+                            staticDomainChanged = true;
                             masterStorageDomain = storageDomain;
                             // The update of storage pool should be without compensation,
                             // this is why we run it in a different SUPRESS transaction.
                             updateStoragePoolInDiffTransaction();
+                        }
+                        if (staticDomainChanged) {
+                            getStorageDomainStaticDAO().update(staticDomain);
                         }
                         storageDomain.setstatus(StorageDomainStatus.Locked);
                         if (existingInDb) {

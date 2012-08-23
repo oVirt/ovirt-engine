@@ -322,11 +322,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         Set<StorageFormatType> supportedFormatsSet =
                 getSupportedStorageFormatSet(storagePool.getcompatibility_version());
         if (supportedFormatsSet.contains(storageDomain.getStorageFormat())) {
-            if (storagePool.getStoragePoolFormatType() == null
-                    || storagePool.getStoragePoolFormatType() == storageDomain.getStorageFormat()) {
-                return true;
-            }
-
+            return true;
         }
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
         getReturnValue().getCanDoActionMessages().add(

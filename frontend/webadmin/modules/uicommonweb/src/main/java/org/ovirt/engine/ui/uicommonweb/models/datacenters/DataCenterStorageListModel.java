@@ -335,7 +335,6 @@ public class DataCenterStorageListModel extends SearchableListModel
                     ArrayList<storage_domains> list = (ArrayList<storage_domains>) result;
                     ArrayList<EntityModel> models = new ArrayList<EntityModel>();
                     boolean addToList;
-                    Version version3_0 = new Version(3, 0);
                     ArrayList<storage_domains> items =
                             dcStorageModel.getItems() != null ? new ArrayList<storage_domains>(Linq.<storage_domains> Cast(dcStorageModel.getItems()))
                                     : new ArrayList<storage_domains>();
@@ -356,7 +355,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                                     if (a.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
                                             && dcStorageModel.getEntity()
                                                     .getcompatibility_version()
-                                                    .compareTo(version3_0) <= 0)
+                                                    .compareTo(Version.v3_0) <= 0)
                                     {
                                         continue;
                                     }
@@ -366,6 +365,15 @@ public class DataCenterStorageListModel extends SearchableListModel
                                         .getStorageFormat())
                                 {
                                     addToList = true;
+                                }
+                                else if (dcStorageModel.getEntity().getcompatibility_version().compareTo(Version.v3_1) >= 0)
+                                {
+                                    // if DC is >= 3.1 we support upgrading
+                                    if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V1
+                                            || a.getStorageStaticData().getStorageFormat() == StorageFormatType.V2)
+                                    {
+                                        addToList = true;
+                                    }
                                 }
                             }
                             else if (dcStorageModel.getStorageDomainType() == StorageDomainType.ImportExport

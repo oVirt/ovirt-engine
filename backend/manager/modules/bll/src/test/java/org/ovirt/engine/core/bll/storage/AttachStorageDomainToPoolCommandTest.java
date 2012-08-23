@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -56,6 +58,8 @@ public class AttachStorageDomainToPoolCommandTest {
     private StoragePoolDAO storagePoolDAO;
     @Mock
     private StorageDomainDAO storageDomainDAO;
+    @Mock
+    private StorageDomainStaticDAO storageDomainStaticDAO;
     @Mock
     private VdsDAO vdsDAO;
     @Mock
@@ -78,11 +82,13 @@ public class AttachStorageDomainToPoolCommandTest {
         when(dbFacade.getStoragePoolDAO()).thenReturn(storagePoolDAO);
         when(dbFacade.getVdsDAO()).thenReturn(vdsDAO);
         when(dbFacade.getStorageDomainDAO()).thenReturn(storageDomainDAO);
+        when(dbFacade.getStorageDomainStaticDAO()).thenReturn(storageDomainStaticDAO);
         storage_pool pool = new storage_pool();
         pool.setstatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);
         when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new storage_domains());
+        when(storageDomainStaticDAO.get(any(Guid.class))).thenReturn(new storage_domain_static());
 
         doReturn(backendInternal).when(cmd).getBackend();
         when(backendInternal.runInternalQuery(any(VdcQueryType.class), any(VdcQueryParametersBase.class))).thenReturn
