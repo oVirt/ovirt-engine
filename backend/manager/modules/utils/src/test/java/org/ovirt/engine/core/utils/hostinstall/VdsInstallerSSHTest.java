@@ -19,6 +19,18 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.utils.ssh.SSHD;
 
+/*
+ * Test properties
+ * $ mvn -Dssh-host=host1 -Dssh-test-port=22 -Dssh-test-user=root -Dssh-test-password=password
+ *
+ * SSH public key is:
+ * ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCF7Rhlve8ikOono3zHN2kkyCqauNSdX9w6lwq3uLNFi7ryyENSpCsQADjCO5EzABUxU+0RHh6OG6TRFCRbI57NN77isfKyLqjsVOkhPB4D86GhmefmnYKPSAA2JxVB9s0BIA8jAgrEy4QFjmxt1EHAi2UAG3PjCC+qANF7CnR47Q==
+ *
+ * TODO
+ *
+ * In future the installer should accept PublicKey and not keystore.
+ */
+
 public class VdsInstallerSSHTest {
     class MyVdsInstallerCallback implements IVdsInstallerCallback {
         public String error;
@@ -71,11 +83,11 @@ public class VdsInstallerSSHTest {
         }
     }
 
-    static String user = "root";
-    static String password = "password";
+    static String host;
+    static String user;
+    static String password;
     static String hostKstore = "src/test/resources/.hostKstore";
     static String hostKstorePassword = "NoSoup4U";
-    static String host = "localhost";
     int port;
 
     SSHD sshd;
@@ -85,30 +97,43 @@ public class VdsInstallerSSHTest {
         IConfigUtilsInterface confInstance = new DefaultValuesConfigUtil();
         Config.setConfigUtils(confInstance);
 
-        sshd = new SSHD();
-        try {
-            KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(hostKstore), /*hostKstorePassword.toCharArray()*/null);
-            sshd.setUser(
-                user,
-                password,
-                ks.getCertificate(
-                    Config.<String>GetValue(
-                        ConfigValues.CertAlias
-                    )
-                ).getPublicKey()
-            );
-        }
-        catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-        try {
-                sshd.start();
-        }
-        catch(IOException e) {
+        host = System.getProperty("ssh-host");
+
+        if (host == null) {
+            host = "localhost";
+            user = "root";
+            password = "password";
+
+            sshd = new SSHD();
+            try {
+                KeyStore ks = KeyStore.getInstance("JKS");
+                ks.load(new FileInputStream(hostKstore), /*hostKstorePassword.toCharArray()*/null);
+                sshd.setUser(
+                    user,
+                    password,
+                    ks.getCertificate(
+                        Config.<String>GetValue(
+                            ConfigValues.CertAlias
+                        )
+                    ).getPublicKey()
+                );
+            }
+            catch (Throwable e) {
                 throw new RuntimeException(e);
+            }
+            try {
+                    sshd.start();
+            }
+            catch(IOException e) {
+                    throw new RuntimeException(e);
+            }
+            port = sshd.getPort();
         }
-        port = sshd.getPort();
+        else {
+            port = Integer.parseInt(System.getProperty("ssh-test-port", "22"));
+            user = System.getProperty("ssh-test-user", "root");
+            password = System.getProperty("ssh-test-password", "password");
+        }
     }
 
     @After
