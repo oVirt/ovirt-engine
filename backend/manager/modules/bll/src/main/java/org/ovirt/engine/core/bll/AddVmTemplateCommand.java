@@ -249,7 +249,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         Map<storage_domains, Integer> domainMap =
                 StorageDomainValidator.getSpaceRequirementsForStorageDomains(
-                        ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false),
+                        ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false),
                         storageDomains,
                         diskInfoDestinationMap);
         for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
