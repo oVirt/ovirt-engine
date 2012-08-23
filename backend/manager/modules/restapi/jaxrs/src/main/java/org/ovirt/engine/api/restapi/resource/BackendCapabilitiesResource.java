@@ -68,21 +68,23 @@ import org.ovirt.engine.api.model.TemplateStatus;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.TransportType;
 import org.ovirt.engine.api.model.TransportTypes;
+import org.ovirt.engine.api.model.Usages;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmAffinities;
 import org.ovirt.engine.api.model.VmAffinity;
+import org.ovirt.engine.api.model.VmDeviceType;
+import org.ovirt.engine.api.model.VmDeviceTypes;
 import org.ovirt.engine.api.model.VmPauseDetails;
 import org.ovirt.engine.api.model.VmStates;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.VmTypes;
-import org.ovirt.engine.api.model.VmDeviceType;
-import org.ovirt.engine.api.model.VmDeviceTypes;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
+import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.api.restapi.util.FencingOptionsParser;
 import org.ovirt.engine.api.restapi.util.ServerCpuParser;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
@@ -171,6 +173,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addDataCenterStates(version, DataCenterStatus.values());
         addPermits(version, PermitType.values());
         addSchedulingPolicies(version, SchedulingPolicyType.values());
+        addNetworkUsages(version, NetworkUsage.values());
 
         version.setFeatures(getFeatures(v));
 
@@ -189,6 +192,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     public String generateId(Version v) {
         NGuid guid = new NGuid((v.getMajor()+"."+v.getMinor()).getBytes(),true);
         return guid!=null ? guid.toString():null;
+    }
+
+    private void addNetworkUsages(VersionCaps version, NetworkUsage[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
+            version.setUsages(new Usages());
+            for (NetworkUsage usage : values) {
+                version.getUsages().getUsages().add(usage.value());
+            }
+        }
     }
 
     private void addSchedulingPolicies(VersionCaps version, SchedulingPolicyType[] values) {

@@ -569,6 +569,7 @@
           <xs:element ref="vm_device_types" minOccurs="0"/>
           <xs:element ref="permits" minOccurs="0"/>
           <xs:element ref="scheduling_policies" minOccurs="0"/>
+          <xs:element ref="usages" minOccurs="0"/>
 
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>

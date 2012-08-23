@@ -100,10 +100,10 @@ public class NetworkMapper {
 
         model.setUsages(new Usages());
         if (entity.isVmNetwork()) {
-            model.getUsages().getUsages().add(NetworkUsage.VM.name());
+            model.getUsages().getUsages().add(NetworkUsage.VM.value());
         }
         if (entity.getCluster() != null && entity.getCluster().getis_display()) {
-            model.getUsages().getUsages().add(NetworkUsage.DISPLAY.name());
+            model.getUsages().getUsages().add(NetworkUsage.DISPLAY.value());
         }
         if (entity.getCluster() != null) {
             if (entity.getCluster().getstatus() != null) {

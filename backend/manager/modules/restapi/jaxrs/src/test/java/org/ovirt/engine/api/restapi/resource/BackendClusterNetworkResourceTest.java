@@ -101,7 +101,7 @@ public class BackendClusterNetworkResourceTest
         assertEquals(model.isDisplay(), true);
         assertTrue(model.isSetUsages());
         assertNotNull(model.getUsages().getUsages());
-        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DISPLAY.name()));
+        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DISPLAY.value()));
         assertTrue(model.isSetRequired());
         assertEquals(model.isRequired(), true);
    }
