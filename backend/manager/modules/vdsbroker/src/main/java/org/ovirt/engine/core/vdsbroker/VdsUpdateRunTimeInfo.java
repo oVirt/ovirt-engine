@@ -652,8 +652,7 @@ public class VdsUpdateRunTimeInfo {
             }
             // we remove the network from the audit log if the bond
             // is active
-            else if (networks.contains(networkName)
-                    && bondsWithStatus.containsKey(iface.getBondName())) {
+            else if (networks.contains(networkName) && bondsWithStatus.get(iface.getBondName())) {
                 networks.remove(networkName);
             }
             if (!bondsWithListOfNics.containsKey(iface.getBondName())) {
