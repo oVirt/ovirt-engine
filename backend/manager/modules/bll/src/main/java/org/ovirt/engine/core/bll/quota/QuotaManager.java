@@ -435,7 +435,8 @@ public class QuotaManager {
                 if (!quotaMap.containsKey(quotaId)) {
                     quota = getQuotaDAO().getById(quotaId);
                     if (quota == null) {
-                        canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+                        canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NO_LONGER_AVAILABLE_IN_SYSTEM.toString());
+                        log.errorFormat("The quota id {0} is not found in backend and DB.", quotaId.toString());
                         return false;
                     }
                     quotaMap.put(quota.getId(), quota);

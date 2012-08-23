@@ -202,6 +202,10 @@ public class OvfVmReader extends OvfReader {
         if (node != null) {
             _vm.getStaticData().setis_stateless(Boolean.parseBoolean(node.InnerText));
         }
+        node = content.SelectSingleNode("quota_id");
+        if (node != null) {
+            _vm.getStaticData().setQuotaId(new Guid(node.InnerText));
+        }
 
         XmlNodeList list = content.SelectNodes("Section");
         for (XmlNode section : list) {

@@ -856,12 +856,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public boolean validateAndSetQuota() {
-        return getQuotaManager().validateAndSetClusterQuota(getStoragePool(),
+        boolean canDoAction = getQuotaManager().validateAndSetClusterQuota(getStoragePool(),
                 getVm().getvds_group_id(),
                 getQuotaId(),
                 getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
                 getVm().getmem_size_mb(),
                 getReturnValue().getCanDoActionMessages());
+        getReturnValue().getCanDoActionMessages().add(String.format("$VmName %1$s", getVm().getvm_name()));
+        return canDoAction;
     }
 
     @Override

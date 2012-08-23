@@ -1,23 +1,20 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.*;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -27,7 +24,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> {
+public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements Quotable{
 
     private static final long serialVersionUID = -3202434016040084728L;
     private boolean hasImages;
@@ -45,6 +42,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     public RemoveVmCommand(T parameters) {
         super(parameters);
         parameters.setEntityId(getVmId());
+        setStoragePoolId(getVm().getstorage_pool_id());
     }
 
     @Override
@@ -250,5 +248,44 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
             AddCustomValue("DisksNames", StringUtils.join(disksLeftInVm, ","));
         }
+    }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        this.rollbackQuota();
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        if (getStoragePool() == null) {
+            setStoragePool(getStoragePoolDAO().getForVdsGroup(getVm().getvds_group_id()));
+        }
+        Guid quotaId = getVm().getQuotaId();
+        Set<Guid> quotaIdsForRollback = new HashSet<Guid>();
+        if (quotaId != null) {
+            // Uncache the details of this quota. next time the quota will be called, a new calculation
+            // would be done base on the DB.
+            quotaIdsForRollback.add(quotaId);
+        }
+        VmHandler.updateDisksFromDb(getVm());
+        for (DiskImage image : getVm().getDiskList()){
+            quotaId = image.getQuotaId();
+
+            if (quotaId != null) {
+                quotaIdsForRollback.add(quotaId);
+            }
+        }
+        QuotaManager.getInstance().rollbackQuota(getStoragePool(), new ArrayList<Guid>(quotaIdsForRollback));
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return null;
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        //
     }
 }

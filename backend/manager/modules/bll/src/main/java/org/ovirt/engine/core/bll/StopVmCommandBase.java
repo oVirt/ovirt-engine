@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
+import java.util.*;
 
+import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.*;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
+public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> implements Quotable {
     private boolean privateSuspendedVm;
 
     public StopVmCommandBase(T parameters) {
@@ -166,4 +166,49 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
 
     private static Log log = LogFactory.getLog(StopVmCommandBase.class);
 
+    @Override
+    public boolean validateAndSetQuota() {
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        if (getStoragePool() == null) {
+            setStoragePool(getStoragePoolDAO().getForVdsGroup(getVm().getvds_group_id()));
+        }
+        Guid quotaId = getVm().getQuotaId();
+        Set<Guid> quotaIdsForRollback = new HashSet<Guid>();
+        if (quotaId != null) {
+            // Uncache the details of this quota. next time the quota will be called, a new calculation
+            // would be done base on the DB.
+            quotaIdsForRollback.add(quotaId);
+        }
+        VmHandler.updateDisksFromDb(getVm());
+        for (DiskImage image : getVm().getDiskList()){
+            quotaId = image.getQuotaId();
+
+            if (quotaId != null) {
+                quotaIdsForRollback.add(quotaId);
+            }
+        }
+        QuotaManager.getInstance().rollbackQuota(getStoragePool(), new ArrayList<Guid>(quotaIdsForRollback));
+    }
+
+    @Override
+    public Guid getQuotaId() {
+        return null;
+    }
+
+    @Override
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        //
+    }
+
+    @Override
+    protected void setSucceeded(boolean value) {
+        super.setSucceeded(value);
+        if (value) {
+            rollbackQuota();
+        }
+    }
 }

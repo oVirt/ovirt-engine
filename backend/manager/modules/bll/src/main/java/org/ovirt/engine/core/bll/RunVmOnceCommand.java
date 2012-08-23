@@ -2,11 +2,17 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> {
     public RunVmOnceCommand(T runVmParams) {
@@ -50,4 +56,43 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         ExecutionHandler.endJob(executionContext, success);
     }
 
+    @Override
+    public boolean validateAndSetQuota() {
+        boolean quotaAcc = super.validateAndSetQuota();
+        if (!quotaAcc) {
+            return false;
+        }
+        //Only if this is run-stateless mode we calculate storage quota.
+        if (!getParameters().getRunAsStateless()) {
+            return quotaAcc;
+        }
+
+        return QuotaManager.getInstance().validateAndSetStorageQuota(getStoragePool(),
+                getStorageQuotaListParameters(),
+                getReturnValue().getCanDoActionMessages());
+
+    }
+
+    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
+        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
+        for (DiskImage image : getVm().getDiskList()) {
+            if (image.getQuotaId() != null) {
+                list.add(new StorageQuotaValidationParameter(image.getQuotaId(),
+                        image.getstorage_ids().get(0),
+                        image.getActualSize()));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        super.rollbackQuota();
+        QuotaManager.getInstance().decreaseStorageQuota(getStoragePool(), getStorageQuotaListParameters());
+    }
+
+    @Override
+    protected void compensate() {
+        rollbackQuota();
+    }
 }

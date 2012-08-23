@@ -90,6 +90,11 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteRaw(_vm.getapp_list());
             _writer.WriteEndElement();
         }
+        if (_vm.getQuotaId() != null) {
+            _writer.WriteStartElement("quota_id");
+            _writer.WriteRaw(_vm.getQuotaId().toString());
+            _writer.WriteEndElement();
+        }
         _writer.WriteStartElement("VmType");
         _writer.WriteRaw(String.valueOf(_vm.getvm_type().getValue()));
         _writer.WriteEndElement();

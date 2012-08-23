@@ -292,6 +292,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     public boolean validateAndSetQuota() {
+        if (isInternalExecution()) {
+            return true;
+        }
         return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
                 getStorageQuotaListParameters(),
                 getReturnValue().getCanDoActionMessages());
@@ -299,6 +302,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     public void rollbackQuota() {
+        if (isInternalExecution()) {
+            return;
+        }
         getQuotaManager().rollbackQuota(getStoragePool(),
                 getQuotaManager().getQuotaListFromParameters(getStorageQuotaListParameters()));
     }
