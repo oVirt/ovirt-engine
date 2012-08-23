@@ -287,6 +287,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String ISCSI_LOGIN_AUTH_ERROR();
 
+    String ProblemWhileTryingToMountTarget();
+
     String iSCSISetupError();
 
     String IsoCannotBeMasterDomain();

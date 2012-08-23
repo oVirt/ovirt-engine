@@ -223,6 +223,7 @@ public enum VdcBllErrors {
     iSCSILogoutError(474),
     iSCSIDiscoveryError(475),
     ISCSI_LOGIN_AUTH_ERROR(476),
+    ProblemWhileTryingToMountTarget(477),
     VolumeGroupActionError(500),
     VolumeGroupPermissionsError(501),
     VolumeGroupCreateError(502),
