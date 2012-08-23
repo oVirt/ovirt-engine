@@ -56,8 +56,25 @@ public class VmDeviceUtils {
                     .getdefault_boot_sequence()) {
                 updateBootOrderInVmDevice(entity);
             }
-            if (oldVmBase.getnum_of_monitors() != entity
+
+            // if the console type has changed, recreate Video devices
+            if (oldVmBase.getdefault_display_type() != entity.getdefault_display_type()) {
+                // delete all video device
+                for (VmDevice device : dao.getVmDeviceByVmIdAndType(oldVmBase.getId(), VmDeviceType.VIDEO.getName())) {
+                    dao.remove(device.getId());
+                }
+                // add video device per each monitor
+                for (int i = 0; i<entity.getnum_of_monitors();i++) {
+                    addManagedDevice(new VmDeviceId(Guid.NewGuid(), entity.getId()),
+                            VmDeviceType.VIDEO,
+                            entity.getdefault_display_type().getVmDeviceType(),
+                            getMemExpr(entity.getnum_of_monitors()),
+                            true,
+                            false);
+                }
+            } else if (entity.getdefault_display_type() == DisplayType.qxl && oldVmBase.getnum_of_monitors() != entity
                     .getnum_of_monitors()) {
+                // spice number of monitors has changed
                 updateNumOfMonitorsInVmDevice(oldVmBase, entity);
             }
             updateUSBSlots(oldVmBase, entity);
