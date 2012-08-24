@@ -239,16 +239,16 @@
     <subsystem xmlns="urn:jboss:domain:threads:1.1"/>
 
     <subsystem xmlns="urn:jboss:domain:web:1.1" native="false" default-virtual-server="default-host">
-      #if $getBoolean('ENGINE_HTTP_ENABLED', True)
-        <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http" redirect-port="$getInteger('ENGINE_HTTPS_PORT', 8443)"/>
+      #if $getBoolean('ENGINE_HTTP_ENABLED')
+        <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http" redirect-port="$getInteger('ENGINE_HTTPS_PORT')"/>
       #end if
-      #if $getBoolean('ENGINE_HTTPS_ENABLED', True)
+      #if $getBoolean('ENGINE_HTTPS_ENABLED')
         <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
           <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/.keystore" key-alias="engine" protocol="TLSv1" verify-client="false"/>
         </connector>
       #end if
-      #if $getBoolean('ENGINE_AJP_ENABLED', False)
-        <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp" redirect-port="$getInteger('ENGINE_PROXY_HTTPS_PORT', 443)"/>
+      #if $getBoolean('ENGINE_AJP_ENABLED')
+        <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp" redirect-port="$getInteger('ENGINE_PROXY_HTTPS_PORT')"/>
       #end if
       <virtual-server name="default-host" enable-welcome-root="false">
         <alias name="localhost"/>
@@ -268,14 +268,14 @@
   </interfaces>
 
   <socket-binding-group name="standard-sockets" default-interface="loopback">
-    #if $getBoolean('ENGINE_HTTP_ENABLED', True)
-      <socket-binding name="http" port="$getInteger('ENGINE_HTTP_PORT', 8080)" interface="public"/>
+    #if $getBoolean('ENGINE_HTTP_ENABLED')
+      <socket-binding name="http" port="$getInteger('ENGINE_HTTP_PORT')" interface="public"/>
     #end if
-    #if $getBoolean('ENGINE_HTTPS_ENABLED', True)
-      <socket-binding name="https" port="$getInteger('ENGINE_HTTPS_PORT', 8443)" interface="public"/>
+    #if $getBoolean('ENGINE_HTTPS_ENABLED')
+      <socket-binding name="https" port="$getInteger('ENGINE_HTTPS_PORT')" interface="public"/>
     #end if
-    #if $getBoolean('ENGINE_AJP_ENABLED', False)
-      <socket-binding name="ajp" port="$getInteger('ENGINE_AJP_PORT', 8009)"/>
+    #if $getBoolean('ENGINE_AJP_ENABLED')
+      <socket-binding name="ajp" port="$getInteger('ENGINE_AJP_PORT')"/>
     #end if
     <socket-binding name="remoting" port="4447"/>
     <socket-binding name="txn-recovery-environment" port="4712"/>

@@ -89,22 +89,29 @@ engineServerLogFile = None
 # from the template used to generate the application server configuration
 # file:
 class Config(configobj.ConfigObj):
-    def __init__(self, name):
-        configobj.ConfigObj.__init__(self, name)
+    def __init__(self, files):
+        # Initialize ourselves as an empty configuration object:
+        configobj.ConfigObj.__init__(self)
 
-    def getString(self, name, default=None):
-        return self.get(name, default)
+        # Merge all the given configuration files, in the same order
+        # given, so that the values in one file are overriden by values
+        # in files appearing later in the list:
+        for file in files:
+            config = configobj.ConfigObj(file)
+            self.merge(config)
 
-    def getBoolean(self, name, default=False):
+    def getString(self, name):
         text = self.get(name)
         if text is None:
-            return default
+            raise Exception("The parameter \"%s\" doesn't have a value." % name)
+        return text
+
+    def getBoolean(self, name):
+        text = self.getString(name)
         return text.lower() in ["t", "true", "y", "yes", "1"]
 
-    def getInteger(self, name, default=0):
-        text = self.get(name)
-        if text is None:
-            return default
+    def getInteger(self, name):
+        text = self.getString(name)
         try:
             return int(text)
         except:
@@ -112,17 +119,27 @@ class Config(configobj.ConfigObj):
 
 
 def loadConfig():
-    # Load the configuration file:
+    # Locate the defaults file:
+    engineDefaultsFile = os.getenv("ENGINE_DEFAULTS", "/usr/share/ovirt-engine/conf/engine.conf.defaults")
+    if not os.path.exists(engineDefaultsFile):
+        raise Exception("The engine configuration defaults file \"%s\" doesn't exist." % engineDefaultsFile)
+
+    # Locate the configuration file:
     engineConfigFile = os.getenv("ENGINE_VARS", "/etc/sysconfig/ovirt-engine")
     if not os.path.exists(engineConfigFile):
         raise Exception("The engine configuration file \"%s\" doesn't exist." % engineConfigFile)
+
+    # Merge all the configuration files:
     global engineConfig
-    engineConfig = Config(engineConfigFile)
+    engineConfig = Config([
+        engineDefaultsFile,
+        engineConfigFile,
+    ])
 
     # Get the id of the engine user:
     global engineUser
     global engineUid
-    engineUser = engineConfig.getString("ENGINE_USER", "ovirt")
+    engineUser = engineConfig.getString("ENGINE_USER")
     try:
         engineUid = pwd.getpwnam(engineUser).pw_uid
     except:
@@ -131,7 +148,7 @@ def loadConfig():
     # Get id of the engine group:
     global engineGroup
     global engineGid
-    engineGroup = engineConfig.getString("ENGINE_GROUP", "ovirt")
+    engineGroup = engineConfig.getString("ENGINE_GROUP")
     try:
         engineGid = grp.getgrnam(engineGroup).gr_gid
     except:
@@ -139,7 +156,7 @@ def loadConfig():
 
     # Java home directory:
     global javaHomeDir
-    javaHomeDir = engineConfig.getString("JAVA_HOME", "/usr/lib/jvm/jre-1.7.0-openjdk.x86_64")
+    javaHomeDir = engineConfig.getString("JAVA_HOME")
 
     # Java launcher:
     global javaLauncher
@@ -147,7 +164,7 @@ def loadConfig():
 
     # JBoss directories:
     global jbossHomeDir
-    jbossHomeDir = engineConfig.getString("JBOSS_HOME", "/usr/share/jboss-as")
+    jbossHomeDir = engineConfig.getString("JBOSS_HOME")
 
     # JBoss files:
     global jbossModulesJar
@@ -164,13 +181,13 @@ def loadConfig():
     global engineServiceDir
     global engineContentDir
     global engineDeploymentsDir
-    engineEtcDir = engineConfig.getString("ENGINE_ETC", "/etc/ovirt-engine")
-    engineLogDir = engineConfig.getString("ENGINE_LOG", "/var/log/ovirt-engine")
-    engineTmpDir = engineConfig.getString("ENGINE_TMP", "/var/tmp/ovirt-engine")
-    engineUsrDir = engineConfig.getString("ENGINE_USR", "/usr/share/ovirt-engine")
-    engineVarDir = engineConfig.getString("ENGINE_VAR", "/var/lib/ovirt-engine")
-    engineLockDir = engineConfig.getString("ENGINE_LOCK", "/var/lock/ovirt-engine")
-    engineCacheDir = engineConfig.getString("ENGINE_CACHE", "/var/cache/ovirt-engine")
+    engineEtcDir = engineConfig.getString("ENGINE_ETC")
+    engineLogDir = engineConfig.getString("ENGINE_LOG")
+    engineTmpDir = engineConfig.getString("ENGINE_TMP")
+    engineUsrDir = engineConfig.getString("ENGINE_USR")
+    engineVarDir = engineConfig.getString("ENGINE_VAR")
+    engineLockDir = engineConfig.getString("ENGINE_LOCK")
+    engineCacheDir = engineConfig.getString("ENGINE_CACHE")
     engineServiceDir = os.path.join(engineUsrDir, "service")
     engineContentDir = os.path.join(engineVarDir, "content")
     engineDeploymentsDir = os.path.join(engineVarDir, "deployments")
@@ -184,7 +201,7 @@ def loadConfig():
     global engineBootLogFile
     global engineConsoleLogFile
     global engineServerLogFile
-    enginePidFile = engineConfig.getString("ENGINE_PID", "/var/run/ovirt-engine.pid")
+    enginePidFile = engineConfig.getString("ENGINE_PID")
     engineLoggingFile = os.path.join(engineServiceDir, "engine-service-logging.properties")
     engineLogFile = os.path.join(engineLogDir, "engine.log")
     jbossConfigTemplateFile = os.path.join(engineServiceDir, "engine-service.xml.in")
@@ -289,6 +306,11 @@ def removeEnginePid():
 
 
 def startEngine():
+    # Load the configuration and perform checks:
+    loadConfig()
+    checkIdentity()
+    checkInstallation()
+
     # Get the PID:
     enginePid = loadEnginePid()
 
@@ -313,7 +335,7 @@ def startEngine():
             return
 
     # The list of applications to be deployed:
-    engineApps = engineConfig.getString("ENGINE_APPS", "engine.ear").split()
+    engineApps = engineConfig.getString("ENGINE_APPS").split()
 
     for engineApp in engineApps:
         # Do nothing if the application is not available:
@@ -369,10 +391,10 @@ def startEngine():
 
     # Get heap configuration parameters from the environment or use defaults if
     # they are not provided:
-    engineHeapMin = engineConfig.getString("ENGINE_HEAP_MIN", "1g")
-    engineHeapMax = engineConfig.getString("ENGINE_HEAP_MAX", "1g")
-    enginePermMin = engineConfig.getString("ENGINE_PERM_MIN", "256m")
-    enginePermMax = engineConfig.getString("ENGINE_PERM_MAX", "256m")
+    engineHeapMin = engineConfig.getString("ENGINE_HEAP_MIN")
+    engineHeapMax = engineConfig.getString("ENGINE_HEAP_MAX")
+    enginePermMin = engineConfig.getString("ENGINE_PERM_MIN")
+    enginePermMax = engineConfig.getString("ENGINE_PERM_MAX")
 
     # Module path should include first the engine modules so that they can override
     # those provided by the application server if needed:
@@ -416,7 +438,7 @@ def startEngine():
         engineArgs.append("-Xrunjdwp:transport=dt_socket,address=%s,server=y,suspend=n" % engineDebugAddress)
 
     # Enable verbose garbage collection if required:
-    engineVerboseGC = engineConfig.getBoolean("ENGINE_VERBOSE_GC", False)
+    engineVerboseGC = engineConfig.getBoolean("ENGINE_VERBOSE_GC")
     if engineVerboseGC:
         engineArgs.extend([
             "-verbose:gc",
@@ -456,7 +478,7 @@ def startEngine():
 
     # Change the resource limits while we are root as we won't be
     # able to change them once we assume the engine identity:
-    engineNofile = engineConfig.getInteger("ENGINE_NOFILE", 65535)
+    engineNofile = engineConfig.getInteger("ENGINE_NOFILE")
     resource.setrlimit(resource.RLIMIT_NOFILE, (engineNofile, engineNofile))
 
     # This is the child process, first thing we do is assume the engine
@@ -493,6 +515,11 @@ def startEngine():
 
 
 def stopEngine():
+    # Load the configuration and perform checks:
+    loadConfig()
+    checkIdentity()
+    checkInstallation()
+
     # Load the PID:
     enginePid = loadEnginePid()
     if not enginePid:
@@ -506,8 +533,8 @@ def stopEngine():
         return
 
     # Get the time to wait for the engine to stop from the configuration:
-    stopTime = engineConfig.getInteger("ENGINE_STOP_TIME", 10)
-    stopInterval = engineConfig.getInteger("ENGINE_STOP_INTERVAL", 1)
+    stopTime = engineConfig.getInteger("ENGINE_STOP_TIME")
+    stopInterval = engineConfig.getInteger("ENGINE_STOP_INTERVAL")
 
     # Kill the process softly and wait for it to dissapear or for the timeout
     # to expire:
@@ -539,6 +566,9 @@ def stopEngine():
 
 
 def checkEngine():
+    # Load the configuration:
+    loadConfig()
+
     # First check that the engine PID file exists, if it doesn't
     # then we assume that the engine is not running:
     enginePid = loadEnginePid()
@@ -592,7 +622,6 @@ def performAction(action):
     # managed inside the function:
     if action == "status":
         try:
-            loadConfig()
             checkEngine()
         except SystemExit:
             raise
@@ -604,9 +633,6 @@ def performAction(action):
     # everything goes well finish with exit code zero, otherwise
     # finish with non zero exit code:
     try:
-        loadConfig()
-        checkIdentity()
-        checkInstallation()
         if action == "start":
             prettyAction("Starting", startEngine)
         elif action == "stop":
