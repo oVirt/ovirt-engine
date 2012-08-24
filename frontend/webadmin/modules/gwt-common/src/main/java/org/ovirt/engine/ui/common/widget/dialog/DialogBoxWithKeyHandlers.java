@@ -2,9 +2,8 @@ package org.ovirt.engine.ui.common.widget.dialog;
 
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.ui.DialogBox;
 
-public class DialogBoxWithKeyHandlers extends DialogBox {
+public class DialogBoxWithKeyHandlers extends ResizableDialogBox {
 
     private PopupNativeKeyPressHandler keyPressHandler;
 
