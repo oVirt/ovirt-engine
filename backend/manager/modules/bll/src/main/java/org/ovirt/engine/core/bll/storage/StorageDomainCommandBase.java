@@ -63,7 +63,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Override
     public NGuid getStorageDomainId() {
-        return getParameters() != null ? !getParameters().getStorageDomainId().equals(Guid.Empty) ? getParameters()
+        return getParameters() != null ? !Guid.Empty.equals(getParameters().getStorageDomainId()) ? getParameters()
                 .getStorageDomainId() : super.getStorageDomainId() : super.getStorageDomainId();
     }
 
