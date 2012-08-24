@@ -439,8 +439,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Interfaces")
     String importVmNetworkIntefacesSubTabLabel();
 
-    @DefaultStringValue("Virtual Disks")
-    String importVmVirualDisksSubTabLabel();
+    @DefaultStringValue("Disks")
+    String importVmDisksSubTabLabel();
 
     @DefaultStringValue("Applications")
     String importVmApplicationslSubTabLabel();
@@ -478,7 +478,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Interfaces")
     String templateInterfaceSubTabLabel();
 
-    @DefaultStringValue("Virtual Disks")
+    @DefaultStringValue("Disks")
     String templateDiskSubTabLabel();
 
     @DefaultStringValue("Storage")
@@ -1856,8 +1856,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Interfaces")
     String networkIntImpTempTab();
 
-    @DefaultStringValue("Virtual Disks")
-    String virtualDisksImpTempTab();
+    @DefaultStringValue("Disks")
+    String disksImpTempTab();
 
     // Volume Brick
     @DefaultStringValue("Server")

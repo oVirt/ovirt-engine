@@ -150,7 +150,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     public VmDiskListModel()
     {
-        setTitle(ConstantsManager.getInstance().getConstants().virtualDisksTitle());
+        setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
         setHashName("virtual_disks"); //$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$

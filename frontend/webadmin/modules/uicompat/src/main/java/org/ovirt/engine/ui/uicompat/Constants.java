@@ -196,9 +196,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Template Disk(s)")
     String removeTemplateDisksTitle();
 
-    @DefaultStringValue("Virtual Disks")
-    String virtualDisksTitle();
-
     @DefaultStringValue("Copy Disk(s)")
     String copyDisksTitle();
 

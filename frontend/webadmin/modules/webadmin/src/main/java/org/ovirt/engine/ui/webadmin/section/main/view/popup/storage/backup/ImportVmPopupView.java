@@ -230,7 +230,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
             ScrollPanel diskPanel = new ScrollPanel();
             diskPanel.add(diskTable);
-            subTabLayoutpanel.add(diskPanel, constants.importVmVirualDisksSubTabLabel());
+            subTabLayoutpanel.add(diskPanel, constants.importVmDisksSubTabLabel());
 
             ScrollPanel appPanel = new ScrollPanel();
             appPanel.add(appTable);

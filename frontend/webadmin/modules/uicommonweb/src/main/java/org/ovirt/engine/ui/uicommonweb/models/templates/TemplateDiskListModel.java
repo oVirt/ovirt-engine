@@ -57,7 +57,7 @@ public class TemplateDiskListModel extends SearchableListModel
 
     public TemplateDiskListModel()
     {
-        setTitle(ConstantsManager.getInstance().getConstants().virtualDisksTitle());
+        setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
         setHashName("virtual_disks"); //$NON-NLS-1$
 
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$

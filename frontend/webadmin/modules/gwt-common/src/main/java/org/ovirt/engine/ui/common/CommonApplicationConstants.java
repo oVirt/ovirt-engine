@@ -145,7 +145,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("General")
     String generalLabel();
 
-    @DefaultStringValue("Virtual Disks")
+    @DefaultStringValue("Disks")
     String disksLabel();
 
     @DefaultStringValue("Network Interfaces")

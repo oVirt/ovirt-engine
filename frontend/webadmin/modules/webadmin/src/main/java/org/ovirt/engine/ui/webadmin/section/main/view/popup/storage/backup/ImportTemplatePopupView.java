@@ -198,7 +198,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
 
             ScrollPanel diskPanel = new ScrollPanel();
             diskPanel.add(diskTable);
-            subTabLayoutpanel.add(diskPanel, constants.virtualDisksImpTempTab());
+            subTabLayoutpanel.add(diskPanel, constants.disksImpTempTab());
         }
     }
 
