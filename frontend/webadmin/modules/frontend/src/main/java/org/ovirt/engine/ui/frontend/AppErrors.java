@@ -2044,4 +2044,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Migrating a VM in paused status is unsupported.")
     String MIGRATE_PAUSED_VM_IS_UNSUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Enabling both Virt and Gluster services is not allowed.")
+    String VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED();
 }

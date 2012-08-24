@@ -168,6 +168,10 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             if(!(getVdsGroup().supportsGlusterService() || getVdsGroup().supportsVirtService())) {
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
                 result = false;
+            } else if (getVdsGroup().supportsGlusterService() && getVdsGroup().supportsVirtService()
+                    && !isAllowClusterWithVirtGluster()) {
+                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
+                result = false;
             }
         }
 

@@ -200,6 +200,17 @@ public class UpdateVdsGroupCommandTest {
     }
 
     @Test
+    public void vdsGroupWithVirtGlusterServicesNotAllowed() {
+        createCommandWithVirtGlusterEnabled();
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
+        cpuExists();
+        allQueriesEmpty();
+        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
+    }
+
+    @Test
     public void disableVirtWhenVmsExist() {
         createCommandWithGlusterEnabled();
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
@@ -264,6 +275,10 @@ public class UpdateVdsGroupCommandTest {
 
     private void createCommandWithGlusterEnabled() {
         createCommand(createVdsGroupWith(false, true));
+    }
+
+    private void createCommandWithVirtGlusterEnabled() {
+        createCommand(createVdsGroupWith(true, true));
     }
 
     private void createCommand(final VDSGroup group) {

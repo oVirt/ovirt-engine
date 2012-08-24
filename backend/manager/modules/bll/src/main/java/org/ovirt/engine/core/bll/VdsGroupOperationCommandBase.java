@@ -79,4 +79,9 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
         return result;
     }
+
+    protected boolean isAllowClusterWithVirtGluster() {
+        Boolean allowVirGluster = Config.<Boolean> GetValue(ConfigValues.AllowClusterWithVirtGlusterEnabled);
+        return allowVirGluster;
+    }
 }

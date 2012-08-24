@@ -38,6 +38,7 @@ select fn_db_add_config_value('AdvancedNFSOptionsEnabled','false','3.0');
 select fn_db_add_config_value('AdvancedNFSOptionsEnabled','true','3.1');
 select fn_db_add_config_value('AdvancedNFSOptionsEnabled','true','3.2');
 select fn_db_add_config_value('AgentAppName','RHEV-Agent','general');
+select fn_db_add_config_value('AllowClusterWithVirtGlusterEnabled','true','general');
 select fn_db_add_config_value('AllowDuplicateMacAddresses','false','general');
 select fn_db_add_config_value('ApplicationMode','255','general');
 select fn_db_add_config_value('AsyncPollingCyclesBeforeCallbackCleanup','120','general');

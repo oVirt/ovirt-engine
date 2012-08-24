@@ -78,7 +78,8 @@ public enum ConfigurationValues {
     WANDisableEffects(ConfigAuthType.User),
     WANColorDepth(ConfigAuthType.User),
     SupportForceCreateVG,
-    NetworkConnectivityCheckTimeoutInSeconds;
+    NetworkConnectivityCheckTimeoutInSeconds,
+    AllowClusterWithVirtGlusterEnabled;
 
     public static enum ConfigAuthType {
         Admin,

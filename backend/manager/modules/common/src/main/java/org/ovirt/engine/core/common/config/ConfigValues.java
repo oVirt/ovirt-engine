@@ -1452,6 +1452,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     LDAPConnectTimeout(379),
 
+    /*
+     * Whether to allow a cluster with both Virt and Gluster services enabled
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AllowClusterWithVirtGlusterEnabled(380),
+
     Invalid(65535);
 
     private int intValue;
