@@ -207,11 +207,11 @@
 				<g:VerticalPanel styleName="{style.checkBoxesPanel}" >
 					<g:HorizontalPanel>
 						<ce:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
-						<p:InfoIcon ui:field="checkConnInfo"></p:InfoIcon>
+						<d:InfoIcon ui:field="checkConnInfo"/>
 					</g:HorizontalPanel>
 					<g:HorizontalPanel>
 						<ce:EntityModelCheckBoxEditor ui:field="commitChanges" />
-						<p:InfoIcon ui:field="commitChangesInfo"></p:InfoIcon>
+						<d:InfoIcon ui:field="commitChangesInfo"/>
 					</g:HorizontalPanel>
 				</g:VerticalPanel>
 			</g:HTMLPanel>

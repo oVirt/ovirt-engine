@@ -1,7 +1,6 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
+package org.ovirt.engine.ui.common.widget.dialog;
 
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
@@ -13,14 +12,15 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
-public class InfoIcon extends FocusPanel{
-    private final static ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
-    private final Image infoImage = new Image(resources.dialogIconHelp());
-    private final Image infoImageHover = new Image(resources.dialogIconHelpRollover());
+public class InfoIcon extends FocusPanel {
+    private Image infoImage;
+    private Image infoImageHover;
     private final DecoratedPopupPanel infoPanel = new DecoratedPopupPanel(true);
 
-    public InfoIcon(SafeHtml text) {
+    public InfoIcon(SafeHtml text, CommonApplicationResources resources) {
         super();
+
+        initInfoImages(resources);
 
         setWidget(infoImage);
         infoPanel.setWidget(new HTML(text));
@@ -43,5 +43,10 @@ public class InfoIcon extends FocusPanel{
                 infoPanel.showRelativeTo(InfoIcon.this);
             }
         });
+    }
+
+    private void initInfoImages(CommonApplicationResources resources) {
+        infoImage = new Image(resources.dialogIconHelp());
+        infoImageHover = new Image(resources.dialogIconHelpRollover());
     }
 }

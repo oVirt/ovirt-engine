@@ -18,15 +18,19 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
@@ -47,6 +51,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -57,6 +64,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ValueLabel;
 
 public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
@@ -79,6 +87,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         String assignedVmsLabel();
     }
+
+    interface PrestartedVmsContextHelp extends SafeHtmlTemplates {
+        @Template("<i>{0}</i>")
+        SafeHtml italicTextContainer(String text);
+    }
+
+    private static PrestartedVmsContextHelp prestartedVmsContextHelp;
 
     @UiField
     protected Style style;
@@ -159,28 +174,57 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @WithElementId("poolType")
     public ListModelListBoxEditor<Object> poolTypeEditor;
 
-    @UiField
-    @Path(value = "assignedVms.entity")
-    @WithElementId("assignedVms")
-    public EntityModelTextBoxEditor assignedVmsEditor;
-
-    @UiField
+    @UiField(provided = true)
     @Ignore
-    protected Label numOfVmsLabel;
+    public InfoIcon newPoolPrestartedVmsIcon;
 
-    @UiField
-    @Path(value = "numOfDesktops.entity")
-    @WithElementId("numOfDesktops")
-    public EntityModelTextBoxEditor numOfDesktopsEditor;
+    @UiField(provided = true)
+    @Ignore
+    public InfoIcon editPoolPrestartedVmsIcon;
 
     @UiField
     @Path(value = "prestartedVms.entity")
     @WithElementId("prestartedVms")
-    public EntityModelTextBoxEditor prestartedVmsEditor;
+    public EntityModelTextBoxOnlyEditor prestartedVmsEditor;
 
     @UiField
     @Ignore
-    protected Label prestartedVmsHintLabel;
+    public FlowPanel newPoolEditVmsPanel;
+
+    @UiField
+    @Ignore
+    public Label prestartedLabel;
+
+    @UiField(provided = true)
+    @Path("numOfDesktops.entity")
+    @WithElementId("numOfVms")
+    public EntityModelTextBoxEditor numOfVmsEditor;
+
+    @UiField
+    @Ignore
+    public FlowPanel editPoolEditVmsPanel;
+
+    @UiField
+    @Ignore
+    public FlowPanel editPoolIncraseNumOfVmsPanel;
+
+    @UiField
+    @Ignore
+    public Label editPrestartedVmsLabel;
+
+    @UiField
+    @Path("prestartedVms.entity")
+    @WithElementId("editPrestartedVms")
+    public EntityModelTextBoxOnlyEditor editPrestartedVmsEditor;
+
+    @UiField(provided = true)
+    @Path("numOfDesktops.entity")
+    @WithElementId("incraseNumOfVms")
+    public EntityModelTextBoxOnlyEditor incraseNumOfVmsEditor;
+
+    @UiField(provided = true)
+    @Path("assignedVms.entity")
+    public ValueLabel<Object> outOfxInPool;
 
     // ==Initial run Tab==
     @UiField
@@ -389,7 +433,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     Panel generalAdvancedParameterExpanderContent;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public AbstractVmPopupWidget(CommonApplicationConstants constants) {
+    public AbstractVmPopupWidget(CommonApplicationConstants constants,
+            CommonApplicationResources resources,
+            final CommonApplicationMessages messages) {
         this.constants = constants;
 
         initListBoxEditors();
@@ -412,10 +458,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
 
+        if (prestartedVmsContextHelp == null) {
+            prestartedVmsContextHelp = GWT.create(PrestartedVmsContextHelp.class);
+        }
+
+        initPoolSpecificWidgets(resources, messages);
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         expander.initWithContent(expanderContent.getElement());
         generalAdvancedParameterExpander.initWithContent(generalAdvancedParameterExpanderContent.getElement());
+        editPrestartedVmsEditor.setKeepTitleOnSetEnabled(true);
+
         applyStyles();
 
         poolTab.setVisible(false);
@@ -423,6 +477,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         localize(constants);
 
         generateIds();
+
+        hidePoolSpecificFields();
+
         priorityEditor.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
@@ -431,6 +488,47 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         }, ""); //$NON-NLS-1$
 
         Driver.driver.initialize(this);
+    }
+
+    protected void initPoolSpecificWidgets(CommonApplicationResources resources,
+            final CommonApplicationMessages messages) {
+        createNumOfDesktopEditors();
+
+        incraseNumOfVmsEditor.setKeepTitleOnSetEnabled(true);
+        numOfVmsEditor.setKeepTitleOnSetEnabled(true);
+
+        newPoolPrestartedVmsIcon =
+                new InfoIcon(prestartedVmsContextHelp.italicTextContainer(messages.prestartedHelp()), resources); //$NON-NLS-1$
+
+        editPoolPrestartedVmsIcon =
+                new InfoIcon(prestartedVmsContextHelp.italicTextContainer(messages.prestartedHelp()), resources); //$NON-NLS-1$
+
+        outOfxInPool = new ValueLabel<Object>(new AbstractRenderer<Object>() {
+
+            @Override
+            public String render(Object object) {
+                return messages.outOfXVMsInPool(object.toString());
+            }
+
+        });
+    }
+
+    /**
+     * There are two editors which edits the same entity - in the correct subclass make sure that the correct one's
+     * value is used to edit the model
+     * <p>
+     * The default implementation just creates the simple editors
+     */
+    protected void createNumOfDesktopEditors() {
+        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor();
+        numOfVmsEditor = new EntityModelTextBoxEditor();
+    }
+
+    private void hidePoolSpecificFields() {
+        numOfVmsEditor.setVisible(false);
+        newPoolEditVmsPanel.setVisible(false);
+        editPoolEditVmsPanel.setVisible(false);
+        editPoolIncraseNumOfVmsPanel.setVisible(false);
     }
 
     protected abstract void generateIds();
@@ -570,10 +668,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // Pools Tab
         poolTab.setLabel(constants.poolVmPopup());
         poolTypeEditor.setLabel(constants.poolTypeVmPopup());
-        numOfVmsLabel.setText(constants.numOfVmsPoolPopup());
-        assignedVmsEditor.setLabel(constants.totalPoolPopup());
-        numOfDesktopsEditor.setLabel("+"); //$NON-NLS-1$
-        prestartedVmsEditor.setLabel(constants.prestartedPoolPopup());
+        editPrestartedVmsLabel.setText(constants.prestartedVms());
+
+        prestartedLabel.setText(constants.prestartedPoolPopup());
+        numOfVmsEditor.setLabel(constants.numOfVmsPoolPopup());
 
         // initial run Tab
         initialRunTab.setLabel(constants.initialRunVmPopup());
@@ -632,7 +730,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         initListeners(object);
         initCustomPropertySheet(object);
 
-        numOfVmsLabel.setVisible(false);
+        // numOfVmsLabel.setVisible(false);
     }
 
     private void initCustomPropertySheet(final UnitVmModel object) {
@@ -702,18 +800,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 disksAllocationPanel.setVisible(isDisksAvailable);
 
                 storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
-            }
-        });
-
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-
-                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-
-                if (e.PropertyName == "PrestartedVmsHint") { //$NON-NLS-1$
-                    prestartedVmsHintLabel.setText(object.getPrestartedVmsHint());
-                }
             }
         });
 

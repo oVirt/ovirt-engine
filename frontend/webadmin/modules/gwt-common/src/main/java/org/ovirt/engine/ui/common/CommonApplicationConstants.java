@@ -325,6 +325,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Initial Run")
     String initialRunVmPopup();
 
+    @DefaultStringValue("Prestarted VMs")
+    String prestartedVms();
+
     @DefaultStringValue("Domain")
     String domainVmPopup();
 
@@ -709,9 +712,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Number of VMs")
     String numOfVmsPoolPopup();
-
-    @DefaultStringValue("Total")
-    String totalPoolPopup();
 
     @DefaultStringValue("Prestarted")
     String prestartedPoolPopup();

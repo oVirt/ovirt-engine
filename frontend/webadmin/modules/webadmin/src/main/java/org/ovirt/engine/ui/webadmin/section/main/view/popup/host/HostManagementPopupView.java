@@ -9,6 +9,7 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InfoIcon;
 import org.ovirt.engine.ui.webadmin.widget.editor.EnumRadioEditor;
 
 import com.google.gwt.core.client.GWT;
@@ -151,7 +151,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
         isToSync = new EntityModelCheckBoxEditor(Align.RIGHT);
-        isToSyncInfo = new InfoIcon(templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()));
+        isToSyncInfo = new InfoIcon(templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()), resources);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

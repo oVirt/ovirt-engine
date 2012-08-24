@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -13,8 +15,8 @@ public class VmServerNewPopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public VmServerNewPopupWidget(CommonApplicationConstants constants) {
-        super(constants);
+    public VmServerNewPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages) {
+        super(constants, resources, messages);
     }
 
     @Override

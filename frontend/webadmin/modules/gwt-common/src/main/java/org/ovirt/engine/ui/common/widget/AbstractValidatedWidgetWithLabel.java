@@ -24,7 +24,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base class for validated widgets that have a label associated with them.
- *
  * @param <W>
  *            Content widget type.
  */
@@ -57,6 +56,13 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     @UiField
     Style style;
+
+    /**
+     * By default the title gets erased, when the setEnabled is called
+     * <p>
+     * This switch disables it
+     */
+    private boolean keepTitleOnSetEnabled = false;
 
     public AbstractValidatedWidgetWithLabel(W contentWidget) {
         this.contentWidget = contentWidget;
@@ -183,7 +189,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
             labelElement.replaceClassName(style.labelEnabled(), style.labelDisabled());
         }
 
-        updateWidgetTitle(null);
+        if (!keepTitleOnSetEnabled) {
+            updateWidgetTitle(null);
+        }
     }
 
     @Override
@@ -224,4 +232,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         labelElement.addClassName(style.labelHidden());
     }
 
+    public void setKeepTitleOnSetEnabled(boolean keepTitleOnSetEnabled) {
+        this.keepTitleOnSetEnabled = keepTitleOnSetEnabled;
+    }
 }

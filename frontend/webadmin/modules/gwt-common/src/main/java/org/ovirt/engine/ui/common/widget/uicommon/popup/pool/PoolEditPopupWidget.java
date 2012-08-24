@@ -1,13 +1,21 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
+import java.text.ParseException;
+
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.text.shared.Parser;
 
 public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
@@ -15,8 +23,10 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public PoolEditPopupWidget(CommonApplicationConstants constants) {
-        super(constants);
+    public PoolEditPopupWidget(CommonApplicationConstants constants,
+            CommonApplicationResources resources,
+            CommonApplicationMessages messages) {
+        super(constants, resources, messages);
     }
 
     @Override
@@ -35,14 +45,32 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
                     enableEditPoolFields();
                 }
             }
+
+        });
+    }
+
+    @Override
+    protected void createNumOfDesktopEditors() {
+        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor();
+
+        numOfVmsEditor = new EntityModelTextBoxEditor(new EntityModelRenderer(), new Parser<Object>() {
+
+            @Override
+            public Object parse(CharSequence text) throws ParseException {
+                // forwards to the currently active editor
+                return incraseNumOfVmsEditor.asEditor().getValue();
+            }
+
         });
     }
 
     private void enableEditPoolFields() {
         descriptionEditor.setEnabled(true);
-        numOfDesktopsEditor.setEnabled(true);
         prestartedVmsEditor.setEnabled(true);
         quotaEditor.setEnabled(true);
+
+        editPrestartedVmsEditor.setEnabled(true);
+        incraseNumOfVmsEditor.setEnabled(true);
     }
 
     private void disableAllTabs() {

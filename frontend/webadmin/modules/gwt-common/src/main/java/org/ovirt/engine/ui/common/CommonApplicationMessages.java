@@ -45,4 +45,10 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Note: {0} is {1}")
     String diskNote(String diskAlias, String formattedNote);
+
+    @DefaultMessage("out of {0} VMs in pool")
+    String outOfXVMsInPool(String numOfVms);
+
+    @DefaultMessage("Number of Prestarted VMs defines the number of VMs in Run state , that are waiting to be attached to Users. Accepted values: 0 to the Number of VMs that already exists in the Pool.")
+    String prestartedHelp();
 }

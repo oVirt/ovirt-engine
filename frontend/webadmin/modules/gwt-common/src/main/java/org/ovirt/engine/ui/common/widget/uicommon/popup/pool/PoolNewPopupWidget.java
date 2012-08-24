@@ -1,11 +1,19 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
+import java.text.ParseException;
+
 import org.ovirt.engine.core.compat.Event;
+import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -17,8 +25,8 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public PoolNewPopupWidget(CommonApplicationConstants constants) {
-        super(constants);
+    public PoolNewPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages) {
+        super(constants, resources, messages);
     }
 
     @Override
@@ -39,17 +47,35 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         initTabAvailabilityListeners(object);
         isStatelessEditor.setVisible(false);
 
-        numOfVmsLabel.setVisible(true);
-
         if (object.getIsNew()) {
+            prestartedVmsEditor.setEnabled(false);
             object.getNumOfDesktops().setEntity("1"); //$NON-NLS-1$
-            assignedVmsEditor.setVisible(false);
-            numOfDesktopsEditor.setLabel(""); //$NON-NLS-1$
-            prestartedVmsEditor.setVisible(false);
-            prestartedVmsHintLabel.setVisible(false);
+
+            numOfVmsEditor.setVisible(true);
+            newPoolEditVmsPanel.setVisible(true);
+            editPoolEditVmsPanel.setVisible(false);
+            editPoolIncraseNumOfVmsPanel.setVisible(false);
         } else {
-            assignedVmsEditor.addLabelStyleName(style.assignedVmsLabel());
+            numOfVmsEditor.setVisible(false);
+            newPoolEditVmsPanel.setVisible(false);
+            editPoolEditVmsPanel.setVisible(true);
+            prestartedVmsEditor.setEnabled(true);
+            editPoolIncraseNumOfVmsPanel.setVisible(true);
         }
+    }
+
+    @Override
+    protected void createNumOfDesktopEditors() {
+        numOfVmsEditor = new EntityModelTextBoxEditor();
+        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor(new EntityModelRenderer(), new Parser<Object>() {
+
+            @Override
+            public Object parse(CharSequence text) throws ParseException {
+                // forwards to the currently active editor
+                return numOfVmsEditor.asEditor().getValue();
+            }
+
+        });
     }
 
     private void initTabAvailabilityListeners(final UnitVmModel pool) {
