@@ -1178,7 +1178,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddPosixFsStorageDomain);
-        actionTypes.add(VdcActionType.RemoveStorageServerConnection);
 
         parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId()));
         StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storageDomain);

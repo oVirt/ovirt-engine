@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -29,6 +30,7 @@ import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -341,6 +343,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         };
         internalDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable());
 
+        TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
+            @Override
+            protected DiskInterface getRawValue(EntityModel object) {
+                Disk disk = (Disk) (((DiskModel) (object.getEntity())).getDisk());
+                return disk.getDiskInterface();
+            }
+        };
+        internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "55px"); //$NON-NLS-1$
+
         internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -445,6 +456,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             }
         };
         externalDiskTable.addColumn(serialColumn, constants.serialSanStorage());
+
+        TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
+            @Override
+            protected DiskInterface getRawValue(EntityModel object) {
+                Disk disk = (Disk) (((DiskModel) (object.getEntity())).getDisk());
+                return disk.getDiskInterface();
+            }
+        };
+        externalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "55px"); //$NON-NLS-1$
 
         externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override

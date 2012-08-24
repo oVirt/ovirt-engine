@@ -44,7 +44,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
@@ -623,32 +625,36 @@ public class VmDiskListModel extends VmDiskListModelBase
     {
         VM vm = getEntity();
         DiskModel model = (DiskModel) getWindow();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
+
+        IFrontendActionAsyncCallback onFinishCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+                VmDiskListModel localModel = (VmDiskListModel) result.getState();
+                localModel.getWindow().StopProgress();
+                Cancel();
+            }
+        };
 
         ArrayList<EntityModel> disksToAttach = (Boolean) model.getIsInternal().getEntity() ?
                 (ArrayList<EntityModel>) model.getInternalAttachableDisks().getSelectedItems() :
                 (ArrayList<EntityModel>) model.getExternalAttachableDisks().getSelectedItems();
 
-        for (EntityModel item : disksToAttach)
-        {
-            DiskModel disk = (DiskModel) item.getEntity();
+        for (int i = 0; i < disksToAttach.size(); i++) {
+            DiskModel disk = (DiskModel) disksToAttach.get(i).getEntity();
             AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
                     vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
+
+            actionTypes.add(VdcActionType.AttachDiskToVm);
             paramerterList.add(parameters);
+            callbacks.add(i == disksToAttach.size() - 1 ? onFinishCallback : null);
         }
 
         model.StartProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.AttachDiskToVm, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
-                        VmDiskListModel localModel = (VmDiskListModel) result.getState();
-                        localModel.getWindow().StopProgress();
-                        Cancel();
-                    }
-                },
-                this);
+        Frontend.RunMultipleActions(actionTypes, paramerterList, callbacks, null, this);
     }
 
     private void Plug(boolean plug) {

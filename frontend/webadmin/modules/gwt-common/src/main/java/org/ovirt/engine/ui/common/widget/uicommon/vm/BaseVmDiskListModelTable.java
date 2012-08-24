@@ -94,9 +94,6 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
                 DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images, "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.statusColumn, constants.statusDisk(), images, "80px"); //$NON-NLS-1$
-
-        getTable().ensureColumnPresent(
                 DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns);
 
         getTable().ensureColumnPresent(
@@ -110,6 +107,12 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns, "120px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.interfaceColumn, constants.interfaceDisk(), all || images || luns, "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.statusColumn, constants.statusDisk(), images, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns);

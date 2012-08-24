@@ -5,6 +5,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -104,6 +105,13 @@ public class DisksViewColumns {
         protected VolumeType getRawValue(Disk object) {
             return object.getDiskStorageType() == DiskStorageType.IMAGE ?
                     ((DiskImage) object).getvolume_type() : null;
+        }
+    };
+
+    public static final TextColumnWithTooltip<Disk> interfaceColumn = new EnumColumn<Disk, DiskInterface>() {
+        @Override
+        protected DiskInterface getRawValue(Disk object) {
+            return object.getDiskInterface();
         }
     };
 
