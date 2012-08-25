@@ -26,6 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CdRom;
@@ -586,6 +587,23 @@ public class LinkHelper {
         UriBuilder uriBuilder = getUriBuilder(uriInfo, model, suggestedParentType);
         if (uriBuilder != null) {
             ActionsBuilder actionsBuilder = new ActionsBuilder(uriBuilder, collection.getResourceType());
+            model.setActions(actionsBuilder.build());
+        }
+    }
+
+    /**
+     * Adds the set of action links for an object
+     *
+     * @param uriInfo the URI info
+     * @param model the object to add actions to
+     * @param collection the object to get implemented methods from
+     * @return the object, including its set of action links
+     */
+    public static <R extends ActionableResource> void addActions(UriInfo uriInfo, R model, Object collection) {
+        if (uriInfo != null) {
+            ActionsBuilder actionsBuilder = new ActionsBuilder(uriInfo,
+                                                               model.getClass(),
+                                                               collection.getClass());
             model.setActions(actionsBuilder.build());
         }
     }

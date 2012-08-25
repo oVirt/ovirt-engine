@@ -9,8 +9,10 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -223,5 +225,15 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             }
         }
         return null;
+    }
+
+    /**
+     *
+     * @param model the resource to add actions to
+     * @return collection with action links
+     */
+    protected <C extends ActionableResource> C addActions(C model) {
+        LinkHelper.addActions(getUriInfo(), model, this);
+        return model;
     }
 }

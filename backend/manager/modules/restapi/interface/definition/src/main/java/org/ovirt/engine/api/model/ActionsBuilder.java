@@ -21,31 +21,45 @@ import java.lang.reflect.Method;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+
+import org.ovirt.engine.api.utils.ArrayUtils;
+
 
 public class ActionsBuilder {
 
     private UriBuilder uriBuilder;
     private Class<?> service;
+    UriInfo uriInfo;
+    Class<?> collection;
 
     public ActionsBuilder(UriBuilder uriBuilder, Class<?> service) {
         this.uriBuilder = uriBuilder;
         this.service = service;
     }
 
+    public ActionsBuilder(UriInfo uriInfo, Class<?> service, Class<?> collection) {
+        this.uriInfo = uriInfo;
+        this.service = service;
+        this.collection = collection;
+    }
+
     public Actions build() {
         Actions actions = null;
 
-        for (Method method : service.getMethods()) {
+        for (Method method : ArrayUtils.concat(service.getMethods(), getInterfaceSignatures(collection))) {
             Path path = method.getAnnotation(Path.class);
             Actionable actionable = method.getAnnotation(Actionable.class);
 
             if (actionable != null && path != null) {
-                URI uri = uriBuilder.clone().path(path.value()).build();
-
                 Link link = new Link();
                 link.setRel(path.value());
-                link.setHref(uri.toString());
-
+                if (uriBuilder != null) {
+                    URI uri = uriBuilder.clone().path(path.value()).build();
+                    link.setHref(uri.toString());
+                } else {
+                    link.setHref(this.uriInfo.getPath()+'/'+link.getRel());
+                }
                 if (actions == null) {
                     actions = new Actions();
                 }
@@ -54,5 +68,15 @@ public class ActionsBuilder {
         }
 
         return actions;
+    }
+
+    private Method[] getInterfaceSignatures(Class<?> collection) {
+        Method[] methods = new Method[0];
+        if (collection != null){
+            for (Class<?> inter : collection.getInterfaces()){
+                methods = ArrayUtils.concat(methods, inter.getMethods());
+            }
+        }
+        return methods;
     }
 }

@@ -72,7 +72,7 @@ public class BackendHostNicsResource
             }
             ret.getHostNics().add(addLinks(hostNic));
         }
-        return ret;
+        return addActions(ret);
     }
 
     @SuppressWarnings("serial")

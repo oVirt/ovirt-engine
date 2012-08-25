@@ -52,6 +52,9 @@ public class BackendHostNicsResourceTest
     private static final Integer NIC_SPEED = 100;
     private static final InterfaceStatus NIC_STATUS = InterfaceStatus.Up;
     private static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.StaticIp;
+    private static final String SETUPNETWORKS_ACTION_BASE_URL = "/hosts/00000000-0000-0000-0000-000000000000/nics";
+    private static final String SETUPNETWORKS_ACTION_URL = "/hosts/00000000-0000-0000-0000-000000000000/nics/setupnetworks";
+    private static final String SETUPNETWORKS_ACTION_REL = "setupnetworks";
 
     public BackendHostNicsResourceTest() {
         super(new BackendHostNicsResource(PARENT_GUID.toString()), null, null);
@@ -79,13 +82,15 @@ public class BackendHostNicsResourceTest
     public void testListIncludeStatistics() throws Exception {
         try {
             accepts.add("application/xml; detail=statistics");
-            setUriInfo(setUpUriExpectations(null));
+            UriInfo uriInfo = setUpActionsUriExpectations();
             setGetVdsQueryExpectations(1);
             setGetNetworksQueryExpectations(1);
             setUpQueryExpectations("");
+            collection.setUriInfo(uriInfo);
 
             List<HostNIC> nics = getCollection();
             assertTrue(nics.get(0).isSetStatistics());
+
             verifyCollection(nics);
         } finally {
             accepts.clear();
@@ -266,12 +271,35 @@ public class BackendHostNicsResourceTest
 
     @Test
     public void testList() throws Exception {
-        UriInfo uriInfo = setUpUriExpectations(null);
+        UriInfo uriInfo = setUpActionsUriExpectations();
         setGetVdsQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
+    }
+
+    @Test
+    public void testActionsInList() throws Exception {
+        UriInfo uriInfo = setUpActionsUriExpectations();
+        setGetVdsQueryExpectations(1);
+        setGetNetworksQueryExpectations(1);
+        setUpQueryExpectations("");
+        collection.setUriInfo(uriInfo);
+        verifyActions(collection.list());
+    }
+
+    private UriInfo setUpActionsUriExpectations() {
+        UriInfo uriInfo = setUpBasicUriExpectations(SETUPNETWORKS_ACTION_BASE_URL);
+        return uriInfo;
+    }
+
+    private void verifyActions(HostNics list) {
+        assertNotNull(list.getActions());
+        assertNotNull(list.getActions().getLinks());
+        assertNotNull(list.getActions().getLinks().get(0));
+        assertEquals(list.getActions().getLinks().get(0).getHref(), SETUPNETWORKS_ACTION_URL);
+        assertEquals(list.getActions().getLinks().get(0).getRel(), SETUPNETWORKS_ACTION_REL);
     }
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {

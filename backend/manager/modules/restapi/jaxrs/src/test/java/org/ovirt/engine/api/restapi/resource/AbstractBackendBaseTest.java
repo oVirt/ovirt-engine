@@ -145,6 +145,12 @@ public abstract class AbstractBackendBaseTest extends Assert {
         return uriInfo;
     }
 
+    protected UriInfo setUpBasicUriExpectations(String path) {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        expect(uriInfo.getPath()).andReturn(path).anyTimes();
+        return uriInfo;
+    }
+
     protected <E> void setUpGetEntityExpectations(VdcQueryType query,
             Class<? extends VdcQueryParametersBase> clz, String[] names, Object[] values, E entity)
             throws Exception {

@@ -810,33 +810,46 @@
 
   <!-- Common to all resources -->
 
-  <xs:complexType name="BaseResource">
+  <xs:complexType name="ActionableResource">
     <xs:sequence>
-      <xs:element name="name" type="xs:string" minOccurs="0"/>
-      <xs:element name="description" type="xs:string" minOccurs="0"/>
       <xs:element name="actions" type="Actions" minOccurs="0"/>
-      <xs:element name="creation_status" type="Status" minOccurs="0"/>      
-      <!-- also rel="creation_status" link for monitoring async creation -->
-      <!-- further link relation types may be defined by specific resources -->
-      <xs:element ref="link" minOccurs="0" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="Links"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
     </xs:sequence>
-    <xs:attribute name="href" type="xs:string"/>
-    <xs:attribute name="id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="BaseResource">
+    <xs:complexContent>
+      <xs:extension base="ActionableResource">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string" minOccurs="0"/>
+          <xs:element name="description" type="xs:string" minOccurs="0"/>
+          <xs:element name="creation_status" type="Status" minOccurs="0"/>
+          <!-- also rel="creation_status" link for monitoring async creation -->
+          <!-- further link relation types may be defined by specific resources -->
+          <xs:element ref="link" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="Links"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="href" type="xs:string"/>
+        <xs:attribute name="id" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="BaseResources">
-    <xs:sequence>
-      <xs:element name="total" type="xs:unsignedInt" minOccurs="0"/>
-      <xs:element name="active" type="xs:unsignedInt" minOccurs="0"/>
-    </xs:sequence>
+     <xs:complexContent>
+      <xs:extension base="ActionableResource">
+        <xs:sequence>
+          <xs:element name="total" type="xs:unsignedInt" minOccurs="0"/>
+          <xs:element name="active" type="xs:unsignedInt" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="Option">
     <xs:attribute name="name" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
