@@ -39,6 +39,8 @@ public class DirectorySearcherTest extends AbstractLdapTest {
     @Rule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.LDAPQueryTimeout, 2),
+            mockConfig(ConfigValues.LDAPConnectTimeout,10),
+            mockConfig(ConfigValues.LDAPOperationTimeout,30),
             mockConfig(ConfigValues.LDAPProviderTypes, "example.com:general")
             );
 

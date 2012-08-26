@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import javax.naming.directory.SearchControls;
@@ -66,11 +67,10 @@ public abstract class LDAPTemplateWrapper {
         contextSource.setContextFactory(com.sun.jndi.ldap.LdapCtxFactory.class);
 
         // binary properties
-        Map<String, String> baseEnvironmentProperties = new HashMap<String, String>();
+        Hashtable<String, String> baseEnvironmentProperties =  new Hashtable<String, String>();
         // objectGUID
         baseEnvironmentProperties.put("java.naming.ldap.attributes.binary", "objectGUID");
-        baseEnvironmentProperties.put("com.sun.jndi.ldap.connect.timeout", Long.toString(timeout));
-
+        LdapBrokerUtils.addLdapConfigValues(baseEnvironmentProperties);
         contextSource.setBaseEnvironmentProperties(baseEnvironmentProperties);
     }
 

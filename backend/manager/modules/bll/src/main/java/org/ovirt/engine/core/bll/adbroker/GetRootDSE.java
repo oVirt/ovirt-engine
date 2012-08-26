@@ -39,6 +39,7 @@ public class GetRootDSE {
      */
     private void execute(LdapProviderType ldapProviderType, String domain) {
         Hashtable<String, String> env = new Hashtable<String, String>();
+        LdapBrokerUtils.addLdapConfigValues(env);
         initContextVariables(env);
 
         Attributes results = null;
@@ -58,7 +59,7 @@ public class GetRootDSE {
             searchControls.setSearchScope(queryExecution.getSearchScope());
             // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
             searchControls.setReturningObjFlag(true);
-            searchControls.setTimeLimit(Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout) * 1000);
+            searchControls.setTimeLimit(Config.<Integer> GetValue(ConfigValues.LDAPOperationTimeout) * 1000);
             NamingEnumeration<SearchResult> search =
                     ctx.search(queryExecution.getBaseDN(), queryExecution.getFilter(), searchControls);
 

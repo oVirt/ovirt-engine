@@ -1442,6 +1442,16 @@ public enum ConfigValues {
     @DefaultValueAttribute("ovirt-engine")
     SSHKeyAlias(377),
 
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    LDAPOperationTimeout(378),
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    LDAPConnectTimeout(379),
+
     Invalid(65535);
 
     private int intValue;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -381,6 +382,17 @@ public class LdapBrokerUtils {
                 .append(nsUniqueId.substring(22, 26))
                 .append(nsUniqueId.substring(27, 35));
         return sb.toString();
+    }
+
+    /**
+     * set ldap configuration with ConfigValue data
+     *
+     * @param env hashtable of parameters for ldap configuration.
+     * this method adds to hashtable specific ldap configuration.
+     */
+    public static void addLdapConfigValues(Hashtable<String, String> env){
+        env.put("com.sun.jndi.ldap.read.timeout", Long.toString(Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout) * 1000));
+        env.put("com.sun.jndi.ldap.connect.timeout", Long.toString(Config.<Integer> GetValue(ConfigValues.LDAPConnectTimeout) * 1000));
     }
 
 }

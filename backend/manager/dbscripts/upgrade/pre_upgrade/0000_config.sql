@@ -182,6 +182,8 @@ select fn_db_add_config_value('keystorePass','NoSoup4U','general');
 select fn_db_add_config_value('keystoreUrl','.keystore','general');
 select fn_db_add_config_value('LdapQueryPageSize','1000','general');
 select fn_db_add_config_value('LDAPQueryTimeout','30','general');
+select fn_db_add_config_value('LDAPConnectTimeout','30','general');
+select fn_db_add_config_value('LDAPOperationTimeout','30','general');
 --Handling LDAP Security Authentication Method
 select fn_db_add_config_value('LDAPSecurityAuthentication','GSSAPI','general');
 select fn_db_add_config_value('LDAPServerPort','389','general');
