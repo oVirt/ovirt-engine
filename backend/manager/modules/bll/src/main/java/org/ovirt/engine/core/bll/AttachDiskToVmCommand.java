@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,6 +75,10 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
                         .getValue())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+        }
+        if (retValue && !disk.isShareable() && disk.getNumberOfVms() > 0) {
+            retValue = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
         }
         if (retValue && isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 ((DiskImage) disk).getstorage_ids().get(0), getVm().getstorage_pool_id())) == null) {
@@ -158,10 +162,16 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     @Override
     protected Map<String, String> getExclusiveLocks() {
-        if (disk.isBoot()) {
-            return Collections.singletonMap(getParameters().getVmId().toString(), LockingGroup.VM_DISK_BOOT.name());
+        Map<String, String> locks = new HashMap<String, String>();
+        if (!disk.isShareable()) {
+            locks.put(disk.getId().toString(), LockingGroup.DISK.name());
         }
-        return null;
+
+        if (disk.isBoot()) {
+            locks.put(getParameters().getVmId().toString(), LockingGroup.VM_DISK_BOOT.name());
+        }
+
+        return locks;
     }
 
     @Override
