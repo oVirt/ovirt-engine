@@ -348,7 +348,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         List<String> invalidNetworkNames = new ArrayList<String>();
         List<String> invalidIfaceNames = new ArrayList<String>();
         Map<String, Network> networksInVdsByName =
-                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVm().getvds_group_id()));
+                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVmTemplate().getvds_group_id()));
         String networkName;
         for (VmNetworkInterface iface : interfaces) {
             if (iface.getId() == null) {
