@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
@@ -914,6 +915,27 @@ public class VdsUpdateRunTimeInfo {
                 new FullListVDSCommandParameters(_vds.getId(), vmsToUpdate)).ExecuteWithReturnValue());
     }
 
+    private boolean shouldLogDeviceDetails(String deviceType) {
+        return !StringUtils.equalsIgnoreCase(deviceType, VmDeviceType.FLOPPY.getName());
+    }
+
+    private void logDeviceInformation(Guid vmId, XmlRpcStruct device) {
+        String message = "Recieved a {0} Device without an address when processing VM {1} devices, skipping device";
+        String deviceType = getDeviceType(device);
+
+        if (shouldLogDeviceDetails(deviceType)) {
+            Map<String,Object> deviceInfo = device.getInnerMap();
+            log.infoFormat(message + ": {2}",
+                           StringUtils.defaultIfEmpty(deviceType, StringUtils.EMPTY),
+                           vmId,
+                           deviceInfo.toString());
+        } else {
+            log.infoFormat(message,
+                           StringUtils.defaultIfEmpty(deviceType, StringUtils.EMPTY),
+                           vmId);
+        }
+    }
+
     /**
      * Actually process the VM device update in DB.
      * @param vm
@@ -935,9 +957,7 @@ public class VdsUpdateRunTimeInfo {
             XmlRpcStruct device = new XmlRpcStruct((Map<String, Object>) o);
             Guid deviceId = getDeviceId(device);
             if ((device.getItem(VdsProperties.Address)) == null) {
-                log.infoFormat("Recieved a Device without an address when processing VM {0} devices, skipping device: {1}.",
-                        vmId,
-                        device.getInnerMap().toString());
+                logDeviceInformation(vmId, device);
                 continue;
             }
             VmDevice vmDevice = deviceMap.get(new VmDeviceId(deviceId, vmId));
@@ -1020,6 +1040,15 @@ public class VdsUpdateRunTimeInfo {
     private static Guid getDeviceId(XmlRpcStruct device) {
         String deviceId = (String) device.getItem(VdsProperties.DeviceId);
         return deviceId == null ? null : new Guid(deviceId);
+    }
+
+    /**
+     * gets the device type from the structure returned by VDSM
+     * @param device
+     * @return
+     */
+    private static String getDeviceType(XmlRpcStruct device) {
+        return (String) device.getItem(VdsProperties.Device);
     }
 
     // if not statistics check if status changed and add to running list
