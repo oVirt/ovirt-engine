@@ -707,6 +707,12 @@ def main(options):
     db = DB()
     DB_NAME_TEMP = "%s_%s" % (basedefs.DB_NAME, utils.getCurrentDateTime())
 
+   # Functions/parameters definitions
+    stopEngineService = [stopEngine]
+    upgradeFunc = [rhyum.update]
+    postFunc = [runPost]
+    engineService = basedefs.ENGINE_SERVICE_NAME
+
     if unsupportedVersionsPresent():
         print MSG_ERROR_INCOMPATIBLE_UPGRADE
         raise Exception(MSG_ERROR_INCOMPATIBLE_UPGRADE)
@@ -741,9 +747,9 @@ def main(options):
     # No rollback in this case
     try:
         # We ask the user before stoping jboss or take command line option
-        if options.unattended_upgrade or checkJbossService():
+        if options.unattended_upgrade or checkJbossService(engineService):
             # Stopping engine
-            runFunc([stopEngine], MSG_INFO_STOP_JBOSS)
+            runFunc(stopEngineService, MSG_INFO_STOP_JBOSS)
         else:
             # This means that user chose not to stop jboss
             logging.debug("exiting gracefully")
@@ -762,7 +768,7 @@ def main(options):
     # In case of failure, do rollback
     try:
         # yum update
-        runFunc([rhyum.update], MSG_INFO_YUM_UPDATE)
+        runFunc(upgradeFunc, MSG_INFO_YUM_UPDATE)
 
         # define db connections services
         etlService = utils.Service("ovirt-engine-etl")
@@ -780,7 +786,7 @@ def main(options):
             startDbRelatedServices(etlService, notificationService)
 
         # post install conf
-        runFunc([runPost], MSG_INFO_RUN_POST)
+        runFunc(postFunc, MSG_INFO_RUN_POST)
 
     except:
         logging.error(traceback.format_exc())
