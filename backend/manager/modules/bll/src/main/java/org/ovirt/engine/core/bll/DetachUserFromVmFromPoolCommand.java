@@ -3,11 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -32,18 +30,10 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
 
     }
 
-    protected boolean IsUserAttachedToPool() {
-        // Check first if user attached to pool directly
-        boolean attached = getVmPoolId() != null
-                && DbFacade.getInstance().getEntityPermissions(getAdUserId(), ActionGroup.VM_POOL_BASIC_OPERATIONS,
-                        getVmPoolId().getValue(), VdcObjectType.VmPool) != null;
-        return attached;
-    }
-
     protected void DetachAllVmsFromUser() {
         List<VM> vms = DbFacade.getInstance().getVmDAO().getAllForUser(getAdUserId());
         for (VM vm : vms) {
-            if (getVmPoolId() != null && getVmPoolId().equals(vm.getVmPoolId())) {
+            if (getVmPoolId().equals(vm.getVmPoolId())) {
                 permissions perm = DbFacade
                         .getInstance()
                         .getPermissionDAO()
@@ -74,7 +64,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
 
     @Override
     protected void executeCommand() {
-        if (IsUserAttachedToPool()) {
+        if (getVmPoolId() != null) {
             DetachAllVmsFromUser();
         }
         setSucceeded(true);
