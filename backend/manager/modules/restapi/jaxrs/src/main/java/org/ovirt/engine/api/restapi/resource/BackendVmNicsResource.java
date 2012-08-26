@@ -59,32 +59,56 @@ public class BackendVmNicsResource
         //      port mirroring network collection, next engine version will support the network collection
         //      in port mirroring
 
-        // if port mirroring exists we check that the network id is equals to the nic network name
         validateEnums(NIC.class, device);
-        if (device.isSetPortMirroring() &&
-                device.getPortMirroring().isSetNetworks()
-                &&
-                device.getPortMirroring().getNetworks().getNetworks().size() == 1
-                &&
-                device.getPortMirroring().getNetworks().getNetworks().get(0).isSetId()
-                &&
-                device.isSetNetwork() && device.getNetwork().isSetId() &&
-                !device.getNetwork()
-                        .getId()
-                        .equals(device.getPortMirroring().getNetworks().getNetworks().get(0).getId())) {
-            Fault fault = new Fault();
-            fault.setReason("The port mirroring network must match the Network set on the NIC");
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(fault).build();
-            throw new WebApplicationException(response);
-        } else if (device.isSetPortMirroring() &&
-                device.getPortMirroring().isSetNetworks() &&
-                device.getPortMirroring().getNetworks().getNetworks().size() > 1) {
-            Fault fault = new Fault();
-            fault.setReason("cannot set more than one network in port mirroring mode");
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(fault).build();
+        boolean fault = false;
+        String faultString = "The port mirroring network must match the Network set on the NIC";
+        boolean isPortMirroring = device.isSetPortMirroring() && device.getPortMirroring().isSetNetworks();
+        boolean isPortMirroringExceeded =
+                isPortMirroring && device.getPortMirroring().getNetworks().getNetworks().size() > 1;
+        if (!fault && isPortMirroringExceeded) {
+            fault = true;
+            faultString = "Cannot set more than one network in port mirroring mode";
+        }
+        isPortMirroring = isPortMirroring && device.getPortMirroring().getNetworks().getNetworks().size() == 1;
+        if (!fault && isPortMirroring) {
+            org.ovirt.engine.api.model.Network pmNetwork = device.getPortMirroring().getNetworks().getNetworks().get(0);
+            String pmNetworkId = (pmNetwork.isSetId() ? pmNetwork.getId() : null);
+            String pmNetworkName = (pmNetwork.isSetName() ? pmNetwork.getName() : null);
+            String networkId =
+                    (device.isSetNetwork() && device.getNetwork().isSetId()) ? device.getNetwork().getId() : null;
+            String networkName =
+                    (device.isSetNetwork() && device.getNetwork().isSetName()) ? device.getNetwork().getName() : null;
+            if (pmNetworkId != null) {
+                networkId = (networkId == null) ? getNetworkId(networkName) : networkId;
+                fault = (!pmNetworkId.equals(networkId));
+            } else if (pmNetworkName != null) {
+                if (networkName == null && networkId != null) {
+                    pmNetworkId = getNetworkId(pmNetworkName);
+                    fault = (!pmNetworkId.equals(networkId));
+                }
+                fault = fault || (!pmNetworkName.equals(networkName));
+            } else {
+                fault = true;
+                faultString = "Network must have name or id property for port mirroring";
+            }
+        }
+        if (fault) {
+            Fault f = new Fault();
+            f.setReason(faultString);
+            Response response = Response.status(Response.Status.BAD_REQUEST).entity(f).build();
             throw new WebApplicationException(response);
         }
         return super.add(device);
+    }
+
+    private String getNetworkId(String networkName) {
+        Guid clusterId = getClusterId();
+        org.ovirt.engine.core.common.businessentities.Network n =
+                getClusterNetwork(clusterId, null, networkName);
+        if (n != null) {
+            return n.getId().toString();
+        }
+        return null;
     }
 
     @Override

@@ -42,6 +42,7 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
             Networks networks = new Networks();
             Network net = new Network();
             net.setId(networkId);
+            net.setName(network.getname());
             portMirroring.setNetworks(networks);
             portMirroring.getNetworks().getNetworks().add(net);
             model.setPortMirroring(portMirroring);
@@ -56,40 +57,42 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
         //      in port mirroring
         validateEnums(NIC.class, device);
         boolean fault = false;
-        String faultString = null;
+        String faultString = "The port mirroring network must match the Network set on the NIC";
         boolean isPortMirroring = device.isSetPortMirroring() && device.getPortMirroring().isSetNetworks();
         boolean isPortMirroringExceeded =
                 isPortMirroring && device.getPortMirroring().getNetworks().getNetworks().size() > 1;
         isPortMirroring = isPortMirroring && device.getPortMirroring().getNetworks().getNetworks().size() == 1;
-
-        // Check if user set more then one network in port mirroring networks collection
         if (isPortMirroringExceeded) {
             fault = true;
             faultString = "Cannot set more than one network in port mirroring mode";
         }
-
+        String networkId =
+                (device.isSetNetwork() && device.getNetwork().isSetId()) ? device.getNetwork().getId() : null;
+        String networkName =
+                (device.isSetNetwork() && device.getNetwork().isSetName()) ? device.getNetwork().getName() : null;
         if (!fault && isPortMirroring) {
-            boolean isNetwork = device.isSetNetwork() && device.getNetwork().isSetId();
-            // if Nics network set no need to check the Nics network from the engine
-            if (isNetwork) {
-                if (!device.getNetwork()
-                        .getId()
-                        .equals(device.getPortMirroring().getNetworks().getNetworks().get(0).getId())) {
-                    fault = true;
-                    faultString = "The port mirroring network must match the Network set on the NIC";
+            Network pmNetwork = device.getPortMirroring().getNetworks().getNetworks().get(0);
+            String pmNetworkId = (pmNetwork.isSetId() ? pmNetwork.getId() : null);
+            String pmNetworkName = (pmNetwork.isSetName() ? pmNetwork.getName() : null);
+            if (pmNetworkId != null) {
+                if (networkId == null) {
+                    networkId = (networkName != null) ? getNetworkId(networkName) : get().getNetwork().getId();
                 }
-                // check if port mirroring network match the Nics network that is store in the engine
-            } else if (!device.getPortMirroring()
-                    .getNetworks()
-                    .getNetworks()
-                    .get(0)
-                    .getId()
-                    .equals(get().getNetwork().getId())) {
+                fault = (!pmNetworkId.equals(networkId));
+            } else if (pmNetworkName != null) {
+                if (networkName == null) {
+                    if (networkId == null) {
+                        networkId = get().getNetwork().getId();
+                    }
+                    pmNetworkId = getNetworkId(pmNetworkName);
+                    fault = (!networkId.equals(pmNetworkId));
+                }
+                fault = fault || (!pmNetworkName.equals(networkName));
+            } else {
                 fault = true;
-                faultString = "The port mirroring network must match the Network set on the NIC";
+                faultString = "Network must have name or id property for port mirroring";
             }
         }
-
         if (fault) {
             Fault f = new Fault();
             f.setReason(faultString);
@@ -97,6 +100,17 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
             throw new WebApplicationException(response);
         }
         return super.update(device);
+    }
+
+    private String getNetworkId(String networkName) {
+        BackendVmNicsResource parent = (BackendVmNicsResource) collection;
+        Guid clusterId = parent.getClusterId();
+        org.ovirt.engine.core.common.businessentities.Network n =
+                parent.getClusterNetwork(clusterId, null, networkName);
+        if (n != null) {
+            return n.getId().toString();
+        }
+        return null;
     }
 
     @Override
