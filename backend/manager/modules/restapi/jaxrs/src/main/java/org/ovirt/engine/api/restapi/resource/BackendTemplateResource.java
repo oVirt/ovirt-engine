@@ -33,11 +33,11 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
-
 public class BackendTemplateResource
     extends AbstractBackendActionableResource<Template, VmTemplate>
     implements TemplateResource {
+
+    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "permissions" };
 
     public BackendTemplateResource(String id) {
         super(id, Template.class, VmTemplate.class, SUB_COLLECTIONS);
