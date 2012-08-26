@@ -724,7 +724,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The disk is already detached from VM.")
     String ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The disk is not sharable and is already attached to a VM.")
+    @DefaultStringValue("Cannot ${action} ${type}. The disk is not shareable and is already attached to a VM.")
     String ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Maximum value for concurrently running VMs exceeded.")
