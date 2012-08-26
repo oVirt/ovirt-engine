@@ -138,7 +138,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
                         : new ArrayList();
         getEditQuotaCommand().setIsExecutionAllowed(items.size() == 1);
-        getRemoveQuotaCommand().setIsExecutionAllowed(items.size() == 1);
+        getRemoveQuotaCommand().setIsExecutionAllowed(items.size() > 0);
         getCloneQuotaCommand().setIsExecutionAllowed(items.size() == 1);
     }
 
