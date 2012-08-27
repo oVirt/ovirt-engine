@@ -133,6 +133,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Attach/Detach Network to/from Clusters")
     String attachDetachNetworkToFromClustersTitle();
 
+    @DefaultStringValue("Save network configuration")
+    String saveNetworkConfigurationTitle();
+
     @DefaultStringValue("Storage")
     String storageTitle();
 
@@ -586,6 +589,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("You are about to attach the network to all the selected clusters and to detach the network from all the unselected clusters.\n\nAre you sure you want to continue?")
     String youAreAboutToAttachDetachNetworkToFromTheClustersMsg();
+
+    @DefaultStringValue("Changes done to the Networking configuration are temporary until explicitly saved.\n\nAre you sure you want to make the changes persistent?")
+    String areYouSureYouWantToMakeTheChangesPersistentMsg();
 
     @DefaultStringValue("Are you sure you want to Detach the following storage(s)?")
     String areYouSureYouWantDetachFollowingStoragesMsg();
