@@ -27,6 +27,8 @@ BUILD_FLAGS=-P gwt-admin,gwt-user
 PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
 PREFIX=/usr/local
+LOCALSTATE_DIR=$(PREFIX)/var
+ENGINE_STATE=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
 BIN_DIR=$(PREFIX)/bin
 SYSCONF_DIR=$(PREFIX)/etc
 DATAROOT_DIR=$(PREFIX)/share
@@ -271,6 +273,9 @@ install_setup:
 	install -m 755 packaging/fedora/setup/engine-upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
 	ln -s $(DATA_DIR)/scripts/engine-upgrade.py $(DESTDIR)$(BIN_DIR)/engine-upgrade
 	install -m 755 packaging/fedora/setup/engine-check-update $(DESTDIR)$(BIN_DIR)/
+
+	# Backups folder
+	install -dm 755 $(DESTDIR)$(ENGINE_STATE)/backups
 
 	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RPM_RELEASE_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
 

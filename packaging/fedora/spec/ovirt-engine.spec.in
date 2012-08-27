@@ -60,6 +60,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	-j1 \\\
 	PACKAGE_NAME=%{name} \\\
 	ENGINE_NAME=%{engine_name} \\\
+	LOCALSTATE_DIR=%{_localstatedir} \\\
+	ENGINE_STATE=%{engine_state} \\\
 	PREFIX=%{_prefix} \\\
 	SYSCONF_DIR=%{_sysconfdir} \\\
 	BIN_DIR=%{_bindir} \\\
@@ -372,7 +374,6 @@ make %{make_common_opts} install DESTDIR=%{buildroot}
 
 install -dm 755 %{buildroot}/%{engine_state}/deployments
 install -dm 755 %{buildroot}/%{engine_state}/content
-install -dm 755 %{buildroot}/%{engine_state}/backups
 install -dm 755 %{buildroot}/%{engine_log}/{notifier,engine-manage-domains}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 install -dm 755 %{buildroot}/%{engine_lock}
@@ -753,6 +754,8 @@ fi
 %dir %{engine_data}/scripts/plugins
 %{engine_data}/scripts/plugins/example_plugin_000.py*
 
+# Backups directory
+%dir %{engine_state}/backups
 
 %files setup-plugin-allinone
 %{engine_data}/scripts/plugins/all_in_one_100.py*
