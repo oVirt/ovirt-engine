@@ -1617,13 +1617,13 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/nics/{nic:id}/attach|rel=detach
+- name: /api/hosts/{host:id}/nics/{nic:id}/detach|rel=detach
   request:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.network.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
