@@ -95,7 +95,8 @@ public class ReportInit {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
                     try {
-                        if (ReportParser.getInstance().parseReport(response.getText())) {
+                        if (response.getStatusCode() == Response.SC_OK
+                                && ReportParser.getInstance().parseReport(response.getText())) {
                             resourceMap = ReportParser.getInstance().getResourceMap();
                             dashboardMap = ReportParser.getInstance().getDashboardMap();
                             isCommunityEdition = ReportParser.getInstance().isCommunityEdition();
