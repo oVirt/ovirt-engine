@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -48,8 +48,8 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected void executeCommand() {
-        QuotaManager.getInstance().removeQuotaFromCache(getQuota().getStoragePoolId(), getParameters().getQuotaId());
         getQuotaDAO().remove(getParameters().getQuotaId());
+        QuotaManager.getInstance().removeQuotaFromCache(getQuota().getStoragePoolId(), getParameters().getQuotaId());
         getReturnValue().setSucceeded(true);
     }
 
