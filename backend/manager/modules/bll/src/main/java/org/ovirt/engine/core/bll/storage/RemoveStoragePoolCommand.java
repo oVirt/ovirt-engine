@@ -322,6 +322,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             return false;
         }
         if (!getParameters().getForceDelete()) {
+            if(poolDomains.size() > 1) {
+                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
+                return false;
+            }
             for (storage_domains domain : poolDomains) {
                 // check that there are no images on data domains
                 if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)

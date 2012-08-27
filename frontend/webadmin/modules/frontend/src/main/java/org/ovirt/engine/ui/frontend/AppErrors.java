@@ -919,6 +919,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove Data Center while there are VMs on it.\n-Please remove all VMs and Templates first.")
     String ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS();
 
+    @DefaultStringValue("Cannot remove Data Center while there are more than one Storage Domains attached.")
+    String ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS();
+
     @DefaultStringValue("Cannot remove Storage Domain. Data storage must be formated after remove.\n-Please verify that Format option is enabled on the Data Domain.")
     String ERROR_CANNOT_REMOVE_STORAGE_DOMAIN_DO_FORMAT();
 
