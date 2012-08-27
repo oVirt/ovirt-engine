@@ -309,11 +309,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             if (getStoragePool().getstatus() != StoragePoolStatus.Uninitialized && !getParameters().getForceDelete()) {
                 returnValue = InitializeVds();
             }
-            List<storage_domains> poolDomains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
+            final List<storage_domains> poolDomains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
                     getStoragePool().getId());
-            List<storage_domains> domainsList = poolDomains;
             if (returnValue) {
-                domainsList = getActiveOrLockedDomainList(domainsList);
+                final List<storage_domains> domainsList = getActiveOrLockedDomainList(poolDomains);
 
                 if (!domainsList.isEmpty()) {
                     returnValue = false;
