@@ -42,12 +42,16 @@ EventsResource {
     }
 
     public Event lookupEvent(String id) {
-        Long longId = Long.valueOf(id);
-        for (AuditLog auditLog : getBackendCollection()) {
-            if (auditLog.getaudit_log_id() == longId)
-                return addLinks(map(auditLog));
+        try {
+            Long longId = Long.valueOf(id);
+            for (AuditLog auditLog : getBackendCollection()) {
+                if (auditLog.getaudit_log_id() == longId)
+                    return addLinks(map(auditLog));
+            }
+            return notFound();
+        } catch (NumberFormatException e) {
+            return notFound();
         }
-        return notFound();
     }
 
     @Override
