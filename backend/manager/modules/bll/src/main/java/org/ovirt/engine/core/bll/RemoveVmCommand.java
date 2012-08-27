@@ -1,6 +1,11 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -14,7 +19,10 @@ import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -42,7 +50,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     public RemoveVmCommand(T parameters) {
         super(parameters);
         parameters.setEntityId(getVmId());
-        setStoragePoolId(getVm().getstorage_pool_id());
+        if (getVm() != null) {
+            setStoragePoolId(getVm().getstorage_pool_id());
+        }
     }
 
     @Override
