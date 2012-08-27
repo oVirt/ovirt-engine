@@ -70,7 +70,7 @@ public class GetRootDSETask implements Callable<Boolean> {
                             }
                         } else {
                             log.errorFormat("Couldn't deduce provider type for domain {0}", domainName);
-                            throw new EngineDirectoryServiceException(AuthenticationResult.CONNECTION_ERROR,
+                            throw new AuthenticationResultException(AuthenticationResult.CONNECTION_ERROR,
                                     "Failed to get rootDSE record for server " + ldapURI);
                         }
                     } else {

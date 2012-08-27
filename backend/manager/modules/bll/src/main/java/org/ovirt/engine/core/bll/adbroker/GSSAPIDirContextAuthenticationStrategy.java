@@ -94,7 +94,7 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
 
     }
 
-    public void authenticate() throws EngineDirectoryServiceException {
+    public void authenticate() throws AuthenticationResultException {
         UsersDomainsCacheManager usersDomainsCacheManager = UsersDomainsCacheManagerService.getInstance();
         UserDomainInfo userDomainInfo = usersDomainsCacheManager.associateUserWithDomain(this.userName,
                 this.realm.toLowerCase());
@@ -113,14 +113,14 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
         }
     }
 
-    private void explicitAuth(UserDomainInfo userDomainInfo) throws EngineDirectoryServiceException {
+    private void explicitAuth(UserDomainInfo userDomainInfo) throws AuthenticationResultException {
 
         GSSAPICallbackHandler callbackHandler = new GSSAPICallbackHandler(userName, password);
         authenticateToKDC(callbackHandler, userDomainInfo);
 
     }
 
-    private  void authenticateToKDC(GSSAPICallbackHandler callbackHandler, UserDomainInfo userDomainInfo) throws EngineDirectoryServiceException {
+    private  void authenticateToKDC(GSSAPICallbackHandler callbackHandler, UserDomainInfo userDomainInfo) throws AuthenticationResultException {
 
         try {
             loginContext = new LoginContext(LOGIN_MODULE_POLICY_NAME, callbackHandler);
@@ -150,7 +150,7 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
                 error.append(result.getDetailedMessage());
                 log.error(error.toString());
             }
-            throw new EngineDirectoryServiceException(result);
+            throw new AuthenticationResultException(result);
         }
     }
 

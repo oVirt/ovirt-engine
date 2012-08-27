@@ -80,7 +80,7 @@ public class GSSAPILdapTemplateWrapper extends LDAPTemplateWrapper {
     }
 
     @Override
-    public void useAuthenticationStrategy() throws EngineDirectoryServiceException {
+    public void useAuthenticationStrategy() throws AuthenticationResultException {
         super.useAuthenticationStrategy();
         GSSAPIDirContextAuthenticationStrategy strategy = (GSSAPIDirContextAuthenticationStrategy) authStrategy;
         strategy.authenticate();

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 
-public class EngineDirectoryServiceException extends Exception {
+public class AuthenticationResultException extends DirectoryServiceException {
 
     /**
      *
@@ -10,7 +10,7 @@ public class EngineDirectoryServiceException extends Exception {
     private static final long serialVersionUID = 2854926242091038897L;
     private AuthenticationResult result;
 
-    public EngineDirectoryServiceException(AuthenticationResult result) {
+    public AuthenticationResultException(AuthenticationResult result) {
         super(result.getDetailedMessage());
         this.result = result;
     }
@@ -19,17 +19,17 @@ public class EngineDirectoryServiceException extends Exception {
         return result;
     }
 
-    public EngineDirectoryServiceException(AuthenticationResult result,String message) {
+    public AuthenticationResultException(AuthenticationResult result,String message) {
         super(message);
         this.result = result;
     }
 
-    public EngineDirectoryServiceException(AuthenticationResult result,Throwable cause) {
+    public AuthenticationResultException(AuthenticationResult result,Throwable cause) {
         super(result.getDetailedMessage(),cause);
         this.result = result;
     }
 
-    public EngineDirectoryServiceException(AuthenticationResult result,String message, Throwable cause) {
+    public AuthenticationResultException(AuthenticationResult result,String message, Throwable cause) {
         super(message, cause);
         this.result = result;
     }

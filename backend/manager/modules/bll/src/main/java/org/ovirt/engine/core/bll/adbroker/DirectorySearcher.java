@@ -88,7 +88,7 @@ public class DirectorySearcher {
                 GetRootDSETask getRootDSETask = new GetRootDSETask(this, domainName, ldapURI);
                 PrepareLdapConnectionTask prepareLdapConnectionTask =
                         new PrepareLdapConnectionTask(this, ldapCredentials, domainName, ldapURI);
-                getRootDSETask.call();
+                getRootDSETask.call(); // TODO: Not really async Can throw exception
                 LdapQueryExecution queryExecution =
                                 LdapQueryExecutionBuilderImpl.getInstance()
                                         .build(getDomainObject(domainName).getLdapProviderType(), queryData);

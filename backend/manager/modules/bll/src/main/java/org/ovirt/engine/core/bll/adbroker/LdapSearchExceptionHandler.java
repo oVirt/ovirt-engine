@@ -19,7 +19,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     @Override
     public LdapSearchExceptionHandlingResponse handle(Exception e, LdapCredentials params) {
         LdapSearchExceptionHandlingResponse response = new LdapSearchExceptionHandlingResponse();
-        if (e instanceof EngineDirectoryServiceException) {
+        if (e instanceof AuthenticationResultException) {
             handleEngineDirectoryServiceException(response, e);
         } else if (e instanceof AuthenticationException) {
             handleAuthenticationException(response);
@@ -55,7 +55,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
 
     private void handleSaslException(LdapSearchExceptionHandlingResponse response, Throwable cause) {
         response.setServerScore(Score.LOW)
-                .setTranslatedException(new EngineDirectoryServiceException(AuthenticationResult.CONNECTION_ERROR,
+                .setTranslatedException(new AuthenticationResultException(AuthenticationResult.CONNECTION_ERROR,
                         "General connection problem due to " + cause))
                 .setTryNextServer(true);
     }
@@ -63,7 +63,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     private void handleOperationException(LdapSearchExceptionHandlingResponse response,
             Throwable throwable, LdapCredentials credentials) {
         response.setServerScore(Score.HIGH)
-                .setTranslatedException(new EngineDirectoryServiceException(AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED,
+                .setTranslatedException(new AuthenticationResultException(AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED,
                         throwable))
                 .setTryNextServer(false);
         //Account may get locked between kerberos authentication and ldap querying.
@@ -84,16 +84,16 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
 
     private void handleAuthenticationException(LdapSearchExceptionHandlingResponse response) {
         log.error("Ldap authentication failed. Please check that the login name , password and path are correct. ");
-        EngineDirectoryServiceException ex =
-                new EngineDirectoryServiceException(AuthenticationResult.OTHER);
+        AuthenticationResultException ex =
+                new AuthenticationResultException(AuthenticationResult.OTHER);
         response.setServerScore(Score.HIGH)
                 .setTranslatedException(ex)
                 .setTryNextServer(false);
     }
 
     private void handleEngineDirectoryServiceException(LdapSearchExceptionHandlingResponse response, Throwable cause) {
-        response.setTranslatedException((EngineDirectoryServiceException) cause);
-        switch (((EngineDirectoryServiceException) cause).getResult()) {
+        response.setTranslatedException((AuthenticationResultException) cause);
+        switch (((AuthenticationResultException) cause).getResult()) {
         // connection error or timeout indicates problems with the sever so handling the same.
         case CONNECTION_ERROR:
         case CONNECTION_TIMED_OUT:
@@ -109,7 +109,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     private void handleTimeout(LdapSearchExceptionHandlingResponse response) {
         response.setTryNextServer(true)
                 .setTranslatedException(
-                        new EngineDirectoryServiceException(AuthenticationResult.CONNECTION_TIMED_OUT,
+                        new AuthenticationResultException(AuthenticationResult.CONNECTION_TIMED_OUT,
                                 "Connection to to server has timed out."))
                 .setServerScore(Score.LOW);
     }

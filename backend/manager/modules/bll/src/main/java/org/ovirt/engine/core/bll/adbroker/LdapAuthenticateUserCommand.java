@@ -90,9 +90,9 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
     private UserAuthenticationResult handleDirectorySearcherException(Exception ex) {
         UserAuthenticationResult authResult = null;
         VdcBllMessages errorMsg = VdcBllMessages.USER_FAILED_TO_AUTHENTICATE;
-        if (ex != null && ex instanceof EngineDirectoryServiceException) {
-            EngineDirectoryServiceException dsException = (EngineDirectoryServiceException) ex;
-            AuthenticationResult result = dsException.getResult();
+        if (ex != null && ex instanceof AuthenticationResultException) {
+            AuthenticationResultException authResultException = (AuthenticationResultException) ex;
+            AuthenticationResult result = authResultException.getResult();
             if (result == null) {
                 result = AuthenticationResult.OTHER;
             }

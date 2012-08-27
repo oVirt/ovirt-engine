@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 
 import javax.naming.directory.SearchControls;
 
@@ -82,7 +80,7 @@ public abstract class LDAPTemplateWrapper {
         ldapTemplate.setIgnorePartialResultException(value);
     }
 
-    public void useAuthenticationStrategy() throws EngineDirectoryServiceException {
+    public void useAuthenticationStrategy() throws AuthenticationResultException {
         authStrategy = buildContextAuthenticationStategy();
         contextSource.setAuthenticationStrategy(authStrategy);
     }

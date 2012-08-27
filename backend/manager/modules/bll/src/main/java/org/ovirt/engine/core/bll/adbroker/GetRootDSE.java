@@ -73,6 +73,7 @@ public class GetRootDSE {
 
         } catch (NamingException e) {
             log.errorFormat("Failed to query rootDSE for LDAP server {0} due to {1}", ldapURI, e.getMessage());
+            throw new DirectoryServiceException(e);
         } finally {
             closeContext(ctx);
         }

@@ -50,7 +50,7 @@ public class PrepareLdapConnectionTask implements Callable<LDAPTemplateWrapper> 
             ldapctx.afterPropertiesSet();
         } catch (Exception e) {
             log.error("Error connecting to directory server", e);
-            throw new EngineDirectoryServiceException(AuthenticationResult.OTHER);
+            throw new AuthenticationResultException(AuthenticationResult.OTHER);
         }
 
         wrapper.useAuthenticationStrategy();
