@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Network;
@@ -393,6 +394,17 @@ public class SetupNetworksHelper {
                 removedNetworks.add(net);
             }
         }
+
+        if (!removedNetworks.isEmpty()) {
+            List<String> vmNames =
+                    getVmInterfaceManager().findActiveVmsUsingNetworks(params.getVdsId(), removedNetworks);
+
+            if (!vmNames.isEmpty()) {
+                for (String vmName : vmNames) {
+                    addViolation(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS, vmName);
+                }
+            }
+        }
     }
 
     public List<Network> getNetworks() {
@@ -409,5 +421,9 @@ public class SetupNetworksHelper {
 
     public Set<String> getRemovedBonds() {
         return removedBonds;
+    }
+
+    public VmInterfaceManager getVmInterfaceManager() {
+        return new VmInterfaceManager();
     }
 }

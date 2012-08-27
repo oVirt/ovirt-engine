@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
@@ -38,6 +39,9 @@ public class SetupNetworksHelperTest {
 
     @Mock
     private NetworkDAO networkDAO;
+
+    @Mock
+    private VmInterfaceManager vmInterfaceManager;
 
     @Mock
     private InterfaceDAO interfaceDAO;
@@ -989,6 +993,7 @@ public class SetupNetworksHelperTest {
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
         SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, Guid.Empty));
 
+        when(helper.getVmInterfaceManager()).thenReturn(vmInterfaceManager);
         DbFacade dbFacade = mock(DbFacade.class);
         doReturn(dbFacade).when(helper).getDbFacade();
         doReturn(interfaceDAO).when(dbFacade).getInterfaceDAO();
