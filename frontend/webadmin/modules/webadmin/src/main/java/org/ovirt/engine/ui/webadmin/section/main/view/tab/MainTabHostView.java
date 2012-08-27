@@ -138,7 +138,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
                 @Override
                 protected Integer getProgressValue(VDS object) {
-                    return Math.min(object.getvm_active(), 100);
+                    return object.getvm_active() != null ? Math.min(object.getvm_active(), 100) : 0;
                 }
             };
             getTable().addColumn(loadColumn, constants.loadHost(), "100px"); //$NON-NLS-1$
