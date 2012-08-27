@@ -492,7 +492,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/restore
+- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/restore|rel=restore
   request:
     body:
       parameterType: Action
