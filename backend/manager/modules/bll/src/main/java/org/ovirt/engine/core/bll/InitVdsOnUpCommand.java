@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -85,7 +86,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
     private void setNonOperational(NonOperationalReason reason) {
         SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVds().getId(), reason);
         tempVar.setSaveToDb(true);
-        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
+        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
     }
 
     private boolean InitializeStorage() {

@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
@@ -239,7 +240,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             tempVar.setSaveToDb(true);
             tempVar.setStorageDomainId(getStorageDomain().getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            getBackend().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
+            getBackend().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar, ExecutionHandler.createInternalJobContext());
         }
     }
 

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -74,7 +75,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
                     VERSION_INCOMPATIBLE_WITH_CLUSTER,
                     customLogValues);
             tempVar.setSaveToDb(true);
-            Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
+            Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
         }
         setSucceeded(true);
     }

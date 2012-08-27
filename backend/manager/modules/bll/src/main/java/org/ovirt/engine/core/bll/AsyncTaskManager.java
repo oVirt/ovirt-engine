@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
@@ -371,7 +372,7 @@ public final class AsyncTaskManager {
                             NonOperationalReason.GENERAL);
                     tempVar.setSaveToDb(true);
                     tempVar.setShouldBeLogged(false);
-                    Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
+                    Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
                 } else {
                     log.info("Could not find vds that is spm and non-operational.");
                 }

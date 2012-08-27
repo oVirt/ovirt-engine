@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -84,7 +85,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
             SetNonOperationalVdsParameters tempVar2 = new SetNonOperationalVdsParameters(getVdsId(),
                     NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
             tempVar2.setSaveToDb(true);
-            Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar2);
+            Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar2,  ExecutionHandler.createInternalJobContext());
         } else {
             // if no need to change to non operational then dont log the command
             setCommandShouldBeLogged(false);
