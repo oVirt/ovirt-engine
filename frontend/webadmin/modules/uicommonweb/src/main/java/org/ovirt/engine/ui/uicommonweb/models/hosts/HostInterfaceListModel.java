@@ -1774,6 +1774,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 else
                                 {
                                     hostInterfaceListModel.getcurrentModel().StopProgress();
+                                    hostInterfaceListModel.Cancel();
                                 }
 
                             }
