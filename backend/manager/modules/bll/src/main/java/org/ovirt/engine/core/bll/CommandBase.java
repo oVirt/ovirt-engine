@@ -23,10 +23,10 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
-import org.ovirt.engine.core.common.PermissionSubject;
-import org.ovirt.engine.core.common.Quotable;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecutionReason;
@@ -728,7 +728,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
             // Check the authorization:
             if (!checkUserAuthorization(getCurrentUser().getUserId(), objectActionGroup, objectId, objectType)) {
-                addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                addCanDoActionMessage(permSubject.getMessage());
                 return false;
             }
         }

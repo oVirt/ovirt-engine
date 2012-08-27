@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.PermissionSubject;
-import org.ovirt.engine.core.common.Quotable;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;

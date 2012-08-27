@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
-import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;

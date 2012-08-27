@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserNameParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;

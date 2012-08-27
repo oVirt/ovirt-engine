@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.users.VdcUser;

@@ -1,8 +1,10 @@
-package org.ovirt.engine.core.common;
+package org.ovirt.engine.core.bll.quota;
 
 import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
+
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 
 public interface Quotable {
 

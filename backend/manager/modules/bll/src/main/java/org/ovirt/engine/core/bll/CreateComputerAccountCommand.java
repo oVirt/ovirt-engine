@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapCreateComputerAccountParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapIsComputerWithSameNameExistsParameters;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.CreateComputerAccountParameters;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.dal.VdcBllMessages;

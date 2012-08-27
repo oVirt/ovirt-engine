@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.Quotable;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DictionaryEntry;
@@ -756,10 +755,6 @@ public final class AuditLogDirector {
                     tempVar.setvds_group_name(auditLogable.getVdsGroupName());
                     tempVar.setCorrelationId(auditLogable.getCorrelationId());
                     tempVar.setJobId(auditLogable.getJobId());
-                    if(tempVar instanceof Quotable){
-                        Quotable quotable = (Quotable)tempVar;
-                        tempVar.setQuotaId(quotable.getQuotaId());
-                    }
                     tempVar.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
                     tempVar.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
                     auditLog = tempVar;

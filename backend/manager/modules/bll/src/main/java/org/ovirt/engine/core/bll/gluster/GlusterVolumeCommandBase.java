@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;

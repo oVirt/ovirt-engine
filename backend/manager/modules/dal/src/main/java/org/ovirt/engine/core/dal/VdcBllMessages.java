@@ -655,7 +655,9 @@ public enum VdcBllMessages {
     ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED,
 
     /* VDSM Error that propagates up to the client. See VdcBLLErrors */
-    ERROR_GET_STORAGE_DOMAIN_LIST // VdcBllErrors.GetStorageDomainListError
+    ERROR_GET_STORAGE_DOMAIN_LIST, // VdcBllErrors.GetStorageDomainListError
+
+    USER_CANNOT_FORCE_RECONNECT_TO_VM
     ;
 
     public int getValue() {

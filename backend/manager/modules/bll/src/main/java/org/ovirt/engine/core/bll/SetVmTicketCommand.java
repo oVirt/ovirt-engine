@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -52,7 +52,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     public List<PermissionSubject> getPermissionCheckSubjects () {
         final List<PermissionSubject> permissions = super.getPermissionCheckSubjects();
         if (needPermissionForConnectingToConsole()) {
-            permissions.add(new PermissionSubject(getVmId(), VdcObjectType.VM, ActionGroup.RECONNECT_TO_VM));
+            permissions.add(new PermissionSubject(getVmId(), VdcObjectType.VM, ActionGroup.RECONNECT_TO_VM, VdcBllMessages.USER_CANNOT_FORCE_RECONNECT_TO_VM));
             neededPermissions = true;
         }
         return permissions;

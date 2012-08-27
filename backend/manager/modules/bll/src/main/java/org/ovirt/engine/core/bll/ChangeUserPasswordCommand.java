@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapChangeUserPasswordParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ChangeUserPasswordParameters;
 
 public class ChangeUserPasswordCommand<T extends ChangeUserPasswordParameters> extends CommandBase<T> {
