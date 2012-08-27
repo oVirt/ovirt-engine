@@ -305,46 +305,43 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                                                   VdcBllMessages.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__POOL);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        if (returnValue) {
-            if (getStoragePool().getstatus() != StoragePoolStatus.Uninitialized && !getParameters().getForceDelete()) {
-                returnValue = InitializeVds();
-            }
-            final List<storage_domains> poolDomains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
-                    getStoragePool().getId());
-            if (returnValue) {
-                final List<storage_domains> domainsList = getActiveOrLockedDomainList(poolDomains);
+        if (!returnValue) {
+            return false;
+        }
+        if (getStoragePool().getstatus() != StoragePoolStatus.Uninitialized && !getParameters().getForceDelete()
+                && !InitializeVds()) {
+            return false;
+        }
+        final List<storage_domains> poolDomains =
+                DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
+                        getStoragePool().getId());
+        final List<storage_domains> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
-                if (!domainsList.isEmpty()) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
+        if (!activeOrLockedDomains.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
+            return false;
+        }
+        if (!getParameters().getForceDelete()) {
+            for (storage_domains domain : poolDomains) {
+                // check that there are no images on data domains
+                if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)
+                        && DbFacade.getInstance()
+                                .getDiskImageDAO()
+                                .getAllSnapshotsForStorageDomain(domain.getId())
+                                .size() != 0) {
+                    addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);
+                    return false;
                 }
             }
-            if (returnValue && !getParameters().getForceDelete()) {
-                for (storage_domains domain : poolDomains) {
-                    // check that there are no images on data domains
-                    if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)
-                            && DbFacade.getInstance()
-                                    .getDiskImageDAO()
-                                    .getAllSnapshotsForStorageDomain(domain.getId())
-                                    .size() != 0) {
-                        returnValue = false;
-                        addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);
-                        break;
-                    }
-                }
-            }
-            // Check that there are no VMs with
-            if (returnValue && !getParameters().getForceDelete()) {
-                List<VmStatic> vms =
-                        DbFacade.getInstance().getVmStaticDAO().getAllByStoragePoolId(getStoragePool().getId());
-                if (vms.size() > 0) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS);
-                }
+            final List<VmStatic> vms =
+                    DbFacade.getInstance().getVmStaticDAO().getAllByStoragePoolId(getStoragePool().getId());
+            if (vms.size() > 0) {
+                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS);
+                return false;
             }
         }
 
-        return returnValue;
+        return true;
     }
 
     protected List<storage_domains> getActiveOrLockedDomainList(List<storage_domains> domainsList) {
