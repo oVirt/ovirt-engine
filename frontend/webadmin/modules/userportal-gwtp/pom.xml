@@ -267,7 +267,7 @@
               <logLevel>INFO</logLevel>
               <style>OBF</style>
               <runTarget>/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</runTarget>
-              <port>8080</port>
+              <port>8700</port>
               <noServer>true</noServer>
               <bindAddress>0.0.0.0</bindAddress>
               <gen>${gwtGenDirectory}</gen>

@@ -322,7 +322,7 @@ select fn_db_add_config_value('ProductKey','','general');
 select fn_db_add_config_value('ProductKeyWindow7','','general');
 select fn_db_add_config_value('ProductKeyWindow7x64','','general');
 select fn_db_add_config_value('ProductRPMVersion','3.0.0.0','general');
-select fn_db_add_config_value('PublicURLPort','8080','general');
+select fn_db_add_config_value('PublicURLPort','8700','general');
 select fn_db_add_config_value('QuotaGraceStorage','20','general');
 select fn_db_add_config_value('QuotaGraceVdsGroup','20','general');
 select fn_db_add_config_value('QuotaThresholdStorage','80','general');

@@ -13,8 +13,8 @@ import re
 import traceback
 
 # Globals
-HTTP_OLD_PORT="8080"
-HTTPS_OLD_PORT="8443"
+HTTP_OLD_PORT="8700"
+HTTPS_OLD_PORT="8701"
 HTTP_NEW_PORT="80"
 HTTPS_NEW_PORT="443"
 
@@ -91,7 +91,7 @@ def _configureJbossXml():
 
         logging.debug("Configuring ajp socket")
         xmlObj.registerNs('domain', 'urn:jboss:domain:1.1')
-        ajpSocketStr='<socket-binding name="ajp" port="8009"/>'
+        ajpSocketStr='<socket-binding name="ajp" port="8702"/>'
         xmlObj.removeNodes("//domain:socket-binding-group/domain:socket-binding[@name='ajp']")
         xmlObj.addNodes("//domain:socket-binding-group", ajpSocketStr)
 
@@ -110,7 +110,7 @@ def _redirectUrl():
     try:
         # Redirect oVirt specific URLs to the application server using the AJP protocol
         logging.debug("Redirect oVirt URLs using AJP protocol")
-        redirectStr="ProxyPass / ajp://localhost:8009/"
+        redirectStr="ProxyPass / ajp://localhost:8702/"
 
         fd = open(basedefs.FILE_OVIRT_HTTPD_CONF, 'w')
         fd.write(redirectStr)

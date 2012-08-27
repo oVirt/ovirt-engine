@@ -42,7 +42,7 @@ public abstract class Configurator {
         setSpiceVersion(new Version(4, 4));
         setSpiceDefaultUsbPort(32023);
         setSpiceDisableUsbListenPort(0);
-        setBackendPort("8080"); //$NON-NLS-1$
+        setBackendPort("8700"); //$NON-NLS-1$
         setLogLevel("INFO"); //$NON-NLS-1$
         setPollingTimerInterval(5000);
     }
@@ -206,7 +206,7 @@ public abstract class Configurator {
     /**
      * Returns the base URL for serving documentation resources.
      * <p>
-     * Example: <code>http://www.example.com:8080/docs/</code>
+     * Example: <code>http://www.example.com/docs/</code>
      *
      * @return Documentation base URL, including the trailing slash.
      */
@@ -217,7 +217,7 @@ public abstract class Configurator {
     /**
      * Returns the base URL for serving locale-specific HTML documentation.
      * <p>
-     * Example: <code>http://www.example.com:8080/docs/en-US/html/</code>
+     * Example: <code>http://www.example.com/docs/en-US/html/</code>
      *
      * @return Locale-specific HTML documentation base URL, including the trailing slash.
      */
@@ -293,8 +293,8 @@ public abstract class Configurator {
     /**
      * Calculates the root URL of the server from where the application was served.
      * <p>
-     * For example, if the application was served from <code>http://www.example.com:8080/foo/bar</code>, it will return
-     * <code>http://www.example.com:8080/</code>.
+     * For example, if the application was served from <code>http://www.example.com/foo/bar</code>, it will return
+     * <code>http://www.example.com/</code>.
      *
      * @return The root URL of the server, including the trailing slash.
      */

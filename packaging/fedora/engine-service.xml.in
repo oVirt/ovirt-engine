@@ -277,9 +277,9 @@
     #if $getBoolean('ENGINE_AJP_ENABLED')
       <socket-binding name="ajp" port="$getInteger('ENGINE_AJP_PORT')"/>
     #end if
-    <socket-binding name="remoting" port="4447"/>
-    <socket-binding name="txn-recovery-environment" port="4712"/>
-    <socket-binding name="txn-status-manager" port="4713"/>
+    <socket-binding name="remoting" port="8703"/>
+    <socket-binding name="txn-recovery-environment" port="8704"/>
+    <socket-binding name="txn-status-manager" port="8705"/>
   </socket-binding-group>
 
 </server>

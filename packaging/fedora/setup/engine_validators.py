@@ -195,7 +195,7 @@ def validateOverrideHttpdConfAndChangePortsAccordingly(param, options=[]):
     logging.info("validateOverrideHttpdConfAndChangePortsAccordingly %s as part of %s"%(param, options))
     retval = validateOptions(param, options)
     if retval and param.lower() == "no":
-        logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default jboss values (8080 & 8443)")
+        logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default jboss values (8700 & 8701)")
         controller = Controller()
         utils.setHttpPortsToNonProxyDefault(controller)
     elif retval:

@@ -1070,7 +1070,7 @@ def installed(rpm):
     return rc == 0
 
 def setHttpPortsToNonProxyDefault(controller):
-    logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default non-proxy values (8080 & 8443)")
+    logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default non-proxy values (8700 & 8701)")
     httpParam = controller.getParamByName("HTTP_PORT")
     httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTP_PORT)
     httpParam = controller.getParamByName("HTTPS_PORT")

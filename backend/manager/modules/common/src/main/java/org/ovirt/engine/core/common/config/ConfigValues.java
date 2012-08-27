@@ -871,7 +871,7 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("8080")
+    @DefaultValueAttribute("8700")
     PublicURLPort(266),
 
     @Reloadable

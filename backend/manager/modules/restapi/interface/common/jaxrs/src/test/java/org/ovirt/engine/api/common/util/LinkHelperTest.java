@@ -67,7 +67,7 @@ public class LinkHelperTest extends Assert {
     private static final String EVENT_ID = "eventtest";
     private static final String STATISTIC_ID = "bleedindeadly";
 
-    private static final String URI_ROOT = "http://localhost:8080";
+    private static final String URI_ROOT = "http://localhost:8700";
     private static final String BASE_PATH = "/restapi-definition-powershell";
 
     private static final String VM_HREF = BASE_PATH + "/vms/" + VM_ID;
