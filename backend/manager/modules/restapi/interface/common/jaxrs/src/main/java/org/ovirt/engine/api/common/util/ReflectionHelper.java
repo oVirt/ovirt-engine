@@ -24,6 +24,7 @@ import java.lang.reflect.ParameterizedType;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -212,11 +213,11 @@ public class ReflectionHelper {
                                                         Thread.currentThread().getContextClassLoader());
 
         for (URL directory : dirs) {
-            String resource = directory.getPath().replace("/"+path+"/", "");
+            String resource = URLDecoder.decode(directory.getPath(), "UTF-8").replace("/"+path+"/", "");
             if (resource.endsWith(".jar")) {
                 classes.addAll(getClassNamesInJarPackage(loader, resource, packageName));
             } else {
-                classes.addAll(getClassNamesInPackage(new File(directory.getFile()), packageName));
+                classes.addAll(getClassNamesInPackage(new File(URLDecoder.decode(directory.getFile(), "UTF-8")), packageName));
             }
         }
         return classes;

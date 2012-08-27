@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dal.dbbroker.generic;
 
+import java.net.URLDecoder;
+
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -18,7 +20,7 @@ public class DomainsPasswordMapTest {
     public void testPasswordDomainMap() throws Exception {
         String keyStorePassword = "NoSoup4U";
         String clearTextPassword = keyStorePassword;
-        String keyStorePath = ClassLoader.getSystemResource(".keystore").getPath();
+        String keyStorePath = URLDecoder.decode(ClassLoader.getSystemResource(".keystore").getPath(), "UTF-8");
         String alias = "engine";
         String encryptedPassword =
                 EncryptionUtils.encrypt(clearTextPassword,

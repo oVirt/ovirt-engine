@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.config;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -15,15 +17,15 @@ public class EngineConfigTest {
     private EngineConfig config = EngineConfig.getInstance();
 
     @BeforeClass
-    public static void setConfigFilePathProperty() {
-        final String path = ClassLoader.getSystemResource("engine-config.conf").getPath();
+    public static void setConfigFilePathProperty() throws UnsupportedEncodingException {
+        final String path = URLDecoder.decode(ClassLoader.getSystemResource("engine-config.conf").getPath(), "UTF-8");
         System.setProperty(EngineConfig.CONFIG_FILE_PATH_PROPERTY, path);
     }
 
     @Test
     public void testConfigDirWithFlagSet() throws Exception {
         // get the real path of the config file
-        final String path = ClassLoader.getSystemResource("engine-config.conf").getPath();
+        final String path = URLDecoder.decode(ClassLoader.getSystemResource("engine-config.conf").getPath(), "UTF-8");
         Assert.assertNotNull(path);
         EngineConfig.main("-a", "--config=" + path);
     }

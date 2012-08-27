@@ -3,6 +3,7 @@ package org.ovirt.engine.api.common.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -29,11 +30,11 @@ public class PackageExplorer {
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
                 if (isJar(resource)) {
-                    jars.add(new JarInputStream(new FileInputStream(getJarName(resource))));
+                    jars.add(new JarInputStream(new FileInputStream(URLDecoder.decode(getJarName(resource), "UTF-8"))));
                 } else if (containsJar(resource)) {
                     jars.add(getContainingResource(classLoader, resource));
                 } else {
-                    dirs.add(new File(resource.getFile()));
+                    dirs.add(new File(URLDecoder.decode(resource.getFile(), "UTF-8")));
                 }
             }
             walkJars(ret, packageName, jars);
