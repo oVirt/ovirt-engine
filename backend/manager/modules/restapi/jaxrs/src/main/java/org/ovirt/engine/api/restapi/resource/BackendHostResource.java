@@ -246,7 +246,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             PowerManagement pm = new PowerManagement();
             pm.setStatus(result.getStatus().toLowerCase().equals("on") ? StatusUtils.create(PowerManagementStatus.ON)
                     : result.getStatus().toLowerCase().equals("off") ? StatusUtils.create(PowerManagementStatus.OFF)
-                            : null);
+                            : result.getStatus().toLowerCase().equals("unknown") ? StatusUtils.create(PowerManagementStatus.UNKNOWN)
+                                    : null);
             action.setPowerManagement(pm);
             return actionSuccess(action);
         } else {

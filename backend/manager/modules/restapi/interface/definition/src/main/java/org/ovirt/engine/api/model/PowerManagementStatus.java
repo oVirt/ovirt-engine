@@ -19,7 +19,8 @@ package org.ovirt.engine.api.model;
 public enum PowerManagementStatus {
 
     ON,
-    OFF;
+    OFF,
+    UNKNOWN;
 
     public String value() {
         return name().toLowerCase();
