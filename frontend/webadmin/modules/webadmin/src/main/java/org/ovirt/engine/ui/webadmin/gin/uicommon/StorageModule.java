@@ -206,6 +206,7 @@ public class StorageModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> getTemplateBackupProvider(ClientGinjector ginjector,
             final Provider<ImportTemplatePopupPresenterWidget> importTemplatePopupProvider,
+            final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, TemplateBackupModel>(ginjector,
                 StorageListModel.class,
@@ -225,6 +226,8 @@ public class StorageModule extends AbstractGinModule {
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
+                } else if (source.getConfirmWindow() instanceof ImportCloneModel) {
+                    return importClonePopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }

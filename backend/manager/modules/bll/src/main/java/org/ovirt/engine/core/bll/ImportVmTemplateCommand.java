@@ -292,7 +292,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     tempVar.setForceOverride(true);
                     tempVar.setImportEntity(true);
                     tempVar.setEntityId(disk.getImageId());
-                    tempVar.setQuotaId(disk.getQuotaId());
+                    for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
+                        if (diskGuidList.get(i).equals(diskImage.getId())) {
+                            tempVar.setQuotaId(diskImage.getQuotaId());
+                            break;
+                        }
+                    }
+
                     MoveOrCopyImageGroupParameters p = tempVar;
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
@@ -501,7 +507,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
         List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
-        for (DiskImage disk : getParameters().getImages()) {
+        for (DiskImage disk : getParameters().getVmTemplate().getDiskList()) {
             list.add(new StorageQuotaValidationParameter(disk.getQuotaId(),
                     //TODO: handle import more than once;
                     imageToDestinationDomainMap.get(disk.getId()),
@@ -523,7 +529,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
             Map<Guid, Guid> quotaMap = new HashMap<Guid, Guid>();
             quotaMap.put(getQuotaId(), getQuotaId());
-            for (DiskImage disk : getParameters().getImages()) {
+            for (DiskImage disk : getParameters().getVmTemplate().getDiskList()) {
                 if (disk.getQuotaId() != null && !quotaMap.containsKey(disk.getQuotaId())) {
                     quotaPermissionList.add(new PermissionSubject(disk.getQuotaId(),
                             VdcObjectType.Quota,

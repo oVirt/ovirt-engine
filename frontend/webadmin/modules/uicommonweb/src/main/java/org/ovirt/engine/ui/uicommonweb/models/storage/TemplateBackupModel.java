@@ -11,12 +11,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -28,18 +27,23 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportDiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class TemplateBackupModel extends ManageBackupModel
+public class TemplateBackupModel extends VmBackupModel
 {
-
     private ArrayList<Map.Entry<VmTemplate, DiskImageList>> extendedItems;
 
     public TemplateBackupModel()
@@ -49,10 +53,12 @@ public class TemplateBackupModel extends ManageBackupModel
     }
 
     @Override
+    protected void setAppListModel(VmAppListModel value) {
+    }
+
+    @Override
     protected void remove()
     {
-        super.remove();
-
         if (getWindow() != null)
         {
             return;
@@ -112,124 +118,61 @@ public class TemplateBackupModel extends ManageBackupModel
     }
 
     @Override
-    protected void Restore()
-    {
-        super.Restore();
-
-        if (getWindow() != null)
-        {
-            return;
-        }
-
+    protected ImportVmModel getImportModel() {
         ImportTemplateModel model = new ImportTemplateModel();
-        setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
         model.setHashName("import_template"); //$NON-NLS-1$
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.Model = this;
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-
-            @Override
-            public void OnSuccess(Object returnModel, Object returnValue) {
-                TemplateBackupModel templateBackupModel = (TemplateBackupModel) returnModel;
-                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-
-                ImportTemplateModel iTemplateModel = (ImportTemplateModel) templateBackupModel.getWindow();
-                iTemplateModel.getCluster().setItems(clusters);
-                iTemplateModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
-
-                iTemplateModel.setSourceStorage(templateBackupModel.getEntity().getStorageStaticData());
-
-                AsyncQuery _asyncQuery1 = new AsyncQuery();
-                _asyncQuery1.Model = templateBackupModel;
-                _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object returnModel1,
-                            Object returnValue1) {
-                        ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue1;
-                        storage_pool pool = null;
-                        if (pools != null && pools.size() > 0) {
-                            pool = pools.get(0);
-                        }
-                        TemplateBackupModel tempalteBackupModel1 = (TemplateBackupModel) returnModel1;
-                        ImportTemplateModel iTemplateModel1 = (ImportTemplateModel) tempalteBackupModel1.getWindow();
-                        iTemplateModel1.setStoragePool(pool);
-
-                        AsyncQuery _asyncQuery2 = new AsyncQuery();
-                        _asyncQuery2.Model = tempalteBackupModel1;
-                        _asyncQuery2.asyncCallback = new INewAsyncCallback() {
-                            @Override
-                            public void OnSuccess(Object returnModel2,
-                                    Object returnValue2) {
-                                TemplateBackupModel tempalteBackupModel2 = (TemplateBackupModel) returnModel2;
-                                ImportTemplateModel iTemplateModel2 =
-                                        (ImportTemplateModel) tempalteBackupModel2.getWindow();
-                                ArrayList<storage_domains> destStorages =
-                                        new ArrayList<storage_domains>();
-                                ArrayList<storage_domains> list = (ArrayList<storage_domains>) returnValue2;
-                                for (storage_domains domain : list)
-                                {
-                                    if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)
-                                            && domain.getstatus() != null
-                                            && domain.getstatus() == StorageDomainStatus.Active)
-                                    {
-                                        destStorages.add(domain);
-                                    }
-                                }
-
-                                iTemplateModel2.getDestinationStorage().setItems(destStorages);
-                                iTemplateModel2.getDestinationStorage()
-                                        .setSelectedItem(Linq.FirstOrDefault(destStorages));
-
-                                iTemplateModel2.setItems(getSelectedItems());
-                                iTemplateModel2.setExtendedItems(getExtendedItems());
-                                if (destStorages.isEmpty())
-                                {
-                                    iTemplateModel2.getDestinationStorage().setIsChangable(false);
-                                    iTemplateModel2.getDestinationStorage()
-                                            .getChangeProhibitionReasons()
-                                            .add("Cannot import Template."); //$NON-NLS-1$
-
-                                    iTemplateModel2.setMessage(ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .thereIsNoDataStorageDomainToImportTemplateIntoMsg());
-
-                                    UICommand tempVar = new UICommand("Cancel", tempalteBackupModel2); //$NON-NLS-1$
-                                    tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-                                    tempVar.setIsDefault(true);
-                                    tempVar.setIsCancel(true);
-                                    iTemplateModel2.getCommands().add(tempVar);
-                                }
-                                else
-                                {
-                                    UICommand tempVar2 = new UICommand("OnRestore", tempalteBackupModel2); //$NON-NLS-1$
-                                    tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                                    tempVar2.setIsDefault(true);
-                                    iTemplateModel2.getCommands().add(tempVar2);
-                                    UICommand tempVar3 = new UICommand("Cancel", tempalteBackupModel2); //$NON-NLS-1$
-                                    tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                                    tempVar3.setIsCancel(true);
-                                    iTemplateModel2.getCommands().add(tempVar3);
-                                }
-                            }
-                        };
-                        AsyncDataProvider.GetDataDomainsListByDomain(_asyncQuery2, iTemplateModel1
-                                .getSourceStorage().getId());
-
-                    }
-
-                };
-                AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery1,
-                        templateBackupModel.getEntity().getId());
-            }
-        };
-
-        AsyncDataProvider.GetClusterListByStorageDomain(_asyncQuery,
-                getEntity().getId());
+        return model;
     }
 
-    private void OnRestore()
-    {
+    @Override
+    protected void setObjectName(Object object, String name, boolean isSuffix) {
+        VmTemplate template = (VmTemplate) object;
+        if (isSuffix) {
+            template.setname(template.getname() + name);
+        } else {
+            template.setname(name);
+        }
+    }
+
+    @Override
+    protected boolean validateSuffix(String suffix, EntityModel entityModel) {
+        for (Object object : objectsInSetupMap.values()) {
+            VmTemplate template = (VmTemplate) object;
+            if (!validateName(template.getname() + suffix, template.getos(), entityModel)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean validateName(String newVmName, Object object, EntityModel entity) {
+        String nameExpr;
+        String nameMsg;
+        nameExpr = "^[0-9a-zA-Z-_]{1," + 49 + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+        nameMsg =
+                ConstantsManager.getInstance()
+                        .getMessages()
+                        .newNameWithSuffixCannotContainBlankOrSpecialChars(40);
+        EntityModel temp = new EntityModel();
+        temp.setIsValid(true);
+        temp.setEntity(newVmName);
+        temp.ValidateEntity(
+                new IValidation[] {
+                        new NotEmptyValidation(),
+                        new RegexValidation(nameExpr, nameMsg)
+                });
+        if (!temp.getIsValid()) {
+            entity.setInvalidityReasons(temp.getInvalidityReasons());
+            entity.setIsValid(false);
+        }
+
+        return temp.getIsValid();
+    }
+
+    @Override
+    protected void executeImport() {
         ImportTemplateModel model = (ImportTemplateModel) getWindow();
 
         if (model.getProgress() != null)
@@ -245,27 +188,38 @@ public class TemplateBackupModel extends ManageBackupModel
         for (Object object : getSelectedItems())
         {
             VmTemplate template = (VmTemplate) object;
-            storage_domains destinationStorage = ((storage_domains) model.getDestinationStorage().getSelectedItem());
-            boolean isSingleDestStorage = (Boolean) model.getIsSingleDestStorage().getEntity();
-            Guid destinationStorageId = destinationStorage != null && isSingleDestStorage ?
-                    destinationStorage.getId() : Guid.Empty;
 
             ImportVmTemplateParameters improtVmTemplateParameters =
                     new ImportVmTemplateParameters(model.getStoragePool().getId(),
-                            model.getSourceStorage().getId(), destinationStorageId,
+                            getEntity().getId(), Guid.Empty,
                             ((VDSGroup) model.getCluster().getSelectedItem()).getId(),
                             template);
 
-            if (!(Boolean) model.getIsSingleDestStorage().getEntity()) {
-                HashMap<Guid, Guid> map = model.getDiskStorageMap().get(template.getId());
-                improtVmTemplateParameters.setImageToDestinationDomainMap(map);
+            if (importModel.getClusterQuota().getSelectedItem() != null &&
+                    importModel.getClusterQuota().getIsAvailable()) {
+                improtVmTemplateParameters.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
             }
 
-            if ((Boolean) model.getCloneAllTemplates().getEntity()
-                    || ((Boolean) model.getCloneOnlyDuplicateTemplates().getEntity()
-                    && model.isObjectInSetup(template))) {
+            Map<Guid, Guid> map = new HashMap<Guid, Guid>();
+            for (DiskImage disk : template.getDiskList()) {
+                Guid key = template.getId();
+                map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
+
+                if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
+                    disk.setQuotaId(
+                            importModel.getDiskImportData(disk.getId()).getSelectedQuota().getId());
+                }
+            }
+
+            improtVmTemplateParameters.setImageToDestinationDomainMap(map);
+
+            if (importModel.isObjectInSetup(template)) {
+                if (!cloneObjectMap.containsKey(template.getId())) {
+                    continue;
+                }
                 improtVmTemplateParameters.setImportAsNewEntity(true);
-                template.setname(template.getname() + model.getCloneTemplatesSuffix().getEntity());
+                improtVmTemplateParameters.getVmTemplate()
+                        .setname(((VmTemplate) cloneObjectMap.get(template.getId())).getname());
             }
 
             prms.add(improtVmTemplateParameters);
@@ -286,7 +240,7 @@ public class TemplateBackupModel extends ManageBackupModel
                         if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size())
                         {
 
-                            String importedTemplates = ""; //$NON-NLS-1$
+                            String importedTemplates = ""; //$NONNLS1$
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
                             for (Object a : templateBackupModel.getSelectedItems())
@@ -336,8 +290,6 @@ public class TemplateBackupModel extends ManageBackupModel
     @Override
     protected void SyncSearch()
     {
-        super.SyncSearch();
-
         if (getEntity() == null || getEntity().getstorage_domain_type() != StorageDomainType.ImportExport
                 || getEntity().getstorage_domain_shared_status() != StorageDomainSharedStatus.Active)
         {
@@ -380,7 +332,7 @@ public class TemplateBackupModel extends ManageBackupModel
                                     list.add(template);
                                 }
                                 backupModel1.setItems(list);
-                                backupModel1.setExtendedItems(items);
+                                TemplateBackupModel.this.extendedItems = items;
                             }
                         };
                         GetAllFromExportDomainQueryParameters tempVar =
@@ -395,12 +347,10 @@ public class TemplateBackupModel extends ManageBackupModel
         }
     }
 
-    protected void setExtendedItems(ArrayList<Map.Entry<VmTemplate, DiskImageList>> items) {
-        this.extendedItems = items;
-    }
-
-    public ArrayList<Map.Entry<VmTemplate, DiskImageList>> getExtendedItems() {
-        return extendedItems;
+    @Override
+    protected void Restore() {
+        super.Restore();
+        ((TemplateImportDiskListModel) ((ImportTemplateModel) getWindow()).getImportDiskListModel()).setExtendedItems(extendedItems);
     }
 
     @Override
@@ -413,8 +363,6 @@ public class TemplateBackupModel extends ManageBackupModel
     @Override
     public void ExecuteCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
-
         if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
@@ -422,6 +370,8 @@ public class TemplateBackupModel extends ManageBackupModel
         else if (StringHelper.stringsEqual(command.getName(), "OnRestore")) //$NON-NLS-1$
         {
             OnRestore();
+        } else {
+            super.ExecuteCommand(command);
         }
     }
 

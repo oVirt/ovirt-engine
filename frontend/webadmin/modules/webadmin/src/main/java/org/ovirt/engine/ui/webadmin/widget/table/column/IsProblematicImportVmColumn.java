@@ -9,7 +9,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code PermissionTypeDataTemplate}.
  */
-public class IsProblematicImportVmColumn extends WebAdminImageResourceColumn<VM> {
+public class IsProblematicImportVmColumn extends WebAdminImageResourceColumn<Object> {
 
     private final List<VM> problematicItems;
 
@@ -18,7 +18,7 @@ public class IsProblematicImportVmColumn extends WebAdminImageResourceColumn<VM>
     }
 
     @Override
-    public ImageResource getValue(VM vm) {
+    public ImageResource getValue(Object vm) {
         if (problematicItems.contains(vm)) {
             return getApplicationResources().alertImage();
         }

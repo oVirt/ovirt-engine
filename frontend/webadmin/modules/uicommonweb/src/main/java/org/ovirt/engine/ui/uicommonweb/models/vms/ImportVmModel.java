@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -52,7 +53,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     private VmImportDiskListModel importDiskListModel;
     private storage_pool storagePool;
     private boolean hasQuota;
-    private ArrayList<storage_domains> filteredStorageDomains;
+    protected ArrayList<storage_domains> filteredStorageDomains;
     private HashMap<Guid, VM> alreadyInSystemVmMap;
     private Map<Guid, ArrayList<Quota>> storageQuotaMap;
     private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<Guid, List<Disk>>();
@@ -269,7 +270,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                 ConstantsManager.getInstance().getConstants().importNotApplicableForDefaultStorage());
     }
 
-    private void checkDestFormatCompatibility() {
+    protected void checkDestFormatCompatibility() {
         for (Object item : getItems()) {
             VM vm = (VM) item;
             if (vm.getDiskMap() != null) {
@@ -297,7 +298,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         }
     }
 
-    private void initDisksStorageDomainsList() {
+    protected void initDisksStorageDomainsList() {
         for (Object item : getItems()) {
             VM vm = (VM) item;
             if (!NGuid.Empty.equals(vm.getvmt_guid())) {
@@ -362,7 +363,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
 
     }
 
-    private void postInitDisks() {
+    protected void postInitDisks() {
         onDataLoad();
 
         checkDestFormatCompatibility();
@@ -409,7 +410,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         return importData;
     }
 
-    private void setDiskImportData(Guid diskId,
+    protected void setDiskImportData(Guid diskId,
             ArrayList<storage_domains> storageDomains,
             VolumeType volumeType) {
         ImportData data = new ImportData();
@@ -482,15 +483,14 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                             alreadyInSystemVmMap.put(vm.getId(), vm);
                         }
 
-                        setSuperItems(value);
+                        ImportVmModel.super.setItems(value);
                     }
                 }));
 
     }
 
-    protected void setSuperItems(Iterable value) {
+    public void setSuperItems(Iterable value) {
         super.setItems(value);
-        List<VM> list = (List<VM>) getItems();
     }
 
     @Override
@@ -498,7 +498,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         return "ImportVmModel"; //$NON-NLS-1$
     }
 
-    public VmImportDiskListModel getImportDiskListModel() {
+    public SearchableListModel getImportDiskListModel() {
         return importDiskListModel;
     }
 

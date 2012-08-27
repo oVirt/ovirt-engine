@@ -135,7 +135,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             //update qutoa
             if (getParameters().getQuotaId() != null) {
                 getImage().setQuotaId(getParameters().getQuotaId());
-                getImageDao().updateQuotaForImageAndSnapshots(getImageGroupId(), getParameters().getQuotaId());
+                getImageDao().updateQuotaForImageAndSnapshots(getParameters().getDestImageGroupId(),
+                        getParameters().getQuotaId());
             }
 
             setSucceeded(true);

@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -48,25 +49,16 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 @SuppressWarnings("unused")
 public class VmBackupModel extends ManageBackupModel {
 
-    @Override
-    public VM getSelectedItem() {
-        return (VM) super.getSelectedItem();
-    }
-
-    public void setSelectedItem(VM value) {
-        super.setSelectedItem(value);
-    }
-
     private VmAppListModel privateAppListModel;
-    private Map<Guid, VM> vmsInSetupMap;
-    private Map<Guid, VM> cloneVmMap;
-    private ImportVmModel importModel;
+    protected Map<Guid, Object> objectsInSetupMap;
+    protected Map<Guid, Object> cloneObjectMap;
+    protected ImportVmModel importModel;
 
     public VmAppListModel getAppListModel() {
         return privateAppListModel;
     }
 
-    private void setAppListModel(VmAppListModel value) {
+    protected void setAppListModel(VmAppListModel value) {
         privateAppListModel = value;
     }
 
@@ -80,7 +72,9 @@ public class VmBackupModel extends ManageBackupModel {
     @Override
     protected void OnSelectedItemChanged() {
         super.OnSelectedItemChanged();
-        getAppListModel().setEntity(getSelectedItem());
+        if (getAppListModel() != null) {
+            getAppListModel().setEntity(getSelectedItem());
+        }
     }
 
     @Override
@@ -116,7 +110,7 @@ public class VmBackupModel extends ManageBackupModel {
         model.getCommands().add(tempVar2);
     }
 
-    public void OnRemove() {
+    private void OnRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
         if (model.getProgress() != null) {
@@ -173,10 +167,8 @@ public class VmBackupModel extends ManageBackupModel {
             return;
         }
 
-        ImportVmModel model = new ImportVmModel();
+        ImportVmModel model = getImportModel();
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
-        model.setHashName("import_virtual_machine"); //$NON-NLS-1$
         model.StartProgress(null);
         UICommand restoreCommand;
         restoreCommand = new UICommand("OnRestore", this); //$NON-NLS-1$
@@ -198,6 +190,13 @@ public class VmBackupModel extends ManageBackupModel {
         model.setCloseCommand(closeCommand);
     }
 
+    protected ImportVmModel getImportModel() {
+        ImportVmModel model = new ImportVmModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        model.setHashName("import_virtual_machine"); //$NON-NLS-1$
+        return model;
+    }
+
     public void OnRestore() {
         importModel = (ImportVmModel) getWindow();
 
@@ -208,12 +207,12 @@ public class VmBackupModel extends ManageBackupModel {
         if (!importModel.Validate()) {
             return;
         }
-        cloneVmMap = new HashMap<Guid, VM>();
+        cloneObjectMap = new HashMap<Guid, Object>();
 
-        vmsInSetupMap = new HashMap<Guid, VM>();
-        for (VM vm : (ArrayList<VM>) importModel.getItems()) {
-            if (importModel.isObjectInSetup(vm)) {
-                vmsInSetupMap.put(vm.getId(), vm);
+        objectsInSetupMap = new HashMap<Guid, Object>();
+        for (Object object : (ArrayList<Object>) importModel.getItems()) {
+            if (importModel.isObjectInSetup(object)) {
+                objectsInSetupMap.put((Guid) ((IVdcQueryable) object).getQueryableId(), object);
             }
         }
         executeImportClone();
@@ -221,15 +220,15 @@ public class VmBackupModel extends ManageBackupModel {
 
     private void executeImportClone() {
         //TODO: support running numbers (for suffix)
-        if (vmsInSetupMap.size() == 0) {
+        if (objectsInSetupMap.size() == 0) {
             executeImport();
             return;
         }
         ImportCloneModel entity = new ImportCloneModel();
-        VM vm = (VM) vmsInSetupMap.values().toArray()[0];
-        entity.setEntity(vm);
-        entity.setTitle("Import Virtual Machine Conflict"); //$NON-NLS-1$
-        entity.setHashName("import_virtual_machine_conflict"); //$NON-NLS-1$
+        Object object = objectsInSetupMap.values().toArray()[0];
+        entity.setEntity(object);
+        entity.setTitle("Import Conflict"); //$NON-NLS-1$
+        entity.setHashName("import_conflict"); //$NON-NLS-1$
         UICommand command = new UICommand("onClone", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
@@ -251,42 +250,53 @@ public class VmBackupModel extends ManageBackupModel {
                 if (!validateSuffix(suffix, cloneModel.getSuffix())) {
                     return;
                 }
-                for (VM vm : vmsInSetupMap.values()) {
-                    vm.setvm_name(vm.getvm_name() + suffix);
-                    cloneVmMap.put(vm.getId(), vm);
+                for (Object object : objectsInSetupMap.values()) {
+                    setObjectName(object, suffix, true);
+                    cloneObjectMap.put((Guid) ((IVdcQueryable) object).getQueryableId(), object);
                 }
             }
-            vmsInSetupMap.clear();
+            objectsInSetupMap.clear();
         } else {
-            VM vm = (VM) cloneModel.getEntity();
+            Object object = cloneModel.getEntity();
             if (!(Boolean) cloneModel.getNoClone().getEntity()) {
                 String vmName = (String) cloneModel.getName().getEntity();
-                if (!validateVmName(vmName, vm.getos(), cloneModel.getName())) {
+                if (!validateName(vmName, object, cloneModel.getName())) {
                     return;
                 }
-
-                vm.setvm_name(vmName);
-                cloneVmMap.put(vm.getId(), vm);
+                setObjectName(object, vmName, false);
+                cloneObjectMap.put((Guid) ((IVdcQueryable) object).getQueryableId(), object);
             }
-            vmsInSetupMap.remove(vm.getId());
+            objectsInSetupMap.remove(((IVdcQueryable) object).getQueryableId());
         }
 
         setConfirmWindow(null);
         executeImportClone();
     }
 
-    private boolean validateSuffix(String suffix, EntityModel entityModel) {
-        for (VM vm : vmsInSetupMap.values()) {
-            if (!validateVmName(vm.getvm_name() + suffix, vm.getos(), entityModel)) {
+    protected void setObjectName(Object object, String name, boolean isSuffix) {
+        VM vm = (VM) object;
+        if (isSuffix) {
+            vm.setvm_name(vm.getvm_name() + name);
+        } else {
+            vm.setvm_name(name);
+        }
+    }
+
+    protected boolean validateSuffix(String suffix, EntityModel entityModel) {
+        for (Object object : objectsInSetupMap.values()) {
+            VM vm = (VM) object;
+            if (!validateName(vm.getvm_name() + suffix, vm.getos(), entityModel)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean validateVmName(String newVmName, VmOsType osType, EntityModel entity) {
+    protected boolean validateName(String newVmName, Object object, EntityModel entity) {
         String nameExpr;
         String nameMsg;
+        VM vm = (VM) object;
+        VmOsType osType = vm.getos();
         if (DataProvider.IsWindowsOsType(osType))
         {
             nameExpr = "^[0-9a-zA-Z-_]{1," + UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -315,6 +325,7 @@ public class VmBackupModel extends ManageBackupModel {
             entity.setInvalidityReasons(temp.getInvalidityReasons());
             entity.setIsValid(false);
         }
+
         return temp.getIsValid();
     }
 
@@ -322,7 +333,7 @@ public class VmBackupModel extends ManageBackupModel {
         setConfirmWindow(null);
     }
 
-    private void executeImport() {
+    protected void executeImport() {
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
 
         for (Object item : importModel.getItems()) {
@@ -364,12 +375,12 @@ public class VmBackupModel extends ManageBackupModel {
             prm.setImageToDestinationDomainMap(map);
 
             if (importModel.isObjectInSetup(vm)) {
-                if (!cloneVmMap.containsKey(vm.getId())) {
+                if (!cloneObjectMap.containsKey(vm.getId())) {
                     continue;
                 }
                 prm.setImportAsNewEntity(true);
                 prm.setCopyCollapse(true);
-                prm.getVm().setvm_name(cloneVmMap.get(vm.getId()).getvm_name());
+                prm.getVm().setvm_name(((VM) cloneObjectMap.get(vm.getId())).getvm_name());
             }
 
             prms.add(prm);

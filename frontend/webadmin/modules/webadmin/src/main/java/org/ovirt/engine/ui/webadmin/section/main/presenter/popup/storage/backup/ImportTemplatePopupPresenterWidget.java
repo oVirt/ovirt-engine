@@ -1,14 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup;
 
-import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class ImportTemplatePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<ImportTemplateModel, ImportTemplatePopupPresenterWidget.ViewDef> {
+public class ImportTemplatePopupPresenterWidget extends ImportVmPopupPresenterWidget {
 
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ImportTemplateModel> {
+    public interface ViewDef extends ImportVmPopupPresenterWidget.ViewDef {
     }
 
     @Inject
