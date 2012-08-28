@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.Iterator;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -134,6 +134,12 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRebalanceCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.optimizeForVirtStore()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getOptimizeForVirtStoreCommand();
             }
         });
     }

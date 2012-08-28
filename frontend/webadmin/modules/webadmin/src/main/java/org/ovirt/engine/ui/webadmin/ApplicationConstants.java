@@ -1994,6 +1994,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Rebalance")
     String rebalanceVolume();
 
+    @DefaultStringValue("Optimize for Virt Store")
+    String optimizeForVirtStore();
+
     // Inteface editor
     @DefaultStringValue("Address:")
     String addressInterfaceEditor();

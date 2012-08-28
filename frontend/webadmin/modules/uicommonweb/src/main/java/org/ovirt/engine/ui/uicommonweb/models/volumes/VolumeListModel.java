@@ -8,12 +8,14 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -78,6 +80,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     private UICommand startCommand;
     private UICommand stopCommand;
     private UICommand rebalanceCommand;
+    private UICommand optimizeForVirtStoreCommand;
 
     public UICommand getRebalanceCommand() {
         return rebalanceCommand;
@@ -103,6 +106,14 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         this.stopCommand = stopCommand;
     }
 
+    public UICommand getOptimizeForVirtStoreCommand() {
+        return optimizeForVirtStoreCommand;
+    }
+
+    public void setOptimizeForVirtStoreCommand(UICommand optimizeForVirtStoreCommand) {
+        this.optimizeForVirtStoreCommand = optimizeForVirtStoreCommand;
+    }
+
     public VolumeListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
 
@@ -116,7 +127,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setStartCommand(new UICommand("Start", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setRebalanceCommand(new UICommand("Rebalance", this)); //$NON-NLS-1$
-
+        setOptimizeForVirtStoreCommand(new UICommand("OptimizeForVirtStore", this)); //$NON-NLS-1$
         getRebalanceCommand().setIsAvailable(false);
 
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
@@ -324,6 +335,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             getStopCommand().setIsExecutionAllowed(false);
             getStartCommand().setIsExecutionAllowed(false);
             getRebalanceCommand().setIsExecutionAllowed(false);
+            getOptimizeForVirtStoreCommand().setIsExecutionAllowed(false);
             return;
         }
 
@@ -331,6 +343,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         getStopCommand().setIsExecutionAllowed(true);
         getStartCommand().setIsExecutionAllowed(true);
         getRebalanceCommand().setIsExecutionAllowed(true);
+        getOptimizeForVirtStoreCommand().setIsExecutionAllowed(true);
 
         for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
         {
@@ -370,6 +383,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             stop();
         } else if (command.equals(getRebalanceCommand())) {
             rebalance();
+        } else if (command.equals(getOptimizeForVirtStoreCommand())) {
+            optimizeForVirtStore();
         } else if (command.getName().equals("onStop")) {//$NON-NLS-1$
             onStop();
         } else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
@@ -390,6 +405,24 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
         }
         Frontend.RunMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list);
+    }
+
+    private void optimizeForVirtStore() {
+        if (getSelectedItems() == null) {
+            return;
+        }
+
+        ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems())
+        {
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
+            option.setVolumeId(volume.getId());
+            option.setKey("group"); //$NON-NLS-1$
+            option.setValue("rhev"); //$NON-NLS-1$
+            list.add(new GlusterVolumeOptionParameters(option));
+        }
+        Frontend.RunMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
     }
 
     private void stop() {
