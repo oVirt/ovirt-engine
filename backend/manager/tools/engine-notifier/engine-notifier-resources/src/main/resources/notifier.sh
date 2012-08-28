@@ -160,13 +160,6 @@ if [ "${ENGINE_TIMEOUT_IN_SECONDS+x}" ]; then
     fi
 fi
 
-# ENGINE_ADDRESS if defined can not be empty
-if [ "${ENGINE_ADDRESS+x}" ]; then
-    if [ -z "$ENGINE_ADDRESS" ]; then
-        die_no_propset \$ENGINE_ADDRESS
-    fi
-fi
-
 # IS_HTTPS_PROTOCOL if defined can not be empty
 if [ "${IS_HTTPS_PROTOCOL+x}" ]; then
     if [ -z "$IS_HTTPS_PROTOCOL" ]; then
@@ -207,6 +200,7 @@ jar_names='
     ovirt-engine/engineencryptutils
     ovirt-engine/engine-notifier-service
     ovirt-engine/engine-tools-common
+    ovirt-engine/utils
     postgresql-jdbc
     slf4j/api
     glassfish-jaxb/jaxb-impl

@@ -40,6 +40,7 @@ import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
+import org.ovirt.engine.core.utils.LocalConfig;
 
 /**
  * Class uses to monitor the oVirt Engineanager service by sampling its health servlet. Upon response other than code 200,
@@ -53,8 +54,7 @@ public class EngineMonitorService implements Runnable {
     private static final Log log = LogFactory.getLog(EngineMonitorService.class);
     private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
-    private static final String DEFAULT_SERVER_ADDRESS = "localhost:80";
-    private static final String HEALTH_SERVLET_URL = "%s://%s/OvirtEngineWeb/HealthStatus";
+    private static final String HEALTH_SERVLET_PATH = "/OvirtEngineWeb/HealthStatus";
     private static final String CERTIFICATION_TYPE = "JKS";
     private static final String DEFAULT_SSL_PROTOCOL = "TLS";
     private static final long DEFAULT_SERVER_MONITOR_TIMEOUT_IN_SECONDS = 30;
@@ -62,7 +62,7 @@ public class EngineMonitorService implements Runnable {
     private DataSource ds;
     private Map<String, String> prop = null;
     private long serverMonitorTimeout;
-    private String serverUrl;
+    private URL serverUrl;
     private boolean isServerUp = true;
     private boolean repeatNonResponsiveNotification;
     private int serverMonitorRetries;
@@ -249,21 +249,18 @@ public class EngineMonitorService implements Runnable {
     }
 
     private void initServerUrl() throws NotificationServiceException {
-        String serverAddressProp = prop.get(NotificationProperties.ENGINE_ADDRESS);
-        String protocol = isHttpsProtocol ? "https" : "http";
-        serverUrl =
-                String.format(HEALTH_SERVLET_URL,
-                        protocol,
-                        StringUtils.isEmpty(serverAddressProp) ? DEFAULT_SERVER_ADDRESS : serverAddressProp);
+        LocalConfig config = LocalConfig.getInstance();
         try {
-            new URL(serverUrl);
-        } catch (MalformedURLException e) {
-            throw new NotificationServiceException(String.format("Invalid engine server address format: [%s]. " +
-                    "Please verify the format of [%s]. Should be ip:port or hostname:port whereas [%s])",
-                    serverUrl,
-                    NotificationProperties.ENGINE_ADDRESS,
-                    serverAddressProp),
-                    e);
+            if (isHttpsProtocol) {
+                serverUrl = config.getExternalHttpsUrl(HEALTH_SERVLET_PATH);
+            }
+            else {
+                serverUrl = config.getExternalHttpUrl(HEALTH_SERVLET_PATH);
+            }
+            log.info("Engine health servlet URL is \"" + serverUrl + "\".");
+        }
+        catch (MalformedURLException exception) {
+            throw new NotificationServiceException("Can't get engine health servlet URL.", exception);
         }
     }
 
@@ -305,7 +302,7 @@ public class EngineMonitorService implements Runnable {
         while (retries > 0) {
             retries--;
             try {
-                isResponsive = checkServerStatus(serverUrl, errors);
+                isResponsive = checkServerStatus(errors);
                 if (!isResponsive) {
                     if (retries > 0) {
                         Thread.sleep(serverMonitorTimeout);
@@ -385,22 +382,17 @@ public class EngineMonitorService implements Runnable {
      *            collection which aggregates any error
      * @return true is engine server is responsive (response with code 200 - HTTP_OK), else false
      */
-    private boolean checkServerStatus(String serverUrl, Set<String> errors) {
+    private boolean checkServerStatus(Set<String> errors) {
         boolean isResponsive = true;
         HttpURLConnection engineConn = null;
-        URL engine;
 
         try {
-            engine = new URL(serverUrl);
-
+            engineConn = (HttpURLConnection) serverUrl.openConnection();
             if (isHttpsProtocol) {
-                engineConn = (HttpsURLConnection) engine.openConnection();
                 ((HttpsURLConnection) engineConn).setSSLSocketFactory(sslFactory);
                 if (sslIgnoreHostVerification) {
                     ((HttpsURLConnection) engineConn).setHostnameVerifier(IgnoredHostnameVerifier);
                 }
-            } else {
-                engineConn = (HttpURLConnection) engine.openConnection();
             }
         } catch (IOException e) {
             errors.add(e.getMessage());

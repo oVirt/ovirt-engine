@@ -17,16 +17,6 @@ import org.ovirt.engine.core.notifier.NotificationServiceException;
  */
 public class NotificationProperties {
     /**
-     * Database parameters
-     */
-    public static final String AS_DATA_SOURCE = "AS_DATA_SOURCE";
-    public static final String AS_LOGIN_CONFIG = "AS_LOGIN_CONFIG";
-    public static final String DB_CONNECTION_URL = "DB_CONNECTION_URL";
-    public static final String DB_USER_NAME = "DB_USER_NAME";
-    public static final String DB_PASSWORD = "DB_PASSWORD";
-    public static final String DB_JDBC_DRIVER_CLASS = "DB_JDBC_DRIVER_CLASS";
-
-    /**
      * Email parameters
      */
     public static final String MAIL_SERVER = "MAIL_SERVER";
@@ -45,7 +35,6 @@ public class NotificationProperties {
     public static final String INTERVAL_IN_SECONDS = "INTERVAL_IN_SECONDS";
     public static final String ENGINE_INTERVAL_IN_SECONDS = "ENGINE_INTERVAL_IN_SECONDS";
     public static final String ENGINE_TIMEOUT_IN_SECONDS = "ENGINE_TIMEOUT_IN_SECONDS";
-    public static final String ENGINE_ADDRESS = "ENGINE_ADDRESS"; // ip:port or hostname:port
     public static final String IS_HTTPS_PROTOCOL = "IS_HTTPS_PROTOCOL";
     public static final String SSL_PROTOCOL = "SSL_PROTOCOL";
     public static final String REPEAT_NON_RESPONSIVE_NOTIFICATION = "REPEAT_NON_RESPONSIVE_NOTIFICATION";
