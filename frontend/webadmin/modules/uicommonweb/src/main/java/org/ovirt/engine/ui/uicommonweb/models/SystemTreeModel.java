@@ -348,9 +348,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             {
                 continue;
             }
-            if (returnValue.getReturnValue() instanceof storage_domains) {
-                storages = (ArrayList<storage_domains>) returnValue.getReturnValue();
-            }
+            storages = (ArrayList<storage_domains>) returnValue.getReturnValue();
 
             SystemTreeItemModel dataCenterItem = new SystemTreeItemModel();
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
