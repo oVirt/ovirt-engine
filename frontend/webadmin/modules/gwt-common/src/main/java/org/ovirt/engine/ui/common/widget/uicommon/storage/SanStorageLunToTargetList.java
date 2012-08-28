@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -73,6 +74,14 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 return ""; //$NON-NLS-1$
             }
         }, "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        // Add last blank column
+        table.addColumn(new TextColumn<LunModel>() {
+            @Override
+            public String getValue(LunModel model) {
+                return ""; //$NON-NLS-1$
+            }
+        }, "", "22px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add blank item list
         table.setRowData(new ArrayList<EntityModel>());
@@ -178,6 +187,9 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         // Create tree item
         HorizontalPanel panel = new HorizontalPanel();
         panel.add(table);
+        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.getElement().getStyle().setTableLayout(TableLayout.FIXED);
+
         TreeItem item = new TreeItem(panel);
 
         // Display LUNs as grayed-out if needed
@@ -195,7 +207,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getRawValue(LunModel model) {
                 return model.getLunId();
             }
-        }, constants.lunIdSanStorage(), "135px"); //$NON-NLS-1$
+        }, constants.lunIdSanStorage());
 
         table.addColumn(new LunTextColumn() {
             @Override
@@ -223,21 +235,21 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getRawValue(LunModel model) {
                 return model.getVendorId();
             }
-        }, constants.vendorIdSanStorage(), "80px"); //$NON-NLS-1$
+        }, constants.vendorIdSanStorage(), "100px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getProductId();
             }
-        }, constants.productIdSanStorage(), "80px"); //$NON-NLS-1$
+        }, constants.productIdSanStorage(), "100px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getSerial();
             }
-        }, constants.serialSanStorage());
+        }, constants.serialSanStorage(), "120px"); //$NON-NLS-1$
     }
 
     @SuppressWarnings("unchecked")
@@ -280,6 +292,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
         table.setRowData(items == null ? new ArrayList<SanTargetModel>() : items);
         table.edit(leafModel);
+        table.setWidth("100%", true); //$NON-NLS-1$
 
         ScrollPanel panel = new ScrollPanel();
         panel.add(table);

@@ -574,7 +574,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         fcpStorageModel.getPropertyChangedEvent().addListener(progressEventHandler);
         fcpStorageModel.setIsGrouppedByTarget(false);
         fcpStorageModel.setIgnoreGrayedOut(true);
-        fcpStorageView = new FcpStorageView(false, 266);
+        fcpStorageView = new FcpStorageView(false, 266, 242);
         fcpStorageView.edit(fcpStorageModel);
 
         // Set 'StorageModel' items

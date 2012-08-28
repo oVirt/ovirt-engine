@@ -11,11 +11,11 @@
 			}
 			
 			.localPathEditor {
-				width: 100%;
+				width: 650px;
 			}
 			
 			.localPathContentWidget {
-				width: 585px;
+				width: 540px;
 			}
 			
 			.errorMessageLabel {

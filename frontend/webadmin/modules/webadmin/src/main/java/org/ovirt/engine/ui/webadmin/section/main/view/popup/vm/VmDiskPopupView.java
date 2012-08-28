@@ -22,6 +22,7 @@ public class VmDiskPopupView extends AbstractModelBoundWidgetPopupView<DiskModel
     public VmDiskPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources, new VmDiskPopupWidget(constants, resources, true), "725px", "615px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        asWidget().enableResizeSupport(true);
     }
 
     @Override

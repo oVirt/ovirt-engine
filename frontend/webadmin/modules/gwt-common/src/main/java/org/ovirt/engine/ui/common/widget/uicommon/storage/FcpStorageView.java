@@ -13,16 +13,19 @@ public class FcpStorageView extends AbstractSanStorageView {
     Label errorMessage;
 
     SanStorageLunToTargetList sanStorageLunToTargetList;
-    static final double panelHeight = 365;
+
+    double panelHeight = 365;
+    double listHeight = 340;
 
     public FcpStorageView(boolean multiSelection) {
-        this(multiSelection, panelHeight);
+        super(multiSelection);
     }
 
-    public FcpStorageView(boolean multiSelection, double panelHeight) {
+    public FcpStorageView(boolean multiSelection, double panelHeight, double listHeight) {
         super(multiSelection);
 
-        contentPanel.getElement().getStyle().setHeight(panelHeight, Unit.PX);
+        this.panelHeight = panelHeight;
+        this.listHeight = listHeight;
     }
 
     @Override
@@ -31,8 +34,9 @@ public class FcpStorageView extends AbstractSanStorageView {
         sanStorageLunToTargetList = new SanStorageLunToTargetList(object, true, multiSelection);
         sanStorageLunToTargetList.activateItemsUpdate();
 
-        // Set tree style
-        sanStorageLunToTargetList.setTreeContainerStyleName(style.treePanel());
+        // Update style
+        sanStorageLunToTargetList.setTreeContainerHeight(listHeight);
+        contentPanel.getElement().getStyle().setHeight(panelHeight, Unit.PX);
 
         // Add view widget to panel
         listPanel.add(sanStorageLunToTargetList);

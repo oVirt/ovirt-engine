@@ -94,6 +94,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        asWidget().enableResizeSupport(true);
         localize(constants);
         addStyles();
         Driver.driver.initialize(this);

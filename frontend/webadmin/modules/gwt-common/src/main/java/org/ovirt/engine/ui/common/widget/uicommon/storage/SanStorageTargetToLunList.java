@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
@@ -78,7 +79,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getValue(SanTargetModel model) {
                 return model.getName();
             }
-        }, constants.targetNameSanStorage());
+        }, constants.targetNameSanStorage(), ""); //$NON-NLS-1$
 
         table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
@@ -96,13 +97,19 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
         table.setWidth("100%", true); //$NON-NLS-1$
 
-        // Add last blank column
+        // Add last blank columns
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return ""; //$NON-NLS-1$
             }
-        }, constants.empty(), "80px"); //$NON-NLS-1$
+        }, constants.empty(), "60px"); //$NON-NLS-1$
+        table.addColumn(new TextColumn<SanTargetModel>() {
+            @Override
+            public String getValue(SanTargetModel model) {
+                return ""; //$NON-NLS-1$
+            }
+        }, constants.empty(), "17px"); //$NON-NLS-1$
 
         // Add blank item list
         table.setRowData(new ArrayList<EntityModel>());
@@ -123,7 +130,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 loginButton.getCommand().Execute();
             }
         });
-        loginButton.setWidth("55px"); //$NON-NLS-1$
+        loginButton.setWidth("52px"); //$NON-NLS-1$
 
         panel.add(loginButton);
         panel.setCellWidth(loginButton, "60px"); //$NON-NLS-1$
@@ -148,13 +155,14 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     protected TreeItem createRootNode(SanTargetModel rootModel) {
         HorizontalPanel panel = new HorizontalPanel();
 
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getName(), "310px", TextAlignment.LEFT); //$NON-NLS-1$
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getAddress(), "80px", TextAlignment.CENTER); //$NON-NLS-1$
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getPort(), "45px", TextAlignment.CENTER); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getName(), "", TextAlignment.LEFT); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getAddress(), "95px", TextAlignment.LEFT); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getPort(), "60px", TextAlignment.LEFT); //$NON-NLS-1$
         addLoginButton(panel, rootModel);
 
         panel.setSpacing(1);
         panel.setWidth("100%"); //$NON-NLS-1$
+        panel.getElement().getStyle().setTableLayout(TableLayout.FIXED);
 
         return new TreeItem(panel);
     }
@@ -216,21 +224,21 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getRawValue(LunModel model) {
                 return model.getVendorId();
             }
-        }, constants.vendorIdSanStorage());
+        }, constants.vendorIdSanStorage(), "100px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getProductId();
             }
-        }, constants.productIdSanStorage());
+        }, constants.productIdSanStorage(), "100px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getSerial();
             }
-        }, constants.serialSanStorage(), "90px"); //$NON-NLS-1$
+        }, constants.serialSanStorage(), "120px"); //$NON-NLS-1$
 
         table.setRowData(items == null ? new ArrayList<LunModel>() : items);
         table.edit(leafModel);
