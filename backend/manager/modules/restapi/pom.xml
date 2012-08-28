@@ -23,7 +23,18 @@
     <engine.api.version>3.1.0</engine.api.version>
     <resteasy.version>2.3.2.Final</resteasy.version>
     <maven-jaxb22-plugin.version>0.8.1</maven-jaxb22-plugin.version>
+    <easymock.version>3.0</easymock.version>
+    <powermock.version>1.4.10</powermock.version>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <repositories>
     <repository>
@@ -47,6 +58,11 @@
       <id>thirdparty-releases</id>
       <name>JBoss Thirdparty Releases</name>
       <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+    </repository>
+
+    <repository>
+      <id>powermock-repo</id>
+      <url>http://powermock.googlecode.com/svn/repo/</url>
     </repository>
   </repositories>
 

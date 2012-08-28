@@ -27,7 +27,6 @@
     <generatedSourcesDirectory>generated-sources/annotations</generatedSourcesDirectory>
     <!-- Directory where GWT compiler generates normally-transient types for review (-gen compiler option) -->
     <gwtGenDirectory>gen</gwtGenDirectory>
-    <junit.version>4.8.1</junit.version>
     <gwtp.version>0.6</gwtp.version>
     <guice.version>3.0</guice.version>
     <gin.version>1.5.0</gin.version>
