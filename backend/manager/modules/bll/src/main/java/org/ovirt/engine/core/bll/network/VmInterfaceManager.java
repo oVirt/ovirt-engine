@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,11 +8,13 @@ import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
 import org.ovirt.engine.core.utils.log.Log;
@@ -88,6 +91,30 @@ public class VmInterfaceManager {
     }
 
     /**
+     * Finds active VMs which uses a network from a given networks list
+     *
+     * @param vdsId
+     *            The host id on which VMs are running
+     * @param networks
+     *            the networks to check if used
+     * @return A list of VM names which uses the networks
+     */
+    public List<String> findActiveVmsUsingNetworks(Guid vdsId, List<String> networks) {
+        List<VM> runningVms = getVmDAO().getAllRunningForVds(vdsId);
+        List<String> vmNames = new ArrayList<String>();
+        for (VM vm : runningVms) {
+            List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
+            for (VmNetworkInterface vmNic : vmInterfaces) {
+                if (networks.contains(vmNic.getNetworkName())) {
+                    vmNames.add(vm.getvm_name());
+                    break;
+                }
+            }
+        }
+        return vmNames;
+    }
+
+    /**
      * Log the given loggable & message to the {@link AuditLogDirector}.
      *
      * @param logable
@@ -107,5 +134,9 @@ public class VmInterfaceManager {
 
     protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
         return DbFacade.getInstance().getVmNetworkInterfaceDAO();
+    }
+
+    protected VmDAO getVmDAO() {
+        return DbFacade.getInstance().getVmDAO();
     }
 }

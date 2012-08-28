@@ -26,9 +26,11 @@ import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -36,6 +38,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class VmInterfaceManagerTest {
 
     private final String NETWORK_NAME = "networkName";
+    private final String VM_NAME = "vmName";
 
     @Mock
     private MacPoolManager macPoolManager;
@@ -45,6 +48,9 @@ public class VmInterfaceManagerTest {
 
     @Mock
     private VmNetworkInterfaceDAO vmNetworkInterfaceDAO;
+
+    @Mock
+    private VmDAO vmDAO;
 
     @Spy
     private VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
@@ -56,6 +62,7 @@ public class VmInterfaceManagerTest {
         doReturn(macPoolManager).when(vmInterfaceManager).getMacPoolManager();
         doReturn(vmNetworkStatisticsDAO).when(vmInterfaceManager).getVmNetworkStatisticsDAO();
         doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDAO();
+        doReturn(vmDAO).when(vmInterfaceManager).getVmDAO();
 
         doNothing().when(vmInterfaceManager).log(any(AuditLogableBase.class), any(AuditLogType.class));
     }
@@ -132,6 +139,31 @@ public class VmInterfaceManagerTest {
         assertFalse(vmInterfaceManager.isValidVmNetwork(iface, Collections.<String, Network> emptyMap()));
     }
 
+    @Test
+    public void findActiveVmsUsingNetworks() {
+        mockDaos();
+
+        List<String> vmNames =
+                vmInterfaceManager.findActiveVmsUsingNetworks(Guid.NewGuid(), Collections.singletonList(NETWORK_NAME));
+        assertTrue(vmNames.contains(VM_NAME));
+    }
+
+    @Test
+    public void findNoneOfActiveVmsUsingNetworks() {
+        mockDaos();
+
+        List<String> vmNames =
+                vmInterfaceManager.findActiveVmsUsingNetworks(Guid.NewGuid(),
+                        Collections.singletonList(NETWORK_NAME + "1"));
+        assertTrue(vmNames.isEmpty());
+    }
+
+    private void mockDaos() {
+        VM vm = createVM(VM_NAME, NETWORK_NAME);
+        when(vmDAO.getAllRunningForVds(any(Guid.class))).thenReturn(Arrays.asList(vm));
+        when(vmNetworkInterfaceDAO.getAllForVm(vm.getId())).thenReturn(vm.getInterfaces());
+    }
+
     protected void runRemoveAllAndVerify(boolean removeFromPool, VerificationMode freeMacVerification) {
         List<VmNetworkInterface> interfaces = Arrays.asList(createNewInterface(), createNewInterface());
 
@@ -187,5 +219,25 @@ public class VmInterfaceManagerTest {
         network.setVmNetwork(isVmNetwork);
         network.setname(networkName);
         return network;
+    }
+
+    /**
+     * Creates a VM instance with a given name, having an interface which uses a given network.
+     *
+     * @param vmName
+     *            The VM name to be set
+     * @param networkName
+     *            The network name to be set for the VM interface
+     * @return the VM instance with the appropriate data.
+     */
+    private VM createVM(String vmName, String networkName) {
+        VM vm = new VM();
+        vm.setId(Guid.NewGuid());
+        vm.setvm_name(vmName);
+        VmNetworkInterface vmIface = createNewInterface();
+        vmIface.setVmId(vm.getId());
+        vmIface.setNetworkName(networkName);
+        vm.getInterfaces().add(vmIface);
+        return vm;
     }
 }

@@ -1,18 +1,17 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -138,17 +137,9 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             }
         }
 
-        List<VM> runningVms = getVmDAO().getAllRunningForVds(vds.getId());
-        List<String> vmNames = new ArrayList<String>();
-        for (VM vm : runningVms) {
-            List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
-            for (VmNetworkInterface vmNic : vmInterfaces) {
-                if (StringUtils.equals(vmNic.getNetworkName(), getParameters().getNetwork().getname())) {
-                    vmNames.add(vm.getvm_name());
-                    break;
-                }
-            }
-        }
+        List<String> vmNames =
+                new VmInterfaceManager().findActiveVmsUsingNetworks(vds.getId(),
+                        Collections.singletonList(getParameters().getNetwork().getName()));
 
         if (!vmNames.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS);
