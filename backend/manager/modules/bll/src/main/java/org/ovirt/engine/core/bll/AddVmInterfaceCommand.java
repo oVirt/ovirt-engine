@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.action.PlugUnplugVmNicParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -23,8 +26,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -33,7 +34,10 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute(forceCompensation = true)
 @CustomLogFields({ @CustomLogField("InterfaceName") })
 public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
@@ -62,40 +66,61 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
 
         getParameters().getInterface().setId(Guid.NewGuid());
         getParameters().getInterface().setVmId(getParameters().getVmId());
-        DbFacade dbFacade = DbFacade.getInstance();
-        dbFacade
-                .getVmNetworkInterfaceDAO()
-                .save(getParameters().getInterface());
-        dbFacade
-                .getVmNetworkStatisticsDAO()
-                .save(getParameters().getInterface().getStatistics());
 
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                addInterfaceToDb(getParameters().getInterface());
+                addInterfaceDeviceToDb();
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
+
+        boolean succeeded = true;
+        if (getParameters().getInterface().isActive()) {
+            succeeded = plugNic();
+        }
+        setSucceeded(succeeded);
+    }
+
+    private void addInterfaceDeviceToDb() {
         VmDevice vmDevice = VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),
                 getParameters().getInterface().isActive());
-
-        boolean succeded = true;
-        VmDynamic vmDynamic = getVm().getDynamicData();
-        if (getParameters().getInterface().isActive()
-                && VmHandler.isHotPlugNicAllowedForVmStatus(vmDynamic.getstatus())) {
-            succeded = hotPlugNic(vmDevice, vmDynamic);
-            if (!succeded) {
-                getReturnValue().getExecuteFailedMessages().add("Failed hot-plugging nic to VM");
-            }
-        }
-        setSucceeded(succeded);
+        getCompensationContext().snapshotNewEntity(vmDevice);
     }
 
-    private boolean hotPlugNic(VmDevice vmDevice, VmDynamic vmDynamic) {
-        if (!canPerformHotPlug()) {
-            return false;
-        } else {
-            return runVdsCommand(VDSCommandType.HotPlugNic,
-                    new HotPlugUnplgNicVDSParameters(vmDynamic.getrun_on_vds().getValue(),
-                            vmDynamic.getId(),
-                            getParameters().getInterface(),
-                            vmDevice)).getSucceeded();
+    private void addInterfaceToDb(VmNetworkInterface vmNetworkInterface) {
+        DbFacade dbFacade = DbFacade.getInstance();
+
+        dbFacade.getVmNetworkInterfaceDAO().save(vmNetworkInterface);
+        getCompensationContext().snapshotNewEntity(vmNetworkInterface);
+
+        dbFacade.getVmNetworkStatisticsDAO().save(vmNetworkInterface.getStatistics());
+        getCompensationContext().snapshotNewEntity(vmNetworkInterface.getStatistics());
+    }
+
+    private boolean plugNic() {
+        PlugUnplugVmNicParameters plugParameters = createPlugUnPlugParameters();
+        VdcReturnValueBase plugVmNicReturnValue =
+                Backend.getInstance().runInternalAction(VdcActionType.PlugUnplugVmNic,
+                        plugParameters,
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+        if (!plugVmNicReturnValue.getSucceeded()) {
+            getReturnValue().getExecuteFailedMessages().add("Failed hot-plugging nic to VM");
+            getReturnValue().getCanDoActionMessages().addAll(plugVmNicReturnValue.getCanDoActionMessages());
+            getReturnValue().getCanDoActionMessages().remove(VdcBllMessages.VAR__ACTION__ADD.name());
+            getReturnValue().setCanDoAction(false);
         }
+        return plugVmNicReturnValue.getSucceeded();
+    }
+
+    private PlugUnplugVmNicParameters createPlugUnPlugParameters() {
+        PlugUnplugVmNicParameters plugUnplugVmNicParameters =
+                new PlugUnplugVmNicParameters(getParameters().getInterface().getId(), PlugAction.PLUG);
+        plugUnplugVmNicParameters.setVmId(getParameters().getVmId());
+        return plugUnplugVmNicParameters;
     }
 
     @Override
@@ -168,12 +193,6 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
             addCanDoActionMessage(String.format("$networks %1$s", interfaceNetwork.getname()));
             return false;
-        }
-
-        if (getParameters().getInterface().isActive()) {
-            if (getVm().getstatus() == VMStatus.Up && !canPerformHotPlug()) {
-                return false;
-            }
         }
 
         if (!StringUtils.isEmpty(getMacAddress())) {
