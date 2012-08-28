@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
-import org.ovirt.engine.core.common.action.HotPlugUnplugVmNicParameters;
+import org.ovirt.engine.core.common.action.PlugUnplugVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -471,12 +471,12 @@ public class VmInterfaceListModel extends SearchableListModel
             VmNetworkInterface nic = (VmNetworkInterface)item;
             nic.setActive(activate);
 
-            HotPlugUnplugVmNicParameters params = new HotPlugUnplugVmNicParameters(nic.getId(), activate?PlugAction.PLUG:PlugAction.UNPLUG);
+            PlugUnplugVmNicParameters params = new PlugUnplugVmNicParameters(nic.getId(), activate?PlugAction.PLUG:PlugAction.UNPLUG);
             params.setVmId(vm.getId());
             paramerterList.add(params);
         }
 
-        Frontend.RunMultipleAction(VdcActionType.HotPlugUnplugVmNic, paramerterList,
+        Frontend.RunMultipleAction(VdcActionType.PlugUnplugVmNic, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {

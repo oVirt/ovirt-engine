@@ -330,7 +330,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___HibernateVm();
 
-	String VdcActionType___HotPlugUnplugVmNic();
+	String VdcActionType___PlugUnplugVmNic();
 
 	String VdcActionType___LoginAdminUser();
 

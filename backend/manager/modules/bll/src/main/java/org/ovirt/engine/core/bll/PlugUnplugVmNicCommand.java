@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.common.action.HotPlugUnplugVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.action.PlugUnplugVmNicParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -17,11 +17,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * update the device, if it is Up - HotPlug / HotUnPlug the virtual network interface
  */
 @NonTransactiveCommandAttribute
-public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> extends VmCommand<T> {
+public class PlugUnplugVmNicCommand<T extends PlugUnplugVmNicParameters> extends VmCommand<T> {
 
     private VmDevice vmDevice;
 
-    public HotPlugUnplugVmNicCommand(T parameters) {
+    public PlugUnplugVmNicCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getVmId());
     }
@@ -37,7 +37,7 @@ public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> e
                 returnValue = canPerformHotPlug();
             }
         } else {
-            addCanDoActionMessage(VdcBllMessages.HOT_PLUG_NIC_VM_STATUS_ILLEGAL);
+            addCanDoActionMessage(VdcBllMessages.PLUG_UNPLUG_NIC_VM_STATUS_ILLEGAL);
             returnValue = false;
         }
 
