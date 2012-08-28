@@ -1861,6 +1861,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot activate/deactivate interface due to VM status. The VM status must be Down or Up.")
     String PLUG_UNPLUG_NIC_VM_STATUS_ILLEGAL();
 
+    @DefaultStringValue("The Network does not exist on the host the VM is running on.\n Either add the Network to the Host, do not activate the Interface or migrate the VM to a Host that has this Network.")
+    String PLUG_UNPLUG_NETWORK_NOT_IN_VDS();
+
     @DefaultStringValue("Disk is already deactivated.")
     String HOT_UNPLUG_DISK_IS_NOT_PLUGGED();
 
