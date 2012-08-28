@@ -31,9 +31,9 @@ public class PlugUnplugVmNicCommand<T extends PlugUnplugVmNicParameters> extends
         boolean returnValue = true;
 
         if (isActivateDeactivateAllowedForVmStatus(getVm().getstatus())) {
-            setVdsId(getVm().getrun_on_vds().getValue());
             // HotPlug in the host needs to be called only if the Vm is UP
             if (VmHandler.isHotPlugNicAllowedForVmStatus(getVm().getstatus())) {
+                setVdsId(getVm().getrun_on_vds().getValue());
                 returnValue = canPerformHotPlug();
             }
         } else {
@@ -57,8 +57,7 @@ public class PlugUnplugVmNicCommand<T extends PlugUnplugVmNicParameters> extends
         // HotPlug in the host is called only if the Vm is UP
         if (VmHandler.isHotPlugNicAllowedForVmStatus(getVm().getstatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),
-                    new HotPlugUnplgNicVDSParameters(getVm().getrun_on_vds().getValue(),
-                            getVm().getId(),
+                    new HotPlugUnplgNicVDSParameters(getVdsId(), getVm().getId(),
                             DbFacade.getInstance().getVmNetworkInterfaceDAO().get(getParameters().getNicId()),
                             vmDevice));
         }
