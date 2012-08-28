@@ -409,9 +409,11 @@ public class VmDeviceUtils {
     private static void updateUSBSlots(VmBase oldVm, VmBase newVm) {
         UsbPolicy oldUsbPolicy = UsbPolicy.DISABLED;
         UsbPolicy newUsbPolicy = newVm.getusb_policy();
+        int currentNumberOfSlots = 0;
 
         if (oldVm != null) {
             oldUsbPolicy = oldVm.getusb_policy();
+            currentNumberOfSlots = getUsbRedirectDevices(oldVm).size();
         }
 
         final int usbSlots = Config.<Integer> GetValue(ConfigValues.NumberOfUSBSlots);
@@ -424,13 +426,12 @@ public class VmDeviceUtils {
                 addUsbSlots(newVm, usbSlots);
             }
         }
-        // Remove USB slots and controllers
-        else if (oldUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE) && !newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {
+        // Remove USB slots and controllers in case we are either in disabled policy or legacy one
+        else if (newUsbPolicy.equals(UsbPolicy.DISABLED) || newUsbPolicy.equals(UsbPolicy.ENABLED_LEGACY)) {
             removeUsbControllers(newVm);
             removeUsbSlots(newVm);
+        // if the USB policy is enabled (and was enabled before), we need to update the number of slots
         } else if (newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {
-            final int currentNumberOfSlots = getUsbRedirectDevices(oldVm).size();
-
             if (currentNumberOfSlots < usbSlots) {
                 // Add slots
                 if (currentNumberOfSlots == 0) {

@@ -1625,12 +1625,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());
-        tempVar.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         tempVar.setis_auto_suspend(false);
         tempVar.setis_stateless((Boolean) model.getIsStateless().getEntity());
         tempVar.setdefault_boot_sequence(model.getBootSequence());
         tempVar.setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
         tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
+        tempVar.setusb_policy(vm.getusb_policy());
         tempVar.setinitrd_url(vm.getinitrd_url());
         tempVar.setkernel_url(vm.getkernel_url());
         tempVar.setkernel_params(vm.getkernel_params());
