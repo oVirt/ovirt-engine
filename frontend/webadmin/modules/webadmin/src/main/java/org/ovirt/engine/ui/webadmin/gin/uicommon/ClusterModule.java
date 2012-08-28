@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
@@ -18,10 +18,10 @@ import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
-import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
@@ -88,15 +88,15 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<ClusterListModel, ClusterPolicyModel> getClusterPolicyProvider(ClientGinjector ginjector,
+    public DetailModelProvider<ClusterListModel, ClusterGeneralModel> getClusterPolicyProvider(ClientGinjector ginjector,
             final Provider<ClusterPolicyPopupPresenterWidget> popupProvider) {
-        return new DetailTabModelProvider<ClusterListModel, ClusterPolicyModel>(ginjector,
+        return new DetailTabModelProvider<ClusterListModel, ClusterGeneralModel>(ginjector,
                 ClusterListModel.class,
-                ClusterPolicyModel.class) {
+                ClusterGeneralModel.class) {
             @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterPolicyModel source,
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterGeneralModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getEditCommand()) {
+                if (lastExecutedCommand == getModel().getEditPolicyCommand()) {
                     return popupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);

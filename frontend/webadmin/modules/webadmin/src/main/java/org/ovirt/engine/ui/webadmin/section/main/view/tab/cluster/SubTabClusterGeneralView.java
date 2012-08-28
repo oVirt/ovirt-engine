@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -16,8 +15,7 @@ import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
-import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
-import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
@@ -36,13 +34,13 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterPolicyModel>
-        implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterPolicyModel> {
+public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterGeneralModel>
+        implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterGeneralModel> {
 
     private static final String MAX_COLOR = "#4E9FDD"; //$NON-NLS-1$
     private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
-    interface Driver extends SimpleBeanEditorDriver<ClusterPolicyModel, SubTabClusterGeneralView> {
+    interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, SubTabClusterGeneralView> {
         Driver driver = GWT.create(Driver.class);
     }
 
@@ -109,7 +107,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     private final ApplicationConstants constants;
 
     @Inject
-    public SubTabClusterGeneralView(final DetailModelProvider<ClusterListModel, ClusterPolicyModel> modelProvider,
+    public SubTabClusterGeneralView(final DetailModelProvider<ClusterListModel, ClusterGeneralModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
         this.constants = constants;
@@ -134,7 +132,6 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         localize(constants);
         Driver.driver.initialize(this);
         buildVolumeDetailsPanel();
-        applyModeCustomizations();
     }
 
     private void localize(ApplicationConstants constants) {
@@ -163,7 +160,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         editPolicyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                getDetailModel().ExecuteCommand(getDetailModel().getEditCommand());
+                getDetailModel().ExecuteCommand(getDetailModel().getEditPolicyCommand());
             }
         });
     }
@@ -190,35 +187,35 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         formBuilder.addFormItem(new FormItem(constants.clusterVolumesDownLabel(), noOfVolumesDown, 2, 0));
     }
 
-    private void applyModeCustomizations()
-    {
-        volumeSummaryPanel.setVisible(ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
-        policyPanel.setVisible(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
-    }
-
     @Override
     public void setMainTabSelectedItem(VDSGroup selectedItem) {
         Driver.driver.edit(getDetailModel());
         formBuilder.showForm(getDetailModel());
-        if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
-            setVisibility(true);
-            leftSlider.setValue(selectedItem.getlow_utilization());
-            rightSlider.setValue(selectedItem.gethigh_utilization());
-            policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " " //$NON-NLS-1$
-                    + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel()); //$NON-NLS-1$
-            policyFieldLabel.setText(constants.clusterPolicyPowSaveLabel());
-        } else if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
-            setVisibility(true);
-            leftSlider.setVisible(false);
-            leftDummySlider.setVisible(true);
-            rightSlider.setValue(selectedItem.gethigh_utilization());
-            policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " " //$NON-NLS-1$
-                    + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel()); //$NON-NLS-1$
-            policyFieldLabel.setText(constants.clusterPolicyEvenDistLabel());
-        } else { // also for VdsSelectionAlgorithm.None
-            setVisibility(false);
-            policyFieldLabel.setText(constants.clusterPolicyNoneLabel());
+        if(selectedItem.supportsVirtService())
+        {
+            if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
+                setVisibility(true);
+                leftSlider.setValue(selectedItem.getlow_utilization());
+                rightSlider.setValue(selectedItem.gethigh_utilization());
+                policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " " //$NON-NLS-1$
+                        + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel()); //$NON-NLS-1$
+                policyFieldLabel.setText(constants.clusterPolicyPowSaveLabel());
+            } else if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
+                setVisibility(true);
+                leftSlider.setVisible(false);
+                leftDummySlider.setVisible(true);
+                rightSlider.setValue(selectedItem.gethigh_utilization());
+                policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " " //$NON-NLS-1$
+                        + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel()); //$NON-NLS-1$
+                policyFieldLabel.setText(constants.clusterPolicyEvenDistLabel());
+            } else { // also for VdsSelectionAlgorithm.None
+                setVisibility(false);
+                policyFieldLabel.setText(constants.clusterPolicyNoneLabel());
+            }
         }
+
+        policyPanel.setVisible(selectedItem.supportsVirtService());
+        volumeSummaryPanel.setVisible(selectedItem.supportsGlusterService());
     }
 
 }
