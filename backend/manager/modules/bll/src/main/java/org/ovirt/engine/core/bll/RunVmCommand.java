@@ -259,9 +259,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 ResumeVm();
             } else { // run vm
                 if (!_isRerun && Boolean.TRUE.equals(getParameters().getRunAsStateless())
-                        && !getVm().getDiskList().isEmpty()
                         && getVm().getstatus() != VMStatus.Suspended) {
-                    StatelessVmTreatment();
+                    if (getVm().getDiskList().isEmpty()) { // If there are no snappable disks, there is no meaning for
+                                                           // running as stateless, log a warning and run normally
+                        warnIfNotAllDisksPermitSnapshots();
+                        RunVm();
+                    }
+                    else {
+                        StatelessVmTreatment();
+                    }
                 } else if (!getParameters().getIsInternal() && !_isRerun
                         && getVm().getstatus() != VMStatus.Suspended
                         && statelessSnapshotExistsForVm()) {
