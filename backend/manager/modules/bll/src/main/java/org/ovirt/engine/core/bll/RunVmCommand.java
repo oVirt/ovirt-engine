@@ -724,7 +724,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // the "beginning step" of the child command.
             runStatelessVmCtx.setStep(runStatelessStep);
             setSucceeded(getBackend()
-                    .runInternalAction(VdcActionType.RunVm, getParameters(), new CommandContext(runStatelessVmCtx))
+                    .runInternalAction(getActionType(), getParameters(), new CommandContext(runStatelessVmCtx))
                     .getSucceeded());
             if (!getSucceeded()) {
                 // could not run the vm don't try to run the end action
