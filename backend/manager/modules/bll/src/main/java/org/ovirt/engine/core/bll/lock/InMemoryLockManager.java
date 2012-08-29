@@ -85,22 +85,12 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         validateLockForAcquireAndWait(lock);
         globalLock.lock();
         try {
-            boolean firstRun = true;
             while (!acquireLockInternal(lock)) {
-                // In case of first try, just wait
-                if (firstRun) {
-                    firstRun = false;
-                } else {
-                    // This is a second try, we did not successes, but possible that release signal for other waiting
-                    // thread
-                    // so try to signal to other threads
-                    releasedLock.signalAll();
-                }
                 log.infoFormat("Failed to acquire lock and wait lock {0}", lock);
                 releasedLock.await();
             }
         } catch (InterruptedException e) {
-            releasedLock.signal();
+
         } finally {
             globalLock.unlock();
         }
