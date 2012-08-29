@@ -100,7 +100,7 @@ FILE_SYSCTL="/etc/sysctl.conf"
 
 # ISO
 ISO_DISPLAY_NAME = "ISO_DOMAIN"
-DEFAULT_ISO_EXPORT_PATH = "/usr/local/exports/iso"
+DEFAULT_ISO_EXPORT_PATH = "/var/lib/exports/iso"
 
 EXEC_IPTABLES="/sbin/iptables"
 EXEC_SLIMMING_PROFILE="%s/ovirt-engine/scripts/slimmingEAP51.sh" % DIR_USR_SHARE
