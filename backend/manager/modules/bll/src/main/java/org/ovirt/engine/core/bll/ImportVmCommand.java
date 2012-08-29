@@ -996,7 +996,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
         List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
-        for (Disk disk : getVm().getDiskMap().values()) {
+        for (Disk disk : getParameters().getVm().getDiskMap().values()) {
             if(disk instanceof DiskImage){
                 DiskImage diskImage = (DiskImage)disk;
                 list.add(new StorageQuotaValidationParameter(diskImage.getQuotaId(),
