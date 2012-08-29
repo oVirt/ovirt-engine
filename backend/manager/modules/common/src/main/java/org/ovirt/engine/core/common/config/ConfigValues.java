@@ -1400,7 +1400,16 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(
             "dmidecode | awk ' /UUID/{ print $2; } ' | tr '\n' '_' && " +
-            "cat /sys/class/net/*/address | sed -e '/00:00:00:00/d' -e '/^$/d' | " +
+            "(" +
+                "find /sys/class/net/*/device | while read f; do " +
+                    "cat \"$(dirname \"$f\")/address\"; " +
+                "done; " +
+                "[ -d /proc/net/bonding ] && " +
+                    "find /proc/net/bonding -type f -exec cat '{}' \\; | " +
+                    "grep 'Permanent HW addr:' | " +
+                    "sed 's/.* //' " +
+            ") | sed -e '/00:00:00:00/d' -e '/^$/d' | " +
+            "sed -e '/00:00:00:00/d' -e '/^$/d' | " +
             "sort -u | head -n 1"
     )
     BootstrapNodeIDCommand(372),
