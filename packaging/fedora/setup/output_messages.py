@@ -31,6 +31,7 @@ INFO_SET_DB_SECURITY="Setting Database Security"
 INFO_SET_DB_CONFIGURATION="Setting Database Configuration"
 INFO_CONFIG_OVIRT_ENGINE="Configuring oVirt-engine"
 INFO_CONFIG_HTTPD="Configuring HTTPD"
+INFO_FIND_JAVA="Configuring JVM"
 INFO_CREATE_CA="Creating CA"
 INFO_CREATE_DB="Creating Database"
 INFO_UPGRADE_DB="Upgrading Database Schema"
@@ -390,6 +391,9 @@ ERR_MOD_SSL_NOT_INSTALLED="Error: mod_ssl is not installed in the system"
 
 # edit ssl.conf
 ERR_EXP_UPD_HTTPD_SSL_CONFIG="Failed updating ssl configuration file %s"
+
+# Search of JVM:
+ERR_EXP_CANT_FIND_SUPPORTED_JAVA="Error: Can't find any supported JVM"
 
 # create ovirt-engine.conf
 ERR_CREATE_OVIRT_HTTPD_CONF="Failed creating ovirt-engine.conf file %s"

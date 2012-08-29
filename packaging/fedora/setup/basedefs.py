@@ -175,3 +175,12 @@ ovirt-engine-tools-common
 ovirt-engine-userportal
 ovirt-engine-webadmin-portal
 """
+
+# The list of directories where JVMs will be searched for:
+JAVA_DIRS = [
+    "/usr/lib/jvm",
+]
+
+# Accepted JVMs should give an string matching this when executed with
+# the -version option:
+JAVA_VERSION = "1.7.0"

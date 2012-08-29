@@ -948,11 +948,14 @@ def generateMacRange():
         return basedefs.CONST_DEFAULT_MAC_RANGE
 
 
-def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, fqdn, http, https):
+def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, fqdn, http, https, javaHome):
     # Load the file:
     logging.debug("Loading text file handler")
     handler = TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
     handler.open()
+
+    # Save the Java home:
+    handler.editParam("JAVA_HOME", javaHome)
 
     handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
     handler.editParam("ENGINE_DB_URL", dbUrl)
@@ -1104,3 +1107,105 @@ def setHttpPortsToNonProxyDefault(controller):
     httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTP_PORT)
     httpParam = controller.getParamByName("HTTPS_PORT")
     httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTPS_PORT)
+
+def checkJavaVersion(version):
+    # Check that the version is supported:
+    if not version.startswith(basedefs.JAVA_VERSION):
+        logging.debug("Java version \"%s\" is not supported, it should start with \"%s\"." % (version, basedefs.JAVA_VERSION))
+        return False
+
+    # If we are here it is an acceptable java version:
+    return True
+
+def checkJvm(jvmPath):
+    # Check that it contains the Java launcher:
+    javaLauncher = os.path.join(jvmPath, "bin", "java")
+    if not os.path.exists(javaLauncher):
+        logging.debug("JVM path \"%s\" doesn't contain the Java launcher." % jvmPath)
+        return False
+
+    # Check that Java launcher is executable:
+    if not os.access(javaLauncher, os.X_OK):
+        logging.debug("The Java launcher \"%s\" isn't executable." % javaLauncher)
+        return False
+
+    # Invoke the Java launcher to check what is the version number:
+    javaCmd = [
+        javaLauncher,
+        "-version",
+    ]
+    javaOut, javaExit = execCmd(cmdList=javaCmd, failOnError=True, msg=output_messages.ERR_RC_CODE)
+
+    # Extract version number:
+    match = re.search(r'^java version "([^"]*)"$', str(javaOut), re.MULTILINE)
+    if not match:
+        logging.debug("The Java launcher \"%s\" doesn't provide the version number." % javaLauncher)
+        return False
+    javaVersion = match.group(1)
+
+    # Check that the version is supported:
+    if not checkJavaVersion(javaVersion):
+        logging.debug("The java version \"%s\" is not supported." % javaVersion)
+        return False
+
+    # Check that it is an OpenJDK:
+    match = re.search(r'^OpenJDK .*$', str(javaOut), re.MULTILINE)
+    if not match:
+        logging.debug("The Java launcher \"%s\" is not OpenJDK." % javaLauncher)
+        return False
+
+    # It passed all the checks, so it is valid JVM:
+    return True
+
+def checkJdk(jvmPath):
+    # We assume that this JVM path has already been checked and that it
+    # contains a valid JVM, so we only need to check that it also
+    # contains a Java compiler:
+    javaCompiler = os.path.join(jvmPath, "bin", "javac")
+    if not os.path.exists(javaCompiler):
+        logging.debug("JVM path \"%s\" doesn't contain the Java compiler." % jvmPath)
+        return False
+
+    # It passed all the checks, so it is a JDK:
+    return True
+
+def findJavaHome():
+    # Find links in the search directories that point to real things,
+    # not to other symlinks (this is to avoid links that point to things
+    # that can be changed by the user, specially "alternatives" managed
+    # links):
+    jvmLinks = []
+    for javaDir in basedefs.JAVA_DIRS:
+        for fileName in os.listdir(javaDir):
+            filePath = os.path.join(javaDir, fileName)
+            if os.path.islink(filePath):
+                targetName = os.readlink(filePath)
+                if targetName.startswith("/"):
+                    targetPath = targetName
+                else:
+                    targetPath = os.path.join(javaDir, targetName)
+                if not os.path.islink(targetPath):
+                    jvmLinks.append(filePath)
+
+    # For each possible JVM path check that it really contain a JVM and
+    # that the version is supported:
+    jvmLinks = [x for x in jvmLinks if checkJvm(x)]
+
+    # We prefer JRE over JDK, mainly because it is more stable, I mean,
+    # a JRE will be always present if there is a JDK, but not the other
+    # way around:
+    jreLinks = [x for x in jvmLinks if not checkJdk(x)]
+    if jreLinks:
+        jvmLinks = jreLinks
+
+    # Sort the list alphabetically (this is only to get a predictable
+    # result):
+    jvmLinks.sort()
+
+    # Return the first link:
+    javaHome = None
+    if jvmLinks:
+        javaHome = jvmLinks[0]
+
+    # Return the result:
+    return javaHome

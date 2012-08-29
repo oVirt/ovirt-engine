@@ -113,6 +113,8 @@ def initSequences():
                         'condition_match' : [],
                         'steps'           : [ { 'title'     : output_messages.INFO_CONFIG_OVIRT_ENGINE,
                                                 'functions' : [setMaxSharedMemory] },
+                                              { 'title'     : output_messages.INFO_FIND_JAVA,
+                                                'functions' : [_findJavaHome]},
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
                                               { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
@@ -1849,7 +1851,8 @@ def _editSysconfig():
                               dbUser=utils.getDbUser(),
                               fqdn=controller.CONF["HOST_FQDN"],
                               http=controller.CONF["HTTP_PORT"],
-                              https=controller.CONF["HTTPS_PORT"])
+                              https=controller.CONF["HTTPS_PORT"],
+                              javaHome=controller.CONF["JAVA_HOME"])
 
 def startRhevmDbRelatedServices():
     """
@@ -1866,6 +1869,16 @@ def startRhevmDbRelatedServices():
     if rc != 0:
         logging.warn("Failed to start rhevm-notifierd")
         controller.MESSAGES.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
+
+def _findJavaHome():
+    # Find it:
+    javaHome = utils.findJavaHome()
+    if not javaHome:
+        logging.error("Can't find any supported JVM.")
+        raise Exception(output_messages.ERR_EXP_CANT_FIND_SUPPORTED_JAVA)
+
+    # Save the result:
+    controller.CONF["JAVA_HOME"] = javaHome
 
 def isSecondRun():
     keystore = os.path.join(basedefs.DIR_OVIRT_PKI, ".keystore")
