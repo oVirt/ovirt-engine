@@ -166,7 +166,7 @@ def initSequences():
                         'condition'       : [utils.compareStrIgnoreCase, controller.CONF["CONFIG_NFS"], "yes"],
                         'condition_match' : [True],
                         'steps'           : [ { 'title'     : output_messages.INFO_CFG_NFS,
-                                                'functions' : [_configNfsShare] } ]
+                                                'functions' : [_configNfsShare, _loadFilesToIsoDomain] } ]
                        },
                       { 'description'     : 'Final Steps',
                         'condition'       : [],
