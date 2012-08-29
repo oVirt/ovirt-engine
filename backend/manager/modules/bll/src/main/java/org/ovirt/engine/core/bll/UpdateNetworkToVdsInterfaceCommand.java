@@ -36,7 +36,6 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
     private VDSReturnValue retVal;
     private boolean editNetworkDone = false;
     private boolean editNetworkThreadFinish = false;
-    private String oldNetworkName;
 
     public UpdateNetworkToVdsInterfaceCommand(T parameters) {
         super(parameters);
@@ -62,21 +61,13 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         }
 
-        NetworkVdsmVDSCommandParameters parameters =
-                new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                        getParameters().getNetwork().getname(),
-                        getParameters().getNetwork().getvlan_id(),
-                        getParameters().getBondName(),
-                        interfaceNames.toArray(new String[] {}),
-                        address,
-                        subnet,
-                        gateway,
-                        getParameters().getNetwork().getstp(),
-                        getParameters().getBondingOptions(),
-                        getParameters().getBootProtocol());
-
+        NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
+                getParameters().getNetwork().getname(), getParameters().getNetwork().getvlan_id(), getParameters()
+                        .getBondName(), interfaceNames.toArray(new String[] {}), address, subnet, gateway,
+                getParameters().getNetwork().getstp(), getParameters().getBondingOptions(), getParameters()
+                        .getBootProtocol());
         parameters.setVmNetwork(getParameters().getNetwork().isVmNetwork());
-        parameters.setOldNetworkName(oldNetworkName);
+        parameters.setOldNetworkName(getParameters().getOldNetworkName());
         parameters.setConnectionTimeout(Config.<Integer> GetValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds));
         parameters.setCheckConnectivity(getParameters().getCheckConnectivity());
 
@@ -153,33 +144,31 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
     protected boolean canDoAction() {
         String ifaceGateway = null;
         interfaces = getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
-        VdsNetworkInterface updatedIface = null;
 
         // check that interface exists
         for (final VdsNetworkInterface i : getParameters().getInterfaces()) {
-            updatedIface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
+            VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface x) {
                     return x.getName().equals(i.getName());
                 }
             });
-            if (updatedIface == null) {
+            if (iface == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
                 return false;
             }
-            ifaceGateway = updatedIface.getGateway();
+            ifaceGateway = iface.getGateway();
         }
 
-        // obtain the network name from the host interface and check that the old network name is not null
-        oldNetworkName = StringUtils.isEmpty(updatedIface.getNetworkName()) ? null : updatedIface.getNetworkName();
-        if (oldNetworkName == null) {
+        // check that the old network name is not null
+        if (StringUtils.isEmpty(getParameters().getOldNetworkName())) {
             addCanDoActionMessage(VdcBllMessages.NETWROK_OLD_NETWORK_NOT_SPECIFIED);
             return false;
         }
 
         VDS vds = getVdsDAO().get(getParameters().getVdsId());
         if (vds.getstatus() != VDSStatus.Maintenance) {
-            // check that the new network doesn't exist in host
+            // check that the old network exists in host
             VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface i) {
@@ -195,7 +184,22 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         }
 
-        if (StringUtils.equals(oldNetworkName, NetworkUtils.getEngineNetwork())
+        // check that the old network exists in host
+        VdsNetworkInterface ifacenet = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
+            @Override
+            public boolean eval(VdsNetworkInterface i) {
+                if (i.getNetworkName() != null) {
+                    return i.getNetworkName().equals(getParameters().getOldNetworkName());
+                }
+                return false;
+            }
+        });
+        if (ifacenet == null) {
+            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS);
+            return false;
+        }
+
+        if (StringUtils.equals(getParameters().getOldNetworkName(), NetworkUtils.getEngineNetwork())
                 && !StringUtils.equals(getParameters().getNetwork().getname(), NetworkUtils.getEngineNetwork())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
