@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -29,6 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -41,6 +44,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
+    private EngineLock snapshotsEngineLock;
 
     public RemoveImageCommand(T parameters) {
         super(parameters);
@@ -80,7 +84,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             if (getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
                     && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport
                     && getParameters().getParentCommand() != VdcActionType.RemoveDisk) {
-                removeImageFromDB();
+                removeImageFromDB(false);
             }
         } else {
             log.warn("DiskImage is null, nothing to remove");
@@ -98,45 +102,84 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p);
     }
 
-    private void removeImageFromDB() {
+    private void removeImageFromDB(boolean isLockOnSnapshotsNeeded) {
         final DiskImage diskImage = getDiskImage();
+        final List<Snapshot> updatedSnapshots;
+        final boolean shouldPerformOpOnVmSnapshots = isLockOnSnapshotsNeeded && !diskImage.isShareable();
 
-        final List<Snapshot> updatedSnapshots = prepareSnapshotConfigWithoutImage(diskImage.getId());
-        TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        getDiskImageDynamicDAO().remove(diskImage.getImageId());
-                        Guid imageTemplate = diskImage.getit_guid();
-                        Guid currentGuid = diskImage.getImageId();
-                        // next 'while' statement removes snapshots from DB only (the
-                        // 'DeleteImageGroup'
-                        // VDS Command should take care of removing all the snapshots from
-                        // the storage).
-                        while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
-                            RemoveChildren(currentGuid);
+        try {
+            if (shouldPerformOpOnVmSnapshots) {
+                VM vm = getVmForNonShareableDiskImage(diskImage);
+                lockVmSnapshotsWithWait(vm);
+                updatedSnapshots = prepareSnapshotConfigWithoutImage(diskImage.getId());
+            } else {
+                updatedSnapshots = Collections.emptyList();
+            }
 
-                            DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
-                            if (image != null) {
-                                RemoveSnapshot(image);
-                                currentGuid = image.getParentId();
-                            } else {
-                                currentGuid = Guid.Empty;
-                                log.warnFormat(
-                                        "'image' (snapshot of image '{0}') is null, cannot remove it.",
-                                        diskImage.getImageId());
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Object>() {
+                        @Override
+                        public Object runInTransaction() {
+                            getDiskImageDynamicDAO().remove(diskImage.getImageId());
+                            Guid imageTemplate = diskImage.getit_guid();
+                            Guid currentGuid = diskImage.getImageId();
+                            // next 'while' statement removes snapshots from DB only (the
+                            // 'DeleteImageGroup'
+                            // VDS Command should take care of removing all the snapshots from
+                            // the storage).
+                            while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
+                                RemoveChildren(currentGuid);
+
+                                DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
+                                if (image != null) {
+                                    RemoveSnapshot(image);
+                                    currentGuid = image.getParentId();
+                                } else {
+                                    currentGuid = Guid.Empty;
+                                    log.warnFormat(
+                                            "'image' (snapshot of image '{0}') is null, cannot remove it.",
+                                            diskImage.getImageId());
+                                }
                             }
-                        }
 
-                        getBaseDiskDao().remove(diskImage.getId());
-                        getVmDeviceDAO().remove(new VmDeviceId(diskImage.getId(), null));
-                        for (Snapshot s : updatedSnapshots) {
-                            getSnapshotDao().update(s);
-                        }
+                            getBaseDiskDao().remove(diskImage.getId());
+                            getVmDeviceDAO().remove(new VmDeviceId(diskImage.getId(), null));
 
-                        return null;
-                    }
-                });
+                            for (Snapshot s : updatedSnapshots) {
+                                getSnapshotDao().update(s);
+                            }
+
+                            return null;
+                        }
+                    });
+        } finally {
+            if (snapshotsEngineLock != null) {
+                getLockManager().releaseLock(snapshotsEngineLock);
+            }
+        }
+    }
+
+    private void lockVmSnapshotsWithWait(VM vm) {
+        snapshotsEngineLock = new EngineLock();
+        Map<String, String> snapshotsExlusiveLockMap = Collections.singletonMap(vm.getId().toString(), LockingGroup.VM_SNAPSHOTS.name());
+        snapshotsEngineLock.setExclusiveLocks(snapshotsExlusiveLockMap);
+        getLockManager().acquireLockWait(snapshotsEngineLock);
+    }
+
+    /**
+     * this method returns the vm that a non shareable disk is attached to
+     * or null is the disk is unttached to any vm,
+     * @param disk
+     * @return
+     */
+    private VM getVmForNonShareableDiskImage(DiskImage disk) {
+        if (!disk.isShareable()) {
+            List<VM> vms = getVmDAO().getVmsListForDisk(disk.getId());
+            if (!vms.isEmpty()) {
+                return vms.get(0);
+            }
+        }
+        return null;
     }
 
     private void GetImageChildren(Guid snapshot, List<Guid> children) {
@@ -231,7 +274,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     private void endCommand() {
         if (getParameters().getRemoveFromDB()) {
-            removeImageFromDB();
+            removeImageFromDB(true);
         } else {
             getImageStorageDomainMapDao().remove(
                     new image_storage_domain_map_id(getParameters().getImageId(),
