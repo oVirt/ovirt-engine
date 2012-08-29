@@ -54,6 +54,7 @@ import org.ovirt.engine.api.restapi.resource.BackendTemplatesResource;
 import org.ovirt.engine.api.restapi.resource.BackendUsersResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmsResource;
+import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.security.auth.LoginValidator;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
@@ -148,6 +149,9 @@ public class BackendApplication extends Application {
         singletons.add(new RequestPayloadLogger());
         singletons.add(new ResponseStatusLogger());
         singletons.add(new ResponsePayloadLogger());
+
+        // Intercepter that maps exceptions cause by illegal guid string to 400 status (BAD_REQUEST).
+        singletons.add(new MalformedIdExceptionMapper());
     }
 
     private void addResource(final BackendResource resource) {

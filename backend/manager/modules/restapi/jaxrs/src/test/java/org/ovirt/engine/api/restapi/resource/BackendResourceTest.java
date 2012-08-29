@@ -9,6 +9,9 @@ import java.util.List;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.restapi.resource.BaseBackendResource.MalformedIdException;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -66,6 +69,16 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         Action action = new Action();
         action.setRootPassword(NAMES[2]);
         resource.install(action);
+    }
+
+    @Test(expected = MalformedIdException.class)
+    public void testBadGuidValidation() throws Exception {
+        setUpGetEntityExpectations(false, false);
+        Host host = new Host();
+        host.setCluster(new Cluster());
+        host.getCluster().setId("!!!");
+        control.replay();
+        resource.update(host);
     }
 
     @Override

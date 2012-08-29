@@ -241,8 +241,21 @@ public class BaseBackendResource {
         return list;
     }
 
+    public static class MalformedIdException extends IllegalArgumentException {
+
+        private static final long serialVersionUID = 1L;
+
+        public MalformedIdException(IllegalArgumentException e) {
+            super(e);
+        }
+    }
+
     protected Guid asGuid(String id) {
-        return new Guid(id);
+        try {
+            return new Guid(id);
+        }catch (IllegalArgumentException e) {
+            throw new MalformedIdException(e);
+        }
     }
 
     protected Guid asGuid(NGuid nGuid) {
