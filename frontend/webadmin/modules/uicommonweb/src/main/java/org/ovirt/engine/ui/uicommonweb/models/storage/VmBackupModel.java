@@ -117,6 +117,8 @@ public class VmBackupModel extends ManageBackupModel {
             return;
         }
 
+        model.StartProgress(null);
+
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.Model = this;
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -134,8 +136,6 @@ public class VmBackupModel extends ManageBackupModel {
                         list.add(new RemoveVmFromImportExportParamenters(vm,
                                 backupModel.getEntity().getId(), pool.getId()));
                     }
-
-                    backupModel.StartProgress(null);
 
                     Frontend.RunMultipleAction(
                             VdcActionType.RemoveVmFromImportExport, list,
