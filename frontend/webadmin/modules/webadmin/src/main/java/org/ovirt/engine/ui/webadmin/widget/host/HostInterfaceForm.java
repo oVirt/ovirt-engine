@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
@@ -15,9 +16,11 @@ import com.google.gwt.user.client.ui.Widget;
 public class HostInterfaceForm extends Composite {
 
     private final Grid grid;
+    private boolean isSelectionAvailable;
 
     @SuppressWarnings("unchecked")
-    public HostInterfaceForm(HostInterfaceListModel listModel) {
+    public HostInterfaceForm(final HostInterfaceListModel listModel) {
+        isSelectionAvailable = listModel.getIsSelectionAvailable();
         grid = new Grid(1, 3);
         grid.getColumnFormatter().setWidth(0, "65%"); //$NON-NLS-1$
         grid.getColumnFormatter().setWidth(1, "11%"); //$NON-NLS-1$
@@ -39,10 +42,24 @@ public class HostInterfaceForm extends Composite {
                 showModels(interfaceLineModels);
             }
         });
+
+        listModel.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                if ("isSelectionAvailable".equals(propName)) { //$NON-NLS-1$
+                    isSelectionAvailable = listModel.getIsSelectionAvailable();
+
+                    if (listModel.getItems()!=null){
+                        showModels((List<HostInterfaceLineModel>) listModel.getItems());
+                    }
+                }
+            }
+        });
     }
 
     InterfacePanel createInterfacePanel(HostInterfaceLineModel lineModel) {
-        InterfacePanel panel = new InterfacePanel();
+        InterfacePanel panel = new InterfacePanel(isSelectionAvailable);
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         panel.addInterfaces(lineModel.getInterfaces());
@@ -50,14 +67,14 @@ public class HostInterfaceForm extends Composite {
     }
 
     BondPanel createBondPanel(HostInterfaceLineModel lineModel) {
-        BondPanel panel = new BondPanel(lineModel);
+        BondPanel panel = new BondPanel(lineModel, isSelectionAvailable);
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         return panel;
     }
 
     VLanPanel createVLanPanel(HostInterfaceLineModel lineModel) {
-        VLanPanel panel = new VLanPanel();
+        VLanPanel panel = new VLanPanel(isSelectionAvailable);
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         panel.addVLans(lineModel);

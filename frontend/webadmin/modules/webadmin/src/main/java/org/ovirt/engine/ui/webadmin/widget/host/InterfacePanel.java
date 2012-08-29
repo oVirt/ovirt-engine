@@ -18,18 +18,26 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InterfacePanel extends VerticalPanel {
 
+    private final boolean isSelectionAvailable;
+
+    public InterfacePanel(boolean isSelectionEnabled) {
+        super();
+        this.isSelectionAvailable = isSelectionEnabled;
+    }
     public void addInterfaces(List<HostInterface> interfaces) {
         for (HostInterface hostInterface : interfaces) {
-            add(new InterfaceElementPanel(hostInterface));
+            add(new InterfaceElementPanel(hostInterface, isSelectionAvailable));
         }
     }
-
 }
 
 class InterfaceElementPanel extends TogglePanel {
 
-    public InterfaceElementPanel(HostInterface hostInterface) {
+    private final boolean isSelectionAvailable;
+
+    public InterfaceElementPanel(HostInterface hostInterface, boolean isSelectionEnabled) {
         super(hostInterface);
+        this.isSelectionAvailable = isSelectionEnabled;
         add(createRow(hostInterface));
     }
 
@@ -55,7 +63,9 @@ class InterfaceElementPanel extends TogglePanel {
         // Check box and interface status icon
         row.setWidget(0, 0, new FlowPanel() {
             {
-                add(getCheckBox());
+                if (isSelectionAvailable){
+                    add(getCheckBox());
+                }
 
                 add(new InterfaceStatusImage(hostInterface.getStatus(),
                         ClientGinjectorProvider.instance().getApplicationResources()));

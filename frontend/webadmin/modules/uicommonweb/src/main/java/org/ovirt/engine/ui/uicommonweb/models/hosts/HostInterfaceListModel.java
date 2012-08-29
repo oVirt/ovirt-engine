@@ -139,6 +139,20 @@ public class HostInterfaceListModel extends SearchableListModel
         privateOriginalItems = value;
     }
 
+    private boolean isSelectionAvailable;
+
+    public boolean getIsSelectionAvailable() {
+        return isSelectionAvailable;
+    }
+
+    public void setSelectionAvailable(boolean value) {
+        if (isSelectionAvailable != value)
+        {
+            isSelectionAvailable = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("isSelectionAvailable")); //$NON-NLS-1$
+        }
+    }
+
     @Override
     public Iterable getItems()
     {
@@ -2304,6 +2318,8 @@ public class HostInterfaceListModel extends SearchableListModel
             getBondCommand().setIsAvailable(isLessThan31);
             getDetachCommand().setIsAvailable(isLessThan31);
             getEditManagementNetworkCommand().setIsAvailable(isLessThan31) ;
+
+            setSelectionAvailable(isLessThan31);
         }
     }
 

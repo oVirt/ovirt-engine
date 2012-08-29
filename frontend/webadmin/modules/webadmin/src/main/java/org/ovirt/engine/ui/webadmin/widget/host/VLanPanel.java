@@ -21,9 +21,15 @@ public class VLanPanel extends VerticalPanel {
     public static final String CHECK_BOX_COLUMN_WIDTH = "50%"; //$NON-NLS-1$
     public static final String NETWORK_NAME_COLUMN_WIDTH = "50%"; //$NON-NLS-1$
 
+    private final boolean isSelectionAvailable;
+
+    public VLanPanel(boolean isSelectionEnabled) {
+        super();
+        this.isSelectionAvailable = isSelectionEnabled;
+    }
     public void addVLans(HostInterfaceLineModel lineModel) {
         for (HostVLan hostVLan : lineModel.getVLans()) {
-            add(new VLanElementPanel(hostVLan));
+            add(new VLanElementPanel(hostVLan, isSelectionAvailable));
         }
 
         add(new VLanElementPanel(lineModel));
@@ -33,8 +39,11 @@ public class VLanPanel extends VerticalPanel {
 
 class VLanElementPanel extends TogglePanel {
 
-    public VLanElementPanel(HostVLan hostVLan) {
+    private boolean isSelectionAvailable = false;
+
+    public VLanElementPanel(HostVLan hostVLan, boolean isSelectionEnabled) {
         super(hostVLan);
+        this.isSelectionAvailable = isSelectionEnabled;
         add(createRow(hostVLan));
     }
 
@@ -61,7 +70,9 @@ class VLanElementPanel extends TogglePanel {
         HorizontalPanel chekboxPanel = new HorizontalPanel();
         chekboxPanel.setWidth("100%"); //$NON-NLS-1$
 
-        chekboxPanel.add(getCheckBox());
+        if (isSelectionAvailable){
+            chekboxPanel.add(getCheckBox());
+        }
         chekboxPanel.add(new Image(ClientGinjectorProvider.instance().getApplicationResources().splitRotateImage()));
         chekboxPanel.add(new Label(new HostVLanNameRenderer().render(hostVLan)));
 
