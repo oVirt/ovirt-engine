@@ -1477,6 +1477,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableMACAntiSpoofingFilterRules(381),
+    // Gluster peer status command
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("gluster peer status --xml")
+    GlusterPeerStatusCommand(378),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
