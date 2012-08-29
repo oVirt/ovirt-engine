@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AttachNetworkToVdsParameters extends VdsActionParameters {
@@ -10,6 +10,7 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
 
     private boolean checkConnectivity;
     private Network network;
+    private String oldNetworkName;
     private VdsNetworkInterface iface;
     private String address;
     private String subnet;
@@ -41,6 +42,14 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
 
     public void setNetwork(Network value) {
         network = value;
+    }
+
+    public String getOldNetworkName() {
+        return oldNetworkName;
+    }
+
+    public void setOldNetworkName(String value) {
+        oldNetworkName = value;
     }
 
     public VdsNetworkInterface getInterface() {

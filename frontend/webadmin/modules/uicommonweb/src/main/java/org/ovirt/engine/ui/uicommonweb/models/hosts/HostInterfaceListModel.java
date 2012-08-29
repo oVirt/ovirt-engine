@@ -1220,6 +1220,10 @@ public class HostInterfaceListModel extends SearchableListModel
             parameters.setBondingOptions(null);
         }
 
+        if (network != null)
+        {
+            parameters.setOldNetworkName(network.getname());
+        }
         parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
         parameters.setBootProtocol(model.getBootProtocol());
 
@@ -1557,6 +1561,7 @@ public class HostInterfaceListModel extends SearchableListModel
             UpdateNetworkToVdsParameters parameters =
                     new UpdateNetworkToVdsParameters(host.getId(), net, selectedItems);
             parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
+            parameters.setOldNetworkName(interfaceWithNetwork.getNetworkName());
 
             Map.Entry<String, EntityModel> bondingOption;
             if (model.getBondingOptions().getSelectedItem() != null)
@@ -1968,7 +1973,9 @@ public class HostInterfaceListModel extends SearchableListModel
                         new UpdateNetworkToVdsParameters(getEntity().getId(),
                                 network,
                                 new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] { nic })));
+                parameters.setOldNetworkName((nic.getNetworkName() != null ? nic.getNetworkName() : network.getname()));
                 parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
+
                 actionType = VdcActionType.UpdateNetworkToVdsInterface;
             }
             Map.Entry<String, EntityModel> bondingOption;
