@@ -284,7 +284,6 @@ class MYum():
             ] + RPM_LIST.split()
             output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_UPDATE)
             logging.debug("Yum update completed successfully")
-            self.updated = True
         finally:
             self._lock()
 
@@ -747,6 +746,9 @@ def main(options):
     try:
         # yum update
         runFunc(upgradeFunc, MSG_INFO_YUM_UPDATE)
+
+        # If we're here, update/upgrade went fine, so
+        rhyum.updated = True
 
         # define db connections services
         etlService = utils.Service("ovirt-engine-etl")
