@@ -79,18 +79,6 @@ NFS_IPTABLES_PORTS = [ {"port"     : "111",
                         "protocol" : ["udp"]},
 ]
 
-def generateMacRange():
-    ipSet = utils.getConfiguredIps()
-    if len(ipSet) > 0:
-        ip = ipSet.pop()
-        mac_parts = ip.split(".")[1:3]
-        mac_base ="%s:%02X:%02X" %(basedefs.CONST_BASE_MAC_ADDR, int(mac_parts[0]), int(mac_parts[1]))
-        return "%s:00-%s:FF"%(mac_base, mac_base)
-    else:
-        logging.error("Could not find a configured ip address, returning default MAC address range")
-        return basedefs.CONST_DEFAULT_MAC_RANGE
-
-
 def generateIsoDomainName():
     '''
     Generates name for iso domain
@@ -268,7 +256,7 @@ def initConfig():
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_MAC_RANG_PROMPT,
                 "OPTION_LIST"     :[],
                 "VALIDATION_FUNC" :validate.validateStringNotEmpty,
-                "DEFAULT_VALUE"   :generateMacRange(),
+                "DEFAULT_VALUE"   : utils.generateMacRange(),
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "MAC_RANGE",
@@ -575,7 +563,7 @@ def _getInputFromUser(param):
                     loop = False
                 # If validation failed but LOOSE_VALIDATION is true, ask user
                 elif param.getKey("LOOSE_VALIDATION"):
-                    answer = _askYesNo("User input failed validation, do you still wish to use it")
+                    answer = utils.askYesNo("User input failed validation, do you still wish to use it")
                     if answer:
                         loop = False
                         controller.CONF[param.getKey("CONF_NAME")] = userInput
@@ -623,22 +611,6 @@ def input_param(param):
         _getInputFromUser(param)
 
     return param
-
-def _askYesNo(question=None):
-    message = StringIO()
-    askString = "%s? (yes|no): "%(question)
-    logging.debug("asking user: %s"%askString)
-    message.write(askString)
-    message.seek(0)
-    rawAnswer = raw_input(message.read())
-    logging.debug("user answered: %s"%(rawAnswer))
-    answer = rawAnswer.lower()
-    if answer == "yes" or answer == "y":
-        return True
-    elif answer == "no" or answer == "n":
-        return False
-    else:
-        return _askYesNo(question)
 
 def copyAndLinkConfig(config):
     """
@@ -1551,7 +1523,7 @@ def _displaySummary():
                     logging.info("%s: %s" % (cmdOption, controller.CONF[param.getKey("CONF_NAME")]))
                     print "%s:" % (cmdOption) + " " * l + controller.CONF[param.getKey("CONF_NAME")]
     logging.info("*** User input summary ***")
-    answer = _askYesNo(output_messages.INFO_USE_PARAMS)
+    answer = utils.askYesNo(output_messages.INFO_USE_PARAMS)
     if not answer:
         logging.debug("user chose to re-enter the user parameters")
         for group in controller.getAllGroups():
@@ -1713,7 +1685,7 @@ def _stopEngine(configFile):
     #if we don't use an answer file, we need to ask the user if to stop engine
     if not configFile:
         print output_messages.INFO_NEED_STOP_JBOSS
-        answer = _askYesNo(output_messages.INFO_Q_STOP_JBOSS)
+        answer = utils.askYesNo(output_messages.INFO_Q_STOP_JBOSS)
         if answer:
             print output_messages.INFO_STOP_JBOSS,
             jservice.stop(True)
@@ -1917,7 +1889,7 @@ def main(configFile=None):
             print output_messages.WARN_SECOND_RUN
 
             # Ask for user input only on interactive run
-            if not configFile and not _askYesNo(output_messages.INFO_PROCEED):
+            if not configFile and not utils.askYesNo(output_messages.INFO_PROCEED):
                 logging.debug("exiting gracefully")
                 print output_messages.INFO_STOP_INSTALL_EXIT
                 return 0

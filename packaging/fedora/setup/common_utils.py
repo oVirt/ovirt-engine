@@ -6,6 +6,7 @@ import pwd
 import logging
 import subprocess
 import re
+from StringIO import StringIO
 import output_messages
 import traceback
 import os
@@ -792,6 +793,22 @@ def getRpmVersion(rpmName=basedefs.ENGINE_RPM_NAME):
     # Return rpm version
     return rpmVersion
 
+def askYesNo(question=None):
+    message = StringIO()
+    askString = "%s? (yes|no): "%(question)
+    logging.debug("asking user: %s"%askString)
+    message.write(askString)
+    message.seek(0)
+    rawAnswer = raw_input(message.read())
+    logging.debug("user answered: %s"%(rawAnswer))
+    answer = rawAnswer.lower()
+    if answer == "yes" or answer == "y":
+        return True
+    elif answer == "no" or answer == "n":
+        return False
+    else:
+        return askYesNo(question)
+
 def retry(func, expectedException=Exception, tries=None, timeout=None, sleep=1):
     """
     Retry a function. Wraps the retry logic so you don't have to
@@ -918,6 +935,18 @@ def getHostParams():
             raise Exception(output_messages.ERR_EXP_PARSE_WEB_CONF % (name, basedefs.FILE_JBOSS_HTTP_PARAMS))
 
     return (values["fqdn"], values["httpPort"], values["httpsPort"])
+
+def generateMacRange():
+    ipSet = getConfiguredIps()
+    if len(ipSet) > 0:
+        ip = ipSet.pop()
+        mac_parts = ip.split(".")[1:3]
+        mac_base ="%s:%02X:%02X" %(basedefs.CONST_BASE_MAC_ADDR, int(mac_parts[0]), int(mac_parts[1]))
+        return "%s:00-%s:FF"%(mac_base, mac_base)
+    else:
+        logging.error("Could not find a configured ip address, returning default MAC address range")
+        return basedefs.CONST_DEFAULT_MAC_RANGE
+
 
 def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, fqdn, http, https):
     # Load the file:

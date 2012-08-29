@@ -149,27 +149,6 @@ def getOptions():
     (options, args) = parser.parse_args()
     return (options, args)
 
-# TODO: Use the same facility for setup and upgrade
-def askYesNo(question=None):
-    """
-    service func to ask yes/no
-    input from user
-    """
-    message = StringIO()
-    userQuestion = "%s? (yes|no): "%(question)
-    logging.debug("asking user: %s"%userQuestion)
-    message.write(userQuestion)
-    message.seek(0)
-    answer = raw_input(message.read())
-    logging.debug("user answered: %s"%(answer))
-    answer = answer.lower()
-    if answer == "yes" or answer == "y":
-        return True
-    elif answer == "no" or answer == "n":
-        return False
-    else:
-        return askYesNo(question)
-
 def checkJbossService(service=basedefs.ENGINE_SERVICE_NAME):
     """
     Ask user to stop jboss service before
@@ -188,7 +167,7 @@ def checkJbossService(service=basedefs.ENGINE_SERVICE_NAME):
         logging.debug("jbossas service is up and running")
 
         print MSG_ALERT_STOP_JBOSS
-        answer = askYesNo(INFO_Q_STOP_JBOSS)
+        answer = utils.askYesNo(INFO_Q_STOP_JBOSS)
 
         # If user choose yes -> return true (stop jbossas)
         if answer:
