@@ -466,7 +466,7 @@ class DB():
         logging.debug("DB Backup completed successfully")
 
     def restore(self):
-        #psql -U postgres -h host -p port -f <backup directory>/<backup_file>
+        # run psql -U engine -h host -p port -d template1 -f <backup directory>/<backup_file>
         # If DB was renamed, restore it
 
         if self.updated or self.dbrenamed:
@@ -488,6 +488,7 @@ class DB():
                 "-U", SERVER_ADMIN,
                 "-h", SERVER_NAME,
                 "-p", SERVER_PORT,
+                "-d", basedefs.DB_TEMPLATE,
                 "-f", self.sqlfile,
             ]
             output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB)
