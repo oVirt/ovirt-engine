@@ -496,7 +496,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 returnValue =
                         IsUserAutorizedToRunAction() && IsBackwardsCompatible() && validateInputs() && acquireLock()
                                 && canDoAction();
-                if (this instanceof Quotable) {
+                if (returnValue && this instanceof Quotable) {
                     returnValue &= ((Quotable) this).validateAndSetQuota();
                 }
                 if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
