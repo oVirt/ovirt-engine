@@ -114,6 +114,7 @@ EXEC_CHKCONFIG="/sbin/chkconfig"
 EXEC_LSOF="/usr/sbin/lsof"
 EXEC_ENCRYPT_PASS="%s/encryptpasswd.sh"%(DIR_OVIRT_PKI)
 EXEC_RPM="/bin/rpm"
+EXEC_YUM = "/usr/bin/yum"
 EXEC_FREE="/usr/bin/free"
 EXEC_DF = "/bin/df"
 EXEC_DATE="/bin/date"

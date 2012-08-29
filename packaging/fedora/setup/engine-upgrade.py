@@ -48,7 +48,6 @@ BACKUP_FILE = "ovirt-engine_db_backup"
 LOG_PATH = "/var/log/ovirt-engine"
 LOG_FILE = "ovirt-engine-upgrade.log"
 
-YUM_EXEC = "/usr/bin/yum"
 ETL_SERVICE="/etc/init.d/ovirt-engine-etl"
 
 # Versions
@@ -281,7 +280,7 @@ class MYum():
             # TODO: Run test transaction
             logging.debug("Yum update started")
             cmd = [
-                YUM_EXEC, "update", "-q", "-y",
+                basedefs.EXEC_YUM, "update", "-q", "-y",
             ] + RPM_LIST.split()
             output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_UPDATE)
             logging.debug("Yum update completed successfully")
@@ -384,7 +383,7 @@ class MYum():
                 # Do rollback only if update went well
                 logging.debug("Yum rollback started")
                 cmd = [
-                    YUM_EXEC, "history", "-y", "undo", upgradeTid,
+                    basedefs.EXEC_YUM, "history", "-y", "undo", upgradeTid,
                 ]
                 output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_HISTORY_UNDO)
                 logging.debug("Yum rollback completed successfully")
@@ -399,7 +398,7 @@ class MYum():
 
         # Get the list
         cmd = [
-            YUM_EXEC, "history", "list", basedefs.ENGINE_RPM_NAME,
+            basedefs.EXEC_YUM, "history", "list", basedefs.ENGINE_RPM_NAME,
         ]
         output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_HISTORY_LIST)
 
