@@ -149,13 +149,6 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
     }
 
-    /**
-     * The method verifies the input for one of two scenario types:
-     * <ul>
-     * <li>Updating an interface details: update boot protocol or replace attached network (for non management network)</li>
-     * <li>Updating management network details: update boot protocol or replace interface</li>
-     * </ul>
-     */
     @Override
     protected boolean canDoAction() {
         String ifaceGateway = null;
@@ -177,20 +170,11 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             ifaceGateway = updatedIface.getGateway();
         }
 
-        boolean managementNetworkUpdated =
-                StringUtils.equals(getParameters().getNetwork().getname(), NetworkUtils.getEngineNetwork());
-
         // obtain the network name from the host interface and check that the old network name is not null
         oldNetworkName = StringUtils.isEmpty(updatedIface.getNetworkName()) ? null : updatedIface.getNetworkName();
-
         if (oldNetworkName == null) {
-            if (managementNetworkUpdated) {
-                // the command will update the interface of a management network
-                oldNetworkName = NetworkUtils.getEngineNetwork();
-            } else {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_OLD_NETWORK_NOT_SPECIFIED);
-                return false;
-            }
+            addCanDoActionMessage(VdcBllMessages.NETWROK_OLD_NETWORK_NOT_SPECIFIED);
+            return false;
         }
 
         VDS vds = getVdsDAO().get(getParameters().getVdsId());
@@ -211,13 +195,15 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         }
 
-        if (managementNetworkUpdateDenied(managementNetworkUpdated)) {
+        if (StringUtils.equals(oldNetworkName, NetworkUtils.getEngineNetwork())
+                && !StringUtils.equals(getParameters().getNetwork().getname(), NetworkUtils.getEngineNetwork())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
             return false;
         }
 
-        if (!managementNetworkUpdated && StringUtils.isNotEmpty(getParameters().getGateway())) {
+        if (!NetworkUtils.getEngineNetwork().equals(getParameters().getNetwork().getname())
+                && StringUtils.isNotEmpty(getParameters().getGateway())) {
             if (!getParameters().getGateway().equals(ifaceGateway)) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
                 return false;
@@ -228,10 +214,10 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         }
 
-        // check connectivity
+        // check conectivity
         getParameters().setCheckConnectivity(getParameters().getCheckConnectivity());
         if (getParameters().getCheckConnectivity()) {
-            if (!managementNetworkUpdated) {
+            if (!StringUtils.equals(getParameters().getNetwork().getname(), NetworkUtils.getEngineNetwork())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_CHECK_CONNECTIVITY);
                 return false;
             }
@@ -262,22 +248,6 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
 
         return true;
-    }
-
-    /**
-     * Checks if it is allowed to modify the management network. The following use-cases should be blocked:
-     * <ul>
-     * <li>The old network is management network, the new network is non-management network.</li>
-     * <li>The old network isn't management network, but the new network is a management network.</li>
-     * </ul>
-     *
-     * @param managementNetworkUpdated
-     *            if the target network is a management network
-     * @return true if updating management network is supported, else false.
-     */
-    private boolean managementNetworkUpdateDenied(boolean managementNetworkUpdated) {
-        return (oldNetworkName.equals(NetworkUtils.getEngineNetwork()) && !managementNetworkUpdated ||
-                !oldNetworkName.equals(NetworkUtils.getEngineNetwork()) && managementNetworkUpdated);
     }
 
     @Override
