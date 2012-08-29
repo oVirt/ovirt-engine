@@ -847,15 +847,12 @@ public class HostInterfaceListModel extends SearchableListModel
                         if (networkDictionary.containsKey(selectedNetworkName))
                         {
                             Network network = networkDictionary.get(selectedNetworkName);
+                            networksToAdd.add(network);
+                            attachedNetworks.remove(network);
 
-                            if (!StringHelper.isNullOrEmpty(item.getNetworkName())){
-                                networksToAdd.add(network);
-                                attachedNetworks.remove(network);
-
-                                if (selectedNetwork == null)
-                                {
-                                    selectedNetwork = network;
-                                }
+                            if (selectedNetwork == null)
+                            {
+                                selectedNetwork = network;
                             }
                         }
                     }
@@ -1961,7 +1958,7 @@ public class HostInterfaceListModel extends SearchableListModel
             }
             // If the selected item is a non-attached or attached to vlan eth (over bond or not),
             // and the selected network in the dialog is a new vlan, attach selected network.
-            if ((StringHelper.isNullOrEmpty(nic.getNetworkName()) && !isUpdateVlan)
+            if ((StringHelper.isNullOrEmpty(nic.getNetworkName()) && (nic.getBonded() == null || !nic.getBonded()) && !isUpdateVlan)
                     || (bondWithVlans && (!vLanAttached && network.getvlan_id() != null)))
             {
                 parameters = new AttachNetworkToVdsParameters(getEntity().getId(), network, nic);
