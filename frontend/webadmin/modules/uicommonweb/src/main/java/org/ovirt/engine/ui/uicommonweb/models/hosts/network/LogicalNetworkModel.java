@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.DcNetworkParams;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
@@ -88,6 +89,11 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     }
 
     public void detach() {
+        if (!isInSync()){
+            getSetupModel().getNetworksToSync().add(getName());
+            setNetworkToDcValues();
+        }
+
         assert attachedToNic != null;
         NetworkInterfaceModel attachingNic = attachedToNic;
         // this needs to be null before the NIC items are changed, because they trigger an event
@@ -126,6 +132,15 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         if (nicEntity.getIsManagement()) {
             nicEntity.setType(0);
         }
+
+    }
+
+    private void setNetworkToDcValues() {
+        DcNetworkParams dcNetParams = getSetupModel().getNetDcParams(getName());
+        getEntity().setvlan_id(dcNetParams.getVlanId());
+        getEntity().setMtu(dcNetParams.getMtu());
+        getEntity().setVmNetwork(dcNetParams.isVmNetwork());
+
     }
 
     public NetworkInterfaceModel getAttachedToNic() {

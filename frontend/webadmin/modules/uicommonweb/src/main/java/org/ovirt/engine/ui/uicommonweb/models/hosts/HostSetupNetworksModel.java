@@ -114,6 +114,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private NetworkOperationFactory operationFactory;
     private List<Network> allNetworks;
+    private final Map<String, DcNetworkParams> netTodcParams;
     private final HostInterfaceListModel hostInterfaceListModel;
     private List<VdsNetworkInterface> allBonds;
     private NetworkOperation currentCandidate;
@@ -123,6 +124,7 @@ public class HostSetupNetworksModel extends EntityModel {
     public HostSetupNetworksModel(HostInterfaceListModel hostInterfaceListModel) {
         this.hostInterfaceListModel = hostInterfaceListModel;
         networkToLastDetachParams = new HashMap<String, NetworkParameters>();
+        netTodcParams = new HashMap<String, DcNetworkParams>();
         setNicsChangedEvent(new Event(NICS_CHANGED_EVENT_DEFINITION));
         setNetworksChangedEvent(new Event(NETWORKS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
@@ -510,6 +512,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private void initNetworkModels() {
         Map<String, LogicalNetworkModel> networkModels = new HashMap<String, LogicalNetworkModel>();
         for (Network network : allNetworks) {
+            netTodcParams.put(network.getname(), new DcNetworkParams(network));
             networkModels.put(network.getname(), new LogicalNetworkModel(network, this));
         }
         setNetworks(networkModels);
@@ -746,5 +749,8 @@ public class HostSetupNetworksModel extends EntityModel {
         return networksToSync;
     }
 
+    public DcNetworkParams getNetDcParams(String networkName) {
+        return netTodcParams.get(networkName);
+    }
 
 }

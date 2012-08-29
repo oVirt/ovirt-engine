@@ -306,6 +306,57 @@ public enum NetworkOperation {
             return true;
         }
 
+    },
+    NULL_OPERATION_UNSYNC {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().invalidOperationWithUnsyncNetwork();
+        }
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return getVerb(op1);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
+    },
+    NULL_OPERATION_ADD_TO_BOND_UNSYNC {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().cannotAddNicWithUnsyncNetworkToBond();
+        }
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return getVerb(op1);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
+    },
+    NULL_OPERATION_BOND_WITH_UNSYNC {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().cannotCreateBondIfNicsContainsUnsyncNetwork();
+        }
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return getVerb(op1);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
     };
 
     private static void clearNetworks(NetworkInterfaceModel nic, List<VdsNetworkInterface> allNics) {

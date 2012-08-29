@@ -67,6 +67,11 @@ public class NetworkOperationFactory {
                         return NetworkOperation.NULL_OPERATION_ADD_TO_BOND_UNMANAGED;
                     }
 
+                    boolean containsUnsync = containsUnsync(nic1);
+                    if (containsUnsync){
+                        return NetworkOperation.NULL_OPERATION_ADD_TO_BOND_UNSYNC;
+                    }
+
                     if (canBond(nic1, bond)) {
                         return NetworkOperation.ADD_TO_BOND;
                     } else {
@@ -82,6 +87,11 @@ public class NetworkOperationFactory {
                     boolean containsUnmanaged = containsUnmanaged(nic1) || containsUnmanaged(nic2);
                     if (containsUnmanaged){
                         return NetworkOperation.NULL_OPERATION_BOND_WITH_UNMANAGED;
+                    }
+
+                    boolean containsUnsync = containsUnsync(nic1) || containsUnsync(nic2);
+                    if (containsUnsync){
+                        return NetworkOperation.NULL_OPERATION_BOND_WITH_UNSYNC;
                     }
 
                     if (canBond(nic1, nic2)) {
@@ -108,6 +118,11 @@ public class NetworkOperationFactory {
                 // not managed
                 if (!network.isManaged()) {
                     return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                }
+
+                // not in sync
+                if (!network.isInSync()) {
+                    return NetworkOperation.NULL_OPERATION_UNSYNC;
                 }
 
                 List<LogicalNetworkModel> nicNetworks = nic.getItems();
@@ -149,6 +164,16 @@ public class NetworkOperationFactory {
         // Check if contains unmanaged networks
         for (LogicalNetworkModel network : nic.getItems()) {
             if (!network.isManaged()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsUnsync(NetworkInterfaceModel nic) {
+        // Check if contains unsync networks
+        for (LogicalNetworkModel network : nic.getItems()) {
+            if (!network.isInSync()) {
                 return true;
             }
         }

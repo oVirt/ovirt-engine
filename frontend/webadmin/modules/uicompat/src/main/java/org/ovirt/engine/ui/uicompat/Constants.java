@@ -1488,6 +1488,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cannot create a bond if one of the nics contains unmanaged network/s")
     String cannotCreateBondIfNicsContainsUnmanagedNetwork();
 
+    @DefaultStringValue("Cannot add nic with unsync network/s to a bond")
+    String cannotAddNicWithUnsyncNetworkToBond();
+
+    @DefaultStringValue("Invalid operation with unsync network: unsync network can only be detached")
+    String invalidOperationWithUnsyncNetwork();
+
+    @DefaultStringValue("Cannot create a bond if one of the nics contains unsync network/s")
+    String cannotCreateBondIfNicsContainsUnsyncNetwork();
+
     @DefaultStringValue("Unassigned Logical Networks panel")
     String unassignedLogicalNetworksPanel();
 

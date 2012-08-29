@@ -227,9 +227,9 @@ public class NetworkModel extends Model
                 getDescription().setIsChangable((Boolean) value);
                 getIsVmNetwork().setIsChangable(isSupportBridgesReportByVDSM() && (Boolean) value);
                 getHasVLanTag().setIsChangable((Boolean) value);
-                getVLanTag().setIsChangable((Boolean) value);
+                getVLanTag().setIsChangable((Boolean)getHasVLanTag().getEntity() && (Boolean) value);
                 getHasMtu().setIsChangable((Boolean) value);
-                getMtu().setIsChangable((Boolean) value);
+                getMtu().setIsChangable((Boolean)getHasMtu().getEntity() && (Boolean) value);
             }
 
         });
