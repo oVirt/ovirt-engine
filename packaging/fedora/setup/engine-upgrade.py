@@ -14,7 +14,6 @@ import common_utils as utils
 import basedefs
 
 # Consts
-PRODUCT_NAME="oVirt-Engine"
 #TODO: Work with a real list here
 RPM_LIST = """
 ovirt-engine
@@ -111,13 +110,13 @@ MSG_INFO_START_JBOSS = "Starting JBoss"
 MSG_INFO_DB_BACKUP_FILE = "DB Backup available at "
 MSG_INFO_LOG_FILE = "Upgrade log available at"
 MSG_INFO_CHECK_UPDATE = "Checking for updates... (This may take several minutes)"
-MSG_INFO_UPGRADE_OK = "%s upgrade completed successfully!" %(PRODUCT_NAME)
+MSG_INFO_UPGRADE_OK = "%s upgrade completed successfully!" % basedefs.APP_NAME
 MSG_INFO_STOP_INSTALL_EXIT="Upgrade stopped, Goodbye."
 MSG_INFO_UPDATE_JBOSS_PROFILE="Updating JBoss Profile"
 
 MSG_ALERT_STOP_JBOSS="\nDuring the upgrade process, %s  will not be accessible.\n\
 All existing running virtual machines will continue but you will not be able to\n\
-start or stop any new virtual machines during the process.\n" %(PRODUCT_NAME)
+start or stop any new virtual machines during the process.\n" % basedefs.APP_NAME
 INFO_Q_STOP_JBOSS="Would you like to proceed"
 MSG_INFO_REPORTS="Perform the following steps to upgrade the history service \
 or the reporting package:\n\
