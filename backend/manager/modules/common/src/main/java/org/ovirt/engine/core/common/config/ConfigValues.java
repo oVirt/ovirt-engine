@@ -1399,18 +1399,24 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(
-            "dmidecode | awk ' /UUID/{ print $2; } ' | tr '\n' '_' && " +
-            "(" +
-                "find /sys/class/net/*/device | while read f; do " +
-                    "cat \"$(dirname \"$f\")/address\"; " +
-                "done; " +
-                "[ -d /proc/net/bonding ] && " +
-                    "find /proc/net/bonding -type f -exec cat '{}' \\; | " +
-                    "grep 'Permanent HW addr:' | " +
-                    "sed 's/.* //' " +
-            ") | sed -e '/00:00:00:00/d' -e '/^$/d' | " +
-            "sed -e '/00:00:00:00/d' -e '/^$/d' | " +
-            "sort -u | head -n 1"
+            "UUID=\"$(" +
+                "dmidecode -s system-uuid 2> /dev/null | " +
+                "sed -e 's/.*Not.*//' " +
+            ")\"; " +
+            "MAC=$(" +
+                "(" +
+                    "find /sys/class/net/*/device | while read f; do " +
+                        "cat \"$(dirname \"$f\")/address\" 2> /dev/null; " +
+                    "done; " +
+                    "[ -d /proc/net/bonding ] && " +
+                        "find /proc/net/bonding -type f -exec cat '{}' \\; | " +
+                        "grep 'Permanent HW addr:' | " +
+                        "sed 's/.* //'" +
+                ") | sed -e '/00:00:00:00/d' -e '/^$/d' | " +
+                "sed -e '/00:00:00:00/d' -e '/^$/d' | " +
+                "sort -u | head -n 1" +
+           "); " +
+           "echo \"${UUID}_${MAC}\""
     )
     BootstrapNodeIDCommand(372),
 
