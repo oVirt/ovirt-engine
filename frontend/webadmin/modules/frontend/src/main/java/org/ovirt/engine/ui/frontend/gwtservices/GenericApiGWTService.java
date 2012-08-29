@@ -37,30 +37,4 @@ public interface GenericApiGWTService extends RpcService {
     public VdcReturnValueBase logOff(VdcUser userToLogoff);
 
     public VdcReturnValueBase Login(String user, String password, String domain);
-
-    // TODO: Should be implemented (most of these methods are required by
-    // UiCommon)
-    /*
-     * public ArrayList<VdcReturnValueBase> RunMultipleActions( VdcActionType actionType,
-     * ArrayList<VdcActionParametersBase> prms);
-     *
-     * public void UnregisterQuery(Guid asyncSearchId);
-     *
-     * public Guid RegisterSearch(String searchString, SearchType cluster, int searchPageSize,
-     * RefObject<ObservableCollection<IVdcQueryable>> tempRefObject);
-     *
-     * public VdcUser Login(String entity, String entity2, String selectedItem);
-     *
-     * public VdcReturnValueBase RunActionAsyncroniousely( VdcActionType addsanstoragedomain, VdcActionParametersBase
-     * param);
-     *
-     * public Guid RegisterQuery(VdcQueryType getallbookmarks, VdcQueryParametersBase vdcQueryParametersBase,
-     * RefObject<ObservableCollection<IVdcQueryable>> tempRefObject);
-     *
-     * public void Logoff(LogoutUserParameters tempVar);
-     *
-     * public boolean getIsUserLoggedIn();
-     *
-     * public VdcUser getLoggedInUser();
-     */
 }

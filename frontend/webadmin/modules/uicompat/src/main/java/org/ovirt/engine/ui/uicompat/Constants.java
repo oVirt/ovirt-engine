@@ -191,6 +191,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Detach Virtual Machine(s)")
     String detachVirtualMachinesTitle();
 
+    @DefaultStringValue("Note: You chose to detach all VMs from the pool - this will remove the pool itself.")
+    String detachAllVmsWarning();
+
     @DefaultStringValue("Permissions")
     String permissionsTitle();
 

@@ -106,10 +106,23 @@ public class PoolModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> getPoolVmListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VM, PoolListModel, PoolVmListModel>(ginjector,
+    public SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> getPoolVmListProvider(
+            ClientGinjector ginjector,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VM, PoolListModel, PoolVmListModel>(
+                ginjector,
                 PoolListModel.class,
-                PoolVmListModel.class);
+                PoolVmListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PoolVmListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getDetachCommand()) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+        };
     }
 
     @Override

@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-@SuppressWarnings("unused")
 public class PoolVmListModel extends VmListModel
 {
 
@@ -88,13 +87,13 @@ public class PoolVmListModel extends VmListModel
 
     public void Detach()
     {
-        if (getWindow() != null)
+        if (getConfirmWindow() != null)
         {
             return;
         }
 
         ConfirmationModel model = new ConfirmationModel();
-        setWindow(model);
+        setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().detachVirtualMachinesTitle());
         model.setHashName("detach_virtual_machine"); //$NON-NLS-1$
 
@@ -106,6 +105,12 @@ public class PoolVmListModel extends VmListModel
         }
         Collections.sort(list);
         model.setItems(list);
+
+        if (list.size() == getEntity().getvm_assigned_count()) {
+            model.getLatch().setIsAvailable(true);
+            model.getLatch().setIsChangable(true);
+            model.setNote(ConstantsManager.getInstance().getConstants().detachAllVmsWarning());
+        }
 
         model.setMessage(ConstantsManager.getInstance()
                 .getConstants()
@@ -123,9 +128,11 @@ public class PoolVmListModel extends VmListModel
 
     public void OnDetach()
     {
-        ConfirmationModel model = (ConfirmationModel) getWindow();
+        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        if (model.getProgress() != null)
+        boolean latchChecked = !model.Validate();
+
+        if (model.getProgress() != null || latchChecked)
         {
             return;
         }
@@ -134,7 +141,7 @@ public class PoolVmListModel extends VmListModel
         for (Object item : getSelectedItems())
         {
             VM vm = (VM) item;
-            list.add(new RemoveVmFromPoolParameters(vm.getId()));
+            list.add(new RemoveVmFromPoolParameters(vm.getId(), true));
         }
 
         model.StartProgress(null);
@@ -143,7 +150,6 @@ public class PoolVmListModel extends VmListModel
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
-
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
                         Cancel();

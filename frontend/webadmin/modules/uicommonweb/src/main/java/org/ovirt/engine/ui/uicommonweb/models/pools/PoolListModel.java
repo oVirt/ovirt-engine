@@ -753,10 +753,17 @@ public class PoolListModel extends ListWithDetailsModel
     private void UpdateActionAvailability()
     {
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
-                && getSelectedItems().size() == 1);
+                && getSelectedItems().size() == 1 && hasVms(getSelectedItem()));
 
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && VdcActionUtils.CanExecute(getSelectedItems(), vm_pools.class, VdcActionType.RemoveVmPool));
+    }
+
+    private boolean hasVms(Object selectedItem) {
+        if (selectedItem instanceof vm_pools) {
+            return ((vm_pools) selectedItem).getvm_assigned_count() != 0;
+        }
+        return false;
     }
 
     @Override
