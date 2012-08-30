@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -32,11 +33,21 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         storage_domain_static oldDomain =
                 DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getId());
 
+        // Only after validating the existing of the storage domain in DB, we set the field lastTimeUsedAsMaster in the
+        // storage domain which is about to be updated.
+        if (returnValue) {
+            getStorageDomain().setLastTimeUsedAsMaster(oldDomain.getLastTimeUsedAsMaster());
+        }
+
+        // Collect changed fields to update in a list.
         List<String> props = ObjectIdentityChecker.GetChangedFields(oldDomain, getStorageDomain()
                 .getStorageStaticData());
-        // allow change only to name field
+
+        // Allow change only to name field
         props.remove("storage_name");
         if (returnValue && props.size() > 0) {
+            log.warnFormat("There was an attempt to update the following fields although they are not allowed to be updated: {0}",
+                    StringUtils.join(props, ","));
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
             returnValue = false;
         }
