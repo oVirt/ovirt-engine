@@ -273,10 +273,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private void rollbackDisksQuota() {
         List<Guid> quotaList = new ArrayList<Guid>();
-        for (DiskImage image : imageTemplates) {
-            quotaList.add(image.getQuotaId());
+        if (imageTemplates != null) {
+            for (DiskImage image : imageTemplates) {
+                quotaList.add(image.getQuotaId());
+            }
+            getQuotaManager().rollbackQuota(getStoragePool(), quotaList);
         }
-        getQuotaManager().rollbackQuota(getStoragePool(), quotaList);
     }
 
     @Override

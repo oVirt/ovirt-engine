@@ -306,8 +306,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     @SuppressWarnings({ "unchecked", "synthetic-access" })
     protected void compensate() {
-        if (this instanceof Quotable) {
-            ((Quotable) this).rollbackQuota();
+        try {
+            if (this instanceof Quotable) {
+                ((Quotable) this).rollbackQuota();
+            }
+        } catch (NullPointerException e) {
+            log.debug("RollbackQuota: failed (may be because quota is disabled)", e);
         }
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
@@ -1132,8 +1136,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     @Override
     public void Rollback() {
         log.errorFormat("Transaction rolled-back for command: {0}.", CommandBase.this.getClass().getName());
-        if (this instanceof Quotable) {
-            ((Quotable) this).rollbackQuota();
+        try {
+            if (this instanceof Quotable) {
+                ((Quotable) this).rollbackQuota();
+            }
+        } catch (NullPointerException e) {
+            log.debug("RollbackQuota: failed (may be because quota is disabled)", e);
         }
         cancelTasks();
     }
