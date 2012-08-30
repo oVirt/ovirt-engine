@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -73,15 +74,22 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         if (getVm().getstatus() == VMStatus.Up) {
             performPlugCommnad(getPlugAction(), disk, oldVmDevice);
         }
-        oldVmDevice.setIsPlugged(!oldVmDevice.getIsPlugged());
+
+        //Update boot order and isPlugged fields
+        final List<VmDevice> devices = VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
+        for (VmDevice device:devices) {
+            if (device.getDeviceId().equals(oldVmDevice.getDeviceId())) {
+                device.setIsPlugged(!oldVmDevice.getIsPlugged());
+                break;
+            }
+        }
+
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                getVmDeviceDao().update(oldVmDevice);
-                // update cached image
+
+                getVmDeviceDao().updateAll("UpdateVmDeviceForHotPlugDisk", devices);
                 VmHandler.updateDisksFromDb(getVm());
-                // update vm device boot order
-                VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
                 return null;
             }
         });

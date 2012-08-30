@@ -14,10 +14,19 @@ public interface MassOperationsDao<T extends BusinessEntity<?>> {
 
     /**
      * Updates the given entities using a more efficient method to update all of them at once, rather than each at a
-     * time.
+     * time. The procedure name to be used is "UpdateEntityName> where EntityName stands for the name of the entity
      *
      * @param entities
      *            The entities to update.
      */
     void updateAll(Collection<T> entities);
+
+
+    /**
+     * Updates the given entities using a more efficient method to update all of them at once, rather than each at a
+     * time.
+     * @param procedureName procedure name for update
+     * @param entities
+     */
+    void updateAll(String procedureName, Collection<T> entities);
 }

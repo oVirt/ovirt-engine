@@ -175,4 +175,31 @@ public class VmDeviceDAODbFacadeImpl extends
         getCallsHandler().executeModification("clearVmDeviceAddress", parameterSource);
 
     }
+
+    @Override
+    public void updateRuntimeInfo(VmDevice vmDevice) {
+        MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
+                .addValue("address", vmDevice.getAddress())
+                .addValue("alias",vmDevice.getAlias());
+
+        getCallsHandler().executeModification("UpdateVmDeviceRuntimeInfo", paramsForUpdate);
+    }
+
+    private MapSqlParameterSource createParameterSourceForUpdate(VmDevice vmDevice) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmDevice.getVmId())
+                .addValue("device_id",vmDevice.getDeviceId());
+        return parameterSource;
+    }
+
+
+    @Override
+    public void updateHotPlugDisk(VmDevice vmDevice) {
+        MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
+            .addValue("boot_order",vmDevice.getBootOrder())
+            .addValue("is_plugged",vmDevice.getIsPlugged());
+        getCallsHandler().executeModification("UpdateVmDeviceForHotPlugDisk" , paramsForUpdate);
+
+    }
+
 }

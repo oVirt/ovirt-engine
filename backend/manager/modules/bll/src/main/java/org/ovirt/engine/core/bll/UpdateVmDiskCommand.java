@@ -242,7 +242,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 // update cached image
                 VmHandler.updateDisksFromDb(getVm());
                 // update vm device boot order
-                VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
+                VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
 
                 setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),
                         Arrays.asList(getVm())));

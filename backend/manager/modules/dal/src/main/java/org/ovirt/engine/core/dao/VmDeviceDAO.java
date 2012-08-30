@@ -41,4 +41,19 @@ public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOpera
      * @param device
      */
     void clearDeviceAddress(Guid deviceId);
+
+    /**
+     * Runs an update for the device according to fields that were updated during
+     * VdsUpdateRuntimeInfo periodic call
+     * @param vmDevice
+     */
+    void updateRuntimeInfo(VmDevice vmDevice);
+
+    /**
+     * Runs an update for the device according to fields that were updated during
+     * HotPlugDisk
+     * @param vmDevice
+     */
+    void updateHotPlugDisk(VmDevice vmDevice);
+
 }

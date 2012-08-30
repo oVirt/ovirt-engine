@@ -129,7 +129,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
     }
 
     protected void updateBootOrderInVmDevice() {
-        VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
+        VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
     }
 
     private void updateDiskVmSnapshotId() {

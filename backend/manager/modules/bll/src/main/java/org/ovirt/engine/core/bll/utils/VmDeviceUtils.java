@@ -44,7 +44,6 @@ public class VmDeviceUtils {
     private final static int SLOTS_PER_CONTROLLER = 6;
     private final static int COMPANION_USB_CONTROLLERS = 3;
 
-
     /**
      * Update the vm devices according to changes made in vm static for existing VM
      */
@@ -54,7 +53,7 @@ public class VmDeviceUtils {
             updateCdInVmDevice(oldVmBase, entity);
             if (oldVmBase.getdefault_boot_sequence() != entity
                     .getdefault_boot_sequence()) {
-                updateBootOrderInVmDevice(entity);
+                updateBootOrderInVmDeviceAndStoreToDB(entity);
             }
 
             // if the console type has changed, recreate Video devices
@@ -98,7 +97,7 @@ public class VmDeviceUtils {
     public static <T extends VmBase> void updateVmDevices(T entity, Guid newId) {
         if (entity != null) {
             updateCdInVmDevice(entity);
-            updateBootOrderInVmDevice(entity);
+            updateBootOrderInVmDeviceAndStoreToDB(entity);
             updateNumOfMonitorsInVmDevice(null, entity);
             updateUSBSlots(null, entity);
             updateMemoryBalloon(null, entity, true);
@@ -190,7 +189,7 @@ public class VmDeviceUtils {
 
         if (isVm) {
             //  update devices boot order
-            updateBootOrderInVmDevice(vmBase);
+            updateBootOrderInVmDeviceAndStoreToDB(vmBase);
 
             // create sound card for a desktop VM if not exists
             if (vmBase.getvm_type() == VmType.Desktop) {
@@ -277,7 +276,7 @@ public class VmDeviceUtils {
         if (type.equals(VmDeviceType.DISK) || type.equals(VmDeviceType.INTERFACE )) {
             // recalculate boot sequence
             VmBase vmBase = DbFacade.getInstance().getVmStaticDAO().get(id.getVmId());
-            updateBootOrderInVmDevice(vmBase);
+            updateBootOrderInVmDeviceAndStoreToDB(vmBase);
         }
         return managedDevice;
     }
@@ -314,10 +313,24 @@ public class VmDeviceUtils {
 
     /**
      * Updates VM boot order in vm device according to the BootSequence enum value.
+     * Stores the updated devices in DB
      * @param vmBase
      */
-    public static void updateBootOrderInVmDevice(VmBase vmBase) {
+    public static void updateBootOrderInVmDeviceAndStoreToDB(VmBase vmBase) {
+        List<VmDevice> devices = updateBootOrderInVmDevice(vmBase);
+        for (VmDevice device : devices) {
+           dao.update(device);
+        }
+    }
+
+    /**
+     * Updates boot order in vm device according to the BootSequence enum value.
+     * @param vmBase
+     * @return the updated VmDevice list
+     */
+    public static List<VmDevice> updateBootOrderInVmDevice(VmBase vmBase) {
         if (vmBase instanceof VmStatic) {
+            //Returns the devices sorted in ascending order
             List<VmDevice> devices = dao.getVmDeviceByVmId(vmBase.getId());
             // reset current boot order
             for (VmDevice device: devices) {
@@ -327,11 +340,9 @@ public class VmDeviceUtils {
             VmHandler.updateDisksForVm(vm, DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()));
             boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
-            // update boot order in vm device
-            for (VmDevice device : devices) {
-                dao.update(device);
-            }
+            return devices;
         }
+        return Collections.emptyList();
     }
 
     /**

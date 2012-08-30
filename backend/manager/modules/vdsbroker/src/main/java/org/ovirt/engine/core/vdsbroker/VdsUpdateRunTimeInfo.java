@@ -157,8 +157,9 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void saveVmDevicesToDb() {
-
-        updateAllInTransaction(vmDeviceToSave.values(), getDbFacade().getVmDeviceDAO());
+        List<VmDevice> list = new ArrayList<VmDevice>(vmDeviceToSave.values());
+        Collections.sort(list);
+        updateAllInTransaction("UpdateVmDeviceRuntimeInfo", list, getDbFacade().getVmDeviceDAO());
 
         if (!removedDeviceIds.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
@@ -197,18 +198,38 @@ public class VdsUpdateRunTimeInfo {
      */
     private static <T extends BusinessEntity<?>> void updateAllInTransaction
             (final Collection<T> entities, final MassOperationsDao<T> dao) {
-        if (!entities.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-
-                        @Override
-                        public Void runInTransaction() {
-                            dao.updateAll(entities);
-                            return null;
-                        }
-                    });
-        }
+        updateAllInTransaction(null, entities,dao);
     }
+
+    /**
+     * Update all the given entities in a transaction, so that a new connection/transaction won't be opened for each
+     * entity update.
+     *
+     * @param <T>
+     *            The type of entity.
+     * @param procedureName
+     *            The name of stored procedure to use for update
+     * @param entities
+     *            The entities to update.
+     * @param dao
+     *            The DAO used for updating.
+     */
+
+    private static <T extends BusinessEntity<?>> void updateAllInTransaction
+        (final String procedureName, final Collection<T> entities, final MassOperationsDao<T> dao) {
+    if (!entities.isEmpty()) {
+        TransactionSupport.executeInScope(TransactionScopeOption.Required,
+            new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                            dao.updateAll(procedureName, entities);
+                    return null;
+                }
+            });
+    }
+}
+
 
     /**
      * check if value is less than configurable threshold , if yes , generated event log message

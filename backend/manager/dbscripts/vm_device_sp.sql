@@ -74,6 +74,43 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateVmDeviceRuntimeInfo(
+    v_device_id UUID,
+    v_vm_id UUID,
+    v_address varchar(255),
+    v_alias varchar(255))
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE vm_device
+    SET
+           address = v_address,
+           alias = v_alias,
+           _update_date = current_timestamp
+    WHERE  device_id = v_device_id and vm_id = v_vm_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateVmDeviceForHotPlugDisk(
+    v_device_id UUID,
+    v_vm_id UUID,
+    v_boot_order int,
+    v_is_plugged boolean)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE vm_device
+    SET
+           boot_order = v_boot_order,
+           is_plugged = v_is_plugged,
+           _update_date = current_timestamp
+    WHERE  device_id = v_device_id and vm_id = v_vm_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION DeleteVmDevice(v_device_id UUID, v_vm_id UUID)
 RETURNS VOID
 AS $procedure$
@@ -113,7 +150,7 @@ BEGIN
     RETURN QUERY
     SELECT *
     FROM   vm_device_view
-    WHERE  vm_id = v_vm_id;
+    WHERE  vm_id = v_vm_id order by device_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

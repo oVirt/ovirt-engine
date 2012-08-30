@@ -146,4 +146,33 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
         Assert.assertTrue(StringUtils.isBlank(dao.get(getExistingEntityId()).getAddress()));
 
     }
+
+    @Test
+    public void testUpdateDeviceRuntimeInfo() {
+        VmDevice vmDevice = dao.get(getExistingEntityId());
+        Assert.assertTrue(StringUtils.isNotBlank(vmDevice.getAddress()));
+        String newAddressValue = "newaddr";
+        vmDevice.setAddress(newAddressValue);
+        String newAlias = "newalias";
+        vmDevice.setAlias(newAlias);
+        dao.updateRuntimeInfo(vmDevice);
+        dao.get(getExistingEntityId());
+        assertEquals(vmDevice.getAddress(), newAddressValue);
+        assertEquals(vmDevice.getAlias(), newAlias);
+    }
+
+    @Test
+    public void testUpdateHotPlugDisk() {
+        VmDevice vmDevice = dao.get(getExistingEntityId());
+        boolean newPluggedValue = !vmDevice.getIsPlugged();
+        int newBootOrderValue = vmDevice.getBootOrder() + 1;
+        Assert.assertTrue(StringUtils.isNotBlank(vmDevice.getAddress()));
+        vmDevice.setBootOrder(newBootOrderValue);
+        vmDevice.setIsPlugged(newPluggedValue);
+        dao.updateHotPlugDisk(vmDevice);
+        dao.get(getExistingEntityId());
+        assertEquals(vmDevice.getIsPlugged(), newPluggedValue);
+        assertEquals(vmDevice.getBootOrder(),newBootOrderValue);
+    }
+
 }
