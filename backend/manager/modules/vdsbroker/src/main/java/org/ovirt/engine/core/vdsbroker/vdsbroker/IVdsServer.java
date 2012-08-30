@@ -4,8 +4,10 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterServersListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeOptionsInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -243,4 +245,9 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterVolumeProfileStart(String volumeName);
 
     StatusOnlyReturnForXmlRpc glusterVolumeProfileStop(String volumeName);
+
+    GlusterVolumeStatusReturnForXmlRpc glusterVolumeStatus(Guid clusterId,
+            String volumeName,
+            String brickName,
+            String volumeStatusOption);
 }

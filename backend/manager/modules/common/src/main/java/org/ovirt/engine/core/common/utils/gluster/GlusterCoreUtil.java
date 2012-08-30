@@ -14,4 +14,15 @@ public class GlusterCoreUtil {
         }
         return qualifiedBricks;
     }
+
+    public static final GlusterBrickEntity getBrickByQualifiedName(List<GlusterBrickEntity> bricksList,
+            String qualifiedBrickName) {
+        for (GlusterBrickEntity brick : bricksList) {
+            // Compare the brickname with the existing volume brick
+            if (brick.getQualifiedName().equals(qualifiedBrickName)) {
+                return brick;
+            }
+        }
+        return null;
+    }
 }

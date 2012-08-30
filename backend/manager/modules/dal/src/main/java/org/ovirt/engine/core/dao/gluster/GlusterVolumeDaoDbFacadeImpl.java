@@ -77,6 +77,23 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
+    public List<GlusterVolumeEntity> getVolumesByOption(Guid clusterId,
+            GlusterStatus status,
+            String optionKey,
+            String optionValue) {
+        List<GlusterVolumeEntity> volumes =
+                getCallsHandler().executeReadList("GetGlusterVolumesByOption",
+                        volumeRowMapper,
+                        getCustomMapSqlParameterSource()
+                                .addValue("cluster_id", clusterId)
+                                .addValue("status", EnumUtils.nameOrNull(status))
+                                .addValue("option_key", optionKey)
+                                .addValue("option_val", optionValue));
+        fetchRelatedEntities(volumes);
+        return volumes;
+    }
+
+    @Override
     public List<GlusterVolumeEntity> getAllWithQuery(String query) {
         List<GlusterVolumeEntity> volumes = new SimpleJdbcTemplate(jdbcTemplate).query(query, volumeRowMapper);
         fetchRelatedEntities(volumes);
@@ -314,4 +331,5 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     protected ParameterizedRowMapper<GlusterVolumeEntity> createEntityRowMapper() {
         return volumeRowMapper;
     }
+
 }

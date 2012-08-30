@@ -238,4 +238,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeProfileStart(String volumeName);
 
     public Map<String, Object> glusterVolumeProfileStop(String volumeName);
+
+    public Map<String, Object> glusterVolumeStatus(String volumeName, String brickName, String volumeStatusOption);
 }

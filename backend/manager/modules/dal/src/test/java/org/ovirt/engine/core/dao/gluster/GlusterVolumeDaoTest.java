@@ -267,6 +267,15 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertEquals(volumeAfter, existingReplVol);
     }
 
+    @Test
+    public void testGetVolumesByOption() {
+        List<GlusterVolumeEntity> volumes = dao.getVolumesByOption(CLUSTER_ID, GlusterStatus.UP, "nfs.disable", "off");
+
+        assertTrue(volumes != null);
+        assertTrue(volumes.contains(existingReplVol));
+        assertTrue(volumes.get(0).isNfsEnabled());
+    }
+
     private GlusterVolumeEntity insertTestVolume() {
         Guid volumeId = Guid.NewGuid();
 

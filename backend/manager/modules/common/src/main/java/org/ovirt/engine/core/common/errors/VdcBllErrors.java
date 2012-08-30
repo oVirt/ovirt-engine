@@ -340,6 +340,7 @@ public enum VdcBllErrors {
     GlusterVolumeOptionInfoFailed(4154),
     GlusterVolumeResetOptionsFailed(4155),
     GlusterVolumeRemoveBricksFailed(4156),
+    GlusterVolumeStatusFailed(4157),
     GlusterVolumeProfileStartFailed(4158),
     GlusterVolumeProfileStopFailed(4159),
     GlusterAddHostFailed(4404),
