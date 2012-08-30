@@ -1333,4 +1333,10 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     public String getName() {
         return getvds_name();
     }
+
+    public String toString() {
+        // note that mVdsStatic may be null, so the getName with no null protection
+        // is not enough, remove this once mVdsStatic can not be null
+        return "Host[" + (mVdsStatic == null ? "null" : mVdsStatic.getvds_name()) + "]";
+    }
 }
