@@ -1126,6 +1126,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks don't exist in the Host's Cluster: ${NETWORKS_DONT_EXIST_IN_CLUSTER_LIST}.")
     String NETWORKS_DONT_EXIST_IN_CLUSTER();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces can have only a single VM Logical Network, or at most one non-VM Logical Network and/or several VLAN Logical Networks: ${NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST}.")
+    String NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following Bonds consist of less than two Network Interfaces: ${NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST}.")
     String NETWORK_BONDS_INVALID_SLAVE_COUNT();
 
