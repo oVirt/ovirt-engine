@@ -153,6 +153,9 @@ public class VmDeviceUtils {
                 if (ifaceCount < ifaces.size()) {
                     id = ifaces.get(ifaceCount++).getId();
                 }
+            } else if (VmDeviceType.CONTROLLER.getName().equals(device.getType())
+                    && VmDeviceType.USB.getName().equals(device.getDevice())) {
+                specParams = device.getSpecParams();
             } else if (VmDeviceType.VIDEO.getName().equals(device.getType())) {
                 if (isVm) {
                     // src is template and target is VM. video devices will be created according
