@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -438,6 +440,23 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                         ActionGroup.CONSUME_QUOTA));
             }
         }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStorageDomain(getParameters().getSourceDomainId().getValue());
+        String sourceSDName = StringUtils.EMPTY;
+
+        if (storageDomains.size() > 0) {
+            sourceSDName = storageDomains.get(0).getstorage_name();
+        }
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put("sourcesd", sourceSDName);
+            jobProperties.put("targetsd", getStorageDomainName());
+            jobProperties.put("action", getParameters().getOperation().name());
+        }
+        return jobProperties;
     }
 
 }
