@@ -362,6 +362,119 @@ public class SetupNetworksHelperTest {
         validateAndAssertNetworkModified(helper, net);
     }
 
+    @Test
+    public void vlanNetworkWithVmNetworkDenied() {
+        Network net1 = createNetwork("net1");
+        Network net2 = createNetwork("net2");
+        net2.setvlan_id(100);
+        mockExistingNetworks(net1, net2);
+
+        VdsNetworkInterface nic = createNic("nic0", null);
+        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+        mockExistingIfaces(nic, vlanNic);
+
+        nic.setNetworkName(net1.getName());
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlanNic));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                nic.getName());
+    }
+
+    @Test
+    public void vmNetworkWithVlanNetworkDenied() {
+        Network net1 = createNetwork("net1");
+        Network net2 = createNetwork("net2");
+        net2.setvlan_id(100);
+        mockExistingNetworks(net1, net2);
+
+        VdsNetworkInterface nic = createNic("nic0", null);
+        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+        mockExistingIfaces(nic, vlanNic);
+
+        nic.setNetworkName(net1.getName());
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(vlanNic, nic));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                nic.getName());
+    }
+
+    @Test
+    public void unmanagedVlanNetworkWithVmNetworkDenied() {
+        Network net1 = createNetwork("net1");
+        Network net2 = createNetwork("net2");
+        net2.setvlan_id(100);
+        mockExistingNetworks(net1);
+
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net1);
+        mockExistingIfaces(nic);
+
+        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlanNic));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                nic.getName());
+    }
+
+    @Test
+    public void fakeVlanNicWithVmNetworkDenied() {
+        Network net1 = createNetwork("net1");
+        Network net2 = createNetwork("net2");
+        mockExistingNetworks(net1, net2);
+
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net1);
+        mockExistingIfaces(nic);
+
+        VdsNetworkInterface fakeVlanNic = createVlan(nic.getName(), 100, net2.getName());
+        fakeVlanNic.setVlanId(null);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic, fakeVlanNic));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                nic.getName());
+    }
+
+    @Test
+    public void nonVmNetworkWithVlanVmNetwork() {
+        Network net1 = createNetwork("net1");
+        net1.setVmNetwork(false);
+        Network net2 = createNetwork("net2");
+        net2.setvlan_id(200);
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net1);
+        VdsNetworkInterface vlan = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+
+        mockExistingNetworks(net1, net2);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlan));
+
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void twoVlanVmNetworks() {
+        Network net1 = createNetwork("net1");
+        net1.setvlan_id(100);
+        Network net2 = createNetwork("net2");
+        net2.setvlan_id(200);
+        VdsNetworkInterface nic = createNic("nic0", null);
+        VdsNetworkInterface vlan1 = createVlan(nic.getName(), net1.getvlan_id(), net1.getName());
+        VdsNetworkInterface vlan2 = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+
+        mockExistingNetworks(net1, net2);
+        mockExistingIfaces(nic);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlan1, vlan2));
+
+        validateAndExpectNoViolations(helper);
+    }
+
     /* --- Tests for bonds functionality --- */
 
     @Test

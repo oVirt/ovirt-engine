@@ -43,6 +43,8 @@ public class SetupNetworksHelper {
     /** All network`s names that are attached to some sort of interface. */
     private Set<String> attachedNetworksNames = new HashSet<String>();
 
+    private Map<String, List<NetworkType>> ifacesWithExclusiveNetwork = new HashMap<String, List<NetworkType>>();
+
     public SetupNetworksHelper(SetupNetworksParameters parameters, Guid vdsGroupId) {
         params = parameters;
         this.vdsGroupId = vdsGroupId;
@@ -218,6 +220,10 @@ public class SetupNetworksHelper {
 
             // check if network exists on cluster
             if (getExistingClusterNetworks().containsKey(networkName)) {
+                Network network = getExistingClusterNetworks().get(networkName);
+                validateNetworkExclusiveOnIface(iface,
+                        determineNetworkType(network.getvlan_id(), network.isVmNetwork()));
+
                 VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
                 if (existingIface != null && !networkName.equals(existingIface.getNetworkName())) {
                     existingIface = getExistingIfaceByNetwork(networkName);
@@ -226,17 +232,55 @@ public class SetupNetworksHelper {
                 if (existingIface != null && existingIface.getNetworkImplementationDetails() != null
                         && !existingIface.getNetworkImplementationDetails().isInSync()) {
                     if (networkShouldBeSynced(networkName)) {
-                        modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
+                        modifiedNetworks.add(network);
                     } else if (networkWasModified(iface)) {
                         addViolation(VdcBllMessages.NETWORKS_NOT_IN_SYNC, networkName);
                     }
                 } else if (networkWasModified(iface)) {
-                    modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
+                    modifiedNetworks.add(network);
                 }
-            } else if (unmanagedNetworkChanged(iface)) {
-                addViolation(VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER, networkName);
+            } else {
+                VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
+                existingIface = (existingIface == null ? iface : existingIface);
+                validateNetworkExclusiveOnIface(iface,
+                        determineNetworkType(existingIface.getVlanId(), existingIface.isBridged()));
+
+                if (unmanagedNetworkChanged(iface)) {
+                    addViolation(VdcBllMessages.NETWORKS_DONT_EXIST_IN_CLUSTER, networkName);
+                }
             }
         }
+    }
+
+    private NetworkType determineNetworkType(Integer vlanId, boolean vmNetwork) {
+        return vlanId != null ? NetworkType.VLAN : vmNetwork ? NetworkType.VM : NetworkType.NON_VM;
+    }
+
+    /**
+     * Make sure that if the given interface has a VM network on it then there is nothing else on the interface, or if
+     * the given interface is a VLAN network, than there is no VM network on the interface.<br>
+     * Other combinations are either legal or illegal but are not a concern of this method.
+     *
+     * @param iface
+     *            The interface to check.
+     * @param networkType
+     *            The type of the network.
+     */
+    private void validateNetworkExclusiveOnIface(VdsNetworkInterface iface, NetworkType networkType) {
+        String ifaceName = NetworkUtils.StripVlan(iface.getName());
+        List<NetworkType> networksOnIface = ifacesWithExclusiveNetwork.get(ifaceName);
+
+        if (networksOnIface == null) {
+            networksOnIface = new ArrayList<SetupNetworksHelper.NetworkType>();
+            ifacesWithExclusiveNetwork.put(ifaceName, networksOnIface);
+        }
+
+        if ((networkType == NetworkType.VLAN && networksOnIface.contains(NetworkType.VM))
+                || (networkType == NetworkType.VM && !networksOnIface.isEmpty())) {
+            addViolation(VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK, ifaceName);
+        }
+
+        networksOnIface.add(networkType);
     }
 
     /**
@@ -425,5 +469,11 @@ public class SetupNetworksHelper {
 
     public VmInterfaceManager getVmInterfaceManager() {
         return new VmInterfaceManager();
+    }
+
+    private enum NetworkType {
+        VM,
+        NON_VM,
+        VLAN
     }
 }
