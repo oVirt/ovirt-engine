@@ -27,6 +27,10 @@ public class CompositePasswordValueHelper implements ValueHelper {
 
     @Override
     public String setValue(String value) throws Exception {
+        // Happens only when deleting password value
+        if (value.isEmpty()){
+            return "";
+        }
         value = pwdValueHelper.extractPasswordValue(value);
         return reformatKeyVal(value, ReformatType.ENCRYPT);
     }
