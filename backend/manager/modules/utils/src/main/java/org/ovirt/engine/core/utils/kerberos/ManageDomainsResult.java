@@ -63,8 +63,8 @@ public class ManageDomainsResult extends Exception {
         }
         else {
             if (StringUtils.isEmpty(defaultMsg)) {
-                log.debug("No default param passed.");
-                this.detailedMessage = "Error with output, no default message to show. sorry..";
+                this.detailedMessage = enumResult.getDetailedMessage() +
+                  ": One of the parameters for this error is null and no default message to show";
             }
             else {
                 this.detailedMessage = defaultMsg;
@@ -85,6 +85,10 @@ public class ManageDomainsResult extends Exception {
     }
 
     public String getDetailedMessage() {
+        return detailedMessage;
+    }
+
+    public String getMessage() {
         return detailedMessage;
     }
 

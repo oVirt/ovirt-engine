@@ -95,19 +95,21 @@ public class ConfigurationProvider {
 
         try {
             passFile = createPassFile(entry.getDomainsConfigurationEntry());
-            Process engineConfigProcess =
-                    Runtime.getRuntime().exec(engineConfigExecutable + " -s "
-                            + enumValue.name() + ((passedAsValue) ? "=" + entry.getDomainsConfigurationEntry() :
-                                    " --admin-pass-file " + passFile.getAbsolutePath())
-                            + " -p " + engineConfigProperties);
+            String executeCmd = engineConfigExecutable + " -s "
+                    + enumValue.name() + ((passedAsValue) ? "=" + entry.getDomainsConfigurationEntry() :
+                        " --admin-pass-file " + passFile.getAbsolutePath())
+                        + " -p " + engineConfigProperties;
+
+            Process engineConfigProcess = Runtime.getRuntime().exec(executeCmd);
+
             int retVal = engineConfigProcess.waitFor();
             if (retVal != 0) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION,
-                        enumValue.name());
+                        enumValue.name() + " - execute command: " + executeCmd);
             }
         } catch (Throwable e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,
-                    new String[] { enumValue.name(), e.getMessage() });
+                    enumValue.name(), e.getMessage());
         } finally {
             disposePassFile(passFile);
         }
