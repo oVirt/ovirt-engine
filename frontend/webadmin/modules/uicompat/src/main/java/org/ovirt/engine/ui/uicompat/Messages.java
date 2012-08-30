@@ -155,4 +155,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Incorrect number of Total Virtual CPUs. It is not possible to compose this number from the available Virtual Sockets and Cores per Virtual Sockets")
     String incorrectVCPUNumber();
+
+    @DefaultMessage("The max allowed name length is {0} for {1} VMs in pool")
+    String poolNameLengthInvalid(int maxLength, int vmsInPool);
+
+    @DefaultMessage("The max allowed num of VMs is {0} when the length of the pool name is {1}")
+    String numOfVmsInPoolInvalod(int maxLength, int vmsInPool);
 }

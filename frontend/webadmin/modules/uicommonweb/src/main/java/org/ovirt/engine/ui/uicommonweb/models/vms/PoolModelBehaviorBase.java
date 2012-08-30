@@ -301,16 +301,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     @Override
     public boolean Validate() {
-
-        // Revalidate name field.
-        // TODO: Make maximum characters value depend on number of desktops in pool.
-        // VmOsType os = (VmOsType) getModel().getOSType().getSelectedItem();
-
         boolean isNew = getModel().getIsNew();
         int maxAllowedVms = getMaxVmsInPool();
         int assignedVms = getModel().getAssignedVms().AsConvertible().Integer();
 
         getModel().getNumOfDesktops().ValidateEntity(
+
                 new IValidation[]
                 {
                         new NotEmptyValidation(),
@@ -337,5 +333,4 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 && getModel().getNumOfDesktops().getIsValid()
                 && getModel().getPrestartedVms().getIsValid();
     }
-
 }

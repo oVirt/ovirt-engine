@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -19,6 +20,8 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.uicommonweb.validation.ExistingPoolNameLengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 
 public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
@@ -105,5 +108,22 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                 }
             }
         }, getModel().getHash()), dataCenter.getId(), ActionGroup.CREATE_VM);
+    }
+
+    public boolean Validate() {
+        boolean parentValidation = super.Validate();
+        if (getModel().getNumOfDesktops().getIsValid()) {
+            getModel().getNumOfDesktops().ValidateEntity(new IValidation[] { new ExistingPoolNameLengthValidation(
+                    (String) getModel().getName().getEntity(),
+                    ((Integer) getModel().getAssignedVms().getEntity()) +
+                    Integer.parseInt(((String) getModel().getNumOfDesktops().getEntity())),
+                    (VmOsType) getModel().getOSType().getSelectedItem()
+                    ) }
+                    );
+
+            return getModel().getNumOfDesktops().getIsValid() && parentValidation;
+        }
+
+        return parentValidation;
     }
 }
