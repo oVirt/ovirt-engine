@@ -72,6 +72,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             bridge.setMtu(getEntity().getMtu());
             bridge.setVdsId(targetNicEntity.getVdsId());
             bridge.setVdsName(targetNicEntity.getVdsName());
+            bridge.setBridged(getEntity().isVmNetwork());
             if (netParams != null){
                 bridge.setBootProtocol(netParams.getBootProtocol());
                 bridge.setAddress(netParams.getAddress());
@@ -84,6 +85,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         } else {
             targetNicEntity.setNetworkName(getName());
             targetNicEntity.setMtu(getEntity().getMtu());
+            targetNicEntity.setBridged(getEntity().isVmNetwork());
             return null;
         }
     }

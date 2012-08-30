@@ -216,6 +216,8 @@ public class HostInterfaceModel extends EntityModel
         this.isToSync = isToSync;
     }
 
+    private NetworkParameters originalNetParams = null;
+
     public HostInterfaceModel() {
         this(false);
     }
@@ -243,13 +245,36 @@ public class HostInterfaceModel extends EntityModel
                 super.setEntity(value);
                 if (getIsToSync().getIsChangable()){
                     setBootProtocolsAvailable((Boolean) value);
+                    if (!(Boolean)value){
+                        revertChanges();
+                    }else{
+                        saveOriginalNetworkParameters();
+                    }
                 }
             }
+
         });
 
         // call the Network_ValueChanged method to set all
         // properties according to default value of Network:
         Network_SelectedItemChanged(null);
+    }
+
+    private void revertChanges() {
+        if (originalNetParams!=null){
+            setBootProtocol(originalNetParams.getBootProtocol());
+            getAddress().setEntity(originalNetParams.getAddress());
+            getSubnet().setEntity(originalNetParams.getSubnet());
+        }
+    }
+
+    private void saveOriginalNetworkParameters(){
+        if (originalNetParams == null){
+            originalNetParams = new  NetworkParameters();
+        }
+        originalNetParams.setBootProtocol(getBootProtocol());
+        originalNetParams.setAddress((String)getAddress().getEntity());
+        originalNetParams.setSubnet((String)getSubnet().getEntity());
     }
 
     @Override
