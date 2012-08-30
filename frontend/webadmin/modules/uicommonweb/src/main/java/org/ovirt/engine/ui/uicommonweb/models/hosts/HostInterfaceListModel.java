@@ -1463,7 +1463,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
         else
         {
-            innerBondModel.setBootProtocol(NetworkBootProtocol.Dhcp);
+            innerBondModel.setBootProtocol(NetworkBootProtocol.None);
         }
 
         innerBondModel.getGateway().setIsAvailable(isAnyManagement);
