@@ -29,13 +29,13 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private String vdsName;
     private NetworkBootProtocol bootProtocol;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_STATIC_IP_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
     private String address;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_SUBNET_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
     private String subnet;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_GATEWAY_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
     private Integer vlanId;
     private Boolean bonded;

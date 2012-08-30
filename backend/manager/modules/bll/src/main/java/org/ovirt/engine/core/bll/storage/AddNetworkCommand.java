@@ -61,13 +61,13 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         });
         if (exists) {
             getReturnValue().getCanDoActionMessages()
-                    .add(VdcBllMessages.NETWROK_NAME_ALREADY_EXISTS.toString());
+                    .add(VdcBllMessages.NETWORK_NAME_ALREADY_EXISTS.toString());
             return false;
         }
 
         if (getParameters().getNetwork().getvlan_id() != null) {
             if (!IsVlanInRange(getParameters().getNetwork().getvlan_id())) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_VLAN_OUT_OF_RANGE);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_OUT_OF_RANGE);
                 return false;
             }
             else if (null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
@@ -80,7 +80,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
                     return false;
                 }
             })) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_VLAN_IN_USE);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
                 return false;
             }
         }

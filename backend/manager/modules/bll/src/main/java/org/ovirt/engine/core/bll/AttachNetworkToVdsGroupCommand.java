@@ -112,7 +112,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             return true;
         }
 
-        addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS);
+        addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
         return false;
     }
 

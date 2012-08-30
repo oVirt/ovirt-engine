@@ -79,7 +79,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         if (getParameters().getNetwork() == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
             return false;
         }
 
@@ -137,7 +137,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         });
 
         if (I != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
             return false;
         }
 
@@ -149,7 +149,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 return network.getname().equals(getParameters().getNetwork().getname());
             }
         })) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS_IN_CLUSTER);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
             return false;
         }
 

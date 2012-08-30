@@ -61,7 +61,7 @@ public class AttachNetworkToVdsGroupCommandTest {
     @Test
     public void networkDoesntExist() {
         simulateVdsGroupExists();
-        assertCanDoActionFailure(VdcBllMessages.NETWROK_NOT_EXISTS.toString());
+        assertCanDoActionFailure(VdcBllMessages.NETWORK_NOT_EXISTS.toString());
     }
 
     @Test

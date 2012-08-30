@@ -878,7 +878,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String VDS_GROUP_CPU_TYPE_CANNOT_BE_NULL();
 
     @DefaultStringValue("Cannot ${action} ${type}. Network name already exists.")
-    String NETWROK_NAME_ALREADY_EXISTS();
+    String NETWORK_NAME_ALREADY_EXISTS();
 
     @DefaultStringValue("Cannot connect server to Storage.  ")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION();
@@ -965,10 +965,10 @@ public interface AppErrors extends ConstantsWithLookup {
     String NETWORK_INTERFACE_ALREADY_HAVE_NETWORK();
 
     @DefaultStringValue("Logical Network is already attached to a Network Interface.")
-    String NETWROK_ALREAY_ATTACH_TO_INTERFACE();
+    String NETWORK_ALREAY_ATTACH_TO_INTERFACE();
 
     @DefaultStringValue("The specified Logical Network doesn't exist.")
-    String NETWROK_NOT_EXISTS();
+    String NETWORK_NOT_EXISTS();
 
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();
@@ -986,7 +986,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE();
 
     @DefaultStringValue("VLAN ID must be a number between 2 and 4905")
-    String NETWROK_VLAN_OUT_OF_RANGE();
+    String NETWORK_VLAN_OUT_OF_RANGE();
 
     @DefaultStringValue("Cannot attach Storage Domain.\n-Please attach Data Domain to the Data Center first.")
     String ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN();
@@ -998,7 +998,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL();
 
     @DefaultStringValue("The Logical Network is in use.\n-Please remove it from all Hosts in Cluster and try again.")
-    String NETWROK_IN_USE();
+    String NETWORK_IN_USE();
 
     @DefaultStringValue("Volume Group (VGs) and Logical Volumes (LVs) are not specified.")
     String ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV();
@@ -1103,7 +1103,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED();
 
     @DefaultStringValue("The specified VLAN ID is already in use.")
-    String NETWROK_VLAN_IN_USE();
+    String NETWORK_VLAN_IN_USE();
 
     @DefaultStringValue("Cluster has Networks that doesn't exist in the Data Center.\n-Please remove those Networks first.")
     String NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK();
@@ -1154,7 +1154,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK();
 
     @DefaultStringValue("Previous network name is required.")
-    String NETWROK_OLD_NETWORK_NOT_SPECIFIED();
+    String NETWORK_OLD_NETWORK_NOT_SPECIFIED();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM cannot have more than 8 interfaces.")
     String NETWORK_INTERFACE_EXITED_MAX_INTERFACES();
@@ -1169,7 +1169,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String TAGS_SPECIFY_TAG_IS_IN_USE();
 
     @DefaultStringValue("The specified Logical Network does not exist in Cluster.")
-    String NETWROK_NET_EXISTS_IN_CLUSTER();
+    String NETWORK_NET_EXISTS_IN_CLUSTER();
 
     @DefaultStringValue("Actions list cannot be empty.")
     String ACTION_LIST_CANNOT_BE_EMPTY();
@@ -1211,7 +1211,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String NETWORK_INTERFACE_IN_USE_BY_VLAN();
 
     @DefaultStringValue("Logical Network is already attached to Cluster.")
-    String NETWROK_ALREADY_ATTACHED_TO_CLUSTER();
+    String NETWORK_ALREADY_ATTACHED_TO_CLUSTER();
 
     @DefaultStringValue("Cannot ${action} ${type}. Host with the same address already exists.")
     String ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST();
@@ -1232,7 +1232,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED();
 
     @DefaultStringValue("Netwrok address must be specify when using static ip")
-    String NETWROK_ADDR_MANDATORY_IN_STATIC_IP();
+    String NETWORK_ADDR_MANDATORY_IN_STATIC_IP();
 
     @DefaultStringValue("Cannot ${action} ${type}. Same action in progress.")
     String ACTION_TYPE_FAILED_OBJECT_LOCKED();
@@ -1250,7 +1250,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED();
 
     @DefaultStringValue("Cannot edit Network while Host is Active, change the Host to Maintenance mode and try again.")
-    String NETWROK_HOST_IS_BUSY();
+    String NETWORK_HOST_IS_BUSY();
 
     @DefaultStringValue("Cannot change Template images format")
     String VMT_CANNOT_CHANGE_IMAGES_TEMPLATE();
@@ -1325,13 +1325,13 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN();
 
     @DefaultStringValue("Bad format of IP address")
-    String NETWROK_ADDR_IN_STATIC_IP_BAD_FORMAT();
+    String NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT();
 
     @DefaultStringValue("Bad format of gateway address")
-    String NETWROK_ADDR_IN_GATEWAY_BAD_FORMAT();
+    String NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT();
 
     @DefaultStringValue("Bad format of subnet mask")
-    String NETWROK_ADDR_IN_SUBNET_BAD_FORMAT();
+    String NETWORK_ADDR_IN_SUBNET_BAD_FORMAT();
 
     @DefaultStringValue("Bad network name, network cannot start with 'bond'")
     String NETWORK_CANNOT_CONTAIN_BOND_NAME();
@@ -1784,7 +1784,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ERROR_CANNOT_CHANGE_STORAGE_POOL_VDSS_UP();
 
     @DefaultStringValue("Data Center must be specified")
-    String NETWROK_STORAGE_POOL_MUST_BE_SPECIFY();
+    String NETWORK_STORAGE_POOL_MUST_BE_SPECIFY();
 
     @DefaultStringValue("Unknown tag name.")
     String EN_UNKNOWN_TAG_NAME();

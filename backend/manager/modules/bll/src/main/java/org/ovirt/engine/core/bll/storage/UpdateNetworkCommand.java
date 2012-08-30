@@ -62,7 +62,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         // check vlan is valid
         if (getParameters().getNetwork().getvlan_id() != null) {
             if (!AddNetworkCommand.IsVlanInRange(getParameters().getNetwork().getvlan_id())) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_VLAN_OUT_OF_RANGE);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_OUT_OF_RANGE);
                 return false;
             }
 
@@ -77,7 +77,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                     return false;
                 }
             })) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_VLAN_IN_USE);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
                 return false;
             }
         }
@@ -90,7 +90,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         });
         if (oldNetwork == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
             return false;
         }
 
@@ -112,7 +112,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         });
         if (net != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_IN_USE);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_IN_USE);
             return false;
         }
 

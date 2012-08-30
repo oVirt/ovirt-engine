@@ -161,7 +161,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         // check that the old network name is not null
         if (StringUtils.isEmpty(getParameters().getOldNetworkName())) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_OLD_NETWORK_NOT_SPECIFIED);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_OLD_NETWORK_NOT_SPECIFIED);
             return false;
         }
 
@@ -178,7 +178,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 }
             });
             if (iface != null) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_HOST_IS_BUSY);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_HOST_IS_BUSY);
                 return false;
             }
         }
@@ -194,7 +194,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             }
         });
         if (ifacenet == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
             return false;
         }
 
@@ -229,7 +229,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         // check address exists in static ip
         if (getParameters().getBootProtocol() == NetworkBootProtocol.StaticIp) {
             if (StringUtils.isEmpty(getParameters().getAddress())) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_MANDATORY_IN_STATIC_IP);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
         }

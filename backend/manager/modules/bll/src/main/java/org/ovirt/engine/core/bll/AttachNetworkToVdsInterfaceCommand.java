@@ -116,7 +116,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         // check that the required not attached to other interface
         iface = Entities.interfacesByNetworkName(interfaces).get(params.getNetwork().getName());
         if (iface != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
             return false;
         }
 
@@ -126,7 +126,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                 .getAllForCluster(getVds().getvds_group_id()));
 
         if (!networksByName.containsKey(params.getNetwork().getName())) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS_IN_CLUSTER);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
             return false;
         } else {
             logicalNetwork = networksByName.get(params.getNetwork().getName());
@@ -136,7 +136,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         // check address exists in static ip
         if (params.getBootProtocol() == NetworkBootProtocol.StaticIp) {
             if (StringUtils.isEmpty(params.getAddress())) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_MANDATORY_IN_STATIC_IP);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
         }

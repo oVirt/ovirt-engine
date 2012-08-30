@@ -19,13 +19,13 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
     private String oldNetworkName;
     private VdsNetworkInterface iface;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_STATIC_IP_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
     private String address;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_SUBNET_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
     private String subnet;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_GATEWAY_BAD_FORMAT")
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
     private String bondingOptions;
     private NetworkBootProtocol bootProtocol = NetworkBootProtocol.None;
