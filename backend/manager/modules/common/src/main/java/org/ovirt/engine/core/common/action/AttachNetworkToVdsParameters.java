@@ -1,19 +1,31 @@
 package org.ovirt.engine.core.common.action;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AttachNetworkToVdsParameters extends VdsActionParameters {
     private static final long serialVersionUID = 5446434263733512827L;
 
     private boolean checkConnectivity;
+
+    @Valid
     private Network network;
     private String oldNetworkName;
     private VdsNetworkInterface iface;
+
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_STATIC_IP_BAD_FORMAT")
     private String address;
+
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_SUBNET_BAD_FORMAT")
     private String subnet;
+
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
     private String bondingOptions;
     private NetworkBootProtocol bootProtocol = NetworkBootProtocol.None;

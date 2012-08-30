@@ -2,13 +2,16 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import javax.validation.Valid;
+
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UpdateNetworkToVdsParameters extends AttachNetworkToVdsParameters {
     private static final long serialVersionUID = 5938344434089627682L;
 
+    @Valid
     private ArrayList<VdsNetworkInterface> interfaces;
     private String bondName;
 

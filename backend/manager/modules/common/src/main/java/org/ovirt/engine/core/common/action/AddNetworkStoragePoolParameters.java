@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
 import javax.validation.Valid;
+
+import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.compat.Guid;
 
 public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
     private static final long serialVersionUID = -7392121807419409051L;
+
     @Valid
     private Network _network;
 

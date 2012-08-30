@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
+import javax.validation.Valid;
+
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -7,6 +9,8 @@ import org.ovirt.engine.core.common.businessentities.network_cluster;
 
 public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
     private static final long serialVersionUID = -2874549285727269806L;
+
+    @Valid
     private Network _network;
 
     public AttachNetworkToVdsGroupParameter(VDSGroup group, Network net) {

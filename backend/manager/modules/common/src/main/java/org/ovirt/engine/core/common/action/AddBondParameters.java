@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddBondParameters extends BondParametersBase {
@@ -9,10 +13,18 @@ public class AddBondParameters extends BondParametersBase {
     private static final long serialVersionUID = 761203751697100144L;
 
     private String[] nics;
+
+    @Valid
     private Network network;
+
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_STATIC_IP_BAD_FORMAT")
     private String address;
+
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_SUBNET_BAD_FORMAT")
     private String subnet;
     private Integer vlanId;
+
+    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWROK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
     private String bondingOptions;
     private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.None;
