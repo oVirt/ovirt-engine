@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
@@ -15,9 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class StorageIsoListModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback
@@ -152,7 +153,7 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
         StartProgress(null);
 
         Frontend.RunMultipleQueries(new ArrayList<VdcQueryType>(Arrays.asList(new VdcQueryType[] {
-            VdcQueryType.GetAllIsoImagesList, VdcQueryType.GetAllFloppyImagesList})),
+                VdcQueryType.GetAllIsoImagesList, VdcQueryType.GetAllFloppyImagesList })),
                 new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
                         parameters, parameters })),
                 this);
@@ -178,11 +179,16 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
                 isoReturnValue.getSucceeded() ? (ArrayList<RepoFileMetaData>) isoReturnValue.getReturnValue()
                         : new ArrayList<RepoFileMetaData>();
 
-        for (RepoFileMetaData item : isoImages)
-        {
+        ArrayList<String> fileNameList = new ArrayList<String>();
+        for (RepoFileMetaData RepoFileMetaData : isoImages) {
+            fileNameList.add(RepoFileMetaData.getRepoFileName());
+        }
+        Collections.sort(fileNameList, new Linq.CaseInsensitiveComparer());
+
+        for (String item : fileNameList) {
             EntityModel model = new EntityModel();
-            model.setHashName(item.getRepoFileName());
-            model.setTitle(item.getRepoFileName());
+            model.setHashName(item);
+            model.setTitle(item);
             model.setEntity("CD/DVD"); //$NON-NLS-1$
             items.add(model);
         }
@@ -193,11 +199,16 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
                 floppyReturnValue.getSucceeded() ? (ArrayList<RepoFileMetaData>) floppyReturnValue.getReturnValue()
                         : new ArrayList<RepoFileMetaData>();
 
-        for (RepoFileMetaData item : floppyImages)
-        {
+        ArrayList<String> floppyNameList = new ArrayList<String>();
+        for (RepoFileMetaData RepoFileMetaData : floppyImages) {
+            floppyNameList.add(RepoFileMetaData.getRepoFileName());
+        }
+        Collections.sort(floppyNameList, new Linq.CaseInsensitiveComparer());
+
+        for (String item : floppyNameList) {
             EntityModel model = new EntityModel();
-            model.setHashName(item.getRepoFileName());
-            model.setTitle(item.getRepoFileName());
+            model.setHashName(item);
+            model.setTitle(item);
             model.setEntity("Floppy"); //$NON-NLS-1$
             items.add(model);
         }
