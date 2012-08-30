@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -229,24 +228,8 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         // check address exists in static ip
         if (getParameters().getBootProtocol() == NetworkBootProtocol.StaticIp) {
-            Pattern IP_PATTERN = Pattern
-                    .compile("^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
             if (StringUtils.isEmpty(getParameters().getAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_MANDATORY_IN_STATIC_IP);
-                return false;
-            }
-            if (!IP_PATTERN.matcher(getParameters().getAddress()).matches()) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_IN_STATIC_IP_BAD_FORMAT);
-                return false;
-            }
-            if (StringUtils.isNotEmpty(getParameters().getGateway())
-                    && !IP_PATTERN.matcher(getParameters().getGateway()).matches()) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_IN_GATEWAY_BAD_FORMAT);
-                return false;
-            }
-            if (StringUtils.isNotEmpty(getParameters().getSubnet())
-                    && !IP_PATTERN.matcher(getParameters().getSubnet()).matches()) {
-                addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_IN_SUBNET_BAD_FORMAT);
                 return false;
             }
         }
