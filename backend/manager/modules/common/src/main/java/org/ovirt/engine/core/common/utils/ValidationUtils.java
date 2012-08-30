@@ -26,7 +26,7 @@ public class ValidationUtils {
             "^([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}$";
     public static final String NO_WHITES_SPACE_PATTERN = "\\S+";
     public static final String IP_PATTERN =
-            "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\b$";
+            "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\b$|^$";
     // NULLABLE_MAC_ADDRESS can be valid mac address: xx:xx:xx:xx:xx:xx or empty string,
     // We need it for VMs that is not sending custom MAC address and we provide MAC address from
     // the MAC pool - this values came as empty string and we don't want the validation fail.
