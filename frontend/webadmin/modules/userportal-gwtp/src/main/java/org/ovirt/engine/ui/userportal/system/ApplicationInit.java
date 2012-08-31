@@ -5,6 +5,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
+import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -30,12 +31,12 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
     public ApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user,
+            CurrentUser user, EventBus eventBus,
             Provider<UserPortalLoginModel> loginModelProvider,
-            EventBus eventBus,
+            LockInteractionManager lockInteractionManager,
             CurrentUserRole userRole,
             ApplicationConstants constants) {
-        super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, loginModelProvider, eventBus);
+        super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, eventBus, loginModelProvider, lockInteractionManager);
         this.userRole = userRole;
         Window.setTitle(constants.applicationTitle());
     }

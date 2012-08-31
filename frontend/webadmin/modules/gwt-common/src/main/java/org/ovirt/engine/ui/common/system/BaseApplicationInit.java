@@ -38,17 +38,21 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
     // Using Provider because any UiCommon model will fail before TypeResolver is initialized
     private final Provider<T> loginModelProvider;
 
+    private final LockInteractionManager lockInteractionManager;
+
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user, Provider<T> loginModelProvider,
-            EventBus eventBus) {
+            CurrentUser user,  EventBus eventBus,
+            Provider<T> loginModelProvider,
+            LockInteractionManager lockInteractionManager) {
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
         this.user = user;
-        this.loginModelProvider = loginModelProvider;
         this.eventBus = eventBus;
+        this.loginModelProvider = loginModelProvider;
+        this.lockInteractionManager = lockInteractionManager;
 
         // Handle UI logout requests
         user.setLogoutHandler(this);
@@ -99,6 +103,8 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
 
         // UI login actions
         user.onUserLogin(loggedUser.getUserName());
+
+        // Post-login actions
         clearPassword(loginModel);
     }
 
@@ -155,6 +161,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                 @Override
                 public void execute() {
+                    lockInteractionManager.showLoadingIndicator();
                     getLoginModel().AutoLogin(vdcUser);
                 }
             });

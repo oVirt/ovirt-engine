@@ -7,19 +7,19 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 
@@ -50,10 +50,13 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
     private static final Logger logger = Logger.getLogger(AbstractLoginPopupPresenterWidget.class.getName());
 
     private final ClientStorage clientStorage;
+    private final LockInteractionManager lockInteractionManager;
 
-    public AbstractLoginPopupPresenterWidget(EventBus eventBus, V view, T loginModel, ClientStorage clientStorage) {
+    public AbstractLoginPopupPresenterWidget(EventBus eventBus, V view, T loginModel,
+            ClientStorage clientStorage, LockInteractionManager lockInteractionManager) {
         super(eventBus, view);
         this.clientStorage = clientStorage;
+        this.lockInteractionManager = lockInteractionManager;
         getView().edit(loginModel);
     }
 
@@ -62,6 +65,16 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
         super.onBind();
 
         final T loginModel = getView().flush();
+
+        final DeferredModelCommandInvoker commandInvoker = new DeferredModelCommandInvoker(loginModel) {
+            @Override
+            protected void executeCommand(UICommand command) {
+                if (command == loginModel.getLoginCommand()) {
+                    lockInteractionManager.showLoadingIndicator();
+                }
+                super.executeCommand(command);
+            }
+        };
 
         loginModel.getLoggedInEvent().addListener(new IEventListener() {
             @Override
@@ -82,12 +95,10 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
         registerHandler(getView().getLoginButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                getView().flush();
-                getView().getLoginButton().getCommand().Execute();
+                commandInvoker.invokeDefaultCommand();
             }
         }));
 
-        final DeferredModelCommandInvoker commandInvoker = new DeferredModelCommandInvoker(loginModel);
         getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
             @Override
             public void onKeyPress(NativeEvent event) {
@@ -119,24 +130,7 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
                 }
             }
         });
-
-        loginModel.getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-
-                if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
-                    if (loginModel.getProgress() != null) {
-                        RootPanel.getBodyElement().getStyle().setCursor(Cursor.WAIT);
-                    } else {
-                        RootPanel.getBodyElement().getStyle().clearCursor();
-                    }
-                }
-            }
-        });
     }
-
-
 
     /**
      * Returns the key used to store and retrieve selected domain from {@link ClientStorage}.

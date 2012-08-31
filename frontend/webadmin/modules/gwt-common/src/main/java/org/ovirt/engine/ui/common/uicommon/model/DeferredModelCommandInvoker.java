@@ -40,7 +40,7 @@ public class DeferredModelCommandInvoker {
                 @Override
                 public void execute() {
                     try {
-                        command.Execute();
+                        executeCommand(command);
                     } catch (Exception ex) {
                         logger.log(Level.SEVERE, "UICommand execution failed", ex); //$NON-NLS-1$
                         commandFailed(command);
@@ -50,6 +50,10 @@ public class DeferredModelCommandInvoker {
                 }
             });
         }
+    }
+
+    protected void executeCommand(UICommand command) {
+        command.Execute();
     }
 
     protected void commandFailed(UICommand command) {

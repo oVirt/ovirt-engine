@@ -6,6 +6,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
+import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
@@ -28,13 +29,12 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
     public ApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user,
+            CurrentUser user, EventBus eventBus,
             Provider<LoginModel> loginModelProvider,
-            EventBus eventBus,
+            LockInteractionManager lockInteractionManager,
             ApplicationConstants constants) {
-        super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, loginModelProvider, eventBus);
+        super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, eventBus, loginModelProvider, lockInteractionManager);
         Window.setTitle(constants.applicationTitle());
-
         handleUiMode();
     }
 
