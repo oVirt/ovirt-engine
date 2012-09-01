@@ -93,8 +93,66 @@ public class SetupNetworksHelper {
         extractRemovedNetworks();
         extractRemovedBonds();
         detectSlaveChanges();
+        validateMTU();
 
         return translateViolations();
+    }
+
+    /**
+     * Validates there is no differences on MTU value between non-VM network to Vlans over the same interface/bond
+     */
+    private void validateMTU() {
+        Map<String, VdsNetworkInterface> ifacesByNetworkName =
+                Entities.interfacesByNetworkName(params.getInterfaces());
+        Set<String> checkedNetworks = new HashSet<String>(getNetworks().size());
+
+        for (Network network : getNetworks()) {
+            if (!checkedNetworks.contains(network.getName())) {
+                List<Network> networksOnInterface = findNetworksOnInterface(ifacesByNetworkName.get(network.getName()));
+                boolean mtuMismatched = false;
+                for (Network net : networksOnInterface) {
+                    checkedNetworks.add(net.getName());
+                    if (net.getMtu() != network.getMtu()
+                            && (NetworkUtils.isNonVmNetworkWithNoVlan(network) || NetworkUtils.isNonVmNetworkWithNoVlan(net))) {
+                        mtuMismatched = true;
+                    }
+                }
+                if (mtuMismatched) {
+                    reportMTUDifferences(networksOnInterface);
+                }
+            }
+        }
+    }
+
+    private void reportMTUDifferences(List<Network> ifaceNetworks) {
+        List<String> mtuDiffNetworks = new ArrayList<String>();
+        for (Network net : ifaceNetworks) {
+            mtuDiffNetworks.add(String.format("%s(%s)",
+                    net.getName(),
+                    net.getMtu() == 0 ? "default" : String.valueOf(net.getMtu())));
+        }
+        addViolation(VdcBllMessages.NETWORK_MTU_DIFFERENCES,
+                String.format("[%s]", StringUtils.join(mtuDiffNetworks, ", ")));
+    }
+
+    /**
+     * Finds all the networks on a specific network interface, directly on the interface or over a vlan.
+     *
+     * @param iface
+     *            the underlying interface
+     * @return a list of attached networks to the given underlying interface
+     */
+    private List<Network> findNetworksOnInterface(VdsNetworkInterface iface) {
+        String nameWithoutVlanId = NetworkUtils.StripVlan(iface.getName());
+        List<Network> networks = new ArrayList<Network>();
+        for (VdsNetworkInterface tmp : params.getInterfaces()) {
+            if (NetworkUtils.StripVlan(tmp.getName()).equals(nameWithoutVlanId) && tmp.getNetworkName() != null) {
+                if (getExistingClusterNetworks().containsKey(tmp.getNetworkName())) {
+                    networks.add(getExistingClusterNetworks().get(tmp.getNetworkName()));
+                }
+            }
+        }
+        return networks;
     }
 
     private void addViolation(VdcBllMessages violation, String violatingEntity) {

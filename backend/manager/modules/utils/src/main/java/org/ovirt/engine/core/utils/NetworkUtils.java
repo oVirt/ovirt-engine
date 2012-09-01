@@ -171,4 +171,14 @@ public final class NetworkUtils {
             return new VdsNetworkInterface.NetworkImplementationDetails();
         }
     }
+
+    /**
+     * Returns true if a given network is non-VM network with no Vlan tagging, else false.
+     *
+     * @param network
+     *            The network to check
+     */
+    public static boolean isNonVmNetworkWithNoVlan(Network network) {
+        return !network.isVmNetwork() && (network.getvlan_id() == null || network.getvlan_id() == 0);
+    }
 }

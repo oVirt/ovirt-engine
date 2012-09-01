@@ -1138,6 +1138,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. STP can only be enabled on VM Networks.")
     String NON_VM_NETWORK_CANNOT_SUPPORT_STP();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks don't have the same MTU value: ${NETWORK_MTU_DIFFERENCES_LIST}.")
+    String NETWORK_MTU_DIFFERENCES();
+
     @DefaultStringValue("The currently used VM Snapshot Image cannot be used in Preview command.")
     String CANNOT_PREIEW_CURRENT_IMAGE();
 
