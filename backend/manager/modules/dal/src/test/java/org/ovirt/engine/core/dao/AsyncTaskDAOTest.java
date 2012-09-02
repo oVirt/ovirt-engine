@@ -51,7 +51,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         newAsyncTask.setaction_parameters(params);
         newAsyncTask.setCommandId(Guid.NewGuid());
 
-        existingAsyncTask = dao.get(new Guid("340fd52b-3400-4cdd-8d3f-C9d03704b0aa"));
+        existingAsyncTask = dao.get(FixturesTool.EXISTING_TASK_ID);
     }
 
     /**
