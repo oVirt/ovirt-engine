@@ -1093,6 +1093,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return retValue;
     }
 
+    /**
+     * Create the {@link SPMAsyncTask} object to be run
+     * @param asyncTaskCreationInfo Info on how to create the task
+     * @param parentCommand The type of command issuing the task
+     * @return An {@link SPMAsyncTask} object representing the task to be run
+     */
     protected SPMAsyncTask ConcreteCreateTask
             (AsyncTaskCreationInfo asyncTaskCreationInfo,
                     VdcActionType parentCommand) {
