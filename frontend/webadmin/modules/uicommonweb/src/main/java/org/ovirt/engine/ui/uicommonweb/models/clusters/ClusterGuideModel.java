@@ -511,7 +511,6 @@ public class ClusterGuideModel extends GuideModel
 
         HostModel hostModel = (HostModel) getWindow();
         hostModel.setIsPowerManagementTabSelected(true);
-        hostModel.getIsPm().setEntity(true);
     }
 
     @Override

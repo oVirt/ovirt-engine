@@ -622,14 +622,18 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     innerHostModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
                 }
 
-                UICommand tempVar = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
-                innerHostModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
-                innerHostModel.getCommands().add(tempVar2);
+
+                UICommand command;
+
+                command = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                command.setIsDefault(true);
+                innerHostModel.getCommands().add(command);
+
+                command = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                command.setIsCancel(true);
+                innerHostModel.getCommands().add(command);
             }
         };
         AsyncDataProvider.GetDataCenterList(_asyncQuery);
@@ -699,15 +703,18 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
                 confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
-                UICommand tempVar =
-                        new UICommand(approveInitiated ? "OnSaveInternalFromApprove" : "OnSaveInternalNotFromApprove", this); //$NON-NLS-1$ //$NON-NLS-2$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
-                confirmModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("CancelConfirmFocusPM", this); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
-                confirmModel.getCommands().add(tempVar2);
+
+                UICommand command;
+
+                command = new UICommand(approveInitiated ? "OnSaveInternalFromApprove" : "OnSaveInternalNotFromApprove", this); //$NON-NLS-1$ //$NON-NLS-2$
+                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                command.setIsDefault(true);
+                confirmModel.getCommands().add(command);
+
+                command = new UICommand("CancelConfirmFocusPM", this); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().configurePowerManagement());
+                command.setIsCancel(true);
+                confirmModel.getCommands().add(command);
             }
             else
             {
@@ -732,7 +739,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         HostModel hostModel = (HostModel) getWindow();
         hostModel.setIsPowerManagementTabSelected(true);
-        hostModel.getIsPm().setEntity(true);
 
         setConfirmWindow(null);
     }

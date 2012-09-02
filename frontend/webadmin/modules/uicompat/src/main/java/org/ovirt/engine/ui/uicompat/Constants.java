@@ -28,6 +28,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Error")
     String errorTitle();
 
+    @DefaultStringValue("Configure Power Management")
+    String configurePowerManagement();
+
     @DefaultStringValue("Create New Bond")
     String createNewBondTitle();
 
