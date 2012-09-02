@@ -775,13 +775,21 @@ def main(options):
         print MSG_ERROR_UPGRADE
         print MSG_INFO_REASON%(sys.exc_info()[1])
 
-        # db restore
+        # allow db restore
         if isUpdateRelatedToDb(rhyum):
-            runFunc([db.restore], MSG_INFO_DB_RESTORE)
+            try:
+                runFunc([db.restore], MSG_INFO_DB_RESTORE)
+            except:
+                # This Exception have already been logged, so just pass along
+                pass
 
-        # yum rollback
+        # allow yum rollback even if db restore failed
         if options.yum_rollback:
-            runFunc([rhyum.rollback], MSG_INFO_YUM_ROLLBACK)
+            try:
+                runFunc([rhyum.rollback], MSG_INFO_YUM_ROLLBACK)
+            except:
+                # This Exception have already been logged, so just pass along
+                pass
         else:
             print MSG_INFO_NO_YUM_ROLLBACK
             logging.debug("Skipping yum rollback")
