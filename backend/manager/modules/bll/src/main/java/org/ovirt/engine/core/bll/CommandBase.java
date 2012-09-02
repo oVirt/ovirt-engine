@@ -1081,7 +1081,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             task.setEntityType(entityType);
             task.setAssociatedEntities(entityIds);
             AsyncTaskUtils.addOrUpdateTaskInDB(task);
-            AsyncTaskManager.getInstance().lockAndAddTaskToManager(task);
+            getAsyncTaskManager().lockAndAddTaskToManager(task);
             retValue = task.getTaskID();
             ExecutionHandler.updateStepExternalId(taskStep, retValue, ExternalSystemType.VDSM);
         } catch (RuntimeException ex) {
@@ -1107,13 +1107,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void UpdateTasksWithActionParameters() {
         for (Guid taskID : getReturnValue().getTaskIdList()) {
-            AsyncTaskManager.getInstance().UpdateTaskWithActionParameters(taskID, getParameters());
+            getAsyncTaskManager().UpdateTaskWithActionParameters(taskID, getParameters());
         }
     }
 
     protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
         for (Guid taskID : taskIds) {
-            AsyncTaskManager.getInstance().StartPollingTask(taskID);
+            getAsyncTaskManager().StartPollingTask(taskID);
         }
     }
 
@@ -1146,7 +1146,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 public void run() {
                     log.infoFormat("Rollback for command: {0}.", CommandBase.this.getClass().getName());
                     try {
-                        AsyncTaskManager.getInstance().CancelTasks(getReturnValue().getTaskIdList());
+                        getAsyncTaskManager().CancelTasks(getReturnValue().getTaskIdList());
                     } catch (Exception e) {
                         log.errorFormat("Failed to cancel tasks for command: {0}.",
                                 CommandBase.this.getClass().getName());
@@ -1163,7 +1163,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
             for (Guid taskId : getParameters().getTaskIds()) {
                 taskIdAsList.add(taskId);
-                ArrayList<AsyncTaskStatus> tasksStatuses = AsyncTaskManager.getInstance().PollTasks(
+                ArrayList<AsyncTaskStatus> tasksStatuses = getAsyncTaskManager().PollTasks(
                         taskIdAsList);
                 // call revert task only if ended successfully
                 if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {
@@ -1469,6 +1469,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected QuotaManager getQuotaManager() {
         return QuotaManager.getInstance();
+    }
+
+    protected AsyncTaskManager getAsyncTaskManager() {
+        return AsyncTaskManager.getInstance();
     }
 
 }
