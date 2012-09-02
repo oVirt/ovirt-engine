@@ -118,7 +118,7 @@ public class ApplicationPlaces {
             + "network_interfaces"; //$NON-NLS-1$
 
     public static final String virtualMachineVirtualDiskSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_disks"; //$NON-NLS-1$
+            + "disks"; //$NON-NLS-1$
 
     public static final String virtualMachineSnapshotSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "snapshots"; //$NON-NLS-1$
@@ -174,7 +174,7 @@ public class ApplicationPlaces {
             + "network_interfaces"; //$NON-NLS-1$
 
     public static final String templateDiskSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_disks"; //$NON-NLS-1$
+            + "disks"; //$NON-NLS-1$
 
     public static final String templateStorageSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
             + "storage"; //$NON-NLS-1$

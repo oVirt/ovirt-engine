@@ -28,7 +28,7 @@ public class PoolDiskListModel extends VmDiskListModelBase
     public PoolDiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
-        setHashName("virtual_disks"); //$NON-NLS-1$
+        setHashName("disks"); //$NON-NLS-1$
     }
 
     @Override

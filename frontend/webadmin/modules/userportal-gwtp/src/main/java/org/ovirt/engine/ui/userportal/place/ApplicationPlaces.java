@@ -44,7 +44,7 @@ public class ApplicationPlaces {
             extendedVirtualMachineNetworkInterfaceSubTabPlace + POOL_SUFFIX;
 
     public static final String extendedVirtualMachineVirtualDiskSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "virtual_disks"; //$NON-NLS-1$
+            + SUB_TAB_PREFIX + "disks"; //$NON-NLS-1$
 
     public static final String extendedVirtualPoolDiskSubTabPlace = extendedVirtualMachineVirtualDiskSubTabPlace
             + POOL_SUFFIX;
@@ -73,7 +73,7 @@ public class ApplicationPlaces {
             + SUB_TAB_PREFIX + "network_interfaces"; //$NON-NLS-1$
 
     public static final String extendedTempplateVirtualDisksSubTabPlace = extendedTemplateSideTabPlace
-            + SUB_TAB_PREFIX + "virtual_disks"; //$NON-NLS-1$
+            + SUB_TAB_PREFIX + "disks"; //$NON-NLS-1$
 
     public static final String extendedTempplateEventsSubTabPlace = extendedTemplateSideTabPlace
             + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$

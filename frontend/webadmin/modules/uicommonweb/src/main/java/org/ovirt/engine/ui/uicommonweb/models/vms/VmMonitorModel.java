@@ -95,6 +95,7 @@ public class VmMonitorModel extends EntityModel
     public VmMonitorModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().monitorTitle());
+        setHashName("monitor"); //$NON-NLS-1$
 
         setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$
     }
