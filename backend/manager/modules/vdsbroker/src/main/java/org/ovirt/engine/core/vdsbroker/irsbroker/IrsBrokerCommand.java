@@ -1593,6 +1593,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 getVDSReturnValue().setExceptionObject(ex);
                 getVDSReturnValue().setVdsError(ex.getVdsError());
                 logException(ex);
+                if (VdcBllErrors.SpmStatusError.equals(ex.getVdsError())) {
+                    getCurrentIrsProxyData().setCurrentVdsId(Guid.Empty);
+                }
                 failover();
             } catch (IrsOperationFailedNoFailoverException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
