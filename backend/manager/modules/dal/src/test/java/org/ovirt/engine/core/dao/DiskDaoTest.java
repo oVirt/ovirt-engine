@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
-    private static final int TOTAL_DISK_IMAGES = 5;
+    private static final int TOTAL_DISK_IMAGES = 6;
 
     @Override
     protected Guid getExistingEntityId() {
