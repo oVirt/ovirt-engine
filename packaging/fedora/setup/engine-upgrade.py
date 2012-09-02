@@ -3,13 +3,13 @@
 # Imports
 import sys
 import os
+import shutil
 import logging
 import traceback
 import types
 import pwd
 from optparse import OptionParser
 import yum
-from StringIO import StringIO
 import common_utils as utils
 import basedefs
 
@@ -43,6 +43,8 @@ SERVER_NAME = basedefs.DB_HOST
 SERVER_PORT = basedefs.DB_PORT
 SERVER_ADMIN = basedefs.DB_ADMIN
 
+
+# CONST
 BACKUP_DIR = "/var/lib/ovirt-engine/backups"
 BACKUP_FILE = "ovirt-engine_db_backup"
 LOG_PATH = "/var/log/ovirt-engine"
@@ -90,6 +92,9 @@ MSG_ERR_SQL_CODE = "Failed running sql query"
 MSG_ERR_EXP_UPD_DC_TYPE="Failed updating default Data Center Storage Type in %s db"
 MSG_ERROR_JBOSS_PID = "Error: JBoss service is dead, but pid file exists"
 MSG_ERROR_YUM_TID = "Error: Yum transaction mismatch"
+MSG_ERROR_PGPASS = "Error: DB password file was not found on this system. Verify \
+that this system was previously installed and that there's a password file at %s or %s" % \
+(basedefs.DB_PASS_FILE, basedefs.ORIG_PASS_FILE)
 
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
@@ -481,6 +486,9 @@ class DB():
             ]
             output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_DROP_DB)
 
+            # .pgpass definition
+            env = { "PGPASSFILE" : basedefs.DB_PASS_FILE }
+
             # Restore
             cmd = [
                 basedefs.EXEC_PSQL,
@@ -490,7 +498,7 @@ class DB():
                 "-d", basedefs.DB_TEMPLATE,
                 "-f", self.sqlfile,
             ]
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB)
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB, envDict=env)
             logging.debug("DB Restore completed successfully")
         else:
             logging.debug("No DB Restore needed")
@@ -684,7 +692,22 @@ def main(options):
     db = DB()
     DB_NAME_TEMP = "%s_%s" % (basedefs.DB_NAME, utils.getCurrentDateTime())
 
-   # Functions/parameters definitions
+    # Handle pgpass
+    if not os.path.exists(basedefs.DB_PASS_FILE):
+        if not os.path.exists(basedefs.ORIG_PASS_FILE):
+            logging.error(MSG_ERROR_PGPASS)
+            print MSG_ERROR_PGPASS
+            sys.exit(1)
+        else:
+            logging.info("Info: Found .pgpass file at old location. Moving it to a new location.")
+            shutil.copy(basedefs.ORIG_PASS_FILE, basedefs.DB_PASS_FILE)
+
+            # File is copied/created by root, so no need to verify the owner.
+            os.chmod(basedefs.DB_PASS_FILE, 0600)
+    else:
+        logging.info("Info: %s file found. Continue.", basedefs.DB_PASS_FILE)
+
+    # Functions/parameters definitions
     stopEngineService = [stopEngine]
     upgradeFunc = [rhyum.update]
     postFunc = [runPost]

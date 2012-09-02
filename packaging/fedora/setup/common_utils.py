@@ -281,7 +281,7 @@ def isTcpPortOpen(port):
             logging.debug("TCP port %s is open by process %s, PID %s" % (port, process, pid))
     return (answer, process, pid)
 
-def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_CODE, maskList=[], useShell=False, usePipeFiles=False):
+def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_CODE, maskList=[], useShell=False, usePipeFiles=False, envDict=None):
     """
     Run external shell command with 'shell=false'
     receives a list of arguments for command line execution
@@ -302,9 +302,23 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
         (stdOutFD, stdOutFile) = tempfile.mkstemp(dir="/tmp")
         (stdInFD, stdInFile) = tempfile.mkstemp(dir="/tmp")
 
+    # Update os.environ with env if provided
+    env = os.environ.copy()
+    if not "PGPASSFILE" in env.keys():
+        env["PGPASSFILE"] = basedefs.DB_PASS_FILE
+    env.update(envDict or {})
+
     # We use close_fds to close any file descriptors we have so it won't be copied to forked childs
-    proc = subprocess.Popen(cmd, stdout=stdOutFD,
-            stderr=stdErrFD, stdin=stdInFD, cwd=cwd, shell=useShell, close_fds=True)
+    proc = subprocess.Popen(
+        cmd,
+        stdout=stdOutFD,
+        stderr=stdErrFD,
+        stdin=stdInFD,
+        cwd=cwd,
+        shell=useShell,
+        close_fds=True,
+        env=env,
+    )
 
     out, err = proc.communicate()
     if usePipeFiles:
@@ -327,16 +341,18 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
 
 def execSqlCommand(userName, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
     logging.debug("running sql query \'%s\' on db." % sqlQuery)
+    env = { "PGPASSFILE" : basedefs.DB_PASS_FILE }
     cmd = [
         basedefs.EXEC_PSQL,
         "-U", userName,
         "-d", dbName,
         "-c", sqlQuery,
     ]
-    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg)
+    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=env)
 
 #TODO: refactor this and previous functions into same execution.
 def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
+    env = { "PGPASSFILE" : basedefs.DB_PASS_FILE }
     logging.debug("running sql query '%s' on db server: \'%s\'." % (sqlQuery, dbHost))
     cmd = [
         basedefs.EXEC_PSQL,
@@ -346,7 +362,7 @@ def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError
         "-d", dbName,
         "-c", sqlQuery,
     ]
-    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg)
+    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=env)
 
 def replaceWithLink(target, link):
     """

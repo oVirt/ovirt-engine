@@ -15,6 +15,7 @@ set_defaults() {
     USERNAME=""
     VERBOSE=false
     LOGFILE="$ME.log"
+    export PGPASSFILE="/etc/ovirt-engine/.pgpass"
 }
 
 #refreshes views

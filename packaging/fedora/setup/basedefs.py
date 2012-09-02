@@ -11,7 +11,6 @@ DB_TEMPLATE = "template1"
 DB_HOST="localhost"
 DB_USER="engine"
 DB_PORT="5432"
-DB_PASS_FILE="/root/.pgpass"
 PGPASS_FILE_TEMPLATE="hostname:port:database:username:password"
 JBOSS_SECURITY_DOMAIN="EncryptDBPassword"
 JBOSS_KERB_AUTH="EngineKerberosAuth"
@@ -30,6 +29,8 @@ PGPASS_FILE_OPENING_LINE = "# Beginning of the oVirt Engine DB settings section"
 PGPASS_FILE_USER_LINE = "DB USER credentials"
 PGPASS_FILE_ADMIN_LINE = "DB ADMIN credentials"
 PGPASS_FILE_CLOSING_LINE = "#####  End of %s DB settings section." % APP_NAME
+DB_PASS_FILE="/etc/%s/.pgpass" % ENGINE_SERVICE_NAME
+ORIG_PASS_FILE="/root/.pgpass"
 
 JBOSS_HTTP_PORT="8700"
 JBOSS_HTTPS_PORT="8701"

@@ -97,7 +97,8 @@ SED=/bin/sed
 SHELL=/bin/sh
 PSQL_BIN=/usr/bin/psql
 
-# Update PSQL BIN to include host and port values
+# Update PSQL BIN to include .pgpass environment variable, host and port values
+ENGINE_PGPASS=/etc/ovirt-engine/.pgpass
 PSQL="${PSQL_BIN} -h $DB_HOST -p $DB_PORT"
 
 if [[ "x${REMOTE_INSTALL}" == "xremote" ]]
@@ -248,7 +249,7 @@ startPgsqlService()
     for i in {1..20}
     do
        echo "[$SCRIPT_NAME] validating that postgres service is running...retry $i" >> $LOGFILE
-      $PSQL -U $USER -d $DB -c "select 1">> $LOGFILE 2>&1
+       PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $USER -d $DB -c "select 1">> $LOGFILE 2>&1
        if [[ $? == 0 ]]
        then
             SERVICE_UP=1
@@ -316,12 +317,12 @@ createDB()
 checkIfDBExists()
 {
     echo "[$SCRIPT_NAME] checking if $DB_NAME db exists already.." >> $LOGFILE
-    $PSQL -U $DB_ADMIN -d $DB_NAME -c "select 1">> $LOGFILE 2>&1
+    PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -d $DB_NAME -c "select 1">> $LOGFILE 2>&1
     if [[ $? -eq 0 ]]
     then
         echo "[$SCRIPT_NAME] $DB_NAME db already exists on $DB_HOST." >> $LOGFILE
         echo " [$SCRIPT_NAME] verifying $TABLE_NAME table exists..." >> $LOGFILE
-        RES=`echo "SELECT count(*) FROM pg_tables WHERE tablename='$TABLE_NAME'" | $PSQL -U $DB_ADMIN -d $DB_NAME -t`
+        RES=`echo "SELECT count(*) FROM pg_tables WHERE tablename='$TABLE_NAME'" | PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -d $DB_NAME -t`
         if [[ $RES -eq 1 ]]
         then
             echo "[$SCRIPT_NAME] $TABLE_NAME table exists in $DB_NAME" >> $LOGFILE
@@ -350,17 +351,17 @@ updateDBUsers()
 	echo "[$SCRIPT_NAME] updating db admin credentials" >> $LOGFILE
 
 	# update admin user password
-	$PSQL -U $DB_ADMIN -d $TEMPLATE -c "ALTER ROLE $DB_ADMIN WITH ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null  2>&1
+	PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -d $TEMPLATE -c "ALTER ROLE $DB_ADMIN WITH ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null  2>&1
 	_verifyRC $? "failed updating user $DB_ADMIN password"
 
     if [[ $LOCAL_DB_SET -eq 1 ]]
     then
         # Drop engine ROLE if exists
-        $PSQL -U $DB_ADMIN -c "DROP ROLE IF EXISTS $DB_USER" >> $LOGFILE 2>&1
+        PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -c "DROP ROLE IF EXISTS $DB_USER" >> $LOGFILE 2>&1
         _verifyRC $? "failed dropping user $DB_USER"
 
         # Create user $DB_USER + password
-        $PSQL -U $DB_ADMIN -c "CREATE ROLE $DB_USER WITH CREATEDB LOGIN ENCRYPTED PASSWORD '$DB_PASS'" >> $LOGFILE 2>&1
+        PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -c "CREATE ROLE $DB_USER WITH CREATEDB LOGIN ENCRYPTED PASSWORD '$DB_PASS'" >> $LOGFILE 2>&1
         _verifyRC $? "failed creating user $DB_USER with encrypted password"
         
         # Handle UUID extensions
@@ -375,7 +376,7 @@ updateDBUsers()
             check_and_install_uuid_osspa_pg9
         else
             echo "adding uuid-ossp.sql from contrib..."
-            $PSQL -U $DB_ADMIN -d $TEMPLATE -f $UUID_SQL >> $LOGFILE 2>&1
+            PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -d $TEMPLATE -f $UUID_SQL >> $LOGFILE 2>&1
         fi
         popd >> $LOGFILE
 

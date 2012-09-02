@@ -280,6 +280,9 @@ class DB():
         """
         # pg_dump -C -E UTF8  --column-inserts --disable-dollar-quoting  --disable-triggers -U postgres --format=p -f $dir/$file  dbname
         logging.debug("DB Backup started")
+
+        # .pgpass update
+        env = {"PGPASSFILE" : basedefs.DB_PASS_FILE}
         cmd = [
             basedefs.EXEC_PGDUMP,
             "-C", "-E", "UTF8",
@@ -293,7 +296,7 @@ class DB():
             "-f", self.sqlfile,
             basedefs.DB_NAME,
         ]
-        utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB)
+        utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB, envDict=env)
         logging.debug("DB Backup completed successfully")
 
     def drop(self):
@@ -309,6 +312,7 @@ class DB():
         # Drop DBs - including the tempoarary ones created during upgrade operations
         # go over all dbs in the list of temp DBs and remove them
         for dbname in utils.listTempDbs():
+            env = {"PGPASSFILE" : basedefs.DB_PASS_FILE}
             cmd = [
                 basedefs.EXEC_DROPDB,
                 "-w",
@@ -317,7 +321,7 @@ class DB():
                 "-p", DB_PORT,
                 dbname,
             ]
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=False, msg=MSG_ERROR_DROP_DB)
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=False, msg=MSG_ERROR_DROP_DB, envDict=env)
             if rc:
                 logging.error(MSG_ERROR_DROP_DB % dbname)
                 raise Exception(MSG_ERROR_DROP_DB % dbname)
