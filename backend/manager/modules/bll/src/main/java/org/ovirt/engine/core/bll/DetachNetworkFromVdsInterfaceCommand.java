@@ -132,7 +132,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                     return network.getname().equals(getParameters().getNetwork().getname());
                 }
             })) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_CLUSTER_NETWORK_IN_USE);
+                addCanDoActionMessage(VdcBllMessages.NETWROK_HOST_IS_BUSY);
                 return false;
             }
         }

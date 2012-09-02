@@ -1249,7 +1249,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot create disk more than ${max}_disk_size GB")
     String ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED();
 
-    @DefaultStringValue("Cannot edit network while Host is active, change the Host to maintenance and try again")
+    @DefaultStringValue("Cannot edit Network while Host is Active, change the Host to Maintenance mode and try again.")
     String NETWROK_HOST_IS_BUSY();
 
     @DefaultStringValue("Cannot change Template images format")
