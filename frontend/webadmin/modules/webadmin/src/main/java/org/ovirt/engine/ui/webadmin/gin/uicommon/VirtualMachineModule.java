@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
@@ -185,7 +186,8 @@ public class VirtualMachineModule extends AbstractGinModule {
     public SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> getVmDiskListProvider(ClientGinjector ginjector,
             final Provider<VmDiskPopupPresenterWidget> popupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider) {
+            final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider,
+            final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider) {
         return new SearchableDetailTabModelProvider<Disk, VmListModel, VmDiskListModel>(ginjector,
                 VmListModel.class,
                 VmDiskListModel.class) {
@@ -199,6 +201,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getMoveCommand()) {
                     return movePopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getChangeQuotaCommand()) {
+                    return changeQutoaPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }

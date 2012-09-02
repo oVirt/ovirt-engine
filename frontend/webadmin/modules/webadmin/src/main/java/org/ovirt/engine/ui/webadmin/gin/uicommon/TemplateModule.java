@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
@@ -123,15 +124,19 @@ public class TemplateModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> getTemplateDiskListProvider(ClientGinjector ginjector,
-            final Provider<DisksAllocationPopupPresenterWidget> copyPopupProvider) {
+            final Provider<DisksAllocationPopupPresenterWidget> copyPopupProvider,
+            final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider) {
         return new SearchableDetailTabModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel>(ginjector,
                 TemplateListModel.class,
                 TemplateDiskListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TemplateDiskListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
                 if (lastExecutedCommand == getModel().getCopyCommand()) {
                     return copyPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getChangeQuotaCommand()) {
+                    return changeQutoaPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
@@ -149,7 +154,8 @@ public class TemplateModule extends AbstractGinModule {
                 TemplateInterfaceListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TemplateInterfaceListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
                 if ((lastExecutedCommand == getModel().getNewCommand())
                         || (lastExecutedCommand == getModel().getEditCommand())) {
                     return popupProvider.get();

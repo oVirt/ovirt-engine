@@ -323,7 +323,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     }
 
     protected void addCustomModelsDetailModelList(ObservableCollection<EntityModel> list) {
-        list.add(3, new TemplateDiskListModel());
+        TemplateDiskListModel diskListModel = new TemplateDiskListModel();
+        diskListModel.setSystemTreeContext(this);
+        list.add(3, diskListModel);
         list.add(new TemplateEventListModel());
         list.add(new PermissionListModel());
     }

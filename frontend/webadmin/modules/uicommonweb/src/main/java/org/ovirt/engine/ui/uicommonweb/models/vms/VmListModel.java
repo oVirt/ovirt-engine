@@ -685,7 +685,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new VmGeneralModel());
         list.add(new VmInterfaceListModel());
-        list.add(new VmDiskListModel());
+        VmDiskListModel diskListModel = new VmDiskListModel();
+        diskListModel.setSystemTreeContext(this);
+        list.add(diskListModel);
         list.add(new VmSnapshotListModel());
         list.add(new VmEventListModel());
         list.add(new VmAppListModel());
@@ -964,6 +966,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 .vmsResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg();
     }
 
+    @Override
     protected boolean entitiesSelectedOnDifferentDataCenters()
     {
         ArrayList<VM> vms = new ArrayList<VM>();
@@ -988,10 +991,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         return t.size() > 1;
     }
 
+    @Override
     protected String extractNameFromEntity(VM entity) {
         return entity.getvm_name();
     }
 
+    @Override
     protected boolean entititesEqualsNullSafe(VM e1, VM e2) {
         return e1.getId().equals(e2.getId());
     }

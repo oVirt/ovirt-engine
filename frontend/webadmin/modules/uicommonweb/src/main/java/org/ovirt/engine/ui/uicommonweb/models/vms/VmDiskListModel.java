@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
@@ -42,6 +43,10 @@ import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -113,6 +118,28 @@ public class VmDiskListModel extends VmDiskListModelBase
         privateUnPlugCommand = value;
     }
 
+    ISupportSystemTreeContext systemTreeContext;
+
+    public ISupportSystemTreeContext getSystemTreeContext() {
+        return systemTreeContext;
+    }
+
+    public void setSystemTreeContext(ISupportSystemTreeContext systemTreeContext) {
+        this.systemTreeContext = systemTreeContext;
+    }
+
+    private UICommand privateChangeQuotaCommand;
+
+    public UICommand getChangeQuotaCommand()
+    {
+        return privateChangeQuotaCommand;
+    }
+
+    private void setChangeQuotaCommand(UICommand value)
+    {
+        privateChangeQuotaCommand = value;
+    }
+
     private boolean privateIsDiskHotPlugSupported;
 
     public boolean getIsDiskHotPlugSupported()
@@ -161,6 +188,8 @@ public class VmDiskListModel extends VmDiskListModelBase
         setPlugCommand(new UICommand("Plug", this)); //$NON-NLS-1$
         setUnPlugCommand(new UICommand("Unplug", this)); //$NON-NLS-1$
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
+        setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
+        getChangeQuotaCommand().setIsAvailable(false);
 
         UpdateActionAvailability();
     }
@@ -307,6 +336,59 @@ public class VmDiskListModel extends VmDiskListModelBase
         diskModel.StopProgress();
     }
 
+    private void changeQuota() {
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+
+        if (disks == null || getWindow() != null)
+        {
+            return;
+        }
+
+        ChangeQuotaModel model = new ChangeQuotaModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
+        model.setHashName("change_quota_disks"); //$NON-NLS-1$
+        model.StartProgress(null);
+        model.init(disks);
+
+        UICommand command = new UICommand("onChangeQuota", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        command.setIsDefault(true);
+        model.getCommands().add(command);
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        model.getCommands().add(command);
+    }
+
+    private void onChangeQuota() {
+        ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+
+        for (Object item : model.getItems())
+        {
+            ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
+            DiskImage disk = (DiskImage) itemModel.getEntity();
+            VdcActionParametersBase parameters =
+                    new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
+                            disk.getId(),
+                            disk.getstorage_ids().get(0),
+                            disk.getstorage_pool_id().getValue());
+            paramerterList.add(parameters);
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        Cancel();
+                    }
+                },
+                this);
+    }
+
     private void Edit()
     {
         final Disk disk = (Disk) getSelectedItem();
@@ -383,7 +465,8 @@ public class VmDiskListModel extends VmDiskListModelBase
                 {
                     StorageType storageType = storage.getstorage_type();
                     boolean isFileDomain =
-                            storageType == StorageType.NFS || storageType == StorageType.LOCALFS || storageType == StorageType.POSIXFS;
+                            storageType == StorageType.NFS || storageType == StorageType.LOCALFS
+                                    || storageType == StorageType.POSIXFS;
                     diskModel.getWipeAfterDelete().setIsChangable(!isFileDomain);
                 }
 
@@ -767,6 +850,26 @@ public class VmDiskListModel extends VmDiskListModelBase
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
         getUnPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(false));
+
+        if (systemTreeContext != null
+                && systemTreeContext.getSystemTreeSelectedItem() != null
+                && systemTreeContext.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter
+                &&
+                ((storage_pool) systemTreeContext.getSystemTreeSelectedItem().getEntity()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+            ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
+            getChangeQuotaCommand().setIsAvailable(true);
+            getChangeQuotaCommand().setIsExecutionAllowed(true);
+            if (disks != null && !disks.isEmpty()) {
+                for (Disk diskItem : disks) {
+                    if (diskItem.getDiskStorageType() != DiskStorageType.IMAGE) {
+                        getChangeQuotaCommand().setIsExecutionAllowed(false);
+                        break;
+                    }
+                }
+            } else {
+                getChangeQuotaCommand().setIsExecutionAllowed(false);
+            }
+        }
     }
 
     public boolean isVmDown() {
@@ -878,6 +981,10 @@ public class VmDiskListModel extends VmDiskListModelBase
         else if (command == getUnPlugCommand())
         {
             Plug(false);
+        } else if (command == getChangeQuotaCommand()) {
+            changeQuota();
+        } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
+            onChangeQuota();
         }
     }
 

@@ -1009,4 +1009,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Name")
     String elementName();
+
+    @DefaultStringValue("Assign Quota")
+    String assignQuota();
 }

@@ -111,6 +111,13 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
                 }
             });
         }
+
+        getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.assignQuota()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getChangeQuotaCommand();
+            }
+        });
     }
 
     protected void attachActivationListenersForModel() {

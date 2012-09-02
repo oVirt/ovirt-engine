@@ -2,10 +2,18 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -18,8 +26,14 @@ import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class TemplateDiskListModel extends SearchableListModel
@@ -34,6 +48,28 @@ public class TemplateDiskListModel extends SearchableListModel
     private void setCopyCommand(UICommand value)
     {
         privateCopyCommand = value;
+    }
+
+    ISupportSystemTreeContext systemTreeContext;
+
+    public ISupportSystemTreeContext getSystemTreeContext() {
+        return systemTreeContext;
+    }
+
+    public void setSystemTreeContext(ISupportSystemTreeContext systemTreeContext) {
+        this.systemTreeContext = systemTreeContext;
+    }
+
+    private UICommand privateChangeQuotaCommand;
+
+    public UICommand getChangeQuotaCommand()
+    {
+        return privateChangeQuotaCommand;
+    }
+
+    private void setChangeQuotaCommand(UICommand value)
+    {
+        privateChangeQuotaCommand = value;
     }
 
     private VmTemplate getEntityStronglyTyped()
@@ -61,6 +97,8 @@ public class TemplateDiskListModel extends SearchableListModel
         setHashName("disks"); //$NON-NLS-1$
 
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
+        setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
+        getChangeQuotaCommand().setIsAvailable(false);
 
         UpdateActionAvailability();
 
@@ -171,6 +209,26 @@ public class TemplateDiskListModel extends SearchableListModel
     {
         getCopyCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isCopyCommandAvailable());
+
+        if (systemTreeContext != null
+                && systemTreeContext.getSystemTreeSelectedItem() != null
+                && systemTreeContext.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter
+                &&
+                ((storage_pool) systemTreeContext.getSystemTreeSelectedItem().getEntity()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+            ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
+            getChangeQuotaCommand().setIsAvailable(true);
+            getChangeQuotaCommand().setIsExecutionAllowed(true);
+            if (disks != null && !disks.isEmpty()) {
+                for (Disk diskItem : disks) {
+                    if (diskItem.getDiskStorageType() != DiskStorageType.IMAGE) {
+                        getChangeQuotaCommand().setIsExecutionAllowed(false);
+                        break;
+                    }
+                }
+            } else {
+                getChangeQuotaCommand().setIsExecutionAllowed(false);
+            }
+        }
     }
 
     private boolean isCopyCommandAvailable() {
@@ -200,6 +258,10 @@ public class TemplateDiskListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
+        } else if (command == getChangeQuotaCommand()) {
+            changeQuota();
+        } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
+            onChangeQuota();
         }
     }
 
@@ -237,5 +299,58 @@ public class TemplateDiskListModel extends SearchableListModel
     @Override
     protected String getListName() {
         return "TemplateDiskListModel"; //$NON-NLS-1$
+    }
+
+    private void changeQuota() {
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+
+        if (disks == null || getWindow() != null)
+        {
+            return;
+        }
+
+        ChangeQuotaModel model = new ChangeQuotaModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
+        model.setHashName("change_quota_disks"); //$NON-NLS-1$
+        model.StartProgress(null);
+        model.init(disks);
+
+        UICommand command = new UICommand("onChangeQuota", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        command.setIsDefault(true);
+        model.getCommands().add(command);
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        model.getCommands().add(command);
+    }
+
+    private void onChangeQuota() {
+        ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+
+        for (Object item : model.getItems())
+        {
+            ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
+            DiskImage disk = (DiskImage) itemModel.getEntity();
+            VdcActionParametersBase parameters =
+                    new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
+                            disk.getId(),
+                            disk.getstorage_ids().get(0),
+                            disk.getstorage_pool_id().getValue());
+            paramerterList.add(parameters);
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        Cancel();
+                    }
+                },
+                this);
     }
 }

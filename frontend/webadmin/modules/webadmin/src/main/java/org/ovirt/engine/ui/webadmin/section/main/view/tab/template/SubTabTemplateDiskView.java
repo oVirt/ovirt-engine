@@ -24,13 +24,23 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
 
     @Inject
     public SubTabTemplateDiskView(final SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> modelProvider,
-            EventBus eventBus, ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
+            EventBus eventBus,
+            ApplicationConstants constants,
+            ApplicationTemplates templates,
+            ApplicationResources resources) {
         super(modelProvider, constants, templates, resources);
 
         actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constants.copyDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getCopyCommand();
+            }
+        });
+
+        actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constants.assignQuota()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return modelProvider.getModel().getChangeQuotaCommand();
             }
         });
 
