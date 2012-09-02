@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 
 public class NetworkParameters {
 
@@ -8,6 +9,17 @@ public class NetworkParameters {
     private String address;
     private String subnet;
     private String gateway;
+
+
+    public NetworkParameters() {
+    }
+
+    public NetworkParameters(VdsNetworkInterface nic) {
+        setBootProtocol(nic.getBootProtocol());
+        setAddress(nic.getAddress());
+        setSubnet(nic.getSubnet());
+        setGateway(nic.getGateway());
+    }
 
     public NetworkBootProtocol getBootProtocol() {
         return bootProtocol;

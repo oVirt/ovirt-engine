@@ -211,6 +211,10 @@ public class HostManagementNetworkModel extends EntityModel
 
     private NetworkParameters originalNetParams = null;
 
+    public void setOriginalNetParams(NetworkParameters originalNetParams) {
+        this.originalNetParams = originalNetParams;
+    }
+
     public HostManagementNetworkModel() {
         this(false);
     }
@@ -233,12 +237,10 @@ public class HostManagementNetworkModel extends EntityModel
                 super.setEntity(value);
 
                 if (getIsToSync().getIsChangable()){
-                    setBootProtocolsAvailable((Boolean) value);
                     if (!(Boolean)value){
                         revertChanges();
-                    }else{
-                        saveOriginalNetworkParameters();
                     }
+                    setBootProtocolsAvailable((Boolean) value);
                 }
             }
         });
@@ -256,16 +258,6 @@ public class HostManagementNetworkModel extends EntityModel
             getSubnet().setEntity(originalNetParams.getSubnet());
             getGateway().setEntity(originalNetParams.getGateway());
         }
-    }
-
-    private void saveOriginalNetworkParameters(){
-        if (originalNetParams == null){
-            originalNetParams = new  NetworkParameters();
-        }
-        originalNetParams.setBootProtocol(getBootProtocol());
-        originalNetParams.setAddress((String)getAddress().getEntity());
-        originalNetParams.setSubnet((String)getSubnet().getEntity());
-        originalNetParams.setGateway((String)getGateway().getEntity());
     }
 
     private void UpdateFieldsByEntity()

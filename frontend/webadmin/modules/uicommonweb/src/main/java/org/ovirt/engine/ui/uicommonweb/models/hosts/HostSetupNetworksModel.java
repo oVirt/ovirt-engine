@@ -115,6 +115,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private NetworkOperationFactory operationFactory;
     private List<Network> allNetworks;
     private final Map<String, DcNetworkParams> netTodcParams;
+    private final Map<String, NetworkParameters> netToBeforeSyncParams;
     private final HostInterfaceListModel hostInterfaceListModel;
     private List<VdsNetworkInterface> allBonds;
     private NetworkOperation currentCandidate;
@@ -125,6 +126,7 @@ public class HostSetupNetworksModel extends EntityModel {
         this.hostInterfaceListModel = hostInterfaceListModel;
         networkToLastDetachParams = new HashMap<String, NetworkParameters>();
         netTodcParams = new HashMap<String, DcNetworkParams>();
+        netToBeforeSyncParams = new HashMap<String, NetworkParameters>();
         setNicsChangedEvent(new Event(NICS_CHANGED_EVENT_DEFINITION));
         setNetworksChangedEvent(new Event(NETWORKS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
@@ -281,6 +283,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 editPopup = new HostManagementNetworkModel(true);
                 final HostManagementNetworkModel mgmntDialogModel = (HostManagementNetworkModel) editPopup;
                 mgmntDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
+                mgmntDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
                 mgmntDialogModel.setEntity(logicalNetwork.getEntity());
                 mgmntDialogModel.getAddress().setEntity(entity.getAddress());
                 mgmntDialogModel.getSubnet().setEntity(entity.getSubnet());
@@ -321,6 +324,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 editPopup = new HostInterfaceModel(true);
                 final HostInterfaceModel networkDialogModel = (HostInterfaceModel) editPopup;
                 networkDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editNetworkTitle(logicalNetwork.getName()));
+                networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
                 networkDialogModel.getAddress().setEntity(entity.getAddress());
                 networkDialogModel.getSubnet().setEntity(entity.getSubnet());
                 networkDialogModel.getName().setIsAvailable(false);
@@ -597,6 +601,10 @@ public class HostSetupNetworksModel extends EntityModel {
                     List<String> bridgedNetworks = new ArrayList<String>();
                     bridgedNetworks.add(networkName);
                     nicToNetwork.put(ifName, bridgedNetworks);
+                }
+
+                if (!networkModel.isInSync() && networkModel.isManaged()){
+                    netToBeforeSyncParams.put(networkName, new NetworkParameters(nic));
                 }
             }
         }

@@ -218,6 +218,10 @@ public class HostInterfaceModel extends EntityModel
 
     private NetworkParameters originalNetParams = null;
 
+    public void setOriginalNetParams(NetworkParameters originalNetParams) {
+        this.originalNetParams = originalNetParams;
+    }
+
     public HostInterfaceModel() {
         this(false);
     }
@@ -244,12 +248,10 @@ public class HostInterfaceModel extends EntityModel
             public void setEntity(Object value) {
                 super.setEntity(value);
                 if (getIsToSync().getIsChangable()){
-                    setBootProtocolsAvailable((Boolean) value);
                     if (!(Boolean)value){
                         revertChanges();
-                    }else{
-                        saveOriginalNetworkParameters();
                     }
+                    setBootProtocolsAvailable((Boolean) value);
                 }
             }
 
@@ -266,15 +268,6 @@ public class HostInterfaceModel extends EntityModel
             getAddress().setEntity(originalNetParams.getAddress());
             getSubnet().setEntity(originalNetParams.getSubnet());
         }
-    }
-
-    private void saveOriginalNetworkParameters(){
-        if (originalNetParams == null){
-            originalNetParams = new  NetworkParameters();
-        }
-        originalNetParams.setBootProtocol(getBootProtocol());
-        originalNetParams.setAddress((String)getAddress().getEntity());
-        originalNetParams.setSubnet((String)getSubnet().getEntity());
     }
 
     @Override
