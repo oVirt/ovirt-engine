@@ -91,7 +91,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     }
 
     public void detach() {
-        if (!isInSync()){
+        if (!isInSync() && isManaged()){
             getSetupModel().getNetworksToSync().add(getName());
             setNetworkToDcValues();
         }
@@ -139,9 +139,12 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     private void setNetworkToDcValues() {
         DcNetworkParams dcNetParams = getSetupModel().getNetDcParams(getName());
-        getEntity().setvlan_id(dcNetParams.getVlanId());
-        getEntity().setMtu(dcNetParams.getMtu());
-        getEntity().setVmNetwork(dcNetParams.isVmNetwork());
+
+        if (dcNetParams != null){
+            getEntity().setvlan_id(dcNetParams.getVlanId());
+            getEntity().setMtu(dcNetParams.getMtu());
+            getEntity().setVmNetwork(dcNetParams.isVmNetwork());
+        }
 
     }
 
