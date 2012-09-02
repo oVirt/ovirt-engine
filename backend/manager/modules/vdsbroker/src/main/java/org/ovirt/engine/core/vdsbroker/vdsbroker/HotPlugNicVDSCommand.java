@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Collections;
+
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -41,6 +43,9 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
         map.add("nicModel", VmInterfaceType.forValue(nic.getType()).name());
         if (vmDevice.getBootOrder() > 0) {
             map.add("bootOrder", String.valueOf(vmDevice.getBootOrder()));
+        }
+        if (nic.isPortMirroring()) {
+            map.add(VdsProperties.portMirroring, Collections.singletonList(nic.getNetworkName()));
         }
         return map;
     }
