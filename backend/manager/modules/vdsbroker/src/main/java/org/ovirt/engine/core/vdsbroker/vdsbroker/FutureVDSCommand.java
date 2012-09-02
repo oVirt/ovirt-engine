@@ -80,7 +80,7 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
             throw e;
         } catch (Exception e) {
             log.error(e);
-            setVdsRuntimeError(new RuntimeException(e));
+            setVdsRuntimeError(e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e));
         }
         return getVDSReturnValue();
     }

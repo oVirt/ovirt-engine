@@ -3,10 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
@@ -32,28 +30,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
      */
     @Override
     public VDSReturnValue RunVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
-        return handleVdsResult(getResourceManager().runVdsCommand(commandType, parameters));
-    }
-
-    /**
-     * Handle the result of the command, throwing an exception if one was thrown by the command ot retirning the result
-     * otherwise.
-     *
-     * @param result
-     *            The result of the command.
-     * @return The result (if no exception was thrown).
-     */
-    private VDSReturnValue handleVdsResult(VDSReturnValue result) {
-        if (StringUtils.isNotEmpty(result.getExceptionString())) {
-            VdcBLLException exp;
-            if (result.getVdsError() != null) {
-                exp = new VdcBLLException(result.getVdsError().getCode(), result.getExceptionString());
-            } else {
-                exp = new VdcBLLException(VdcBllErrors.ENGINE, result.getExceptionString());
-            }
-            throw exp;
-        }
-        return result;
+        return VdsHandler.handleVdsResult(getResourceManager().runVdsCommand(commandType, parameters));
     }
 
     /*
@@ -103,6 +80,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
      * org.ovirt.engine.core.bll.VDSBrokerFrontend#RemoveAsyncRunningCommand(com.
      * redhat.engine.compat.Guid)
      */
+    @Override
     public IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId) {
         return _asyncRunningCommands.remove(vmId);
     }

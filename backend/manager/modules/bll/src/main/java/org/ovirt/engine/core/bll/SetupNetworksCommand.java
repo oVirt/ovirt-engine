@@ -101,8 +101,12 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
         try {
             VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
-            if (retVal != null && retVal.getSucceeded()) {
-                setSucceeded(TransactionSupport.executeInNewTransaction(updateVdsNetworksInTx(bckndCmdParams)));
+            if (retVal != null) {
+                VdsHandler.handleVdsResult(retVal);
+
+                if (retVal.getSucceeded()) {
+                    setSucceeded(TransactionSupport.executeInNewTransaction(updateVdsNetworksInTx(bckndCmdParams)));
+                }
             }
         } catch (TimeoutException e) {
             log.debugFormat("Setup networks command timed out for {0} seconds", timeout);

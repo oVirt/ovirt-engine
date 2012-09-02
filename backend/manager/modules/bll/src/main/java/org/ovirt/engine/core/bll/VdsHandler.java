@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -10,6 +11,9 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -192,4 +196,24 @@ public class VdsHandler extends BaseHandler {
                 || isoVersion.getMajor() == -1;
     }
 
+    /**
+     * Handle the result of the VDS command, throwing an exception if one was thrown by the command or returning the
+     * result otherwise.
+     *
+     * @param result
+     *            The result of the command.
+     * @return The result (if no exception was thrown).
+     */
+    public static VDSReturnValue handleVdsResult(VDSReturnValue result) {
+        if (StringUtils.isNotEmpty(result.getExceptionString())) {
+            VdcBLLException exp;
+            if (result.getVdsError() != null) {
+                exp = new VdcBLLException(result.getVdsError().getCode(), result.getExceptionString());
+            } else {
+                exp = new VdcBLLException(VdcBllErrors.ENGINE, result.getExceptionString());
+            }
+            throw exp;
+        }
+        return result;
+    }
 }
