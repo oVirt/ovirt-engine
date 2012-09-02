@@ -36,9 +36,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected boolean canDoAction() {
         boolean returnValue = true;
 
-        if (isActivateDeactivateAllowedForVmStatus(getVm().getstatus())) {
+        if (activateDeactivateVmNicAllowed(getVm().getstatus())) {
             // HotPlug in the host needs to be called only if the Vm is UP
-            if (VmHandler.isHotPlugNicAllowedForVmStatus(getVm().getstatus())) {
+            if (hotPlugVmNicRequired(getVm().getstatus())) {
                 setVdsId(getVm().getrun_on_vds().getValue());
                 returnValue = canPerformHotPlug();
                 if (returnValue && !networkAttachedToVds(getNetworkName(), getVdsId())) {
@@ -70,7 +70,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     @Override
     protected void ExecuteVmCommand() {
         // HotPlug in the host is called only if the Vm is UP
-        if (VmHandler.isHotPlugNicAllowedForVmStatus(getVm().getstatus())) {
+        if (hotPlugVmNicRequired(getVm().getstatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new HotPlugUnplgNicVDSParameters(getVdsId(), getVm().getId(),
                             DbFacade.getInstance().getVmNetworkInterfaceDAO().get(getParameters().getNicId()),
@@ -101,7 +101,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
 
-    private boolean isActivateDeactivateAllowedForVmStatus(VMStatus vmStatus) {
+    private boolean activateDeactivateVmNicAllowed(VMStatus vmStatus) {
         return vmStatus == VMStatus.Up || vmStatus == VMStatus.Down;
     }
 
@@ -119,5 +119,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     protected InterfaceDAO getInterfaceDAO() {
         return getDbFacade().getInterfaceDAO();
+    }
+
+    private boolean hotPlugVmNicRequired(VMStatus vmStatus) {
+        return vmStatus == VMStatus.Up;
     }
 }
