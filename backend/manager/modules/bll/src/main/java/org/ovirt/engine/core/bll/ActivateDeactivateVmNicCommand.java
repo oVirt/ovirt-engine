@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.action.PlugUnplugVmNicParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -19,15 +19,15 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
- * Attach or detach a virtual network interface to the VM in case it is in a valid status. If the VM is down, simply
+ * Activate or deactivate a virtual network interface of a VM in case it is in a valid status. If the VM is down, simply
  * update the device, if it is Up - HotPlug / HotUnPlug the virtual network interface
  */
 @NonTransactiveCommandAttribute
-public class PlugUnplugVmNicCommand<T extends PlugUnplugVmNicParameters> extends VmCommand<T> {
+public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
     private VmDevice vmDevice;
 
-    public PlugUnplugVmNicCommand(T parameters) {
+    public ActivateDeactivateVmNicCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getVmId());
     }
@@ -42,12 +42,12 @@ public class PlugUnplugVmNicCommand<T extends PlugUnplugVmNicParameters> extends
                 setVdsId(getVm().getrun_on_vds().getValue());
                 returnValue = canPerformHotPlug();
                 if (returnValue && !networkAttachedToVds(getNetworkName(), getVdsId())) {
-                    addCanDoActionMessage(VdcBllMessages.PLUG_UNPLUG_NETWORK_NOT_IN_VDS);
+                    addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                     returnValue = false;
                 }
             }
         } else {
-            addCanDoActionMessage(VdcBllMessages.PLUG_UNPLUG_NIC_VM_STATUS_ILLEGAL);
+            addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NIC_VM_STATUS_ILLEGAL);
             returnValue = false;
         }
 

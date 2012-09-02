@@ -9,9 +9,9 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.action.PlugUnplugVmNicParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -79,7 +79,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
 
         boolean succeeded = true;
         if (getParameters().getInterface().isActive()) {
-            succeeded = plugNic();
+            succeeded = activateNic();
         }
         setSucceeded(succeeded);
     }
@@ -101,26 +101,26 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         getCompensationContext().snapshotNewEntity(vmNetworkInterface.getStatistics());
     }
 
-    private boolean plugNic() {
-        PlugUnplugVmNicParameters plugParameters = createPlugUnPlugParameters();
-        VdcReturnValueBase plugVmNicReturnValue =
-                Backend.getInstance().runInternalAction(VdcActionType.PlugUnplugVmNic,
-                        plugParameters,
+    private boolean activateNic() {
+        ActivateDeactivateVmNicParameters activateParameters = createActivateDeactivateParameters();
+        VdcReturnValueBase activateVmNicReturnValue =
+                Backend.getInstance().runInternalAction(VdcActionType.ActivateDeactivateVmNic,
+                        activateParameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-        if (!plugVmNicReturnValue.getSucceeded()) {
-            getReturnValue().getExecuteFailedMessages().add("Failed hot-plugging nic to VM");
-            getReturnValue().getCanDoActionMessages().addAll(plugVmNicReturnValue.getCanDoActionMessages());
+        if (!activateVmNicReturnValue.getSucceeded()) {
+            getReturnValue().getExecuteFailedMessages().add("Failed activating nic.");
+            getReturnValue().getCanDoActionMessages().addAll(activateVmNicReturnValue.getCanDoActionMessages());
             getReturnValue().getCanDoActionMessages().remove(VdcBllMessages.VAR__ACTION__ADD.name());
             getReturnValue().setCanDoAction(false);
         }
-        return plugVmNicReturnValue.getSucceeded();
+        return activateVmNicReturnValue.getSucceeded();
     }
 
-    private PlugUnplugVmNicParameters createPlugUnPlugParameters() {
-        PlugUnplugVmNicParameters plugUnplugVmNicParameters =
-                new PlugUnplugVmNicParameters(getParameters().getInterface().getId(), PlugAction.PLUG);
-        plugUnplugVmNicParameters.setVmId(getParameters().getVmId());
-        return plugUnplugVmNicParameters;
+    private ActivateDeactivateVmNicParameters createActivateDeactivateParameters() {
+        ActivateDeactivateVmNicParameters activateDeactivateVmNicParameters =
+                new ActivateDeactivateVmNicParameters(getParameters().getInterface().getId(), PlugAction.PLUG);
+        activateDeactivateVmNicParameters.setVmId(getParameters().getVmId());
+        return activateDeactivateVmNicParameters;
     }
 
     @Override

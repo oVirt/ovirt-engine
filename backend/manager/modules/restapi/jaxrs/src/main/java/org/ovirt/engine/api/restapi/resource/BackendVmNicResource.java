@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.VmNicResource;
-import org.ovirt.engine.core.common.action.PlugUnplugVmNicParameters;
+import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -120,17 +120,17 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
 
     @Override
     public Response activate(Action action) {
-        PlugUnplugVmNicParameters params = new PlugUnplugVmNicParameters(guid, PlugAction.PLUG);
+        ActivateDeactivateVmNicParameters params = new ActivateDeactivateVmNicParameters(guid, PlugAction.PLUG);
         BackendNicsResource parent = (BackendNicsResource) collection;
         params.setVmId(parent.parentId);
-        return doAction(VdcActionType.PlugUnplugVmNic, params, action);
+        return doAction(VdcActionType.ActivateDeactivateVmNic, params, action);
     }
 
     @Override
     public Response deactivate(Action action) {
-        PlugUnplugVmNicParameters params = new PlugUnplugVmNicParameters(guid, PlugAction.UNPLUG);
+        ActivateDeactivateVmNicParameters params = new ActivateDeactivateVmNicParameters(guid, PlugAction.UNPLUG);
         params.setVmId(((BackendNicsResource) collection).parentId);
-        return doAction(VdcActionType.PlugUnplugVmNic, params, action);
+        return doAction(VdcActionType.ActivateDeactivateVmNic, params, action);
     }
 
     @Override

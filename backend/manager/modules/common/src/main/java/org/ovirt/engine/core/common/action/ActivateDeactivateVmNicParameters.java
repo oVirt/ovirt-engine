@@ -2,12 +2,12 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class PlugUnplugVmNicParameters extends VmOperationParameterBase {
+public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase {
 
     private Guid nicId;
     private PlugAction action;
 
-    public PlugUnplugVmNicParameters(Guid nicId, PlugAction action) {
+    public ActivateDeactivateVmNicParameters(Guid nicId, PlugAction action) {
         super();
         this.nicId = nicId;
         this.action = action;
