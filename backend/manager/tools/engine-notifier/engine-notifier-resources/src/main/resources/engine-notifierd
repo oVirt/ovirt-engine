@@ -21,7 +21,7 @@ ENGINE_USER="ovirt"
 export JAVA_HOME
 
 # Path to the engine-notifier launch script
-NOTIFIER_SCRIPT=/usr/share/ovirt-engine/notifier/notifier.sh
+NOTIFIER_SCRIPT=/usr/share/ovirt-engine/bin/engine-notifier.sh
 
 if [ -z "$SHUTDOWN_WAIT" ]; then
     SHUTDOWN_WAIT=10

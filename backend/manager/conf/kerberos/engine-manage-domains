@@ -6,16 +6,11 @@
 # should be under the /etc directory.
 #
 
-die () {
-        printf >&2 "$@\n"
-        exit 1
-}
+# Load the prolog:
+. "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
-# Import configurations
-PUSHDIR=`readlink -f $0`
-pushd `dirname $PUSHDIR` > /dev/null
-CONF_DIR=/etc/ovirt-engine/engine-manage-domains
-CONF_FILE=$CONF_DIR/engine-manage-domains.conf
+CONF_DIR="${ENGINE_ETC}/engine-manage-domains"
+CONF_FILE="${CONF_DIR}/engine-manage-domains.conf"
 
 found=0
 for ((i=1; i<=$# && ! found; i++))
@@ -138,7 +133,7 @@ LdapServers
 LDAPProviderTypes
 EOF
 
-java -cp .:$CP org.ovirt.engine.core.utils.kerberos.ManageDomains "$@" -propertiesFile=$PROPERTIES_FILE
+"${JAVA_HOME}/bin/java" -cp .:$CP org.ovirt.engine.core.utils.kerberos.ManageDomains "$@" -propertiesFile=$PROPERTIES_FILE
 
 RET_VAL=$?
 

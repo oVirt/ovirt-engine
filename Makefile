@@ -197,10 +197,9 @@ rpm-quick:
 create_dirs:
 	@echo "*** Creating Directories"
 	@install -dm 755 $(DESTDIR)$(BIN_DIR)
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/bin
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/conf
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/db-backups
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/engine-config
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/engine-manage-domains
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ovirt-isos
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/plugins
 	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
@@ -310,16 +309,16 @@ install_config:
 	install -m 644 backend/manager/tools/engine-config/src/main/resources/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
 
 	# Main program for the configuration tool:
-	install -m 750 backend/manager/tools/engine-config/src/main/resources/engine-config $(DESTDIR)$(DATA_DIR)/engine-config/
-	ln -s $(DATA_DIR)/engine-config/engine-config $(DESTDIR)$(BIN_DIR)/engine-config
+	install -m 750 backend/manager/tools/engine-config/src/main/resources/engine-config $(DESTDIR)$(DATA_DIR)/bin/engine-config.sh
+	ln -s $(DATA_DIR)/bin/engine-config.sh $(DESTDIR)$(BIN_DIR)/engine-config
 
 	# Configuration files for the domain management tool:
 	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
 	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
 
 	# Main program for the domain management tool:
-	install -m 750 backend/manager/conf/kerberos/engine-manage-domains $(DESTDIR)$(DATA_DIR)/engine-manage-domains/
-	ln -s $(DATA_DIR)/engine-manage-domains/engine-manage-domains $(DESTDIR)$(BIN_DIR)/engine-manage-domains
+	install -m 750 backend/manager/conf/kerberos/engine-manage-domains $(DESTDIR)$(DATA_DIR)/bin/engine-manage-domains.sh
+	ln -s $(DATA_DIR)/bin/engine-manage-domains.sh $(DESTDIR)$(BIN_DIR)/engine-manage-domains
 
 install_sysprep:
 	@echo "*** Deploying sysperp"
@@ -329,7 +328,6 @@ install_sysprep:
 install_notification_service:
 	@echo "*** Deploying notification service"
 
-	install -dm 755 $(DESTDIR)$(DATA_DIR)/notifier
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier
 
 	# Configuration files:
@@ -337,7 +335,7 @@ install_notification_service:
 	install -m 640 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/
 
 	# Main program:
-	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.sh $(DESTDIR)$(DATA_DIR)/notifier/
+	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.sh $(DESTDIR)$(DATA_DIR)/bin/engine-notifier.sh
 	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/engine-notifierd $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d/
 
 install_db_scripts:
@@ -350,6 +348,11 @@ install_db_scripts:
 
 install_misc:
 	@echo "*** Copying additional files"
+
+	# Shell scripts used by several programs:
+	install -m 755 backend/manager/tools/engine-tools-common/src/main/shell/engine-prolog.sh $(DESTDIR)$(DATA_DIR)/bin
+
+	# Other misc things:
 	install -m 644 backend/manager/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf
 	install -m 640 backend/manager/conf/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
 	install -m 644 backend/manager/conf/engine.conf.defaults $(DESTDIR)$(DATA_DIR)/conf

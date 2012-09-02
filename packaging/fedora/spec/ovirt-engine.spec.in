@@ -657,6 +657,9 @@ fi
 
 %files backend
 
+# Directory for binaries and scripts:
+%dir %{engine_data}/bin
+
 # Jar files:
 %{engine_java}/bll.jar
 %{engine_java}/dal.jar
@@ -812,6 +815,9 @@ fi
 
 %files tools-common
 
+# Scripts:
+%{engine_data}/bin/engine-prolog.sh
+
 # Jar files:
 %{engine_java}/engine-tools-common.jar
 
@@ -823,13 +829,11 @@ fi
 
 %files config
 
-# Links to the main scripts:
+# Scripts and links:
 %{_bindir}/engine-config
 %{_bindir}/engine-manage-domains
-
-# Scripts:
-%{engine_data}/engine-config
-%{engine_data}/engine-manage-domains
+%{engine_data}/bin/engine-config.sh
+%{engine_data}/bin/engine-manage-domains.sh
 
 # Configuration files for the configuration tool:
 %dir %{engine_etc}/engine-config
@@ -846,7 +850,7 @@ fi
 %files notification-service
 
 # Startup scripts:
-%{_datadir}/%{engine_name}/notifier
+%{engine_data}/bin/engine-notifier.sh
 %{_initddir}/engine-notifierd
 
 # Log and state directories must be owned by ovirt because the notifier service

@@ -5,10 +5,9 @@
 # files can be found under /usr/share/java. The service's configuration
 # should be under the /etc directory by default.
 #
-die () {
-    printf >&2 "$1"
-    exit $2
-}
+
+# Load the prolog:
+. "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
 usage () {
     printf "engine-notifier: oVirt Event Notification Service\n"
@@ -21,13 +20,6 @@ die_no_propset() {
     # exit when property defined but not set then exit
     die "Error: $1 if defined can not be empty, please check for this in configuration file $CONF_FILE\n" 6
 }
-
-NOTIFIER_HOME=/usr/share/ovirt-engine/notifier/
-if [ ! -d "$NOTIFIER_HOME" ]; then
-    die "Error: daemon home directory is missing or not accessible: $NOTIFIER_HOME.\n" 5
-fi
-
-cd $NOTIFIER_HOME
 
 if [ "$1" == "--help" -o "$1" == "-h" ]; then
     usage
@@ -45,7 +37,7 @@ if [ "$#" -eq 1 ]; then
     fi
     CONF_FILE="$1"
 else
-    CONF_FILE=/etc/ovirt-engine/notifier/notifier.conf
+    CONF_FILE="${ENGINE_ETC}/notifier/notifier.conf"
 fi
 
 # Import configurations
@@ -180,7 +172,7 @@ JAVA_LIB_HOME=/usr/share/java
 
 # Add the configuration directory to the classpath so that configuration
 # files can be loaded as resources:
-CP=/etc/ovirt-engine/notifier/.
+CP="${ENGINE_ETC}/notifier"
 
 # Add the required jar files from the system wide jars directory:
 jar_names='
@@ -241,6 +233,6 @@ then
     NOTIFIER_PID=/dev/null
 fi
 
-exec java -cp .:$CP $JAVA_OPTS org.ovirt.engine.core.notifier.Notifier $CONF_FILE 2>/dev/null &
+"${JAVA_HOME}/bin/java" -cp $CP $JAVA_OPTS org.ovirt.engine.core.notifier.Notifier $CONF_FILE 2>/dev/null &
 
 echo $! >$NOTIFIER_PID
