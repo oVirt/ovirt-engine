@@ -137,9 +137,9 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             StringBuilder sb = new StringBuilder("Null action_parameters:\n");
             StackTraceElement[] st = Thread.currentThread().getStackTrace();
 
-            for (int i = 0; i < st.length; i++) {
+            for (StackTraceElement element : st) {
                 sb.append(String.format("\tMethod: %1$s\n",
-                        st[i].getMethodName()));
+                        element.getMethodName()));
             }
 
             log.error(sb.toString());
