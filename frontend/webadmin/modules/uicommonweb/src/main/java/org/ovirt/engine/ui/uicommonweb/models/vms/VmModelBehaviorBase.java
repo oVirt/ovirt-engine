@@ -82,6 +82,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public abstract void UpdateMinAllocatedMemory();
 
+    protected void PostInitTemplate() {
+
+    }
+
     public boolean Validate()
     {
         return true;
@@ -700,7 +704,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 .setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
                         model.getTemplate().setSelectedItem(template);
                         model.getTemplate().setIsChangable(false);
-
+                        PostInitTemplate();
                     }
                 },
                 getModel().getHash()),

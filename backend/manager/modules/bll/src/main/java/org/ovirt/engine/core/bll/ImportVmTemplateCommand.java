@@ -69,6 +69,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         parameters.setEntityId(getVmTemplate().getId());
         setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
+        setStorageDomainId(parameters.getStorageDomainId());
     }
 
     protected ImportVmTemplateCommand(Guid commandId) {

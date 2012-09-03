@@ -175,7 +175,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getKernel_parameters().setEntity(vmBase.getkernel_params());
             getModel().getInitrd_path().setEntity(vmBase.getinitrd_url());
 
-            getModel().setIsDisksAvailable(getModel().getIsNew());
+            getModel().setIsDisksAvailable(true);
 
             if (!vmBase.getId().equals(Guid.Empty))
             {
@@ -270,14 +270,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 }
                 getModel().getTemplate().setItems(templates);
                 setupSelectedTemplate(getModel().getTemplate(), templates);
-                templateInited();
             }
         }), dataCenter.getId());
 
-    }
-
-    protected void templateInited() {
-        // override if needed
     }
 
     protected abstract void setupSelectedTemplate(ListModel model, List<VmTemplate> templates);
