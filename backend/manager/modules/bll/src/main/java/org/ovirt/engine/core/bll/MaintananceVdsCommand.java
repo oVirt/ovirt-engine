@@ -193,4 +193,14 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, tempVar);
         }
     }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = Collections.singletonMap(VdcObjectType.VDS.name().toLowerCase(), getVdsName());
+        }
+
+        return jobProperties;
+    }
+
 }
