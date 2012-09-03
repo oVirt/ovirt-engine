@@ -138,11 +138,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        AuditLogType startMessage = isInternalExecution() ? AuditLogType.VM_MIGRATION_START_SYSTEM_INITIATED
+                : AuditLogType.VM_MIGRATION_START;
         // all good, succeeded and the vm is up
         // succeeded false, rerun
         // succeeded false, rerun false = migration failed
-        return getSucceeded() ? (VMStatus) getActionReturnValue() == VMStatus.Up ? AuditLogType.VM_MIGRATION_DONE
-                : AuditLogType.VM_MIGRATION_START
+        return getSucceeded() ? getActionReturnValue() == VMStatus.Up ? AuditLogType.VM_MIGRATION_DONE
+                :startMessage
                 : _isRerun ? AuditLogType.VM_MIGRATION_TRYING_RERUN
                         : getVds().getstatus() == VDSStatus.PreparingForMaintenance ? AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTANANCE
                                 : AuditLogType.VM_MIGRATION_FAILED;
