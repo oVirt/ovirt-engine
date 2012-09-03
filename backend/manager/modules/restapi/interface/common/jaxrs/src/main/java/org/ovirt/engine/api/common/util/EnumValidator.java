@@ -66,8 +66,17 @@ public class EnumValidator {
         try {
             return Enum.valueOf(clz, toUppercase ? name.toUpperCase() : name);
         } catch (IllegalArgumentException e) {
+            detail = detail + getPossibleValues(clz);
             throw new WebApplicationException(response(reason, MessageFormat.format(detail, name, clz.getSimpleName())));
         }
+    }
+
+    private static <E extends Enum<E>> String getPossibleValues(Class<E> clz) {
+        StringBuilder builder = new StringBuilder(". Possible values for " + clz.getSimpleName() + " are:");
+        for (E enumValue : clz.getEnumConstants()) {
+            builder.append(" ").append(enumValue.name().toLowerCase()).append(",");
+        }
+        return builder.toString().substring(0, builder.toString().length() - 1);
     }
 
     private static Response response(String reason, String detail) {

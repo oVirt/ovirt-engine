@@ -47,6 +47,8 @@ public class EnumValidatorTest extends Assert {
         Fault fault = (Fault)wae.getResponse().getEntity();
         assertNotNull(fault);
         assertEquals("Invalid value", fault.getReason());
-        assertEquals(value + " is not a member of " + typeName, fault.getDetail());
+        assertEquals(value + " is not a member of " + typeName
+                + ". Possible values for State are: new, runnable, blocked, waiting, timed_waiting, terminated",
+                fault.getDetail());
     }
 }
