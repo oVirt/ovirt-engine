@@ -105,11 +105,12 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     private void removeImageFromDB(boolean isLockOnSnapshotsNeeded) {
         final DiskImage diskImage = getDiskImage();
         final List<Snapshot> updatedSnapshots;
-        final boolean shouldPerformOpOnVmSnapshots = isLockOnSnapshotsNeeded && !diskImage.isShareable();
 
         try {
-            if (shouldPerformOpOnVmSnapshots) {
-                VM vm = getVmForNonShareableDiskImage(diskImage);
+            VM vm = getVmForNonShareableDiskImage(diskImage);
+            // if the disk is not part of a vm (floating), there are no snapshots to update
+            // so no lock is required.
+            if (isLockOnSnapshotsNeeded && vm!=null) {
                 lockVmSnapshotsWithWait(vm);
                 updatedSnapshots = prepareSnapshotConfigWithoutImage(diskImage.getId());
             } else {
