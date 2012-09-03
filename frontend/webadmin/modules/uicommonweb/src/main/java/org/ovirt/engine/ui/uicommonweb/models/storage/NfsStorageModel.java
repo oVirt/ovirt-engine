@@ -27,6 +27,11 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class NfsStorageModel extends Model implements IStorageModel {
 
+    //retrans nfs option max value
+    private final static short RETRANS_MAX = 32767;
+    //timeo nfs option max value
+    private final static short TIMEOUT_MAX = 6000;
+
     public static EventDefinition PathChangedEventDefinition;
     private Event pathChangedEvent;
 
@@ -165,11 +170,11 @@ public class NfsStorageModel extends Model implements IStorageModel {
         });
 
         getRetransmissions().ValidateEntity(new IValidation[] {
-            new IntegerValidation(0, Integer.MAX_VALUE)
+            new IntegerValidation(0, RETRANS_MAX)
         });
 
         getTimeout().ValidateEntity(new IValidation[] {
-            new IntegerValidation(1, Integer.MAX_VALUE)
+            new IntegerValidation(1, TIMEOUT_MAX)
         });
 
         return getPath().getIsValid()
