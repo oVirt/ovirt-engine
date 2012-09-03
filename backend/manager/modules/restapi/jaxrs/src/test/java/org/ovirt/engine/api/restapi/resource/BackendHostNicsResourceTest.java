@@ -53,7 +53,7 @@ public class BackendHostNicsResourceTest
     private static final InterfaceStatus NIC_STATUS = InterfaceStatus.Up;
     private static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.StaticIp;
     private static final String SETUPNETWORKS_ACTION_BASE_URL = "/hosts/00000000-0000-0000-0000-000000000000/nics";
-    private static final String SETUPNETWORKS_ACTION_URL = "/hosts/00000000-0000-0000-0000-000000000000/nics/setupnetworks";
+    private static final String SETUPNETWORKS_ACTION_URL = "/api/hosts/00000000-0000-0000-0000-000000000000/nics/setupnetworks";
     private static final String SETUPNETWORKS_ACTION_REL = "setupnetworks";
 
     public BackendHostNicsResourceTest() {

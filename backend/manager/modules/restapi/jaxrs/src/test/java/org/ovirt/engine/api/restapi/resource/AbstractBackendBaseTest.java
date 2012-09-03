@@ -146,8 +146,12 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpBasicUriExpectations(String path) {
-        UriInfo uriInfo = setUpBasicUriExpectations();
+        UriInfo uriInfo = control.createMock(UriInfo.class);
+        URI baseUri = URI.create(URI_BASE + '/');
+
+        expect(uriInfo.getBaseUri()).andReturn(baseUri).anyTimes();
         expect(uriInfo.getPath()).andReturn(path).anyTimes();
+
         return uriInfo;
     }
 

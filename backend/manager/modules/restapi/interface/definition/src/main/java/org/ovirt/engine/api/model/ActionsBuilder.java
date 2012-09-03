@@ -28,6 +28,7 @@ import org.ovirt.engine.api.utils.ArrayUtils;
 
 public class ActionsBuilder {
 
+    private static final String URL_SEPARATOR  = "/";
     private UriBuilder uriBuilder;
     private Class<?> service;
     UriInfo uriInfo;
@@ -58,7 +59,10 @@ public class ActionsBuilder {
                     URI uri = uriBuilder.clone().path(path.value()).build();
                     link.setHref(uri.toString());
                 } else {
-                    link.setHref(this.uriInfo.getPath()+'/'+link.getRel());
+                    link.setHref(this.uriInfo.getBaseUri().getPath() +
+                                 this.uriInfo.getPath().substring(1) +
+                                 URL_SEPARATOR +
+                                 link.getRel());
                 }
                 if (actions == null) {
                     actions = new Actions();
