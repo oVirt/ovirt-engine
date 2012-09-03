@@ -35,20 +35,23 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
                                     getParameters().getNonOperationalReason()));
         }
 
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                // migrate vms according to cluster migrateOnError option
-                switch (getVdsGroup().getMigrateOnError()) {
+        // if host failed to recover, no point in sending migrate, as it would fail.
+        if (getParameters().getNonOperationalReason() != NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH) {
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    // migrate vms according to cluster migrateOnError option
+                    switch (getVdsGroup().getMigrateOnError()) {
                     case YES:
                         MigrateAllVms(getExecutionContext());
                         break;
                     case HA_ONLY:
-                        MigrateAllVms(getExecutionContext(),true);
+                        MigrateAllVms(getExecutionContext(), true);
                         break;
+                    }
                 }
-            }
-        });
+            });
+        }
 
         if (getParameters().getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE) {
             log.errorFormat("Host '{0}' is set to Non-Operational, it is missing the following networks: '{1}'",
