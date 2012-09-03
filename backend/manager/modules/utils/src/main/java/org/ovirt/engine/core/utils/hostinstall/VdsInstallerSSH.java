@@ -213,9 +213,8 @@ public class VdsInstallerSSH {
         }
         catch (Exception e) {
             String m = String.format(
-                "Could not connect to server %1$s: %2$s",
-                this.host,
-                e.getMessage()
+                "Could not connect to server %1$s",
+                this.host
             );
             log.error(m, e);
             _callbackFailed(m);
@@ -403,14 +402,20 @@ public class VdsInstallerSSH {
             }
         }
         catch (Exception e) {
-            String m = String.format(
-                "SSH error running command %1$s '%2$s': %3$s",
-                this.host,
-                command,
-                e.getMessage()
+            log.error(
+                String.format(
+                    "SSH error running command %1$s:'%2$s'",
+                    this.host,
+                    command
+                ),
+                e
             );
-            log.error(m, e);
-            _callbackFailed(m);
+            _callbackFailed(
+                String.format(
+                    "SSH command failed while executing at host '%1$s', refer to logs for further information",
+                    this.host
+                )
+            );
         }
 
         log.debug("executeCommand leave " + ret);
@@ -434,22 +439,20 @@ public class VdsInstallerSSH {
         }
         catch (FileNotFoundException e) {
             String m = String.format(
-                "SSH could not receive file %1$s:'%2$s': '%3$s': %4$s",
+                "SSH could not receive file %1$s:'%2$s': '%3$s'",
                 this.host,
                 source,
-                destination,
-                e.getMessage()
+                destination
             );
             log.error(m, e);
             _callbackFailed(m);
         }
         catch (Exception e) {
             String m = String.format(
-                "SSH could not receive file %1$s:'%2$s': '%3$s': %4$s",
+                "SSH could not receive file %1$s:'%2$s': '%3$s'",
                 this.host,
                 source,
-                destination,
-                e.getMessage()
+                destination
             );
             log.error(m, e);
             _callbackAddError(m);
@@ -484,11 +487,10 @@ public class VdsInstallerSSH {
         }
         catch (Exception e) {
             String m = String.format(
-                "SSH could not send file %2$s %1$s:%3$s: %4$s",
+                "SSH could not send file %2$s %1$s:%3$s",
                 this.host,
                 source,
-                destination,
-                e.getMessage()
+                destination
             );
             log.error(m, e);
             _callbackAddError(m);
