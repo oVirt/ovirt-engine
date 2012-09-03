@@ -381,8 +381,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     public boolean validateAndSetQuota() {
         if (ImageOperation.Move.equals(getParameters().getOperation())) {
-            getQuotaManager().decreaseStorageQuota(getStoragePool(),
-                    getSourceStorageQuotaListParameters());
+            // If source and destination are in the same quota - do nothing and return true
+            if (getImage().getQuotaId() != null && getImage().getQuotaId().equals(getQuotaId())) {
+                return true;
+            }
             if (getQuotaManager()
                     .validateAndSetStorageQuota(getStoragePool(),
                             getDestQuotaListParameters(),

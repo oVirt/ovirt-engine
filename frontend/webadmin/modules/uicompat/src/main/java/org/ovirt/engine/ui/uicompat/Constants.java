@@ -909,6 +909,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field can't be empty.")
     String thisFieldCantBeEmptyInvalidReason();
 
+    @DefaultStringValue("Quota enforcement activated. Quota must be defined for the selected storage domain")
+    String quotaMustBeSelectedInvalidReason();
+
     @DefaultStringValue("New Role")
     String newRoleTitle();
 

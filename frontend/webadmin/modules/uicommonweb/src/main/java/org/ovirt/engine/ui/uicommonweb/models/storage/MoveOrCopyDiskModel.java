@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -26,6 +27,8 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SelectedQuotaValidation;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -244,6 +247,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             return;
         }
 
+        if (!this.Validate()) {
+            return;
+        }
+
         boolean iSingleStorageDomain = (Boolean) getIsSingleStorageDomain().getEntity();
 
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
@@ -327,4 +334,20 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             OnCopy();
         }
     }
+
+    public boolean Validate() {
+        if (getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
+                || getQuotaEnforcementType() == QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT) {
+            return true;
+        }
+
+        boolean isValid = true;
+        for (DiskModel diskModel : getDisks()) {
+            diskModel.getQuota().ValidateSelectedItem(new IValidation[]{new SelectedQuotaValidation()});
+            isValid &= diskModel.getQuota().getIsValid();
+        }
+
+        return isValid;
+    }
 }
+

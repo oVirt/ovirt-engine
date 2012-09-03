@@ -251,7 +251,7 @@ public class QuotaManager {
                                 }
                             }
                             if (!hasStorageId) {
-                                canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+                                canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
                                 return false;
                             }
                         }
