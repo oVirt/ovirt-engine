@@ -201,7 +201,9 @@ def initAPI():
     try:
         controller.CONF["API_OBJECT"] = API(url=URL,
                                         username=USERNAME,
-                                        password=controller.CONF['AUTH_PASS'])
+                                        password=controller.CONF['AUTH_PASS'],
+                                        ca_file=basedefs.FILE_CA_CRT_SRC,
+                                    )
     except:
         logging.error(traceback.format_exc())
         raise Exception(ERROR_CREATE_API_OBJECT)
