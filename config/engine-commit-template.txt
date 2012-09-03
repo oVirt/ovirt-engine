@@ -1,7 +1,7 @@
-<core | restapi | tools | history | engine | userportal | webadmin>: short summary under 50 chars (#xxxxxx)
-
-https://bugzilla.redhat.com/XXXXXX
+<core | restapi | tools | history | engine | userportal | webadmin>: short summary under 50 chars
 
 Longer description using lines' length under 72 chars.
 
 With multiple paragraphs if necessary.
+
+Bug-Url: https://bugzilla.redhat.com/??????
