@@ -926,19 +926,17 @@ public class CommonModel extends ListModel
             }
         }
 
-        if (model == null)
+        if (model != null)
         {
-            return;
+            // Transfer a search string to the model.
+            model.setSearchString(getEffectiveSearchString());
+
+            // Change active list model as neccesary.
+            setSelectedItem(model);
+
+            // Propagate search command to a concrete list model.
+            getSelectedItem().getSearchCommand().Execute();
         }
-
-        // Transfer a search string to the model.
-        model.setSearchString(getEffectiveSearchString());
-
-        // Change active list model as neccesary.
-        setSelectedItem(model);
-
-        // Propagate search command to a concrete list model.
-        getSelectedItem().getSearchCommand().Execute();
 
         executingSearch = false;
     }
