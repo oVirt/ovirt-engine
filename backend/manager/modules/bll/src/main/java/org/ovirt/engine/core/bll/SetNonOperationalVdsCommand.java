@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
@@ -51,7 +51,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         });
 
         if (getParameters().getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE) {
-            log.infoFormat("Host '{0}' is set to Non-Operational, it is missing the following networks: '{1}'",
+            log.errorFormat("Host '{0}' is set to Non-Operational, it is missing the following networks: '{1}'",
                     getVds().getvds_name(), getParameters().getCustomLogValues().get("Networks"));
         }
         setSucceeded(true);
