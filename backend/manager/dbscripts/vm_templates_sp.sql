@@ -39,7 +39,10 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_initrd_url    VARCHAR(4000) ,
  v_kernel_url    VARCHAR(4000) ,
  v_kernel_params VARCHAR(4000) ,
- v_quota_id UUID)
+ v_quota_id UUID,
+ v_migration_support integer,
+ v_dedicated_vm_for_vds UUID)
+
 RETURNS VOID
    AS $procedure$
 BEGIN
@@ -79,7 +82,9 @@ INTO vm_static(
     kernel_url,
     kernel_params,
     entity_type,
-    quota_id)
+    quota_id,
+    migration_support,
+    dedicated_vm_for_vds)
 VALUES(
     -- This field is meaningless for templates for the time being, however we want to keep it not null for VMs.
     -- Thus, since templates are top level elements they "point" to the 'Blank' template.
@@ -117,7 +122,9 @@ VALUES(
     v_kernel_url,
     v_kernel_params,
     'TEMPLATE',
-    v_quota_id);
+    v_quota_id,
+    v_migration_support,
+    v_dedicated_vm_for_vds);
 END; $procedure$
 LANGUAGE plpgsql;    
 

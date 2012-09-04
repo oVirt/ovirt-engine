@@ -1639,6 +1639,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setinitrd_url(vm.getinitrd_url());
         tempVar.setkernel_url(vm.getkernel_url());
         tempVar.setkernel_params(vm.getkernel_params());
+        tempVar.setdedicated_vm_for_vds(vm.getdedicated_vm_for_vds());
+        tempVar.setMigrationSupport(vm.getMigrationSupport());
+
         VM newvm = tempVar;
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
