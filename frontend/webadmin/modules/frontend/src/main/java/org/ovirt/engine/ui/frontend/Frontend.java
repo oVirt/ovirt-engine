@@ -141,6 +141,9 @@ public class Frontend {
         service.RunQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute RunQuery: " + caught, caught); //$NON-NLS-1$
                 FrontendQueryAsyncResult f = new FrontendQueryAsyncResult(queryType, parameters, null);
                 getEventsHandler().runQueryFailed(null);
@@ -182,6 +185,9 @@ public class Frontend {
         service.RunQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
             @Override
             public void onFailure(Throwable caught) {
+                if(ignoreFailure(caught)){
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute RunQuery: " + caught, caught); //$NON-NLS-1$
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
@@ -243,6 +249,9 @@ public class Frontend {
         service.RunPublicQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute RunPublicQuery: " + caught, caught); //$NON-NLS-1$
                 FrontendQueryAsyncResult f = new FrontendQueryAsyncResult(queryType, parameters, null);
                 getEventsHandler().runQueryFailed(null);
@@ -284,6 +293,9 @@ public class Frontend {
         service.RunPublicQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute RunQuery: " + caught, caught); //$NON-NLS-1$
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
@@ -353,6 +365,9 @@ public class Frontend {
         service.RunMultipleQueries(queryTypeList, queryParamsList, new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute RunPublicQuery: " + caught, caught); //$NON-NLS-1$
                 FrontendMultipleQueryAsyncResult f =
                         new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, null);
@@ -450,6 +465,9 @@ public class Frontend {
         service.RunAction(actionType, parameters, new AsyncCallback<VdcReturnValueBase>() {
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
                 failureEventHandler(caught);
                 FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, null, state);
@@ -473,6 +491,9 @@ public class Frontend {
         service.RunAction(actionType, parameters, new AsyncCallback<VdcReturnValueBase>() {
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
                 failureEventHandler(caught);
                 FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, null);
@@ -506,6 +527,9 @@ public class Frontend {
         service.RunMultipleActions(actionType, parameters, isRunOnlyIfAllCanDoPass, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
             @Override
             public void onFailure(Throwable caught) {
+                        if (ignoreFailure(caught)) {
+                            return;
+                        }
                 logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
                 failureEventHandler(caught);
 
@@ -614,6 +638,9 @@ public class Frontend {
 
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute RunQuery: " + caught, caught); //$NON-NLS-1$
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
@@ -646,6 +673,9 @@ public class Frontend {
         service.logOff(vdcUser, new AsyncCallback<VdcReturnValueBase>() {
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute Logoff: " + caught, caught); //$NON-NLS-1$
                 callback.onFailure(caught);
             }
@@ -672,6 +702,9 @@ public class Frontend {
 
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute Logoff: " + caught, caught); //$NON-NLS-1$
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
@@ -692,6 +725,9 @@ public class Frontend {
         service.getLoggedInUser(new AsyncCallback<VdcUser>() {
             @Override
             public void onFailure(Throwable caught) {
+                if (ignoreFailure(caught)) {
+                    return;
+                }
                 logger.log(Level.SEVERE, "Failed to execute sync getIsUserLoggedIn: " + caught, caught); //$NON-NLS-1$
                 failureEventHandler(caught);
                 callback.OnFailure(null);
@@ -827,5 +863,14 @@ public class Frontend {
 
     public static Event getQueryCompleteEvent() {
         return QueryCompleteEvent;
+    }
+
+    // ignore escape key
+    protected static boolean ignoreFailure(Throwable caught) {
+        if (caught instanceof StatusCodeException && ((StatusCodeException)
+                caught).getStatusCode() == 0) {
+            return true;
+        }
+        return false;
     }
 }
