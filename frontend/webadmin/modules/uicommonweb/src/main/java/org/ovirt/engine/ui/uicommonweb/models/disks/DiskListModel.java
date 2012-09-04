@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -47,6 +49,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
@@ -315,8 +318,26 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             disk = diskImage;
         }
         else {
-            LunDisk lunDisk = model.getIsNew() ? new LunDisk() : (LunDisk) getSelectedItem();
-            lunDisk.setLun((LUNs) model.getSanStorageModel().getAddedLuns().get(0).getEntity());
+            LunDisk lunDisk;
+            SanStorageModel sanStorageModel = model.getSanStorageModel();
+            ArrayList<String> partOfSdLunsMessages = sanStorageModel.getPartOfSdLunsMessages();
+
+            if (model.getIsNew()) {
+                if (partOfSdLunsMessages.isEmpty() || sanStorageModel.isForce()) {
+                    LUNs luns = (LUNs) model.getSanStorageModel().getAddedLuns().get(0).getEntity();
+                    luns.setLunType((StorageType) model.getStorageType().getSelectedItem());
+
+                    lunDisk = new LunDisk();
+                    lunDisk.setLun(luns);
+                }
+                else {
+                    ForceCreationWarning(partOfSdLunsMessages);
+                    return;
+                }
+            }
+            else {
+                lunDisk = (LunDisk) getSelectedItem();
+            }
 
             disk = lunDisk;
         }
@@ -361,6 +382,44 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
                     }
                 },
                 this);
+    }
+
+    private void ForceCreationWarning(ArrayList<String> usedLunsMessages) {
+        ConfirmationModel confirmationModel = new ConfirmationModel();
+        setConfirmWindow(confirmationModel);
+
+        confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().forceStorageDomainCreation());
+        confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().lunsAlreadyPartOfSD());
+        confirmationModel.setHashName("force_lun_disk_creation"); //$NON-NLS-1$
+        confirmationModel.setItems(usedLunsMessages);
+
+        UICommand command;
+        command = new UICommand("OnForceSave", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        command.setIsDefault(true);
+        confirmationModel.getCommands().add(command);
+
+        command = new UICommand("CancelConfirm", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        confirmationModel.getCommands().add(command);
+    }
+
+    private void OnForceSave()
+    {
+        ConfirmationModel confirmationModel = (ConfirmationModel) getConfirmWindow();
+        if (confirmationModel != null && !confirmationModel.Validate())
+        {
+            return;
+        }
+
+        CancelConfirm();
+
+        DiskModel model = (DiskModel) getWindow();
+        SanStorageModel sanStorageModel = model.getSanStorageModel();
+        sanStorageModel.setForce(true);
+
+        OnSave();
     }
 
     private void OnAttachDisks()
@@ -666,6 +725,14 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         return true;
     }
 
+    private void CancelConfirm()
+    {
+        DiskModel model = (DiskModel) getWindow();
+        SanStorageModel sanStorageModel = model.getSanStorageModel();
+        sanStorageModel.setForce(false);
+        setConfirmWindow(null);
+    }
+
     @Override
     public void ExecuteCommand(UICommand command)
     {
@@ -695,9 +762,17 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         {
             OnSave();
         }
+        else if (StringHelper.stringsEqual(command.getName(), "OnForceSave")) //$NON-NLS-1$
+        {
+            OnForceSave();
+        }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
+        {
+            CancelConfirm();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {

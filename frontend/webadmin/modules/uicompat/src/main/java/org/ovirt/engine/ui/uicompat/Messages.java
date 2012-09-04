@@ -116,7 +116,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Press {0} to Release Cursor")
     String pressKeyToReleaseCursor(String key);
 
-    @DefaultMessage("LUN is already part of storage domain: {0}")
+    @DefaultMessage("LUN is already part of Storage Domain: {0}")
     String lunAlreadyPartOfStorageDomainWarning(String storageDomainName);
 
     @DefaultMessage("LUN is already used by disk: {0}")

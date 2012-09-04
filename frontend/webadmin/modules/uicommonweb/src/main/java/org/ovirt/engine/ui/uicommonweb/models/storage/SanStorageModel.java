@@ -618,6 +618,23 @@ public abstract class SanStorageModel extends SanStorageModelBase
         return usedLunsMessages;
     }
 
+    public ArrayList<String> getPartOfSdLunsMessages() {
+        ArrayList<String> partOfSdLunsMessages = new ArrayList<String>();
+        Messages messages = ConstantsManager.getInstance().getMessages();
+
+        for (LunModel lunModel : getAddedLuns()) {
+            String reason = null;
+            LUNs lun = (LUNs) lunModel.getEntity();
+
+            if (lun.getStorageDomainId() != null) {
+                reason = messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName());
+                partOfSdLunsMessages.add(lunModel.getLunId() + " (" + reason + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+
+        return partOfSdLunsMessages;
+    }
+
     @Override
     public boolean Validate()
     {
