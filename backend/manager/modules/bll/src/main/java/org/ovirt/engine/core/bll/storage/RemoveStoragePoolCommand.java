@@ -318,13 +318,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         final List<storage_domains> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
         if (!activeOrLockedDomains.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
-            return false;
+            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
         }
         if (!getParameters().getForceDelete()) {
             if(poolDomains.size() > 1) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
-                return false;
+                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
             }
             for (storage_domains domain : poolDomains) {
                 // check that there are no images on data domains
@@ -333,15 +331,13 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                                 .getDiskImageDAO()
                                 .getAllSnapshotsForStorageDomain(domain.getId())
                                 .size() != 0) {
-                    addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);
-                    return false;
+                    return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);
                 }
             }
             final List<VmStatic> vms =
                     DbFacade.getInstance().getVmStaticDAO().getAllByStoragePoolId(getStoragePool().getId());
             if (vms.size() > 0) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS);
-                return false;
+                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS);
             }
         }
 
