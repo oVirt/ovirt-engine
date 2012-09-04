@@ -1211,7 +1211,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected boolean acquireLockInternal() {
-        boolean returnValue = true;
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
         if (commandLock == null) {
             Map<String, String> exclusiveLocks = getExclusiveLocks();
@@ -1223,12 +1222,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     commandLock = lock;
                 } else {
                     log.infoFormat("Failed to Acquire Lock to object {0}", lock);
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
-                    returnValue = false;
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
                 }
             }
         }
-        return returnValue;
+        return true;
     }
 
     private void acquireLockAndWait() {
@@ -1305,6 +1303,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected void addCanDoActionMessage(VdcBllMessages message) {
         getReturnValue().getCanDoActionMessages().add(message.name());
+    }
+
+    /**
+     * Add validation message and return false. See {@link #addCanDoActionMessage(String)}
+     * @param message   the message to add
+     *
+     * @return  false always
+     */
+    protected final boolean failCanDoAction(VdcBllMessages message) {
+        addCanDoActionMessage(message);
+        return false;
     }
 
     /**
