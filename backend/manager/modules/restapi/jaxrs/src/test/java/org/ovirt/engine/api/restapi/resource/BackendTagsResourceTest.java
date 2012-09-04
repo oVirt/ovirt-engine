@@ -51,7 +51,7 @@ public class BackendTagsResourceTest
         collection.setUriInfo(uriInfo);
         List<Tag> results = getCollection();
         assertNotNull(collection);
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
     }
 
     @Test

@@ -107,7 +107,7 @@ public class BackendResource extends BaseBackendResource {
             }
             List<T> results = asCollection(clz, result.getReturnValue());
             if (results!=null && getMaxResults()!=NO_LIMIT && getMaxResults()<results.size()) {
-                results = results.subList(0, getMaxResults()-1);
+                results = results.subList(0, getMaxResults());
             }
             return results;
         } catch (Exception e) {
