@@ -28,3 +28,7 @@ target
 /frontend/webadmin/modules/userportal-gwtp/gen
 /frontend/webadmin/modules/webadmin/gen
 /frontend/webadmin/modules/webadmin/war
+
+# Local scripts log files
+# #########################
+/backend/manager/dbscripts/*.sh.log
