@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -280,6 +281,18 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         default:
             return AuditLogType.USER_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
         }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+            if (snapshot != null) {
+                jobProperties.put(VdcObjectType.Snapshot.name().toLowerCase(), snapshot.getDescription());
+            }
+        }
+        return jobProperties;
     }
 
     @Override

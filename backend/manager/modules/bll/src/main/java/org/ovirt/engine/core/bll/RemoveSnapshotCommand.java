@@ -4,9 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -35,10 +37,22 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private void initializeObjectState() {
-        Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
-        if (snapshot != null) {
-            setSnapshotName(snapshot.getDescription());
+        if (StringUtils.isEmpty(getSnapshotName())) {
+            Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
+            if (snapshot != null) {
+                setSnapshotName(snapshot.getDescription());
+            }
         }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            initializeObjectState();
+            jobProperties.put(VdcObjectType.Snapshot.name().toLowerCase(), getSnapshotName());
+        }
+        return jobProperties;
     }
 
     /**

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -57,6 +58,16 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         setSnapshotName(parameters.getDescription());
         setStoragePoolId(getVm().getstorage_pool_id());
     }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.Snapshot.name().toLowerCase(), getParameters().getDescription());
+        }
+        return jobProperties;
+    }
+
 
     /**
      * Filter all allowed snapshot disks.

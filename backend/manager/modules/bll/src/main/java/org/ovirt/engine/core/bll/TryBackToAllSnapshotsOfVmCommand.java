@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -49,6 +50,18 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     public TryBackToAllSnapshotsOfVmCommand(T parameters) {
         super(parameters);
         parameters.setEntityId(getVmId());
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+            if (snapshot != null) {
+                jobProperties.put(VdcObjectType.Snapshot.name().toLowerCase(), snapshot.getDescription());
+            }
+        }
+        return jobProperties;
     }
 
     @Override

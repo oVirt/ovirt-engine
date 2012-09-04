@@ -27,7 +27,8 @@ public enum VdcObjectType {
     Quota(17, "Quota"),
     GlusterVolume(18, "Gluster Volume"),
     Disk(19, "Disk"),
-    VmInterface(20, "VmInterface");
+    VmInterface(20, "VmInterface"),
+    Snapshot(21, "Snapshot");
 
     private int value;
     private String vdcObjectTranslationVal;
