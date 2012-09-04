@@ -827,8 +827,7 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(net, newNet);
 
         VdsNetworkInterface nic = createNic("nic0", null);
-        VdsNetworkInterface nicWithVlan = createVlan(nic.getName(), net.getvlan_id(), net.getName());
-        nicWithVlan.setMtu(net.getMtu());
+        VdsNetworkInterface nicWithVlan = createVlanSyncedWithNetwork(nic.getName(), net);
         mockExistingIfaces(nic, nicWithVlan);
 
         nic.setNetworkName(newNet.getName());
@@ -900,8 +899,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(
                 createParametersForNics(nic, createVlan(nic.getName(), newNet.getvlan_id(), newNet.getName())));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_MTU_DIFFERENCES,
-                String.format("[%s(%d), %s(%d)]", net.getName(), net.getMtu(), newNet.getName(), newNet.getMtu()));
+        validateAndExpectMtuValidation(helper, net, newNet);
     }
 
     /**
@@ -930,15 +928,13 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(net, newNet);
 
         VdsNetworkInterface nic = createNic("nic0", null);
-        VdsNetworkInterface nicWithVlan = createVlan(nic.getName(), net.getvlan_id(), net.getName());
-        nicWithVlan.setMtu(net.getMtu());
+        VdsNetworkInterface nicWithVlan = createVlanSyncedWithNetwork(nic.getName(), net);
         mockExistingIfaces(nic, nicWithVlan);
 
         nic.setNetworkName(newNet.getName());
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, nicWithVlan));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_MTU_DIFFERENCES,
-                String.format("[%s(%d), %s(%d)]", newNet.getName(), newNet.getMtu(), net.getName(), net.getMtu()));
+        validateAndExpectMtuValidation(helper, newNet, net);
     }
 
     /**
@@ -966,15 +962,13 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(net, newNet);
 
         VdsNetworkInterface nic = createNic("nic0", null);
-        VdsNetworkInterface nicWithVlan = createVlan(nic.getName(), net.getvlan_id(), net.getName());
-        nicWithVlan.setMtu(net.getMtu());
+        VdsNetworkInterface nicWithVlan = createVlanSyncedWithNetwork(nic.getName(), net);
         mockExistingIfaces(nic, nicWithVlan);
 
         nic.setNetworkName(newNet.getName());
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, nicWithVlan));
 
-        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_MTU_DIFFERENCES,
-                String.format("[%s(%s), %s(%d)]", newNet.getName(), "default", net.getName(), net.getMtu()));
+        validateAndExpectMtuValidation(helper, newNet, net);
     }
 
     /**
@@ -993,7 +987,7 @@ public class SetupNetworksHelperTest {
      * </pre>
      */
     @Test
-    public void nonVmLanWithDifferentMTUAddedToNic() {
+    public void nonVmVlanWithDifferentMTUAddedToNic() {
         Network net = createNetwork("vlanVmMtu9000");
         net.setvlan_id(100);
         net.setMtu(9000);
@@ -1004,8 +998,7 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(net, newNet);
 
         VdsNetworkInterface nic = createNic("nic0", null);
-        VdsNetworkInterface nicWithVlan = createVlan(nic.getName(), net.getvlan_id(), net.getName());
-        nicWithVlan.setMtu(net.getMtu());
+        VdsNetworkInterface nicWithVlan = createVlanSyncedWithNetwork(nic.getName(), net);
         mockExistingIfaces(nic, nicWithVlan);
 
         VdsNetworkInterface nicWithNonVmVlan = createVlan(nic.getName(), newNet.getvlan_id(), newNet.getName());
@@ -1048,8 +1041,16 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(
                 createParametersForNics(nic, createVlan(nic.getName(), newNet.getvlan_id(), newNet.getName())));
 
+        validateAndExpectMtuValidation(helper, net, newNet);
+    }
+
+    private void validateAndExpectMtuValidation(SetupNetworksHelper helper, Network net1, Network net2) {
         validateAndExpectViolation(helper, VdcBllMessages.NETWORK_MTU_DIFFERENCES,
-                String.format("[%s(%d), %s(%d)]", net.getName(), net.getMtu(), newNet.getName(), newNet.getMtu()));
+                String.format("[%s(%s), %s(%d)]",
+                        net1.getName(),
+                        net1.getMtu() == 0 ? "default" : net1.getMtu(),
+                        net2.getName(),
+                        net2.getMtu()));
     }
 
     /* --- Tests for General Violations --- */
@@ -1224,6 +1225,20 @@ public class SetupNetworksHelperTest {
                 network.getvlan_id(),
                 network.getName(),
                 network.isVmNetwork());
+        return nic;
+    }
+
+    /**
+     * @param nicName
+     *            The name of the NIC.
+     * @param network
+     *            The network that the NIC is in sync with. Can't be <code>null</code>.
+     * @return {@link VdsNetworkInterface} representing a vlan NIC with the given parameters.
+     */
+    private VdsNetworkInterface createVlanSyncedWithNetwork(String nicName, Network network) {
+        VdsNetworkInterface nic = createVlan(nicName, network.getvlan_id(), network.getName());
+        nic.setBridged(network.isVmNetwork());
+        nic.setMtu(network.getMtu());
         return nic;
     }
 

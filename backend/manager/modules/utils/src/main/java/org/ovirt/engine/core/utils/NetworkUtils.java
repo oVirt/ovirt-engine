@@ -178,7 +178,7 @@ public final class NetworkUtils {
      * @param network
      *            The network to check
      */
-    public static boolean isNonVmNetworkWithNoVlan(Network network) {
-        return !network.isVmNetwork() && (network.getvlan_id() == null || network.getvlan_id() == 0);
+    public static boolean isNonVmNonVlanNetwork(Network network) {
+        return !network.isVmNetwork() && network.getvlan_id() == null;
     }
 }

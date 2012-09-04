@@ -113,7 +113,7 @@ public class SetupNetworksHelper {
                 for (Network net : networksOnInterface) {
                     checkedNetworks.add(net.getName());
                     if (net.getMtu() != network.getMtu()
-                            && (NetworkUtils.isNonVmNetworkWithNoVlan(network) || NetworkUtils.isNonVmNetworkWithNoVlan(net))) {
+                            && (NetworkUtils.isNonVmNonVlanNetwork(network) || NetworkUtils.isNonVmNonVlanNetwork(net))) {
                         mtuMismatched = true;
                     }
                 }
