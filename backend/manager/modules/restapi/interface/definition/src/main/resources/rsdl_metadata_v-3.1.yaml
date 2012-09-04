@@ -1735,7 +1735,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/tags|rel=add|
+- name: /api/hosts/{host:id}/tags|rel=add
   request:
     body:
       parameterType: Tag
