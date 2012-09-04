@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
@@ -52,7 +54,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     }
 
     protected void ProceedVGLunsInDb() {
-        final java.util.ArrayList<LUNs> luns = (java.util.ArrayList<LUNs>) Backend
+        final ArrayList<LUNs> luns = (ArrayList<LUNs>) Backend
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.GetVGInfo,
@@ -86,13 +88,11 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
 
     @Override
     protected boolean CanAddDomain() {
-        boolean returnValue = true;
         // !AddSANStorageDomainParametersValue.IsExistingStorageDomain &&
         if (((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringUtils
                 .isEmpty(getStorageDomain().getstorage()))) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
+            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
         }
-        return returnValue;
+        return true;
     }
 }
