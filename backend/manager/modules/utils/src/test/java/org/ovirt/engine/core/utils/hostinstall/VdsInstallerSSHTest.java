@@ -374,7 +374,7 @@ public class VdsInstallerSSHTest {
         try {
             assertTrue(vssh.connect(host, password));
             callbacks.reset();
-            assertFalse(vssh.executeCommand("xxxx"));
+            assertFalse(vssh.executeCommand("/xxxx"));
             assertFalse(callbacks.connected);
             assertFalse(callbacks.endTransfer);
             assertNull(callbacks.message);
