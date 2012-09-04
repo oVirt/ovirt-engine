@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDevicesVisibilityVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -126,8 +127,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
 
             // try to connect vds to luns and getDeviceList in order to refresh them
             for (LUNs lun : luns) {
-                if (!StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                        .ConnectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty)) {
+                if (!connectStorageToLunByVdsId(vds, lun)) {
                     log.errorFormat("Could not connect host {0} to lun {1}", vds.getvds_name(), lun.getLUN_id());
                     setVds(vds);
                     ((ConnectAllHostsToLunCommandReturnValue)getReturnValue()).setFailedVds(vds);
@@ -162,13 +162,28 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.TRUE, resultMap);
     }
 
+    private boolean connectStorageToLunByVdsId(VDS vds, LUNs lun) {
+        try {
+            return StorageHelperDirector.getInstance()
+                    .getItem(getStorageDomain().getstorage_type())
+                    .ConnectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty);
+        } catch (VdcBLLException e) {
+            ((ConnectAllHostsToLunCommandReturnValue) getReturnValue()).setFailedVds(vds);
+            throw e;
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private List<LUNs> getHostLuns(VDS vds) {
-        return (List<LUNs>) runVdsCommand(
-                VDSCommandType.GetDeviceList,
-                new GetDeviceListVDSCommandParameters(vds.getId(),
-                        getStorageDomain().getstorage_type())).getReturnValue();
+        try {
+            return (List<LUNs>) runVdsCommand(
+                    VDSCommandType.GetDeviceList,
+                    new GetDeviceListVDSCommandParameters(vds.getId(),
+                            getStorageDomain().getstorage_type())).getReturnValue();
+        } catch (VdcBLLException e) {
+            ((ConnectAllHostsToLunCommandReturnValue) getReturnValue()).setFailedVds(vds);
+            throw e;
+        }
     }
 
     /**

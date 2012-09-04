@@ -61,10 +61,8 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                     getReturnValue().getCanDoActionMessages().add(String.format("$hostName %1s",
                             connectResult.getFailedVds().getvds_name()));
                 }
-                if (connectResult.getFailedLun() != null) {
-                    getReturnValue().getCanDoActionMessages().add(String.format("$lun %1s",
-                            connectResult.getFailedLun().getLUN_id()));
-                }
+                String lunId = connectResult.getFailedLun() != null ? connectResult.getFailedLun().getLUN_id() : "";
+                getReturnValue().getCanDoActionMessages().add(String.format("$lun %1s", lunId));
                 returnValue = false;
             } else {
                 // use luns list from connect command
