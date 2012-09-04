@@ -7,6 +7,7 @@ import javax.naming.AuthenticationException;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -90,6 +91,7 @@ public class BasicTest {
 
     @Test
     public void testServerKey() throws Exception {
+        Assume.assumeNotNull(TestCommon.sshd);
         client.connect();
         assertEquals(TestCommon.sshd.getKey(), client.getServerKey());
     }
