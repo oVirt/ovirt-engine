@@ -74,13 +74,11 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
     protected boolean canDoAction() {
         // check minimum 2 nics in bond
         if (getParameters().getNics().length < 2) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
-            return false;
+            return failCanDoAction(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
         }
 
         if (getParameters().getNetwork() == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
-            return false;
+            return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS);
         }
 
         List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(
@@ -95,8 +93,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         });
 
         if (bond == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
-            return false;
+            return failCanDoAction(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
         }
 
         // check that each nic is valid
@@ -109,18 +106,14 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             });
 
             if (iface == null) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
-                return false;
+                return failCanDoAction(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
             } else if (StringUtils.isNotEmpty(iface.getBondName())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
-                return false;
+                return failCanDoAction(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
             } else if (StringUtils.isNotEmpty(iface.getNetworkName())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
-                return false;
+                return failCanDoAction(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
             } else if (NetworkUtils.interfaceHasVlan(iface, interfaces)) {
                 // check that one of the nics is not connected to vlan
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VLAN);
-                return false;
+                return failCanDoAction(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VLAN);
             }
 
         }
@@ -137,8 +130,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         });
 
         if (I != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
-            return false;
+            return failCanDoAction(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
         }
 
         // check that the network exists in current cluster
@@ -149,8 +141,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 return network.getname().equals(getParameters().getNetwork().getname());
             }
         })) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
-            return false;
+            return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
         return true;
