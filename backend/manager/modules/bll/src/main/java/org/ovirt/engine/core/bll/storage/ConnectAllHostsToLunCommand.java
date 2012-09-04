@@ -73,16 +73,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             }
         }).get(0);
 
-        @SuppressWarnings("unchecked")
-        List<LUNs> luns =
-                    (List<LUNs>) Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.GetDeviceList,
-                                new GetDeviceListVDSCommandParameters(spmVds.getId(),
-                                            getStorageDomain().getstorage_type()))
-                            .getReturnValue();
+        List<LUNs> luns = getHostLuns(spmVds);
         Map<String, LUNs> lunsMap = new HashMap<String, LUNs>();
         for (LUNs lun : luns) {
             lunsMap.put(lun.getLUN_id(), lun);
@@ -155,14 +146,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             if (!Config.<Boolean> GetValue(ConfigValues.SupportGetDevicesVisibility,
                     vds.getvds_group_compatibility_version().getValue())) {
                 Set<String> hostsLunsIds = new HashSet<String>();
-                @SuppressWarnings("unchecked")
-                List<LUNs> hostLuns = (List<LUNs>) Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.GetDeviceList,
-                                new GetDeviceListVDSCommandParameters(vds.getId(),
-                                        getStorageDomain().getstorage_type())).getReturnValue();
+                List<LUNs> hostLuns = getHostLuns(vds);
                 for (LUNs lun : hostLuns) {
                     hostsLunsIds.add(lun.getLUN_id());
                 }
@@ -176,6 +160,15 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             }
         }
         return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.TRUE, resultMap);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private List<LUNs> getHostLuns(VDS vds) {
+        return (List<LUNs>) runVdsCommand(
+                VDSCommandType.GetDeviceList,
+                new GetDeviceListVDSCommandParameters(vds.getId(),
+                        getStorageDomain().getstorage_type())).getReturnValue();
     }
 
     /**
