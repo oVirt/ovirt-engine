@@ -85,16 +85,13 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
         if (getVds() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_NOT_EXIST);
-            returnValue = false;
+            return failCanDoAction(VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_NOT_EXIST);
         }
-        if (returnValue && getVds().getstatus() == VDSStatus.Up) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_ALREADY_UP);
-            returnValue = false;
+        if (getVds().getstatus() == VDSStatus.Up) {
+            return failCanDoAction(VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_ALREADY_UP);
         }
-        return returnValue;
+        return true;
     }
 
     @Override
