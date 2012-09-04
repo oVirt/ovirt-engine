@@ -147,14 +147,12 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     protected boolean attachUserToSession() {
-        boolean authenticated = true;
         if (!StringUtils.isEmpty(getParameters().getSessionId())) {
             SessionDataContainer.getInstance().setUser(getParameters().getSessionId(), getCurrentUser());
         } else if (!SessionDataContainer.getInstance().setUser(getCurrentUser())) {
-            addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
-            authenticated = false;
+            return failCanDoAction(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
         }
-        return authenticated;
+        return true;
     }
 
     protected boolean isUserCanBeAuthenticated() {
