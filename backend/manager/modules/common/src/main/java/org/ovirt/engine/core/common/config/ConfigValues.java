@@ -383,7 +383,7 @@ public enum ConfigValues {
     EnableUSBAsDefault(110),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("600")
+    @DefaultValueAttribute("300")
     SSHInactivityTimoutSeconds(111),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -1481,6 +1481,11 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     MTUOverrideSupported(382),
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1800")
+    SSHInactivityHardTimoutSeconds(383),
 
     Invalid(65535);
 

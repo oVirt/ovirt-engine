@@ -387,7 +387,8 @@ select fn_db_add_config_value('SQLServerLikeSyntax','LIKE','general');
 select fn_db_add_config_value('SQLServerPagingSyntax',E' WHERE RowNum BETWEEN %1$s AND %2$s','general');
 select fn_db_add_config_value('SQLServerPagingType','Range','general');
 select fn_db_add_config_value('SQLServerSearchTemplate',E'SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1) as T2 %3$s','general');
-select fn_db_add_config_value('SSHInactivityTimoutSeconds','600','general');
+select fn_db_add_config_value('SSHInactivityTimoutSeconds','300','general');
+select fn_db_add_config_value('SSHInactivityHardTimoutSeconds','1800','general');
 --Handling SPICE SSL Enabled
 select fn_db_add_config_value('SSLEnabled','true','general');
 select fn_db_add_config_value('StorageDomainFalureTimeoutInMinutes','5','general');

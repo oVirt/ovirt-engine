@@ -82,6 +82,9 @@ public class VdsInstallerSSH {
             keyStore,
             keyStorePassword,
             Config.<Integer>GetValue(
+                ConfigValues.SSHInactivityHardTimoutSeconds
+            ) * 1000,
+            Config.<Integer>GetValue(
                 ConfigValues.SSHInactivityTimoutSeconds
             ) * 1000
         );
@@ -93,17 +96,19 @@ public class VdsInstallerSSH {
         String userPassword,
         String keyStore,
         String keyStorePassword,
-        long timeout
+        long hardTimeout,
+        long softTimeout
     ) {
         log.debug(
             String.format(
-                "_doConnect enter (%1$s, %2$s, %3$s, %4$s, %5$s, %6$d)",
+                "_doConnect enter (%1$s, %2$s, %3$s, %4$s, %5$s, %6$d, %7$d)",
                 server,
                 user,
                 userPassword,
                 keyStore,
                 keyStorePassword,
-                timeout
+                hardTimeout,
+                softTimeout
             )
         );
 
@@ -112,8 +117,8 @@ public class VdsInstallerSSH {
 
         try {
             this.client = new SSHClient();
-            this.client.setHardTimeout(timeout);
-            this.client.setSoftTimeout(timeout);
+            this.client.setHardTimeout(hardTimeout);
+            this.client.setSoftTimeout(softTimeout);
             this.client.setHost(this.host, this.port);
             this.client.setUser(user);
 
@@ -271,14 +276,27 @@ public class VdsInstallerSSH {
         );
     }
 
-    public final boolean connect(String server, String rootPassword, long timeout) {
+    public final boolean connect(String server, String rootPassword, long hardTimeout) {
         return _doConnect(
             server,
             "root",
             rootPassword,
             null,
             null,
-            timeout
+            hardTimeout,
+            hardTimeout
+        );
+    }
+
+    public final boolean connect(String server, String rootPassword, long hardTimeout, long softTimeout) {
+        return _doConnect(
+            server,
+            "root",
+            rootPassword,
+            null,
+            null,
+            hardTimeout,
+            softTimeout
         );
     }
 
