@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
+import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -68,6 +70,15 @@ public class BackwardCompatibilityTaskCreationTest {
                 new CreateImageTemplateCommand(new CreateImageTemplateParameters()),
                 new CreateCloneOfTemplateCommand(new CreateCloneOfTemplateParameters()),
                 new RemoveVmCommand(new RemoveVmParameters()),
+                new HibernateVmCommand(new HibernateVmParameters()) {
+                    @Override
+                    public VM getVm() {
+                        VM vm = new VM();
+                        vm.setId(Guid.NewGuid());
+                        vm.setstorage_pool_id(Guid.NewGuid());
+                        return vm;
+                    }
+                },
                 new MoveOrCopyImageGroupCommand(new MoveOrCopyImageGroupParameters()) {
                     @Override
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
