@@ -58,6 +58,9 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
     @Override
     public boolean validateAndSetQuota() {
+        if (isInternalExecution()) {
+            return true;
+        }
         boolean quotaAcc = super.validateAndSetQuota();
         if (!quotaAcc) {
             return false;
