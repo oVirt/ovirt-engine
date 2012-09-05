@@ -105,7 +105,7 @@
 		}
 
 		.actionButton {
-			padding: 5px;
+			padding: 8px;
 		}
 
 		.networkImageBorder {
