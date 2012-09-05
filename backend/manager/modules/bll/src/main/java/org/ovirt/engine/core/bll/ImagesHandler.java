@@ -661,8 +661,10 @@ public final class ImagesHandler {
                 .getStorageServerConnectionDAO()
                 .getAllForLun(lun.getLUN_id())));
 
-        StorageHelperDirector.getInstance().getItem(
-                lun.getLunConnections().get(0).getstorage_type()).removeLun(lun);
+        if (!lun.getLunConnections().isEmpty()) {
+            StorageHelperDirector.getInstance().getItem(
+                    lun.getLunConnections().get(0).getstorage_type()).removeLun(lun);
+        }
 
     }
 

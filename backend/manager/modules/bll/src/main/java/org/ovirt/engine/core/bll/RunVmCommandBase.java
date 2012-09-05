@@ -350,11 +350,14 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
                                             .getStorageServerConnectionDAO()
                                             .getAllForLun(lun.getLUN_id())));
-            if (!StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getstorage_type())
-                        .ConnectStorageToLunByVdsId(null, hostId, lun, getVm().getstorage_pool_id())) {
+
+            if (!lun.getLunConnections().isEmpty()
+                    && !StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getstorage_type())
+                            .ConnectStorageToLunByVdsId(null, hostId, lun, getVm().getstorage_pool_id())) {
                 log.infoFormat("Failed to connect  a lun disk to vdsm {0} skiping it", hostId);
                 return false;
             }
+
         }
         return true;
     }
