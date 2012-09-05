@@ -72,7 +72,6 @@ public class EntityAsyncTask extends SPMAsyncTask {
     @Override
     protected void OnTaskEndSuccess() {
         LogEndTaskSuccess();
-        OnCurrentTaskEndSuccess();
         EndActionIfNecessary();
     }
 
@@ -218,37 +217,15 @@ public class EntityAsyncTask extends SPMAsyncTask {
     @Override
     protected void OnTaskEndFailure() {
         LogEndTaskFailure();
-        OnCurrentTaskEndFailure();
         EndActionIfNecessary();
     }
 
     @Override
     protected void OnTaskDoesNotExist() {
         LogTaskDoesntExist();
-        OnCurrentTaskDoesNotExist();
         EndActionIfNecessary();
     }
 
-    /**
-     * Executed when the task ends successfully, regardless of whether there are
-     * other running tasks on the same entity or not.
-     */
-    protected void OnCurrentTaskEndSuccess() {
-    }
-
-    /**
-     * Executed when the task ended with a failure, regardless of whether there
-     * are other running tasks on the same entity or not.
-     */
-    protected void OnCurrentTaskEndFailure() {
-    }
-
-    /**
-     * Executed when we find out that the task doesn't exist, regardless of
-     * whether there are other running tasks on the same entity or not.
-     */
-    protected void OnCurrentTaskDoesNotExist() {
-    }
 
     private static final Log log = LogFactory.getLog(EntityAsyncTask.class);
 }
