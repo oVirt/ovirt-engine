@@ -18,6 +18,8 @@ import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
+import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -54,14 +56,20 @@ public class BackwardCompatibilityTaskCreationTest {
             mockConfig(ConfigValues.AsyncTaskStatusCachingTimeInMinutes, 10)
             );
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
     @DataPoints
     public static CommandBase<? extends VdcActionParametersBase>[] data() {
         return new CommandBase<?>[] {
                 new CreateSnapshotCommand(new ImagesActionsParametersBase()),
                 new AddImageFromScratchCommand(new AddImageFromScratchParameters()),
                 new CreateImageTemplateCommand(new CreateImageTemplateParameters()),
-                new CreateCloneOfTemplateCommand(new CreateCloneOfTemplateParameters())
+                new CreateCloneOfTemplateCommand(new CreateCloneOfTemplateParameters()),
+                new MoveOrCopyImageGroupCommand(new MoveOrCopyImageGroupParameters()) {
+                    @Override
+                    protected void initContainerDetails(ImagesContainterParametersBase parameters) {
+                        // No op for test
+                    }
+                }
         };
     }
 
