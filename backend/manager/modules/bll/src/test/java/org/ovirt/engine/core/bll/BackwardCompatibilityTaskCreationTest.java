@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
+import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -100,6 +101,12 @@ public class BackwardCompatibilityTaskCreationTest {
                     }
                 },
                 new RemoveTemplateSnapshotCommand(new ImagesContainterParametersBase()) {
+                    @Override
+                    protected void initContainerDetails(ImagesContainterParametersBase parameters) {
+                        // No op for test
+                    }
+                },
+                new RestoreFromSnapshotCommand(new RestoreFromSnapshotParameters()) {
                     @Override
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
                         // No op for test

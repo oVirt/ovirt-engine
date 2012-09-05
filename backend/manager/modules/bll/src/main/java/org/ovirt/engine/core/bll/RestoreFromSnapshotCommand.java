@@ -2,16 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
@@ -68,13 +62,8 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     }
 
     @Override
-    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        VdcActionParametersBase commandParams = getParametersForTask(parentCommand, getParameters());
-        AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
-                AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
-                commandParams, asyncTaskCreationInfo.getStepId(), getCommandId()));
-        p.setEntityId(getParameters().getEntityId());
-        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteVolume, p);
+    protected AsyncTaskType getTaskType() {
+        return AsyncTaskType.deleteVolume;
     }
 
     @Override
