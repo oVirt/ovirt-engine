@@ -33,14 +33,19 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecut
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
+import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -1100,8 +1105,23 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return An {@link SPMAsyncTask} object representing the task to be run
      */
     protected SPMAsyncTask ConcreteCreateTask
-            (AsyncTaskCreationInfo asyncTaskCreationInfo,
-                    VdcActionType parentCommand) {
+            (AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+
+        VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
+        AsyncTaskParameters p =
+                new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
+                        AsyncTaskResultEnum.success,
+                        AsyncTaskStatusEnum.running,
+                        asyncTaskCreationInfo.getTaskID(),
+                        parametersForTask,
+                        asyncTaskCreationInfo.getStepId(),
+                        getCommandId()));
+        p.setEntityId(getParameters().getEntityId());
+        return AsyncTaskManager.getInstance().CreateTask(getTaskType(), p);
+    }
+
+    /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
+    protected AsyncTaskType getTaskType() {
         throw new UnsupportedOperationException();
     }
 

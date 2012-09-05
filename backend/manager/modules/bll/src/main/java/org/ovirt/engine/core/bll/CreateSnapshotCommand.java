@@ -8,16 +8,10 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
@@ -132,18 +126,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     @Override
-    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
-        AsyncTaskParameters p =
-                new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
-                        AsyncTaskResultEnum.success,
-                        AsyncTaskStatusEnum.running,
-                        asyncTaskCreationInfo.getTaskID(),
-                        parametersForTask,
-                        asyncTaskCreationInfo.getStepId(),
-                        getCommandId()));
-        p.setEntityId(getParameters().getEntityId());
-        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p);
+    protected AsyncTaskType getTaskType() {
+        return AsyncTaskType.createVolume;
     }
 
     /**
