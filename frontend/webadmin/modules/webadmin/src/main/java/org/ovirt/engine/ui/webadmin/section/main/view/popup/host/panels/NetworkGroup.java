@@ -32,7 +32,7 @@ public class NetworkGroup extends DnDPanel {
     private final NetworkPanelsStyle style;
     private final NetworkInterfaceModel nicModel;
     private final FlexTable table;
-    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     public NetworkGroup(NetworkInterfaceModel nicModel, final NetworkPanelsStyle style) {
         super(false);
@@ -71,12 +71,12 @@ public class NetworkGroup extends DnDPanel {
         Collections.sort(networks);
         if (networkSize > 0) {
             flexCellFormatter.setRowSpan(0, 0, networkSize);
+            FlexTable networkTable = new FlexTable();
             for (int i = 0; i < networkSize; i++) {
-                table.setWidget(i, i > 0 ? 1 : 2, new NetworkPanel(networks.get(i), style));
-                if (i > 0) {
-                    table.removeCell(i, 0);
-                }
+                networkTable.setWidget(i, 0 ,new NetworkPanel(networks.get(i), style));
             }
+            networkTable.setWidth("100%"); //$NON-NLS-1$
+            table.setWidget(0, 2, networkTable);
         } else {
             SimplePanel emptyPanel = new SimplePanel();
             Label label = new Label(constants.noNetworkAssigned());

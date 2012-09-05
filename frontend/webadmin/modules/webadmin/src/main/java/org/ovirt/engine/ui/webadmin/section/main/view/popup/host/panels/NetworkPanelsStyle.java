@@ -15,8 +15,6 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String itemPanel();
 
-    String itemPanelError();
-
     String mgmtNetwork();
 
     String networkGroupDragOver();

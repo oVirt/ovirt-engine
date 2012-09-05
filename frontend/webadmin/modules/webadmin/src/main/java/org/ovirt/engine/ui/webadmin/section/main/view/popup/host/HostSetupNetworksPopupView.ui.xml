@@ -45,11 +45,6 @@
 			color: black;
 		}
 
-		.itemPanelError {
-			border-color: red;
-			border-width: 2px;
-		}
-
 		.networkGroupDragOver {
 			border-color: black !important;
 			box-shadow: 1px 1px 1px 1px rgba(33, 33, 33, 0.3);

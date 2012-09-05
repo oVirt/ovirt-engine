@@ -2,14 +2,16 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.HTML;
 
 public class ConnectorPanel extends FlexTable {
 
+    private final ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
     public ConnectorPanel(NetworkInterfaceModel nicModel, NetworkPanelsStyle style) {
         super();
         int networkSize = nicModel.getItems().size();
@@ -23,7 +25,8 @@ public class ConnectorPanel extends FlexTable {
         FlexCellFormatter flexCellFormatter = getFlexCellFormatter();
         flexCellFormatter.setRowSpan(0, 0, networkSize);
 
-        setWidget(0, 0, new Image(networkSize > 1 ? resources.arrowLeftMiddle() : resources.arrowLeft()));
+        HTML leftImageHtml = new HTML(templates.image(resources.arrowLeft().getURL(), resources.arrowLeft().getHeight(), resources.arrowLeft().getWidth()));
+        setWidget(0, 0, leftImageHtml);
 
         for (int i = 0; i < networkSize; i++) {
             int row = i;
@@ -40,8 +43,9 @@ public class ConnectorPanel extends FlexTable {
                     rightImage = resources.arrowRightMiddle();
                 }
             }
-            setWidget(row, column, new Image(rightImage));
+
+            HTML rightImageHtml = new HTML(templates.image(rightImage.getURL(), rightImage.getHeight(), rightImage.getWidth()));
+            setWidget(row, column, rightImageHtml);
         }
-        setHeight((50 * networkSize) + "px"); //$NON-NLS-1$
     }
 }

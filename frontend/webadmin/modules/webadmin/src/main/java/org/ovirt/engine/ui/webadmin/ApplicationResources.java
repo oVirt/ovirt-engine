@@ -266,9 +266,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/arrow_right_middle.png")
     ImageResource arrowRightMiddle();
 
-    @Source("images/network/arrow_left_middle.png")
-    ImageResource arrowLeftMiddle();
-
     @Source("images/network/arrow_right_one.png")
     ImageResource arrowRightOne();
 

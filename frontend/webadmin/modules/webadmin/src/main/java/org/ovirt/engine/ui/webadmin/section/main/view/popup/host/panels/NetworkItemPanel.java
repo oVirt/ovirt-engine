@@ -112,9 +112,6 @@ public abstract class NetworkItemPanel extends DnDPanel {
     private void init() {
         menu = menuFor(item);
         getElement().addClassName(style.itemPanel());
-        if (item.hasError()) {
-            getElement().addClassName(style.itemPanelError());
-        }
 
         setWidget(getContents());
 

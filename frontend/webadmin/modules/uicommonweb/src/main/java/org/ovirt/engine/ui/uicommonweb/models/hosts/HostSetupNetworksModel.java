@@ -479,7 +479,6 @@ public class HostSetupNetworksModel extends EntityModel {
         unmanagedNetwork.setMtu(nic.getMtu());
         unmanagedNetwork.setVmNetwork(nic.isBridged());
         LogicalNetworkModel networkModel = new LogicalNetworkModel(unmanagedNetwork, this);
-        networkModel.setError(ConstantsManager.getInstance().getConstants().thisNetworkDoesNotExistInTheClusterErr());
         networkMap.put(networkName, networkModel);
         return networkModel;
     }
