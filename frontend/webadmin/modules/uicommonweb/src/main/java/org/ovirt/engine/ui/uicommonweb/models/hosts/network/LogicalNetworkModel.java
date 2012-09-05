@@ -223,4 +223,9 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         VdsNetworkInterface nic = hasVlan() ? getBridge().getEntity() : getAttachedToNic().getEntity();
         return nic.getNetworkImplementationDetails();
     }
+
+    @Override
+    public String getType() {
+        return HostSetupNetworksModel.NETWORK;
+    }
 }

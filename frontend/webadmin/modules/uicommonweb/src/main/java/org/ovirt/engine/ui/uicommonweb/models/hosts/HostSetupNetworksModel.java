@@ -122,6 +122,9 @@ public class HostSetupNetworksModel extends EntityModel {
     private NetworkItemModel<?> currentOp1;
     private NetworkItemModel<?> currentOp2;
 
+    public static final String NIC = "nic"; //$NON-NLS-1$
+    public static final String NETWORK = "network"; //$NON-NLS-1$
+
     public HostSetupNetworksModel(HostInterfaceListModel hostInterfaceListModel) {
         this.hostInterfaceListModel = hostInterfaceListModel;
         networkToLastDetachParams = new HashMap<String, NetworkParameters>();
@@ -148,12 +151,24 @@ public class HostSetupNetworksModel extends EntityModel {
 
     }
 
-    public boolean candidateOperation(String op1Key, String op2Key, boolean drop) {
-        NetworkInterfaceModel nic1 = nicMap.get(op1Key);
-        LogicalNetworkModel network1 = networkMap.get(op1Key);
+    public boolean candidateOperation(String op1Key, String op1Type, String op2Key, String op2Type, boolean drop) {
 
-        NetworkInterfaceModel nic2 = nicMap.get(op2Key);
-        LogicalNetworkModel network2 = networkMap.get(op2Key);
+        NetworkInterfaceModel nic1 = null;
+        LogicalNetworkModel network1 = null;
+        NetworkInterfaceModel nic2 = null;
+        LogicalNetworkModel network2 = null;
+
+        if (op1Type != null && op1Type.equals(NIC)){
+            nic1 = nicMap.get(op1Key);
+        }else if (op1Type != null && op1Type.equals(NETWORK)){
+            network1 = networkMap.get(op1Key);
+        }
+
+        if (op2Type != null && op2Type.equals(NIC)){
+            nic2 = nicMap.get(op2Key);
+        }else if (op2Type != null && op2Type.equals(NETWORK)){
+            network2 = networkMap.get(op2Key);
+        }
 
         NetworkItemModel<?> op1 = nic1 == null ? network1 : nic1;
         NetworkItemModel<?> op2 = nic2 == null ? network2 : nic2;

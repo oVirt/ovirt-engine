@@ -35,6 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class NetworkItemPanel extends DnDPanel {
 
     public static final String SETUP_NETWORKS_DATA = "SetupNetworksData"; //$NON-NLS-1$
+    public static final String SETUP_NETWORKS_TYPE = "SetupNetworksType"; //$NON-NLS-1$
     final ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
     final ApplicationMessages messages = ClientGinjectorProvider.instance().getApplicationMessages();
     final Image dragImage = new Image(resources.itemDraggable());
@@ -135,6 +136,8 @@ public abstract class NetworkItemPanel extends DnDPanel {
                 NetworkItemPanel sourcePanel = (NetworkItemPanel) event.getSource();
                 // Required: set data for the event.
                 event.setData(SETUP_NETWORKS_DATA, sourcePanel.item.getName());
+                event.setData(SETUP_NETWORKS_TYPE, sourcePanel.item.getType());
+
                 // show a ghost of the widget under cursor.
                 NativeEvent nativeEvent = event.getNativeEvent();
                 int x = nativeEvent.getClientX() - sourcePanel.getAbsoluteLeft();

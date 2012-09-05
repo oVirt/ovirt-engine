@@ -127,8 +127,9 @@ public class NetworkGroup extends DnDPanel {
     private void doDrag(DragDropEventBase<?> event, boolean isDrop) {
         HostSetupNetworksModel setupModel = nicModel.getSetupModel();
         String data = event.getData(NetworkItemPanel.SETUP_NETWORKS_DATA);
+        String type = event.getData(NetworkItemPanel.SETUP_NETWORKS_TYPE); //$NON-NLS-1$
         if (data != null) {
-            if (setupModel.candidateOperation(data, nicModel.getName(), isDrop)) {
+            if (setupModel.candidateOperation(data, type, nicModel.getName(), HostSetupNetworksModel.NIC, isDrop)) {
                 table.getElement().addClassName(style.networkGroupDragOver());
                 // allow drag/drop (look at http://www.w3.org/TR/html5/dnd.html#dndevents)
                 event.preventDefault();

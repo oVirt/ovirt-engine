@@ -72,4 +72,6 @@ public abstract class NetworkItemModel<T extends Enum<T>> extends ListModel impl
 
     }
 
+    public abstract String getType();
+
 }

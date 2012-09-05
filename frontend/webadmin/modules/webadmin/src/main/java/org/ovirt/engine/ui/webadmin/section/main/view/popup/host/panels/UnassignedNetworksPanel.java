@@ -132,8 +132,9 @@ public class UnassignedNetworksPanel extends DnDPanel{
 
     private void doDrag(DragDropEventBase<?> event, boolean isDrop) {
         String data = event.getData(NetworkItemPanel.SETUP_NETWORKS_DATA);
+        String type = event.getData(NetworkItemPanel.SETUP_NETWORKS_TYPE);
         if (data != null) {
-            if (setupModel.candidateOperation(data, null, isDrop)) {
+            if (setupModel.candidateOperation(data, type, null, null, isDrop)) {
                animatedPanel.getElement().addClassName(style.networkGroupDragOver());
                 // allow drag/drop (look at http://www.w3.org/TR/html5/dnd.html#dndevents)
                 event.preventDefault();

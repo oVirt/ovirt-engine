@@ -72,4 +72,9 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     public void setBonded(boolean bonded) {
         this.bonded = bonded;
     }
+
+    @Override
+    public String getType() {
+        return HostSetupNetworksModel.NIC;
+    }
 }
