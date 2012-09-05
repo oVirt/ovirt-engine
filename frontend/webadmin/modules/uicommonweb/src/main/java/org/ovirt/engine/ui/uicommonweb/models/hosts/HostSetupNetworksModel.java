@@ -162,7 +162,7 @@ public class HostSetupNetworksModel extends EntityModel {
             throw new IllegalArgumentException("null Operands"); //$NON-NLS-1$
         }
 
-        NetworkOperation candidate = NetworkOperationFactory.operationFor(op1, op2);
+        NetworkOperation candidate = NetworkOperationFactory.operationFor(op1, op2, true);
 
         if (drop) {
             onOperation(candidate, candidate.getCommand(op1, op2, allNics));

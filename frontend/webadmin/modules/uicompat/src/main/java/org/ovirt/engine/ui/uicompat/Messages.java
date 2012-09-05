@@ -134,6 +134,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Detach Network {0}")
     String detachNetwork(String networkName);
 
+    @DefaultMessage("Remove Network {0}")
+    String removeNetwork(String networkName);
+
+
     @DefaultMessage("Attach {0} to")
     String attachTo(String name);
 

@@ -120,8 +120,8 @@ public class NetworkPanel extends NetworkItemPanel {
             item.edit();
         } else {
             OperationMap operationMap = item.getSetupModel().commandsFor(item);
-            final NetworkCommand detach = operationMap.get(NetworkOperation.DETACH_NETWORK).get(0);
-            item.getSetupModel().onOperation(NetworkOperation.DETACH_NETWORK, detach);
+            final NetworkCommand detach = operationMap.get(NetworkOperation.REMOVE_UNMANAGED_NETWORK).get(0);
+            item.getSetupModel().onOperation(NetworkOperation.REMOVE_UNMANAGED_NETWORK, detach);
         }
     }
 

@@ -225,6 +225,29 @@ public enum NetworkOperation {
         }
 
     },
+    REMOVE_UNMANAGED_NETWORK {
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getMessages().removeNetwork(op1.getName());
+        }
+
+        @Override
+        public boolean isUnary() {
+            return true;
+        }
+
+        @Override
+        protected NetworkOperationCommandTarget getTarget() {
+            return new NetworkOperationCommandTarget() {
+                @Override
+                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                        NetworkItemModel<?> op2,
+                        List<VdsNetworkInterface> allNics, Object... params) {
+                    DETACH_NETWORK.getCommand(op1, op2, allNics).Execute();
+                }
+            };
+        }
+    },
     NULL_OPERATION {
 
         @Override

@@ -38,7 +38,7 @@ public class NetworkOperationFactory {
      * @param op2
      * @return
      */
-    public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+    public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2, boolean isDrag) {
         // !! always check bond before nic because of inheritance !!
 
         // op1: bond
@@ -108,6 +108,16 @@ public class NetworkOperationFactory {
             LogicalNetworkModel network = (LogicalNetworkModel) op1;
             // op2: null
             if (network.isAttached() && op2 == null) {
+
+                // not managed
+                if (!network.isManaged()){
+                    if (isDrag){
+                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                    }else {
+                        return NetworkOperation.REMOVE_UNMANAGED_NETWORK;
+                    }
+                }
+
                 return NetworkOperation.DETACH_NETWORK;
             }
             // op2: nic
@@ -156,6 +166,9 @@ public class NetworkOperationFactory {
         return NetworkOperation.NULL_OPERATION;
     }
 
+    public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+        return operationFor(op1, op2, false);
+    }
     private static boolean canBond(NetworkInterfaceModel nic1, NetworkInterfaceModel nic2) {
         return (nic1.getItems().size() == 0 || nic2.getItems().size() == 0);
     }
@@ -221,6 +234,7 @@ public class NetworkOperationFactory {
                 operations.addCommand(operation, operation.getCommand(item, network, allNics));
             }
         }
+
         // with self
         NetworkOperation operation = operationFor(item, null);
         if (!operation.isNullOperation()) {
@@ -228,7 +242,9 @@ public class NetworkOperationFactory {
                     + " is Binary, while a Uniary Operation is expected for " + item.getName(); //$NON-NLS-1$
             operations.addCommand(operation, operation.getCommand(item, null, allNics));
         }
+
         return operations;
+
     }
 
     private void assertBinary(NetworkItemModel<?> op1, NetworkItemModel<?> op2, NetworkOperation operation) {
