@@ -1503,7 +1503,9 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.root_password: 'xs:string'} 
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
