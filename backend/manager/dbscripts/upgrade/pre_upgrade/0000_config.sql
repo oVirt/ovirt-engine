@@ -266,6 +266,10 @@ select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','false', '2.2')
 select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','false', '3.0');
 select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','false', '3.1');
 select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','true', '3.2');
+select fn_db_add_config_value('MTUOverrideSupported','false','2.2');
+select fn_db_add_config_value('MTUOverrideSupported','false','3.0');
+select fn_db_add_config_value('MTUOverrideSupported','true','3.1');
+select fn_db_add_config_value('MTUOverrideSupported','true','3.2');
 --Handling Organization Name
 select fn_db_add_config_value('OrganizationName','oVirt','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');

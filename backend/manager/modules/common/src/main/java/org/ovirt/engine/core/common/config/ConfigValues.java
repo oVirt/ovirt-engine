@@ -1463,6 +1463,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     EnableMACAntiSpoofingFilterRules(381),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MTUOverrideSupported(382),
+
     Invalid(65535);
 
     private int intValue;

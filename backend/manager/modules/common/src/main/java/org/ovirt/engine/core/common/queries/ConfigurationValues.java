@@ -79,7 +79,8 @@ public enum ConfigurationValues {
     WANColorDepth(ConfigAuthType.User),
     SupportForceCreateVG,
     NetworkConnectivityCheckTimeoutInSeconds,
-    AllowClusterWithVirtGlusterEnabled;
+    AllowClusterWithVirtGlusterEnabled,
+    MTUOverrideSupported(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,
