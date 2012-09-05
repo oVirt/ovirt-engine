@@ -477,7 +477,7 @@ select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','262144','2.2');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.0');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.1');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.2');
-select fn_db_add_config_value('VmGracefulShutdownMessage','The oVirt Engine is shutting down this Virtual Machine','general');
+select fn_db_add_config_value('VmGracefulShutdownMessage','The Engine is shutting down this Virtual Machine','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
 select fn_db_add_config_value('VMMinMemorySizeInMB','256','general');
 --Number of subsequent failures in VM creation in a pool before giving up and stop creating new VMs
@@ -526,7 +526,7 @@ select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,por
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;ilo3:','general');
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ilo3,ipmilan,rsa,rsb,wti,cisco_ucs','3.0');
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ipmilan,rsa,rsb,wti,cisco_ucs','2.2');
-select fn_db_update_config_value('VmGracefulShutdownMessage','The oVirt Engine is shutting down this Virtual Machine','general');
+select fn_db_update_config_value('VmGracefulShutdownMessage','The Engine is shutting down this Virtual Machine','general');
 select fn_db_update_config_value('DisconnectPoolOnReconstruct','0,2,3','general');
 select fn_db_update_config_value('SupportBridgesReportByVDSM','false','3.1');
 
