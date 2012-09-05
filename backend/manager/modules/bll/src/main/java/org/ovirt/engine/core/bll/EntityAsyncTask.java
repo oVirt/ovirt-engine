@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -23,8 +25,8 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public class EntityAsyncTask extends SPMAsyncTask {
     private static final Object _lockObject = new Object();
 
-    private static final java.util.HashMap<Object, EntityMultiAsyncTasks> _multiTasksByEntities =
-            new java.util.HashMap<Object, EntityMultiAsyncTasks>();
+    private static final Map<Object, EntityMultiAsyncTasks> _multiTasksByEntities =
+            new HashMap<Object, EntityMultiAsyncTasks>();
 
     private static final AtomicInteger _endActionsInProgress = new AtomicInteger(0);
 
