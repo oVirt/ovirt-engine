@@ -9,6 +9,9 @@ import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.Nic;
+import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -164,7 +167,7 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                 @Override
                 public VdsNetworkInterface mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
-                    VdsNetworkInterface entity = new VdsNetworkInterface();
+                    VdsNetworkInterface entity = createInterface(rs);
                     entity.getStatistics().setId(Guid.createGuidFromString(rs.getString("id")));
                     entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
                     entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
@@ -176,13 +179,6 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setGateway(rs.getString("gateway"));
                     entity.setSubnet(rs.getString("subnet"));
                     entity.setAddress(rs.getString("addr"));
-                    entity.setSpeed((Integer) rs.getObject("speed"));
-                    entity.setVlanId((Integer) rs.getObject("vlan_id"));
-                    entity.setBondType((Integer) rs.getObject("bond_type"));
-                    entity.setBondName(rs.getString("bond_name"));
-                    entity.setBonded((Boolean) rs.getObject("is_bond"));
-                    entity.setBondOptions(rs.getString("bond_opts"));
-                    entity.setMacAddress(rs.getString("mac_addr"));
                     entity.setNetworkName(rs.getString("network_name"));
                     entity.setName(rs.getString("name"));
                     entity.setVdsId(NGuid.createGuidFromString(rs.getString("vds_id")));
@@ -192,6 +188,46 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
                     return entity;
+                }
+
+                /**
+                 * Create the correct type according to the row. If the type can't be determined for whatever reason,
+                 * {@link VdsNetworkInterface} instance is created & initialized.
+                 *
+                 * @param rs
+                 *            The row representing the entity.
+                 * @return The instance of the correct type as represented by the row.
+                 * @throws SQLException
+                 */
+                private VdsNetworkInterface createInterface(ResultSet rs) throws SQLException {
+                    VdsNetworkInterface iface;
+
+                    String macAddress = rs.getString("mac_addr");
+                    Integer vlanId = (Integer) rs.getObject("vlan_id");
+                    Integer bondType = (Integer) rs.getObject("bond_type");
+                    String bondName = rs.getString("bond_name");
+                    Boolean isBond = (Boolean) rs.getObject("is_bond");
+                    String bondOptions = rs.getString("bond_opts");
+                    Integer speed = (Integer) rs.getObject("speed");
+
+                    if (isBond != null && vlanId != null) {
+                        iface = new VdsNetworkInterface();
+                        iface.setMacAddress(macAddress);
+                        iface.setVlanId(vlanId);
+                        iface.setBondType(bondType);
+                        iface.setBondName(bondName);
+                        iface.setBonded(isBond);
+                        iface.setBondOptions(bondOptions);
+                        iface.setSpeed(speed);
+                    } else if (Boolean.TRUE.equals(isBond)) {
+                        iface = new Bond(macAddress, bondOptions, bondType);
+                    } else if (vlanId != null) {
+                        iface = new Vlan(vlanId);
+                    } else {
+                        iface = new Nic(macAddress, speed, bondName);
+                    }
+
+                    return iface;
                 }
             };
 }
