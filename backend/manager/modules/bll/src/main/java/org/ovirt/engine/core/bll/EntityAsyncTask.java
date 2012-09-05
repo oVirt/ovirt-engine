@@ -21,12 +21,12 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
  * other tasks regarding the relevant entity have already ended.
  */
 public class EntityAsyncTask extends SPMAsyncTask {
-    protected static final Object _lockObject = new Object();
+    private static final Object _lockObject = new Object();
 
-    private static java.util.HashMap<Object, EntityMultiAsyncTasks> _multiTasksByEntities =
+    private static final java.util.HashMap<Object, EntityMultiAsyncTasks> _multiTasksByEntities =
             new java.util.HashMap<Object, EntityMultiAsyncTasks>();
 
-    private static AtomicInteger _endActionsInProgress = new AtomicInteger(0);
+    private static final AtomicInteger _endActionsInProgress = new AtomicInteger(0);
 
     public static int getEndActionsInProgress() {
         return _endActionsInProgress.get();
@@ -247,5 +247,5 @@ public class EntityAsyncTask extends SPMAsyncTask {
     protected void OnCurrentTaskDoesNotExist() {
     }
 
-    private static Log log = LogFactory.getLog(EntityAsyncTask.class);
+    private static final Log log = LogFactory.getLog(EntityAsyncTask.class);
 }
