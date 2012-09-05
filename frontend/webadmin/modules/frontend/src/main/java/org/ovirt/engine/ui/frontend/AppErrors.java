@@ -1144,6 +1144,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks don't have the same MTU value: ${NETWORK_MTU_DIFFERENCES_LIST}.")
     String NETWORK_MTU_DIFFERENCES();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Overriding MTU is not supported for this Data Center's compatibility version.")
+    String NETWORK_MTU_OVERRIDE_NOT_SUPPORTED();
+
     @DefaultStringValue("The currently used VM Snapshot Image cannot be used in Preview command.")
     String CANNOT_PREIEW_CURRENT_IMAGE();
 

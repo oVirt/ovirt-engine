@@ -29,7 +29,7 @@ public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends St
         boolean retVal = true;
 
         if (!getParameters().getNetwork().isVmNetwork()) {
-            Version version = getStoragePoolDAO().get(getParameters().getStoragePoolId()).getcompatibility_version();
+            Version version = getStoragePool().getcompatibility_version();
             retVal = Config.<Boolean> GetValue(ConfigValues.NonVmNetworkSupported, version.getValue());
             if (!retVal) {
                 addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
@@ -46,5 +46,19 @@ public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends St
             stpIsAllowed = false;
         }
         return stpIsAllowed;
+    }
+
+    protected boolean validateMTUOverrideSupport() {
+        boolean mtuSupported = true;
+
+        if (getParameters().getNetwork().getMtu() != 0) {
+            mtuSupported =
+                    Config.<Boolean> GetValue(ConfigValues.MTUOverrideSupported,
+                            getStoragePool().getcompatibility_version().getValue());
+            if (!mtuSupported) {
+                addCanDoActionMessage(VdcBllMessages.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED);
+            }
+        }
+        return mtuSupported;
     }
 }
