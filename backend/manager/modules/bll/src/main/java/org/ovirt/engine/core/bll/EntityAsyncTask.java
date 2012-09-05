@@ -101,6 +101,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
             entityInfo.MarkAllWithAttemptingEndAction();
             _endActionsInProgress.incrementAndGet();
             ThreadPoolUtil.execute(new Runnable() {
+                @SuppressWarnings("synthetic-access")
                 @Override
                 public void run() {
                     EndCommandAction();
