@@ -14,6 +14,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -55,7 +56,8 @@ public class BackwardCompatibilityTaskCreationTest {
     @DataPoints
     public static CommandBase<? extends VdcActionParametersBase>[] data() {
         return new CommandBase<?>[] {
-                new CreateSnapshotCommand(new ImagesActionsParametersBase())
+                new CreateSnapshotCommand(new ImagesActionsParametersBase()),
+                new AddImageFromScratchCommand(new AddImageFromScratchParameters())
         };
     }
 
