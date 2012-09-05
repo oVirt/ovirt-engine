@@ -6,14 +6,9 @@ import java.util.Arrays;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
@@ -93,11 +88,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     }
 
     @Override
-    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
-                AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
-                getParameters(), asyncTaskCreationInfo.getStepId(), getCommandId()));
-        p.setEntityId(getParameters().getEntityId());
-        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.copyImage, p);
+    protected AsyncTaskType getTaskType() {
+        return AsyncTaskType.copyImage;
     }
 }
