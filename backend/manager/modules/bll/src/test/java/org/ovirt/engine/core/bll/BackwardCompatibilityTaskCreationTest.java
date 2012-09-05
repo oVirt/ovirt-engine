@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -69,6 +70,28 @@ public class BackwardCompatibilityTaskCreationTest {
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
                         // No op for test
                     }
+                },
+                new RemoveImageCommand(new RemoveImageParameters()) {
+                    @Override
+                    protected void initContainerDetails(ImagesContainterParametersBase parameters) {
+                        // No op for test
+                    }
+
+                    @Override
+                    protected void initImage() {
+                        // No op for test
+                    }
+
+                    @Override
+                    protected void initStoragePoolId() {
+                        // No op for test
+                    }
+
+                    @Override
+                    protected void initStorageDomainId() {
+                        // No op for test
+                    }
+
                 }
         };
     }

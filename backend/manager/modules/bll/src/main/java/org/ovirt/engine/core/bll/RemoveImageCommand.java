@@ -10,17 +10,12 @@ import java.util.Map;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -93,13 +88,8 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     @Override
-    protected SPMAsyncTask ConcreteCreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
-                AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
-                getParametersForTask(parentCommand, getParameters()), asyncTaskCreationInfo.getStepId(),
-                getCommandId()));
-        p.setEntityId(getParameters().getEntityId());
-        return AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.deleteImage, p);
+    protected AsyncTaskType getTaskType() {
+        return AsyncTaskType.deleteImage;
     }
 
     private void removeImageFromDB(boolean isLockOnSnapshotsNeeded) {
