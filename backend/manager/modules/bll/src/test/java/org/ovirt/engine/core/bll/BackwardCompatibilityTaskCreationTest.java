@@ -98,6 +98,12 @@ public class BackwardCompatibilityTaskCreationTest {
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
                         // No op for test
                     }
+                },
+                new RemoveTemplateSnapshotCommand(new ImagesContainterParametersBase()) {
+                    @Override
+                    protected void initContainerDetails(ImagesContainterParametersBase parameters) {
+                        // No op for test
+                    }
                 }
         };
     }
