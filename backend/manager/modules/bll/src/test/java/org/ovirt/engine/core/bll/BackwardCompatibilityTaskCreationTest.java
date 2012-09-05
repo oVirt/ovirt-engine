@@ -92,6 +92,12 @@ public class BackwardCompatibilityTaskCreationTest {
                         // No op for test
                     }
 
+                },
+                new RemoveSnapshotSingleDiskCommand(new ImagesContainterParametersBase()) {
+                    @Override
+                    protected void initContainerDetails(ImagesContainterParametersBase parameters) {
+                        // No op for test
+                    }
                 }
         };
     }
