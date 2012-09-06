@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
@@ -42,6 +43,11 @@ public class BackendUsersResource extends BackendUsersResourceBase implements Us
         AdUser adUser = getEntity(AdUser.class,
                                   SearchType.AdUser,
                                   getSearchPattern(user.getUserName(), domain));
+        if (adUser == null) {
+            return Response.status(Status.BAD_REQUEST)
+                    .entity("No such user: " + user.getUserName() + " in domain " + domain)
+                    .build();
+        }
         AddUserParameters newUser = new AddUserParameters();
         newUser.setVdcUser(map(adUser));
         return performCreation(VdcActionType.AddUser, newUser, new UserIdResolver(adUser.getUserId()), BaseResource.class);
