@@ -572,4 +572,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 	String AuditLogType___DWH_STARTED();
 
 	String AuditLogType___DWH_ERROR();
+
+        String AuditLogType___VDS_TIME_DRIFT_ALERT();
 }
