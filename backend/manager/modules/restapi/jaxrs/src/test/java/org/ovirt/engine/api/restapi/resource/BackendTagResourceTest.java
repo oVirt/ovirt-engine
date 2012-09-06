@@ -12,6 +12,8 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.queries.GetTagByTagIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagByTagNameParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
+
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.PARENT_GUID;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.PARENT_IDX;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.getModel;
@@ -20,6 +22,9 @@ import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.veri
 
 public class BackendTagResourceTest
     extends AbstractBackendSubResourceTest<Tag, tags, BackendTagResource> {
+
+    private static final int NEW_PARENT_IDX = 1;
+    private static final Guid NEW_PARENT_ID = GUIDS[NEW_PARENT_IDX];
 
     public BackendTagResourceTest() {
         super(new BackendTagResource(GUIDS[0].toString(), new BackendTagsResource()));
@@ -81,6 +86,7 @@ public class BackendTagResourceTest
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
+        setUpGetEntityExpectations(0);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
                                            TagsOperationParameters.class,
@@ -103,7 +109,7 @@ public class BackendTagResourceTest
                                      GetTagByTagNameParameters.class,
                                      new String[] { "TagName" },
                                      new Object[] { NAMES[PARENT_IDX] },
-                                     getEntity(PARENT_IDX));
+                getEntity(NEW_PARENT_IDX));
 
         Tag model = getModel(0);
         model.getParent().getTag().setId(null);
@@ -113,10 +119,11 @@ public class BackendTagResourceTest
     }
 
     protected void doTestMove(Tag model, int index) throws Exception {
+        model.getParent().getTag().setId(NEW_PARENT_ID.toString());
         setUpActionExpectations(VdcActionType.MoveTag,
                                 MoveTagParameters.class,
                                 new String[] { "TagId", "NewParentId" },
-                                new Object[] { GUIDS[index], PARENT_GUID },
+                new Object[] { GUIDS[index], NEW_PARENT_ID },
                                 true,
                                 true,
                                 null,
@@ -125,11 +132,12 @@ public class BackendTagResourceTest
 
         setUpGetEntityExpectations(index);
         setUpGetEntityExpectations(index);
+        setUpGetEntityExpectations(index);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
                                            TagsOperationParameters.class,
                                            new String[] { "Tag.tag_name", "Tag.parent_id" },
-                                           new Object[] { NAMES[index], PARENT_GUID },
+                new Object[] { NAMES[index], NEW_PARENT_ID },
                                            true,
                                            true));
 
@@ -147,6 +155,7 @@ public class BackendTagResourceTest
     }
 
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
+        setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
@@ -167,11 +176,12 @@ public class BackendTagResourceTest
     @Test
     public void testConflictedUpdate() throws Exception {
         setUpGetEntityExpectations(0);
+        setUpGetEntityExpectations(0);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
 
         Tag model = getModel(1, false);
-        model.setId(GUIDS[1].toString());
+        model.setId(NEW_PARENT_ID.toString());
         try {
             resource.update(model);
             fail("expected WebApplicationException");

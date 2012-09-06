@@ -38,7 +38,12 @@ public class BackendTagResource
             incoming.getParent().getTag().setId(parent.getParentId(incoming));
         }
 
-        if (isSetParent(incoming)) {
+        Tag existingTag = get();
+        String existingTagParentId =
+                existingTag.isSetParent() && existingTag.getParent().isSetTag() && existingTag.getParent().getTag().isSetId() ? existingTag.getParent()
+                        .getTag()
+                        .getId() : null;
+        if (isSetParent(incoming) && !incoming.getParent().getTag().getId().equals(existingTagParentId)) {
             moveTag(asGuid(incoming.getParent().getTag().getId()));
         }
 
