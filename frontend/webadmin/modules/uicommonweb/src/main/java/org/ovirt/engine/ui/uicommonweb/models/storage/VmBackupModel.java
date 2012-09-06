@@ -194,6 +194,7 @@ public class VmBackupModel extends ManageBackupModel {
         ImportVmModel model = new ImportVmModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
         model.setHashName("import_virtual_machine"); //$NON-NLS-1$
+        model.setEntity(getEntity());
         return model;
     }
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -11,11 +12,14 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.DiskImageList;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
@@ -53,6 +57,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     private VmImportDiskListModel importDiskListModel;
     private storage_pool storagePool;
     private boolean hasQuota;
+    private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<Guid, List<Disk>>();
     protected ArrayList<storage_domains> filteredStorageDomains;
     private HashMap<Guid, VM> alreadyInSystemVmMap;
     private Map<Guid, ArrayList<Quota>> storageQuotaMap;
@@ -266,8 +271,10 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
             }
         }
 
-        setMessage(isDefaultStorageApplicableForAllDisks ? "" :
-                ConstantsManager.getInstance().getConstants().importNotApplicableForDefaultStorage());
+        if ((getMessage() == null || getMessage().isEmpty())
+                && !isDefaultStorageApplicableForAllDisks) {
+            setMessage(ConstantsManager.getInstance().getConstants().importNotApplicableForDefaultStorage());
+        }
     }
 
     protected void checkDestFormatCompatibility() {
@@ -345,21 +352,63 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
 
                                 if (storageDomains == null) {
                                     // Missing template disk
-                                    showCloseMessage(
-                                    ConstantsManager.getInstance().getConstants().importMissingStorages());
-                                    return;
+                                    missingTemplateDiskMap.put(templateId, templateDiskMap.get(templateId));
                                 } else {
                                     setDiskImportData(disk.getId(), storageDomains, diskImage.getvolume_type());
                                 }
                             }
                         }
                     }
-                    postInitDisks();
+                    if (!missingTemplateDiskMap.keySet().isEmpty()) {
+                        getTemplatesFromExportDomain();
+                    } else {
+                        postInitDisks();
+                    }
                 }
             });
         } else {
             postInitDisks();
         }
+
+    }
+
+    protected void getTemplatesFromExportDomain() {
+        GetAllFromExportDomainQueryParameters tempVar =
+                new GetAllFromExportDomainQueryParameters(storagePool.getId(), ((storage_domains) getEntity())
+                        .getId());
+        tempVar.setGetAll(true);
+        Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery(ImportVmModel.this,
+                new INewAsyncCallback() {
+
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        Map<VmTemplate, DiskImageList> dictionary =
+                                (HashMap<VmTemplate, DiskImageList>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        Map<Guid, Guid> tempMap = new HashMap<Guid, Guid>();
+                        for (Entry<VmTemplate, DiskImageList> entry : dictionary.entrySet()) {
+                            tempMap.put(entry.getKey().getId(), null);
+                        }
+                        for (Guid templateId : missingTemplateDiskMap.keySet()) {
+                            if (tempMap.containsKey(templateId)) {
+                                for (Disk disk : missingTemplateDiskMap.get(templateId)) {
+                                    setDiskImportData(disk.getId(),
+                                            filteredStorageDomains, ((DiskImage) disk).getvolume_type());
+                                }
+                            } else {
+                                showCloseMessage(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .errorTemplateCannotBeFoundMessage());
+                                return;
+                            }
+                        }
+                        ImportVmModel.this.setMessage(ConstantsManager.getInstance()
+                                .getConstants()
+                                .importMissingStorages());
+                        getCollapseSnapshots().setEntity(true);
+                        getCollapseSnapshots().setIsChangable(false);
+                        postInitDisks();
+                    }
+                }));
 
     }
 

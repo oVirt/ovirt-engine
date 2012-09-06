@@ -1519,12 +1519,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String assignQuotaForDisk();
 
     @DefaultStringValue("Some imported VMs depend on one or more templates which are " +
-    "not available in the system. Either: 1. Import VMs with 'collapse snapshots' "+
-    "option 2. Import missing templates first and then try importing the VMs again")
+    "not available in the system. Therefore you must Import VMs with 'collapse snapshots', "+
+    "another option is to Import missing templates first and then try import the VMs again")
     String importMissingStorages();
 
     @DefaultStringValue("The selected default Storage Domain is not applicable for all disks " +
             "(i.e. some disks will be imported to a different Storage Domain).")
     String importNotApplicableForDefaultStorage();
+
+    @DefaultStringValue("Template cannot be found in the system, VM(s) cannot be imported")
+    String errorTemplateCannotBeFoundMessage();
 
 }
