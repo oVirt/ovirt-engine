@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,6 +79,42 @@ public class Entities {
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    /**
+     * Convert the given collections to a {@link String}. Empty or <code>null</code> collections will be converted to
+     * "[]", otherwise first element will appear after the opening bracket, and the consecutive elements (if any) will
+     * appear on a new line, prefixed by the given prefix.
+     *
+     * @param objects
+     *            The collection to convert (can be <code>null</code>).
+     * @param prefix
+     *            The prefix to print on new line of a collection element (not on 1st element).
+     * @return A {@link String} representation of the given collection.
+     */
+    public static String collectionToString(Collection<?> objects, String prefix) {
+        StringBuilder sb = new StringBuilder("[");
+        if (objects != null) {
+            boolean first = true;
+            for (Iterator<?> iterator = objects.iterator(); iterator.hasNext();) {
+                Object object = iterator.next();
+
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append(prefix);
+                }
+
+                sb.append(object.toString());
+
+                if (iterator.hasNext()) {
+                    sb.append(",\n");
+                }
+            }
+        }
+
+        sb.append("]");
+        return sb.toString();
     }
 
 }
