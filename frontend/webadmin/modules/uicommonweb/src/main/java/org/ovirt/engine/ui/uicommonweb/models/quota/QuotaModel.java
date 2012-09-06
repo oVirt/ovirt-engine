@@ -250,8 +250,8 @@ public class QuotaModel extends EntityModel {
 
         ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
         QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
-        quotaVdsGroup.setMemSizeMB((long) -1);
-        quotaVdsGroup.setVirtualCpu(-1);
+        quotaVdsGroup.setMemSizeMB(QuotaVdsGroup.UNLIMITED_MEM);
+        quotaVdsGroup.setVirtualCpu(QuotaVdsGroup.UNLIMITED_VCPU);
         quotaVdsGroup.setMemSizeMBUsage((long) 0);
         quotaVdsGroup.setVirtualCpuUsage(0);
         quotaClusterList.add(quotaVdsGroup);
@@ -259,7 +259,7 @@ public class QuotaModel extends EntityModel {
 
         ArrayList<QuotaStorage> quotaStorgaeList = new ArrayList<QuotaStorage>();
         QuotaStorage quotaStorage = new QuotaStorage();
-        quotaStorage.setStorageSizeGB((long) -1);
+        quotaStorage.setStorageSizeGB(QuotaStorage.UNLIMITED);
         quotaStorage.setStorageSizeGBUsage(0.0);
         quotaStorgaeList.add(quotaStorage);
         getQuotaStorages().setItems(quotaStorgaeList);
@@ -275,13 +275,13 @@ public class QuotaModel extends EntityModel {
         EditQuotaClusterModel model = new EditQuotaClusterModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().defineClusterQuotaOnDataCenterTitle());
         model.setEntity(object);
-        if (object.getMemSizeMB() == null || object.getMemSizeMB() == -1) {
+        if (object.getMemSizeMB() == null || object.getMemSizeMB().equals(QuotaVdsGroup.UNLIMITED_MEM)) {
             model.getUnlimitedMem().setEntity(true);
         } else {
             model.getSpecificMem().setEntity(true);
             model.getSpecificMemValue().setEntity(object.getMemSizeMB().toString());
         }
-        if (object.getVirtualCpu() == null || object.getVirtualCpu() == -1) {
+        if (object.getVirtualCpu() == null || object.getVirtualCpu().equals(QuotaVdsGroup.UNLIMITED_VCPU)) {
             model.getUnlimitedCpu().setEntity(true);
         } else {
             model.getSpecificCpu().setEntity(true);
@@ -305,7 +305,7 @@ public class QuotaModel extends EntityModel {
         EditQuotaStorageModel model = new EditQuotaStorageModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().defineStorageQuotaOnDataCenterTitle());
         model.setEntity(object);
-        if (object.getStorageSizeGB() == null || object.getStorageSizeGB() == -1) {
+        if (object.getStorageSizeGB() == null || object.getStorageSizeGB().equals(QuotaStorage.UNLIMITED)) {
             model.getUnlimitedStorage().setEntity(true);
         } else {
             model.getSpecificStorage().setEntity(true);
@@ -329,13 +329,13 @@ public class QuotaModel extends EntityModel {
             return;
         }
         if ((Boolean) model.getUnlimitedMem().getEntity()) {
-            quotaCluster.setMemSizeMB((long) -1);
+            quotaCluster.setMemSizeMB(QuotaVdsGroup.UNLIMITED_MEM);
         } else {
             quotaCluster.setMemSizeMB(new Long((String) model.getSpecificMemValue().getEntity()));
         }
 
         if ((Boolean) model.getUnlimitedCpu().getEntity()) {
-            quotaCluster.setVirtualCpu(-1);
+            quotaCluster.setVirtualCpu(QuotaVdsGroup.UNLIMITED_VCPU);
         } else {
             quotaCluster.setVirtualCpu(new Integer((String) model.getSpecificCpuValue().getEntity()));
         }
@@ -349,7 +349,7 @@ public class QuotaModel extends EntityModel {
             return;
         }
         if ((Boolean) model.getUnlimitedStorage().getEntity()) {
-            quotaStorage.setStorageSizeGB((long) -1);
+            quotaStorage.setStorageSizeGB(QuotaStorage.UNLIMITED);
         } else {
             quotaStorage.setStorageSizeGB(new Long((String) model.getSpecificStorageValue().getEntity()));
         }
