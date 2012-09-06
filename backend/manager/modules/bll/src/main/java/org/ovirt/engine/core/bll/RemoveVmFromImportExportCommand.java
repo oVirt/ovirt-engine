@@ -136,4 +136,16 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         }
         return jobProperties;
     }
+
+    @Override
+    public boolean validateAndSetQuota() {
+        // no need for quota in the export domain,
+        // ignoring it since it inherits quotable (removeVmCommand)
+        return true;
+    }
+
+    @Override
+    public void rollbackQuota() {
+        // see validateAndSetQuota()
+    }
 }
