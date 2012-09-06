@@ -15,6 +15,8 @@ import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -199,19 +201,31 @@ public abstract class AbstractActionPanel<T> extends Composite implements HasEle
         widget.addDomHandler(new ContextMenuHandler() {
             @Override
             public void onContextMenu(ContextMenuEvent event) {
-                event.preventDefault();
-                event.stopPropagation();
+                AbstractActionPanel.this.onContextMenu(event);
+            }
+        }, ContextMenuEvent.getType());
+    }
 
-                // Show context menu only when not empty
+    protected void onContextMenu(final ContextMenuEvent event) {
+        final int eventX = event.getNativeEvent().getClientX();
+        final int eventY = event.getNativeEvent().getClientY();
+
+        // Suppress default browser context menu
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Use deferred command to ensure that the context menu
+        // is shown only after other event handlers do their job
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                // Avoid showing empty context menu
                 if (hasActionButtons()) {
-                    int eventX = event.getNativeEvent().getClientX();
-                    int eventY = event.getNativeEvent().getClientY();
-
                     updateContextMenu(contextMenuBar, actionButtonList, contextPopupPanel);
                     contextPopupPanel.showAndFitToScreen(eventX, eventY);
                 }
             }
-        }, ContextMenuEvent.getType());
+        });
     }
 
     MenuBar updateContextMenu(MenuBar menuBar, List<ActionButtonDefinition<T>> actions, final PopupPanel popupPanel) {

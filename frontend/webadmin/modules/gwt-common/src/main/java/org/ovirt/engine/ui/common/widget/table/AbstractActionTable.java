@@ -10,8 +10,11 @@ import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -166,20 +169,24 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
                 if (selectedItems < 2) {
                     return;
                 }
+
                 if (tooltip != null) {
                     tooltip.hide();
                 }
-                tooltip = new PopupPanel(true);
 
-                tooltip.setWidget(new Label(selectionModel.getSelectedList().size() + " " + constants.selectedActionTable())); //$NON-NLS-1$
+                tooltip = new PopupPanel(true);
+                tooltip.setWidget(new Label(selectionModel.getSelectedList().size()
+                        + " " + constants.selectedActionTable())); //$NON-NLS-1$
+
                 if (mousePosition[0] == 0 && mousePosition[1] == 0) {
                     mousePosition[0] = Window.getClientWidth() / 2;
                     mousePosition[1] = Window.getClientHeight() * 1 / 3;
                 }
+
                 tooltip.setPopupPosition(mousePosition[0] + 15, mousePosition[1]);
                 tooltip.show();
-                Timer t = new Timer() {
 
+                Timer t = new Timer() {
                     @Override
                     public void run() {
                         tooltip.hide();
@@ -187,6 +194,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
                 };
                 t.schedule(500);
             }
+
         });
     }
 
@@ -217,9 +225,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
         // Enable keyboard selection
         table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-
-        // Add context menu handler for table widget
-        addContextMenuHandler(table);
 
         // Add arrow key handler
         table.addDomHandler(new KeyDownHandler() {
@@ -257,24 +262,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
             }
         }, KeyDownEvent.getType());
 
-        // Add right click handler
-        table.addCellPreviewHandler(new CellPreviewEvent.Handler<T>() {
-            @Override
-            public void onCellPreview(CellPreviewEvent<T> event) {
-                if (event.getNativeEvent().getButton() != NativeEvent.BUTTON_RIGHT
-                        || !"mousedown".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
-                    return;
-                }
-
-                final T value = event.getValue();
-
-                if (!selectionModel.isSelected(value)) {
-                    selectionModel.setMultiSelectEnabled(false);
-                    selectionModel.setMultiRangeSelectEnabled(false);
-                    selectionModel.setSelected(value, true);
-                }
-            }
-        });
+        // Add context menu handler for table widget
+        addContextMenuHandler(tableContainer);
 
         // Use fixed table layout
         setWidth("100%", true); //$NON-NLS-1$
@@ -283,6 +272,44 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         tableContainer.setWidget(table);
         tableHeaderContainer.setWidget(tableHeader);
         tableHeaderContainer.setVisible(!showDefaultHeader);
+    }
+
+    @Override
+    protected void onContextMenu(ContextMenuEvent event) {
+        super.onContextMenu(event);
+
+        Element target = event.getNativeEvent().getEventTarget().cast();
+        T value = getValueFromElement(target);
+
+        if (value != null && !selectionModel.isSelected(value)) {
+            selectionModel.setMultiSelectEnabled(false);
+            selectionModel.setMultiRangeSelectEnabled(false);
+            selectionModel.setSelected(value, true);
+        }
+    }
+
+    private T getValueFromElement(Element target) {
+        TableCellElement tableCell = findNearestParentCell(target);
+
+        if (tableCell != null) {
+            Element trElem = tableCell.getParentElement();
+            TableRowElement tr = TableRowElement.as(trElem);
+            int row = tr.getSectionRowIndex();
+            return table.getVisibleItem(row);
+        } else {
+            return null;
+        }
+    }
+
+    private TableCellElement findNearestParentCell(Element elem) {
+        while ((elem != null) && (elem != table.getElement())) {
+            String tagName = elem.getTagName();
+            if ("td".equalsIgnoreCase(tagName) || "th".equalsIgnoreCase(tagName)) { //$NON-NLS-1$ //$NON-NLS-2$
+                return elem.cast();
+            }
+            elem = elem.getParentElement();
+        }
+        return null;
     }
 
     public void setWidth(String width, boolean isFixedLayout) {
@@ -382,8 +409,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
             if (width == null) {
                 addColumn(column, headerText);
-            }
-            else {
+            } else {
                 addColumn(column, headerText, width);
             }
         } else if (!present && table.getColumnIndex(column) != -1) {
