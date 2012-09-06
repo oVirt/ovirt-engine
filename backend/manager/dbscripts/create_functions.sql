@@ -250,7 +250,7 @@ BEGIN
 
 		RETURN QUERY
 			SELECT system_root_id AS id
-			UNION
+			UNION ALL
 			SELECT storage_pool_id as id FROM storage_pool_iso_map WHERE storage_id = v_entity_id
 			UNION
 			SELECT v_entity_id AS id;
