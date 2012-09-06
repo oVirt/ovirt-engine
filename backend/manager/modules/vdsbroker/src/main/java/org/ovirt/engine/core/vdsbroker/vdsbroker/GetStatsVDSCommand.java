@@ -31,5 +31,6 @@ public class GetStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> e
             }
         }
         VdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.mInfo);
+        VdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.mInfo);
     }
 }

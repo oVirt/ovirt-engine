@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -8,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -322,6 +326,26 @@ public class VdsBrokerObjectsBuilder {
             hooksStr = xmlRpcStruct.getItem(VdsProperties.hooks).toString();
         }
         vds.setHooksStr(hooksStr);
+    }
+
+    public static void checkTimeDrift(VDS vds, XmlRpcStruct xmlRpcStruct) {
+        Boolean isHostTimeDriftEnabled = Config.GetValue(ConfigValues.EnableHostTimeDrift);
+        if (isHostTimeDriftEnabled) {
+            Integer maxTimeDriftAllowed = Config.GetValue(ConfigValues.HostTimeDriftInSec);
+            Date hostDate = AssignDatetimeValue(xmlRpcStruct, VdsProperties.hostDatetime);
+            if (hostDate != null) {
+                Long timeDrift =
+                        TimeUnit.MILLISECONDS.toSeconds(Math.abs(hostDate.getTime() - System.currentTimeMillis()));
+                if (timeDrift > maxTimeDriftAllowed) {
+                    AuditLogableBase logable = new AuditLogableBase(vds.getId());
+                    logable.AddCustomValue("Actual", timeDrift.toString());
+                    logable.AddCustomValue("Max", maxTimeDriftAllowed.toString());
+                    AuditLogDirector.log(logable, AuditLogType.VDS_TIME_DRIFT_ALERT);
+                }
+            } else {
+                log.error("Time Drift validation: failed to get Host or Engine time.");
+            }
+        }
     }
 
     private static void initDisksUsage(XmlRpcStruct vmStruct, VmStatistics vm) {
@@ -731,6 +755,22 @@ public class VdsBrokerObjectsBuilder {
             retval = null;
         }
         return retval;
+    }
+
+    private static Date AssignDatetimeValue(XmlRpcStruct input, String name) {
+        if (input.containsKey(name)) {
+            if (input.getItem(name) instanceof Date) {
+                return (Date) input.getItem(name);
+            }
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+            try {
+                String dateStr = input.getItem(name).toString().replaceFirst("T", " ").trim();
+                return formatter.parse(dateStr);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     private static Boolean AssignBoolValue(XmlRpcStruct input, String name) {

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 public final class VdsProperties {
     // vds configuration (i.e. VdsStatic)
     // vds runtime (i.e. VdsDynamic req getVdsCapabilities)
+    public static final String hostDatetime = "dateTime";
     public static final String time_zone = "timeZone";
     public static final String utc_diff = "timeOffset";
     public static final String cpu_flags = "cpuFlags";
