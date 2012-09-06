@@ -4,7 +4,7 @@ Create or replace FUNCTION inst_update_default_storage_pool_type(v_storage_pool_
 RETURNS VOID
    AS $procedure$
 BEGIN
-      if (v_storage_pool_type > 0 and v_storage_pool_type < 5) then
+      if (v_storage_pool_type > 0 and v_storage_pool_type < 7) then
          UPDATE storage_pool
          SET storage_pool_type = v_storage_pool_type, _update_date = LOCALTIMESTAMP
          WHERE storage_pool.name = 'Default' and not exists

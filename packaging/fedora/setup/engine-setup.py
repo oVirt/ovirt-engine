@@ -308,7 +308,7 @@ def initConfig():
             {   "CMD_OPTION"      :"default-dc-type",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_DC_TYPE_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_DC_TYPE_PROMPT,
-                "OPTION_LIST"     :["NFS","FC","ISCSI"],
+                "OPTION_LIST"     :["NFS","FC","ISCSI","POSIXFS"],
                 "VALIDATION_FUNC" :validate.validateOptions,
                 "DEFAULT_VALUE"   :"NFS",
                 "MASK_INPUT"      : False,
@@ -504,7 +504,7 @@ def initConfig():
         controller.addGroup(group, paramList)
 
 #data center types enum
-controller.CONF["DC_TYPE_ENUM"] = utils.Enum(NFS=1, FC=2, ISCSI=3)
+controller.CONF["DC_TYPE_ENUM"] = utils.Enum(NFS=1, FC=2, ISCSI=3, POSIXFS=6)
 
 def _getColoredText (text, color):
     ''' gets text string and color
