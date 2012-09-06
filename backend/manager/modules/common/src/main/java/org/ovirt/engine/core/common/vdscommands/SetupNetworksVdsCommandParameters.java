@@ -5,8 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -108,5 +109,19 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
 
     public void setRemovedBonds(Set<String> removedBonds) {
         this.removedBonds = removedBonds;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s, force=%s, checkConnectivity=%s, conectivityTimeout=%s,\n\tnetworks=%s,\n\tbonds=%s,\n\tinterfaces=%s,\n\tremovedNetworks=%s,\n\tremovedBonds=%s",
+                super.toString(),
+                isForce(),
+                isCheckConnectivity(),
+                getConectivityTimeout(),
+                Entities.collectionToString(getNetworks(), "\t\t"),
+                Entities.collectionToString(getBonds(), "\t\t"),
+                Entities.collectionToString(getInterfaces(), "\t\t"),
+                getRemovedNetworks(),
+                getRemovedBonds());
     }
 }

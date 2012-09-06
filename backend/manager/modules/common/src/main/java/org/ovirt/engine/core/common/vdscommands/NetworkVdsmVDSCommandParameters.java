@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.Arrays;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -207,9 +207,9 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
 
     @Override
     public String toString() {
-        return String.format("%s, networkName=%s, oldNetworkName=%s, hostAddr=%s, checkConnectivity=%s, " +
-                "connectionTimeout=%s, vlanId=%s, bondName=%s, nics=%s, inetAddr=%s, networkMask=%s, gateway=%s, " +
-                "stp=%s, bondingOptions=%s, bootProtocol=%s, vmNetwork=%s",
+        return String.format("%s, networkName=%s, oldNetworkName=%s, hostAddr=%s, checkConnectivity=%s, "
+                + "connectionTimeout=%s, vlanId=%s, bondName=%s, nics=%s, inetAddr=%s, networkMask=%s, gateway=%s, "
+                + "stp=%s, bondingOptions=%s, bootProtocol=%s, vmNetwork=%s, network=%s",
                 super.toString(),
                 getNetworkName(),
                 getOldNetworkName(),
@@ -225,6 +225,7 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
                 getStp(),
                 getBondingOptions(),
                 getBootProtocol(),
-                isVmNetwork());
+                isVmNetwork(),
+                getNetwork());
     }
 }

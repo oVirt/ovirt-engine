@@ -217,6 +217,36 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
     }
 
     @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getName())
+                .append(" {id=")
+                .append(getId())
+                .append(", description=")
+                .append(getdescription())
+                .append(", subnet=")
+                .append(getsubnet())
+                .append(", gateway=")
+                .append(getgateway())
+                .append(", type=")
+                .append(gettype())
+                .append(", vlan_id=")
+                .append(getvlan_id())
+                .append(", stp=")
+                .append(getstp())
+                .append(", storage_pool_id=")
+                .append(getstorage_pool_id())
+                .append(", mtu=")
+                .append(getMtu())
+                .append(", vmNetwork=")
+                .append(isVmNetwork())
+                .append(", cluster=")
+                .append(getCluster())
+                .append("}");
+        return builder.toString();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

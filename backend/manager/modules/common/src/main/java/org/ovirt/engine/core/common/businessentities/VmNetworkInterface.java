@@ -140,6 +140,35 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     }
 
     @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("VmNetworkInterface [id=")
+                .append(getId())
+                .append(", networkName=")
+                .append(getNetworkName())
+                .append(", speed=")
+                .append(getSpeed())
+                .append(", type=")
+                .append(getType())
+                .append(", name=")
+                .append(getName())
+                .append(", macAddress=")
+                .append(getMacAddress())
+                .append(", active=")
+                .append(isActive())
+                .append(", portMirroring=")
+                .append(isPortMirroring())
+                .append(", vmId=")
+                .append(getVmId())
+                .append(", vmName=")
+                .append(getVmName())
+                .append(", vmTemplateId=")
+                .append(getVmTemplateId())
+                .append("]");
+        return builder.toString();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

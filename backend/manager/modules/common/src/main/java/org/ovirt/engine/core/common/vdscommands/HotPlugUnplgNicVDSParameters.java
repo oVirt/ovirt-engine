@@ -29,4 +29,13 @@ public class HotPlugUnplgNicVDSParameters extends VdsIdVDSCommandParametersBase 
     public VmDevice getVmDevice() {
         return vmDevice;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s, vm.vm_name=%s, nic=%s, vmDevice=%s",
+                super.toString(),
+                (getVm() == null ? "" : getVm().getvm_name()),
+                getNic(),
+                getVmDevice());
+    }
 }

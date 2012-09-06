@@ -36,6 +36,21 @@ public class network_cluster implements BusinessEntity<NetworkClusterId> {
     }
 
     @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("network_cluster {id=")
+                .append(getId())
+                .append(", status=")
+                .append(getstatus())
+                .append(", is_display=")
+                .append(getis_display())
+                .append(", required=")
+                .append(isRequired())
+                .append("}");
+        return builder.toString();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

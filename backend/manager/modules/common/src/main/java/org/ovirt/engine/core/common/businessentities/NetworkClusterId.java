@@ -77,11 +77,11 @@ public class NetworkClusterId implements Serializable {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("NetworkClusterId [clusterId=")
+        builder.append("{clusterId=")
                 .append(getClusterId())
                 .append(", networkId=")
                 .append(getNetworkId())
-                .append("]");
+                .append("}");
         return builder.toString();
     }
 }

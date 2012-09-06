@@ -307,6 +307,48 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     }
 
     @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getName())
+                .append(" {id=")
+                .append(getId())
+                .append(", vdsId=")
+                .append(getVdsId())
+                .append(", macAddress=")
+                .append(getMacAddress())
+                .append(", networkName=")
+                .append(getNetworkName())
+                .append(", vlanId=")
+                .append(getVlanId())
+                .append(", bonded=")
+                .append(getBonded())
+                .append(", bondName=")
+                .append(getBondName())
+                .append(", bondOptions=")
+                .append(getBondOptions())
+                .append(", bootProtocol=")
+                .append(getBootProtocol())
+                .append(", address=")
+                .append(getAddress())
+                .append(", subnet=")
+                .append(getSubnet())
+                .append(", gateway=")
+                .append(getGateway())
+                .append(", mtu=")
+                .append(getMtu())
+                .append(", bridged=")
+                .append(isBridged())
+                .append(", speed=")
+                .append(getSpeed())
+                .append(", type=")
+                .append(getType())
+                .append(", networkImplementationDetails=")
+                .append(getNetworkImplementationDetails())
+                .append("}");
+        return builder.toString();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -442,6 +484,17 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
          */
         public boolean isManaged() {
             return managed;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("{inSync=")
+                    .append(isInSync())
+                    .append(", managed=")
+                    .append(isManaged())
+                    .append("}");
+            return builder.toString();
         }
     }
 }
