@@ -1,34 +1,13 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
-public class ConnectStoragePoolVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
+public class ConnectStoragePoolVDSCommandParameters extends DisconnectStoragePoolVDSCommandParameters {
     public ConnectStoragePoolVDSCommandParameters(Guid vdsId, Guid storagePoolId, int vds_spm_id, Guid masterDomainId,
             int masterVersion) {
-        super(vdsId, storagePoolId);
-        this.setvds_spm_id(vds_spm_id);
+        super(vdsId, storagePoolId, vds_spm_id);
         setMasterDomainId(masterDomainId);
         setMasterVersion(masterVersion);
-    }
-
-    private int privatevds_spm_id;
-
-    public int getvds_spm_id() {
-        return privatevds_spm_id;
-    }
-
-    private void setvds_spm_id(int value) {
-        privatevds_spm_id = value;
-    }
-
-    private Guid privateMasterDomainId = new Guid();
-
-    public Guid getMasterDomainId() {
-        return privateMasterDomainId;
-    }
-
-    private void setMasterDomainId(Guid value) {
-        privateMasterDomainId = value;
     }
 
     private int privateMasterVersion;
@@ -44,8 +23,21 @@ public class ConnectStoragePoolVDSCommandParameters extends GetStorageConnection
     public ConnectStoragePoolVDSCommandParameters() {
     }
 
+    private Guid privateMasterDomainId = new Guid();
+
+    public Guid getMasterDomainId() {
+        return privateMasterDomainId;
+    }
+
+    private void setMasterDomainId(Guid value) {
+        privateMasterDomainId = value;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s, vds_spm_id = %s, masterDomainId = %s, masterVersion = %s", super.toString(), getvds_spm_id(), getMasterDomainId(), getMasterVersion());
+        return String.format("%s, masterDomainId = %s, masterVersion = %s",
+                super.toString(),
+                getMasterDomainId(),
+                getMasterVersion());
     }
 }
