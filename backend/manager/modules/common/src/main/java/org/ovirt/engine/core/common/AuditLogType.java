@@ -59,6 +59,9 @@ public enum AuditLogType {
     SYSTEM_VDS_RESTART(121, AuditLogTimeInterval.MINUTE.getValue()),
     SYSTEM_FAILED_VDS_RESTART(122, AuditLogTimeInterval.MINUTE.getValue()),
 
+    // Host time drift Alert
+    VDS_TIME_DRIFT_ALERT(604, AuditLogTimeInterval.MINUTE.getValue() * 60),
+
     // -- IRS Log types --
     IRS_FAILURE(22, AuditLogTimeInterval.HOUR.getValue() * 12),
     IRS_DISK_SPACE_LOW(26, AuditLogTimeInterval.HOUR.getValue() * 12),

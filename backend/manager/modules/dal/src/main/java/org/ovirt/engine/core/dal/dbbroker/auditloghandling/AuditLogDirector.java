@@ -268,6 +268,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VDS_ACTIVATE_ASYNC, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_ACTIVATE_FAILED_ASYNC, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.VDS_TIME_DRIFT_ALERT, AuditLogSeverity.WARNING);
     }
 
     @SuppressWarnings("deprecation")
