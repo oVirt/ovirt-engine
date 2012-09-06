@@ -263,6 +263,9 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
                             networkModel.getIsVmNetwork().setIsChangable(false);
                         }
 
+                        updateMTUOverrideSupport((DataCenterNetworkModel) getWindow(),
+                                getEntity().getcompatibility_version().toString());
+
                         AsyncQuery _asyncQuery = new AsyncQuery();
                         _asyncQuery.setModel(DataCenterNetworkListModel.this);
                         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -336,6 +339,9 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
                             networkModel.getIsVmNetwork().setEntity(true);
                             networkModel.getIsVmNetwork().setIsChangable(false);
                         }
+
+                        updateMTUOverrideSupport((DataCenterNetworkModel) getWindow(),
+                                getEntity().getcompatibility_version().toString());
 
                         AsyncQuery _asyncQuery = new AsyncQuery();
                         _asyncQuery.setModel(DataCenterNetworkListModel.this);
@@ -884,4 +890,19 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         return "DataCenterNetworkListModel"; //$NON-NLS-1$
     }
 
+    private void updateMTUOverrideSupport(final DataCenterNetworkModel networkModel, final String version) {
+        AsyncDataProvider.IsMTUOverrideSupported(new AsyncQuery(DataCenterNetworkListModel.this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        boolean isMTUOverrideSupported = (Boolean) returnValue;
+
+                        networkModel.setMTUOverrideSupported(isMTUOverrideSupported);
+                        if (!isMTUOverrideSupported) {
+                            networkModel.getHasMtu().setIsChangable(false);
+                            networkModel.getMtu().setIsChangable(false);
+                        }
+                    }
+                }), version);
+    }
 }

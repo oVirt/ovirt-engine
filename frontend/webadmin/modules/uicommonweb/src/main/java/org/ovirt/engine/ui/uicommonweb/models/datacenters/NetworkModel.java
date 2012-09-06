@@ -198,6 +198,16 @@ public class NetworkModel extends Model
         this.isSupportBridgesReportByVDSM = isSupportBridgesReportByVDSM;
     }
 
+    private boolean mtuOverrideSupported;
+
+    public boolean isMTUOverrideSupported() {
+        return mtuOverrideSupported;
+    }
+
+    public void setMTUOverrideSupported(boolean mtuOverrideSupported) {
+        this.mtuOverrideSupported = mtuOverrideSupported;
+    }
+
     public NetworkModel()
     {
         setName(new EntityModel());
@@ -228,8 +238,9 @@ public class NetworkModel extends Model
                 getIsVmNetwork().setIsChangable(isSupportBridgesReportByVDSM() && (Boolean) value);
                 getHasVLanTag().setIsChangable((Boolean) value);
                 getVLanTag().setIsChangable((Boolean)getHasVLanTag().getEntity() && (Boolean) value);
-                getHasMtu().setIsChangable((Boolean) value);
-                getMtu().setIsChangable((Boolean)getHasMtu().getEntity() && (Boolean) value);
+                getHasMtu().setIsChangable((Boolean) value && isMTUOverrideSupported());
+                getMtu().setIsChangable((Boolean) getHasMtu().getEntity() && (Boolean) value
+                        && isMTUOverrideSupported());
             }
 
         });

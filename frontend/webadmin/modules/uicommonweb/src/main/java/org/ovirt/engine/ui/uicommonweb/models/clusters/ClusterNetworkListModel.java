@@ -397,6 +397,25 @@ public class ClusterNetworkListModel extends SearchableListModel
                                         clusterNetworkModel.getIsVmNetwork().setIsChangable(false);
                                     }
 
+                                    AsyncDataProvider.IsMTUOverrideSupported(new AsyncQuery(ClusterNetworkListModel.this,
+                                            new INewAsyncCallback() {
+                                                @Override
+                                                public void OnSuccess(Object model, Object returnValue) {
+                                                    boolean isMTUOverrideSupported = (Boolean) returnValue;
+                                                    ClusterNetworkListModel networkListModel =
+                                                            ClusterNetworkListModel.this;
+                                                    ClusterNetworkModel networkModel =
+                                                            (ClusterNetworkModel) networkListModel.getWindow();
+
+                                                    networkModel.setMTUOverrideSupported(isMTUOverrideSupported);
+                                                    if (!isMTUOverrideSupported) {
+                                                        networkModel.getHasMtu().setIsChangable(false);
+                                                        networkModel.getMtu().setIsChangable(false);
+                                                    }
+                                                }
+                                            }),
+                                            getEntity().getcompatibility_version().toString());
+
                                     clusterNetworkModel.setDataCenterName(dataCenter.getname());
                                     AsyncQuery _asyncQuery2 = new AsyncQuery();
                                     _asyncQuery2.asyncCallback = new INewAsyncCallback() {
