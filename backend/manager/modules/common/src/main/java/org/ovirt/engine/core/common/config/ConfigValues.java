@@ -1509,6 +1509,17 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     IPTablesConfigForGluster(388),
 
+    // Host time drift
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    EnableHostTimeDrift(389),
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    HostTimeDriftInSec(390),
+
     Invalid(65535);
 
     private int intValue;

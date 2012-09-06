@@ -104,6 +104,8 @@ select fn_db_add_config_value('EmulatedMachine','rhel5.5.0','2.2');
 select fn_db_add_config_value('EmulatedMachine','rhel6.0.0','3.0');
 select fn_db_add_config_value('EmulatedMachine','pc-0.14','3.1');
 select fn_db_add_config_value('EmulatedMachine','pc-0.14','3.2');
+-- Host time drift
+select fn_db_add_config_value('EnableHostTimeDrift','false','general');
 --Handling Enable Spice Root Certification Validation
 select fn_db_add_config_value('EnableSpiceRootCertificateValidation','true','general');
 select fn_db_add_config_value('EnableSwapCheck','true','general');
@@ -140,6 +142,7 @@ select fn_db_add_config_value('GlusterVolumeOptionOwnerGroupVirtValue','36','gen
 select fn_db_add_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_','general');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
 select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
+select fn_db_add_config_value('HostTimeDriftInSec','300','general');
 select fn_db_add_config_value('HotPlugEnabled','false','2.2');
 select fn_db_add_config_value('HotPlugEnabled','false','3.0');
 select fn_db_add_config_value('HotPlugEnabled','true','3.1');
