@@ -169,7 +169,9 @@ public class HostMapper {
             HostType type = map(entity.getvds_type(), null);
             model.setType(type != null ? type.value() : null);
         }
-        model.setMemory(entity.getphysical_mem_mb()==null ? 0 : entity.getphysical_mem_mb()*BYTES_IN_MEGABYTE);
+        model.setMemory(Long.valueOf(entity.getphysical_mem_mb() == null ? 0 : entity.getphysical_mem_mb()
+                * BYTES_IN_MEGABYTE));
+        model.setMaxSchedulingMemory((int) entity.getMaxSchedulingMemory() * BYTES_IN_MEGABYTE);
         return model;
     }
 
@@ -250,4 +252,5 @@ public class HostMapper {
             return null;
         }
     }
+
 }

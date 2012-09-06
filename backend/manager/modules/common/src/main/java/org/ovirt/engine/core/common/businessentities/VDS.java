@@ -590,6 +590,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setmem_commited(Integer value) {
         this.mVdsDynamic.setmem_commited(value);
+        calculateFreeVirtualMemory();
         OnPropertyChanged(new PropertyChangedEventArgs("mem_commited"));
         OnPropertyChanged(new PropertyChangedEventArgs("mem_commited_percent"));
     }
@@ -1236,6 +1237,19 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setSSHKeyFingerprint(String sshKeyFingerprint) {
         mVdsStatic.setSSHKeyFingerprint(sshKeyFingerprint);
+    }
+
+    private float maxSchedulingMemory;
+
+    public void calculateFreeVirtualMemory() {
+        if (getmem_commited() != null && getphysical_mem_mb() != null && getreserved_mem() != null) {
+            maxSchedulingMemory = (getmax_vds_memory_over_commit() * getphysical_mem_mb() / 100.0f) -
+                    (getmem_commited() + getreserved_mem());
+        }
+    }
+
+    public float getMaxSchedulingMemory() {
+        return maxSchedulingMemory;
     }
 
 }

@@ -69,6 +69,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     MemorySizeLabel<Long> swapTotal;
     MemorySizeLabel<Long> usedSwap;
     MemorySizeLabel<Long> swapFree;
+    MemorySizeLabel<Float> maxSchedulingMemory;
 
     @Ignore
     DetailsLabel<ArrayList<ValueLabel<Integer>>, Integer> physicalMemoryDetails =
@@ -140,6 +141,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formItems.add(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 0, 2));
         formItems.add(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 1, 2));
         formItems.add(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 2, 2));
+        formItems.add(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 3, 2));
 
         applyModeCustomizations(formItems);
 
@@ -176,6 +178,8 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         this.swapTotal = new MemorySizeLabel<Long>(constants);
         this.usedSwap = new MemorySizeLabel<Long>(constants);
         this.swapFree = new MemorySizeLabel<Long>(constants);
+
+        this.maxSchedulingMemory = new MemorySizeLabel<Float>(constants);
     }
 
     @SuppressWarnings("unchecked")
@@ -193,6 +197,8 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
         physicalMemoryDetails.setValue(physicalMemoryDetailsArray);
         swapSizeDetails.setValue(swapSizeDetailsArray);
+
+        maxSchedulingMemory.setValue(selectedItem.getMaxSchedulingMemory());
 
         formBuilder.showForm(getDetailModel());
     }

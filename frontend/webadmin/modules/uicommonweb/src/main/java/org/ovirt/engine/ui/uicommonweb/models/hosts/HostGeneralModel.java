@@ -475,6 +475,12 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    private Float maxSchedulingMemory;
+
+    public Float getMaxSchedulingMemory() {
+        return maxSchedulingMemory;
+    }
+
     private boolean hasAnyAlert;
 
     public boolean getHasAnyAlert()

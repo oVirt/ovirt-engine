@@ -85,4 +85,21 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertNotNull(host.getMemory());
         assertEquals(new Long(host.getMemory()), new Long(4194304000L));
     }
+
+    @Test
+    public void testMaxSchedulingMemory() {
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        vds.setphysical_mem_mb(4000);
+        vds.setmem_commited(1000);
+        vds.setmax_vds_memory_over_commit(150);
+        vds.setreserved_mem(65);
+        vds.calculateFreeVirtualMemory();
+        Host host = HostMapper.map(vds, (Host) null);
+        long vdsValue = (long) vds.getMaxSchedulingMemory();
+        Long hostValue = host.getMaxSchedulingMemory() / HostMapper.BYTES_IN_MEGABYTE;
+
+        assertTrue(vdsValue > 0 && hostValue > 0 && vdsValue == hostValue);
+
+    }
 }

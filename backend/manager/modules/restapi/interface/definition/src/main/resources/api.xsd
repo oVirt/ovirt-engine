@@ -1134,6 +1134,7 @@
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="cpu" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory" type="xs:long" minOccurs="0"/>
+          <xs:element name="max_scheduling_memory" type="xs:long" minOccurs="0"/>
           <xs:element name="summary" type="VmSummary" minOccurs="0" maxOccurs="1"/>
           <xs:element name="override_iptables" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <!-- when installing a host, optionally reboot the host -->

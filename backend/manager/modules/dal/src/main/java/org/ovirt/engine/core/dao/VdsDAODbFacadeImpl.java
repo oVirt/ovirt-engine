@@ -284,7 +284,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setVdsSpmPriority(rs.getInt("vds_spm_priority"));
             entity.setAutoRecoverable(rs.getBoolean("recoverable"));
             entity.setSSHKeyFingerprint(rs.getString("sshKeyFingerprint"));
-
+            entity.calculateFreeVirtualMemory();
             return entity;
         }
     }

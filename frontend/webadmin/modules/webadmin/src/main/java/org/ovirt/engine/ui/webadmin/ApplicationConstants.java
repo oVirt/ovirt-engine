@@ -1043,6 +1043,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Swap Size")
     String swapSizeHostGeneral();
 
+    @DefaultStringValue("Max free Memory for scheduling new VMs")
+    String maxSchedulingMemory();
+
     @DefaultStringValue("Shared Memory")
     String sharedMemHostGeneral();
 
