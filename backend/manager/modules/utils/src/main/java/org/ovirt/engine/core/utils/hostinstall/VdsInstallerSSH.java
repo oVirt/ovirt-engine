@@ -534,7 +534,7 @@ public class VdsInstallerSSH {
             if (cert == null) {
                 throw new KeyStoreException(
                     String.format(
-                        "Failed to find certificate store '%1$s' using alias '%2%s'",
+                        "Failed to find certificate store '%1$s' using alias '%2$s'",
                         keystoreFile,
                         alias
                     )
@@ -549,7 +549,7 @@ public class VdsInstallerSSH {
         catch (Exception e) {
             log.error(
                 String.format(
-                    "Failed to send own public key from store '%1$s' using alias '%2%s'",
+                    "Failed to send own public key from store '%1$s' using alias '%2$s'",
                     keystoreFile,
                     alias
                 ),
