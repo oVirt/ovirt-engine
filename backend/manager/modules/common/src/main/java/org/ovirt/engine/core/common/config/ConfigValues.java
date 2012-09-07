@@ -1499,6 +1499,16 @@ public enum ConfigValues {
     @DefaultValueAttribute("36")
     GlusterVolumeOptionOwnerGroupVirtValue(386),
 
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    IPTablesConfigForVirt(387),
+
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    IPTablesConfigForGluster(388),
+
     Invalid(65535);
 
     private int intValue;

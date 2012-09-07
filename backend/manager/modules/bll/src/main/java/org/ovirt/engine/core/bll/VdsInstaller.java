@@ -26,8 +26,8 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.VdcException;
 import org.ovirt.engine.core.utils.hostinstall.CachedTar;
-import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.engine.core.utils.hostinstall.IVdsInstallerCallback;
+import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -44,6 +44,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
     private String _caFileName = "ca.pem";
     private static final String FIREWALL_CONFIG_FILENAME_PREFIX = "firewall.conf";
     private static final String SSHKEY_FILENAME_PREFIX = "ovirt-id_rsa";
+    private static final String IP_TABLE_CUSTOM_RULES_PLACE_HOLDER = "@CUSTOM_RULES@";
 
     protected VdsInstallStages _prevInstallStage = VdsInstallStages.Start;
     protected VdsInstallStages _currentInstallStage = VdsInstallStages.Start;
@@ -67,6 +68,9 @@ public class VdsInstaller implements IVdsInstallerCallback {
     private final String remoteFwRulesFilePath;
     private final String _remoteSSHKey;
     private boolean isAddOvirtFlow = false;
+    private boolean supportVirt = false;
+    private boolean supportGluster = false;
+
     protected static final java.util.HashMap<VdsInstallStages, String> _translatedMessages =
             new java.util.HashMap<VdsInstallStages, String>();
 
@@ -129,8 +133,8 @@ public class VdsInstaller implements IVdsInstallerCallback {
         Guid vdsGroupId = vds.getvds_group_id();
         VDSGroup vdsGroup = vdsGroupDao.get(vdsGroupId);
 
-        boolean supportVirt = vdsGroup.supportsVirtService();
-        boolean supportGluster = vdsGroup.supportsGlusterService();
+        supportVirt = vdsGroup.supportsVirtService();
+        supportGluster = vdsGroup.supportsGlusterService();
 
         // We don't allow having none services on the cluster. In such a case we
         // specify that the cluster supports virt for installation purposes
@@ -313,7 +317,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             }
 
             if (_executionSucceded && isOverrideFirewallAllowed()) {
-                String ipTablesConfig = Config.<String> GetValue(ConfigValues.IPTablesConfig);
+                String ipTablesConfig = getIpTableConfig();
                 if (StringUtils.isNotEmpty(ipTablesConfig)) {
                     _executionSucceded = uploadStringAsFile(ipTablesConfig, remoteFwRulesFilePath);
                 }
@@ -376,6 +380,20 @@ public class VdsInstaller implements IVdsInstallerCallback {
             break;
         }
         }
+    }
+
+    private String getIpTableConfig() {
+        String ipTablesConfig = Config.<String> GetValue(ConfigValues.IPTablesConfig);
+        String serviceIPTablesConfig = "";
+        if (supportVirt) {
+            serviceIPTablesConfig += Config.<String> GetValue(ConfigValues.IPTablesConfigForVirt);
+        }
+        if (supportGluster) {
+            serviceIPTablesConfig += Config.<String> GetValue(ConfigValues.IPTablesConfigForGluster);
+        }
+
+        ipTablesConfig.replace(IP_TABLE_CUSTOM_RULES_PLACE_HOLDER, serviceIPTablesConfig);
+        return ipTablesConfig;
     }
 
     private boolean uploadStringAsFile(String str, String remote) {
