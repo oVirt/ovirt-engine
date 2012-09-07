@@ -194,12 +194,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected boolean checkStorageConnection(String storageDomainConnection) {
-        boolean returnValue = true;
         if (getStorageServerConnectionDAO().get(storageDomainConnection) == null) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
-        return returnValue;
+        return true;
     }
 
     protected boolean checkMasterDomainIsUp() {
