@@ -38,7 +38,7 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
     @Override
     protected DiskImageDAO prepareDao() {
-        return prepareDAO(dbFacade.getDiskImageDAO());
+        return prepareDAO(dbFacade.getDiskImageDao());
     }
 
     @Override

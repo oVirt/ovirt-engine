@@ -890,7 +890,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DbFacade.getInstance().getImageDao().remove(disk.getImageId());
 
                 List<DiskImage> imagesForDisk =
-                        DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(disk.getId());
+                        DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
                 if (imagesForDisk == null || imagesForDisk.isEmpty()) {
                     DbFacade.getInstance().getBaseDiskDao().remove(disk.getId());
                 }

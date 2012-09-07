@@ -111,7 +111,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         DiskImage diskImage = (DiskImage) disk;
         if (diskImage.getVmEntityType() == VmEntityType.TEMPLATE) {
             // Temporary fix until re factoring vm_images_view and image_storage_domain_view
-            diskImage.setstorage_ids(getDiskImageDAO().get(diskImage.getImageId()).getstorage_ids());
+            diskImage.setstorage_ids(getDiskImageDao().get(diskImage.getImageId()).getstorage_ids());
         } else if ((getParameters().getStorageDomainId() == null) || (Guid.Empty.equals(getParameters().getStorageDomainId()))) {
             getParameters().setStorageDomainId(diskImage.getstorage_ids().get(0));
             setStorageDomainId(diskImage.getstorage_ids().get(0));
@@ -249,8 +249,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 .getVmDeviceDAO();
     }
 
-    protected DiskImageDAO getDiskImageDAO() {
-        return DbFacade.getInstance().getDiskImageDAO();
+    protected DiskImageDAO getDiskImageDao() {
+        return DbFacade.getInstance().getDiskImageDao();
     }
 
     protected DiskDao getDiskDao() {

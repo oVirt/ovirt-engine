@@ -135,7 +135,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
         final List<DiskImage> images = DbFacade
                 .getInstance()
-                .getDiskImageDAO()
+                .getDiskImageDao()
                 .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
         if (images.size() > 0) {
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());

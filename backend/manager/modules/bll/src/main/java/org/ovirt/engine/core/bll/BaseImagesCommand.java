@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
@@ -72,10 +71,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected ImageDao getImageDao() {
         return getDbFacade().getImageDao();
-    }
-
-    protected DiskImageDAO getDiskImageDao() {
-        return getDbFacade().getDiskImageDAO();
     }
 
     protected SnapshotDao getSnapshotDao() {
@@ -229,7 +224,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return The ID of the image for the same drive, or null if none found.
      */
     protected Guid findImageForSameDrive(Guid snapshotId) {
-        List<DiskImage> imagesFromSanpshot = getDiskImageDAO().getAllSnapshotsForVmSnapshot(snapshotId);
+        List<DiskImage> imagesFromSanpshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
         for (DiskImage diskImage : imagesFromSanpshot) {
             if (getDiskImage().getId().equals(diskImage.getId())) {
                 return diskImage.getImageId();

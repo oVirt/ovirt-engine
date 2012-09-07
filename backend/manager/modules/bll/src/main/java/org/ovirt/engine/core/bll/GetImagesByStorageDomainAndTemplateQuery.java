@@ -12,7 +12,7 @@ public class GetImagesByStorageDomainAndTemplateQuery<P extends StorageDomainTem
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                .getDiskImageDAO()
+                .getDiskImageDao()
                 .getImagesByStorageIdAndTemplateId(getParameters().getStorageDomainId(),
                         getParameters().getTemplateId()));
 

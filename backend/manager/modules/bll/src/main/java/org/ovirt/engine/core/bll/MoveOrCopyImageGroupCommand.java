@@ -36,7 +36,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         case END_FAILURE:
             if (_diskImage == null) {
                 List<DiskImage> diskImages =
-                        getDiskImageDAO().getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+                        getDiskImageDao().getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
                 _diskImage = (diskImages.isEmpty()) ? null : diskImages.get(0);
             }
 
@@ -201,7 +201,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
     @Override
     protected boolean canPerformRollbackUsingCommand(VdcActionType commandType, VdcActionParametersBase params) {
-        return getDiskImageDAO().get(getParameters().getDestinationImageId()) != null;
+        return getDiskImageDao().get(getParameters().getDestinationImageId()) != null;
     }
 
 }

@@ -123,7 +123,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         VdcReturnValueBase returnValue;
         boolean noImagesRemovedYet = getTaskIdList().isEmpty();
         List<Guid> deletedDisksIds = new ArrayList<Guid>();
-        for (DiskImage image : getDiskImageDAO().getImagesWithNoDisk(getVm().getId())) {
+        for (DiskImage image : getDiskImageDao().getImagesWithNoDisk(getVm().getId())) {
             if (!deletedDisksIds.contains(image.getId())) {
                 deletedDisksIds.add(image.getId());
                 returnValue = runAsyncTask(VdcActionType.RemoveImage,
@@ -196,7 +196,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 prepareToDeletePreviewBranch();
 
                 // Set the active snapshot's images as target images for restore, because they are what we keep.
-                getParameters().setImagesList(getDiskImageDAO().getAllSnapshotsForVmSnapshot(
+                getParameters().setImagesList(getDiskImageDao().getAllSnapshotsForVmSnapshot(
                         getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE)));
                 break;
             }
@@ -238,10 +238,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW);
         getSnapshotDao().updateStatus(previewedSnapshotId, SnapshotStatus.OK);
         snapshotsToRemove.add(removedSnapshotId);
-        List<DiskImage> images = getDiskImageDAO().getAllSnapshotsForVmSnapshot(removedSnapshotId);
+        List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(removedSnapshotId);
 
         for (DiskImage image : images) {
-            DiskImage parentImage = getDiskImageDAO().getSnapshotById(image.getParentId());
+            DiskImage parentImage = getDiskImageDao().getSnapshotById(image.getParentId());
             NGuid snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
 
             while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)) {
@@ -249,7 +249,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                     snapshotsToRemove.add(snapshotToRemove.getValue());
                 }
 
-                parentImage = getDiskImageDAO().getSnapshotById(parentImage.getParentId());
+                parentImage = getDiskImageDao().getSnapshotById(parentImage.getParentId());
                 snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
             }
         }
@@ -267,7 +267,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private List<DiskImage> getImagesList() {
         if (getParameters().getImagesList() == null && !getParameters().getDstSnapshotId().equals(Guid.Empty)) {
             getParameters().setImagesList(
-                    getDiskImageDAO().getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId()));
+                    getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId()));
         }
         return getParameters().getImagesList();
     }

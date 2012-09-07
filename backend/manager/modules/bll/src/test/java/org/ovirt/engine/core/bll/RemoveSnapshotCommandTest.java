@@ -41,7 +41,7 @@ public class RemoveSnapshotCommandTest {
         RemoveSnapshotParameters params = new RemoveSnapshotParameters(snapGuid, vmGuid);
         cmd = spy(new RemoveSnapshotCommand<RemoveSnapshotParameters>(params));
         doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
-        doReturn(diskImageDAO).when(cmd).getDiskImageDAO();
+        doReturn(diskImageDAO).when(cmd).getDiskImageDao();
     }
 
     @Test

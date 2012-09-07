@@ -117,7 +117,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     private boolean hasImages() {
-        return getDiskImageDAO()
+        return getDiskImageDao()
                 .getAllSnapshotsForStorageDomain(getStorageDomain().getId())
                 .size() != 0
                 || getImageStorageDomainMapDao().getAllByStorageDomainId(getStorageDomain().getId()).size() != 0;
@@ -342,8 +342,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return getDbFacade().getStoragePoolIsoMapDAO();
     }
 
-    protected DiskImageDAO getDiskImageDAO() {
-        return getDbFacade().getDiskImageDAO();
+    protected DiskImageDAO getDiskImageDao() {
+        return getDbFacade().getDiskImageDao();
     }
 
     protected DiskImageDynamicDAO getDiskImageDynamicDAO() {

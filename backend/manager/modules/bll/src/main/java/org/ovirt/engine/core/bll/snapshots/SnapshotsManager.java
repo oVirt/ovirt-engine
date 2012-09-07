@@ -411,7 +411,7 @@ public class SnapshotsManager {
     }
 
     protected DiskImageDAO getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDAO();
+        return DbFacade.getInstance().getDiskImageDao();
     }
 
     protected DiskDao getDiskDao() {

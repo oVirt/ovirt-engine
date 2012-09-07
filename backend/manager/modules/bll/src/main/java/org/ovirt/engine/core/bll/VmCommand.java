@@ -493,8 +493,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return getDbFacade().getDiskDao();
     }
 
-    protected DiskImageDAO getDiskImageDAO() {
-        return getDbFacade().getDiskImageDAO();
+    protected DiskImageDAO getDiskImageDao() {
+        return getDbFacade().getDiskImageDao();
     }
 
     protected boolean checkPayload(VmPayload payload, String isoPath) {

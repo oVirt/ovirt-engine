@@ -339,7 +339,7 @@ public final class ImagesHandler {
         ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>();
         Guid curImage = imageId;
         while (!imageTemplateId.equals(curImage) && !curImage.equals(Guid.Empty)) {
-            DiskImage curDiskImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(curImage);
+            DiskImage curDiskImage = DbFacade.getInstance().getDiskImageDao().getSnapshotById(curImage);
             snapshots.add(curDiskImage);
             curImage = curDiskImage.getParentId();
         }

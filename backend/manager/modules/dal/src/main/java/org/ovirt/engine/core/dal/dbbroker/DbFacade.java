@@ -565,7 +565,7 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public DiskImageDAO getDiskImageDAO() {
+    public DiskImageDAO getDiskImageDao() {
         return getDAO(DiskImageDAO.class);
     }
 

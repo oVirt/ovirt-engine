@@ -408,7 +408,7 @@ public class BasicTestSetup {
 
         Guid id = storage.getId();
         DB_FACADE.getStorageDomainDynamicDAO().remove(id);
-        List<DiskImage> snapshots = DB_FACADE.getDiskImageDAO().getAllSnapshotsForStorageDomain(id);
+        List<DiskImage> snapshots = DB_FACADE.getDiskImageDao().getAllSnapshotsForStorageDomain(id);
         for (DiskImage i : snapshots) {
             DB_FACADE.getImageDao().remove(i.getImageId());
         }

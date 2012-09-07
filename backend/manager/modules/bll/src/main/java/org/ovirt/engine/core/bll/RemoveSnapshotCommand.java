@@ -61,7 +61,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      */
     protected List<DiskImage> getSourceImages() {
         if (_sourceImages == null) {
-            _sourceImages = getDiskImageDAO().getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
+            _sourceImages = getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
         }
         return _sourceImages;
     }
@@ -102,7 +102,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             // candoaction that the vm
             // is not a template and the vm is not in preview mode and that
             // this is not the active snapshot.
-            DiskImage dest = getDiskImageDAO().getAllSnapshotsForParent(source.getImageId()).get(0);
+            DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(source.getImageId()).get(0);
 
             ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(source.getImageId(),
                     getVmId());
@@ -209,7 +209,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     protected boolean validateImageNotActive() {
-        return getDiskImageDAO().get(getRepresentativeSourceImageId()) == null;
+        return getDiskImageDao().get(getRepresentativeSourceImageId()) == null;
     }
 
     private boolean hasImages() {

@@ -37,7 +37,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
         List<DiskImage> imagesList = null;
 
         if (snapshotId != null) {
-            imagesList = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForVmSnapshot(snapshotId);
+            imagesList = DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
         }
 
         if (imagesList != null && imagesList.size() > 0) {

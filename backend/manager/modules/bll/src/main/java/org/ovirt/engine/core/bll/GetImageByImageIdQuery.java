@@ -10,6 +10,6 @@ public class GetImageByImageIdQuery<P extends GetImageByImageIdParameters>
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getDiskImageDAO().get(getParameters().getImageId()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getDiskImageDao().get(getParameters().getImageId()));
     }
 }

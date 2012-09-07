@@ -175,7 +175,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     private void GetImageChildren(Guid snapshot, List<Guid> children) {
         List<Guid> list = new ArrayList<Guid>();
-        for (DiskImage image : getDiskImageDAO().getAllSnapshotsForParent(snapshot)) {
+        for (DiskImage image : getDiskImageDao().getAllSnapshotsForParent(snapshot)) {
             list.add(image.getImageId());
         }
         children.addAll(list);

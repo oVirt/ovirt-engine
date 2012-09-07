@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 
 /**
  * This abstract class holds helper methods for concrete command classes that require to add a VM and clone an image in
@@ -249,11 +248,6 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         diskImage.setImageId(imageId);
         return diskImage;
     }
-
-    protected DiskImageDAO getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDAO();
-    }
-
 
     @Override
     protected void executeVmCommand() {

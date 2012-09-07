@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
 
@@ -59,7 +58,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
      */
     protected void markImagesIllegalIfNotInDb(VM vm) {
         List<DiskImage> imagesInDb =
-                getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
+                getDbFacade().getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
         // Converts to a map of Id to DiskImage in order to check existence only by Image ID (in case not all
         // image data is written to OVF
         Map<Guid, DiskImage> imagesInDbMap = ImagesHandler.getDiskImagesByIdMap(imagesInDb);
@@ -72,10 +71,6 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
                 fromConfigImg.setimageStatus(ImageStatus.ILLEGAL);
             }
         }
-    }
-
-    protected DiskImageDAO getDiskImageDao() {
-        return getDbFacade().getDiskImageDAO();
     }
 
     protected VmDAO getVmDao() {
