@@ -53,8 +53,8 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
     protected boolean canDoAction() {
         boolean retValue = true;
         if (disk == null) {
-            retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+            return false;
         }
         boolean isImageDisk = disk.getDiskStorageType() == DiskStorageType.IMAGE;
         if (isImageDisk && ((DiskImage) disk).getimageStatus() == ImageStatus.ILLEGAL) {
@@ -62,7 +62,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return false;
         }
         retValue =
-                retValue && acquireLockInternal() && isVmExist() && isVmUpOrDown() && isDiskCanBeAddedToVm(disk)
+                acquireLockInternal() && isVmExist() && isVmUpOrDown() && isDiskCanBeAddedToVm(disk)
                         && isDiskPassPCIAndIDELimit(disk);
         if (retValue && getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
             retValue = false;
