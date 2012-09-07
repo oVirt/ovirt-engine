@@ -176,7 +176,11 @@ public final class RandomUtils extends Random {
             throw new IllegalArgumentException("l must be greater than 0!");
         }
 
-        return (Math.abs(super.nextLong()) % l);
+        long rand = super.nextLong();
+        if (rand == Long.MIN_VALUE) {
+            rand++;
+        }
+        return (Math.abs(rand) % l);
     }
 
     /**
