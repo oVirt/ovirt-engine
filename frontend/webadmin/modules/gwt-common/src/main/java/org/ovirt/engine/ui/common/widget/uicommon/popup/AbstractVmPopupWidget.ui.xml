@@ -226,7 +226,7 @@
 							<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 
-<!-- 						New VM							 -->
+<!-- 						New VM Pool							 -->
 							<e:EntityModelTextBoxEditor ui:field="numOfVmsEditor" />
                             <g:FlowPanel ui:field="newPoolEditVmsPanel" addStyleNames="{style.poolEditVms}">
                             	<g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">
@@ -236,7 +236,7 @@
 								<e:EntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" addStyleNames="{style.prestartedVmsEditor}" contentWidgetStyleName="{style.prestartedVmsEditorContent}" />
                             </g:FlowPanel>
                             
-<!--                             Edit VM -->
+<!--                             Edit VM Pool -->
                             <g:FlowPanel addStyleNames="{style.poolEditVms}" ui:field="editPoolEditVmsPanel">
 								<g:FlowPanel addStyleNames="{style.editPrestartedLabelWithHelp}">
 									<g:Label ui:field="editPrestartedVmsLabel" addStyleNames="{style.prestartedLabel}" />
@@ -260,12 +260,12 @@
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
                             <e:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
                             <e:EntityModelTextBoxEditor ui:field="totalvCPUsEditor" />
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<d:AdvancedParametersExpander ui:field="generalAdvancedParameterExpander"/>
-							<g:FlowPanel ui:field="generalAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
-								<e:ListModelListBoxEditor ui:field="corePerSocketEditor" />
-								<e:ListModelListBoxEditor ui:field="numOfSocketsEditor" />
+							<g:FlowPanel addStyleNames="{style.sectionPanel}">
+								<d:AdvancedParametersExpander ui:field="generalAdvancedParameterExpander"/>
+								<g:FlowPanel ui:field="generalAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
+									<e:ListModelListBoxEditor ui:field="corePerSocketEditor" />
+									<e:ListModelListBoxEditor ui:field="numOfSocketsEditor" />
+								</g:FlowPanel>
 							</g:FlowPanel>
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">

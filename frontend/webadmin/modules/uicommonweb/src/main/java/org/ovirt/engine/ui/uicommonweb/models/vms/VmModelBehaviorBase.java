@@ -774,27 +774,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getCoresPerSocket().setItems(filterPossibleValues(coresPerSocets, sockets));
         getModel().getNumOfSockets().setItems(filterPossibleValues(sockets, coresPerSocets));
 
-        if (totalCpuCores % coresPerSocket == 0) {
-            // the value selected in the coresPerSocket is compatible with the new totalCPUCores,
-            // so keep it and adjust the numOfSockets according to it
-            int newNumOfSockets = totalCpuCores / coresPerSocket;
-            if (newNumOfSockets <= maxNumOfSockets) {
-                getModel().getNumOfSockets().setSelectedItem(newNumOfSockets);
-                getModel().getCoresPerSocket().setSelectedItem(coresPerSocket);
-            } else {
-                // we need to compose it from more cores on the available sockets
-                composeCoresAndSocketsWhenDontFitInto(totalCpuCores);
-            }
+        // ignore the value already selected in the coresPerSocket
+        // and always try to set the max possible totalcpuCores
+        if (totalCpuCores <= maxNumOfSockets) {
+            getModel().getCoresPerSocket().setSelectedItem(1);
+            getModel().getNumOfSockets().setSelectedItem(totalCpuCores);
         } else {
-            // the value selected in coresPerSocket is not compatible with the new totalCPUCores,
-            // so erase it to 1 and select the numOfSockets to be the same as the totalCPUCores
-            if (totalCpuCores <= maxNumOfSockets) {
-                getModel().getCoresPerSocket().setSelectedItem(1);
-                getModel().getNumOfSockets().setSelectedItem(totalCpuCores);
-            } else {
-                // we need to compose it from more cores on the available sockets
-                composeCoresAndSocketsWhenDontFitInto(totalCpuCores);
-            }
+            // we need to compose it from more cores on the available sockets
+            composeCoresAndSocketsWhenDontFitInto(totalCpuCores);
         }
 
         boolean isNumOfVcpusCorrect = isNumOfSocketsCorrect(totalCpuCores);
