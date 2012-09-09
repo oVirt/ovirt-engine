@@ -327,12 +327,20 @@ public class VdsSelector {
         return readyToRun.isEmpty() ? Guid.Empty : getBestVdsToRun(readyToRun);
     }
 
+    /**
+     * Determine whether all required Networks are attached to the Host's Nics. Required Networks are the Networks that
+     * are defined on active vNics of the VM.
+     *
+     * @param vdsId
+     *            The Host id.
+     * @return <code>true</code> if all required Networks are attached to a Host Nic, otherwise, <code>false</code>.
+     */
     boolean areRequiredNetworksAvailable(Guid vdsId) {
         final List<VdsNetworkInterface> allInterfacesForVds = getInterfaceDAO().getAllInterfacesForVds(vdsId);
         for (final VmNetworkInterface vmIf : getVmNICs()) {
             boolean found = false;
             for (final VdsNetworkInterface vdsIf : allInterfacesForVds) {
-                if (StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
+                if (!vmIf.isActive() || StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
                     found = true;
                     break;
                 }
