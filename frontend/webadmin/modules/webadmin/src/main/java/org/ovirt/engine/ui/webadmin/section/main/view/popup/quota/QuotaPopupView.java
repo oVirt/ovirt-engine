@@ -42,6 +42,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
+import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaUtilizationStatusColumn;
 
 public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> implements QuotaPopupPresenterWidget.ViewDef, SliderValueChange {
 
@@ -250,6 +251,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             }
         }, constants.storageNameQuota(), "200px"); //$NON-NLS-1$
 
+        quotaStorageTable.addColumn(new QuotaUtilizationStatusColumn<QuotaStorage>(), constants.empty(), "1px"); //$NON-NLS-1$
+
         quotaStorageTable.addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
@@ -335,6 +338,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 return object.getVdsGroupName();
             }
         }, constants.clusterNameQuota(), "200px"); //$NON-NLS-1$
+
+        quotaClusterTable.addColumn(new QuotaUtilizationStatusColumn<QuotaVdsGroup>(), constants.empty(), "1px"); //$NON-NLS-1$
 
         quotaClusterTable.addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override

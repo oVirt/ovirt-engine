@@ -716,6 +716,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster Quota")
     String importVm_destClusterQuota();
 
+    @DefaultStringValue("Quota exceeded")
+    String quotaExceeded();
+
     @DefaultStringValue("Collapse All Snapshots")
     String importVm_collapseSnapshots();
 
