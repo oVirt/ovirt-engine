@@ -910,7 +910,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The selected Storage Domain is not part of the Data Center.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL();
 
-    @DefaultStringValue("Cannot detach Storage Domain while VMs/Templates reside on it.\n-Please remove all objects and try again.")
+    @DefaultStringValue("Cannot detach a non empty Storage Domain.\n-Please remove all VMs / Templates / Disks and try again.")
     String ERROR_CANNOT_DETACH_STORAGE_DOMAIN_WITH_IMAGES();
 
     @DefaultStringValue("Cannot remove Data Center while there are volumes on it.\n-Please remove all VMs and Templates first.")
