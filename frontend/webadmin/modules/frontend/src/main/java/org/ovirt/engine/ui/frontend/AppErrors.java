@@ -613,10 +613,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action import")
     String VAR__ACTION__IMPORT();
 
-    @DefaultStringValue("$action attach Action to")
+    @DefaultStringValue("$action attach")
     String VAR__ACTION__ATTACH_ACTION_TO();
 
-    @DefaultStringValue("$action Dettach Action from")
+    @DefaultStringValue("$action detach")
     String VAR__ACTION__DETACH_ACTION_TO();
 
     @DefaultStringValue("$action move")
