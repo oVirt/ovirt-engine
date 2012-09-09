@@ -1676,6 +1676,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Quota is not valid.")
     String ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID();
 
+    @DefaultStringValue("Cannot ${action} ${type}. No quota is defined for the selected domain. Assign a quota to the domain or select a different domain.")
+    String ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN();
+
     @DefaultStringValue("Cannot ${action} ${type}. The quota associated with VM ${VmName} is no longer available. This may be a result of an import or snapshot restoring actions. Please reassign a quota to this VM.")
     String ACTION_TYPE_FAILED_QUOTA_IS_NO_LONGER_AVAILABLE_IN_SYSTEM();
 
