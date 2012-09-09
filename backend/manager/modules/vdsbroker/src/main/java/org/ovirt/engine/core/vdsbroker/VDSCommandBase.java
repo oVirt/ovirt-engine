@@ -5,9 +5,9 @@ import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
@@ -114,7 +114,9 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
         log.errorFormat("Command {0} execution failed. Exception: {1}", getCommandName(), ExceptionUtils.getMessage(ex));
     }
 
-    protected abstract String getAdditionalInformation();
+    protected String getAdditionalInformation() {
+        return "";
+    }
 
     protected abstract void ExecuteVDSCommand();
 
