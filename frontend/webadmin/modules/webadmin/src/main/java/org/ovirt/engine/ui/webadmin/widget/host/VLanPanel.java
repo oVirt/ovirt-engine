@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
@@ -28,11 +29,14 @@ public class VLanPanel extends VerticalPanel {
         this.isSelectionAvailable = isSelectionEnabled;
     }
     public void addVLans(HostInterfaceLineModel lineModel) {
+        boolean hasVlan = lineModel.getVlanSize() != 0;
         for (HostVLan hostVLan : lineModel.getVLans()) {
             add(new VLanElementPanel(hostVLan, isSelectionAvailable));
         }
 
-        add(new VLanElementPanel(lineModel));
+        if (!hasVlan || !StringHelper.isNullOrEmpty(lineModel.getNetworkName())){
+            add(new VLanElementPanel(lineModel));
+        }
     }
 
 }

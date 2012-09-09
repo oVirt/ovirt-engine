@@ -277,13 +277,17 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         });
 
         // Use fixed table layout
-        table.setWidth("100%", true); //$NON-NLS-1$
-        tableHeader.setWidth("100%", true); //$NON-NLS-1$
+        setWidth("100%", true); //$NON-NLS-1$
 
         // Attach table widget to the corresponding panel
         tableContainer.setWidget(table);
         tableHeaderContainer.setWidget(tableHeader);
         tableHeaderContainer.setVisible(!showDefaultHeader);
+    }
+
+    public void setWidth(String width, boolean isFixedLayout) {
+        table.setWidth("100%", isFixedLayout); //$NON-NLS-1$
+        tableHeader.setWidth("100%", isFixedLayout); //$NON-NLS-1$
     }
 
     @UiHandler("prevPageButton")

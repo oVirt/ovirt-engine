@@ -59,6 +59,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
                         clientStorage);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants, templates);
+        table.setWidth("100%", false); //$NON-NLS-1$
 
         contentPanel = new VerticalPanel();
         contentPanel.setWidth("100%"); //$NON-NLS-1$
@@ -72,17 +73,17 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     }
 
     void initTable(ApplicationConstants constants, ApplicationTemplates templates) {
-        table.addColumn(new EmptyColumn(), constants.empty(), "10%"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.nameInterface(), "20%"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.addressInterface(), "20%"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.macInterface(), "20%"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.speedInterface(), constants.mbps()).asString(), "10%"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxInterface(), constants.mbps()).asString(), "10%"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txInterface(), constants.mbps()).asString(), "10%"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts()).asString(), "10%"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.bondInterface(), "20%"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.vlanInterface(), "20%"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.networkNameInterface(), "20%"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.nameInterface(), "210px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.addressInterface(), "210px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.macInterface(), "210px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.speedInterface(), constants.mbps()).asString(), "105px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxInterface(), constants.mbps()).asString(), "105px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txInterface(), constants.mbps()).asString(), "105px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts()).asString(), "105px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.bondInterface(), "210px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.vlanInterface(), "210px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.networkNameInterface(), "210px"); //$NON-NLS-1$
 
         table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.addEditInterface()) {
             @Override
