@@ -1488,7 +1488,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The following LUNs are already part of Storage Domains:")
     String lunsAlreadyPartOfSD();
 
-    @DefaultStringValue("Networks on both interfaces : Detach all the networks from one the interfaces/bond, if required re-attach to the bond")
+    @DefaultStringValue("Networks on both interfaces : Detach all the networks from one of the interfaces/bond, if required re-attach to the bond")
     String networksOnBothInterfaces();
 
     @DefaultStringValue("Invalid operation with unmanaged network: unmanaged network can only be removed")

@@ -1243,7 +1243,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Selected Compatibility Version is not supported.")
     String ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED();
 
-    @DefaultStringValue("Netwrok address must be specify when using static ip")
+    @DefaultStringValue("Network address must be specified when using static ip")
     String NETWORK_ADDR_MANDATORY_IN_STATIC_IP();
 
     @DefaultStringValue("Cannot ${action} ${type}. Same action in progress.")
