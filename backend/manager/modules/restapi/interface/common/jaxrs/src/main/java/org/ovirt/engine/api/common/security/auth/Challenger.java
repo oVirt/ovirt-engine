@@ -86,12 +86,10 @@ public class Challenger implements PreProcessInterceptor {
         HttpSession httpSession = getCurrentSession(true);
 
         // If the session isn't a new session then we validate it, otherwise we authenticate
-        if (validator != null && httpSession != null) {
-            if (!httpSession.isNew()) {
-                successful = executeSessionValidation(httpSession, preferPersistentAuth);
-            } else {
-                successful = executeBasicAuthentication(headers, httpSession, preferPersistentAuth);
-            }
+        if (validator != null && httpSession != null && !httpSession.isNew()) {
+            successful = executeSessionValidation(httpSession, preferPersistentAuth);
+        } else {
+            successful = executeBasicAuthentication(headers, httpSession, preferPersistentAuth);
         }
 
         if (!successful) {
