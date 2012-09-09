@@ -46,7 +46,9 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
 
     @Override
     public String toString() {
-        return String.format("%s(%s)", super.toString(),
+        String AddInfo = getAdditionalInformation();
+        return String.format("%s(%s %s)", super.toString(),
+                (!AddInfo.isEmpty() ? AddInfo + "," : ""),
                 (getParameters() != null ? getParameters().toString() : "null"));
     }
 
@@ -111,6 +113,8 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     private void logException(RuntimeException ex) {
         log.errorFormat("Command {0} execution failed. Exception: {1}", getCommandName(), ExceptionUtils.getMessage(ex));
     }
+
+    protected abstract String getAdditionalInformation();
 
     protected abstract void ExecuteVDSCommand();
 

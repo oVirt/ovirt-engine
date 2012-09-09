@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker;
 import org.ovirt.engine.core.common.vdscommands.*;
 
 public class IsVmDuringInitiatingVDSCommand<P extends IsVmDuringInitiatingVDSCommandParameters>
-        extends VDSCommandBase<P> {
+extends VDSCommandBase<P> {
     public IsVmDuringInitiatingVDSCommand(P parameters) {
         super(parameters);
     }
@@ -11,6 +11,11 @@ public class IsVmDuringInitiatingVDSCommand<P extends IsVmDuringInitiatingVDSCom
     @Override
     protected void ExecuteVDSCommand() {
         getVDSReturnValue().setReturnValue(ResourceManager.getInstance()
-                                                          .IsVmDuringInitiating(getParameters().getVmId()));
+                .IsVmDuringInitiating(getParameters().getVmId()));
+    }
+
+    @Override
+    protected String getAdditionalInformation() {
+        return "";
     }
 }
