@@ -43,6 +43,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.add(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
         drive.add(VdsProperties.Optional, Boolean.FALSE.toString());
         drive.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
+        drive.add(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
