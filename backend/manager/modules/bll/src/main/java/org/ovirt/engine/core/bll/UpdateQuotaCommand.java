@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
 public class UpdateQuotaCommand extends QuotaCRUDCommand {
@@ -50,6 +52,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
         QuotaDAO dao = getQuotaDAO();
         dao.update(getParameters().getQuota());
         getReturnValue().setSucceeded(true);
+        afterUpdate();
     }
 
     protected void removeQuotaFromCache() {
@@ -77,8 +80,6 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
     /**
      * Set quota from the parameter
      *
-     * @param parameters
-     * @return
      */
     private void setQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();
@@ -96,5 +97,16 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
             }
         }
         setQuota(quotaParameter);
+    }
+
+    private void afterUpdate() {
+        boolean newSizeUnderCurrentConsumption =
+                QuotaManager.getInstance().isStorageQuotaExceeded(getQuota().getId());
+
+        if (newSizeUnderCurrentConsumption) {
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.AddCustomValue("QuotaName", getQuotaName());
+            AuditLogDirector.log(logable, AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION);
+        }
     }
 }

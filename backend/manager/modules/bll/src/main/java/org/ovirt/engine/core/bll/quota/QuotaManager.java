@@ -565,4 +565,41 @@ public class QuotaManager {
             rollbackQuota(vm.getstorage_pool_id(), Arrays.asList(vm.getQuotaId()));
         }
     }
+
+    /**
+     * Check if the quota exceeded the storage limit (ether for global limit or one of the specific limits).
+     *
+     * @param quotaId
+     *            - quota id
+     * @return - true if the quota exceeded the storage limitation. false if quota was not found, limit was not defined
+     *         or limit not crossed.
+     */
+    public boolean isStorageQuotaExceeded(Guid quotaId) {
+        if (quotaId == null) {
+            return false;
+        }
+
+        Quota quota = getQuotaDAO().getById(quotaId);
+
+        if (quota == null) {
+            return false;
+        }
+
+        // for global quota
+        if (quota.getGlobalQuotaStorage() != null) {
+            if (quota.getGlobalQuotaStorage().getStorageSizeGB() != null
+                    && !quota.getGlobalQuotaStorage().getStorageSizeGB().equals(QuotaStorage.UNLIMITED)
+                    && quota.getGlobalQuotaStorage().getStorageSizeGB()
+                    < quota.getGlobalQuotaStorage().getStorageSizeGBUsage()) {
+                return true;
+            }
+        } else if (quota.getQuotaStorages() != null) { // for specific quota
+            for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
+                if (quotaStorage.getStorageSizeGB() < quotaStorage.getStorageSizeGBUsage()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
