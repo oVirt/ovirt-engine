@@ -119,12 +119,8 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
      *         map of luns Ids -> connected hosts
      */
     private Pair<Boolean, Map<String, List<Guid>>> ConnectVdsToLun(List<LUNs> luns) {
-        // all vdss in pool except spm (already connected)
         Map<String, List<Guid>> resultMap = new HashMap<String, List<Guid>>();
         for (VDS vds : getAllRunningVdssInPool()) {
-            if (vds.getspm_status() == VdsSpmStatus.SPM)
-                continue;
-
             // try to connect vds to luns and getDeviceList in order to refresh them
             for (LUNs lun : luns) {
                 if (!connectStorageToLunByVdsId(vds, lun)) {

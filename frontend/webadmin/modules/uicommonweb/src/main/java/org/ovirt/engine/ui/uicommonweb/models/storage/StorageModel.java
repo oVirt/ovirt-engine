@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -576,34 +577,33 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         VDS oldSelectedItem = (VDS) getHost().getSelectedItem();
         VDS selectedItem = null;
 
-        getHost().setItems(hosts);
+        // On Edit - only SPM is available.
+        if (getStorage() != null) {
+            hosts = Collections.singletonList(getSPM(hosts));
+        }
 
         // Try to select previously selected host.
-        if (oldSelectedItem != null)
-        {
+        if (oldSelectedItem != null) {
             selectedItem = Linq.FirstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getId()));
         }
 
-        // Try to select an SPM host when edit storage.
-        if (selectedItem == null && getStorage() != null)
-        {
-            for (VDS host : hosts)
-            {
-                if (host.getspm_status() == VdsSpmStatus.SPM)
-                {
-                    selectedItem = host;
-                    break;
-                }
-            }
-        }
-
         // Select a default - first host in the list.
-        if (selectedItem == null)
-        {
+        if (selectedItem == null) {
             selectedItem = Linq.FirstOrDefault(hosts);
         }
 
+        getHost().setItems(hosts);
         getHost().setSelectedItem(selectedItem);
+    }
+
+    private VDS getSPM(Iterable<VDS> hosts) {
+        for (VDS host : hosts) {
+            if (host.getspm_status() == VdsSpmStatus.SPM) {
+                return host;
+            }
+        }
+
+        return null;
     }
 
     void UpdateFormat()
