@@ -142,7 +142,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("VmNetworkInterface [id=")
+        builder.append("VmNetworkInterface {id=")
                 .append(getId())
                 .append(", networkName=")
                 .append(getNetworkName())
@@ -164,7 +164,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
                 .append(getVmName())
                 .append(", vmTemplateId=")
                 .append(getVmTemplateId())
-                .append("]");
+                .append("}");
         return builder.toString();
     }
 
