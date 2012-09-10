@@ -5,6 +5,7 @@ import java.util.Collections;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -25,8 +26,8 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
     }
 
     protected void init() {
-        struct.add("vmId", getParameters().getVm().getId().toString());
-        struct.add("nic", initNicStructure());
+        struct.add(VdsProperties.vm_guid, getParameters().getVm().getId().toString());
+        struct.add(VdsProperties.VM_NETWORK_INTERFACE, initNicStructure());
     }
 
     private XmlRpcStruct initNicStructure() {
@@ -34,16 +35,17 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
         VmNetworkInterface nic = getParameters().getNic();
         VmDevice vmDevice = getParameters().getVmDevice();
 
-        map.add("type", "interface");
-        map.add("device", "bridge");
-        map.add("macAddr", nic.getMacAddress());
-        map.add("network", nic.getNetworkName());
+        map.add(VdsProperties.Type, VmDeviceType.INTERFACE.getName());
+        map.add(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
+        map.add(VdsProperties.mac_addr, nic.getMacAddress());
+        map.add(VdsProperties.network, nic.getNetworkName());
         addAddress(map, vmDevice.getAddress());
-        map.add("specParams", vmDevice.getSpecParams());
-        map.add("nicModel", VmInterfaceType.forValue(nic.getType()).name());
+        map.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
+        map.add(VdsProperties.nic_type, VmInterfaceType.forValue(nic.getType()).name());
         map.add(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
+
         if (vmDevice.getBootOrder() > 0) {
-            map.add("bootOrder", String.valueOf(vmDevice.getBootOrder()));
+            map.add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
         }
 
         if (nic.isPortMirroring()) {
@@ -56,7 +58,7 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
 
     private void addAddress(XmlRpcStruct map, String address) {
         if (org.apache.commons.lang.StringUtils.isNotBlank(address)) {
-            map.add("address", XmlRpcStringUtils.string2Map(getParameters().getVmDevice().getAddress()));
+            map.add(VdsProperties.Address, XmlRpcStringUtils.string2Map(getParameters().getVmDevice().getAddress()));
         }
     }
 

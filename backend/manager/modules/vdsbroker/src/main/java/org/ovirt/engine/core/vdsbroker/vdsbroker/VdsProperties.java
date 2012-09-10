@@ -115,6 +115,7 @@ public final class VdsProperties {
     public static final String monitorResponse = "monitorResponse";
 
     // Network related
+    public static final String VM_NETWORK_INTERFACE = "nic";
     public static final String network_nics = "nics";
     public static final String network_vlans = "vlans";
     public static final String network_networks = "networks";
