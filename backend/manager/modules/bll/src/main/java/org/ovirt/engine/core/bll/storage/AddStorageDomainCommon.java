@@ -21,8 +21,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
 
     @Override
     protected boolean CanAddDomain() {
-        boolean returnValue = CheckStorageConnection(getStorageDomain().getstorage());
-        return returnValue;
+        return CheckStorageConnection(getStorageDomain().getstorage());
     }
 
     @Override
