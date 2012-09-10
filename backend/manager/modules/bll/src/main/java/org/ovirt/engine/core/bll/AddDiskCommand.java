@@ -259,9 +259,17 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         } else {
             listPermissionSubjects = super.getPermissionCheckSubjects();
         }
-        listPermissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
-                VdcObjectType.Storage,
-                ActionGroup.CREATE_DISK));
+        // If the storage domain ID is empty/null, it means we are going to create an external disk
+        // In order to do that we need CREATE_DISK permissions on System level
+        if (getParameters().getStorageDomainId() == null || Guid.Empty.equals(getParameters().getStorageDomainId())) {
+            listPermissionSubjects.add(new PermissionSubject(Guid.SYSTEM,
+                    VdcObjectType.System,
+                    ActionGroup.CREATE_DISK));
+        } else {
+            listPermissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
+                    VdcObjectType.Storage,
+                    ActionGroup.CREATE_DISK));
+        }
         return listPermissionSubjects;
     }
 
