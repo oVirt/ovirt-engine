@@ -82,7 +82,7 @@ public class NetworkOperationFactory {
             // op2: nic
             else if (op2 instanceof NetworkInterfaceModel) {
                 NetworkInterfaceModel nic2 = (NetworkInterfaceModel) op2;
-                if (!nic1.isBonded()) {
+                if (!nic1.isBonded() && !nic1.equals(nic2)) {
 
                     boolean containsUnmanaged = containsUnmanaged(nic1) || containsUnmanaged(nic2);
                     if (containsUnmanaged){
