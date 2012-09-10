@@ -8,10 +8,10 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
-import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -343,6 +343,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     public void rollbackQuota() {
+        if (getImagesList().isEmpty()) {
+            return;
+        }
+        setStoragePoolId(getImagesList().get(0).getstorage_pool_id());
         for (DiskImage image : getImagesList()) {
             Guid quotaId = image.getQuotaId();
             if (quotaId != null) {
