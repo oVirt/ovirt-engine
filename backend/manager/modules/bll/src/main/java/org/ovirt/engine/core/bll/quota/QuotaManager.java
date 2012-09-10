@@ -100,6 +100,12 @@ public class QuotaManager {
     }
 
     public void rollbackQuota(storage_pool storagePool, List<Guid> quotaList) {
+        if (storagePool == null){
+            if (quotaList == null || quotaList.isEmpty()) {
+                return;
+            }
+            storagePool = extractStoragePoolFromQuota(quotaList.get(0));
+        }
         rollbackQuota(storagePool.getId(), quotaList);
     }
 
@@ -147,6 +153,14 @@ public class QuotaManager {
         Pair<AuditLogType, AuditLogableBase> logPair = new Pair<AuditLogType, AuditLogableBase>();
         lock.readLock().lock();
         try {
+            if (storagePool == null){
+                log.debug("Null storage pool was passed to 'QuotaManager.validateAndSetStorageQuota()'");
+                if (parameters.isEmpty() || parameters.get(0).getQuotaId() == null) {
+                    canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+                    return false;
+                }
+                storagePool = extractStoragePoolFromQuota(parameters.get(0).getQuotaId());
+            }
             if (QuotaEnforcementTypeEnum.DISABLED.equals(storagePool.getQuotaEnforcementType())) {
                 return true;
             }
@@ -476,6 +490,14 @@ public class QuotaManager {
             ArrayList<String> canDoActionMessages) {
         Pair<AuditLogType, AuditLogableBase> logPair = new Pair<AuditLogType, AuditLogableBase>();
         try {
+            if (storagePool == null){
+                log.debug("Null storage pool was passed to 'QuotaManager.validateAndSetStorageQuota()'");
+                if (quotaId == null) {
+                    canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+                    return false;
+                }
+                storagePool = extractStoragePoolFromQuota(quotaId);
+            }
             if (QuotaEnforcementTypeEnum.DISABLED.equals(storagePool.getQuotaEnforcementType())) {
                 return true;
             }
@@ -601,5 +623,13 @@ public class QuotaManager {
             }
         }
         return false;
+    }
+
+    private storage_pool extractStoragePoolFromQuota(Guid quotaId) {
+        storage_pool storagePool;Quota quota = getQuotaDAO().getById(quotaId);
+        storagePool = new storage_pool();
+        storagePool.setId(quota.getStoragePoolId());
+        storagePool.setQuotaEnforcementType(quota.getQuotaEnforcementType());
+        return storagePool;
     }
 }
