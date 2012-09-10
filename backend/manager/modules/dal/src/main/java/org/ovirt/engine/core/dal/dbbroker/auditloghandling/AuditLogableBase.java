@@ -215,8 +215,7 @@ public class AuditLogableBase extends TimeoutBase {
                 if (storageDomainList.size() != 0) {
                     _storageDomain = storageDomainList.get(0);
                     for (final storage_domains storageDomainFromList : storageDomainList) {
-                        if (storageDomainFromList.getstatus() != null
-                                && storageDomainFromList.getstatus() == StorageDomainStatus.Active) {
+                        if (storageDomainFromList.getstatus() == StorageDomainStatus.Active) {
                             _storageDomain = storageDomainFromList;
                             break;
                         }
