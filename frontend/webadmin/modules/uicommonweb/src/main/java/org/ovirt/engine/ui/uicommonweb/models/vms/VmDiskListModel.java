@@ -461,7 +461,6 @@ public class VmDiskListModel extends VmDiskListModelBase
 
                 storage_domains storage = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
 
-                diskModel.getWipeAfterDelete().setEntity(disk.isWipeAfterDelete());
                 if (diskModel.getStorageDomain() != null && diskModel.getStorageDomain().getSelectedItem() != null)
                 {
                     StorageType storageType = storage.getstorage_type();
@@ -470,6 +469,8 @@ public class VmDiskListModel extends VmDiskListModelBase
                                     || storageType == StorageType.POSIXFS;
                     diskModel.getWipeAfterDelete().setIsChangable(!isFileDomain);
                 }
+
+                diskModel.getWipeAfterDelete().setEntity(disk.isWipeAfterDelete());
 
                 ArrayList<Disk> disks =
                         vmDiskListModel.getItems() != null ? Linq.<Disk> Cast(vmDiskListModel.getItems())
