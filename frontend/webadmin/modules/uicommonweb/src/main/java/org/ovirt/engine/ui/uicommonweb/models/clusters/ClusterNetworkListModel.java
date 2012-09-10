@@ -412,53 +412,53 @@ public class ClusterNetworkListModel extends SearchableListModel
                                                         networkModel.getHasMtu().setIsChangable(false);
                                                         networkModel.getMtu().setIsChangable(false);
                                                     }
+
+                                                    clusterNetworkModel.setDataCenterName(dataCenter.getname());
+                                                    AsyncQuery _asyncQuery2 = new AsyncQuery();
+                                                    _asyncQuery2.asyncCallback = new INewAsyncCallback() {
+                                                        @Override
+                                                        public void OnSuccess(Object model, Object ReturnValue)
+                                                        {
+                                                            ClusterNetworkListModel networkListModel = ClusterNetworkListModel.this;
+                                                            ClusterNetworkModel networkModel =
+                                                                    (ClusterNetworkModel) networkListModel.getWindow();
+
+                                                            // Cluster list
+                                                            ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) ReturnValue;
+                                                            NetworkClusterModel networkClusterModel;
+                                                            ListModel networkClusterList =
+                                                                    new ListModel();
+                                                            List<NetworkClusterModel> items = new ArrayList<NetworkClusterModel>();
+                                                            for (VDSGroup cluster : clusterList)
+                                                            {
+                                                                networkClusterModel = new NetworkClusterModel(cluster);
+                                                                if (!(cluster.getId().equals(getEntity().getId()))) {
+                                                                    networkClusterModel.setAttached(false);
+                                                                } else {
+                                                                    networkClusterModel.setAttached(true);
+                                                                    networkClusterModel.setIsChangable(false);
+                                                                }
+
+                                                                items.add(networkClusterModel);
+                                                            }
+                                                            networkClusterList.setItems(items);
+                                                            networkModel.setNetworkClusterList(networkClusterList);
+
+                                                            UICommand tempVar = new UICommand("OnSave", networkListModel); //$NON-NLS-1$
+                                                            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                                                            tempVar.setIsDefault(true);
+                                                            networkModel.getCommands().add(tempVar);
+
+                                                            UICommand tempVar2 = new UICommand("Cancel", networkListModel); //$NON-NLS-1$
+                                                            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                                                            tempVar2.setIsCancel(true);
+                                                            networkModel.getCommands().add(tempVar2);
+                                                        }
+                                                    };
+                                                    AsyncDataProvider.GetClusterList(_asyncQuery2, dataCenter.getId());
                                                 }
                                             }),
                                             getEntity().getcompatibility_version().toString());
-
-                                    clusterNetworkModel.setDataCenterName(dataCenter.getname());
-                                    AsyncQuery _asyncQuery2 = new AsyncQuery();
-                                    _asyncQuery2.asyncCallback = new INewAsyncCallback() {
-                                        @Override
-                                        public void OnSuccess(Object model, Object ReturnValue)
-                                        {
-                                            ClusterNetworkListModel networkListModel = ClusterNetworkListModel.this;
-                                            ClusterNetworkModel networkModel =
-                                                    (ClusterNetworkModel) networkListModel.getWindow();
-
-                                            // Cluster list
-                                            ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) ReturnValue;
-                                            NetworkClusterModel networkClusterModel;
-                                            ListModel networkClusterList =
-                                                    new ListModel();
-                                            List<NetworkClusterModel> items = new ArrayList<NetworkClusterModel>();
-                                            for (VDSGroup cluster : clusterList)
-                                            {
-                                                networkClusterModel = new NetworkClusterModel(cluster);
-                                                if (!(cluster.getId().equals(getEntity().getId()))) {
-                                                    networkClusterModel.setAttached(false);
-                                                } else {
-                                                    networkClusterModel.setAttached(true);
-                                                    networkClusterModel.setIsChangable(false);
-                                                }
-
-                                                items.add(networkClusterModel);
-                                            }
-                                            networkClusterList.setItems(items);
-                                            networkModel.setNetworkClusterList(networkClusterList);
-
-                                            UICommand tempVar = new UICommand("OnSave", networkListModel); //$NON-NLS-1$
-                                            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                                            tempVar.setIsDefault(true);
-                                            networkModel.getCommands().add(tempVar);
-
-                                            UICommand tempVar2 = new UICommand("Cancel", networkListModel); //$NON-NLS-1$
-                                            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                                            tempVar2.setIsCancel(true);
-                                            networkModel.getCommands().add(tempVar2);
-                                        }
-                                    };
-                                    AsyncDataProvider.GetClusterList(_asyncQuery2, dataCenter.getId());
                                 }
                             }),
                             dataCenter.getcompatibility_version().toString());
