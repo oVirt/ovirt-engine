@@ -99,7 +99,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
         setQuota(quotaParameter);
     }
 
-    private void afterUpdate() {
+    protected void afterUpdate() {
         boolean newSizeUnderCurrentConsumption =
                 QuotaManager.getInstance().isStorageQuotaExceeded(getQuota().getId());
 

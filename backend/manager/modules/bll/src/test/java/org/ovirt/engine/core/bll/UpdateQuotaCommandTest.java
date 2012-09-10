@@ -47,6 +47,7 @@ public class UpdateQuotaCommandTest {
         command = spy(new UpdateQuotaCommand(params));
         doReturn(quotaDAO).when(command).getQuotaDAO();
         doNothing().when(command).removeQuotaFromCache();
+        doNothing().when(command).afterUpdate();
     }
 
     private void setUpQuota() {
