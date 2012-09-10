@@ -139,7 +139,7 @@ public class TemplateBackupModel extends VmBackupModel
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
         for (Object object : objectsInSetupMap.values()) {
             VmTemplate template = (VmTemplate) object;
-            if (!validateName(template.getname() + suffix, template.getos(), entityModel)) {
+            if (!validateName(template.getname() + suffix, template, entityModel)) {
                 return false;
             }
         }

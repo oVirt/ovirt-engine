@@ -286,7 +286,7 @@ public class VmBackupModel extends ManageBackupModel {
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
         for (Object object : objectsInSetupMap.values()) {
             VM vm = (VM) object;
-            if (!validateName(vm.getvm_name() + suffix, vm.getos(), entityModel)) {
+            if (!validateName(vm.getvm_name() + suffix, vm, entityModel)) {
                 return false;
             }
         }
