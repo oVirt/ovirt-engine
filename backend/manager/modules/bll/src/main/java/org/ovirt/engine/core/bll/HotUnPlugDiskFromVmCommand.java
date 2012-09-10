@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute
 public class HotUnPlugDiskFromVmCommand<T extends HotPlugDiskToVmParameters> extends HotPlugDiskToVmCommand<T> {
 
     private static final long serialVersionUID = -7170156978848697566L;

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
@@ -7,12 +10,14 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute
 public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = 2022232044279588022L;
@@ -81,6 +86,11 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
             }
         });
         setSucceeded(true);
+    }
+
+    @Override
+    protected Map<String, String> getSharedLocks() {
+        return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
     }
 
     @Override

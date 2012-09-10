@@ -237,12 +237,13 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             checkVmIsDown(),
                             true, true, disksList);
         }
-
-        if (!result) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
-        }
         return result;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
     }
 
     /**
