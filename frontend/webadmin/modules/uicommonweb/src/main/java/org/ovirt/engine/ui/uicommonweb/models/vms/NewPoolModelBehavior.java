@@ -44,7 +44,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         if (getModel().getName().getIsValid()) {
             getModel().getName().ValidateEntity(new IValidation[] { new NewPoolNameLengthValidation(
                     (String) getModel().getName().getEntity(),
-                    Integer.parseInt(((String) getModel().getNumOfDesktops().getEntity())),
+                    Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),
                     (VmOsType) getModel().getOSType().getSelectedItem()
                     ) });
 

@@ -116,7 +116,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             getModel().getNumOfDesktops().ValidateEntity(new IValidation[] { new ExistingPoolNameLengthValidation(
                     (String) getModel().getName().getEntity(),
                     ((Integer) getModel().getAssignedVms().getEntity()) +
-                    Integer.parseInt(((String) getModel().getNumOfDesktops().getEntity())),
+                    Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),
                     (VmOsType) getModel().getOSType().getSelectedItem()
                     ) }
                     );
