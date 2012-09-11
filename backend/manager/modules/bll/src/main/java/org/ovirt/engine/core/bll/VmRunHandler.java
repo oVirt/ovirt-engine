@@ -2,9 +2,13 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -12,6 +16,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -35,11 +40,14 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 /** A utility class for verifying running a vm*/
 public class VmRunHandler {
     private static final VmRunHandler instance = new VmRunHandler();
+    private static final Log log = LogFactory.getLog(VmHandler.class);
 
     public static VmRunHandler getInstance() {
         return instance;
@@ -149,6 +157,11 @@ public class VmRunHandler {
                                 message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA.toString());
                             }
 
+                            if (retValue && isStatelessVm && !hasSpaceForSnapthosts(vm)) {
+                                retValue = false;
+                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.name());
+                            }
+
                             retValue = retValue == false ? retValue : vdsSelector.CanFindVdsToRunOn(message, false);
 
                             /**
@@ -167,6 +180,42 @@ public class VmRunHandler {
             }
         }
         return retValue;
+    }
+
+    /**
+     * check that we can create snapshots for all disks
+     *
+     * @param vm
+     * @return true if all storage domains have enough space to create snapshots for this VM plugged disks
+     */
+    public boolean hasSpaceForSnapthosts(VM vm) {
+        Integer minSnapshotSize = Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB);
+        for (Entry<storage_domains, Integer> e : mapStorageDomainsToNumOfDisks(vm).entrySet()) {
+            if (!StorageDomainSpaceChecker.hasSpaceForRequest(e.getKey(),
+                    minSnapshotSize * e.getValue())) {
+                log.error("not enough space to create snapshot on domain " + e.getKey().getId());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * map the VM number of pluggable and snapable disks from their domain.
+     *
+     * @param vm
+     * @return
+     */
+    public Map<storage_domains, Integer> mapStorageDomainsToNumOfDisks(VM vm) {
+        Map<storage_domains, Integer> map = new HashMap<storage_domains, Integer>();
+        for (Disk disk : getPluggedDisks(vm)) {
+            if (disk.isAllowSnapshot()) {
+                for (storage_domains domain : getStorageDomainDAO().getAllStorageDomainsByImageId(((DiskImage) disk).getImageId())) {
+                    map.put(domain, map.containsKey(domain) ? Integer.valueOf(map.get(domain) + 1) : Integer.valueOf(1));
+                }
+            }
+        }
+        return map;
     }
 
     /**
