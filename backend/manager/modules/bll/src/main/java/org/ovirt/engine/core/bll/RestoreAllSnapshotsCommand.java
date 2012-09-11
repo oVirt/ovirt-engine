@@ -77,7 +77,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
 
         if (!getImagesList().isEmpty()) {
             lockVmWithCompensationIfNeeded();

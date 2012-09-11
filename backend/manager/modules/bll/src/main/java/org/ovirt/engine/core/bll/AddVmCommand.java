@@ -475,7 +475,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         ArrayList<String> errorMessages = new ArrayList<String>();
         if (canAddVm(errorMessages, destStorages.values())) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

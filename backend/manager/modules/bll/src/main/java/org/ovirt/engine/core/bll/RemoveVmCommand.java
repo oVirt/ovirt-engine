@@ -56,7 +56,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         if (getVm().getstatus() != VMStatus.ImageLocked) {
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
         }
@@ -224,7 +224,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         try {
             if (acquireLock()) {
                 // Ensures the lock on the VM guid can be acquired. This prevents a race
-                // between ExecuteVmCommand (for example, of a first multiple VMs removal that includes VM A,
+                // between executeVmCommand (for example, of a first multiple VMs removal that includes VM A,
                 // and a second multiple VMs removal that include the same VM).
                 setVm(DbFacade.getInstance().getVmDAO().get(getVmId()));
                 if (getVm() != null) {

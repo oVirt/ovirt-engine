@@ -79,14 +79,14 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         getParameters().setEntityId(getVm().getId());
         if (getVm().getstatus() == VMStatus.Suspended
                 || !StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())) {
             setSuspendedVm(true);
             setSucceeded(StopSuspendedVm());
         } else {
-            super.ExecuteVmCommand();
+            super.executeVmCommand();
         }
         removeStatelessVmUnmanagedDevices();
     }

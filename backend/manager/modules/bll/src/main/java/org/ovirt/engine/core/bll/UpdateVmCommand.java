@@ -68,7 +68,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         VmStatic oldVmStatic = getVm().getStaticData();
         VmStatic newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setcreation_date(oldVmStatic.getcreation_date());

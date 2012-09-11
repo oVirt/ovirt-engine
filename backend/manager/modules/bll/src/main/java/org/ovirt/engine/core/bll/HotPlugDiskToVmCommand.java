@@ -69,7 +69,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         if (getVm().getstatus() == VMStatus.Up) {
             performPlugCommnad(getPlugAction(), disk, oldVmDevice);
         }

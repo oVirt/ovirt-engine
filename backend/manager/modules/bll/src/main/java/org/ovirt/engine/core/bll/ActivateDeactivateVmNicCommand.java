@@ -68,7 +68,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getstatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),

@@ -280,7 +280,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             createDiskBasedOnImage();

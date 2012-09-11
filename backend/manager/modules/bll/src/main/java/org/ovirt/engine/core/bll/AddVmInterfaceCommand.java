@@ -52,7 +52,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         AddCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
         this.setVmName(DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId()).getvm_name());

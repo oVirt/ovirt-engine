@@ -69,7 +69,7 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         if (diskShouldBeUnPlugged()) {
             performPlugCommnad(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
         }

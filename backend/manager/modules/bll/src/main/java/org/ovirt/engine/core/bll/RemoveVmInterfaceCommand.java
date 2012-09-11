@@ -31,7 +31,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         this.setVmName(DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
 
         // return mac to pool

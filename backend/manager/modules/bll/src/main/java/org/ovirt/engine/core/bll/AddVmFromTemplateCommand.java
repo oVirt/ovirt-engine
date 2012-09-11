@@ -33,8 +33,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
-    protected void ExecuteVmCommand() {
-        super.ExecuteVmCommand();
+    protected void executeVmCommand() {
+        super.executeVmCommand();
         // override template id to blank
         getParameters().OriginalTemplate = getVm().getvmt_guid();
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().OriginalTemplate, getCompensationContext());

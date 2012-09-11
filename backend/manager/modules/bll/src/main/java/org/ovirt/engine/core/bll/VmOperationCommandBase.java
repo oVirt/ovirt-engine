@@ -29,7 +29,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         if (GetRunningOnVds()) {
             Perform();
             return;

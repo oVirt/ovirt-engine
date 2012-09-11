@@ -83,7 +83,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         Guid newActiveSnapshotId = Guid.NewGuid();
         Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         getParameters().setSnapshotType(determineSnapshotType());
@@ -124,7 +124,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
                 } else {
                     throw new VdcBLLException(vdcReturnValue.getFault().getError(),
-                            "CreateAllSnapshotsFromVmCommand::ExecuteVmCommand: Failed to create snapshot!");
+                            "CreateAllSnapshotsFromVmCommand::executeVmCommand: Failed to create snapshot!");
                 }
             }
 

@@ -32,7 +32,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         Set<Guid> mImagesToBeRemoved = new HashSet<Guid>();
         List<DiskImage> images = getParameters().Images;
         if (images == null) {

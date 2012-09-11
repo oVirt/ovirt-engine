@@ -17,7 +17,7 @@ public class SetDedicatedVmCommand<T extends SetDedicatedVmParameters> extends V
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         List<VM> vms = getVmDAO().getAllForDedicatedPowerClientByVds(getVdsId());
         if (vms != null && vms.size() != 0) {
             vms.get(0).setdedicated_vm_for_vds(null);

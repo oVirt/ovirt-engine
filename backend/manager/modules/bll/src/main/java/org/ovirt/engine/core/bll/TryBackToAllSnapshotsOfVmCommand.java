@@ -111,7 +111,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     @Override
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
 
         final Guid newActiveSnapshotId = Guid.NewGuid();
         Guid previousActiveSnapshotId = TransactionSupport.executeInNewTransaction(new TransactionMethod<Guid>() {

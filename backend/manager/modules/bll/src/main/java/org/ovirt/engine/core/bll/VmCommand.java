@@ -75,10 +75,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Override
     protected void executeCommand() {
-        ExecuteVmCommand();
+        executeVmCommand();
     }
 
-    protected void ExecuteVmCommand() {
+    protected void executeVmCommand() {
         // The default action is no action.
         // Other command may override this behavior.
     }

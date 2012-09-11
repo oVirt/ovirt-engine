@@ -107,7 +107,7 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
                 log.infoFormat("VdcBll.PowerClientMigrateOnConnectCheck - Migrating the VM to the power client");
                 setVdsDestinationId(getPowerClient().getId());
                 _destinationVds = getPowerClient();
-                super.ExecuteVmCommand();
+                super.executeVmCommand();
                 return;
             }
         }
@@ -118,7 +118,7 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
                 .<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient)) {
             log.infoFormat("VdcBll.PowerClientMigrateOnConnectCheck - Client is not a power client, so we got here to migrate from the power client the VM is currently running on");
             log.infoFormat("VdcBll.PowerClientMigrateOnConnectCheck - Migrating the VM to a VDS");
-            super.ExecuteVmCommand();
+            super.executeVmCommand();
         }
 
     }
