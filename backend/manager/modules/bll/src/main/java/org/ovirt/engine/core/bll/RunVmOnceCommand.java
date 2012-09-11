@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
@@ -10,9 +13,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> {
     public RunVmOnceCommand(T runVmParams) {
@@ -66,7 +66,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             return false;
         }
         //Only if this is run-stateless mode we calculate storage quota.
-        if (!getParameters().getRunAsStateless()) {
+        if (!Boolean.TRUE.equals(getParameters().getRunAsStateless())) {
             return quotaAcc;
         }
 
