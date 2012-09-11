@@ -51,6 +51,8 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     private ArrayList<Guid> taskIds;
 
+    private int executionIndex = 0;
+
     /**
      * A cross system identifier of the executed action
      */
@@ -232,6 +234,22 @@ public class VdcActionParametersBase implements java.io.Serializable {
         this.correlationId = correlationId;
     }
 
+    public int getExecutionIndex() {
+        return executionIndex;
+    }
+
+    public void setExecutionIndex(int executionIndex) {
+        this.executionIndex = executionIndex;
+    }
+
+    public void incrementExecutionIndex() {
+        executionIndex++;
+    }
+
+    public void decrementExecutionIndex() {
+        executionIndex--;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -242,11 +260,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
         result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
         result = prime * result + ((httpSessionId == null) ? 0 : httpSessionId.hashCode());
         result = prime * result + (multipleAction ? 1231 : 1237);
-        result =
-                prime * result + ((parametersCurrentUser == null) ? 0 : parametersCurrentUser.hashCode());
+        result = prime * result + ((parametersCurrentUser == null) ? 0 : parametersCurrentUser.hashCode());
         result = prime * result + ((parentCommand == null) ? 0 : parentCommand.hashCode());
         result = prime * result + ((taskIds == null) ? 0 : taskIds.hashCode());
         result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
+        result = prime * result + executionIndex;
         return result;
     }
 
@@ -296,6 +314,8 @@ public class VdcActionParametersBase implements java.io.Serializable {
             if (other.correlationId != null)
                 return false;
         } else if (!correlationId.equals(other.correlationId))
+            return false;
+        if (executionIndex != other.executionIndex)
             return false;
         return true;
     }

@@ -121,8 +121,9 @@ public class EntityAsyncTask extends SPMAsyncTask {
         }
 
         try {
-            log.infoFormat("EntityAsyncTask::EndCommandAction [within thread]context: Attempting to EndAction '{0}'",
-                    entityInfo.getActionType());
+            log.infoFormat("EntityAsyncTask::EndCommandAction [within thread] context: Attempting to EndAction '{0}', executionIndex: '{1}'",
+                    entityInfo.getActionType(),
+                    dbAsyncTask.getaction_parameters().getExecutionIndex());
 
             try {
                 /**

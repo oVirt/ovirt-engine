@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
+import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -116,6 +117,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected Map<String, String> jobProperties;
 
+    /** Handlers for performing the logical parts of the command */
+    private List<SPMAsyncTaskHandler> taskHandlers;
+
     protected CommandActionState getActionState() {
         return _actionState;
     }
@@ -140,6 +144,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
 
         commandId = commandIdFromParameters;
+        taskHandlers = initTaskHandlers();
     }
 
     /**
@@ -149,6 +154,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected CommandBase(Guid commandId) {
         this.commandId = commandId;
+    }
+
+    protected List<SPMAsyncTaskHandler> initTaskHandlers() {
+        return null;
     }
 
     /**
@@ -279,8 +288,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
 
             if (actionAllowed) {
-                getReturnValue().setCanDoAction(true);
-                getReturnValue().setIsSyncronious(true);
                 execute();
             } else {
                 getReturnValue().setCanDoAction(false);
@@ -313,8 +320,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * </ol>
      * <li>Remove all the snapshots for this command, since we handled them.</li> </ol>
      */
-    @SuppressWarnings({ "unchecked", "synthetic-access" })
     protected void compensate() {
+        if (hasTaskHandlers()) {
+            getCurrentTaskHandler().compensate();
+            revertPreviousHandlers();
+        } else {
+            internalCompensate();
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "synthetic-access" })
+    protected final void internalCompensate() {
         try {
             if (this instanceof Quotable) {
                 ((Quotable) this).rollbackQuota();
@@ -485,7 +501,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void internalEndSuccessfully() {
         log.infoFormat("Ending command successfully: {0}", getClass().getName());
-        endSuccessfully();
+        if (hasTaskHandlers()) {
+            getCurrentTaskHandler().endSuccessfully();
+            getParameters().incrementExecutionIndex();
+            if (getExecutionIndex() < getTaskHandlers().size()) {
+                _actionState = CommandActionState.EXECUTE;
+                execute();
+            }
+        } else {
+            endSuccessfully();
+        }
     }
 
     protected void endSuccessfully() {
@@ -494,7 +519,30 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void internalEndWithFailure() {
         log.errorFormat("Ending command with failure: {0}", getClass().getName());
-        endWithFailure();
+        if (hasTaskHandlers()) {
+            getCurrentTaskHandler().endWithFailure();
+            revertPreviousHandlers();
+        } else {
+            endWithFailure();
+        }
+    }
+
+    private void revertPreviousHandlers() {
+        getParameters().decrementExecutionIndex();
+        if (getExecutionIndex() >= 0) {
+            log.errorFormat("Reverting task handler: {0}", getCurrentTaskHandler().getClass().getName());
+            getParameters().setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
+            getCurrentTaskHandler().compensate();
+
+            if (!hasRevertTask()) {
+                // If there is no task to take us onwards, just run the previous handler's revert
+                revertPreviousHandlers();
+            }
+        }
+    }
+
+    private boolean hasRevertTask() {
+        return getCurrentTaskHandler().getRevertTaskType() != null;
     }
 
     protected void endWithFailure() {
@@ -821,7 +869,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         boolean exceptionOccurred = true;
         try {
             logRunningCommand();
-            executeCommand();
+            if (hasTaskHandlers()) {
+                getCurrentTaskHandler().execute();
+            } else {
+                executeCommand();
+            }
             functionReturnValue = getSucceeded();
             exceptionOccurred = false;
         } catch (RepositoryException e) {
@@ -861,8 +913,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private void logRunningCommand() {
         // Set start of log for running command.
         StringBuilder logInfo = new StringBuilder("Running command: ")
-                .append(getClass().getSimpleName()).append(" internal: ")
-                .append(isInternalExecution()).append(".");
+                .append(getClass().getSimpleName());
+
+        if (hasTaskHandlers()) {
+            logInfo.append("Task handler: ").append(getCurrentTaskHandler().getClass().getSimpleName());
+        }
+
+        logInfo.append(" internal: ").append(isInternalExecution()).append(".");
 
         // Get permissions of object ,to get object id.
         List<PermissionSubject> permissionSubjectList = getPermissionCheckSubjects();
@@ -914,7 +971,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    private void execute() {
+    protected final void execute() {
+        getReturnValue().setCanDoAction(true);
+        getReturnValue().setIsSyncronious(true);
+
         ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
 
         try {
@@ -1117,7 +1177,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         getCommandId(),asyncTaskCreationInfo.getStoragePoolID(),
                         asyncTaskCreationInfo.getTaskType()));
         p.setEntityId(getParameters().getEntityId());
-        return AsyncTaskManager.getInstance().CreateTask(getTaskType(), p);
+        return AsyncTaskManager.getInstance().CreateTask(internalGetTaskType(), p);
+    }
+
+    /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
+    private AsyncTaskType internalGetTaskType() {
+        if (hasTaskHandlers()) {
+            if (getParameters().getExecutionReason() == CommandExecutionReason.REGULAR_FLOW) {
+                return getCurrentTaskHandler().getTaskType();
+            }
+            return getCurrentTaskHandler().getRevertTaskType();
+        }
+        return getTaskType();
     }
 
     /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
@@ -1489,4 +1560,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return AsyncTaskManager.getInstance();
     }
 
+    protected List<SPMAsyncTaskHandler> getTaskHandlers() {
+        return taskHandlers;
+    }
+
+    protected boolean hasTaskHandlers() {
+        return getTaskHandlers() != null;
+    }
+
+    protected SPMAsyncTaskHandler getCurrentTaskHandler() {
+        return getTaskHandlers().get(getExecutionIndex());
+    }
+
+    private int getExecutionIndex() {
+        return getParameters().getExecutionIndex();
+    }
 }
