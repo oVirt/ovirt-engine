@@ -1,12 +1,34 @@
 #import basedefs
 
-# Redirect all requests to the application server using the AJP protocol
-# and making sure that the connections will be recovered in a short time
-# interval (5 seconds at the moment):
-ProxyPass / ajp://localhost:${basedefs.JBOSS_AJP_PORT}/ retry=5
+#raw
+#
+# Redirect all requests to the application server using the AJP
+# protocol.
+#
+# The following parameters are recommended:
+#
+# retry=5
+#
+# This is needed to make sure that connections to the application server
+# are recovered in a short time interval (5 seconds at the moment)
+# otherwise when the application server is restarted the web server will
+# refuse to connect during 60 seconds.
+#
+# timeout=600
+#
+# This is needed to make sure that long RESTAPI requests have time to
+# finish before the web server aborts the request as the default timeout
+# (controlled by the Timeout directive in httpd.conf) is 60 seconds.
+#
+#end raw
+ProxyPass / ajp://localhost:${basedefs.JBOSS_AJP_PORT}/ retry=5 timeout=600
 
+#raw
+#
 # Remove the Expect headers from API requests (this is needed to fix a
 # problem with some API clients):
+#
+#end raw
 <IfModule mod_headers.c>
   RequestHeader unset Expect early
 </IfModule>
