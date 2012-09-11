@@ -864,9 +864,6 @@ public class VdsBrokerObjectsBuilder {
 
         addHostNetworksAndUpdateInterfaces(vds, xmlRpcStruct, currVlans, networkVlans);
 
-        // Check vlans are line with Clusters vlans
-        checkClusterVlans(vds, networkVlans);
-
         // set bonding options
         setBondingOptions(vds, oldInterfaces);
 
@@ -1205,31 +1202,6 @@ public class VdsBrokerObjectsBuilder {
                         newIface.setBondOptions(iface.getBondOptions());
                         break;
                     }
-                }
-            }
-        }
-    }
-
-    private static void checkClusterVlans(VDS vds, Map<String, Integer> hostVlans) {
-        List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDAO()
-                .getAllForCluster(vds.getvds_group_id());
-        for (Network net : clusterNetworks) {
-            if (net.getvlan_id() != null) {
-                if (hostVlans.containsKey(net.getname())) {
-                    if (!hostVlans.get(net.getname()).equals(net.getvlan_id())) {
-                        // error wrong vlan
-                        AuditLogableBase logable = new AuditLogableBase();
-                        logable.setVdsId(vds.getId());
-                        logable.AddCustomValue("VlanIdHost", hostVlans.get(net.getname()).toString());
-                        logable.AddCustomValue("VlanIdCluster", net.getvlan_id().toString());
-                        AuditLogDirector.log(logable, AuditLogType.NETWORK_HOST_USING_WRONG_CLUSER_VLAN);
-                    }
-                } else {
-                    // error no vlan
-                    AuditLogableBase logable = new AuditLogableBase();
-                    logable.setVdsId(vds.getId());
-                    logable.AddCustomValue("VlanIdCluster", net.getvlan_id().toString());
-                    AuditLogDirector.log(logable, AuditLogType.NETWORK_HOST_MISSING_CLUSER_VLAN);
                 }
             }
         }
