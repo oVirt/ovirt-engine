@@ -2194,4 +2194,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("There is already a Template(s) with the same name")
     String sameTemplateNameExists();
 
+    @DefaultStringValue("[No jobs available]")
+    String emptyJobMessage();
 }
