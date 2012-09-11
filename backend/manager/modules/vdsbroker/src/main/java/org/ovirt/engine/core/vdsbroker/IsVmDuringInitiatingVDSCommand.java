@@ -13,9 +13,4 @@ extends VDSCommandBase<P> {
         getVDSReturnValue().setReturnValue(ResourceManager.getInstance()
                 .IsVmDuringInitiating(getParameters().getVmId()));
     }
-
-    @Override
-    protected String getAdditionalInformation() {
-        return "";
-    }
 }

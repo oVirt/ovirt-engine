@@ -34,6 +34,15 @@ public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBas
     }
 
     @Override
+    protected String getAdditionalInformation() {
+        if (getVds() != null) {
+            return String.format("HostName = %1$s", getVds().getvds_name());
+        } else {
+            return super.getAdditionalInformation();
+        }
+    }
+
+    @Override
     protected void ExecuteVDSCommand() {
         if (_vdsManager != null) {
             synchronized (_vdsManager.getLockObj()) {

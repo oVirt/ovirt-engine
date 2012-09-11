@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -46,9 +47,9 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
 
     @Override
     public String toString() {
-        String AddInfo = getAdditionalInformation();
+        String addInfo = getAdditionalInformation();
         return String.format("%s(%s %s)", super.toString(),
-                (!AddInfo.isEmpty() ? AddInfo + "," : ""),
+                (!addInfo.isEmpty() ? addInfo + "," : StringUtils.EMPTY),
                 (getParameters() != null ? getParameters().toString() : "null"));
     }
 
@@ -115,7 +116,7 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     }
 
     protected String getAdditionalInformation() {
-        return "";
+        return StringUtils.EMPTY;
     }
 
     protected abstract void ExecuteVDSCommand();

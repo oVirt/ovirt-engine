@@ -18,6 +18,6 @@ public class VdsIdVDSCommandParametersBase extends VDSParametersBase {
 
     @Override
     public String toString() {
-        return String.format("vdsId = %s", getVdsId());
+        return String.format("HostId = %s", getVdsId());
     }
 }

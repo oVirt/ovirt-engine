@@ -40,9 +40,4 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
         }
         DbFacade.getInstance().getVmDynamicDAO().update(vmDynamic);
     }
-
-    @Override
-    protected String getAdditionalInformation() {
-        return "";
-    }
 }
