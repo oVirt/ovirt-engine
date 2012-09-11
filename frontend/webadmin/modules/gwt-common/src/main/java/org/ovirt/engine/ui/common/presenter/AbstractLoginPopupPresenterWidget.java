@@ -86,6 +86,7 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
         loginModel.getLoginFailedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                lockInteractionManager.hideLoadingIndicator();
                 getView().setErrorMessage(loginModel.getMessage());
                 logger.warning("Login failed for user [" + loginModel.getUserName().getEntity() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             }
