@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -91,7 +92,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     }
 
     private void removeStatelessVmUnmanagedDevices() {
-        if (getSucceeded() && getVm().getis_stateless()) {
+        if (getSucceeded() && (getVm().getis_stateless() ||  isRunOnce())) {
             // remove all unmanaged devices of a stateless VM
             List<VmDevice> vmDevices =
                 DbFacade.getInstance()
@@ -104,6 +105,23 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
                 }
             }
         }
+    }
+
+    /*
+     * This method checks if we are stopping a VM that was started by run-once
+     * In such case we will may have 2 devices, one managed and one unmanaged for CD or Floppy
+     * This is not supported currently by libvirt that allows only one CD/Floppy
+     * This code should be removed if libvirt will support in future multiple CD/Floppy
+     */
+    private boolean isRunOnce() {
+        List<VmDevice> cdList =
+            DbFacade.getInstance()
+                    .getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(getVm().getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName());
+        List<VmDevice> floppyList =
+            DbFacade.getInstance()
+                    .getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(getVm().getId(), VmDeviceType.DISK.getName(), VmDeviceType.FLOPPY.getName());
+
+        return (cdList.size() > 1 || floppyList.size() > 1);
     }
 
     /**
