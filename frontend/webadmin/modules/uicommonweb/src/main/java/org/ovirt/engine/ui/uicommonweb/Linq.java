@@ -924,10 +924,9 @@ public final class Linq
 
         if (lists != null && !lists.isEmpty()) {
             result.addAll(lists.get(0));
-        }
-
-        for (ArrayList<T> list : lists) {
-            result.retainAll(list);
+            for (ArrayList<T> list : lists) {
+                result.retainAll(list);
+            }
         }
 
         return result;
