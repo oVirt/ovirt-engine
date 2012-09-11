@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -178,6 +179,7 @@ public class VdsSelector {
          */
         RpmVersion vdsVersion = null;
         boolean noVDSs = true;
+        StringBuilder sb = new StringBuilder();
         for (VDS curVds : vdss) {
             if (isMigrate && getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getId())) {
                 continue;
@@ -185,7 +187,7 @@ public class VdsSelector {
 
             noVDSs = false;
 
-            ValidationResult result = validateHostIsReadyToRun(curVds);
+            ValidationResult result = validateHostIsReadyToRun(curVds, sb);
             if (result.isValid()) {
                 return true;
             } else {
@@ -218,12 +220,16 @@ public class VdsSelector {
 
             }
         }
+        log.info(sb.toString());
         return false;
     }
 
-    private ValidationResult validateHostIsReadyToRun(final VDS vds) {
-        if ((!vds.getvds_group_id().equals(getVm().getvds_group_id())) || (vds.getstatus() != VDSStatus.Up)
-                || isVdsFailedToRunVm(vds.getId())) {
+    private ValidationResult validateHostIsReadyToRun(final VDS vds, StringBuilder sb) {
+        // buffer the mismatches as we go
+        sb.append(" VDS ").append(vds.getvds_name()).append(" ").append(vds.getId()).append(" ");
+
+        if ((!vds.getvds_group_id().equals(getVm().getvds_group_id())) || (vds.getstatus() != VDSStatus.Up)) {
+            sb.append("is not in up status or belongs to the VM's cluster");
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER);
         }
         // If Vm in Paused mode - no additional memory allocation needed
@@ -231,16 +237,32 @@ public class VdsSelector {
             // not enough memory
             // In case we are using this function in migration we make sure we
             // don't allocate the same VDS
+            sb.append("has insufficient memory to run the VM");
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY);
+        }
+        // In case we are using this function in migration we make sure we
+            // don't allocate the same VDS
+        else if ((getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(vds.getId()))) {
+            sb.append("is the same host the VM is currently running on");
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
+        }
+        // check capacity to run power clients
+        else if (!RunVmCommandBase.hasCapacityToRunVM(vds)) {
+            sb.append("has insuffient capacity to run power client");
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS);
         }
         // if vm has more vCpus then vds physical cpus - dont allow to run
         else if (vds.getcpu_cores() != null && getVm().getnum_of_cpus() > vds.getcpu_cores()) {
+            sb.append("has less cores(").append(vds.getcpu_cores()).append(") than ").append(getVm().getnum_of_cpus());
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS);
         }
         else if (!IsVMSwapValueLegal(vds)) {
+            sb.append("swap value is illegal");
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP);
         }
         else if (!areRequiredNetworksAvailable(vds.getId())) {
+            sb.append("is missing networks required by VM nics ").append(Entities.interfacesByNetworkName(getVmNICs())
+                    .keySet());
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS);
         }
         return ValidationResult.VALID;
@@ -289,42 +311,23 @@ public class VdsSelector {
     }
 
     private Guid getVdsToRunOn(Iterable<VDS> vdss) {
+        StringBuilder sb = new StringBuilder();
         final List<VDS> readyToRun = new ArrayList<VDS>();
         for (VDS curVds : vdss) {
-            // vds must be in the correct group
-            if (!curVds.getvds_group_id().equals(getVm().getvds_group_id()))
-                continue;
-
-            // vds must be up to run a vm
-            if (curVds.getstatus() != VDSStatus.Up)
-                continue;
-
-            // apply limit on vds memory over commit.
-            if (!RunVmCommandBase.hasMemoryToRunVM(curVds, getVm()))
-                continue;
-
-            // In case we are using this function in migration we make sure we
-            // don't allocate the same VDS
-            if ((getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getId()))
-                    || isVdsFailedToRunVm(curVds.getId()) ||
-                    // RunVmCommandBase.isVdsVersionOld(curVds, getVm()) ||
-                    !RunVmCommandBase.hasCapacityToRunVM(curVds))
-                continue;
-
-            // vds must have at least cores as the vm
-            if (curVds.getcpu_cores() != null && getVm().getnum_of_cpus() > curVds.getcpu_cores()) {
-                continue;
+            if (validateHostIsReadyToRun(curVds,sb) == ValidationResult.VALID) {
+                readyToRun.add(curVds);
             }
-            if (!IsVMSwapValueLegal(curVds))
-                continue;
-
-            if(!areRequiredNetworksAvailable(curVds.getId()))
-                continue;
-
-            readyToRun.add(curVds);
         }
 
-        return readyToRun.isEmpty() ? Guid.Empty : getBestVdsToRun(readyToRun);
+        if (readyToRun.isEmpty()) {
+            log.info(sb.toString());
+            return Guid.Empty;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug(sb.toString());
+            }
+            return getBestVdsToRun(readyToRun);
+        }
     }
 
     /**
