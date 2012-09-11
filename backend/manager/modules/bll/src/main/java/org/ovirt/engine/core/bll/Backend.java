@@ -127,16 +127,17 @@ public class Backend implements BackendInternal {
         while (!dbUp && System.currentTimeMillis() < expectedTimeout) {
             try {
                 dbUp = DbFacade.getInstance().CheckDBConnection();
+            } catch (RuntimeException ex) {
+                log.error("Error in getting DB connection. The database is inaccessible. " +
+                        "Original exception is: " + ExceptionUtils.getMessage(ex));
                 try {
                     Thread.sleep(waitBetweenInterval);
                 } catch (InterruptedException e) {
                     log.warn("Failed to wait between connection polling attempts. " +
                             "Original exception is: " + ExceptionUtils.getMessage(e));
                 }
-            } catch (RuntimeException ex) {
-                log.error("Error in getting DB connection. The database is inaccessible. " +
-                        "Original exception is: " + ExceptionUtils.getMessage(ex));
             }
+
         }
         if (!dbUp) {
             throw new IllegalStateException("Could not obtain connection to the database." +

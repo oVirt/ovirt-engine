@@ -73,7 +73,7 @@ public class DbFacadeLocator {
         final String ON_START_CONNECTION_TIMEOUT = "OnStartConnectionTimeout";
         final String CONNECTION_CHECK_INTERVAL = "ConnectionCheckInterval";
         final String DEFAULT_TIMEOUT_VALUE = "300000";
-        final String DEFAULT_INTERVAL_VALUE = "1000";
+        final String DEFAULT_INTERVAL_VALUE = "5000";
         InputStream inputStream = null;
         try {
             String onStartConnectionTimeout = null;
