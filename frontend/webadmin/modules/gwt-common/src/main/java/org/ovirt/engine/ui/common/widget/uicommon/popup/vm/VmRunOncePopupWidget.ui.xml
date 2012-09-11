@@ -74,35 +74,42 @@
 		}
 
 		.bootSequenceButton {
-			height: 13px;
-			width: 13px;
-			background: white;
-			border: 0px;
+			font-size: 10px;
+			font-weight: bold;
+			text-align: center;
+			width: 35px;
+			position: relative;
+			left: 5px;
 		}
 
 		.bootSequenceButtonUp {
-
+			padding-top: 2px;
 		}
 
 		.bootSequenceButtonDown {
 			position: relative;
-			top: 10px;
+			top: -5px;
 		}
 
 		.bootSequenceButtonPanel {
 			position: absolute;
-			background: white;
+			background: #e5ecff;
 			right: 0px;
 			bottom: 0px;
-			top: 16px;
-			height: 60px;
-			width: 25px
+			top: 15px;
+			height: 65px;
+			width: 75px
 		}
 
 		.panelStyle {
 			background: #e5ecff;
 			border-top: 2px solid white;
 			width: 100%;
+		}
+
+<!-- 		DisclosurePanel header section -->
+		.panelStyle a[class=header] {
+			font-weight: bold;
 		}
 	</ui:style>
 
@@ -127,12 +134,10 @@
 					<g:VerticalPanel addStyleNames="{style.bootSequenceButtonPanel}">
 						<g:PushButton ui:field="bootSequenceUpButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonUp}"
 							enabled="false">
-							<g:upFace image='{resources.bootSequenceListBoxButtonUp}' />
 						</g:PushButton>
 
 						<g:PushButton ui:field="bootSequenceDownButton" addStyleNames="{style.bootSequenceButton} {style.bootSequenceButtonDown}"
 							enabled="false">
-							<g:upFace image='{resources.bootSequenceListBoxButtonDown}' />
 						</g:PushButton>
 					</g:VerticalPanel>
 				</g:AbsolutePanel>

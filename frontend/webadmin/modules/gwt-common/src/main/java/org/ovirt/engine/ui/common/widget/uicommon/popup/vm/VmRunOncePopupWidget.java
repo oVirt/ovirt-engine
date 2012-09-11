@@ -196,6 +196,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     private CommonApplicationResources resources;
 
+    private final CommonApplicationConstants constants;
+
     @UiFactory
     protected DisclosurePanel createPanel(String label)
     {
@@ -203,6 +205,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     public VmRunOncePopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources) {
+        this.constants = constants;
         this.resources = resources;
         initCheckBoxEditors();
         initRadioButtonEditors();
@@ -210,14 +213,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initBootSequenceBox();
 
-        localize(constants);
+        localize();
         addStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         Driver.driver.initialize(this);
     }
 
-    void localize(CommonApplicationConstants constants) {
+    void localize() {
         // Boot Options
         runAsStatelessEditor.setLabel(constants.runOncePopupRunAsStatelessLabel());
         runAndPauseEditor.setLabel(constants.runOncePopupRunAndPauseLabel());
@@ -264,13 +267,15 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     void initBootSequenceBox() {
         bootSequenceBox = new ListBox(false);
-        bootSequenceBox.setWidth("100%"); //$NON-NLS-1$
+        bootSequenceBox.setWidth("370px"); //$NON-NLS-1$
         bootSequenceBox.setHeight("60px"); //$NON-NLS-1$
 
         VerticalPanel boxPanel = new VerticalPanel();
         boxPanel.setWidth("100%"); //$NON-NLS-1$
         boxPanel.add(bootSequenceBox);
         bootSequencePanel.add(boxPanel);
+
+        localizeBootSequenceButtons();
     }
 
     void addStyles() {
@@ -369,8 +374,17 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
                 bootSequenceUpButton.setEnabled(bootSequenceModel.getMoveItemUpCommand().getIsExecutionAllowed());
                 bootSequenceDownButton.setEnabled(bootSequenceModel.getMoveItemDownCommand().getIsExecutionAllowed());
+
+                // the setEnabled resets the label for some reason, so need to set it back
+                localizeBootSequenceButtons();
             }
+
         });
+    }
+
+    protected void localizeBootSequenceButtons() {
+        bootSequenceUpButton.setText(constants.bootSequenceUpButtonLabel());
+        bootSequenceDownButton.setText(constants.bootSequenceDownButtonLabel());
     }
 
     private void updateBootSequenceItems() {

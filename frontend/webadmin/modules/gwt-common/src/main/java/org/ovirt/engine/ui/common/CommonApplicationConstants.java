@@ -67,6 +67,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Boot Options")
     String runOncePopupBootOptionsLabel();
 
+    @DefaultStringValue("Up")
+    String bootSequenceUpButtonLabel();
+
+    @DefaultStringValue("Down")
+    String bootSequenceDownButtonLabel();
+
     @DefaultStringValue("Display Protocol")
     String runOncePopupDisplayProtocolLabel();
 
