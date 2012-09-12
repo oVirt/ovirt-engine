@@ -217,8 +217,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     // At this point we should work with the VM that was read from
                     // the OVF
                     setVm(vm);
+                    // Iterate over all the VM images (active image and snapshots)
                     for (DiskImage image : getVm().getImages()) {
                         if (getParameters().getCopyCollapse()) {
+                            // If copy collapse sent then iterate over the images got from the parameters, until we got
+                            // a match with the image from the VM.
                             for (DiskImage p : imageList) {
                                 // copy the new disk volume format/type if provided,
                                 // only if requested by the user
@@ -229,14 +232,15 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                                     if (p.getvolume_type() != null) {
                                         image.setvolume_type(p.getvolume_type());
                                     }
+                                    // Validate the configuration of the image got from the parameters.
+                                    retVal = validateImageConfig(canDoActionMessages, domainsMap, image);
+                                    break;
                                 }
                             }
+                        } else {
+                            // If no copy collapse sent, validate each image configuration (snapshot or active image).
+                            retVal = validateImageConfig(canDoActionMessages, domainsMap, image);
                         }
-                        retVal =
-                                ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getId()))
-                                        .getStorageStaticData(),
-                                        image,
-                                        canDoActionMessages);
                         if (!retVal) {
                             break;
                         } else {
@@ -263,6 +267,15 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
 
         return retVal;
+    }
+
+    private boolean validateImageConfig(List<String> canDoActionMessages,
+            Map<Guid, storage_domains> domainsMap,
+            DiskImage image) {
+        return ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getId()))
+                        .getStorageStaticData(),
+                        image,
+                        canDoActionMessages);
     }
 
     private boolean canDoAction_afterCloneVm(boolean retVal,
