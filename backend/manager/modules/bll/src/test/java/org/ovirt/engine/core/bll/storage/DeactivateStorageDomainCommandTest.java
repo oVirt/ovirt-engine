@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
@@ -56,6 +57,8 @@ public class DeactivateStorageDomainCommandTest {
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
+    private AsyncTaskDAO asyncTaskDAO;
+    @Mock
     private VDS vds;
     storage_pool_iso_map map = new storage_pool_iso_map();
 
@@ -72,6 +75,7 @@ public class DeactivateStorageDomainCommandTest {
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
         when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
         when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
+        when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDAO);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(new storage_pool());
         when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new storage_domains());

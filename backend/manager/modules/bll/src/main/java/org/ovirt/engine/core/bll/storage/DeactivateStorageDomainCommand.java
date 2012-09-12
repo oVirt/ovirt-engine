@@ -25,6 +25,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -116,6 +118,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
                 return false;
             } else if (getStorageDomain().getstorage_domain_type() != StorageDomainType.ISO
+                    && (getStorageDomain().getstorage_domain_type() == StorageDomainType.ImportExport && !getParameters().getIsInternal())
             && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
                return false;
@@ -227,7 +230,23 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return null;
             }
         });
+        notifyAsyncTasks();
         setSucceeded(true);
+    }
+
+    /**
+     * Send notification to user about tasks still running at the moment when the storage got deactivated.
+     */
+    private void notifyAsyncTasks() {
+        final List<Guid> asyncTasks =
+                getDbFacade().getAsyncTaskDao()
+                .getAsyncTaskIdsByEntity(getParameters().getStorageDomainId());
+
+        if (!asyncTasks.isEmpty()) {
+            AuditLogableBase auditLogableBase = new AuditLogableBase();
+            auditLogableBase.setStorageDomain(getStorageDomain());
+            AuditLogDirector.log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_TASKS_ERROR);
+        }
     }
 
     /**

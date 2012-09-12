@@ -364,6 +364,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_RESET_IRS, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN_ASYNC, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED_ASYNC, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.STORAGE_DOMAIN_TASKS_ERROR, AuditLogSeverity.WARNING);
     }
 
     private static void initQuotaSeverities() {
