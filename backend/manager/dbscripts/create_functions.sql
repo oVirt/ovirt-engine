@@ -453,6 +453,7 @@ $function$
         User = 15,
         Role = 16,
         Quota = 17,
+        GlusterVolume = 18,
         Disk = 19,
         VmInterface = 20
 */
@@ -487,6 +488,8 @@ BEGIN
         result := ( SELECT name FROM roles WHERE id = v_entity_id );
     WHEN v_entity_type = 17 THEN
         result := ( SELECT quota_name FROM quota WHERE id = v_entity_id );
+   WHEN v_entity_type = 18 THEN
+        result := ( SELECT vol_name FROM gluster_volumes WHERE id = v_entity_id );
     WHEN v_entity_type = 19 THEN
         result := ( SELECT disk_alias FROM base_disks WHERE disk_id = v_entity_id );
     WHEN v_entity_type = 20 THEN
