@@ -684,7 +684,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         super.EndActionOnDisks();
         rollbackQuota();
         if (getVm() != null) {

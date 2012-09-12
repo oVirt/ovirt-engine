@@ -221,7 +221,7 @@ VmPoolUserCommandBase<T> {
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
                 getParameters().getImagesParameters().get(0),
                 new CommandContext(getCompensationContext())).getSucceeded());

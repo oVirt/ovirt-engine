@@ -259,7 +259,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         endCommand();
     }
 

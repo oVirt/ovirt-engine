@@ -305,7 +305,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         endCommand();
         rollbackQuota();
     }

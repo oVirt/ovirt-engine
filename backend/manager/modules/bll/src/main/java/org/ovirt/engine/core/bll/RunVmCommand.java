@@ -741,7 +741,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         SetIsVmRunningStateless();
         rollbackQuota();
         if (_isVmRunningStateless) {
@@ -754,7 +754,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         else {
-            super.EndWithFailure();
+            super.endWithFailure();
         }
     }
 

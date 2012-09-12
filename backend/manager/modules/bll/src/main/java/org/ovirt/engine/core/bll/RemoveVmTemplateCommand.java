@@ -242,7 +242,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         rollbackQuota();
         HandleEndAction();
     }

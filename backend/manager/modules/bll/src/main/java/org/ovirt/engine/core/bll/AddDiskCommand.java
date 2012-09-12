@@ -495,8 +495,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     @Override
-    protected void EndWithFailure() {
-        super.EndWithFailure();
+    protected void endWithFailure() {
+        super.endWithFailure();
         rollbackQuota();
     }
 

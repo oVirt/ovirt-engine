@@ -65,7 +65,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         Guid previouslyActiveSnapshotId =
                 getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW, SnapshotStatus.LOCKED);
         getSnapshotDao().remove(previouslyActiveSnapshotId);
@@ -73,7 +73,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
         snapshotsManager.addActiveSnapshot(previouslyActiveSnapshotId, getVm(), getCompensationContext());
 
-        super.EndWithFailure();
+        super.endWithFailure();
     }
 
     protected SnapshotDao getSnapshotDao() {

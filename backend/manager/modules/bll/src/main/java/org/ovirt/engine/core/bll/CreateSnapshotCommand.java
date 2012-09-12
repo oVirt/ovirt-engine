@@ -141,7 +141,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         RevertTasks();
 
         if (getDestinationDiskImage() != null
@@ -163,6 +163,6 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             }
         }
 
-        super.EndWithFailure();
+        super.endWithFailure();
     }
 }

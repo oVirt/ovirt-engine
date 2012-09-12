@@ -424,7 +424,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         RemoveNetwork();
         RemoveImages();
 

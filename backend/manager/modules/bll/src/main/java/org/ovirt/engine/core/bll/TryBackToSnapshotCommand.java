@@ -58,7 +58,7 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         updateOldImageActive(SnapshotType.ACTIVE, true);
 
         // Remove destination, unlock source:

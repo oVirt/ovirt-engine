@@ -159,7 +159,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         if (getMoveOrCopyImageOperation() == ImageOperation.Copy) {
             UnLockImage();
             if (getParameters().getAddImageDomainMapping()) {

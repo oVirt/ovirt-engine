@@ -879,7 +879,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         setVm(null); // Going to try and refresh the VM by re-loading
         // it form DB
         VM vmFromParams = getParameters().getVm();

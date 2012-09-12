@@ -271,7 +271,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         EndMoveOrCopyCommand();
     }
 

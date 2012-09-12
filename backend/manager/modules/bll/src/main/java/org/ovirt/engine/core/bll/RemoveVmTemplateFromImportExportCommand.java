@@ -144,7 +144,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         EndRemoveTemplate();
     }
 

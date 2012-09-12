@@ -326,7 +326,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                     setSucceeded(true);
                 } else {
                     log.errorFormat("hibernation volume of VM '{0}', is not initialized.", getVm().getvm_name());
-                    EndWithFailure();
+                    endWithFailure();
                 }
             }
         }
@@ -339,7 +339,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         if (getVm() != null) {
             RevertTasks();
             if (getVm().getrun_on_vds() != null) {
@@ -358,7 +358,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
             else {
                 log.warnFormat(
-                        "HibernateVmCommand::EndWithFailure: Vm '{0}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
+                        "HibernateVmCommand::endWithFailure: Vm '{0}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
                         getVm().getvm_name());
 
                 getReturnValue().setEndActionTryAgain(false);
@@ -367,7 +367,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
         else {
             setCommandShouldBeLogged(false);
-            log.warn("HibernateVmCommand::EndWithFailure: Vm is null - not performing full EndAction.");
+            log.warn("HibernateVmCommand::endWithFailure: Vm is null - not performing full EndAction.");
             setSucceeded(true);
         }
     }

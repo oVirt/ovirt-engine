@@ -88,7 +88,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         // TODO: FILL! We should determine what to do in case of
         // failure (is everything rolled-backed? rolled-forward?
         // some and some?).

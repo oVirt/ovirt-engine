@@ -490,10 +490,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void InternalEndWithFailure() {
         log.errorFormat("Ending command with failure: {0}", getClass().getName());
-        EndWithFailure();
+        endWithFailure();
     }
 
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         setSucceeded(true);
     }
 

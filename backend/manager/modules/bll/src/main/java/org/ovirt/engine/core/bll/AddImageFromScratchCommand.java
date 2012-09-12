@@ -99,10 +99,10 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         if (getDestinationDiskImage() != null) {
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
         }
-        super.EndWithFailure();
+        super.endWithFailure();
     }
 }

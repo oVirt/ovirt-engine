@@ -454,7 +454,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         EndActionOnAllImageGroups();
         VM vm = getVm();
         VmHandler.UnLockVm(vm);

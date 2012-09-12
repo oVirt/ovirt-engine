@@ -380,7 +380,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         UndoActionOnSourceAndDestination();
 
         setSucceeded(true);

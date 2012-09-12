@@ -276,7 +276,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         EndVmCommand();
     }
 

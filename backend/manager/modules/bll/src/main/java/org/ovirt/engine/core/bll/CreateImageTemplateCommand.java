@@ -110,7 +110,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         UnLockImage();
         setVmTemplate(DbFacade.getInstance().getVmTemplateDAO()
                 .get(getVmTemplateId()));

@@ -122,8 +122,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
-    protected void EndWithFailure() {
-        super.EndWithFailure();
+    protected void endWithFailure() {
+        super.endWithFailure();
         VmTemplateHandler.UnLockVmTemplate(getParameters().OriginalTemplate);
     }
 }

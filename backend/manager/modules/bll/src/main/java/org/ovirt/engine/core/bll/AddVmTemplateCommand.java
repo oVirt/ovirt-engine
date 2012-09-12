@@ -401,7 +401,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     @Override
-    protected void EndWithFailure() {
+    protected void endWithFailure() {
         // We evaluate 'VmTemplate' so it won't be null in the last 'if'
         // statement.
         // (a template without images doesn't exist in the 'vm_template_view').
