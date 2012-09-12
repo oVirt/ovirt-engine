@@ -189,7 +189,7 @@ public class IsoDomainListSyncronizer {
             return null;
         }
         // At any case, if refreshed or not, get Iso list from the cache.
-        repoList = getCachedIsoListByStoragePoolAndDomainId(storagePoolId, storageDomainId);
+        repoList = getCachedIsoListByStoragePoolAndDomainId(storagePoolId, storageDomainId, fileTypeExtension);
 
         // Return list of repository files.
         return repoList;
@@ -374,15 +374,16 @@ public class IsoDomainListSyncronizer {
      *            - The storage domain Id we want to get the file list from.
      * @param IsoStoragePoolId
      *            - The storage pool Id we want to get the file list from.
+     * @param fileTypeExtension
+     *            - The file type extension (ISO  or Floppy).
      * @return List of Iso file fetched from DB, if parameter is invalid returns an empty list.
      */
-    public List<RepoFileMetaData> getCachedIsoListByStoragePoolAndDomainId(Guid isoStoragePoolId, Guid isoStorageDomainId) {
+    public List<RepoFileMetaData> getCachedIsoListByStoragePoolAndDomainId(Guid isoStoragePoolId, Guid isoStorageDomainId, FileTypeExtension fileTypeExtension) {
         List<RepoFileMetaData> fileListMD = new ArrayList<RepoFileMetaData>();
         // Check validation of parameters.
         if (isoStorageDomainId != null && isoStoragePoolId != null && VmRunHandler.getInstance().findActiveISODomain(isoStoragePoolId) != null) {
             // Get all the Iso files of storage and domain ID.
-            fileListMD = repoStorageDom.getRepoListForStorageDomainAndStoragePool(isoStoragePoolId, isoStorageDomainId,
-                    FileTypeExtension.ISO);
+            fileListMD = repoStorageDom.getRepoListForStorageDomainAndStoragePool(isoStoragePoolId, isoStorageDomainId, fileTypeExtension);
         }
         return fileListMD;
     }
