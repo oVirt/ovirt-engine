@@ -202,7 +202,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
     void setAlertCount(int count) {
 
-        String countStr = count + " " + constants.alertsEventFooter(); //$NON-NLS-1$
+        String countStr = constants.alertsEventFooter() + " (" + count + ")"; //$NON-NLS-1$  //$NON-NLS-2$
 
         SafeHtml up = templates.alertEventButton(alertImage, countStr,
                 buttonUpStart, buttonUpStretch, buttonUpEnd, style.alertButtonUpStyle());
