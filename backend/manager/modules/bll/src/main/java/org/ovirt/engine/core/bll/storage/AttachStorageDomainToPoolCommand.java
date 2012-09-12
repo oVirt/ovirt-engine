@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -50,11 +51,15 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                         getParameters().getSessionId());
                 parameters.setIsInternal(true);
                 parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
-                setSucceeded(getBackend().runInternalAction(VdcActionType.AddStoragePoolWithStorages,
-                        parameters,
-                        new CommandContext(getCompensationContext()))
-                        .getSucceeded());
 
+                VdcReturnValueBase returnValue = getBackend().runInternalAction(
+                        VdcActionType.AddStoragePoolWithStorages,
+                        parameters,
+                        new CommandContext(getCompensationContext()));
+                setSucceeded(returnValue.getSucceeded());
+                if (!returnValue.getSucceeded()) {
+                    getReturnValue().setFault(returnValue.getFault());
+                }
             } else {
                 map = getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getParameters().getStoragePoolId()));
