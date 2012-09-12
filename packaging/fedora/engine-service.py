@@ -412,7 +412,6 @@ def startEngine():
 
         # Virtual machine options:
         "-server",
-        "-XX:+UseCompressedOops",
         "-XX:+TieredCompilation",
         "-Xms%s" % engineHeapMin,
         "-Xmx%s" % engineHeapMax,
