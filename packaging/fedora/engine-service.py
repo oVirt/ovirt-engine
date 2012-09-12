@@ -415,7 +415,7 @@ def startEngine():
         "-XX:+UseCompressedOops",
         "-XX:+TieredCompilation",
         "-Xms%s" % engineHeapMin,
-        "-Xms%s" % engineHeapMax,
+        "-Xmx%s" % engineHeapMax,
         "-XX:PermSize=%s" % enginePermMin,
         "-XX:MaxPermSize=%s" % enginePermMax,
         "-Djava.net.preferIPv4Stack=true",
