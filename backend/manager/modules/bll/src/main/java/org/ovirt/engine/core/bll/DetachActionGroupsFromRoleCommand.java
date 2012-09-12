@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -54,7 +54,7 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
         }
 
         // If the role didn't allow viewing children in the first place, removing action groups won't change that
-        roles role = getRole();
+        Role role = getRole();
         if (role.allowsViewingChildren()) {
             boolean shouldAllowViewingChildren = false;
 

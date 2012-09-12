@@ -22,7 +22,7 @@
 //import org.mockito.MockitoAnnotations;
 //import org.ovirt.engine.core.common.businessentities.RoleType;
 //import org.ovirt.engine.core.common.businessentities.permissions;
-//import org.ovirt.engine.core.common.businessentities.roles;
+//import org.ovirt.engine.core.common.businessentities.Role;
 //import org.ovirt.engine.core.common.users.VdcUser;
 //import org.ovirt.engine.core.compat.Guid;
 //import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -63,8 +63,8 @@
 //    // Tests for isAdminUser Method
 //    @Test
 //    public void isAdminUserTrue() throws Exception {
-//        List<roles> roles = new ArrayList<roles>();
-//        roles role = new roles("admin role", adElementId, "admin");
+//        List<Role> roles = new ArrayList<Role>();
+//        Role role = new Role("admin role", adElementId, "admin");
 //        role.setType(RoleType.ADMIN);
 //        roles.add(role);
 //        when(DbFacade.getInstance().getRoleDAO().getAllForUserAndGroups(adElementId, "")).thenReturn(roles);
@@ -76,8 +76,8 @@
 //
 //    @Test
 //    public void isAdminUserFalse() throws Exception {
-//        List<roles> roles = new ArrayList<roles>();
-//        roles role = new roles("user role", adElementId, "user");
+//        List<Role> roles = new ArrayList<Role>();
+//        Role role = new Role("user role", adElementId, "user");
 //        role.setType(RoleType.USER);
 //        roles.add(role);
 //        when(DbFacade.getInstance().getRoleDAO().getAllForUserAndGroups(adElementId, "")).thenReturn(roles);

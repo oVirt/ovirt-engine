@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
@@ -20,7 +20,7 @@ public class RolePresenterWidget extends PresenterWidget<RolePresenterWidget.Vie
 
         void setRoleModelProvider(RoleModelProvider modelProvider);
 
-        SimpleActionTable<roles> getRoleTable();
+        SimpleActionTable<Role> getRoleTable();
 
         void setSubTabVisibility(boolean b);
 

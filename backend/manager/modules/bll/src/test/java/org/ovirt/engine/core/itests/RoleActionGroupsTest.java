@@ -15,14 +15,14 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * Test class for roles and ActionGroups
  *
- * @see {@link ActionGroup} , {@link roles}
+ * @see {@link ActionGroup} , {@link Role}
  *
  */
 public class RoleActionGroupsTest extends AbstractBackendTest {
@@ -34,7 +34,7 @@ public class RoleActionGroupsTest extends AbstractBackendTest {
     public void createRole() {
         runAsSuperAdmin();
         // TODO Auto-generated method stub
-        roles role = new roles("test role", Guid.NewGuid(), "role" + testSequence);
+        Role role = new Role("test role", Guid.NewGuid(), "role" + testSequence);
         role.setType(RoleType.ADMIN);
         ArrayList<ActionGroup> groups = new ArrayList<ActionGroup>();
         groups.add(ActionGroup.CHANGE_VM_CD);

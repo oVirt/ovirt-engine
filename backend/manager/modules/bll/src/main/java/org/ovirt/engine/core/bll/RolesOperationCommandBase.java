@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,7 +25,7 @@ public abstract class RolesOperationCommandBase<T extends RolesOperationsParamet
     }
 
     @Override
-    protected roles getRole() {
+    protected Role getRole() {
         return getParameters().getRole();
     }
 

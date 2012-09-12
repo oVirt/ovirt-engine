@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -50,7 +50,7 @@ public class RoleView extends Composite {
     @UiField
     Label showLabel;
 
-    private SimpleActionTable<roles> table;
+    private SimpleActionTable<Role> table;
     private SimpleActionTable<permissions> permissionTable;
     private SplitLayoutPanel splitLayoutPanel;
 
@@ -145,12 +145,12 @@ public class RoleView extends Composite {
     }
 
     private void initRoleTable(ApplicationConstants constants) {
-        this.table = new SimpleActionTable<roles>(roleModelProvider,
+        this.table = new SimpleActionTable<Role>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        TextColumnWithTooltip<roles> nameColumn = new TextColumnWithTooltip<roles>() {
+        TextColumnWithTooltip<Role> nameColumn = new TextColumnWithTooltip<Role>() {
             @Override
-            public String getValue(roles object) {
+            public String getValue(Role object) {
                 return object.getname();
             }
         };
@@ -161,36 +161,36 @@ public class RoleView extends Composite {
 
         table.addColumn(nameColumn, constants.nameRole(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<roles> descColumn = new TextColumnWithTooltip<roles>() {
+        TextColumnWithTooltip<Role> descColumn = new TextColumnWithTooltip<Role>() {
             @Override
-            public String getValue(roles object) {
+            public String getValue(Role object) {
                 return object.getdescription();
             }
         };
         table.addColumn(descColumn, constants.descriptionRole(), "300px"); //$NON-NLS-1$
 
-        table.addActionButton(new WebAdminButtonDefinition<roles>(constants.newRole()) {
+        table.addActionButton(new WebAdminButtonDefinition<Role>(constants.newRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getNewCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<roles>(constants.editRole()) {
+        table.addActionButton(new WebAdminButtonDefinition<Role>(constants.editRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getEditCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<roles>(constants.copyRole()) {
+        table.addActionButton(new WebAdminButtonDefinition<Role>(constants.copyRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getCloneCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<roles>(constants.removeRole()) {
+        table.addActionButton(new WebAdminButtonDefinition<Role>(constants.removeRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getRemoveCommand();

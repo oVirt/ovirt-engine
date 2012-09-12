@@ -2,15 +2,15 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>RoleDAO</code> defines a type for performing CRUD operations on instances of {@link roles}.
+ * <code>RoleDAO</code> defines a type for performing CRUD operations on instances of {@link Role}.
  *
  *
  */
-public interface RoleDAO extends GenericDao<roles, Guid> {
+public interface RoleDAO extends GenericDao<Role, Guid> {
 
     /**
      * Retrieves the role with the specified name.
@@ -19,7 +19,7 @@ public interface RoleDAO extends GenericDao<roles, Guid> {
      *            the role name
      * @return the role
      */
-    roles getByName(String name);
+    Role getByName(String name);
 
     /**
      * Retrieves all roles for the specified Ad element.
@@ -28,7 +28,7 @@ public interface RoleDAO extends GenericDao<roles, Guid> {
      *            the Ad element
      * @return the list of roles
      */
-    List<roles> getAllForAdElement(Guid id);
+    List<Role> getAllForAdElement(Guid id);
 
     /**
      * This seems to be a redundant method, but the stored procedure is different from the one for
@@ -38,7 +38,7 @@ public interface RoleDAO extends GenericDao<roles, Guid> {
      *            the Ad element
      * @return the list of roles
      */
-    List<roles> getForAdElement(Guid id);
+    List<Role> getForAdElement(Guid id);
 
     /**
      * This method gets the Roles for the given user and its groups. The purpose of this method is to be able to get
@@ -50,5 +50,5 @@ public interface RoleDAO extends GenericDao<roles, Guid> {
      *            comma delimited list of group IDs of the user
      * @return the list of the roles
      */
-    List<roles> getAllForUserAndGroups(Guid userId, String groupIds);
+    List<Role> getAllForUserAndGroups(Guid userId, String groupIds);
 }

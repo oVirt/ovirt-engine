@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -165,7 +165,7 @@ public class SystemPermissionListModel extends SearchableListModel
             }
         }
 
-        roles role = (roles) model.getRole().getSelectedItem();
+        Role role = (Role) model.getRole().getSelectedItem();
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)

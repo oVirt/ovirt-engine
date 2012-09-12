@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -21,7 +21,7 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        roles oldRole = getRoleDao().get(getRole().getId());
+        Role oldRole = getRoleDao().get(getRole().getId());
         if (oldRole == null) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_ID);
             returnValue = false;

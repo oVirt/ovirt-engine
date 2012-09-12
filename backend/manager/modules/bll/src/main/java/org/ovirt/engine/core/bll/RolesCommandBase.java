@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 @CustomLogFields({ @CustomLogField("RoleName") })
 public abstract class RolesCommandBase<T extends RolesParameterBase> extends CommandBase<T> {
     private static final long serialVersionUID = -5335986165541561251L;
-    private roles _role;
+    private Role _role;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -32,7 +32,7 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
         super(parameters);
     }
 
-    protected roles getRole() {
+    protected Role getRole() {
         if (_role == null) {
             _role = getRoleDao().get(getParameters().getRoleId());
         }

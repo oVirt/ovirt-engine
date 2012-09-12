@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -22,7 +22,7 @@ public class GetRolesForDelegationByUserQuery<P extends VdcQueryParametersBase> 
     protected void executeQueryCommand() {
         IVdcUser user = getCurrentUser();
         // check the user has SuperUser on System Object, directly or via group membership.
-        List<roles> myRoles = DbFacade.getInstance().getRoleDAO().getAll();
+        List<Role> myRoles = DbFacade.getInstance().getRoleDAO().getAll();
         permissions adminPerm = DbFacade
                 .getInstance()
                 .getPermissionDAO()
@@ -33,7 +33,7 @@ public class GetRolesForDelegationByUserQuery<P extends VdcQueryParametersBase> 
             // user is not super admin - remove all
             // ADMIN roles from the list
             for (Iterator i = myRoles.iterator(); i.hasNext();) {
-                roles r = (roles) i.next();
+                Role r = (Role) i.next();
                 if (r.getType() == RoleType.ADMIN)
                     i.remove();
             }

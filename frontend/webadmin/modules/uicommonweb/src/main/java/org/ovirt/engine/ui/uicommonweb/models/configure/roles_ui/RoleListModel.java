@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -151,7 +151,7 @@ public class RoleListModel extends ListWithDetailsModel
     public ArrayList<ActionGroup> publicAttachedActions;
     public ArrayList<ActionGroup> detachActionGroup;
     public ArrayList<ActionGroup> attachActionGroup;
-    public roles role;
+    public Role role;
     private RoleType privateItemsFilter;
 
     public RoleType getItemsFilter()
@@ -204,8 +204,8 @@ public class RoleListModel extends ListWithDetailsModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 RoleListModel roleListModel = (RoleListModel) model;
-                ArrayList<roles> filteredList = new ArrayList<roles>();
-                for (roles item : (ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
+                ArrayList<Role> filteredList = new ArrayList<Role>();
+                for (Role item : (ArrayList<Role>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
                     if (roleListModel.getItemsFilter() == null || roleListModel.getItemsFilter() == item.getType())
                     {
@@ -232,8 +232,8 @@ public class RoleListModel extends ListWithDetailsModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 RoleListModel roleListModel = (RoleListModel) model;
-                ArrayList<roles> filteredList = new ArrayList<roles>();
-                for (roles item : (ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
+                ArrayList<Role> filteredList = new ArrayList<Role>();
+                for (Role item : (ArrayList<Role>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
                     // ignore CONSUME_QUOTA_ROLE in UI
                     if (item.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
@@ -287,7 +287,7 @@ public class RoleListModel extends ListWithDetailsModel
         model.setMessage(ConstantsManager.getInstance().getConstants().rolesMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (roles role : Linq.<roles> Cast(getSelectedItems()))
+        for (Role role : Linq.<Role> Cast(getSelectedItems()))
         {
             list.add(role.getname());
         }
@@ -307,7 +307,7 @@ public class RoleListModel extends ListWithDetailsModel
     {
         for (Object item : getSelectedItems())
         {
-            roles role = (roles) item;
+            Role role = (Role) item;
             Frontend.RunAction(VdcActionType.RemoveRole, new RolesParameterBase(role.getId()));
         }
 
@@ -320,21 +320,21 @@ public class RoleListModel extends ListWithDetailsModel
     public void Edit()
     {
         commandType = CommandType.Edit;
-        roles role = (roles) getSelectedItem();
+        Role role = (Role) getSelectedItem();
         InitRoleDialog(role);
     }
 
     public void New()
     {
         commandType = CommandType.New;
-        roles role = new roles();
+        Role role = new Role();
         InitRoleDialog(role);
     }
 
     public void CloneRole()
     {
         commandType = CommandType.Clone;
-        roles role = (roles) getSelectedItem();
+        Role role = (Role) getSelectedItem();
         InitRoleDialog(role);
     }
 
@@ -362,7 +362,7 @@ public class RoleListModel extends ListWithDetailsModel
                         roleListModel.setAttachedActionGroups(publicAttachedActions);
                     }
                 };
-                roles role = (roles) getSelectedItem();
+                Role role = (Role) getSelectedItem();
                 Frontend.RunQuery(
                         VdcQueryType.GetRoleActionGroupsByRoleId,
                         new MultilevelAdministrationByRoleIdParameters(role
@@ -373,7 +373,7 @@ public class RoleListModel extends ListWithDetailsModel
     }
 
     void setAttachedActionGroups(List<ActionGroup> attachedActions) {
-        roles role = (roles) getSelectedItem();
+        Role role = (Role) getSelectedItem();
         RoleModel model = (RoleModel) getWindow();
         ArrayList<SelectionTreeNodeModel> selectionTree =
                 RoleTreeView.GetRoleTreeView((model.getIsNew() ? false : role.getis_readonly()),
@@ -406,7 +406,7 @@ public class RoleListModel extends ListWithDetailsModel
         model.setPermissionGroupModels(selectionTree);
     }
 
-    private void InitRoleDialog(roles role)
+    private void InitRoleDialog(Role role)
     {
         if (getWindow() != null)
         {
@@ -503,7 +503,7 @@ public class RoleListModel extends ListWithDetailsModel
             return;
         }
 
-        role = commandType != CommandType.Edit ? new roles() : (roles) getSelectedItem();
+        role = commandType != CommandType.Edit ? new Role() : (Role) getSelectedItem();
         role.setType(((Boolean) model.getIsAdminRole().getEntity() ? RoleType.ADMIN : RoleType.USER));
 
         if (!model.Validate())
@@ -659,7 +659,7 @@ public class RoleListModel extends ListWithDetailsModel
     {
         for (Object item : roles)
         {
-            roles r = (roles) item;
+            Role r = (Role) item;
             if (r.getis_readonly())
             {
                 return true;

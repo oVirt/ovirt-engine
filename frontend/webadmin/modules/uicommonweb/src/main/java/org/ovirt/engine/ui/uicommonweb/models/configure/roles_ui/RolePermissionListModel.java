@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -38,12 +38,12 @@ public class RolePermissionListModel extends SearchableListModel
     }
 
     @Override
-    public roles getEntity()
+    public Role getEntity()
     {
-        return (roles) super.getEntity();
+        return (Role) super.getEntity();
     }
 
-    public void setEntity(roles value)
+    public void setEntity(Role value)
     {
         super.setEntity(value);
     }

@@ -6,13 +6,12 @@ import org.junit.Test;
 
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 
 public abstract class AbstractBackendRoleResourceTest
-        extends AbstractBackendSubResourceTest<Role, roles, BackendRoleResource> {
+        extends AbstractBackendSubResourceTest<Role, org.ovirt.engine.core.common.businessentities.Role, BackendRoleResource> {
 
     public AbstractBackendRoleResourceTest(BackendRoleResource roleResource) {
         super(roleResource);
@@ -64,8 +63,8 @@ public abstract class AbstractBackendRoleResourceTest
     }
 
     @Override
-    protected roles getEntity(int index) {
-        roles role = new roles();
+    protected org.ovirt.engine.core.common.businessentities.Role getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.Role role = new org.ovirt.engine.core.common.businessentities.Role();
         role.setId(GUIDS[index]);
         role.setname(NAMES[index]);
         role.setdescription(DESCRIPTIONS[index]);

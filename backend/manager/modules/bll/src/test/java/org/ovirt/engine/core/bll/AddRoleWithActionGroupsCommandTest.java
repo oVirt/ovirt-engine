@@ -14,7 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 
 @RunWith(Parameterized.class)
 public class AddRoleWithActionGroupsCommandTest {
@@ -41,7 +41,7 @@ public class AddRoleWithActionGroupsCommandTest {
     public AddRoleWithActionGroupsCommandTest(boolean shouldBeInheritable, List<ActionGroup> groups) {
         this.shouldBeInheritable = shouldBeInheritable;
 
-        params = new RoleWithActionGroupsParameters(new roles(), new ArrayList<ActionGroup>(groups));
+        params = new RoleWithActionGroupsParameters(new Role(), new ArrayList<ActionGroup>(groups));
         command = new AddRoleWithActionGroupsCommand<RoleWithActionGroupsParameters>(params);
     }
 

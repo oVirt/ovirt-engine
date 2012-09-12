@@ -25,7 +25,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 @Entity
 @Table(name = "roles")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class roles extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
+public class Role extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1487620954798772886L;
     private static final ArrayList<String> _event_subscriberProperties = new ArrayList<String>(
             Arrays.asList(new String[] { "id", "name", "description", "is_readonly" }));
@@ -57,12 +57,12 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
 
     private boolean allowsViewingChildren = false;
 
-    public roles() {
+    public Role() {
     }
 
     // TODO add type to the constructor? - depends on future code changes by
     // Omer
-    public roles(String description, Guid id, String name) {
+    public Role(String description, Guid id, String name) {
         this.description = description;
         this.id = id;
         this.name = name;
@@ -88,7 +88,7 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
             return false;
         if (getClass() != obj.getClass())
             return false;
-        roles other = (roles) obj;
+        Role other = (Role) obj;
         if (description == null) {
             if (other.description != null)
                 return false;

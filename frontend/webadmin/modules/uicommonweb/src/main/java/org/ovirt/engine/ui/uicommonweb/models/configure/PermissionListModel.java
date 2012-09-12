@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -261,7 +261,7 @@ public class PermissionListModel extends SearchableListModel
             }
         }
 
-        roles role = (roles) model.getRole().getSelectedItem();
+        Role role = (Role) model.getRole().getSelectedItem();
         // adGroup/user
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();

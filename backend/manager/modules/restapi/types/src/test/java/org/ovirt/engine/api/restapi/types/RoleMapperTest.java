@@ -1,12 +1,11 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Role;
-import org.ovirt.engine.core.common.businessentities.roles;
 
-public class RoleMapperTest extends AbstractInvertibleMappingTest<Role, roles, roles> {
+public class RoleMapperTest extends AbstractInvertibleMappingTest<Role, org.ovirt.engine.core.common.businessentities.Role, org.ovirt.engine.core.common.businessentities.Role> {
 
     public RoleMapperTest() {
-        super(Role.class, roles.class, roles.class);
+        super(Role.class, org.ovirt.engine.core.common.businessentities.Role.class, org.ovirt.engine.core.common.businessentities.Role.class);
     }
 
     @Override

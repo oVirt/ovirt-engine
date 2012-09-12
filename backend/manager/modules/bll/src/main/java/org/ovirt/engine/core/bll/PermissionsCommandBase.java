@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -55,7 +55,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     }
 
     public String getRoleName() {
-        roles role = getRoleDao().get(getParameters().getPermission().getrole_id());
+        Role role = getRoleDao().get(getParameters().getPermission().getrole_id());
         return role == null ? null : role.getname();
     }
 

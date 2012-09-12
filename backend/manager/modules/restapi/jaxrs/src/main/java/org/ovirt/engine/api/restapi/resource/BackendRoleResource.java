@@ -10,13 +10,12 @@ import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendRoleResource
-    extends AbstractBackendSubResource<Role, roles>
+    extends AbstractBackendSubResource<Role, org.ovirt.engine.core.common.businessentities.Role>
     implements UpdatableRoleResource, RoleResource{
 
     private Guid userId;
@@ -26,7 +25,7 @@ public class BackendRoleResource
     }
 
     public BackendRoleResource(String id, Guid userId) {
-        super(id, Role.class, roles.class, SUB_COLLECTIONS);
+        super(id, Role.class, org.ovirt.engine.core.common.businessentities.Role.class, SUB_COLLECTIONS);
         this.userId = userId;
     }
 
@@ -59,9 +58,9 @@ public class BackendRoleResource
                 new UpdateParametersProvider());
     }
 
-    public class UpdateParametersProvider implements ParametersProvider<Role, roles> {
+    public class UpdateParametersProvider implements ParametersProvider<Role, org.ovirt.engine.core.common.businessentities.Role> {
         @Override
-        public VdcActionParametersBase getParameters(Role model, roles entity) {
+        public VdcActionParametersBase getParameters(Role model, org.ovirt.engine.core.common.businessentities.Role entity) {
             RolesOperationsParameters params = new RolesOperationsParameters();
             params.setRoleId(guid);
             params.setRole(map(model, entity));

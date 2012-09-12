@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RoleDAOTest extends BaseDAOTestCase {
@@ -19,8 +19,8 @@ public class RoleDAOTest extends BaseDAOTestCase {
     private static final int ROLE_COUNT = 3;
 
     private RoleDAO dao;
-    private roles existingRole;
-    private roles newRole;
+    private Role existingRole;
+    private Role newRole;
 
     @Override
     public void setUp() throws Exception {
@@ -30,7 +30,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
 
         existingRole = dao.get(new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78"));
 
-        newRole = new roles();
+        newRole = new Role();
         newRole.setname("new role");
         newRole.setdescription("This is a new role.");
         newRole.setType(RoleType.USER);
@@ -42,7 +42,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetRoleWithInvalidId() {
-        roles result = dao.get(Guid.NewGuid());
+        Role result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }
@@ -52,7 +52,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetRole() {
-        roles result = dao.get(existingRole.getId());
+        Role result = dao.get(existingRole.getId());
 
         assertNotNull(result);
         assertEquals(existingRole, result);
@@ -63,7 +63,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetRoleByNameWithInvalidName() {
-        roles result = dao.getByName("Farkle");
+        Role result = dao.getByName("Farkle");
 
         assertNull(result);
     }
@@ -73,7 +73,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetRoleByName() {
-        roles result = dao.getByName(existingRole.getname());
+        Role result = dao.getByName(existingRole.getname());
 
         assertNotNull(result);
         assertEquals(existingRole, result);
@@ -84,7 +84,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRoles() {
-        List<roles> result = dao.getAll();
+        List<Role> result = dao.getAll();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -96,7 +96,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRolesForAdElementWithInvalidId() {
-        List<roles> result = dao.getAllForAdElement(Guid.NewGuid());
+        List<Role> result = dao.getAllForAdElement(Guid.NewGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -107,7 +107,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRolesForAdElement() {
-        List<roles> result = dao.getAllForAdElement(USER_ID);
+        List<Role> result = dao.getAllForAdElement(USER_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -118,7 +118,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRolesForUserAndGroupByAdElementWithInvalidAdElement() {
-        List<roles> result = dao.getAllForAdElement(Guid.NewGuid());
+        List<Role> result = dao.getAllForAdElement(Guid.NewGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -129,7 +129,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRolesForUserAndGroupByAdElement() {
-        List<roles> result = dao.getAllForAdElement(USER_ID);
+        List<Role> result = dao.getAllForAdElement(USER_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -140,7 +140,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUsersAndGroups() {
-        List<roles> result = dao.getAllForUserAndGroups(USER_ID,
+        List<Role> result = dao.getAllForUserAndGroups(USER_ID,
                 GROUP_IDS);
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -149,7 +149,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllForUsersAndGroupsInvalidUserAndGroups() {
-        List<roles> result = dao.getAllForUserAndGroups(Guid.NewGuid(),
+        List<Role> result = dao.getAllForUserAndGroups(Guid.NewGuid(),
                 Guid.NewGuid().toString());
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -164,7 +164,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
     public void testSaveRole() {
         dao.save(newRole);
 
-        roles result = dao.getByName(newRole.getname());
+        Role result = dao.getByName(newRole.getname());
 
         assertNotNull(result);
         assertEquals(newRole, result);
@@ -179,7 +179,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
 
         dao.update(existingRole);
 
-        roles result = dao.get(existingRole.getId());
+        Role result = dao.get(existingRole.getId());
 
         assertNotNull(result);
         assertEquals(existingRole, result);
@@ -192,7 +192,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
     public void testRemoveRole() {
         dao.remove(existingRole.getId());
 
-        roles result = dao.get(existingRole.getId());
+        Role result = dao.get(existingRole.getId());
 
         assertNull(result);
     }

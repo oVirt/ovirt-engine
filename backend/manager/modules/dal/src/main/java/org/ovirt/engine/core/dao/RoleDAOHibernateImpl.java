@@ -8,21 +8,21 @@ import org.hibernate.Query;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RoleDAOHibernateImpl extends BaseDAOHibernateImpl<roles, Guid> implements RoleDAO {
+public class RoleDAOHibernateImpl extends BaseDAOHibernateImpl<Role, Guid> implements RoleDAO {
     public RoleDAOHibernateImpl() {
-        super(roles.class);
+        super(Role.class);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<roles> getAllForAdElement(Guid id) {
+    public List<Role> getAllForAdElement(Guid id) {
         Guid[] ids = getUserAndGroupIdsForUser(id);
 
         if (ids.length == 0) {
-            return new ArrayList<roles>();
+            return new ArrayList<Role>();
         }
 
         Query query = getSession().createQuery("from roles role, permissions perms " +
@@ -70,7 +70,7 @@ public class RoleDAOHibernateImpl extends BaseDAOHibernateImpl<roles, Guid> impl
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<roles> getForAdElement(Guid id) {
+    public List<Role> getForAdElement(Guid id) {
         Query query = getSession().createQuery("from roles role, permissions perms " +
                 "where perms.roleId = role.id " +
                 "and perms.adElementId = :id");
@@ -81,7 +81,7 @@ public class RoleDAOHibernateImpl extends BaseDAOHibernateImpl<roles, Guid> impl
     }
 
     @Override
-    public List<roles> getAllForUserAndGroups(Guid userId, String groupIds) {
+    public List<Role> getAllForUserAndGroups(Guid userId, String groupIds) {
         throw new NotImplementedException();
     }
 }

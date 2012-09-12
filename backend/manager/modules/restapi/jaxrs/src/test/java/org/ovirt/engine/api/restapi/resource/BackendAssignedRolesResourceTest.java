@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
@@ -66,9 +65,9 @@ public class BackendAssignedRolesResourceTest
     }
 
     private void setUpGetEntityExpectations(Guid entityId, Boolean returnNull) throws Exception {
-        roles role = null;
+        org.ovirt.engine.core.common.businessentities.Role role = null;
         if (!returnNull) {
-            role = new roles();
+            role = new org.ovirt.engine.core.common.businessentities.Role();
             role.setId(entityId);
         }
         setUpGetEntityExpectations(VdcQueryType.GetRoleById,
@@ -162,8 +161,8 @@ public class BackendAssignedRolesResourceTest
         verifyModel((Role) response.getEntity(), 1);
     }
 
-    private roles getRole() {
-        roles role = new roles();
+    private org.ovirt.engine.core.common.businessentities.Role getRole() {
+        org.ovirt.engine.core.common.businessentities.Role role = new org.ovirt.engine.core.common.businessentities.Role();
         role.setId(GUIDS[1]);
         return role;
     }

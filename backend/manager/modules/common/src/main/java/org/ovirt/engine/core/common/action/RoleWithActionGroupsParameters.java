@@ -16,7 +16,7 @@ public class RoleWithActionGroupsParameters extends RolesOperationsParameters {
         actionGroups = value;
     }
 
-    public RoleWithActionGroupsParameters(roles role, ArrayList<ActionGroup> actions) {
+    public RoleWithActionGroupsParameters(Role role, ArrayList<ActionGroup> actions) {
         super(role);
         this.setActionGroups(actions);
     }

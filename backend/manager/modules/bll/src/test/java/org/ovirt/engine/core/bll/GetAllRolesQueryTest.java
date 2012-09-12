@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.dao.RoleDAO;
 
@@ -18,9 +18,9 @@ public class GetAllRolesQueryTest extends AbstractUserQueryTest<MultilevelAdmini
     @Test
     public void testExecuteQueryCommand() {
         // Prepare the result
-        roles role = new roles();
+        Role role = new Role();
         role.setname("test role");
-        List<roles> result = Collections.singletonList(role);
+        List<Role> result = Collections.singletonList(role);
 
         // Mock the DAO
         RoleDAO roleDAOMock = mock(RoleDAO.class);

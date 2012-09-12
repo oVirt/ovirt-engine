@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.RoleDAO;
 import org.ovirt.engine.core.dao.RoleGroupMapDAO;
@@ -19,7 +19,7 @@ import org.ovirt.engine.core.dao.RoleGroupMapDAO;
 public abstract class AbstractRolesCommandTestBase {
     private RolesParameterBase params;
     private RolesCommandBase<? extends RolesParameterBase> command;
-    private roles role;
+    private Role role;
 
     @Mock
     private RoleDAO roleDAOMock;
@@ -31,7 +31,7 @@ public abstract class AbstractRolesCommandTestBase {
     public void setUp() {
         params = generateParameters();
         command = spy(generateCommand());
-        role = new roles();
+        role = new Role();
         role.setId(params.getRoleId());
 
         doReturn(roleDAOMock).when(command).getRoleDao();
@@ -53,7 +53,7 @@ public abstract class AbstractRolesCommandTestBase {
         return command;
     }
 
-    protected roles getRole() {
+    protected Role getRole() {
         return role;
     }
 

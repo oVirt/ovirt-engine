@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.view.popup.permissions;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -123,7 +123,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         roleSelection = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((roles) object).getname();
+                return ((Role) object).getname();
             }
         });
     }

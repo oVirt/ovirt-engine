@@ -4,17 +4,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-public class RolesRowMapper implements ParameterizedRowMapper<roles> {
+public class RolesRowMapper implements ParameterizedRowMapper<Role> {
 
     public static final RolesRowMapper instance = new RolesRowMapper();
 
     @Override
-    public roles mapRow(ResultSet rs, int rowNum) throws SQLException {
-        roles entity = new roles();
+    public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Role entity = new Role();
         entity.setdescription(rs.getString("description"));
         entity.setId(Guid.createGuidFromString(rs.getString("id")));
         entity.setname(rs.getString("name"));

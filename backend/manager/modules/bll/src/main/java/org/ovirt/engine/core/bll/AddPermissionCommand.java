@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -36,7 +36,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
             return false;
         }
 
-        roles role = getRoleDao().get(perm.getrole_id());
+        Role role = getRoleDao().get(perm.getrole_id());
         Guid adElementId = perm.getad_element_id();
 
         if (role == null) {
@@ -134,7 +134,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
     private void updateAdminStatus(permissions perm) {
         // if the role of the permission is of type admin update the user
         // lastAdminCheckStatus to true
-        roles role = getRoleDao().get(perm.getrole_id());
+        Role role = getRoleDao().get(perm.getrole_id());
         if (role.getType() == RoleType.ADMIN) {
             MultiLevelAdministrationHandler.setIsAdminGUIFlag(perm.getad_element_id(), true);
         }

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -173,17 +173,17 @@ public class AdElementListModel extends SearchableListModel
                     public void OnSuccess(Object model1, Object result1)
                     {
                         AdElementListModel adElementListModel1 = (AdElementListModel) model1;
-                        roles roleValue = null;
+                        Role roleValue = null;
                         boolean first = true;
-                        ArrayList<roles> roles = (ArrayList<roles>) result1;
-                        ArrayList<roles> newRoles = new ArrayList<roles>();
-                        for (roles r : roles) {
+                        ArrayList<Role> roles = (ArrayList<Role>) result1;
+                        ArrayList<Role> newRoles = new ArrayList<Role>();
+                        for (Role r : roles) {
                             // ignore CONSUME_QUOTA_ROLE in UI
                             if (!r.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                                 newRoles.add(r);
                             }
                         }
-                        for (roles r : roles)
+                        for (Role r : roles)
                         {
                             if (first)
                             {

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
@@ -40,7 +39,11 @@ public class BackendAssignedRolesResource
         validateParameters(role, "id|name");
         validateEnums(Role.class, role);
         if (!role.isSetId()) {
-            roles entity = getEntity(roles.class, VdcQueryType.GetRoleByName, new MultilevelAdministrationByRoleNameParameters(role.getName()), role.getName());
+            org.ovirt.engine.core.common.businessentities.Role entity = getEntity(
+                org.ovirt.engine.core.common.businessentities.Role.class,
+                VdcQueryType.GetRoleByName,
+                new MultilevelAdministrationByRoleNameParameters(role.getName()),
+                                                                 role.getName());
             role.setId(entity.getId().toString());
         }
         return performCreation(VdcActionType.AddSystemPermission,

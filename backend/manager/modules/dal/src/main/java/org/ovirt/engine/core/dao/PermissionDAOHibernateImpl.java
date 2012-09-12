@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -296,7 +296,7 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
             query = getSession().createQuery("from roles where id = :id");
             query.setParameter("id", permission.getrole_id().toString());
 
-            roles role = (roles) query.uniqueResult();
+            Role role = (Role) query.uniqueResult();
 
             if (role != null) {
                 permission.setRoleName(role.getname());

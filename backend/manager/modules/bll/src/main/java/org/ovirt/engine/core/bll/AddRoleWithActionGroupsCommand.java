@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -97,7 +97,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
      */
     protected void prepareRoleForCommand() {
         // Note that the role is take from the parameters
-        roles role = getRole();
+        Role role = getRole();
         role.setId(Guid.NewGuid());
         role.setAllowsViewingChildren(false);
 

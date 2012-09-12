@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.RolesRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
 
     @Override
-    public roles get(Guid id) {
+    public Role get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
@@ -24,7 +24,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
     }
 
     @Override
-    public roles getByName(String name) {
+    public Role getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("name", name);
 
@@ -32,21 +32,21 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
     }
 
     @Override
-    public List<roles> getAll() {
+    public List<Role> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetAllFromRole", RolesRowMapper.instance, parameterSource);
     }
 
     @Override
-    public List<roles> getAllForAdElement(Guid id) {
+    public List<Role> getAllForAdElement(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id);
 
         return getCallsHandler().executeReadList("GetAllRolesByAdElementId", RolesRowMapper.instance, parameterSource);
     }
 
-    public List<roles> getAllForUserAndGroups(Guid id, String groupIds) {
+    public List<Role> getAllForUserAndGroups(Guid id, String groupIds) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", id)
                 .addValue("group_ids", groupIds);
@@ -57,7 +57,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
     }
 
     @Override
-    public List<roles> getForAdElement(Guid id) {
+    public List<Role> getForAdElement(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id);
 
@@ -65,7 +65,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
     }
 
     @Override
-    public void save(roles role) {
+    public void save(Role role) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", role.getdescription())
                 .addValue("id", role.getId()).addValue("name", role.getname())
@@ -77,7 +77,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
     }
 
     @Override
-    public void update(roles role) {
+    public void update(Role role) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", role.getdescription())
                 .addValue("id", role.getId()).addValue("name", role.getname())

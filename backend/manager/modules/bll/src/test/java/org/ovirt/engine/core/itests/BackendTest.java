@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +33,7 @@ public class BackendTest extends AbstractBackendTest {
 
     @Test
     public void runSingleCommand() {
-        roles role = new roles();
+        Role role = new Role();
         role.setId(Guid.NewGuid());
         role.setname("Random_" + new Random().nextInt());
         role.setType(RoleType.USER);
@@ -50,8 +50,8 @@ public class BackendTest extends AbstractBackendTest {
         MultilevelAdministrationsQueriesParameters parameters = new MultilevelAdministrationsQueriesParameters();
         VdcQueryReturnValue value = backend.runInternalQuery(VdcQueryType.GetAllRoles, parameters);
         assertTrue(value.getSucceeded());
-        Collection<roles> roles = (Collection<roles>) value.getReturnValue();
-        for (roles role : roles) {
+        Collection<Role> roles = (Collection<Role>) value.getReturnValue();
+        for (Role role : roles) {
             System.out.println(role.getname());
         }
     }

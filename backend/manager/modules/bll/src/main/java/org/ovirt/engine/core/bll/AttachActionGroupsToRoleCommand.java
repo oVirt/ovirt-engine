@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -40,7 +40,7 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
     protected boolean checkIfGroupsCanBeAttached(List<String> canDoMessages) {
         List<ActionGroup> attachGroups = getParameters().getActionGroups();
         Guid roleId = getParameters().getRoleId();
-        roles role = getRole();
+        Role role = getRole();
 
         // Get all groups by ID and check if they already exist
         List<ActionGroup> allGroups = getActionGroupsByRoleId(roleId);
@@ -73,7 +73,7 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
 
         // Only adding groups that allow viewing children could make a role allow viewing its children
         if (addedGroupThatAllowsViewingChildren) {
-            roles role = getRole();
+            Role role = getRole();
             // The role should be updated only if it didn't allow viewing children in the first place
             if (!role.allowsViewingChildren()) {
                 role.setAllowsViewingChildren(true);

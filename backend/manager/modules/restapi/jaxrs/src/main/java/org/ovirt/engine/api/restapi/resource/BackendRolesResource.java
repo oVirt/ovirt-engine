@@ -14,20 +14,19 @@ import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.api.restapi.types.Mapper;
 
 public class BackendRolesResource
-        extends AbstractBackendCollectionResource<Role, roles>
+        extends AbstractBackendCollectionResource<Role, org.ovirt.engine.core.common.businessentities.Role>
         implements RolesResource {
 
     static final String[] SUB_COLLECTIONS = { "permits" };
 
     public BackendRolesResource() {
-        super(Role.class, roles.class, SUB_COLLECTIONS);
+        super(Role.class, org.ovirt.engine.core.common.businessentities.Role.class, SUB_COLLECTIONS);
     }
 
     @Override
@@ -56,9 +55,9 @@ public class BackendRolesResource
         return inject(new BackendRoleResource(id));
     }
 
-    protected Roles mapCollection(List<roles> entities) {
+    protected Roles mapCollection(List<org.ovirt.engine.core.common.businessentities.Role> entities) {
         Roles collection = new Roles();
-        for (roles entity : entities) {
+        for (org.ovirt.engine.core.common.businessentities.Role entity : entities) {
             collection.getRoles().add(addLinks(map(entity)));
         }
         return collection;

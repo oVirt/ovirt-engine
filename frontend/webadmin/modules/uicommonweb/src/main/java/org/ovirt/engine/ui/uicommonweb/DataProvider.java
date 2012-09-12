@@ -46,7 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
@@ -157,8 +157,8 @@ public final class DataProvider
     public static ArrayList<UserPermissionModel> GetUserPermissionMatrix(Guid userId)
     {
         // var roles = GetRoleList().ToDictionary(a => a.id);
-        HashMap<Guid, roles> roles = new HashMap<Guid, roles>();
-        for (roles role : GetRoleList())
+        HashMap<Guid, Role> roles = new HashMap<Guid, Role>();
+        for (Role role : GetRoleList())
         {
             roles.put(role.getId(), role);
         }
@@ -246,17 +246,17 @@ public final class DataProvider
         return new ArrayList<Network>();
     }
 
-    public static ArrayList<roles> GetRoleList()
+    public static ArrayList<Role> GetRoleList()
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters());
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (ArrayList<roles>) returnValue.getReturnValue();
+            return (ArrayList<Role>) returnValue.getReturnValue();
         }
 
-        return new ArrayList<roles>();
+        return new ArrayList<Role>();
     }
 
     private static String cachedDefaultTimeZone;
@@ -1856,7 +1856,7 @@ public final class DataProvider
         {
             // return ((List<roles>)returnValue.ReturnValue).FirstOrDefault(a => String.Compare(a.name, name, true) ==
             // 0) == null;
-            for (roles role : (ArrayList<roles>) returnValue.getReturnValue())
+            for (Role role : (ArrayList<Role>) returnValue.getReturnValue())
             {
                 if (role.getname().compareToIgnoreCase(name) == 0)
                 {

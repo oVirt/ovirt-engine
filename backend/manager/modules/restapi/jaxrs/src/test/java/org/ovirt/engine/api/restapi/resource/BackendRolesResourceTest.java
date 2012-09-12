@@ -16,13 +16,12 @@ import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendRolesResourceTest
-        extends AbstractBackendCollectionResourceTest<Role, roles, BackendRolesResource> {
+        extends AbstractBackendCollectionResourceTest<Role, org.ovirt.engine.core.common.businessentities.Role, BackendRolesResource> {
 
     public BackendRolesResourceTest() {
         super(new BackendRolesResource(), null, "");
@@ -174,8 +173,8 @@ public class BackendRolesResourceTest
     }
 
     @Override
-    protected roles getEntity(int index) {
-        roles role = new roles();
+    protected org.ovirt.engine.core.common.businessentities.Role getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.Role role = new org.ovirt.engine.core.common.businessentities.Role();
         role.setId(GUIDS[index]);
         role.setname(NAMES[index]);
         role.setdescription(DESCRIPTIONS[index]);
@@ -184,8 +183,8 @@ public class BackendRolesResourceTest
         return role;
     }
 
-    protected List<roles> setUpRoles() {
-        List<roles> roles = new ArrayList<roles>();
+    protected List<org.ovirt.engine.core.common.businessentities.Role> setUpRoles() {
+        List<org.ovirt.engine.core.common.businessentities.Role> roles = new ArrayList<org.ovirt.engine.core.common.businessentities.Role>();
         for (int i = 0; i < NAMES.length; i++) {
             roles.add(getEntity(i));
         }

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -71,7 +71,7 @@ public class QueriesTest extends AbstractBackendTest {
     public void getRolesForDelegation() {
         VdcQueryReturnValue runQuery =
             backend.RunQuery(VdcQueryType.GetRolesForDelegationByUser, sessionize(new VdcQueryParametersBase()));
-        ArrayList<roles> roles = (ArrayList<org.ovirt.engine.core.common.businessentities.roles>) runQuery.getReturnValue();
+        ArrayList<Role> roles = (ArrayList<Role>) runQuery.getReturnValue();
         Assert.assertNotNull(roles);
 
     }

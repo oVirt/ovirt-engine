@@ -2,13 +2,12 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RoleMapper {
 
-    @Mapping(from = roles.class, to = Role.class)
-    public static Role map(roles entity, Role template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.Role.class, to = Role.class)
+    public static Role map(org.ovirt.engine.core.common.businessentities.Role entity, Role template) {
         Role model = template != null ? template : new Role();
         model.setName(entity.getname());
         model.setDescription(entity.getdescription());
@@ -18,9 +17,9 @@ public class RoleMapper {
         return model;
     }
 
-    @Mapping(from = Role.class, to = roles.class)
-    public static roles map(Role model, roles template) {
-        roles entity = template != null ? template : new roles();
+    @Mapping(from = Role.class, to = org.ovirt.engine.core.common.businessentities.Role.class)
+    public static org.ovirt.engine.core.common.businessentities.Role map(Role model, org.ovirt.engine.core.common.businessentities.Role template) {
+        org.ovirt.engine.core.common.businessentities.Role entity = template != null ? template : new org.ovirt.engine.core.common.businessentities.Role();
         if (model.isSetId()) {
             entity.setId(new Guid(model.getId()));
         }

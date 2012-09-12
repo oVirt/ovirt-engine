@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -127,7 +127,7 @@ public class DbFacade {
             put(VdsDynamic.class, VdsDynamicDAO.class);
             put(VdsStatistics.class, VdsStatisticsDAO.class);
             put(vds_spm_id_map.class, VdsSpmIdMapDAO.class);
-            put(roles.class, RoleDAO.class);
+            put(Role.class, RoleDAO.class);
             put(VmTemplate.class, VmTemplateDAO.class);
             put(VmDynamic.class, VmDynamicDAO.class);
             put(VmStatic.class, VmStaticDAO.class);
