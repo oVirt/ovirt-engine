@@ -80,7 +80,10 @@ public enum ConfigurationValues {
     SupportForceCreateVG,
     NetworkConnectivityCheckTimeoutInSeconds,
     AllowClusterWithVirtGlusterEnabled,
-    MTUOverrideSupported(ConfigAuthType.User);
+    MTUOverrideSupported(ConfigAuthType.User),
+    GlusterVolumeOptionGroupVirtValue,
+    GlusterVolumeOptionOwnerUserVirtValue,
+    GlusterVolumeOptionOwnerGroupVirtValue;
 
     public static enum ConfigAuthType {
         Admin,

@@ -20,6 +20,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -411,18 +413,67 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         if (getSelectedItems() == null) {
             return;
         }
+        AsyncQuery aQuery = new AsyncQuery();
+        aQuery.setModel(this);
+        aQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, final Object result)
+            {
+                AsyncQuery aQueryInner = new AsyncQuery();
+                aQueryInner.setModel(this);
+                aQueryInner.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object modelInner, final Object resultInner)
+                    {
 
-        ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
-            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
-            GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
-            option.setVolumeId(volume.getId());
-            option.setKey("group"); //$NON-NLS-1$
-            option.setValue("rhev"); //$NON-NLS-1$
-            list.add(new GlusterVolumeOptionParameters(option));
-        }
-        Frontend.RunMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
+                        AsyncQuery aQueryInner1 = new AsyncQuery();
+                        aQueryInner1.setModel(this);
+                        aQueryInner1.asyncCallback = new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object modelInner1, Object resultInner1)
+                            {
+                                String optionGroupVirt = (String) result;
+                                String optionOwnerUserVirt = (String) resultInner;
+                                String optionOwnerGroupVirt = (String) resultInner1;
+
+                                ArrayList<VdcActionParametersBase> list =
+                                        new java.util.ArrayList<VdcActionParametersBase>();
+                                for (Object item : getSelectedItems())
+                                {
+                                    GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+
+                                    GlusterVolumeOptionEntity optionGroup = new GlusterVolumeOptionEntity();
+                                    optionGroup.setVolumeId(volume.getId());
+                                    optionGroup.setKey("group"); //$NON-NLS-1$
+                                    optionGroup.setValue(optionGroupVirt);
+                                    list.add(new GlusterVolumeOptionParameters(optionGroup));
+
+                                    GlusterVolumeOptionEntity optionOwnerUser = new GlusterVolumeOptionEntity();
+                                    optionOwnerUser.setVolumeId(volume.getId());
+                                    optionOwnerUser.setKey("storage.owner-uid"); //$NON-NLS-1$
+                                    optionOwnerUser.setValue(optionOwnerUserVirt);
+                                    list.add(new GlusterVolumeOptionParameters(optionOwnerUser));
+
+                                    GlusterVolumeOptionEntity optionOwnerGroup = new GlusterVolumeOptionEntity();
+                                    optionOwnerGroup.setVolumeId(volume.getId());
+                                    optionOwnerGroup.setKey("storage.owner-gid"); //$NON-NLS-1$
+                                    optionOwnerGroup.setValue(optionOwnerGroupVirt);
+                                    list.add(new GlusterVolumeOptionParameters(optionOwnerGroup));
+                                }
+                                Frontend.RunMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
+                            }
+                        };
+
+                        AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue),
+                                aQueryInner1);
+                    }
+                };
+                AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue),
+                        aQueryInner);
+            }
+        };
+        AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue),
+                aQuery);
     }
 
     private void stop() {

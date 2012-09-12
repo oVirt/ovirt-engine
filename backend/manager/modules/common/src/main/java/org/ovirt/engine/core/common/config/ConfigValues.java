@@ -1487,6 +1487,18 @@ public enum ConfigValues {
     @DefaultValueAttribute("1800")
     SSHInactivityHardTimoutSeconds(383),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("virt")
+    GlusterVolumeOptionGroupVirtValue(384),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("36")
+    GlusterVolumeOptionOwnerUserVirtValue(385),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("36")
+    GlusterVolumeOptionOwnerGroupVirtValue(386),
+
     Invalid(65535);
 
     private int intValue;

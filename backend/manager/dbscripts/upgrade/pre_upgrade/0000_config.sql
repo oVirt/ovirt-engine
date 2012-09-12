@@ -134,6 +134,9 @@ select fn_db_add_config_value('FindFenceProxyDelayBetweenRetriesInSec','30','gen
 select fn_db_add_config_value('FindFenceProxyRetries','3','general');
 select fn_db_add_config_value('FreeSpaceCriticalLowInGB','5','general');
 select fn_db_add_config_value('FreeSpaceLow','10','general');
+select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','general');
+select fn_db_add_config_value('GlusterVolumeOptionOwnerUserVirtValue','36','general');
+select fn_db_add_config_value('GlusterVolumeOptionOwnerGroupVirtValue','36','general');
 select fn_db_add_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_','general');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
 select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
