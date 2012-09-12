@@ -281,8 +281,8 @@ END; $BODY$
 LANGUAGE plpgsql;
 
 -- This function splits a config value: given a config value with one row for 'general', it creates new options
--- with the old value, for each version, except the newest version, which gets the input value
-CREATE OR REPLACE FUNCTION fn_db_split_config_value(v_option_name character varying, v_old_option_value character varying, v_new_option_value character varying)
+-- with the old value, for each version, except the v_update_from_version version and beyond, which gets the input value
+CREATE OR REPLACE FUNCTION fn_db_split_config_value(v_option_name character varying, v_old_option_value character varying, v_new_option_value character varying, v_update_from_version character varying)
   RETURNS void AS
 $BODY$
 declare
@@ -292,10 +292,12 @@ v_version varchar(40);
 v_index integer;
 v_count integer;
 v_total_count integer;
+v_version_count integer;
 begin
     v_total_count := count(version) from vdc_options where option_name = v_option_name;
     v_old_value := option_value from vdc_options where option_name = v_option_name and version = 'general';
-    if (v_total_count <= 1) then
+    v_version_count := count(distinct version) from vdc_options where version <> 'general';
+    if (v_total_count <= v_version_count) then
         begin
             if (v_old_value IS NULL) then
                 v_old_value := v_old_option_value;
@@ -306,10 +308,14 @@ begin
         loop
             fetch v_cur into v_version;
             exit when not found;
-            if (v_index = v_count) then
-                insert into vdc_options (option_name, option_value, version) values (v_option_name, v_new_option_value, v_version);
-            else
-                insert into vdc_options (option_name, option_value, version) values (v_option_name, v_old_value, v_version);
+            -- We shouldn't update if already exists
+            if (not exists (select 1 from vdc_options where option_name = v_option_name and version = v_version)) then
+                -- Might not work well for versions such as 3.10, but we currently don't have any
+                if (v_version >= v_update_from_version) then
+                    insert into vdc_options (option_name, option_value, version) values (v_option_name, v_new_option_value, v_version);
+                else
+                    insert into vdc_options (option_name, option_value, version) values (v_option_name, v_old_value, v_version);
+                end if;
             end if;
             v_index := v_index +1;
         end loop;

@@ -649,9 +649,9 @@ select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
 -- To ease this the fn_db_split_config_value can be used, input is the
 -- option_name, the old value and the new value. Result is creating one row for each old
 -- cluster level with the original value if exists, or the input old value
--- and one row for the newest one, with the input value.
+-- and from the update version and beyond, the input value.
 ------------------------------------------------------------------------------------
-select fn_db_split_config_value('SpiceSecureChannels','smain,sinputs','smain,sinputs,scursor,splayback,srecord,sdisplay');
+select fn_db_split_config_value('SpiceSecureChannels','smain,sinputs','smain,sinputs,scursor,splayback,srecord,sdisplay,susbredir,ssmartcard', '3.1');
 
 ------------------------------------------------------------------------------------
 --                  Simple direct updates section

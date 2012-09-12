@@ -405,7 +405,7 @@ public enum ConfigValues {
     SearchesRefreshRateInSeconds(116),
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("smain,sinputs,scursor,splayback,srecord,sdisplay")
+    @DefaultValueAttribute("smain,sinputs,scursor,splayback,srecord,sdisplay,ssmartcard,susbredir")
     SpiceSecureChannels(117),
     @Deprecated
     @TypeConverterAttribute(Integer.class)
