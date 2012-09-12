@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -34,10 +37,10 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
             masterId = new Guid(_result.mStoragePoolInfo.getItem("master_uuid").toString());
         }
         sp.setId(getParameters().getStoragePoolId());
-        java.util.ArrayList<storage_domains> domList = ParseStorageDomainList(_result.mDomainsList, masterId);
+        ArrayList<storage_domains> domList = ParseStorageDomainList(_result.mDomainsList, masterId);
 
-        KeyValuePairCompat<storage_pool, java.util.List<storage_domains>> list =
-                new KeyValuePairCompat<storage_pool, java.util.List<storage_domains>>(
+        KeyValuePairCompat<storage_pool, List<storage_domains>> list =
+                new KeyValuePairCompat<storage_pool, List<storage_domains>>(
                         sp, domList);
         setReturnValue(list);
     }
