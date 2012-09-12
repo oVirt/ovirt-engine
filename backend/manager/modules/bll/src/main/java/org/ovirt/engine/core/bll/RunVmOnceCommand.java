@@ -94,8 +94,4 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         QuotaManager.getInstance().decreaseStorageQuota(getStoragePool(), getStorageQuotaListParameters());
     }
 
-    @Override
-    protected void compensate() {
-        rollbackQuota();
-    }
 }
