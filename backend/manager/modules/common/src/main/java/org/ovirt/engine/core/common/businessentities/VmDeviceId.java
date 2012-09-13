@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @Embeddable
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class VmDeviceId implements Serializable {
+public class VmDeviceId implements Serializable,Comparable<VmDeviceId> {
 
     /**
      *
@@ -85,5 +85,15 @@ public class VmDeviceId implements Serializable {
 
     public void setVmId(Guid vmId) {
         this.vmId = vmId;
+    }
+
+    @Override
+    public int compareTo(VmDeviceId other) {
+        int vmComparsion = getVmId().compareTo(other.getVmId());
+        if (vmComparsion == 0) {
+            return getDeviceId().compareTo(other.getDeviceId());
+        } else {
+            return vmComparsion;
+        }
     }
 }
