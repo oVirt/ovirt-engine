@@ -149,7 +149,7 @@ public interface VmDAO extends DAO {
      *            the storage domain
      * @return the running VMs
      */
-    List<VM> getAllRunningForStorageDomain(Guid storageDomain);
+    List<VM> getAllActiveForStorageDomain(Guid storageDomain);
 
     /**
      * Get all vms related to quota id

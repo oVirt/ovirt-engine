@@ -104,9 +104,9 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
         if (!getParameters().getIsInternal()
                 && !getVmDAO()
-                        .getAllRunningForStorageDomain(getStorageDomain().getId())
+                        .getAllActiveForStorageDomain(getStorageDomain().getId())
                         .isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_RUNNING_VMS);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
             return false;
         }
         if (getStoragePool().getspm_vds_id() != null) {

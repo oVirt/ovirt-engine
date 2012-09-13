@@ -286,8 +286,8 @@ public class VmDAOTest extends BaseDAOTestCase {
      * Ensures that all running VMs associated with a storage domain.
      */
     @Test
-    public void testGetAllRunningForStorageDomain() {
-        List<VM> result = dao.getAllRunningForStorageDomain(STORAGE_DOMAIN_ID);
+    public void testGetAllActiveForStorageDomain() {
+        List<VM> result = dao.getAllActiveForStorageDomain(STORAGE_DOMAIN_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

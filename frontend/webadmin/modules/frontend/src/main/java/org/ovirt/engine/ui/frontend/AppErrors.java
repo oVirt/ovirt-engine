@@ -1171,8 +1171,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM cannot have more than 8 interfaces.")
     String NETWORK_INTERFACE_EXITED_MAX_INTERFACES();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Running VMs were detected.\n-Please stop all running VMs associated with this Storage Domain first.")
-    String ACTION_TYPE_FAILED_DETECTED_RUNNING_VMS();
+    @DefaultStringValue("Cannot ${action} ${type}. Active VMs were detected.\n-Please ensure all VMs associated with this Storage Domain are stopped and in the Down state first.")
+    String ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS();
 
     @DefaultStringValue("The provided Host does not exist.")
     String ACTION_TYPE_FAILED_HOST_NOT_EXIST();

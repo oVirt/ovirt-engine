@@ -164,8 +164,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
-    public List<VM> getAllRunningForStorageDomain(Guid id) {
-        return getCallsHandler().executeReadList("GetRunningVmsByStorageDomainId",
+    public List<VM> getAllActiveForStorageDomain(Guid id) {
+        return getCallsHandler().executeReadList("GetActiveVmsByStorageDomainId",
                 VMRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_domain_id", id));

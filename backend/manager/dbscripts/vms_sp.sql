@@ -779,7 +779,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetRunningVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetActiveVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
