@@ -97,12 +97,16 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
                 return getModel().getHasDomain();
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 6, 2) {
-            @Override
-            public boolean isVisible() {
-                return getModel().getHasTimeZone();
-            }
-        });
+
+//        Removed because VDSM and guest agent don't support returning of the time zone within the guest.
+//        TODO: Uncomment again once this will be implemented.
+//
+//        formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 6, 2) {
+//            @Override
+//            public boolean isVisible() {
+//                return getModel().getHasTimeZone();
+//            }
+//        });
     }
 
     @Override
