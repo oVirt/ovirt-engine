@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -32,7 +33,9 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
     ApplicationResources resources;
     ApplicationConstants constants;
 
-    public VMsTree(CommonApplicationResources resources, CommonApplicationConstants constants, ApplicationTemplates templates) {
+    public VMsTree(CommonApplicationResources resources,
+            CommonApplicationConstants constants,
+            ApplicationTemplates templates) {
         super(resources, constants, templates);
         this.resources = (ApplicationResources) resources;
         this.constants = (ApplicationConstants) constants;
@@ -66,7 +69,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
     @Override
     protected TreeItem getLeafItem(Disk disk) {
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            return getSnapshotNode(((DiskImage)disk).getSnapshots());
+            return getSnapshotNode(((DiskImage) disk).getSnapshots());
         } else {
             return null;
         }
@@ -84,7 +87,13 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
     @Override
     protected boolean getIsNodeEnabled(Disk disk) {
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            return ((DiskImage)disk).getstorage_ids().get(0).equals(((BusinessEntity) listModel.getEntity()).getId());
+            if (listModel.getEntity() instanceof Quota) {
+                return ((BusinessEntity) listModel.getEntity()).getId().equals(((DiskImage) disk).getQuotaId());
+            } else {
+                return ((DiskImage) disk).getstorage_ids()
+                        .get(0)
+                        .equals(((BusinessEntity) listModel.getEntity()).getId());
+            }
         } else {
             return true;
         }

@@ -638,7 +638,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
             diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
             diskImage.setvolume_format(model.getVolumeFormat());
-            if (model.getQuota().getIsAvailable()) {
+            if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
                 diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
             }
 

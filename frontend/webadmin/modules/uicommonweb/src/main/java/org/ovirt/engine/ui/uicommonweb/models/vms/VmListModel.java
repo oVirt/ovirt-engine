@@ -2324,6 +2324,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                             .setvolume_format(DataProvider.GetDiskVolumeFormat(
                                                     (VolumeType) disk.getVolumeType().getSelectedItem(),
                                                     storageDomain.getstorage_type()));
+                                    if (disk.getQuota().getSelectedItem() != null) {
+                                        dict.get(templateDisk.getId()).setQuotaId(((Quota) disk.getQuota()
+                                                .getSelectedItem()).getId());
+                                    }
                                 }
                             }
 

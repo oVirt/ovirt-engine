@@ -202,7 +202,9 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
                     rootItem = oldRootItemsMap.get(rootItem.getUserObject());
                 }
                 else {
-                    rootItem.addItem(getEmptyRoot());
+                    if (getEmptyRoot() != null) {
+                        rootItem.addItem(getEmptyRoot());
+                    }
                 }
             } else {
                 for (N node : getNodeObjects(root)) {

@@ -379,6 +379,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE, AuditLogSeverity.WARNING);
     }
 
     private static void initVMSeverities() {

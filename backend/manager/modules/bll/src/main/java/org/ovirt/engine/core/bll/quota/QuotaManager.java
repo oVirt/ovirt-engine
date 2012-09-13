@@ -172,9 +172,16 @@ public class QuotaManager {
                 return true;
             }
             for (StorageQuotaValidationParameter param : parameters) {
-                if (param.getQuotaId() == null || param.getStorageDomainId() == null) {
-                    canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-                    return false;
+                if (param.getQuotaId() == null || Guid.Empty.equals(param.getQuotaId())
+                        || param.getStorageDomainId() == null) {
+                    if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+                        canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+                        return false;
+                    } else {
+                        logPair.setFirst(AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE);
+                        logPair.setSecond(new AuditLogableBase());
+                        return true;
+                    }
                 }
             }
 
@@ -432,15 +439,22 @@ public class QuotaManager {
             Guid vdsGroupId,
             Guid quotaId,
             ArrayList<String> canDoActionMessages) {
+        Pair<AuditLogType, AuditLogableBase> logPair = new Pair<AuditLogType, AuditLogableBase>();
         lock.readLock().lock();
         try {
             if (QuotaEnforcementTypeEnum.DISABLED.equals(storagePool.getQuotaEnforcementType())) {
                 return true;
             }
 
-            if (vdsGroupId == null || vdsGroupId.equals(Guid.Empty) || quotaId == null) {
-                canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-                return false;
+            if (vdsGroupId == null || Guid.Empty.equals(vdsGroupId) || quotaId == null || Guid.Empty.equals(quotaId)) {
+                if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+                    canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+                    return false;
+                } else {
+                    logPair.setFirst(AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
+                    logPair.setSecond(new AuditLogableBase());
+                    return true;
+                }
             }
 
             if (!storagePoolQuotaMap.containsKey(storagePool.getId())) {
@@ -485,6 +499,9 @@ public class QuotaManager {
             return false;
         } finally {
             lock.readLock().unlock();
+            if (logPair.getFirst() != null) {
+                AuditLogDirector.log(logPair.getSecond(), logPair.getFirst());
+            }
         }
 
     }

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.widget.storage;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -27,7 +28,9 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
     ApplicationResources resources;
     ApplicationConstants constants;
 
-    public TemplatesTree(CommonApplicationResources resources, CommonApplicationConstants constants, ApplicationTemplates templates) {
+    public TemplatesTree(CommonApplicationResources resources,
+            CommonApplicationConstants constants,
+            ApplicationTemplates templates) {
         super(resources, constants, templates);
         this.resources = (ApplicationResources) resources;
         this.constants = (ApplicationConstants) constants;
@@ -75,8 +78,11 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
 
     @Override
     protected boolean getIsNodeEnabled(DiskImage disk) {
-        if (listModel.getEntity() instanceof Quota) {
+        if (listModel.getEntity() == null) {
             return true;
+        }
+        if (listModel.getEntity() instanceof Quota) {
+            return ((BusinessEntity) listModel.getEntity()).getId().equals(((DiskImage) disk).getQuotaId());
         }
         return disk.getstorage_ids().contains(((storage_domains) listModel.getEntity()).getId());
     }
