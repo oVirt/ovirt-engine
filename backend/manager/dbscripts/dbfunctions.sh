@@ -194,7 +194,7 @@ get_files() {
 
 is_view_or_sp_changed() {
     files=$(get_files "upgrade" 3)
-    md5sum $files > .scripts.md5.tmp
+    md5sum $files create_*views.sql *_sp.sql > .scripts.md5.tmp
     diff -s -q .scripts.md5 .scripts.md5.tmp >& /dev/null
     result=$?
 
