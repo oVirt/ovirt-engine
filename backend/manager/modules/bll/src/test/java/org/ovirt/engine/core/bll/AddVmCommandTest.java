@@ -126,7 +126,7 @@ public class AddVmCommandTest {
         final int pctRequired = 10;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
         doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
-        assertTrue("vm could not be added", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+        assertTrue("vm could not be added", cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class AddVmCommandTest {
         final int domainSizeGB = 4;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
         doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
-        assertFalse("vm could not be added", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+        assertFalse("vm could not be added", cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for the wrong reason",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
@@ -150,7 +150,7 @@ public class AddVmCommandTest {
         final int domainSizeGB = 10;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
         doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
-        assertFalse("vm could not be added", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+        assertFalse("vm could not be added", cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for the wrong reason",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
@@ -167,7 +167,7 @@ public class AddVmCommandTest {
         setNewDisksForTemplate(10, cmd.getVmTemplate().getDiskMap());
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         assertFalse("Thin vm could not be added due to storage sufficient",
-                cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+                cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for insufficient disk size",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
@@ -184,7 +184,7 @@ public class AddVmCommandTest {
         // Set new Disk Image map with 3GB.
         setNewImageDiskMapForTemplate(cmd, 3000000000L, cmd.getVmTemplate().getDiskImageMap());
         assertFalse("Clone vm could not be added due to storage sufficient",
-                cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+                cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for insufficient disk size",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
@@ -199,7 +199,7 @@ public class AddVmCommandTest {
                 setupCanAddVmFromTemplateTests(domainSizeGB, sizeRequired, pctRequired);
         setNewImageDiskMapForTemplate(cmd, 3000000000L, cmd.getVmTemplate().getDiskImageMap());
         assertFalse("Thin vm could not be added due to storage sufficient",
-                cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+                cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for insufficient disk size",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }

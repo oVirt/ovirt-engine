@@ -149,7 +149,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return _vmDisks;
     }
 
-    protected boolean CanAddVm(ArrayList<String> reasons, Collection<storage_domains> destStorages) {
+    protected boolean canAddVm(ArrayList<String> reasons, Collection<storage_domains> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
         boolean returnValue = canAddVm(reasons, vmStaticFromParams.getvm_name(), getStoragePoolId()
                 .getValue(), vmStaticFromParams.getpriority());
@@ -216,7 +216,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         && CheckPCIAndIDELimit(getParameters().getVmStaticData().getnum_of_monitors(),
                                 getVmInterfaces(),
                                 getVmDisks(), getReturnValue().getCanDoActionMessages())
-                        && CanAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
+                        && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
         return returnValue;
     }
@@ -477,7 +477,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     @Override
     protected void ExecuteVmCommand() {
         ArrayList<String> errorMessages = new ArrayList<String>();
-        if (CanAddVm(errorMessages, destStorages.values())) {
+        if (canAddVm(errorMessages, destStorages.values())) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
