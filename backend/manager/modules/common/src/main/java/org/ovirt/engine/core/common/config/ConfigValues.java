@@ -1528,6 +1528,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("10000")
     ThrottlerMaxWaitForVdsUpdateInMillis(391),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    OnlyRequiredNetworksMandatoryForVdsSelection(392),
+
     Invalid(65535);
 
     private int intValue;

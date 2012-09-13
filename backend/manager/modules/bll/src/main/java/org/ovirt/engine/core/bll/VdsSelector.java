@@ -3,10 +3,12 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -262,7 +265,7 @@ public class VdsSelector {
             sb.append("swap value is illegal");
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP);
         }
-        else if (!areRequiredNetworksAvailable(vds.getId())) {
+        else if (!areRequiredNetworksAvailable(vds)) {
             sb.append("is missing networks required by VM nics ").append(Entities.interfacesByNetworkName(getVmNICs())
                     .keySet());
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS);
@@ -333,19 +336,26 @@ public class VdsSelector {
     }
 
     /**
-     * Determine whether all required Networks are attached to the Host's Nics. Required Networks are the Networks that
-     * are defined on active vNics of the VM.
-     *
-     * @param vdsId
-     *            The Host id.
-     * @return <code>true</code> if all required Networks are attached to a Host Nic, otherwise, <code>false</code>.
-     */
-    boolean areRequiredNetworksAvailable(Guid vdsId) {
-        final List<VdsNetworkInterface> allInterfacesForVds = getInterfaceDAO().getAllInterfacesForVds(vdsId);
+    * Determine whether all required Networks are attached to the Host's Nics. A required Network, depending on
+    * ConfigValue.OnlyRequiredNetworksMandatoryForVdsSelection, is defined as:
+    * 1. false: any network that is defined on an Active vNic of the VM.
+    * 2. true: a Cluster-Required Network that is defined on an Active vNic of the VM.
+    * @param vdsId
+    *            The Host id.
+    * @return <code>true</code> if all required Networks are attached to a Host Nic, otherwise, <code>false</code>.
+    */
+    private boolean areRequiredNetworksAvailable(VDS vds) {
+        final List<VdsNetworkInterface> allInterfacesForVds = getInterfaceDAO().getAllInterfacesForVds(vds.getId());
+        final List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(vds.getvds_group_id());
+        final Map<String, Network> networksByName = Entities.entitiesByName(clusterNetworks);
+
+        boolean onlyRequiredNetworks =
+                Config.<Boolean> GetValue(ConfigValues.OnlyRequiredNetworksMandatoryForVdsSelection);
         for (final VmNetworkInterface vmIf : getVmNICs()) {
             boolean found = false;
             for (final VdsNetworkInterface vdsIf : allInterfacesForVds) {
-                if (!vmIf.isActive() || StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
+                if (!networkRequiredOnVds(vmIf, networksByName, onlyRequiredNetworks)
+                        || StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
                     found = true;
                     break;
                 }
@@ -355,6 +365,22 @@ public class VdsSelector {
             }
         }
         return true;
+    }
+
+    private NetworkDAO getNetworkDAO() {
+        return DbFacade.getInstance().getNetworkDAO();
+    }
+
+    private boolean networkRequiredOnVds(VmNetworkInterface vmIface,
+            Map<String, Network> networksByName,
+            boolean onlyRequiredNetworks) {
+        boolean networkRequiredOnVds = true;
+        if (!vmIface.isActive()) {
+            networkRequiredOnVds = false;
+        } else if (onlyRequiredNetworks) {
+            networkRequiredOnVds = networksByName.get(vmIface.getNetworkName()).getCluster().isRequired();
+        }
+        return networkRequiredOnVds;
     }
 
     VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
