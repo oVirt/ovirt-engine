@@ -235,11 +235,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                     notDownVms++;
                 }
             }
-            if (notDownVms > 0
-                    && !oldGroup.getcompatibility_version().equals(getVdsGroup().getcompatibility_version())) {
-                result = false;
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_RUNNING_VMS);
-            }
+
             boolean sameCpuNames = StringUtils.equals(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
             if (result && !sameCpuNames) {
                 if (suspendedVms > 0) {
