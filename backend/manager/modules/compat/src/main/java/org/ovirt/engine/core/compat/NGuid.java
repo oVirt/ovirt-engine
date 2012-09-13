@@ -2,7 +2,7 @@ package org.ovirt.engine.core.compat;
 
 import java.util.UUID;
 
-public class NGuid implements Serializable {
+public class NGuid implements Serializable, Comparable<NGuid> {
 
     protected static final String EMPTY_GUID_VALUE = "00000000-0000-0000-0000-000000000000";
 
@@ -153,6 +153,11 @@ public class NGuid implements Serializable {
     private static String AddLeadingZero(int k) {
         return (k <= 0xF) ? "0" + Integer.toHexString(k) : Integer
                 .toHexString(k);
+    }
+
+    @Override
+    public int compareTo(NGuid other) {
+        return this.getUuid().compareTo(other.getUuid());
     }
 
 }
