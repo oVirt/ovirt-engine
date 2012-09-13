@@ -95,15 +95,7 @@ RETURNS SETOF vm_pools_view
 BEGIN
       RETURN QUERY SELECT DISTINCT pools.*
 	FROM vm_pools_view pools
-	WHERE exists (
-		SELECT *
-		from permissions_view perms 
-		WHERE perms.object_id in (
-			SELECT * from
-			fn_get_entity_parents(pools.vm_pool_id,5))
-		and perms.ad_element_id in (
-				SELECT id from getUserAndGroupsById(v_user_id))
-		and perms.role_type = 2);
+    INNER JOIN user_vm_pool_permissions_view ON user_id = v_user_id AND entity_id = pools.vm_pool_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
