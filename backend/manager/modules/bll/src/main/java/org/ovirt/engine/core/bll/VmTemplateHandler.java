@@ -54,20 +54,6 @@ public class VmTemplateHandler {
     }
 
     /**
-     * Check if template state did not changed from last canDoAction check (still not locked and exist in the DB).
-     *
-     * @return True if template is at valid state, false otherwise.
-     */
-    public static boolean isTemplateStatusIsNotLocked(Guid id) {
-        boolean returnValue = false;
-        VmTemplate template = DbFacade.getInstance().getVmTemplateDao().get(id);
-        if ((template != null) && (template.getstatus() != VmTemplateStatus.Locked)) {
-            returnValue = true;
-        }
-        return returnValue;
-    }
-
-    /**
      * Lock the VM template with the given id in a new transaction, handling the compensation data using the given
      * {@link CompensationContext}.
      *

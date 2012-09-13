@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -12,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -33,11 +36,21 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
+    protected Map<String, String> getExclusiveLocks() {
+        Map<String, String> locks = new HashMap<String, String>();
+        Map<String, String> parentLocks = super.getExclusiveLocks();
+        if (parentLocks != null) {
+            locks.putAll(parentLocks);
+        }
+        locks.put(getVmTemplateId().toString(), LockingGroup.TEMPLATE.name());
+        return locks;
+    }
+
+    @Override
     protected void executeVmCommand() {
+        VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
         super.executeVmCommand();
-        // override template id to blank
         getParameters().OriginalTemplate = getVm().getvmt_guid();
-        VmTemplateHandler.lockVmTemplateInTransaction(getParameters().OriginalTemplate, getCompensationContext());
         getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
         DbFacade.getInstance().getVmStaticDao().update(getVm().getStaticData());

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -15,11 +16,13 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@LockIdNameAttribute
 public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends MoveOrCopyTemplateCommand<T> {
 
     public ExportVmTemplateCommand(T parameters) {
@@ -70,6 +73,11 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 return null;
             }
         });
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmTemplateId().toString(), LockingGroup.TEMPLATE.name());
     }
 
     @Override
