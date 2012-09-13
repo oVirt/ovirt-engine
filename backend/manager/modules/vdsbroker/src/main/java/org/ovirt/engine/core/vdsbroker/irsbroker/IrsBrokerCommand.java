@@ -1114,7 +1114,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         } else if (inActiveDomainsInPool.contains(tempData.getDomainId())
                                 && !isDomainReportedAsProblematic(tempData, false)) {
                             log.warnFormat("Storage Domain {0} was reported by Host {1} as Active in Pool {2}, moving to active status",
-                                    tempData.getDomainId(),
+                                    getDomainIdTuple(tempData.getDomainId()),
                                     vdsName,
                                     _storagePoolId);
                             storage_pool_iso_map map =
@@ -1191,7 +1191,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             if (tempData.getCode() != 0) {
                 if (isLog) {
                     log.errorFormat("Domain {0} was reported with error code {1}",
-                            tempData.getDomainId(),
+                            getDomainIdTuple(tempData.getDomainId()),
                             tempData.getCode());
                 }
                 return true;
@@ -1200,7 +1200,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     .<Double> GetValue(ConfigValues.MaxStorageVdsTimeoutCheckSec)) {
                 if (isLog) {
                     log.errorFormat("Domain {0} check timeot {1} is too big",
-                            tempData.getDomainId(),
+                            getDomainIdTuple(tempData.getDomainId()),
                             tempData.getLastCheck());
                 }
                 return true;
@@ -1244,12 +1244,13 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private void DomainRecoveredFromProblem(Guid domainId, Guid vdsId, String vdsName) {
-            log.infoFormat("Domain {0} recovered from problem. vds: {1}", domainId, vdsName);
+            String domainIdTuple = getDomainIdTuple(domainId);
+            log.infoFormat("Domain {0} recovered from problem. vds: {1}", domainIdTuple, vdsName);
             ClearVds(vdsId, domainId);
             _domainsInProblem.get(domainId).remove(vdsId);
             if (_domainsInProblem.get(domainId).size() == 0) {
                 log.infoFormat("Domain {0} has recovered from problem. No active host in the DC is reporting it as" +
-                        " problematic, so clearing the domain recovery timer.", domainId);
+                        " problematic, so clearing the domain recovery timer.", domainIdTuple);
                 _domainsInProblem.remove(domainId);
                 ClearTimer(domainId);
             }
@@ -1258,7 +1259,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private void AddDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
             UpdateVdsInProblem(domainId, vdsId);
             _domainsInProblem.put(domainId, new java.util.HashSet<Guid>(java.util.Arrays.asList(vdsId)));
-            log.warnFormat("domain {0} in problem. vds: {1}", domainId, vdsName);
+            log.warnFormat("domain {0} in problem. vds: {1}", getDomainIdTuple(domainId), vdsName);
             Class[] inputType = new Class[] { Guid.class };
             Object[] inputParams = new Object[] { domainId };
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "OnTimer", inputType,
@@ -1272,7 +1273,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         public void OnTimer(Guid domainId) {
             synchronized (_lockObject) {
                 if (_domainsInProblem.containsKey(domainId)) {
-                    log.info("starting ProcessDomainRecovery for domain " + domainId);
+                    log.info("starting ProcessDomainRecovery for domain " + getDomainIdTuple(domainId));
                     ProcessDomainRecovery(domainId);
                 }
                 _timers.remove(domainId);
@@ -1280,7 +1281,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private void UpdateDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
-            log.debugFormat("domain {0} still in problem. vds: {1}", domainId, vdsName);
+            log.debugFormat("domain {0} still in problem. vds: {1}", getDomainIdTuple(domainId), vdsName);
             _domainsInProblem.get(domainId).add(vdsId);
             UpdateVdsInProblem(domainId, vdsId);
         }
@@ -1323,6 +1324,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // that did report on a problem with this domain.
             // (and not a problem with the domain itself).
             storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
+            String domainIdTuple = getDomainIdTuple(domainId);
             if (vdssInProblem.size() > 0) {
                 if (storageDomain.getstorage_domain_type() != StorageDomainType.ImportExport
                         && storageDomain.getstorage_domain_type() != StorageDomainType.ISO) {
@@ -1335,17 +1337,15 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         VDS vds = vdsMap.get(vdsId);
                         if (vds == null) {
                             log.warnFormat(
-                                    "vds {0} reported domain {1}:{2} - as in problem but cannot find vds in db!!",
+                                    "vds {0} reported domain {1} - as in problem but cannot find vds in db!!",
                                     vdsId,
-                                    domainId,
-                                    storageDomain.getstorage_name());
+                                    domainIdTuple);
                         } else if (vds.getstatus() != VDSStatus.Maintenance
                                 && vds.getstatus() != VDSStatus.NonOperational) {
                             log.warnFormat(
-                                    "vds {0} reported domain {1}:{2} as in problem, moving the vds to status NonOperational",
+                                    "vds {0} reported domain {1} as in problem, moving the vds to status NonOperational",
                                     vds.getvds_name(),
-                                    domainId,
-                                    storageDomain.getstorage_name());
+                                    domainIdTuple);
                             ResourceManager
                                     .getInstance()
                                     .getEventListener()
@@ -1354,10 +1354,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             clearVdsFromCache(vdsId, vds.getvds_name());
                         } else {
                             log.warnFormat(
-                                    "vds {0} reported domain {1}:{2} as in problem, vds is in status {3}, no need to move to nonoperational",
+                                    "vds {0} reported domain {1} as in problem, vds is in status {3}, no need to move to nonoperational",
                                     vds.getvds_name(),
-                                    domainId,
-                                    storageDomain.getstorage_name(),
+                                    domainIdTuple,
                                     vds.getstatus());
                         }
                     }
@@ -1366,7 +1365,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             "Storage domain {0} is not visible to one or more hosts. "
                                     +
                                     "Since the domain's type is {1}, hosts status will not be changed to non-operational",
-                            storageDomain.getstorage_name(),
+                            domainIdTuple,
                             storageDomain.getstorage_domain_type());
                 }
 
@@ -1376,7 +1375,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                      // Domain.
                 if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
                     log.warnFormat("domain {0} was reported by all hosts in status UP as problematic. Moving the Domain to NonOperational.",
-                            domainId);
+                            domainIdTuple);
                     ResourceManager.getInstance()
                             .getEventListener().storageDomainNotOperational(domainId, _storagePoolId);
                 } else if (duringReconstructMaster.compareAndSet(false, true)) {
@@ -1388,7 +1387,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     }
                 } else {
                     log.warnFormat("domain {0} was reported by all hosts in status UP as problematic. But not moving the Domain to NonOperational. Because of is reconstract now",
-                            domainId);
+                            domainIdTuple);
                     return;
                 }
             }
@@ -1501,6 +1500,15 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     XmlRpcUtils.shutDownConnection(((IrsServerWrapper) privatemIrsProxy).getHttpClient());
                 }
                 _disposed = true;
+            }
+        }
+
+        private static String getDomainIdTuple(Guid domainId) {
+            storage_domain_static storage_domain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
+            if (storage_domain != null) {
+                return domainId + ":" + storage_domain.getstorage_name();
+            } else {
+                return domainId.toString();
             }
         }
 
