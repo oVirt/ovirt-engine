@@ -483,7 +483,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 @Override
                 public Void runInTransaction() {
                     AddVmStatic();
-                    AddVmDynamic();
+                    addVmDynamic();
                     AddVmNetwork();
                     AddVmStatistics();
                     addActiveSnapshot();
@@ -606,7 +606,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         getCompensationContext().snapshotNewEntity(vmStatic);
     }
 
-    void AddVmDynamic() {
+    void addVmDynamic() {
         VmDynamic tempVar = new VmDynamic();
         tempVar.setId(getVmId());
         tempVar.setstatus(VMStatus.Down);
