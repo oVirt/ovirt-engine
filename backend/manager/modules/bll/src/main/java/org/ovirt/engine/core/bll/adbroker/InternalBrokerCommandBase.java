@@ -15,7 +15,7 @@ public abstract class InternalBrokerCommandBase extends BrokerCommandBase {
     }
 
     @Override
-    public LdapReturnValueBase Execute() {
+    public LdapReturnValueBase execute() {
         try {
             ExecuteQuery();
         } catch (RuntimeException e) {

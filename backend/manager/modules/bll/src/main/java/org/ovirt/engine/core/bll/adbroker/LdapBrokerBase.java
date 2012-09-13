@@ -15,7 +15,7 @@ public abstract class LdapBrokerBase implements LdapBroker {
     public LdapReturnValueBase RunAdAction(AdActionType actionType, LdapBrokerBaseParameters parameters) {
         log.debug("RunAdAction Entry, actionType=" + actionType.toString());
         BrokerCommandBase command = CreateCommand(actionType, parameters);
-        return command.Execute();
+        return command.execute();
     }
 
     private BrokerCommandBase CreateCommand(AdActionType action, LdapBrokerBaseParameters parameters) {

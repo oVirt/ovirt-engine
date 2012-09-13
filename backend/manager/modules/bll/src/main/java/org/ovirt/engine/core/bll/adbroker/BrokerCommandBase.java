@@ -62,5 +62,5 @@ public abstract class BrokerCommandBase {
         _parameters = parameters;
     }
 
-    public abstract LdapReturnValueBase Execute();
+    public abstract LdapReturnValueBase execute();
 }

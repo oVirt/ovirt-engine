@@ -59,7 +59,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     @Override
-    public LdapReturnValueBase Execute() {
+    public LdapReturnValueBase execute() {
         try {
             log.debugFormat("Running LDAP command: {0}", getClass().getName());
             String loginNameForKerberos =
