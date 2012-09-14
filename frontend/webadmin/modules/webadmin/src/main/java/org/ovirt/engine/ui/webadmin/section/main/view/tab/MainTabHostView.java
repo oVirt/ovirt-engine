@@ -112,13 +112,15 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(clusterColumn, constants.clusterHost());
 
-        TextColumnWithTooltip<VDS> dcColumn = new TextColumnWithTooltip<VDS>() {
-            @Override
-            public String getValue(VDS object) {
-                return object.getstorage_pool_name();
-            }
-        };
-        getTable().addColumn(dcColumn, constants.dcHost());
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
+            TextColumnWithTooltip<VDS> dcColumn = new TextColumnWithTooltip<VDS>() {
+                @Override
+                public String getValue(VDS object) {
+                    return object.getstorage_pool_name();
+                }
+            };
+            getTable().addColumn(dcColumn, constants.dcHost());
+        }
 
         TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
             @Override
