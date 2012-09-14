@@ -392,7 +392,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             serviceIPTablesConfig += Config.<String> GetValue(ConfigValues.IPTablesConfigForGluster);
         }
 
-        ipTablesConfig.replace(IP_TABLE_CUSTOM_RULES_PLACE_HOLDER, serviceIPTablesConfig);
+        ipTablesConfig = ipTablesConfig.replace(IP_TABLE_CUSTOM_RULES_PLACE_HOLDER, serviceIPTablesConfig);
         return ipTablesConfig;
     }
 
