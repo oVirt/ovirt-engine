@@ -30,8 +30,7 @@ public class VdsInstallerSSH {
 
     private SSHClient client;
     private IVdsInstallerCallback callback;
-    private String host;
-    private int port = 22;
+    private int port = 22; // until api supprt port
 
     /* for testing */
     void setPort(int port) {
@@ -113,13 +112,12 @@ public class VdsInstallerSSH {
         );
 
         boolean ret = false;
-        this.host = server;
 
         try {
             this.client = new SSHClient();
             this.client.setHardTimeout(hardTimeout);
             this.client.setSoftTimeout(softTimeout);
-            this.client.setHost(this.host, this.port);
+            this.client.setHost(server, this.port); // port until API supports port
             this.client.setUser(user);
 
             if (keyStore == null) {
@@ -206,7 +204,7 @@ public class VdsInstallerSSH {
             _callbackAddMessage(
                 String.format(
                     "<BSTRAP component='RHEV_INSTALL' status='OK' message='Connected to Host %1$s with SSH key fingerprint: %2$s'/>",
-                    this.host,
+                    this.client.getDisplayHost(),
                     fingerprint
                 )
             );
@@ -219,7 +217,7 @@ public class VdsInstallerSSH {
         catch (Exception e) {
             String m = String.format(
                 "Could not connect to server %1$s",
-                this.host
+                this.client.getDisplayHost()
             );
             log.error(m, e);
             _callbackFailed(m);
@@ -394,7 +392,7 @@ public class VdsInstallerSSH {
             }
         }
 
-        log.info(String.format("SSH execute %1$s '%2$s'", this.host, command));
+        log.info(String.format("SSH execute %1$s '%2$s'", this.client.getDisplayHost(), command));
 
         boolean ret = false;
 
@@ -423,7 +421,7 @@ public class VdsInstallerSSH {
             log.error(
                 String.format(
                     "SSH error running command %1$s:'%2$s'",
-                    this.host,
+                    this.client.getDisplayHost(),
                     command
                 ),
                 e
@@ -431,7 +429,7 @@ public class VdsInstallerSSH {
             _callbackFailed(
                 String.format(
                     "SSH command failed while executing at host '%1$s', refer to logs for further information",
-                    this.host
+                    this.client.getDisplayHost()
                 )
             );
         }
@@ -446,7 +444,7 @@ public class VdsInstallerSSH {
 
     public final boolean receiveFile(String source, String destination) {
 
-        log.info(String.format("SSH receive %1$s:'%2$s' '%3$s')", this.host, source, destination));
+        log.info(String.format("SSH receive %1$s:'%2$s' '%3$s')", this.client.getDisplayHost(), source, destination));
 
         boolean ret = false;
 
@@ -458,7 +456,7 @@ public class VdsInstallerSSH {
         catch (FileNotFoundException e) {
             String m = String.format(
                 "SSH could not receive file %1$s:'%2$s': '%3$s'",
-                this.host,
+                this.client.getDisplayHost(),
                 source,
                 destination
             );
@@ -468,7 +466,7 @@ public class VdsInstallerSSH {
         catch (Exception e) {
             String m = String.format(
                 "SSH could not receive file %1$s:'%2$s': '%3$s'",
-                this.host,
+                this.client.getDisplayHost(),
                 source,
                 destination
             );
@@ -482,7 +480,7 @@ public class VdsInstallerSSH {
 
     public final boolean sendFile(String source, String destination) {
 
-        log.debug(String.format("SSH send %1$s:'%2$s' '%3$s'", this.host, source, destination));
+        log.debug(String.format("SSH send %1$s:'%2$s' '%3$s'", this.client.getDisplayHost(), source, destination));
 
         boolean ret = false;
 
@@ -495,7 +493,7 @@ public class VdsInstallerSSH {
             log.error (
                 String.format(
                     "SSH could not send file %2$s %1$s:%3$s",
-                    this.host,
+                    this.client.getDisplayHost(),
                     source,
                     destination
                 ),
@@ -506,7 +504,7 @@ public class VdsInstallerSSH {
         catch (Exception e) {
             String m = String.format(
                 "SSH could not send file %2$s %1$s:%3$s",
-                this.host,
+                this.client.getDisplayHost(),
                 source,
                 destination
             );

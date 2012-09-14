@@ -38,6 +38,7 @@ public class SSHClient {
     private static final int STREAM_BUFFER_SIZE = 8192;
     private static final int CONSTRAINT_BUFFER_SIZE = 1024;
     private static final int THREAD_JOIN_WAIT_TIME = 2000;
+    private static final int DEFAULT_SSH_PORT = 22;
 
     private static Log log = LogFactory.getLog(SSHClient.class);
 
@@ -49,7 +50,7 @@ public class SSHClient {
     private String password;
     private KeyPair keyPair;
     private String host;
-    private int port;
+    private int port = DEFAULT_SSH_PORT;
     private PublicKey serverKey;
 
     /**
@@ -172,6 +173,73 @@ public class SSHClient {
     }
 
     /**
+     * Set host.
+     * @param host host.
+     */
+    public void setHost(String host) {
+        setHost(host, DEFAULT_SSH_PORT);
+    }
+
+    /**
+     * Get host.
+     * @return host as set by setHost()
+     */
+    public String getHost() {
+        return this.host;
+    }
+
+    /**
+     * Get port.
+     * @return port.
+     */
+    public int getPort() {
+        return this.port;
+    }
+
+    /**
+     * Get hard timeout.
+     * @return timeout.
+     */
+    public long getHardTimeout() {
+        return this.hardTimeout;
+    }
+
+    /**
+     * Get soft timeout.
+     * @return timeout.
+     */
+    public long getSoftTimeout() {
+        return this.softTimeout;
+    }
+
+    /**
+     * Get user.
+     * @return user.
+     */
+    public String getUser() {
+        return this.user;
+    }
+
+    public String getDisplayHost() {
+        StringBuilder ret = new StringBuilder(100);
+        if (this.host == null) {
+            ret.append("N/A");
+        }
+        else {
+            if (this.user != null) {
+                ret.append(this.user);
+                ret.append("@");
+            }
+            ret.append(this.host);
+            if (this.port != DEFAULT_SSH_PORT) {
+                ret.append(":");
+                ret.append(this.port);
+            }
+        }
+        return ret.toString();
+    }
+
+    /**
      * Get server key
      * @return server key.
      */
@@ -184,7 +252,7 @@ public class SSHClient {
      */
     public void connect() throws Exception {
 
-        log.debug(String.format("Connecting: '%1$s:%2$s", this.host, this.port));
+        log.debug(String.format("Connecting: '%1$s'", this.getDisplayHost()));
 
         try {
             this.client = _createSshClient();
@@ -209,9 +277,8 @@ public class SSHClient {
             if (!cfuture.await(this.softTimeout)) {
                 throw new TimeLimitExceededException(
                     String.format(
-                        "SSH connection timed out connecting to '%1$s:%2$d'",
-                        this.host,
-                        this.port
+                        "SSH connection timed out connecting to '%1$s'",
+                        this.getDisplayHost()
                     )
                 );
             }
@@ -233,18 +300,16 @@ public class SSHClient {
             if ((stat & ClientSession.CLOSED) != 0) {
                 throw new IOException(
                     String.format(
-                        "SSH session closed during connection '%1$s:%2$d'",
-                        this.host,
-                        this.port
+                        "SSH session closed during connection '%1$s'",
+                        this.getDisplayHost()
                     )
                 );
             }
             if ((stat & ClientSession.TIMEOUT) != 0) {
                 throw new TimeLimitExceededException(
                     String.format(
-                        "SSH timed out waiting for authentication request '%1$s:%2$d'",
-                        this.host,
-                        this.port
+                        "SSH timed out waiting for authentication request '%1$s'",
+                        this.getDisplayHost()
                     )
                 );
             }
@@ -254,7 +319,7 @@ public class SSHClient {
             throw e;
         }
 
-        log.debug(String.format("Connected: '%1$s:%2$s", this.host, this.port));
+        log.debug(String.format("Connected: '%1$s'", this.getDisplayHost()));
     }
 
     /**
@@ -262,7 +327,7 @@ public class SSHClient {
      */
     public void authenticate() throws Exception {
 
-        log.debug(String.format("Authenticating: '%1$s:%2$s", this.host, this.port));
+        log.debug(String.format("Authenticating: '%1$s'", this.getDisplayHost()));
 
         try {
             AuthFuture afuture;
@@ -275,27 +340,24 @@ public class SSHClient {
             else {
                 throw new AuthenticationException(
                     String.format(
-                        "SSH authentication failure '%1$s:%2$s', no password or key",
-                        this.host,
-                        this.port
+                        "SSH authentication failure '%1$s', no password or key",
+                        this.getDisplayHost()
                     )
                 );
             }
             if (!afuture.await(this.softTimeout)) {
                 throw new TimeLimitExceededException(
                     String.format(
-                        "SSH authentication timed out connecting to '%1$s:%2$d'",
-                        this.host,
-                        this.port
+                        "SSH authentication timed out connecting to '%1$s'",
+                        this.getDisplayHost()
                     )
                 );
             }
             if (!afuture.isSuccess()) {
                 throw new AuthenticationException(
                     String.format(
-                        "SSH authentication to '%1$s:%2$d' failed%3$s",
-                        this.host,
-                        this.port,
+                        "SSH authentication to '%1$s' failed%2$s",
+                        this.getDisplayHost(),
                         (
                             this.keyPair == null ?
                             " make sure host is configured for password authentication" :
@@ -310,7 +372,7 @@ public class SSHClient {
             throw e;
         }
 
-        log.debug(String.format("Authenticated: '%1$s:%2$s", this.host, this.port));
+        log.debug(String.format("Authenticated: '%1$s'", this.getDisplayHost()));
     }
 
     /**
@@ -401,9 +463,8 @@ public class SSHClient {
             if (hardTimeout) {
                 throw new TimeLimitExceededException(
                     String.format(
-                        "SSH session hard timeout host '%1$s:%2$d'",
-                        this.host,
-                        this.port
+                        "SSH session hard timeout host '%1$s'",
+                        this.getDisplayHost()
                     )
                 );
             }
@@ -411,9 +472,8 @@ public class SSHClient {
             if ((stat & ClientChannel.TIMEOUT) != 0) {
                 throw new TimeLimitExceededException(
                     String.format(
-                        "SSH session timeout host '%1$s:%2$d'",
-                        this.host,
-                        this.port
+                        "SSH session timeout host '%1$s'",
+                        this.getDisplayHost()
                     )
                 );
             }
@@ -431,9 +491,8 @@ public class SSHClient {
             if ((stat & ClientChannel.EXIT_SIGNAL) != 0) {
                 throw new IOException(
                     String.format(
-                        "Signal received during SSH session host '%1$s:%2$d'",
-                        this.host,
-                        this.port
+                        "Signal received during SSH session host '%1$s'",
+                        this.getDisplayHost()
                     )
                 );
             }
@@ -441,9 +500,8 @@ public class SSHClient {
             if ((stat & ClientChannel.EXIT_STATUS) != 0 && channel.getExitStatus() != 0) {
                 throw new IOException(
                     String.format(
-                        "Command returned failure code %3$d during SSH session %1$s:%2$d' '%4$s'",
-                        this.host,
-                        this.port,
+                        "Command returned failure code %2$d during SSH session '%1$s' '%3$s'",
+                        this.getDisplayHost(),
                         channel.getExitStatus(),
                         command
                     )
@@ -453,9 +511,8 @@ public class SSHClient {
             if ((stat & ClientChannel.TIMEOUT) != 0) {
                 throw new TimeLimitExceededException(
                     String.format(
-                        "SSH session timeout waiting for status host %1$s:%2$d",
-                        this.host,
-                        this.port
+                        "SSH session timeout waiting for status host '%1$s'",
+                        this.getDisplayHost()
                     )
                 );
             }
