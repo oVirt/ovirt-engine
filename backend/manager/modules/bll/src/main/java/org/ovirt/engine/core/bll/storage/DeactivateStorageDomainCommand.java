@@ -175,16 +175,20 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             getStorageDomain().getStorageDynamicData().setavailable_disk_size(null);
             getStorageDomain().getStorageDynamicData().setused_disk_size(null);
         }
-        runVdsCommand(VDSCommandType.DeactivateStorageDomain,
-                new DeactivateStorageDomainVDSCommandParameters(getStoragePool().getId(),
-                        getStorageDomain()
-                                .getId(),
-                        _newMasterStorageDomainId,
-                        getStoragePool().getmaster_domain_version()));
+        if (!getParameters().isInactive()) {
+            runVdsCommand(VDSCommandType.DeactivateStorageDomain,
+                    new DeactivateStorageDomainVDSCommandParameters(getStoragePool().getId(),
+                            getStorageDomain()
+                                    .getId(),
+                            _newMasterStorageDomainId,
+                            getStoragePool().getmaster_domain_version()));
+        }
         freeLock();
-        runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
-                _isLastMaster,
-                _newMasterStorageDomainId);
+        if (!getParameters().isInactive()) {
+            runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
+                    _isLastMaster,
+                    _newMasterStorageDomainId);
+        }
         if (_isLastMaster && spm != null) {
             final VDSReturnValue stopSpmReturnValue = runVdsCommand(VDSCommandType.SpmStopOnIrs,
                     new IrsBaseVDSCommandParameters(getStoragePool().getId()));
@@ -202,7 +206,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                             getStoragePool().getId(), spm.getvds_spm_id()));
         }
 
-        if (spm != null) {
+        if (!getParameters().isInactive() && spm != null) {
             getStorageHelper(getStorageDomain()).DisconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
         }
 

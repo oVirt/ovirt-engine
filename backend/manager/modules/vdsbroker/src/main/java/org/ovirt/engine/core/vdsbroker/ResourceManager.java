@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -404,10 +402,5 @@ public class ResourceManager {
         }
 
         return null;
-    }
-
-    public void UpdateVdsDomainsData(Guid vdsId, String vdsName, Guid storagePoolId,
-            ArrayList<VDSDomainsData> vdsDomainData) {
-        IrsBrokerCommand.UpdateVdsDomainsData(vdsId, vdsName, storagePoolId, vdsDomainData);
     }
 }

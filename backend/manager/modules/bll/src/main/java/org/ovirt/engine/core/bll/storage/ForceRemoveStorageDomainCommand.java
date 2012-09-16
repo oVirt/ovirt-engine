@@ -35,7 +35,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 // if master try to reconstruct
                 if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
                     ReconstructMasterParameters tempVar = new ReconstructMasterParameters(getStoragePool().getId(),
-                            getStorageDomain().getId(), true);
+                            getStorageDomain().getId(), false);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                     Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain, tempVar);
                 }

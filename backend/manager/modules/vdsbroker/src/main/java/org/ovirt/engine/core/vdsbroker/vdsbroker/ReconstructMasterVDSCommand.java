@@ -17,10 +17,11 @@ public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandPa
         final Map<String, String> domains = new HashMap<String, String>();
 
         for (storage_pool_iso_map domain : getParameters().getDomainsList()) {
-            domains.put(domain.getstorage_id().toString(),
-                    domain.getstatus() != null ? domain.getstatus() == StorageDomainStatus.InActive ? "attached"
-                            : domain.getstatus().toString().toLowerCase() : StorageDomainStatus.Unknown.toString()
-                            .toLowerCase());
+            if (domain.getstatus() == StorageDomainStatus.Maintenance) {
+                domains.put(domain.getstorage_id().toString(), "attached");
+            } else {
+                domains.put(domain.getstorage_id().toString(), StorageDomainStatus.Active.toString().toLowerCase());
+            }
         }
 
         status = getBroker().reconstructMaster(getParameters().getStoragePoolId().toString(),

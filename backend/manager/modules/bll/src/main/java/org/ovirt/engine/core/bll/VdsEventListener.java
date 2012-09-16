@@ -72,15 +72,18 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
-        Backend.getInstance().runInternalAction(VdcActionType.HandleFailedStorageDomain,
-                new StorageDomainPoolParametersBase(storageDomainId, storagePoolId),
+        StorageDomainPoolParametersBase parameters =
+                new StorageDomainPoolParametersBase(storageDomainId, storagePoolId);
+        parameters.setIsInternal(true);
+        parameters.setInactive(true);
+        Backend.getInstance().runInternalAction(VdcActionType.DeactivateStorageDomain,
+                parameters,
                 ExecutionHandler.createInternalJobContext());
     }
 
     @Override
     public void masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
-        VdcActionParametersBase parameters = new ReconstructMasterParameters(storagePoolId, storageDomainId, false);
-        parameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+        VdcActionParametersBase parameters = new ReconstructMasterParameters(storagePoolId, storageDomainId, true);
         Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain,
                 parameters,
                 ExecutionHandler.createInternalJobContext());

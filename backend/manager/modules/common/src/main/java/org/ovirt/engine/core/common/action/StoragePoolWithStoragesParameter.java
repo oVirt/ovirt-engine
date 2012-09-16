@@ -1,17 +1,19 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
 public class StoragePoolWithStoragesParameter extends StoragePoolManagementParameter {
     private static final long serialVersionUID = 399202796107792151L;
-    private java.util.ArrayList<Guid> privateStorages;
+    private List<Guid> privateStorages;
 
-    public java.util.ArrayList<Guid> getStorages() {
+    public List<Guid> getStorages() {
         return privateStorages;
     }
 
-    private void setStorages(java.util.ArrayList<Guid> value) {
+    private void setStorages(List<Guid> value) {
         privateStorages = value;
     }
 
@@ -25,7 +27,7 @@ public class StoragePoolWithStoragesParameter extends StoragePoolManagementParam
         privateIsInternal = value;
     }
 
-    public StoragePoolWithStoragesParameter(storage_pool storagePool, java.util.ArrayList<Guid> storage_domain_ids, String sessionId) {
+    public StoragePoolWithStoragesParameter(storage_pool storagePool, List<Guid> storage_domain_ids, String sessionId) {
         super(storagePool);
         setStorages(storage_domain_ids);
         setSessionId(sessionId);

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Arrays;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -16,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -46,8 +47,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
         if (getStorageDomain() != null) {
             if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
                 StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
-                        new java.util.ArrayList<Guid>(
-                                java.util.Arrays.asList(new Guid[] { getStorageDomain().getId() })),
+                       Arrays.asList(getStorageDomain().getId()),
                         getParameters().getSessionId());
                 parameters.setIsInternal(true);
                 parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
@@ -77,18 +77,13 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                         }
                     });
                     ConnectAllHostsToPool();
-                    VDSReturnValue returnValue =
-                            getBackend().getResourceManager()
-                                    .RunVdsCommand(
-                                            VDSCommandType.AttachStorageDomain,
-                                            new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
-                                                    getParameters().getStorageDomainId()));
-                    DiconnectAllHostsInPool();
+                    runVdsCommand(VDSCommandType.AttachStorageDomain,
+                            new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
+                                    getParameters().getStorageDomainId()));
                     executeInNewTransaction(new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
                             final StorageDomainType sdType = getStorageDomain().getstorage_domain_type();
-
                             map.setstatus(StorageDomainStatus.Maintenance);
                             getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
 
@@ -103,16 +98,15 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
 
                                 if (domain.getStorageFormat() != targetFormat) {
                                     log.infoFormat("Updating storage domain {0} (type {1}) to format {2}",
-                                        getStorageDomain().getId(), sdType, targetFormat);
+                                            getStorageDomain().getId(), sdType, targetFormat);
                                     domain.setStorageFormat(targetFormat);
                                     getStorageDomainStaticDAO().update(domain);
                                 }
                             }
-
                             return null;
                         }
                     });
-                    setSucceeded(returnValue.getSucceeded());
+                    setSucceeded(true);
                 }
             }
         }
@@ -127,9 +121,6 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
 
     @Override
     protected boolean canDoAction() {
-        super.canDoAction();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH);
-
         // We can share only ISO or Export domain , or a data domain
         // which is not attached.
         boolean returnValue =
@@ -145,5 +136,11 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
             returnValue = CheckMasterDomainIsUp();
         }
         return returnValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH);
     }
 }

@@ -92,7 +92,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                             .ConnectStorageToDomainByVdsId(storageDomain,
                                     getVds().getId());
                 }
-                retVal = AddStoragePoolInIrs();
+                retVal = addStoragePoolInIrs();
                 if (!retVal.getSucceeded()
                         && retVal.getVdsError().getCode() == VdcBllErrors.StorageDomainAccessError) {
                     log.warnFormat("Error creating storage pool on vds {0} - continuing",
@@ -208,16 +208,12 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
      * Save the master version out of the transaction
      */
 
-    private VDSReturnValue AddStoragePoolInIrs() {
-        return Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.CreateStoragePool,
-                        new CreateStoragePoolVDSCommandParameters(getVds().getId(), getStoragePool()
-                                .getstorage_pool_type(), getStoragePool().getId(), getStoragePool().getname(),
-                                masterStorageDomain.getId(), getParameters().getStorages(), getStoragePool()
-                                        .getmaster_domain_version()));
+    private VDSReturnValue addStoragePoolInIrs() {
+        return runVdsCommand(VDSCommandType.CreateStoragePool,
+                new CreateStoragePoolVDSCommandParameters(getVds().getId(), getStoragePool()
+                        .getstorage_pool_type(), getStoragePool().getId(), getStoragePool().getname(),
+                        masterStorageDomain.getId(), getParameters().getStorages(), getStoragePool()
+                                .getmaster_domain_version()));
     }
 
     private boolean ActivateStorageDomains() {

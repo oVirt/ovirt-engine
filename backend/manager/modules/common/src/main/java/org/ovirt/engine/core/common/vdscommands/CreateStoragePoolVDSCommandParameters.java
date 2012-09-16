@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    private Guid privateStoragePoolId = new Guid();
+    private Guid privateStoragePoolId = Guid.Empty;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -34,7 +36,7 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolName = value;
     }
 
-    private Guid privateMasterDomainId = new Guid();
+    private Guid privateMasterDomainId = Guid.Empty;
 
     public Guid getMasterDomainId() {
         return privateMasterDomainId;
@@ -44,13 +46,13 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateMasterDomainId = value;
     }
 
-    private java.util.ArrayList<Guid> privateDomainsIdList;
+    private List<Guid> privateDomainsIdList;
 
-    public java.util.ArrayList<Guid> getDomainsIdList() {
+    public List<Guid> getDomainsIdList() {
         return privateDomainsIdList;
     }
 
-    private void setDomainsIdList(java.util.ArrayList<Guid> value) {
+    private void setDomainsIdList(List<Guid> value) {
         privateDomainsIdList = value;
     }
 
@@ -65,7 +67,7 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
     }
 
     public CreateStoragePoolVDSCommandParameters(Guid vdsId, StorageType storageType, Guid storagePoolId,
-            String poolName, Guid masterDomainId, java.util.ArrayList<Guid> domainsIdList, int masterVersion) {
+            String poolName, Guid masterDomainId, List<Guid> domainsIdList, int masterVersion) {
         super(vdsId);
         setStoragePoolId(storagePoolId);
         setStorageType(storageType);

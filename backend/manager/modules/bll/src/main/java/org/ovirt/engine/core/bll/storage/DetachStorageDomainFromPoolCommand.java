@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
@@ -13,9 +12,6 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -41,71 +37,42 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     @Override
     protected void executeCommand() {
         log.info("Start detach storage domain");
-        if (getStorageDomain() != null) {
-            changeStorageDomainStatusInTransaction(getStorageDomain().getStoragePoolIsoMapData(),StorageDomainStatus.Locked);
-            log.info(" Detach storage domain: before connect");
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            ConnectAllHostsToPool();
-                            return null;
-                        }
-            });
+        changeStorageDomainStatusInTransaction(getStorageDomain().getStoragePoolIsoMapData(),
+                StorageDomainStatus.Locked);
+        log.info(" Detach storage domain: before connect");
+        ConnectAllHostsToPool();
 
-            log.info(" Detach storage domain: after connect");
+        log.info(" Detach storage domain: after connect");
 
-            VDSReturnValue returnValue = TransactionSupport.executeInScope(TransactionScopeOption.Required,new TransactionMethod<VDSReturnValue>() {
-                @Override
-                public VDSReturnValue runInTransaction() {
-                     return Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.DetachStorageDomain,
-                            new DetachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
-                                    getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
-                                            .getmaster_domain_version()));
+        VDSReturnValue returnValue = runVdsCommand(
+                VDSCommandType.DetachStorageDomain,
+                new DetachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
+                        getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
+                                .getmaster_domain_version()));
+        log.info(" Detach storage domain: after detach in vds");
+        DiconnectAllHostsInPool();
 
-                }
-            });
-            log.info(" Detach storage domain: after detach in vds");
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,new TransactionMethod<Object>() {
-                @Override
-                public Object runInTransaction() {
-                    DiconnectAllHostsInPool();
-                    return null;
-                }
-            });
-
-            log.info(" Detach storage domain: after disconnect storage");
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-                @Override
-                public Object runInTransaction() {
-                    storage_pool_iso_map mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
-                    getCompensationContext().snapshotEntity(mapToRemove);
-                    DbFacade.getInstance()
-                    .getStoragePoolIsoMapDAO()
-                    .remove(new StoragePoolIsoMapId(mapToRemove.getstorage_id(),mapToRemove.getstorage_pool_id()));
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
-            });
-            if (returnValue.getSucceeded() && getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO) {
-                // reset iso for this pool in vdsBroker cache
-                TransactionSupport.executeInScope(TransactionScopeOption.Required,new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.ResetISOPath,
-                                new IrsBaseVDSCommandParameters(getParameters().getStoragePoolId()));
-                        return null;
-                    }
-                });
+        log.info(" Detach storage domain: after disconnect storage");
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+            @Override
+            public Object runInTransaction() {
+                storage_pool_iso_map mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
+                getCompensationContext().snapshotEntity(mapToRemove);
+                DbFacade.getInstance()
+                        .getStoragePoolIsoMapDAO()
+                        .remove(new StoragePoolIsoMapId(mapToRemove.getstorage_id(),
+                                mapToRemove.getstorage_pool_id()));
+                getCompensationContext().stateChanged();
+                return null;
             }
-            setSucceeded(returnValue.getSucceeded());
+        });
+        if (returnValue.getSucceeded() && getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO) {
+            // reset iso for this pool in vdsBroker cache
+            runVdsCommand(VDSCommandType.ResetISOPath,
+                    new IrsBaseVDSCommandParameters(getParameters().getStoragePoolId()));
         }
         log.info("End detach storage domain");
+        setSucceeded(returnValue.getSucceeded());
     }
 
     @Override
@@ -116,14 +83,14 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
 
     @Override
     protected boolean canDoAction() {
-        if (!super.canDoAction()) {
-            return false;
-        }
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
         return canDetachDomain(getParameters().getDestroyingPool(),
                 getParameters().getRemoveLast(),
                 isInternalExecution());
     }
 
-    private static Log log = LogFactory.getLog(DetachStorageDomainFromPoolCommand.class);
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
+    }
 }

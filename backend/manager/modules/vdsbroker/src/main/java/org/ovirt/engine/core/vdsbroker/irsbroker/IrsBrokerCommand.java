@@ -374,13 +374,12 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     statusChanged = true;
                 } else if (domainPoolMap.getstatus() != StorageDomainStatus.Locked
                         && domainPoolMap.getstatus() != data.getstatus()) {
-                    if (domainPoolMap.getstatus() != StorageDomainStatus.Maintenance
-                            || data.getstatus() != StorageDomainStatus.InActive) {
+                    if (domainPoolMap.getstatus() != StorageDomainStatus.InActive
+                            && data.getstatus() != StorageDomainStatus.InActive) {
                         DbFacade.getInstance().getStoragePoolIsoMapDAO().update(data.getStoragePoolIsoMapData());
                         statusChanged = true;
                     }
-                    if (data.getstatus() != null && (data.getstatus() == StorageDomainStatus.InActive ||
-                            data.getstatus() == StorageDomainStatus.Maintenance)
+                    if (data.getstatus() != null && data.getstatus() == StorageDomainStatus.InActive
                             && domainFromDb.getstorage_domain_type() == StorageDomainType.Master) {
                         storage_pool pool = DbFacade.getInstance().getStoragePoolDAO()
                                 .get(domainPoolMap.getstorage_pool_id().getValue());
@@ -394,7 +393,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
                 // if status didn't change and still not active no need to
                 // update dynamic data
-                if (statusChanged || data.getstatus() == StorageDomainStatus.Active) {
+                if (statusChanged
+                        || (domainPoolMap.getstatus() != StorageDomainStatus.InActive && data.getstatus() == StorageDomainStatus.Active)) {
                     DbFacade.getInstance().getStorageDomainDynamicDAO().update(data.getStorageDynamicData());
                     if (data.getavailable_disk_size() != null && data.getused_disk_size() != null) {
                         int freePercent = data.getStorageDynamicData().getfreeDiskPercent();
@@ -405,12 +405,12 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         boolean percentThresholdMet =
                                 freePercent <= Config.<Integer> GetValue(ConfigValues.FreeSpaceLow);
                         if (spaceThresholdMet && percentThresholdMet) {
-                             type = AuditLogType.IRS_DISK_SPACE_LOW_ERROR;
+                            type = AuditLogType.IRS_DISK_SPACE_LOW_ERROR;
                         } else {
                             if (spaceThresholdMet || percentThresholdMet) {
                                 type = AuditLogType.IRS_DISK_SPACE_LOW;
                             }
-                         }
+                        }
                         if (type != AuditLogType.UNASSIGNED) {
                             AuditLogableBase logable = new AuditLogableBase();
                             logable.setStorageDomain(data);
@@ -435,7 +435,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             case VG_METADATA_CRITICALLY_FULL:
                                 AuditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL);
                                 break;
-                            case SMALL_VG_METADATA :
+                            case SMALL_VG_METADATA:
                                 AuditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA);
                                 break;
                             default:
@@ -1054,84 +1054,81 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         public void UpdateVdsDomainsData(final Guid vdsId, final String vdsName,
-                final java.util.ArrayList<VDSDomainsData> data) {
+                final ArrayList<VDSDomainsData> data) {
 
-            Set<Guid> domainsInProblems =
-                    (Set<Guid>) TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
-                            new TransactionMethod<Set<Guid>>() {
-                                @Override
-                                public Set<Guid> runInTransaction() {
+            Set<Guid> domainsInProblems = null;
+            storage_pool storagePool =
+                    DbFacade.getInstance().getStoragePoolDAO().get(_storagePoolId);
+            if (storagePool != null
+                    && (storagePool.getstatus() == StoragePoolStatus.Up || storagePool.getstatus() == StoragePoolStatus.Problematic)) {
 
-                                    Set<Guid> domainsInProblems = null;
-                                    storage_pool storagePool =
-                                            DbFacade.getInstance().getStoragePoolDAO().get(_storagePoolId);
-                                    if (storagePool != null
-                                            && (storagePool.getstatus() == StoragePoolStatus.Up || storagePool.getstatus() == StoragePoolStatus.Problematic)) {
+                try {
+                    // build a list of all domains in pool
+                    // which are in status Active or Unknown
+                    Set<Guid> domainsInPool = new HashSet<Guid>(
+                            DbFacade.getInstance().getStorageDomainStaticDAO().getAllIds(
+                                    _storagePoolId, StorageDomainStatus.Active));
+                    domainsInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDAO().getAllIds(
+                            _storagePoolId, StorageDomainStatus.Unknown));
+                    Set<Guid> inActiveDomainsInPool =
+                            new HashSet<Guid>(DbFacade.getInstance()
+                                    .getStorageDomainStaticDAO()
+                                    .getAllIds(_storagePoolId, StorageDomainStatus.InActive));
 
-                                        try {
+                    // build a list of all the domains in
+                    // pool (domainsInPool) that are not
+                    // visible by the host.
+                    List<Guid> domainsInPoolThatNonVisibleByVds = new ArrayList<Guid>();
+                    Set<Guid> dataDomainIds = new HashSet<Guid>();
+                    for (VDSDomainsData tempData : data) {
+                        dataDomainIds.add(tempData.getDomainId());
+                    }
+                    for (Guid tempDomainId : domainsInPool) {
+                        if (!dataDomainIds.contains(tempDomainId)) {
+                            domainsInPoolThatNonVisibleByVds.add(tempDomainId);
+                        }
+                    }
 
-                                            // build a list of all domains in pool
-                                            // which are in status Active or Unknown
-                                            Set<Guid> domainsInPool = new HashSet<Guid>(
-                                                    DbFacade.getInstance().getStorageDomainStaticDAO().getAllIds(
-                                                            _storagePoolId, StorageDomainStatus.Active));
-                                            domainsInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDAO().getAllIds(
-                                                    _storagePoolId, StorageDomainStatus.Unknown));
+                    // build a list of domains that the host
+                    // reports as in problem (code!=0) or (code==0
+                    // && lastChecl >
+                    // ConfigValues.MaxStorageVdsTimeoutCheckSec)
+                    // and are contained in the Active or
+                    // Unknown domains in pool
+                    List<Guid> domainsSeenByVdsInProblem = new ArrayList<Guid>();
+                    for (VDSDomainsData tempData : data) {
+                        if (domainsInPool.contains(tempData.getDomainId())) {
+                            if (isDomainReportedAsProblematic(tempData)) {
+                                domainsSeenByVdsInProblem.add(tempData.getDomainId());
+                            } else if (tempData.getDelay() > Config.<Double> GetValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
+                                logDelayedDomain(vdsId, tempData);
+                            }
+                        } else if (inActiveDomainsInPool.contains(tempData.getDomainId())
+                                && !isDomainReportedAsProblematic(tempData)) {
+                            log.warnFormat("Storage {0} was reported by vds {1} as active in pool {2}, moving to active status",
+                                    tempData.getDomainId(),
+                                    vdsName,
+                                    _storagePoolId);
+                            storage_pool_iso_map map =
+                                    DbFacade.getInstance()
+                                            .getStoragePoolIsoMapDAO()
+                                            .get(new StoragePoolIsoMapId(tempData.getDomainId(), _storagePoolId));
+                            map.setstatus(StorageDomainStatus.Active);
+                            DbFacade.getInstance().getStoragePoolIsoMapDAO().update(map);
+                        }
+                    }
 
-                                            // build a list of all the domains in
-                                            // pool (domainsInPool) that are not
-                                            // visible by the host.
-                                            List<Guid> domainsInPoolThatNonVisibleByVds = new ArrayList<Guid>();
-                                            Set<Guid> dataDomainIds = new HashSet<Guid>();
-                                            for (VDSDomainsData tempData : data) {
-                                                dataDomainIds.add(tempData.getDomainId());
-                                            }
-                                            for (Guid tempDomainId : domainsInPool) {
-                                                if (!dataDomainIds.contains(tempDomainId)) {
-                                                    domainsInPoolThatNonVisibleByVds.add(tempDomainId);
-                                                }
-                                            }
+                    // build a list of all potential domains
+                    // in problem
+                    domainsInProblems = new HashSet<Guid>();
+                    domainsInProblems.addAll(domainsInPoolThatNonVisibleByVds);
+                    domainsInProblems.addAll(domainsSeenByVdsInProblem);
 
-                                            // build a list of domains that the host
-                                            // reports as in problem (code!=0) or (code==0
-                                            // && lastChecl >
-                                            // ConfigValues.MaxStorageVdsTimeoutCheckSec)
-                                            // and are contained in the Active or
-                                            // Unknown domains in pool
-                                            List<Guid> domainsSeenByVdsInProblem = new ArrayList<Guid>();
-                                            for (VDSDomainsData tempData : data) {
-                                                if (domainsInPool.contains(tempData.getDomainId())) {
-                                                    if (tempData.getCode() != 0) {
-                                                        domainsSeenByVdsInProblem.add(tempData.getDomainId());
-                                                    } else if (tempData.getLastCheck() > Config
-                                                            .<Double> GetValue(ConfigValues.MaxStorageVdsTimeoutCheckSec)) {
-                                                        domainsSeenByVdsInProblem.add(tempData.getDomainId());
-                                                    } else if (tempData.getDelay() > Config.<Double> GetValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
-                                                        AuditLogableBase logable = new AuditLogableBase();
-                                                        logable.setVdsId(vdsId);
-                                                        logable.setStorageDomainId(tempData.getDomainId());
-                                                        logable.AddCustomValue("Delay",
-                                                                Double.toString(tempData.getDelay()));
-                                                        AuditLogDirector.log(logable,
-                                                                AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
-                                                    }
-                                                }
-                                            }
+                } catch (RuntimeException ex) {
+                    log.error("error in UpdateVdsDomainsData", ex);
+                }
 
-                                            // build a list of all potential domains
-                                            // in problem
-                                            domainsInProblems = new HashSet<Guid>();
-                                            domainsInProblems.addAll(domainsInPoolThatNonVisibleByVds);
-                                            domainsInProblems.addAll(domainsSeenByVdsInProblem);
-
-                                        } catch (RuntimeException ex) {
-                                            log.error("error in UpdateVdsDomainsData", ex);
-                                        }
-
-                                    }
-                                    return domainsInProblems;
-                                }
-                            });
+            }
             if (domainsInProblems != null) {
                 synchronized (_lockObject) {
                     // during reconstruct master we do not want to update
@@ -1145,6 +1142,27 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     updateProblematicVdsData(vdsId, vdsName, domainsInProblems);
                 }
             }
+        }
+
+        private void logDelayedDomain(final Guid vdsId, VDSDomainsData tempData) {
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.setVdsId(vdsId);
+            logable.setStorageDomainId(tempData.getDomainId());
+            logable.AddCustomValue("Delay",
+                    Double.toString(tempData.getDelay()));
+            AuditLogDirector.log(logable,
+                    AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
+        }
+
+        private boolean isDomainReportedAsProblematic(VDSDomainsData tempData) {
+            if (tempData.getCode() != 0) {
+                return true;
+            }
+            if (tempData.getLastCheck() > Config
+                    .<Double> GetValue(ConfigValues.MaxStorageVdsTimeoutCheckSec)) {
+                return true;
+            }
+            return false;
         }
 
         private void updateProblematicVdsData(final Guid vdsId, final String vdsName, Set<Guid> domainsInProblems) {
@@ -1232,114 +1250,110 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private void ProcessDomainRecovery(final Guid domainId) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Object>() {
-                @Override
-                public Object runInTransaction() {
+            // build a list of all the hosts in status UP in
+            // Pool.
+            List<Guid> vdssInPool = new ArrayList<Guid>();
+            List<VDS> allVds = DbFacade.getInstance().getVdsDAO().getAllForStoragePool(_storagePoolId);
+            Map<Guid, VDS> vdsMap = new HashMap<Guid, VDS>();
+            for (VDS tempVDS : allVds) {
+                vdsMap.put(tempVDS.getId(), tempVDS);
+                if (tempVDS.getstatus() == VDSStatus.Up) {
+                    vdssInPool.add(tempVDS.getId());
+                }
+            }
 
-                    // build a list of all the hosts in status UP in
-                    // Pool.
-                    List<Guid> vdssInPool = new ArrayList<Guid>();
-                    List<VDS> allVds = DbFacade.getInstance().getVdsDAO().getAll();
-                    for (VDS tempVDS : allVds) {
-                        if (tempVDS.getstatus() == VDSStatus.Up && tempVDS.getstorage_pool_id().equals(_storagePoolId)) {
-                            vdssInPool.add(tempVDS.getId());
-                        }
-                    }
+            // build a list of all the hosts that did not report
+            // on this domain as in problem.
+            // Mark the above list as hosts we suspect are in
+            // problem.
+            Set<Guid> hostsThatReportedDomainAsInProblem = _domainsInProblem.get(domainId);
+            List<Guid> vdssInProblem = new ArrayList<Guid>();
+            for (Guid tempVDSId : vdssInPool) {
+                if (!hostsThatReportedDomainAsInProblem.contains(tempVDSId)) {
+                    vdssInProblem.add(tempVDSId);
+                }
+            }
 
-                    // build a list of all the hosts that did not report
-                    // on this domain as in problem.
-                    // Mark the above list as hosts we suspect are in
-                    // problem.
-                    java.util.Set<Guid> hostsThatReportedDomainAsInProblem = _domainsInProblem.get(domainId);
-                    List<Guid> vdssInProblem = new ArrayList<Guid>();
-                    for (Guid tempVDSId : vdssInPool) {
-                        if (!hostsThatReportedDomainAsInProblem.contains(tempVDSId)) {
-                            vdssInProblem.add(tempVDSId);
-                        }
-                    }
-
-                    // If not All the hosts in status UP reported on
-                    // this domain as in problem. We assume the problem
-                    // is with the hosts
-                    // that did report on a problem with this domain.
-                    // (and not a problem with the domain itself).
-                    storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDAO().get(domainId);
-                    if (vdssInProblem.size() > 0) {
-                        if (storageDomain.getstorage_domain_type() != StorageDomainType.ImportExport
-                                && storageDomain.getstorage_domain_type() != StorageDomainType.ISO) {
-                            // The domain is of type DATA and was
-                            // reported as in problem.
-                            // Moving all the hosts which reported on
-                            // this domain as in problem to non
-                            // operational.
-                            for (Guid vdsId : _domainsInProblem.get(domainId)) {
-                                VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
-                                if (vds == null) {
-                                    log.warnFormat(
-                                            "vds {0} reported domain {1}:{2} - as in problem but cannot find vds in db!!",
-                                            vdsId,
-                                            domainId,
-                                            storageDomain.getstorage_name());
-                                } else if (vds.getstatus() != VDSStatus.Maintenance
-                                        && vds.getstatus() != VDSStatus.NonOperational) {
-                                    log.warnFormat(
-                                            "vds {0} reported domain {1}:{2} as in problem, moving the vds to status NonOperational",
-                                            vds.getvds_name(),
-                                            domainId,
-                                            storageDomain.getstorage_name());
-                                    ResourceManager
-                                            .getInstance()
-                                            .getEventListener()
-                                            .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
-                                                    true, true, domainId);
-                                    clearVdsFromCache(vdsId, vds.getvds_name());
-                                } else {
-                                    log.warnFormat(
-                                            "vds {0} reported domain {1}:{2} as in problem, vds is in status {3}, no need to move to nonoperational",
-                                            vds.getvds_name(),
-                                            domainId,
-                                            storageDomain.getstorage_name(),
-                                            vds.getstatus());
-                                }
-                            }
+            // If not All the hosts in status UP reported on
+            // this domain as in problem. We assume the problem
+            // is with the hosts
+            // that did report on a problem with this domain.
+            // (and not a problem with the domain itself).
+            storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDAO().get(domainId);
+            if (vdssInProblem.size() > 0) {
+                if (storageDomain.getstorage_domain_type() != StorageDomainType.ImportExport
+                        && storageDomain.getstorage_domain_type() != StorageDomainType.ISO) {
+                    // The domain is of type DATA and was
+                    // reported as in problem.
+                    // Moving all the hosts which reported on
+                    // this domain as in problem to non
+                    // operational.
+                    for (Guid vdsId : _domainsInProblem.get(domainId)) {
+                        VDS vds = vdsMap.get(vdsId);
+                        if (vds == null) {
+                            log.warnFormat(
+                                    "vds {0} reported domain {1}:{2} - as in problem but cannot find vds in db!!",
+                                    vdsId,
+                                    domainId,
+                                    storageDomain.getstorage_name());
+                        } else if (vds.getstatus() != VDSStatus.Maintenance
+                                && vds.getstatus() != VDSStatus.NonOperational) {
+                            log.warnFormat(
+                                    "vds {0} reported domain {1}:{2} as in problem, moving the vds to status NonOperational",
+                                    vds.getvds_name(),
+                                    domainId,
+                                    storageDomain.getstorage_name());
+                            ResourceManager
+                                    .getInstance()
+                                    .getEventListener()
+                                    .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
+                                            true, true, domainId);
+                            clearVdsFromCache(vdsId, vds.getvds_name());
                         } else {
                             log.warnFormat(
-                                    "Storage domain {0} is not visible to one or more hosts. " +
-                                    "Since the domain's type is {1}, hosts status will not be changed to non-operational",
+                                    "vds {0} reported domain {1}:{2} as in problem, vds is in status {3}, no need to move to nonoperational",
+                                    vds.getvds_name(),
+                                    domainId,
                                     storageDomain.getstorage_name(),
-                                    storageDomain.getstorage_domain_type());
-                        }
-
-                    } else { // Because all the hosts in status UP
-                             // reported on this domain as in problem
-                             // we assume the problem is with the
-                             // Domain.
-                        if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
-                            log.warnFormat("domain {0} was reported by all hosts in status UP as problematic. Moving the Domain to NonOperational.",
-                                            domainId);
-                            ResourceManager.getInstance()
-                                    .getEventListener().storageDomainNotOperational(domainId, _storagePoolId);
-                        } else if (duringReconstructMaster.compareAndSet(false, true)) {
-                            try {
-                                ResourceManager.getInstance()
-                                        .getEventListener().storageDomainNotOperational(domainId, _storagePoolId);
-                            } finally {
-                                duringReconstructMaster.set(false);
-                            }
-                        } else {
-                            log.warnFormat("domain {0} was reported by all hosts in status UP as problematic. But not moving the Domain to NonOperational. Because of is reconstract now",
-                                                               domainId);
-                            return null;
+                                    vds.getstatus());
                         }
                     }
-
-                    // clear from cache of _vdssInProblem and
-                    // _domainsInProblem
-                    clearDomainFromCache(domainId);
-                    ClearTimer(domainId);
-                    return null;
+                } else {
+                    log.warnFormat(
+                            "Storage domain {0} is not visible to one or more hosts. "
+                                    +
+                                    "Since the domain's type is {1}, hosts status will not be changed to non-operational",
+                            storageDomain.getstorage_name(),
+                            storageDomain.getstorage_domain_type());
                 }
-            });
+
+            } else { // Because all the hosts in status UP
+                     // reported on this domain as in problem
+                     // we assume the problem is with the
+                     // Domain.
+                if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
+                    log.warnFormat("domain {0} was reported by all hosts in status UP as problematic. Moving the Domain to NonOperational.",
+                            domainId);
+                    ResourceManager.getInstance()
+                            .getEventListener().storageDomainNotOperational(domainId, _storagePoolId);
+                } else if (duringReconstructMaster.compareAndSet(false, true)) {
+                    try {
+                        ResourceManager.getInstance()
+                                .getEventListener().masterDomainNotOperational(domainId, _storagePoolId);
+                    } finally {
+                        duringReconstructMaster.set(false);
+                    }
+                } else {
+                    log.warnFormat("domain {0} was reported by all hosts in status UP as problematic. But not moving the Domain to NonOperational. Because of is reconstract now",
+                            domainId);
+                    return;
+                }
+            }
+
+            // clear from cache of _vdssInProblem and
+            // _domainsInProblem
+            clearDomainFromCache(domainId);
+            ClearTimer(domainId);
         }
 
         /**

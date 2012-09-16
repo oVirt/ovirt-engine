@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -43,8 +43,6 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     protected boolean canDoAction() {
-        super.canDoAction();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ACTIVATE);
         boolean returnValue = checkStoragePool()
                 && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
                                                   VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
@@ -56,49 +54,40 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     protected void executeCommand() {
-
-        final storage_pool_iso_map map = DbFacade.getInstance().getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),getParameters().getStoragePoolId()));
-        changeStorageDomainStatusInTransaction(map,StorageDomainStatus.Locked);
+        final storage_pool_iso_map map =
+                DbFacade.getInstance()
+                        .getStoragePoolIsoMapDAO()
+                        .get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
+                                getParameters().getStoragePoolId()));
+        changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
         freeLock();
 
-        log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new java.util.Date());
+        log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new Date());
         ConnectAllHostsToPool();
-        log.infoFormat("ActivateStorage Domain. After Connect all hosts to pool. Time:{0}", new java.util.Date());
-        setSucceeded(Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.ActivateStorageDomain,
-                        new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain()
-                                .getId())).getSucceeded());
-        log.infoFormat("ActivateStorage Domain. After Activate storage domain in vds. Time:{0}", new java.util.Date());
-        if (getSucceeded()) {
-            RefreshAllVdssInPool(false);
-            log.infoFormat("ActivateStorage Domain. After Refresh all pools . Time:{0}", new java.util.Date());
+        runVdsCommand(VDSCommandType.ActivateStorageDomain,
+                new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain().getId()));
+        log.infoFormat("ActivateStorage Domain. After Connect all hosts to pool. Time:{0}", new Date());
 
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(map, map.getstatus());
-                    map.setstatus(StorageDomainStatus.Active);
-                    DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
-                    if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
-                        calcStoragePoolStatusByDomainsStatus();
-                    }
-                    getCompensationContext().stateChanged();
-                    return null;
+        RefreshAllVdssInPool(false);
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                map.setstatus(StorageDomainStatus.Active);
+                DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+                    calcStoragePoolStatusByDomainsStatus();
                 }
-            });
-
-            log.infoFormat("ActivateStorage Domain. After change storage pool status in vds. Time:{0}",
-                    new java.util.Date());
-            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO) {
-                IsoDomainListSyncronizer.getInstance().refresheIsoDomainWhenActivateDomain(getStorageDomain().getId(),
-                        getStoragePool().getId());
+                return null;
             }
-        } else {
-            compensate();
+        });
+
+        log.infoFormat("ActivateStorage Domain. After change storage pool status in vds. Time:{0}",
+                new Date());
+        if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO) {
+            IsoDomainListSyncronizer.getInstance().refresheIsoDomainWhenActivateDomain(getStorageDomain().getId(),
+                    getStoragePool().getId());
         }
+        setSucceeded(true);
     }
 
     @Override
@@ -115,6 +104,12 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     @Override
     protected Map<String, String> getExclusiveLocks() {
         return Collections.singletonMap(getStorageDomainId().toString(), LockingGroup.STORAGE.name());
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ACTIVATE);
     }
 
     private boolean storageDomainStatusIsValid() {
