@@ -35,7 +35,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @LockIdNameAttribute
-@NonTransactiveCommandAttribute
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStoragesParameter> extends
         UpdateStoragePoolCommand<T> {
     public AddStoragePoolWithStoragesCommand(T parameters) {
