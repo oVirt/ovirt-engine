@@ -146,7 +146,7 @@ public class BackwardCompatibilityTaskCreationTest {
         VdcActionParametersBase params = cmd.getParameters();
         params.setEntityId(Guid.NewGuid());
         params.setParentCommand(RandomUtils.instance().nextEnum(VdcActionType.class));
-        params.setParentParemeters(params);
+        params.setParentParameters(params);
 
         AsyncTaskCreationInfo info = nextAsyncTaskCreationInfo();
 

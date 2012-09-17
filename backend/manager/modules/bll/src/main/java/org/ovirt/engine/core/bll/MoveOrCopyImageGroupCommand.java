@@ -185,7 +185,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             Guid destImageId = getParameters().getDestinationImageId();
             RemoveImageParameters removeImageParams =
                     new RemoveImageParameters(destImageId);
-            removeImageParams.setParentParemeters(getParameters());
+            removeImageParams.setParentParameters(getParameters());
             removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
             removeImageParams.setEntityId(getDestinationImageId());
             // Setting the image as the monitored entity, so there will not be dependency

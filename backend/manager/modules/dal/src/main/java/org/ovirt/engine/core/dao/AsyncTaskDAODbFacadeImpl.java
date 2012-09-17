@@ -84,9 +84,9 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
 
         private static String serializeParameters(VdcActionParametersBase params) {
             VdcActionParametersBase parentParams = params.getParentParameters();
-            params.setParentParemeters(null);
+            params.setParentParameters(null);
             String jsonStr = new JsonObjectSerializer().serialize(params);
-            params.setParentParemeters(parentParams);
+            params.setParentParameters(parentParams);
             return jsonStr;
         }
     }

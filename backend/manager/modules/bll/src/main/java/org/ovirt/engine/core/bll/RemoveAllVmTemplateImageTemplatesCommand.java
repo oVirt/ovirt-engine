@@ -47,7 +47,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 tempVar.setWipeAfterDelete(template.isWipeAfterDelete());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 tempVar.setParentCommand(getActionType());
-                tempVar.setParentParemeters(getParameters());
+                tempVar.setParentParameters(getParameters());
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.RemoveTemplateSnapshot,
                                 tempVar,

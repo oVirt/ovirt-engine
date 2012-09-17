@@ -96,7 +96,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVmFromScratch);
                 tempVar.setEntityId(getParameters().getEntityId());
-                tempVar.setParentParemeters(getParameters());
+                tempVar.setParentParameters(getParameters());
                 tmpRetValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.AddImageFromScratch,
                                 tempVar,

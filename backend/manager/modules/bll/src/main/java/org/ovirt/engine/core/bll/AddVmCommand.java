@@ -640,7 +640,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);
                 tempVar.setEntityId(getParameters().getEntityId());
-                tempVar.setParentParemeters(getParameters());
+                tempVar.setParentParameters(getParameters());
                 tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
                 VdcReturnValueBase result =
                         getBackend().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,

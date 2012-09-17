@@ -164,7 +164,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         RemoveAllVmImagesParameters tempVar = new RemoveAllVmImagesParameters(getVmId(), images);
         tempVar.setParentCommand(getActionType());
         tempVar.setEntityId(getParameters().getEntityId());
-        tempVar.setParentParemeters(getParameters());
+        tempVar.setParentParameters(getParameters());
         VdcReturnValueBase vdcRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
                         tempVar,

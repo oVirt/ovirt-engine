@@ -157,7 +157,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
         return parentParameters;
     }
 
-    public void setParentParemeters (VdcActionParametersBase parameters) {
+    public void setParentParameters (VdcActionParametersBase parameters) {
         parentParameters = parameters;
     }
 

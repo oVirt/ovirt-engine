@@ -114,7 +114,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 ImagesActionsParametersBase p = tempVar;
                 // ParametersCurrentUser = CurrentUser,
                 getParameters().getImagesParameters().add(p);
-                p.setParentParemeters(getParameters());
+                p.setParentParameters(getParameters());
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateSnapshot,
                                 p,

@@ -323,7 +323,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setEntityId(getParameters().getEntityId());
         parameters.setStoragePoolId(getStorageDomain().getstorage_pool_id().getValue());
         getParameters().getImagesParameters().add(parameters);
-        parameters.setParentParemeters(getParameters());
+        parameters.setParentParameters(getParameters());
         if (getVm() != null) {
             setVmSnapshotIdForDisk(parameters);
             getCompensationContext().snapshotNewEntity(VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo()

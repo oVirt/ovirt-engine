@@ -45,7 +45,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                             .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
                             getMoveOrCopyImageOperation());
                     p.setParentCommand(getActionType());
-                    p.setParentParemeters(getParameters());
+                    p.setParentParameters(getParameters());
                     p.setEntityId(getParameters().getEntityId());
                     p.setUseCopyCollapse(true);
                     p.setCopyVolumeType(CopyVolumeType.SharedVol);

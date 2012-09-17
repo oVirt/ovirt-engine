@@ -290,7 +290,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             tempVar.setPostZero(disk.isWipeAfterDelete());
             tempVar.setForceOverride(getParameters().getForceOverride());
             MoveOrCopyImageGroupParameters p = tempVar;
-            p.setParentParemeters(getParameters());
+            p.setParentParameters(getParameters());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                             VdcActionType.MoveOrCopyImageGroup,
                             p,

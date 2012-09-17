@@ -158,7 +158,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         VdcReturnValueBase returnValue;
         params.setEntityId(getParameters().getEntityId());
         params.setParentCommand(getActionType());
-        params.setParentParemeters(getParameters());
+        params.setParentParameters(getParameters());
         params.setCommandType(taskType);
         returnValue = Backend.getInstance().runInternalAction(
                 taskType,

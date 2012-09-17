@@ -153,7 +153,7 @@ VmPoolUserCommandBase<T> {
             RunVmParams runVmParams = new RunVmParams(vmToAttach);
             runVmParams.setSessionId(getParameters().getSessionId());
             runVmParams.setUseVnc(getVm().getvm_type() == VmType.Server);
-            runVmParams.setParentParemeters(getParameters());
+            runVmParams.setParentParameters(getParameters());
             runVmParams.setEntityId(vmToAttach);
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
             runVmParams.setRunAsStateless(true);

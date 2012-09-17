@@ -332,7 +332,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         getParameters().setVolumeType(getDiskImage().getvolume_type());
         getParameters().setCopyVolumeType(CopyVolumeType.SharedVol);
         getParameters().setParentCommand(getActionType());
-        getParameters().setParentParemeters(getParameters());
+        getParameters().setParentParameters(getParameters());
     }
 
     /**

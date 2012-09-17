@@ -208,7 +208,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     protected boolean RemoveVmTemplateImages() {
         getParameters().setEntityId(getParameters().getEntityId());
         getParameters().setParentCommand(getActionType());
-        getParameters().setParentParemeters(getParameters());
+        getParameters().setParentParameters(getParameters());
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                 VdcActionType.RemoveAllVmTemplateImageTemplates,
                 getParameters(),

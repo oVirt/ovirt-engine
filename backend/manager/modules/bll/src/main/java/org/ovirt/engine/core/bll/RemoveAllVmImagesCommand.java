@@ -52,11 +52,11 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
             if (mImagesToBeRemoved.contains(image.getImageId())) {
                 RemoveImageParameters tempVar = new RemoveImageParameters(image.getImageId());
                 tempVar.setParentCommand(getParameters().getParentCommand());
-                tempVar.setParentParemeters(getParameters().getParentParameters());
+                tempVar.setParentParameters(getParameters().getParentParameters());
                 tempVar.setDiskImage(image);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setForceDelete(getParameters().getForceDelete());
-                tempVar.setParentParemeters(getParameters());
+                tempVar.setParentParameters(getParameters());
                 VdcReturnValueBase vdcReturnValue =
                         Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
                                 tempVar,

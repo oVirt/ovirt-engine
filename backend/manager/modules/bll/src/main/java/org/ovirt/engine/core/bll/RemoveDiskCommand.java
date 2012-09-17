@@ -266,7 +266,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             p.setDiskImage(diskImage);
             p.setParentCommand(VdcActionType.RemoveDisk);
             p.setEntityId(getParameters().getEntityId());
-            p.setParentParemeters(getParameters());
+            p.setParentParameters(getParameters());
             p.setStorageDomainId(getParameters().getStorageDomainId());
             p.setForceDelete(getParameters().getForceDelete());
             if (diskImage.getstorage_ids().size() == 1) {
