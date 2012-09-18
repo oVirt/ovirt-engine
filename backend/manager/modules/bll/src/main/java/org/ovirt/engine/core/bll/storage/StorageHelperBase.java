@@ -127,8 +127,15 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     protected String addToAuditLogErrorMessage(String connection, String errorCode,
             List<storage_server_connections> connections) {
-        String connectionField = getConnectionField(connections, connection);
+        return addToAuditLogErrorMessage(connection, errorCode, connections, null);
+    }
+
+    protected String addToAuditLogErrorMessage(String connection, String errorCode,
+            List<storage_server_connections> connections, LUNs lun) {
         AuditLogableBase logable = new AuditLogableBase();
+
+        String connectionField = getConnectionField(connections, connection) +
+                (lun == null ? "" : " (LUN " + lun.getphysical_volume_id() + ")");
         logable.AddCustomValue("Connection", connectionField);
 
         // Get translated error by error code ,if no translation found (should not happened) ,

@@ -172,7 +172,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                             String connectionField =
                                     addToAuditLogErrorMessage(connectionFailed,
                                             returnValue.get(connectionFailed),
-                                            connections);
+                                            connections, lun);
                             printLog(log, connectionField, returnValue.get(connectionFailed));
                         }
                         return false;
