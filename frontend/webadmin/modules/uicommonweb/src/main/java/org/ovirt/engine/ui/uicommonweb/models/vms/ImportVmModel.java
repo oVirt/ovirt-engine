@@ -143,6 +143,17 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                                     ArrayList<Quota> quotaList =
                                             (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                                     importVmModel.getClusterQuota().setItems(quotaList);
+                                    if (quotaList.isEmpty()
+                                            && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+                                        setMessage(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .missingQuotaClusterEnforceMode());
+                                    } else if (getMessage() != null
+                                            && getMessage().equals(ConstantsManager.getInstance()
+                                                    .getConstants()
+                                                    .missingQuotaClusterEnforceMode())) {
+                                        setMessage("");
+                                    }
                                 }
                             }));
         }
@@ -245,11 +256,23 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                     public void Executed(FrontendMultipleQueryAsyncResult result) {
                         List<VdcQueryReturnValue> returnValueList =
                                 result.getReturnValues();
+                        boolean noQuota = true;
                         for (int i = 0; i < filteredStorageDomains.size(); i++) {
+                            ArrayList<Quota> quotaList = (ArrayList<Quota>) returnValueList.get(i)
+                                    .getReturnValue();
+                            if (noQuota
+                                    && !quotaList.isEmpty()) {
+                                noQuota = false;
+                            }
                             storageQuotaMap.put(
                                     filteredStorageDomains.get(i).getId(),
-                                    (ArrayList<Quota>) returnValueList.get(i)
-                                            .getReturnValue());
+                                    quotaList);
+                        }
+                        if (noQuota
+                                && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+                            showCloseMessage(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .missingQuotaStorageEnforceMode());
                         }
                         initDisksStorageDomainsList();
                     }
@@ -491,13 +514,30 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     }
 
     public boolean Validate() {
+        if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
+            getClusterQuota().ValidateSelectedItem(
+                    new IValidation[] { new NotEmptyValidation() });
+            for (ImportData item : diskImportDataMap.values()) {
+                if (item.getSelectedQuota() == null) {
+                    setMessage(ConstantsManager.getInstance().getConstants().missingQuotaStorageEnforceMode());
+                    return false;
+                }
+            }
+            if (getMessage() != null
+                    && getMessage().equals(ConstantsManager.getInstance()
+                            .getConstants()
+                            .missingQuotaStorageEnforceMode())) {
+                setMessage("");
+            }
+        }
         getStorage().ValidateSelectedItem(
                 new IValidation[] { new NotEmptyValidation() });
         getCluster().ValidateSelectedItem(
                 new IValidation[] { new NotEmptyValidation() });
 
         return getStorage().getIsValid()
-                && getCluster().getIsValid();
+                && getCluster().getIsValid()
+                && getClusterQuota().getIsValid();
     }
 
     @Override

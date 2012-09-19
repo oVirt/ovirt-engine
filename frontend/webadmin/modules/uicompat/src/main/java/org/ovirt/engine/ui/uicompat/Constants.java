@@ -1542,4 +1542,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Unable to fetch the gluster hosts. Please verify the host IP Address and password")
     String emptyGlusterHosts();
+
+    @DefaultStringValue("Missing Quota for the selected Storage Domain(s), Please define proper Quota")
+    String missingQuotaStorageEnforceMode();
+
+    @DefaultStringValue("Missing Quota for the selected Cluster, Please define proper Quota")
+    String missingQuotaClusterEnforceMode();
 }
