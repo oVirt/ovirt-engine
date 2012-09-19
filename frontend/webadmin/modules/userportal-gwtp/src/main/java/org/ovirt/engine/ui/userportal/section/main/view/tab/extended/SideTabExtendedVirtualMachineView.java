@@ -321,7 +321,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        data.getIsPool() ? constants.returnVmLabel() : constants.shutdownVmLabel(),
+                        data.getIsPool() ? constants.returnVmLabel() : constants.shutDownVm(),
                         applicationResources.stopIcon(),
                         applicationResources.stopDisabledIcon()
                 ) {
@@ -359,7 +359,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             @Override
             protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
                 return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        constants.stopVmLabel(),
+                        constants.powerOffVm(),
                         applicationResources.powerIcon(),
                         applicationResources.powerDisabledIcon()
                 ) {

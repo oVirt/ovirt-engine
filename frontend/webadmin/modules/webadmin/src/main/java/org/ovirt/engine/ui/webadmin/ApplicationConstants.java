@@ -1211,12 +1211,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Suspend")
     String suspendVm();
 
-    @DefaultStringValue("Shut down")
-    String shutDownVm();
-
-    @DefaultStringValue("Stop")
-    String stopVm();
-
     @DefaultStringValue("Console")
     String consoleVm();
 

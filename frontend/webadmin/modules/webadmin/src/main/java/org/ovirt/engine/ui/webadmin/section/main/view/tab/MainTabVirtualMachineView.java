@@ -210,7 +210,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getShutdownCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.stopVm(), CommandLocation.OnlyFromFromContext) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();

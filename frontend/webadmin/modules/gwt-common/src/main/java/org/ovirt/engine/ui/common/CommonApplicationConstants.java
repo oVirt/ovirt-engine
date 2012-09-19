@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface CommonApplicationConstants extends Constants {
 
@@ -201,6 +202,12 @@ public interface CommonApplicationConstants extends Constants {
     String no();
 
     // Vm
+    @DefaultStringValue("Power Off")
+    String powerOffVm();
+
+    @DefaultStringValue("Shutdown")
+    String shutDownVm();
+
     @DefaultStringValue("Name")
     String nameVm();
 

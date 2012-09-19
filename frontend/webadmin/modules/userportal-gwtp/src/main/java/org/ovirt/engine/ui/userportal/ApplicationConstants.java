@@ -154,14 +154,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Return VM")
     String returnVmLabel();
 
-    @DefaultStringValue("Shutdown")
-    String shutdownVmLabel();
-
     @DefaultStringValue("Suspend")
     String suspendVmLabel();
-
-    @DefaultStringValue("Stop")
-    String stopVmLabel();
 
     @DefaultStringValue("Open Console")
     String openConsoleLabel();
