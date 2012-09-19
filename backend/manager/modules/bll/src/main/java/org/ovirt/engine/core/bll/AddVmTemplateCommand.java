@@ -359,7 +359,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         setVmTemplateId(getParameters().getVmTemplateId());
 
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {

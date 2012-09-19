@@ -33,7 +33,7 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
     }
 
     @Override
-    public void Rollback() {
+    public void rollback() {
         try {
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.DisconnectStorageServer,
                     getParameters());

@@ -125,7 +125,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                 return;
             }
             Guid guid1 =
-                    CreateTask(ret1.getCreationInfo(),
+                    createTask(ret1.getCreationInfo(),
                             VdcActionType.HibernateVm,
                             VdcObjectType.Storage,
                             getStorageDomainId().getValue());
@@ -156,7 +156,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             if (!ret2.getSucceeded()) {
                 return;
             }
-            Guid guid2 = CreateTask(ret2.getCreationInfo(), VdcActionType.HibernateVm);
+            Guid guid2 = createTask(ret2.getCreationInfo(), VdcActionType.HibernateVm);
             getReturnValue().getTaskIdList().add(guid2);
 
             // this is the new param that should be passed to the hibernate
@@ -282,7 +282,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         if (getVm() != null) {
             if (getVm().getstatus() != VMStatus.SavingState && getVm().getstatus() != VMStatus.Up) {
                 // If the Vm is not in SavingState/Up status, we shouldn't
@@ -341,7 +341,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     @Override
     protected void endWithFailure() {
         if (getVm() != null) {
-            RevertTasks();
+            revertTasks();
             if (getVm().getrun_on_vds() != null) {
                 getVm().sethibernation_vol_handle(null);
                 getVm().setstatus(VMStatus.Up);

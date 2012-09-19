@@ -81,7 +81,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         EndActionOnDisks();
 
         if (getVm() != null) {

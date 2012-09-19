@@ -114,7 +114,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalTaskIdList().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(),
+                        createTask(vdsReturnValue.getCreationInfo(),
                                 VdcActionType.RestoreAllSnapshots,
                                 VdcObjectType.Storage,
                                 storageDomainId));

@@ -74,7 +74,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalTaskIdList().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmFromTemplate,VdcObjectType.Storage,
+                        createTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmFromTemplate,VdcObjectType.Storage,
                                 getParameters().getStorageDomainId(),
                                 getDestinationStorageDomainId()));
             }

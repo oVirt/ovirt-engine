@@ -89,7 +89,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     @Override
-    protected List<tags> GetTagsAttachedToObject() {
+    protected List<tags> getTagsAttachedToObject() {
         return getTagDAO().getAllForVm((getParameters()).getVmId().toString());
     }
 
@@ -271,7 +271,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         EndVmCommand();
     }
 
@@ -317,7 +317,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
 
             Guid guid1 =
-                    CreateTask(vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, imagesList[0]);
+                    createTask(vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, imagesList[0]);
             getTaskIdList().add(guid1);
 
             // delete second image
@@ -330,17 +330,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
             if (!vdsRetValue2.getSucceeded()) {
                 if (startPollingTasks) {
-                    UpdateTasksWithActionParameters();
+                    updateTasksWithActionParameters();
                     AsyncTaskManager.getInstance().StartPollingTask(guid1);
                 }
                 return false;
             }
 
-            Guid guid2 = CreateTask(vdsRetValue2.getCreationInfo(), parentCommand);
+            Guid guid2 = createTask(vdsRetValue2.getCreationInfo(), parentCommand);
             getTaskIdList().add(guid2);
 
             if (startPollingTasks) {
-                UpdateTasksWithActionParameters();
+                updateTasksWithActionParameters();
                 AsyncTaskManager.getInstance().StartPollingTask(guid1);
                 AsyncTaskManager.getInstance().StartPollingTask(guid2);
             }

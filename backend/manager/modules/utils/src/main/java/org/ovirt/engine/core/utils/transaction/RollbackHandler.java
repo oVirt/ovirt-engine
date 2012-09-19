@@ -5,5 +5,5 @@ package org.ovirt.engine.core.utils.transaction;
  * Settings | File Templates.
  */
 public interface RollbackHandler {
-    void Rollback();
+    void rollback();
 }

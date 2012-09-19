@@ -139,7 +139,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         EndRemoveTemplate();
     }
 

@@ -19,11 +19,11 @@ public abstract class IrsCreateCommand<P extends StoragePoolDomainAndGroupIdBase
     }
 
     protected void BaseRollback() {
-        super.Rollback();
+        super.rollback();
     }
 
     @Override
-    public void Rollback() {
+    public void rollback() {
         try {
             // todo - omer sending false for postZero, check that is correct
             // always (and not parameter from user)

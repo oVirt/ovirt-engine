@@ -689,7 +689,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         SetIsVmRunningStateless();
 
         if (_isVmRunningStateless) {
@@ -736,7 +736,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         // Hibernation (VMStatus.Suspended) treatment:
         else {
-            super.EndSuccessfully();
+            super.endSuccessfully();
         }
     }
 

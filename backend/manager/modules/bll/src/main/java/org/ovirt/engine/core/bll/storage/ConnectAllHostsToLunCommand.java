@@ -57,7 +57,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
     }
 
     @Override
-    protected VdcReturnValueBase CreateReturnValue() {
+    protected VdcReturnValueBase createReturnValue() {
         return new ConnectAllHostsToLunCommandReturnValue();
     }
 

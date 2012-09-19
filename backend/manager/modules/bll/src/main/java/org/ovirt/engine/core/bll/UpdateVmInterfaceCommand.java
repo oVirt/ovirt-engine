@@ -72,8 +72,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
      * <li>The new MAC address is freed.</li>
      */
     @Override
-    public void Rollback() {
-        super.Rollback();
+    public void rollback() {
+        super.rollback();
         if (macAddressChanged) {
             MacPoolManager.getInstance().AddMac(oldIface.getMacAddress());
             if (!Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses)) {

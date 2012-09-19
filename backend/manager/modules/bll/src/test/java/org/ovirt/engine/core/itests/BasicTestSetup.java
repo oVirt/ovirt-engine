@@ -286,7 +286,7 @@ public class BasicTestSetup {
         setIsMultiLevelAdministrationOn(Boolean.FALSE);
         mockVdsInstallerHelper();
         AddVdsCommand<AddVdsActionParameters> addVdsCommand = createAddVdsCommand(addHostParams);
-        VdcReturnValueBase addHostAction = addVdsCommand.ExecuteAction();
+        VdcReturnValueBase addHostAction = addVdsCommand.executeAction();
         setIsMultiLevelAdministrationOn(isMLA);
         Assert.assertTrue(addHostAction.getSucceeded());
 

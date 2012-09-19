@@ -250,8 +250,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
     }
 
     @Override
-    public void Rollback() {
-        super.Rollback();
+    public void rollback() {
+        super.rollback();
         try {
             MacPoolManager.getInstance().freeMac(getMacAddress());
         } catch (java.lang.Exception e) {

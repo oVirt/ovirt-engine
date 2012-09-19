@@ -346,7 +346,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         if (getDestinationDiskImage() != null) {
             Guid storagePoolId = getDestinationDiskImage().getstorage_pool_id() != null ? getDestinationDiskImage()
                     .getstorage_pool_id().getValue() : Guid.Empty;

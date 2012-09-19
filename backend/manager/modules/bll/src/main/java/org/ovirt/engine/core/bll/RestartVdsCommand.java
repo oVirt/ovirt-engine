@@ -89,8 +89,8 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
      * If failed to restart the host, move its status to NonResponsive
      */
     @Override
-    public void Rollback() {
-        super.Rollback();
+    public void rollback() {
+        super.rollback();
         final Guid vdsId = getVdsId();
         log.warnFormat("Restart host action failed, updating host {0} to {1}", vdsId, VDSStatus.NonResponsive.name());
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

@@ -60,7 +60,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                                         .toString()));
 
         getReturnValue().getInternalTaskIdList().add(
-                CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmTemplate,
+                createTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmTemplate,
                         VdcObjectType.Storage, getParameters().getStorageDomainId(),
                         getParameters().getDestinationStorageDomainId()));
 

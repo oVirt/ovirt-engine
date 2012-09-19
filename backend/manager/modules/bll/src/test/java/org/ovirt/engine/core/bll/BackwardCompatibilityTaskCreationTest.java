@@ -150,7 +150,7 @@ public class BackwardCompatibilityTaskCreationTest {
 
         AsyncTaskCreationInfo info = nextAsyncTaskCreationInfo();
 
-        SPMAsyncTask spmAsyncTask = cmd.ConcreteCreateTask(info, cmd.getParameters().getParentCommand());
+        SPMAsyncTask spmAsyncTask = cmd.concreteCreateTask(info, cmd.getParameters().getParentCommand());
         assertEquals("wrong storage pool ID", info.getStoragePoolID(), spmAsyncTask.getStoragePoolID());
         assertEquals("wrong task ID", info.getTaskID(), spmAsyncTask.getTaskID());
         assertEquals("wrong task result", AsyncTaskResultEnum.success, spmAsyncTask.getLastTaskStatus().getResult());
@@ -162,7 +162,7 @@ public class BackwardCompatibilityTaskCreationTest {
     /**
      * Tests that a purely engine command, with no async tasks throws the
      * correct exception when
-     * {@link CommandBase#ConcreteCreateTask(AsyncTaskCreationInfo, VdcActionType)}
+     * {@link CommandBase#concreteCreateTask(AsyncTaskCreationInfo, VdcActionType)}
      * is called.
      *
      * Note: {@link AddPermissionCommand} is merely used as an example here.
@@ -172,7 +172,7 @@ public class BackwardCompatibilityTaskCreationTest {
         PermissionsOperationsParametes params = new PermissionsOperationsParametes();
         AddPermissionCommand<PermissionsOperationsParametes> cmd =
                 new AddPermissionCommand<PermissionsOperationsParametes>(params);
-        cmd.ConcreteCreateTask(nextAsyncTaskCreationInfo(), VdcActionType.Unknown);
+        cmd.concreteCreateTask(nextAsyncTaskCreationInfo(), VdcActionType.Unknown);
     }
 
     /** @return A randomly generated {@link AsyncTaskCreationInfo} object */

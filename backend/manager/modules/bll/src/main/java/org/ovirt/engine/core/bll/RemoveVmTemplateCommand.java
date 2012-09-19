@@ -237,7 +237,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         HandleEndAction();
     }
 

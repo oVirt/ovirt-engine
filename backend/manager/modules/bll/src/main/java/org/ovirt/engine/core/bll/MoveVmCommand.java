@@ -220,7 +220,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         EndMoveVmCommand();
     }
 

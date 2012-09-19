@@ -38,7 +38,7 @@ public abstract class AdminOperationCommandBase<T extends VdcActionParametersBas
      *
      */
     @Override
-    protected boolean IsUserAutorizedToRunAction() {
+    protected boolean isUserAuthorizedToRunAction() {
         if (isInternalExecution() || !Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn)) {
             if (log.isDebugEnabled()) {
                 log.debugFormat(

@@ -300,7 +300,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         endCommand();
     }
 

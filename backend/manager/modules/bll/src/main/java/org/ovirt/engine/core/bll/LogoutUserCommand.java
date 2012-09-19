@@ -43,7 +43,7 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
     }
 
     @Override
-    protected boolean IsUserAutorizedToRunAction() {
+    protected boolean isUserAuthorizedToRunAction() {
         return true;
     }
 

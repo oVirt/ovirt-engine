@@ -65,7 +65,7 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
     }
 
     @Override
-    public void Rollback() {
+    public void rollback() {
         try {
             // We check for "Done" status because we want to be sure that we made the net change, or in case of empty
             // response (which means the call to VDSM failed on timeout).

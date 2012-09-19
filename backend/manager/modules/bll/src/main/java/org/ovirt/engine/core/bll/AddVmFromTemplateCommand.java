@@ -43,7 +43,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         DbFacade.getInstance().getVmStaticDAO().update(getVm().getStaticData());
         // if there are no tasks, we can end the command right away.
         if (getTaskIdList().isEmpty()) {
-            EndSuccessfully();
+            endSuccessfully();
         }
     }
 
@@ -116,8 +116,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
-    protected void EndSuccessfully() {
-        super.EndSuccessfully();
+    protected void endSuccessfully() {
+        super.endSuccessfully();
         VmTemplateHandler.UnLockVmTemplate(getParameters().OriginalTemplate);
     }
 

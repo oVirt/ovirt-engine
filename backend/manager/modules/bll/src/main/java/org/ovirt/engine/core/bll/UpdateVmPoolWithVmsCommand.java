@@ -23,7 +23,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     }
 
     @Override
-    protected Guid GetPoolId() {
+    protected Guid getPoolId() {
         getVmPoolDAO().update(getVmPool());
         return getVmPool().getvm_pool_id();
     }

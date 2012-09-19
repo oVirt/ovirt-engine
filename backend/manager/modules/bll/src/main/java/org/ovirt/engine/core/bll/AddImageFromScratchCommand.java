@@ -81,7 +81,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setTaskIds(new ArrayList<Guid>());
             getParameters().getTaskIds().add(
-                    CreateTask(vdsReturnValue.getCreationInfo(),
+                    createTask(vdsReturnValue.getCreationInfo(),
                             getParameters().getParentCommand(),
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));

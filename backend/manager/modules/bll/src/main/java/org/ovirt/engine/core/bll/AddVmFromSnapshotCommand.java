@@ -232,8 +232,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
-    protected void EndSuccessfully() {
-        super.EndSuccessfully();
+    protected void endSuccessfully() {
+        super.endSuccessfully();
         unlockEntities();
     }
 

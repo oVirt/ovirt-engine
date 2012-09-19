@@ -259,7 +259,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     @Override
-    protected List<tags> GetTagsAttachedToObject() {
+    protected List<tags> getTagsAttachedToObject() {
         return DbFacade.getInstance().getTagDAO()
                 .getAllForVmPools((getParameters().getVmPoolId()).toString());
     }

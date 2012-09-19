@@ -62,7 +62,7 @@ public abstract class VdcCommandBase implements RollbackHandler {
     }
 
     @Override
-    public void Rollback() {
+    public void rollback() {
         log.errorFormat("Command {1} Rollbacked", getCommandName());
     }
 

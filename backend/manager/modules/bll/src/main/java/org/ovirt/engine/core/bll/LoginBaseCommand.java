@@ -36,7 +36,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     @Override
-    protected VdcLoginReturnValueBase CreateReturnValue() {
+    protected VdcLoginReturnValueBase createReturnValue() {
         return new VdcLoginReturnValueBase();
     }
 
@@ -213,7 +213,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     @Override
-    protected boolean IsUserAutorizedToRunAction() {
+    protected boolean isUserAuthorizedToRunAction() {
         if (log.isDebugEnabled()) {
             log.debugFormat("IsUserAutorizedToRunAction: Login - no permission check");
         }

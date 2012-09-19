@@ -100,7 +100,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         if (getDisksList().isEmpty()) {
             getParameters().setTaskGroupSuccess(true);
-            EndSuccessfully();
+            endSuccessfully();
         } else {
             for (DiskImage image : getDisksList()) {
                 ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getImageId());

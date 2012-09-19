@@ -87,14 +87,14 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
     }
 
-    protected abstract Guid GetPoolId();
+    protected abstract Guid getPoolId();
 
     /**
      * This operation may take much time, so transactions timeout increased to 2 minutes
      */
     @Override
     protected void executeCommand() {
-        Guid poolId = GetPoolId();
+        Guid poolId = getPoolId();
         boolean isAtLeastOneVMCreationFailed = false;
         setActionReturnValue(poolId);
 

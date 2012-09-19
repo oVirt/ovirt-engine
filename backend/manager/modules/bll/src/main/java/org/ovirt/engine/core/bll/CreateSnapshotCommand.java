@@ -103,7 +103,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             if (vdsReturnValue.getSucceeded()) {
                 getParameters().setTaskIds(new java.util.ArrayList<Guid>());
                 getParameters().getTaskIds().add(
-                        CreateTask(vdsReturnValue.getCreationInfo(),
+                        createTask(vdsReturnValue.getCreationInfo(),
                                 getParameters().getParentCommand(),
                                 VdcObjectType.Storage,
                                 getParameters().getStorageDomainId(),
@@ -142,7 +142,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
 
     @Override
     protected void endWithFailure() {
-        RevertTasks();
+        revertTasks();
 
         if (getDestinationDiskImage() != null
                 && !DbFacade.getInstance().getVmDAO().getVmsListForDisk(getDestinationDiskImage().getId()).isEmpty()) {

@@ -77,7 +77,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         setSucceeded(true);
     }
 

@@ -79,7 +79,7 @@ public class MultipleActionsRunner {
             }
 
             if (getCommands().size() == 1) {
-                returnValues.add(getCommands().get(0).CanDoActionOnly());
+                returnValues.add(getCommands().get(0).canDoActionOnly());
             } else {
                 CheckCanDoActionsAsyncroniousely(returnValues);
             }
@@ -147,7 +147,7 @@ public class MultipleActionsRunner {
                                 currentCanDoActionId + 1,
                                 totalSize,
                                 actionType);
-                        VdcReturnValueBase returnValue = command.CanDoActionOnly();
+                        VdcReturnValueBase returnValue = command.canDoActionOnly();
                         synchronized (returnValues) {
                             returnValues.add(returnValue);
                         }
@@ -197,7 +197,7 @@ public class MultipleActionsRunner {
                         new Boolean(hasCorrelationIdMap.get(command.getCommandId())));
             }
             ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
-            command.ExecuteAction();
+            command.executeAction();
         }
     }
 

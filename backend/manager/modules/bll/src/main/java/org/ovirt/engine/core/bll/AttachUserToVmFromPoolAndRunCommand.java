@@ -191,7 +191,7 @@ VmPoolUserCommandBase<T> {
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         if (getVm() != null) {
             if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
                 setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,

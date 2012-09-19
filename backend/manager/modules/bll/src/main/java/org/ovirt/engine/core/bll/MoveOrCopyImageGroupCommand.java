@@ -104,7 +104,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         if (vdsReturnValue.getSucceeded()) {
             AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
             getReturnValue().getInternalTaskIdList().add(
-                    CreateTask(taskCreationInfo,
+                    createTask(taskCreationInfo,
                             getParameters().getParentCommand(),
                             VdcObjectType.Storage,
                             sourceDomainId,
@@ -168,7 +168,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                         (new image_storage_domain_map_id(getParameters().getImageId(),
                                 getParameters().getStorageDomainId()));
             }
-            RevertTasks();
+            revertTasks();
         }
 
         else {
@@ -179,7 +179,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     }
 
     @Override
-    protected void RevertTasks() {
+    protected void revertTasks() {
         // Revert should be performed only for AddVmFromSnapshot at this point.
         if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot) {
             Guid destImageId = getParameters().getDestinationImageId();

@@ -30,7 +30,7 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
 
         if (vdsReturnValue.getSucceeded()) {
             getReturnValue().getInternalTaskIdList().add(
-                    CreateTask(vdsReturnValue.getCreationInfo(),
+                    createTask(vdsReturnValue.getCreationInfo(),
                             VdcActionType.RemoveVmTemplate,
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));

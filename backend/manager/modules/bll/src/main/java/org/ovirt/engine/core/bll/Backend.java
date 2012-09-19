@@ -333,7 +333,7 @@ public class Backend implements BackendInternal {
             command.setContext(context);
             ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal, hasCorrelationId);
 
-            returnValue = command.ExecuteAction();
+            returnValue = command.executeAction();
             returnValue.setCorrelationId(parameters.getCorrelationId());
             returnValue.setJobId(command.getJobId());
             return returnValue;
@@ -353,7 +353,7 @@ public class Backend implements BackendInternal {
             CommandContext context) {
         CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
         command.setContext(context);
-        return command.EndAction();
+        return command.endAction();
     }
 
     @Override
@@ -482,7 +482,7 @@ public class Backend implements BackendInternal {
         case LoginUser:
         case LoginAdminUser: {
             CommandBase<?> command = CommandsFactory.CreateCommand(parameters.getActionType(), parameters);
-            return command.ExecuteAction();
+            return command.executeAction();
         }
         default: {
             return NotAutorizedError();

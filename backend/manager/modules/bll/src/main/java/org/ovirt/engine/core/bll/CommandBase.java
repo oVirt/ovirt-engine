@@ -251,15 +251,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private TransactionScopeOption scope;
     private TransactionScopeOption endActionScope;
 
-    public VdcReturnValueBase CanDoActionOnly() {
+    public VdcReturnValueBase canDoActionOnly() {
         setActionMessageParameters();
-        getReturnValue().setCanDoAction(InternalCanDoAction());
+        getReturnValue().setCanDoAction(internalCanDoAction());
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
         return _returnValue;
     }
 
-    public VdcReturnValueBase ExecuteAction() {
+    public VdcReturnValueBase executeAction() {
         determineExecutionReason();
         _actionState = CommandActionState.EXECUTE;
         String tempVar = getDescription();
@@ -270,14 +270,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         Step validatingStep = ExecutionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
 
         try {
-            actionAllowed = getReturnValue().getCanDoAction() || InternalCanDoAction();
+            actionAllowed = getReturnValue().getCanDoAction() || internalCanDoAction();
             ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
 
             if (actionAllowed) {
                 getReturnValue().setCanDoAction(true);
                 getReturnValue().setIsSyncronious(true);
                 getParameters().setTaskStartTime(System.currentTimeMillis());
-                Execute();
+                execute();
             } else {
                 getReturnValue().setCanDoAction(false);
             }
@@ -376,18 +376,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getBusinessEntitySnapshotDAO().removeAllForCommandId(commandId);
     }
 
-    public VdcReturnValueBase EndAction() {
+    public VdcReturnValueBase endAction() {
         ExecutionHandler.startFinalizingStep(getExecutionContext());
 
         try {
-            SetActionState();
+            setActionState();
             handleTransactivity();
             TransactionSupport.executeInScope(endActionScope, this);
         } catch (TransactionRolledbackLocalException e) {
             log.infoFormat("EndAction: Transaction was aborted in {0}", this.getClass().getName());
         } finally {
             if (getCommandShouldBeLogged()) {
-                LogCommand();
+                logCommand();
             }
         }
 
@@ -415,7 +415,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    private void SetActionState() {
+    private void setActionState() {
         // This mechanism should change,
         // And for ROLLBACK_FLOW we should
         // introduce a new actionState.
@@ -436,9 +436,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         boolean exceptionOccurred = false;
         try {
             if (isEndSuccessfully()) {
-                InternalEndSuccessfully();
+                internalEndSuccessfully();
             } else {
-                InternalEndWithFailure();
+                internalEndWithFailure();
             }
         } catch (RuntimeException e) {
             exceptionOccurred = true;
@@ -479,16 +479,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         compensate();
     }
 
-    private void InternalEndSuccessfully() {
+    private void internalEndSuccessfully() {
         log.infoFormat("Ending command successfully: {0}", getClass().getName());
-        EndSuccessfully();
+        endSuccessfully();
     }
 
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         setSucceeded(true);
     }
 
-    private void InternalEndWithFailure() {
+    private void internalEndWithFailure() {
         log.errorFormat("Ending command with failure: {0}", getClass().getName());
         endWithFailure();
     }
@@ -497,13 +497,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         setSucceeded(true);
     }
 
-    private boolean InternalCanDoAction() {
+    private boolean internalCanDoAction() {
         boolean returnValue = false;
         try {
             Transaction transaction = TransactionSupport.suspend();
             try {
                 returnValue =
-                        IsUserAutorizedToRunAction() && IsBackwardsCompatible() && validateInputs() && acquireLock()
+                        isUserAuthorizedToRunAction() && isBackwardsCompatible() && validateInputs() && acquireLock()
                                 && canDoAction();
                 if (returnValue && this instanceof Quotable) {
                     returnValue &= ((Quotable) this).validateAndSetQuota();
@@ -560,7 +560,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return validationGroups;
     }
 
-    protected boolean IsBackwardsCompatible() {
+    protected boolean isBackwardsCompatible() {
         boolean result = true;
         action_version_map actionVersionMap = DbFacade.getInstance()
                 .getActionGroupDAO().getActionVersionMapByActionType(getActionType());
@@ -670,7 +670,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return <code>true</code> if the user is authorized to run the given action,
      *   <code>false</code> otherwise
      */
-    protected boolean IsUserAutorizedToRunAction() {
+    protected boolean isUserAuthorizedToRunAction() {
         // Skip check if this is an internal action:
         if (isInternalExecution()) {
             if (log.isDebugEnabled()) {
@@ -742,7 +742,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return true;
     }
 
-    protected List<tags> GetTagsAttachedToObject() {
+    protected List<tags> getTagsAttachedToObject() {
         // tags_permissions_map
         return new ArrayList<tags>();
     }
@@ -756,7 +756,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *
      * @return
      */
-    protected VdcReturnValueBase CreateReturnValue() {
+    protected VdcReturnValueBase createReturnValue() {
         return new VdcReturnValueBase();
     }
 
@@ -816,7 +816,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return parentParameters;
     }
 
-    private boolean ExecuteWithoutTransaction() {
+    private boolean executeWithoutTransaction() {
         boolean functionReturnValue = false;
         boolean exceptionOccurred = true;
         try {
@@ -826,7 +826,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             exceptionOccurred = false;
         } catch (RepositoryException e) {
             log.error(String.format("Command %1$s throw Database exception", getClass().getName()), e);
-            ProcessExceptionToClient(new VdcFault(e, VdcBllErrors.DB));
+            processExceptionToClient(new VdcFault(e, VdcBllErrors.DB));
         }
         catch (VdcBLLException e) {
             log.error(String.format("Command %1$s throw Vdc Bll exception. With error message %2$s",
@@ -835,9 +835,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (log.isDebugEnabled()) {
                 log.debug(String.format("Command %1$s throw Vdc Bll exception", getClass().getName()), e);
             }
-            ProcessExceptionToClient(new VdcFault(e, e.getVdsError().getCode()));
+            processExceptionToClient(new VdcFault(e, e.getVdsError().getCode()));
         } catch (RuntimeException e) {
-            ProcessExceptionToClient(new VdcFault(e, VdcBllErrors.ENGINE));
+            processExceptionToClient(new VdcFault(e, VdcBllErrors.ENGINE));
             log.error(String.format("Command %1$s throw exception", getClass().getName()), e);
         } finally {
             // If we failed to execute due to exception or some other reason, we compensate for the failure.
@@ -904,7 +904,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         // If we didn't managed to acquire lock for command or the object wasn't managed to execute properly, then
         // rollback the transaction.
-        if (!ExecuteWithoutTransaction()) {
+        if (!executeWithoutTransaction()) {
             if (TransactionSupport.current() == null) {
                 cancelTasks();
             }
@@ -914,7 +914,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    private void Execute() {
+    private void execute() {
         ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
 
         try {
@@ -928,7 +928,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             try {
                 freeLock();
                 if (getCommandShouldBeLogged()) {
-                    LogCommand();
+                    logCommand();
                 }
                 if (getSucceeded()) {
                     // only after creating all tasks, we can start polling them (we
@@ -936,9 +936,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     // to start polling before all tasks were created, otherwise we
                     // might change
                     // the VM/VmTemplate status to 'Down'/'OK' too soon.
-                    UpdateTasksWithActionParameters();
+                    updateTasksWithActionParameters();
 
-                    StartPollingAsyncTasks();
+                    startPollingAsyncTasks();
                 }
             } finally {
                 if (!hasTasks() && !ExecutionHandler.checkIfJobHasTasks(getExecutionContext())) {
@@ -959,7 +959,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected abstract void executeCommand();
 
-    private void LogCommand() {
+    private void logCommand() {
         Class<?> type = getClass();
         InternalCommandAttribute annotation = type.getAnnotation(InternalCommandAttribute.class);
         if (annotation == null) {
@@ -978,7 +978,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     public VdcReturnValueBase getReturnValue() {
         if (_returnValue == null) {
-            _returnValue = CreateReturnValue();
+            _returnValue = createReturnValue();
         }
         return _returnValue;
     }
@@ -1005,7 +1005,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         _description = value;
     }
 
-    private void ProcessExceptionToClient(VdcFault fault) {
+    private void processExceptionToClient(VdcFault fault) {
         fault.setSessionID(getParameters().getSessionId());
         _returnValue.setFault(fault);
     }
@@ -1024,11 +1024,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            Ids of entities to be associated with task
      * @return Guid of the created task.
      */
-    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    protected Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType entityType,
             Guid... entityIds) {
-        return CreateTask(asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
+        return createTask(asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
     }
 
     /**
@@ -1045,9 +1045,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            Ids of entities to be associated with task
      * @return Guid of the created task.
      */
-    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    protected Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        return CreateTask(asyncTaskCreationInfo, parentCommand, null, null, EMPTY_GUID_ARRAY);
+        return createTask(asyncTaskCreationInfo, parentCommand, null, null, EMPTY_GUID_ARRAY);
     }
 
     /**
@@ -1066,7 +1066,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            Ids of entities to be associated with task
      * @return Guid of the created task.
      */
-    protected Guid CreateTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    protected Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             String description, VdcObjectType entityType, Guid... entityIds) {
         Guid retValue = Guid.Empty;
@@ -1081,7 +1081,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (taskStep != null) {
                 asyncTaskCreationInfo.setStepId(taskStep.getId());
             }
-            SPMAsyncTask task = ConcreteCreateTask(asyncTaskCreationInfo, parentCommand);
+            SPMAsyncTask task = concreteCreateTask(asyncTaskCreationInfo, parentCommand);
             retValue = task.getTaskID();
             task.setEntityType(entityType);
             task.setAssociatedEntities(entityIds);
@@ -1104,7 +1104,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param parentCommand The type of command issuing the task
      * @return An {@link SPMAsyncTask} object representing the task to be run
      */
-    protected SPMAsyncTask ConcreteCreateTask
+    protected SPMAsyncTask concreteCreateTask
             (AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
 
         VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
@@ -1125,7 +1125,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         throw new UnsupportedOperationException();
     }
 
-    protected void UpdateTasksWithActionParameters() {
+    protected void updateTasksWithActionParameters() {
         for (Guid taskID : getReturnValue().getTaskIdList()) {
             getAsyncTaskManager().UpdateTaskWithActionParameters(taskID, getParameters());
         }
@@ -1137,7 +1137,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    protected void StartPollingAsyncTasks() {
+    protected void startPollingAsyncTasks() {
         startPollingAsyncTasks(getReturnValue().getTaskIdList());
     }
 
@@ -1147,7 +1147,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     @Override
-    public void Rollback() {
+    public void rollback() {
         log.errorFormat("Transaction rolled-back for command: {0}.", CommandBase.this.getClass().getName());
         try {
             if (this instanceof Quotable) {
@@ -1176,7 +1176,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    protected void RevertTasks() {
+    protected void revertTasks() {
         if (getParameters().getTaskIds() != null) {
             // list to send to the PollTasks method
             ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();

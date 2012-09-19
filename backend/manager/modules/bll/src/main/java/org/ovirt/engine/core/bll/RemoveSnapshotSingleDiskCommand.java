@@ -44,7 +44,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
             getReturnValue().getInternalTaskIdList().add(
-                    CreateTask(vdsReturnValue.getCreationInfo(),
+                    createTask(vdsReturnValue.getCreationInfo(),
                             VdcActionType.RemoveSnapshot,
                             ExecutionMessageDirector.resolveStepMessage(StepEnum.MERGE_SNAPSHOTS, getJobMessageProperties()),
                             VdcObjectType.Storage,
@@ -66,7 +66,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
     }
 
     @Override
-    protected void EndSuccessfully() {
+    protected void endSuccessfully() {
         // NOTE: The removal of the images from DB is done here
         // assuming that there might be situation (related to
         // tasks failures) in which we will want to preserve the
