@@ -9,9 +9,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
@@ -207,6 +207,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     protected boolean RemoveVmTemplateImages() {
         getParameters().setEntityId(getParameters().getEntityId());
+        getParameters().setParentCommand(getActionType());
+        getParameters().setParentParemeters(getParameters());
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                 VdcActionType.RemoveAllVmTemplateImageTemplates,
                 getParameters(),
