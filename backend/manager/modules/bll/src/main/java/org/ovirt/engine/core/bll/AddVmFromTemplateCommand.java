@@ -48,7 +48,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
-    protected boolean AddVmImages() {
+    protected boolean addVmImages() {
         if (getVmTemplate().getDiskMap().size() > 0) {
             if (getVm().getstatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");

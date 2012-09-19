@@ -106,7 +106,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
-    protected boolean AddVmImages() {
+    protected boolean addVmImages() {
         int numberOfStartedCopyTasks = 0;
         try {
             if (!getDiskImagesFromConfiguration().isEmpty()) {

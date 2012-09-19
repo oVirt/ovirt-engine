@@ -60,7 +60,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
     }
 
     @Override
-    protected boolean AddVmImages() {
+    protected boolean addVmImages() {
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(
                 getParameters().getVmStaticData().getvmt_guid());
         if (disks.isEmpty() && !getParameters().getVmStaticData().getvmt_guid().equals(Guid.Empty)) {

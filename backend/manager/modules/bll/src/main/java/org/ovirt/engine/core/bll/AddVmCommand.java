@@ -203,7 +203,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return getBlockSparseInitSizeInGB() * storageToDisksMap.get(domainId).size();
     }
 
-    protected boolean CanDoAddVmCommand() {
+    protected boolean canDoAddVmCommand() {
         boolean returnValue = false;
         returnValue = areParametersLegal(getReturnValue().getCanDoActionMessages());
         // Check if number of monitors passed is legal
@@ -291,7 +291,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             storageToDisksMap =
                     ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
                             diskInfoDestinationMap);
-            returnValue = CanDoAddVmCommand();
+            returnValue = canDoAddVmCommand();
         }
 
         String vmName = getParameters().getVm().getvm_name();
@@ -482,10 +482,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
                 @Override
                 public Void runInTransaction() {
-                    AddVmStatic();
+                    addVmStatic();
                     addVmDynamic();
-                    AddVmNetwork();
-                    AddVmStatistics();
+                    addVmNetwork();
+                    addVmStatistics();
                     addActiveSnapshot();
                     getCompensationContext().stateChanged();
                     return null;
@@ -494,7 +494,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             freeLock();
 
             addVmPermission();
-            if (AddVmImages()) {
+            if (addVmImages()) {
                 copyVmDevices();
                 addDiskPermissions(newDiskImages);
                 addVmPayload();
@@ -566,7 +566,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return returnValue;
     }
 
-    protected void AddVmNetwork() {
+    protected void addVmNetwork() {
         // Add interfaces from template
         for (VmNetworkInterface iface : getVmInterfaces()) {
             iface.setId(Guid.NewGuid());
@@ -581,7 +581,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
     }
 
-    protected void AddVmStatic() {
+    protected void addVmStatic() {
         VmStatic vmStatic = getParameters().getVmStaticData();
         if (vmStatic.getorigin() == null) {
             vmStatic.setorigin(OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)));
@@ -618,14 +618,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         getCompensationContext().snapshotNewEntity(vmDynamic);
     }
 
-    void AddVmStatistics() {
+    void addVmStatistics() {
         VmStatistics stats = new VmStatistics();
         stats.setId(getVmId());
         DbFacade.getInstance().getVmStatisticsDAO().save(stats);
         getCompensationContext().snapshotNewEntity(stats);
     }
 
-    protected boolean AddVmImages() {
+    protected boolean addVmImages() {
         if (getVmTemplate().getDiskMap().size() > 0) {
             if (getVm().getstatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
