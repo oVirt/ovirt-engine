@@ -62,7 +62,7 @@ public class AutoRecoveryManager {
             }
         }, "hosts");
         check(dbFacade.getStorageDomainDAO(),
-                VdcActionType.ActivateStorageDomain,
+                VdcActionType.ConnectDomainToStorage,
                 new DoWithClosure<storage_domains, VdcActionParametersBase>() {
             @Override
             public VdcActionParametersBase doWith(final storage_domains arg) {

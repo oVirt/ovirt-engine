@@ -80,7 +80,7 @@ public class AutoRecoveryManagerTest {
         manager.onTimer();
         verify(backendMock, times(vdss.size())).runInternalAction(eq(VdcActionType.ActivateVds),
                 any(VdcActionParametersBase.class));
-        verify(backendMock, times(storageDomains.size())).runInternalAction(eq(VdcActionType.ActivateStorageDomain),
+        verify(backendMock, times(storageDomains.size())).runInternalAction(eq(VdcActionType.ConnectDomainToStorage),
                 any(VdcActionParametersBase.class));
     }
 
@@ -93,7 +93,7 @@ public class AutoRecoveryManagerTest {
         manager.onTimer();
         verify(backendMock, never()).runInternalAction(eq(VdcActionType.ActivateVds),
                 any(VdcActionParametersBase.class));
-        verify(backendMock, never()).runInternalAction(eq(VdcActionType.ActivateStorageDomain),
+        verify(backendMock, never()).runInternalAction(eq(VdcActionType.ConnectDomainToStorage),
                 any(VdcActionParametersBase.class));
     }
 }

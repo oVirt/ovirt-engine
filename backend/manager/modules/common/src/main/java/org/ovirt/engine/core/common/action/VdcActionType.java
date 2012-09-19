@@ -203,6 +203,7 @@ public enum VdcActionType {
     AttachStorageDomainToPool(906, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
     DetachStorageDomainFromPool(907, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
     ActivateStorageDomain(908, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
+    ConnectDomainToStorage(916),
     DeactivateStorageDomain(909, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
     AddSANStorageDomain(910, ActionGroup.CREATE_STORAGE_DOMAIN),
     ExtendSANStorageDomain(911, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION),
