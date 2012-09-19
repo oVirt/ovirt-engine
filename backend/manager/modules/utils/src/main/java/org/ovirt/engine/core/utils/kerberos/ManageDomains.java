@@ -447,11 +447,7 @@ public class ManageDomains {
                 true,
                 false);
 
-        if (addPermissions) {
-            updatePermissionsTable(adUserNameEntry, adUserIdEntry);
-        } else {
-            System.out.println(WARNING_NOT_ADDING_PERMISSIONS);
-        }
+        handleAddPermissions(adUserNameEntry, adUserIdEntry);
 
         // Update the configuration
         setConfigurationEntries(domainNameEntry,
@@ -463,6 +459,14 @@ public class ManageDomains {
                 ldapProviderTypesEntry);
 
         System.out.println(String.format(SUCCESSFULLY_COMPLETED_ACTION_ON_DOMAIN, "added", domainName));
+    }
+
+    private void handleAddPermissions(DomainsConfigurationEntry adUserNameEntry, DomainsConfigurationEntry adUserIdEntry) {
+        if (addPermissions) {
+            updatePermissionsTable(adUserNameEntry, adUserIdEntry);
+        } else {
+            System.out.println(WARNING_NOT_ADDING_PERMISSIONS);
+        }
     }
 
     private ManageDomainsResult updatePermissionsTable(DomainsConfigurationEntry adUserNameEntry,
@@ -560,11 +564,7 @@ public class ManageDomains {
                 true,
                 false);
 
-        if (addPermissions) {
-            updatePermissionsTable(adUserNameEntry, adUserIdEntry);
-        } else {
-            System.out.println(WARNING_NOT_ADDING_PERMISSIONS);
-        }
+        handleAddPermissions(adUserNameEntry, adUserIdEntry);
 
         setConfigurationEntries(domainNameEntry,
                 adUserNameEntry,
