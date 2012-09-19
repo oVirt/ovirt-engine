@@ -443,7 +443,7 @@ public class SPMAsyncTask {
 
     public void StopTask() {
         if (getState() != AsyncTaskState.AttemptingEndAction && getState() != AsyncTaskState.Cleared
-                && getState() != AsyncTaskState.ClearFailed) {
+                && getState() != AsyncTaskState.ClearFailed && !getLastTaskStatus().getTaskIsInUnusualState()) {
             try {
                 log.infoFormat(
                         "SPMAsyncTask::StopTask: Attempting to stop task '{0}' (Parent Command {1}, Parameters Type {2}).",
