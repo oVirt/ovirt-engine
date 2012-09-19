@@ -31,16 +31,16 @@ public class ManageDomains {
     public static final String CONF_FILE_PATH = "/etc/ovirt-engine/engine-manage-domains/engine-manage-domains.conf";
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
-    private final String WARNING_NOT_ADDING_PERMISSIONS =
-            "WARNING: No permissions were added to the Engine. Login either with the internal admin user or with another configured user.";
+    private final String INFO_ABOUT_NOT_ADDING_PERMISSIONS =
+            "The domain %1$s has been added to the engine as an authentication source but no users from that domain have been granted permissions within the oVirt Manager.\nUsers from this domain can be granted permissions from the Web administration interface.";
 
     private final String SERVICE_RESTART_MESSAGE =
             "oVirt Engine restart is required in order for the changes to take place (service ovirt-engine restart).";
     private final String DELETE_DOMAIN_SUCCESS =
             "Successfully deleted domain %1$s. Please remove all users and groups of this domain using the Administration portal or the API. "
                     + SERVICE_RESTART_MESSAGE;
-    private final String SUCCESSFULLY_COMPLETED_ACTION_ON_DOMAIN =
-            "Successfully %1$s domain %2$s. " + SERVICE_RESTART_MESSAGE;
+    private final String SUCCESS_MESSAGE_FOR_ACTION_WITH_ADD_PERMISSIONS =
+            "Successfully %1$s domain %2$s. ";
     private final String ILLEGAL_PASSWORD_CHARACTERS = ",";
 
     private final String DEFAULT_AUTH_MODE = LdapAuthModeEnum.GSSAPI.name();
@@ -447,7 +447,7 @@ public class ManageDomains {
                 true,
                 false);
 
-        handleAddPermissions(adUserNameEntry, adUserIdEntry);
+        handleAddPermissions(domainName, adUserNameEntry, adUserIdEntry);
 
         // Update the configuration
         setConfigurationEntries(domainNameEntry,
@@ -457,15 +457,21 @@ public class ManageDomains {
                 ldapServersEntry,
                 adUserIdEntry,
                 ldapProviderTypesEntry);
-
-        System.out.println(String.format(SUCCESSFULLY_COMPLETED_ACTION_ON_DOMAIN, "added", domainName));
+        printSuccessMessage(domainName,"added");
     }
 
-    private void handleAddPermissions(DomainsConfigurationEntry adUserNameEntry, DomainsConfigurationEntry adUserIdEntry) {
+    private void printSuccessMessage(String domainName, String action) {
+        if (addPermissions) {
+            System.out.print(String.format(SUCCESS_MESSAGE_FOR_ACTION_WITH_ADD_PERMISSIONS, "added", domainName));
+        }
+        System.out.println(SERVICE_RESTART_MESSAGE);
+    }
+
+    private void handleAddPermissions(String domainName,DomainsConfigurationEntry adUserNameEntry, DomainsConfigurationEntry adUserIdEntry) {
         if (addPermissions) {
             updatePermissionsTable(adUserNameEntry, adUserIdEntry);
         } else {
-            System.out.println(WARNING_NOT_ADDING_PERMISSIONS);
+            System.out.println(String.format(INFO_ABOUT_NOT_ADDING_PERMISSIONS, domainName));
         }
     }
 
@@ -564,7 +570,7 @@ public class ManageDomains {
                 true,
                 false);
 
-        handleAddPermissions(adUserNameEntry, adUserIdEntry);
+        handleAddPermissions(domainName,adUserNameEntry, adUserIdEntry);
 
         setConfigurationEntries(domainNameEntry,
                 adUserNameEntry,
@@ -574,7 +580,7 @@ public class ManageDomains {
                 adUserIdEntry,
                 ldapProviderTypeEntry);
 
-        System.out.println(String.format(SUCCESSFULLY_COMPLETED_ACTION_ON_DOMAIN, "edited", domainName));
+        printSuccessMessage(domainName,"edited");
     }
 
     private void createKerberosConfiguration(DomainsConfigurationEntry gssapiDomains) throws ManageDomainsResult {
