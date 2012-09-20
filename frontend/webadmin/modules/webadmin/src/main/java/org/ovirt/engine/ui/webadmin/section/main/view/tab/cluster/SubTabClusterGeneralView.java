@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -28,7 +29,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -47,6 +51,9 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     interface ViewUiBinder extends UiBinder<Widget, SubTabClusterGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    // to find the icon for alert messages:
+    private final ApplicationResources resources;
 
     @UiField
     HorizontalPanel policyPanel;
@@ -104,13 +111,24 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     TextBoxLabel noOfVolumesUp = new TextBoxLabel();
     TextBoxLabel noOfVolumesDown = new TextBoxLabel();
 
+    @UiField
+    HTMLPanel alertsPanel;
+
+    // This is the list of action items inside the panel, so that we
+    // can clear and add elements inside without affecting the panel:
+    @UiField
+    FlowPanel alertsList;
+
     private final ApplicationConstants constants;
 
     @Inject
     public SubTabClusterGeneralView(final DetailModelProvider<ClusterListModel, ClusterGeneralModel> modelProvider,
-            ApplicationConstants constants) {
+            ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         this.constants = constants;
+
+        // Inject a reference to the resources:
+        this.resources = resources;
 
         initSliders();
         initLabels();
@@ -218,4 +236,30 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         volumeSummaryPanel.setVisible(selectedItem.supportsGlusterService());
     }
 
+    @Override
+    public void clearAlerts() {
+        // Remove all the alert widgets and make the panel invisible:
+        alertsList.clear();
+        alertsPanel.setVisible(false);
+    }
+
+    @Override
+    public void addAlert(Widget alertWidget) {
+        // Create a composite panel that contains the alert icon and the widget provided
+        // by the caller, both rendered horizontally:
+        FlowPanel alertPanel = new FlowPanel();
+        Image alertIcon = new Image(resources.alertImage());
+        alertIcon.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
+        alertWidget.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
+        alertPanel.add(alertIcon);
+        alertPanel.add(alertWidget);
+
+        // Add the composite panel to the alerts panel:
+        alertsList.add(alertPanel);
+
+        // Make the panel visible if it wasn't:
+        if (!alertsPanel.isVisible()) {
+            alertsPanel.setVisible(true);
+        }
+    }
 }

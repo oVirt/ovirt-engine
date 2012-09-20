@@ -2429,4 +2429,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     // Network cluster
     @DefaultStringValue("Network Status")
     String networkStatus();
+
+    @DefaultStringValue("Host IP/Name")
+    String detachGlusterHostsHostAddress();
+
+    @DefaultStringValue("Detach the hosts forcefully")
+    String detachGlusterHostsForcefully();
 }

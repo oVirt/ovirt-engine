@@ -1604,4 +1604,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Management")
     String mgmgtNetworkRole();
+
+    @DefaultStringValue("There are no new hosts in the cluster")
+    String emptyNewGlusterHosts();
+
+    @DefaultStringValue("Detach Gluster Hosts")
+    String detachGlusterHostsTitle();
 }

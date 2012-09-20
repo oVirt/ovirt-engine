@@ -92,6 +92,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
@@ -1114,6 +1115,19 @@ public final class AsyncDataProvider {
                 new GlusterVolumeAdvancedDetailsParameters(clusterId, volume, brick, true);
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
                 parameters,
+                aQuery);
+    }
+
+    public static void GetGlusterHostsNewlyAdded(AsyncQuery aQuery, Guid clusterId, boolean isFingerprintRequired) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAddedGlusterServers,
+                new AddedGlusterServersParameters(clusterId, isFingerprintRequired),
                 aQuery);
     }
 
