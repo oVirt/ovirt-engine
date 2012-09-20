@@ -242,7 +242,7 @@ public class VmRunHandler {
      * @return
      */
     protected List<Disk> getPluggedDisks(VM vm) {
-        List<Disk> diskImages = getDiskDAO().getAllForVm(vm.getId());
+        List<Disk> diskImages = getDiskDao().getAllForVm(vm.getId());
         List<VmDevice> diskVmDevices = getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                 VmDeviceType.DISK.getName(),
                 VmDeviceType.DISK.getName());
@@ -351,7 +351,7 @@ public class VmRunHandler {
         return Backend.getInstance();
     }
 
-    protected DiskDao getDiskDAO() {
+    protected DiskDao getDiskDao() {
         return DbFacade.getInstance().getDiskDao();
     }
 

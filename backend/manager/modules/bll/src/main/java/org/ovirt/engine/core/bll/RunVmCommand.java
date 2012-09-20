@@ -123,7 +123,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             refreshBootParameters(runVmParameters);
             // set vm disks
-            VmHandler.updateDisksForVm(getVm(), getDiskDAO().getAllForVm(getVm().getId()));
+            VmHandler.updateDisksForVm(getVm(), getDiskDao().getAllForVm(getVm().getId()));
         }
     }
 

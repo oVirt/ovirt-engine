@@ -463,8 +463,8 @@ public class RunVmCommandTest {
     protected void initDAOMocks(final List<Disk> disks, final List<VmDevice> vmDevices) {
         final DiskDao diskDao = mock(DiskDao.class);
         when(diskDao.getAllForVm(Guid.Empty)).thenReturn(disks);
-        doReturn(diskDao).when(command).getDiskDAO();
-        doReturn(diskDao).when(vmRunHandler).getDiskDAO();
+        doReturn(diskDao).when(command).getDiskDao();
+        doReturn(diskDao).when(vmRunHandler).getDiskDao();
 
         final StorageDomainDAO storageDomainDAO = mock(StorageDomainDAO.class);
         when(storageDomainDAO.getAllForStoragePool(Guid.Empty))
