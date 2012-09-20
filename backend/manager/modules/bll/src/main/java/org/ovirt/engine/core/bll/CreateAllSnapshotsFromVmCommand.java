@@ -8,12 +8,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -233,9 +233,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         boolean result = true;
         List<DiskImage> disksList = getDisksList();
         if (disksList.size() > 0) {
+            VmValidator vmValidator = new VmValidator(getVm());
             result = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
-                    && validate(vmNotDuringMigration())
-                    && validate(vmNotRunningStateless())
+                    && validate(vmValidator.vmNotDuringMigration())
+                    && validate(vmValidator.vmNotRunningStateless())
                     && ImagesHandler.PerformImagesChecks(getVm(),
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getstorage_pool_id(),
@@ -265,26 +266,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 ConfigValues.LiveSnapshotEnabled, getStoragePool().getcompatibility_version().getValue());
     }
 
-    /**
-     * @return Validation result that indicates if the VM is during migration or not.
-     */
-    private ValidationResult vmNotDuringMigration() {
-        if (getVm().getstatus() == VMStatus.MigratingFrom || getVm().getstatus() == VMStatus.MigratingTo) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
-        }
 
-        return ValidationResult.VALID;
-    }
-
-    private ValidationResult vmNotRunningStateless() {
-        if (getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
-            VdcBllMessages message = getVm().isStatusUp() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_STATELESS_SNAPSHOT_LEFTOVER;
-            return new ValidationResult(message);
-        }
-
-        return ValidationResult.VALID;
-    }
 
     @Override
     protected VdcActionType getChildActionType() {
