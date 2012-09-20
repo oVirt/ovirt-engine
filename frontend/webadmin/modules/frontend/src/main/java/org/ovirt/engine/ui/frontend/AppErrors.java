@@ -316,6 +316,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}: The disk ${diskAlias} is locked. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_DISK_IS_LOCKED();
 
+    @DefaultStringValue("Cannot ${action} ${type}: VM is locked. Please try again in a few minutes.")
+    String ACTION_TYPE_FAILED_VM_IS_LOCKED();
+
     @DefaultStringValue("Cannot ${action} ${type}: VM is being exported now. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_VM_DURING_EXPORT();
 
