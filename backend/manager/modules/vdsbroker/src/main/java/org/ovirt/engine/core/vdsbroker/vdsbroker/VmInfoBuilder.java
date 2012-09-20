@@ -149,10 +149,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     continue;
                 }
                 struct = new XmlRpcStruct();
-                String file = vm.getCdPath();
+                String cdPath = vm.getCdPath();
                 addCdDetails(vmDevice, struct);
                 addAddress(vmDevice, struct);
-                addDevice(struct, vmDevice, file);
+                addDevice(struct, vmDevice, cdPath == null ? "" : cdPath);
                 break; // currently only one is supported, may change in future releases
             }
         }
