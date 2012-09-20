@@ -1,19 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.compat.Guid;
 
-public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
-    private Guid privateDstDomainId = new Guid();
-
-    public Guid getDstDomainId() {
-        return privateDstDomainId;
-    }
-
-    private void setDstDomainId(Guid value) {
-        privateDstDomainId = value;
-    }
-
+public class MoveImageGroupVDSCommandParameters extends TargetDomainImageGroupVDSCommandParameters {
     private Guid privateVmId = new Guid();
 
     public Guid getVmId() {
@@ -37,8 +27,7 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
     public MoveImageGroupVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             Guid dstStorageDomainId, Guid vmId, ImageOperation op, boolean postZero, boolean force,
             String compatibilityVersion) {
-        super(storagePoolId, storageDomainId, imageGroupId);
-        setDstDomainId(dstStorageDomainId);
+        super(storagePoolId, storageDomainId, imageGroupId, dstStorageDomainId);
         setVmId(vmId);
         setOp(op);
         setPostZero(postZero);
@@ -71,9 +60,8 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
 
     @Override
     public String toString() {
-        return String.format("%s, dstDomainId = %s, vmId = %s, op = %s, postZero = %s, force = %s",
+        return String.format("%s, vmId = %s, op = %s, postZero = %s, force = %s",
                 super.toString(),
-                getDstDomainId(),
                 getVmId(),
                 getOp(),
                 getPostZero(),
