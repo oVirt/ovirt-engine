@@ -215,13 +215,6 @@ def _verifyUserPermissions():
         print MSG_ERROR_USER_NOT_ROOT%(username)
         sys.exit(1)
 
-def isDBUp():
-    """
-    check if ovirt-engine db is up
-    """
-    logging.debug("checking if %s db is already installed and running.."%basedefs.DB_NAME)
-    (out, rc) = utils.execSqlCommand(basedefs.DB_ADMIN, basedefs.DB_NAME, "select 1", True)
-
 class MYum():
     def __init__(self):
         self.updated = False

@@ -339,17 +339,6 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
         raise Exception(msg)
     return ("".join(output.splitlines(True)), proc.returncode)
 
-def execSqlCommand(userName, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
-    logging.debug("running sql query \'%s\' on db." % sqlQuery)
-    env = { "PGPASSFILE" : basedefs.DB_PASS_FILE }
-    cmd = [
-        basedefs.EXEC_PSQL,
-        "-U", userName,
-        "-d", dbName,
-        "-c", sqlQuery,
-    ]
-    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=env)
-
 #TODO: refactor this and previous functions into same execution.
 def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
     env = { "PGPASSFILE" : basedefs.DB_PASS_FILE }
