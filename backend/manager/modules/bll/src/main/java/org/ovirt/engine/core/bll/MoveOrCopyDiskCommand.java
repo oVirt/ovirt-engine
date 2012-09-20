@@ -79,7 +79,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && checkTemplateInDestStorageDomain()
                 && validateSpaceRequirements()
                 && checkImageConfiguration(canDoActionMessages)
-                && checkCanBeMoveInVm() && checkIfNeedToBeOverride();
+                && checkCanBeMoveInVm()
+                && checkIfNeedToBeOverride();
     }
 
     protected boolean isSourceAndDestTheSame() {
@@ -355,13 +356,18 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             List<VM> vmsForDisk = getVmsForDiskId();
             if (!vmsForDisk.isEmpty()) {
-                sharedLockMap = new HashMap<String, String>();
+                Map<String, String> lockMap = new HashMap<String, String>();
                 for (VM currVm : vmsForDisk) {
-                    sharedLockMap.put(currVm.getId().toString(), LockingGroup.VM.name());
+                    lockMap.put(currVm.getId().toString(), LockingGroup.VM.name());
                 }
+                lockForMove(lockMap);
             }
         }
         return retValue;
+    }
+
+    protected void lockForMove(Map<String, String> lockMap) {
+        sharedLockMap = lockMap;
     }
 
     @Override

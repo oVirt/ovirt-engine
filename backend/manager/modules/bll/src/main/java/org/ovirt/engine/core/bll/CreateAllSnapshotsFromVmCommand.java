@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -113,9 +114,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                         .getParentCommand() : VdcActionType.CreateAllSnapshotsFromVm;
                 tempVar.setParentCommand(parentCommand);
                 ImagesActionsParametersBase p = tempVar;
-                getParameters().getImagesParameters().add(p);
 
-                p.setParentParameters(getParametersForTask(parentCommand, getParameters()));
+                VdcActionParametersBase parrentParamsForTask = getParametersForTask(parentCommand, getParameters());
+                p.setParentParameters(parrentParamsForTask);
+                parrentParamsForTask.getImagesParameters().add(p);
 
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateSnapshot,
@@ -283,7 +285,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
+        return getParameters().isNeedsLocking() ?
+                Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name()) : null;
     }
 
     @Override

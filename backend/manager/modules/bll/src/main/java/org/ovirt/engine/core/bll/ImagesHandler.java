@@ -461,21 +461,7 @@ public final class ImagesHandler {
 
         List<DiskImage> images = getImages(vm, diskImageList);
         if (returnValue && checkImagesLocked) {
-            List<String> lockedDisksAliases = new ArrayList<String>();
-            for (DiskImage diskImage : images) {
-                if (diskImage.getimageStatus() == ImageStatus.LOCKED) {
-                    lockedDisksAliases.add(diskImage.getDiskAlias());
-                    returnValue = false;
-                }
-            }
-            if (lockedDisksAliases.size() > 0) {
-                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED.toString());
-                messages.add(String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
-            }
-            if (returnValue && vm.getstatus() == VMStatus.ImageLocked) {
-                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED.toString());
-                returnValue = false;
-            }
+            returnValue = checkImagesLocked(vm, messages, images);
         }
         if (returnValue && checkVmIsDown && vm.getstatus() != VMStatus.Down) {
             returnValue = false;
@@ -501,6 +487,30 @@ public final class ImagesHandler {
                 returnValue = false;
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());
             }
+        }
+        return returnValue;
+    }
+
+    public static boolean checkImagesLocked(VM vm, List<String> messages) {
+        return checkImagesLocked(vm, messages, getImages(vm, null));
+    }
+
+    private static boolean checkImagesLocked(VM vm, List<String> messages, List<DiskImage> images) {
+        boolean returnValue = true;
+        List<String> lockedDisksAliases = new ArrayList<String>();
+        for (DiskImage diskImage : images) {
+            if (diskImage.getimageStatus() == ImageStatus.LOCKED) {
+                lockedDisksAliases.add(diskImage.getDiskAlias());
+                returnValue = false;
+            }
+        }
+        if (lockedDisksAliases.size() > 0) {
+            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED.toString());
+            messages.add(String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
+        }
+        if (returnValue && vm.getstatus() == VMStatus.ImageLocked) {
+            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED.toString());
+            returnValue = false;
         }
         return returnValue;
     }
@@ -678,5 +688,8 @@ public final class ImagesHandler {
         DbFacade.getInstance().getBaseDiskDao().remove(diskId);
     }
 
+    public static void updateImageStatus(Guid imageId, ImageStatus imageStatus) {
+        DbFacade.getInstance().getImageDao().updateStatus(imageId, imageStatus);
+    }
 
 }

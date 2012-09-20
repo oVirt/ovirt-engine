@@ -7,13 +7,14 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase implements java.io.Serializable {
-
-    private static final long serialVersionUID = 3456740034406494984L;
+    private static final long serialVersionUID = 847791941815264795L;
 
     @NotEmpty(groups = { CreateEntity.class },
             message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_EMPTY")
     @ValidDescription(message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_ASCII", groups = { CreateEntity.class})
     private String _description;
+
+    private boolean needsLocking = true;
 
     /**
      * Used to indicate the type of snapshot to take.
@@ -42,5 +43,13 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
      */
     public void setSnapshotType(SnapshotType snapshotType) {
         this.snapshotType = snapshotType;
+    }
+
+    public boolean isNeedsLocking() {
+        return needsLocking;
+    }
+
+    public void setNeedsLocking(boolean needsLocking) {
+        this.needsLocking = needsLocking;
     }
 }

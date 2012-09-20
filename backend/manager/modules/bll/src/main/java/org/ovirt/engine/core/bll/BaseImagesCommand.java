@@ -341,9 +341,13 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void setImageStatus(ImageStatus imageStatus) {
-        DiskImage diskImage = getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage();
+        DiskImage diskImage = getRelevantDiskImage();
         diskImage.setimageStatus(imageStatus);
-        getImageDao().update(diskImage.getImage());
+        ImagesHandler.updateImageStatus(diskImage.getImage().getId(), imageStatus);
+    }
+
+    protected DiskImage getRelevantDiskImage() {
+        return getParameters().isImportEntity() ? getDestinationDiskImage() : getDiskImage();
     }
 
     @Override

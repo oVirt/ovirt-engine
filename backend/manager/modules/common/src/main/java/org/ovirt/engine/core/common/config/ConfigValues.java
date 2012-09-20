@@ -1537,6 +1537,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("Active")
     EngineMode(393),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    LiveStorageMigrationEnabled(393),
+
     Invalid(65535);
 
     private int intValue;

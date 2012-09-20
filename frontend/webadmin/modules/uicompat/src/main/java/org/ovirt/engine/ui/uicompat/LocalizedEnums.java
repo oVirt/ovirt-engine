@@ -248,7 +248,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___ChangeDisk();
 
-        String VdcActionType___MoveOrCopyDisk();
+    String VdcActionType___MoveOrCopyDisk();
+
+    String VdcActionType___LiveMigrateDisk();
+
+    String VdcActionType___MoveDisk();
 
 	String VdcActionType___ShutdownVm();
 
