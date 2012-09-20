@@ -46,14 +46,14 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     @Override
     protected void executeCommand() {
         super.executeCommand();
-        if (CanCreateSnapshot()) {
+        if (canCreateSnapshot()) {
             VDSReturnValue vdsReturnValue = performImageVdsmOperation();
             if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                 /**
                  * Vitaly TODO: think about transactivity in DB
                  */
-                ProcessOldImageFromDb();
-                AddDiskImageToDb(mNewCreatedDiskImage, null);
+                processOldImageFromDb();
+                addDiskImageToDb(mNewCreatedDiskImage, null);
                 setActionReturnValue(mNewCreatedDiskImage);
                 setSucceeded(true);
             }
@@ -69,7 +69,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     @Override
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
-        mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
+        mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
         mNewCreatedDiskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
         setStoragePoolId(mNewCreatedDiskImage.getstorage_pool_id() != null ? mNewCreatedDiskImage.getstorage_pool_id()
                 .getValue() : Guid.Empty);
@@ -133,7 +133,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     /**
      * By default old image must be replaced by new one
      */
-    protected void ProcessOldImageFromDb() {
+    protected void processOldImageFromDb() {
         getParameters().setOldLastModifiedValue(getDiskImage().getlastModified());
         getDiskImage().setlastModified(new Date());
         getDiskImage().setactive(false);

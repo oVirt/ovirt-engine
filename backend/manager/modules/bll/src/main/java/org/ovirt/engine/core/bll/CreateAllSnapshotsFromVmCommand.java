@@ -140,7 +140,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    protected void EndVmCommand() {
+    protected void endVmCommand() {
         Guid createdSnapshotId =
                 getSnapshotDao().getId(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
         if (getParameters().getTaskGroupSuccess()) {
@@ -154,9 +154,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             revertToActiveSnapshot(createdSnapshotId);
         }
 
-        EndActionOnDisks();
+        endActionOnDisks();
 
-        UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(new VM[] { getVm() }));
+        updateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(new VM[] { getVm() }));
 
         setSucceeded(getParameters().getTaskGroupSuccess());
         getReturnValue().setEndActionTryAgain(false);

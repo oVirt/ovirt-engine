@@ -89,7 +89,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         if (retVal) {
             // set the source domain and check that it is ImportExport type and active
-            SetSourceDomainId(getParameters().getSourceDomainId());
+            setSourceDomainId(getParameters().getSourceDomainId());
             StorageDomainValidator sourceDomainValidator = new StorageDomainValidator(getSourceDomain());
             retVal = sourceDomainValidator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
         }
@@ -248,8 +248,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             @Override
             public Void runInTransaction() {
                 initImportClonedTemplateDisks();
-                AddVmTemplateToDb();
-                AddVmInterfaces();
+                addVmTemplateToDb();
+                addVmInterfaces();
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -257,20 +257,20 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         boolean doesVmTemplateContainImages = !getParameters().getImages().isEmpty();
         if (doesVmTemplateContainImages) {
-            MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
+            moveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
         }
 
         VmDeviceUtils.addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
 
         if (!doesVmTemplateContainImages) {
-            EndMoveOrCopyCommand();
+            endMoveOrCopyCommand();
         }
 
         setSucceeded(success);
     }
 
     @Override
-    protected void MoveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
+    protected void moveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -325,7 +325,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         });
     }
 
-    protected void AddVmTemplateToDb() {
+    protected void addVmTemplateToDb() {
         getVmTemplate().setvds_group_id(getParameters().getVdsGroupId());
         getVmTemplate().setstatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
@@ -353,7 +353,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
     }
 
-    protected void AddVmInterfaces() {
+    protected void addVmInterfaces() {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
         List<VmNetworkInterface> interfaces = getVmTemplate().getInterfaces();
         List<String> invalidNetworkNames = new ArrayList<String>();
@@ -395,17 +395,17 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     @Override
-    protected void EndMoveOrCopyCommand() {
+    protected void endMoveOrCopyCommand() {
         VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
 
-        EndActionOnAllImageGroups();
+        endActionOnAllImageGroups();
 
-        UpdateTemplateInSpm();
+        updateTemplateInSpm();
 
         setSucceeded(true);
     }
 
-    protected void RemoveNetwork() {
+    protected void removeNetwork() {
         List<VmNetworkInterface> list =
                 DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplateId());
         for (VmNetworkInterface iface : list) {
@@ -413,7 +413,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
     }
 
-    protected void RemoveImages() {
+    protected void removeImages() {
         for (DiskImage image : getParameters().getImages()) {
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getImageId());
             DbFacade.getInstance().getImageStorageDomainMapDao().remove(image.getImageId());
@@ -425,8 +425,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Override
     protected void endWithFailure() {
-        RemoveNetwork();
-        RemoveImages();
+        removeNetwork();
+        removeImages();
 
         DbFacade.getInstance().getVmTemplateDAO().remove(getVmTemplateId());
         rollbackQuota();
@@ -434,7 +434,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     @Override
-    protected void UpdateTemplateInSpm() {
+    protected void updateTemplateInSpm() {
         VmTemplateCommand.UpdateTemplateInSpm(getParameters().getStoragePoolId(), new java.util.ArrayList<VmTemplate>(
                 java.util.Arrays.asList(new VmTemplate[] { getParameters().getVmTemplate() })), Guid.Empty,
                 getParameters().getImages());

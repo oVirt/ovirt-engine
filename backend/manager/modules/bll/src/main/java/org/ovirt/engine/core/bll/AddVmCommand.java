@@ -213,7 +213,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         returnValue =
                 returnValue
-                        && CheckPCIAndIDELimit(getParameters().getVmStaticData().getnum_of_monitors(),
+                        && checkPciAndIdeLimit(getParameters().getVmStaticData().getnum_of_monitors(),
                                 getVmInterfaces(),
                                 getVmDisks(), getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
@@ -685,20 +685,20 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     @Override
     protected void endWithFailure() {
-        super.EndActionOnDisks();
+        super.endActionOnDisks();
         rollbackQuota();
         if (getVm() != null) {
-            RemoveVmInSpm(getVm().getstorage_pool_id(), getVmId());
+            removeVmInSpm(getVm().getstorage_pool_id(), getVmId());
         }
         removeVmRelatedEntitiesFromDb();
         setSucceeded(true);
     }
 
     protected void removeVmRelatedEntitiesFromDb() {
-        RemoveVmUsers();
-        RemoveVmNetwork();
+        removeVmUsers();
+        removeVmNetwork();
         new SnapshotsManager().removeSnapshots(getVmId());
-        RemoveVmStatic();
+        removeVmStatic();
     }
 
     @Override

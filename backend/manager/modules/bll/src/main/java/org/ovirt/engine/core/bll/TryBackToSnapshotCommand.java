@@ -24,7 +24,7 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
      * Remove old image vm map.
      */
     @Override
-    protected void ProcessOldImageFromDb() {
+    protected void processOldImageFromDb() {
         updateOldImageActive(SnapshotType.PREVIEW, false);
     }
 
@@ -62,7 +62,7 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
         updateOldImageActive(SnapshotType.ACTIVE, true);
 
         // Remove destination, unlock source:
-        UndoActionOnSourceAndDestination();
+        undoActionOnSourceAndDestination();
 
         setSucceeded(true);
     }

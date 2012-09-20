@@ -78,7 +78,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return sourceDomain;
     }
 
-    protected void SetSourceDomainId(Guid storageId) {
+    protected void setSourceDomainId(Guid storageId) {
         sourceDomainId = storageId;
     }
 
@@ -159,7 +159,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (VmTemplateHandler.isTemplateStatusIsNotLocked(getVmTemplateId())) {
             VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
             if (!getTemplateDisks().isEmpty()) {
-                MoveOrCopyAllImageGroups();
+                moveOrCopyAllImageGroups();
             } else {
                 endVmTemplateRelatedOps();
             }
@@ -167,11 +167,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
     }
 
-    protected void MoveOrCopyAllImageGroups() {
-        MoveOrCopyAllImageGroups(getVmTemplateId(), getTemplateDisks());
+    protected void moveOrCopyAllImageGroups() {
+        moveOrCopyAllImageGroups(getVmTemplateId(), getTemplateDisks());
     }
 
-    protected void MoveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
+    protected void moveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -241,8 +241,8 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return true;
     }
 
-    protected void EndMoveOrCopyCommand() {
-        EndActionOnAllImageGroups();
+    protected void endMoveOrCopyCommand() {
+        endActionOnAllImageGroups();
         endVmTemplateRelatedOps();
         setSucceeded(true);
     }
@@ -251,7 +251,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (getVmTemplate() != null) {
             VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
             VmDeviceUtils.setVmDevices(getVmTemplate());
-            UpdateTemplateInSpm();
+            updateTemplateInSpm();
         }
         else {
             setCommandShouldBeLogged(false);
@@ -259,7 +259,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
     }
 
-    protected void UpdateTemplateInSpm() {
+    protected void updateTemplateInSpm() {
         VmTemplate vmt = getVmTemplate();
         VmTemplateCommand.UpdateTemplateInSpm(vmt.getstorage_pool_id().getValue(),
                 Arrays.asList(vmt));
@@ -267,15 +267,15 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     @Override
     protected void endSuccessfully() {
-        EndMoveOrCopyCommand();
+        endMoveOrCopyCommand();
     }
 
     @Override
     protected void endWithFailure() {
-        EndMoveOrCopyCommand();
+        endMoveOrCopyCommand();
     }
 
-    protected void EndActionOnAllImageGroups() {
+    protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             getBackend().EndAction(getImagesActionType(), p);
         }

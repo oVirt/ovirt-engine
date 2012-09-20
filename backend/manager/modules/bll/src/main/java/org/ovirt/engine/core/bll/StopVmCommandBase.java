@@ -84,7 +84,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         if (getVm().getstatus() == VMStatus.Suspended
                 || !StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())) {
             setSuspendedVm(true);
-            setSucceeded(StopSuspendedVm());
+            setSucceeded(stopSuspendedVm());
         } else {
             super.executeVmCommand();
         }
@@ -131,7 +131,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
      * @return True - Operation succeeded <BR/>
      *         False - Operation failed.
      */
-    private boolean StopSuspendedVm() {
+    private boolean stopSuspendedVm() {
         boolean returnVal = false;
 
         // Set the Vm to null, for getting the recent VM from the DB, instead from the cache.
@@ -142,13 +142,13 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         if (getVm().getstatus() != VMStatus.ImageLocked) {
             // Set the VM to image locked to decrease race condition.
             getVm().setstatus(VMStatus.ImageLocked);
-            UpdateVmData(getVm().getDynamicData());
+            updateVmData(getVm().getDynamicData());
             if (!StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())
-                    && HandleHibernatedVm(getActionType(), false)) {
+                    && handleHibernatedVm(getActionType(), false)) {
                 returnVal = true;
             } else {
                 getVm().setstatus(vmStatus);
-                UpdateVmData(getVm().getDynamicData());
+                updateVmData(getVm().getDynamicData());
             }
         }
         return returnVal;
@@ -159,7 +159,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
      * If VM is active in the VDSM (not suspended/stop), we will use UpdateVmDynamicData VDS command, for preventing
      * over write in the DB, otherwise , update directly to the DB.
      */
-    private void UpdateVmData(VmDynamic vmDynamicData) {
+    private void updateVmData(VmDynamic vmDynamicData) {
         if (getVm().getrun_on_vds() != null) {
             Backend.getInstance()
                     .getResourceManager()
@@ -172,7 +172,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     }
 
     @Override
-    protected void EndVmCommand() {
+    protected void endVmCommand() {
         setCommandShouldBeLogged(false);
 
         if (getVm() != null) {

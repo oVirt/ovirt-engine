@@ -3,9 +3,9 @@ package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface IVdsAsyncCommand {
-    void Rerun();
+    void rerun();
 
-    void RunningSucceded();
+    void runningSucceded();
 
     boolean getAutoStart();
 

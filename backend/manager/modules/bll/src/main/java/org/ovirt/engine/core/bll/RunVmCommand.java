@@ -88,7 +88,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         super(runVmParams);
         getParameters().setEntityId(runVmParams.getVmId());
         setStoragePoolId(getVm() != null ? getVm().getstorage_pool_id() : null);
-        InitRunVmCommand();
+        initRunVmCommand();
     }
 
     @Override
@@ -106,7 +106,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return _destinationVds;
     }
 
-    private void InitRunVmCommand() {
+    private void initRunVmCommand() {
         RunVmParams runVmParameters = getParameters();
         if (!StringUtils.isEmpty(runVmParameters.getDiskPath())) {
             _cdImagePath = ImagesHandler.cdPathWindowsToLinux(runVmParameters.getDiskPath(), getVm()
@@ -189,12 +189,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return ImagesHandler.cdPathWindowsToLinux(url, getVm().getstorage_pool_id());
     }
 
-    private void ResumeVm() {
+    private void resumeVm() {
         mResume = true;
         setVdsId(new Guid(getVm().getrun_on_vds().toString()));
         if (getVds() != null) {
             try {
-                IncrementVdsPendingVmsCount();
+                incrementVdsPendingVmsCount();
                 VDSReturnValue result = getBackend()
                         .getResourceManager()
                         .RunAsyncVdsCommand(VDSCommandType.Resume,
@@ -204,27 +204,27 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
             } finally {
                 freeLock();
-                DecrementVdsPendingVmsCount();
+                decrementVdsPendingVmsCount();
             }
         } else {
             setActionReturnValue(getVm().getstatus());
         }
     }
 
-    protected void RunVm() {
+    protected void runVm() {
         setActionReturnValue(VMStatus.Down);
-        if (GetVdsToRunOn()) {
+        if (getVdsToRunOn()) {
             VMStatus status = null;
             try {
-                IncrementVdsPendingVmsCount();
-                AttachCd();
+                incrementVdsPendingVmsCount();
+                attachCd();
                 if (connectLunDisks(getVdsId())) {
-                    status = CreateVm();
+                    status = createVm();
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 }
             } finally {
                 freeLock();
-                DecrementVdsPendingVmsCount();
+                decrementVdsPendingVmsCount();
             }
             setActionReturnValue(status);
 
@@ -237,12 +237,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 log.infoFormat("Failed to run desktop {0}, rerun", getVm().getvm_name());
                 setCommandShouldBeLogged(false);
                 setSucceeded(true);
-                Rerun();
+                rerun();
             }
         }
 
         else {
-            FailedToRunVm();
+            failedToRunVm();
             setSucceeded(false);
             _isRerun = false;
         }
@@ -254,26 +254,26 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // change
         VmDeviceUtils.updateVmDevices(getVm().getStaticData());
         setActionReturnValue(VMStatus.Down);
-        if (InitVm()) {
+        if (initVm()) {
             if (getVm().getstatus() == VMStatus.Paused) { // resume
-                ResumeVm();
+                resumeVm();
             } else { // run vm
                 if (!_isRerun && Boolean.TRUE.equals(getParameters().getRunAsStateless())
                         && getVm().getstatus() != VMStatus.Suspended) {
                     if (getVm().getDiskList().isEmpty()) { // If there are no snappable disks, there is no meaning for
                                                            // running as stateless, log a warning and run normally
                         warnIfNotAllDisksPermitSnapshots();
-                        RunVm();
+                        runVm();
                     }
                     else {
-                        StatelessVmTreatment();
+                        statelessVmTreatment();
                     }
                 } else if (!getParameters().getIsInternal() && !_isRerun
                         && getVm().getstatus() != VMStatus.Suspended
                         && statelessSnapshotExistsForVm()) {
                     removeVmStatlessImages();
                 } else {
-                    RunVm();
+                    runVm();
                 }
             }
         } else {
@@ -291,14 +291,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * the Boot Sequence (at any place) set again the CDPath to the ISO Path that was stored in the database, and we
      * assume that this CD is bootable. So , priorities are (from low to high) : 1)Default 2)Tools 3)Boot Sequence
      */
-    private void AttachCd() {
+    private void attachCd() {
         Guid storagePoolId = getVm().getstorage_pool_id();
 
         boolean isIsoFound = (getVmRunHandler().findActiveISODomain(storagePoolId) != null);
         if (isIsoFound) {
             if (StringUtils.isEmpty(getVm().getCdPath())) {
                 getVm().setCdPath(getVm().getiso_path());
-                GuestToolsVersionTreatment();
+                guestToolsVersionTreatment();
                 refreshBootSequenceParameter(getParameters());
                 if (getVm().getboot_sequence() == BootSequence.CD) {
                     getVm().setCdPath(getVm().getiso_path());
@@ -313,7 +313,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     }
 
-    private void StatelessVmTreatment() {
+    private void statelessVmTreatment() {
         warnIfNotAllDisksPermitSnapshots();
 
         if (statelessSnapshotExistsForVm()) {
@@ -391,14 +391,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         setSucceeded(true);
     }
 
-    private void DecrementVdsPendingVmsCount() {
+    private void decrementVdsPendingVmsCount() {
         synchronized (_vds_pending_vm_count) {
             int i = _vds_pending_vm_count.get(getVdsId());
             _vds_pending_vm_count.put(getVdsId(), i - 1);
         }
     }
 
-    private void IncrementVdsPendingVmsCount() {
+    private void incrementVdsPendingVmsCount() {
         synchronized (_vds_pending_vm_count) {
             if (!_vds_pending_vm_count.containsKey(getVdsId())) {
                 _vds_pending_vm_count.put(getVdsId(), 1);
@@ -409,7 +409,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    protected VMStatus CreateVm() {
+    protected VMStatus createVm() {
 
         // reevaluate boot parameters if VM was executed with 'run once'
         refreshBootParameters(getParameters());
@@ -481,7 +481,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    protected boolean InitVm() {
+    protected boolean initVm() {
         if (getVm() == null) {
             log.warnFormat("ResourceManager::{0}::No such vm (where id = '{1}' )in database", getClass().getName(),
                     getVmId().toString());
@@ -498,7 +498,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     getVmId().toString());
             return false;
         } else {
-            HandleMemoryAdjustments();
+            handleMemoryAdjustments();
             VmHandler.updateDisksFromDb(getVm());
             getVm().setCdPath(_cdImagePath);
             getVm().setFloppyPath(_floppyImagePath);
@@ -533,11 +533,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    protected void HandleMemoryAdjustments() {
+    protected void handleMemoryAdjustments() {
         // nothing to do in RunVmCommand class
     }
 
-    protected boolean GetVdsToRunOn() {
+    protected boolean getVdsToRunOn() {
         // use destination vds or default vds or none
         setVdsId(getVdsSelector().GetVdsToRunOn());
         setVds(null);
@@ -559,7 +559,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * If vds version greater then vm's and vm not running with cd and there is appropriate RhevAgentTools image -
      * add it to vm as cd.
      */
-    private void GuestToolsVersionTreatment() {
+    private void guestToolsVersionTreatment() {
         boolean attachCd = false;
         String selectedToolsVersion = "";
         String selectedToolsClusterVersion = "";
@@ -690,7 +690,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void endSuccessfully() {
-        SetIsVmRunningStateless();
+        setIsVmRunningStateless();
 
         if (_isVmRunningStateless) {
             VdcActionParametersBase createSnapshotParameters = getParameters().getImagesParameters().get(0);
@@ -742,7 +742,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void endWithFailure() {
-        SetIsVmRunningStateless();
+        setIsVmRunningStateless();
         rollbackQuota();
         if (_isVmRunningStateless) {
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
@@ -758,7 +758,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    private void SetIsVmRunningStateless() {
+    private void setIsVmRunningStateless() {
         _isVmRunningStateless = statelessSnapshotExistsForVm();
     }
 

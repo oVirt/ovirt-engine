@@ -30,8 +30,8 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
         storage_domain_static storage = DbFacade.getInstance().getStorageDomainStaticDAO().get(
                 getParameters().getStorageDomainId());
         if (storage.getstorage_domain_type() == StorageDomainType.ImportExport) {
-            VDSReturnValue retVal = ExecuteVerb();
-            BuildOvfReturnValue(retVal.getReturnValue());
+            VDSReturnValue retVal = executeVerb();
+            buildOvfReturnValue(retVal.getReturnValue());
         } else {
             java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>> templates =
                     new java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>>();
@@ -40,7 +40,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
     }
 
     @Override
-    protected void BuildOvfReturnValue(Object obj) {
+    protected void buildOvfReturnValue(Object obj) {
         boolean shouldAdd = true;
         ArrayList<String> ovfList = (ArrayList<String>) obj;
         OvfManager ovfManager = new OvfManager();
@@ -50,7 +50,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
         for (VmTemplate vmTemplate : existsTemplates) {
             existsVmDictionary.put(vmTemplate.getId(), vmTemplate);
         }
-        if (IsValidExportDomain()) {
+        if (isValidExportDomain()) {
             VmTemplate template = null;
             for (String ovf : ovfList) {
                 try {

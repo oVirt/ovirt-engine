@@ -85,7 +85,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             // Set the VM to null, to fetch it again from the DB ,instead from the cache.
             // We want to get the VM current data that was updated to the DB.
             setVm(null);
-            UpdateVmInSpm(getVm().getstorage_pool_id(),
+            updateVmInSpm(getVm().getstorage_pool_id(),
                     new ArrayList<VM>(Arrays.asList(new VM[] { getVm() })));
         }
         setSucceeded(true);
@@ -238,7 +238,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (vmFromDB.getnum_of_monitors() < vmFromParams.getnum_of_monitors()) {
             List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
             List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDAO().getAllForVm(getVmId());
-            if (!CheckPCIAndIDELimit(vmFromParams.getnum_of_monitors(),
+            if (!checkPciAndIdeLimit(vmFromParams.getnum_of_monitors(),
                     interfaces,
                     allDisks,
                     getReturnValue().getCanDoActionMessages())) {

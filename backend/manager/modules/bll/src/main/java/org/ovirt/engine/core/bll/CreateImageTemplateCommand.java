@@ -43,7 +43,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                 ImagesHandler.getAllImageSnapshots(getDiskImage().getImageId(), getDiskImage().getit_guid()));
 
         setDiskImage(getDiskImage().getSnapshots().get(getDiskImage().getSnapshots().size() - 1));
-        DiskImage newImage = CloneDiskImage(getDestinationImageId());
+        DiskImage newImage = cloneDiskImage(getDestinationImageId());
         fillVolumeInformation(newImage);
 
         VDSReturnValue vdsReturnValue = Backend
@@ -83,7 +83,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         setActionReturnValue(newImage);
 
         // set source image as locked:
-        LockImage();
+        lockImage();
         setSucceeded(true);
     }
 
@@ -111,7 +111,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
 
     @Override
     protected void endWithFailure() {
-        UnLockImage();
+        unLockImage();
         setVmTemplate(DbFacade.getInstance().getVmTemplateDAO()
                 .get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {

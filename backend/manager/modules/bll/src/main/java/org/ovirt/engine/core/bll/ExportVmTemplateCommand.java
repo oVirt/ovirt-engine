@@ -32,7 +32,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     }
 
     @Override
-    protected void MoveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
+    protected void moveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -122,7 +122,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     }
 
     @Override
-    protected void UpdateTemplateInSpm() {
+    protected void updateTemplateInSpm() {
         // update the target (export) domain
         VmTemplateCommand.UpdateTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(),
                 Arrays.asList(getVmTemplate()),

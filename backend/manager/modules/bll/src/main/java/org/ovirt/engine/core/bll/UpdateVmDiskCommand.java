@@ -121,7 +121,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 }
             }));
             allVmDisks.add(getParameters().getDiskInfo());
-            if (!CheckPCIAndIDELimit(getVm().getnum_of_monitors(),
+            if (!checkPciAndIdeLimit(getVm().getnum_of_monitors(),
                     allVmInterfaces,
                     allVmDisks,
                     getReturnValue().getCanDoActionMessages())) {
@@ -244,7 +244,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 // update vm device boot order
                 VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
 
-                setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),
+                setSucceeded(updateVmInSpm(getVm().getstorage_pool_id(),
                         Arrays.asList(getVm())));
                 return null;
             }

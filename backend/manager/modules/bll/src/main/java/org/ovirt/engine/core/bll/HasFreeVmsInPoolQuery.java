@@ -10,7 +10,7 @@ public class HasFreeVmsInPoolQuery<P extends HasFreeVmsInPoolParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue((!VmPoolCommandBase.GetVmToAttach(getParameters().getPoolId())
+        getQueryReturnValue().setReturnValue((!VmPoolCommandBase.getVmToAttach(getParameters().getPoolId())
                                                                 .equals(Guid.Empty)));
     }
 }

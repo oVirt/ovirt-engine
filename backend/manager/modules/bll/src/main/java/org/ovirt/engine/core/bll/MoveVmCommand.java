@@ -172,20 +172,20 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         }
 
         VmHandler.LockVm(vm.getDynamicData(), getCompensationContext());
-        MoveOrCopyAllImageGroups();
+        moveOrCopyAllImageGroups();
 
         setSucceeded(true);
 
     }
 
-    protected boolean UpdateVmImSpm() {
-        return VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
+    protected boolean updateVmImSpm() {
+        return VmCommand.updateVmInSpm(getVm().getstorage_pool_id(),
                 Arrays.asList(getVm()));
     }
 
     @Override
-    protected void MoveOrCopyAllImageGroups() {
-        MoveOrCopyAllImageGroups(getVmId(), getVm().getDiskList());
+    protected void moveOrCopyAllImageGroups() {
+        moveOrCopyAllImageGroups(getVmId(), getVm().getDiskList());
     }
 
     @Override
@@ -201,14 +201,14 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         }
     }
 
-    protected void EndMoveVmCommand() {
-        EndActionOnAllImageGroups();
+    protected void endMoveVmCommand() {
+        endActionOnAllImageGroups();
 
         if (getVm() != null) {
             VmHandler.UnLockVm(getVm());
 
             VmHandler.updateDisksFromDb(getVm());
-            UpdateVmImSpm();
+            updateVmImSpm();
         }
 
         else {
@@ -221,12 +221,12 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected void endSuccessfully() {
-        EndMoveVmCommand();
+        endMoveVmCommand();
     }
 
     @Override
     protected void endWithFailure() {
-        EndMoveVmCommand();
+        endMoveVmCommand();
     }
 
     @Override

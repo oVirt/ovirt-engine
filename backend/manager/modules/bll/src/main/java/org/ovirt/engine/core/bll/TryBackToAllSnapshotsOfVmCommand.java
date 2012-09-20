@@ -82,7 +82,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void endSuccessfully() {
-        EndActionOnDisks();
+        endActionOnDisks();
 
         if (getVm() != null) {
             VmHandler.unlockVm(getVm(), getCompensationContext());
@@ -106,7 +106,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getSnapshotDao().get(getParameters().getDstSnapshotId()),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
                 getCompensationContext());
-        UpdateVmInSpm(getVm().getstorage_pool_id(),
+        updateVmInSpm(getVm().getstorage_pool_id(),
                 Arrays.asList(getVm()));
     }
 

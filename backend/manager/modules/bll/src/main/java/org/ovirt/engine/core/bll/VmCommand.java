@@ -107,7 +107,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @param disks
      * @return
      */
-    public static <T extends Disk> boolean CheckPCIAndIDELimit(int monitorsNumber, List<VmNetworkInterface> interfaces,
+    public static <T extends Disk> boolean checkPciAndIdeLimit(int monitorsNumber, List<VmNetworkInterface> interfaces,
             List<T> disks, ArrayList<String> messages) {
         boolean result = true;
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
@@ -152,11 +152,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @param vmsList
      * @return Returns true if updateVm succeeded.
      */
-    public static boolean UpdateVmInSpm(Guid storagePoolId, List<VM> vmsList) {
-        return UpdateVmInSpm(storagePoolId, vmsList, Guid.Empty);
+    public static boolean updateVmInSpm(Guid storagePoolId, List<VM> vmsList) {
+        return updateVmInSpm(storagePoolId, vmsList, Guid.Empty);
     }
 
-    public static boolean UpdateVmInSpm(Guid storagePoolId,
+    public static boolean updateVmInSpm(Guid storagePoolId,
             List<VM> vmsList,
             Guid storageDomainId) {
         HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
@@ -197,20 +197,20 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 .getSucceeded();
     }
 
-    protected boolean RemoveVmInSpm(Guid storagePoolId, Guid vmID) {
-        return RemoveVmInSpm(storagePoolId, vmID, Guid.Empty);
+    protected boolean removeVmInSpm(Guid storagePoolId, Guid vmID) {
+        return removeVmInSpm(storagePoolId, vmID, Guid.Empty);
     }
 
-    protected boolean RemoveVmInSpm(Guid storagePoolId, Guid vmID, Guid storageDomainId) {
+    protected boolean removeVmInSpm(Guid storagePoolId, Guid vmID, Guid storageDomainId) {
         return runVdsCommand(VDSCommandType.RemoveVM,
                 new RemoveVMVDSCommandParameters(storagePoolId, vmID, storageDomainId)).getSucceeded();
     }
 
-    protected void RemoveVmStatic() {
+    protected void removeVmStatic() {
         getVmStaticDAO().remove(getVmId());
     }
 
-    protected void RemoveVmNetwork() {
+    protected void removeVmNetwork() {
         List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDAO().getAllForVm(getVmId());
         if (interfaces != null) {
             for (VmNetworkInterface iface : interfaces) {
@@ -219,28 +219,28 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
-    protected void RemoveVmDynamic() {
+    protected void removeVmDynamic() {
         getVmDynamicDAO().remove(getVmId());
     }
 
-    protected void RemoveVmStatistics() {
+    protected void removeVmStatistics() {
         getVmStatisticsDAO().remove(getVmId());
     }
 
-    protected void RemoveVmUsers() {
+    protected void removeVmUsers() {
         List<tags_vm_map> all = getTagDAO().getTagVmMapByVmIdAndDefaultTag(getVmId());
         for (tags_vm_map tagVm : all) {
             getTagDAO().detachVmFromTag(tagVm.gettag_id(), getVmId());
         }
     }
 
-    protected void EndVmCommand() {
-        EndActionOnDisks();
+    protected void endVmCommand() {
+        endActionOnDisks();
         endActionOnVmConfiguration();
         setSucceeded(true);
     }
 
-    protected void EndActionOnDisks() {
+    protected void endActionOnDisks() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             if (overrideChildCommandSuccess()) {
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
@@ -256,7 +256,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             if (getVm().getstatus() == VMStatus.ImageLocked) {
                 VmHandler.unlockVm(getVm(), getCompensationContext());
             }
-            UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
+            updateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
         } else {
             setCommandShouldBeLogged(false);
             log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
@@ -272,19 +272,19 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Override
     protected void endSuccessfully() {
-        EndVmCommand();
+        endVmCommand();
     }
 
     @Override
     protected void endWithFailure() {
-        EndVmCommand();
+        endVmCommand();
     }
 
     protected VdcActionType getChildActionType() {
         return VdcActionType.Unknown;
     }
 
-    protected boolean HandleHibernatedVm(VdcActionType parentCommand, boolean startPollingTasks) {
+    protected boolean handleHibernatedVm(VdcActionType parentCommand, boolean startPollingTasks) {
         // this is temp code until it will be implemented in SPM
         String[] strings = getVm().gethibernation_vol_handle().split(",");
         List<Guid> guids = new LinkedList<Guid>();

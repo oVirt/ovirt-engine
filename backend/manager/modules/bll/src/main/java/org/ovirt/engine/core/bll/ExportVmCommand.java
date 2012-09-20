@@ -150,7 +150,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             return false;
         }
 
-        if (!(CheckVmInStorageDomain() && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+        if (!(checkVmInStorageDomain() && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                 && ImagesHandler.PerformImagesChecks(getVm(),
                         getReturnValue().getCanDoActionMessages(),
                         getVm().getstorage_pool_id(),
@@ -191,7 +191,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
                 @Override
                 public Void runInTransaction() {
-                    MoveOrCopyAllImageGroups();
+                    moveOrCopyAllImageGroups();
                     return null;
                 }
             });
@@ -206,7 +206,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return !getDisksBasedOnImage().isEmpty();
     }
 
-    public boolean UpdateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
+    public boolean updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
         HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
                 new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
         OvfManager ovfManager = new OvfManager();
@@ -263,8 +263,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     @Override
-    protected void MoveOrCopyAllImageGroups() {
-        MoveOrCopyAllImageGroups(getVm().getId(), getDisksBasedOnImage());
+    protected void moveOrCopyAllImageGroups() {
+        moveOrCopyAllImageGroups(getVm().getId(), getDisksBasedOnImage());
     }
 
     private Collection<DiskImage> getDisksBasedOnImage() {
@@ -275,7 +275,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     @Override
-    protected void MoveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
+    protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
             MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
                     .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
@@ -331,7 +331,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
      * Check that vm is in export domain
      * @return
      */
-    protected boolean CheckVmInStorageDomain() {
+    protected boolean checkVmInStorageDomain() {
         boolean retVal = true;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getVm()
                 .getstorage_pool_id(), getParameters().getStorageDomainId());
@@ -400,15 +400,15 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return super.getAuditLogTypeValue();
     }
 
-    protected boolean UpdateVmImSpm() {
-        return VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
+    protected boolean updateVmImSpm() {
+        return VmCommand.updateVmInSpm(getVm().getstorage_pool_id(),
                 Arrays.asList(getVm()),
                 getParameters().getStorageDomainId());
     }
 
     @Override
     protected void endSuccessfully() {
-        EndActionOnAllImageGroups();
+        endActionOnAllImageGroups();
         VM vm = getVm();
         VmHandler.UnLockVm(vm);
         endDiskRelatedActions(vm);
@@ -431,14 +431,14 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         Snapshot activeSnapshot = DbFacade.getInstance().getSnapshotDao().get(
                 DbFacade.getInstance().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
         vm.setSnapshots(Arrays.asList(activeSnapshot));
-        UpdateCopyVmInSpm(getVm().getstorage_pool_id(),
+        updateCopyVmInSpm(getVm().getstorage_pool_id(),
                 vm, getParameters()
                         .getStorageDomainId());
     }
 
     private void updateSnapshotOvf(VM vm) {
         vm.setSnapshots(DbFacade.getInstance().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
-        UpdateVmImSpm();
+        updateVmImSpm();
     }
 
     protected void endSuccessfullySynchronous() {
@@ -455,7 +455,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     @Override
     protected void endWithFailure() {
-        EndActionOnAllImageGroups();
+        endActionOnAllImageGroups();
         VM vm = getVm();
         VmHandler.UnLockVm(vm);
         VmHandler.updateDisksFromDb(vm);

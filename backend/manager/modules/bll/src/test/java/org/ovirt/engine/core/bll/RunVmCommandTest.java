@@ -292,7 +292,7 @@ public class RunVmCommandTest {
         RunVmParams runVmParams = command.getParameters();
         runVmParams.setinitrd_url(initrd);
         runVmParams.setkernel_url(kernel);
-        command.CreateVm();
+        command.createVm();
 
         // Check Vm
         VM vm = vmDAO.get(command.getParameters().getVmId());

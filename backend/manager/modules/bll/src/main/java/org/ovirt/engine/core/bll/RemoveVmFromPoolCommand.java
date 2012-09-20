@@ -17,7 +17,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
         }
     }
 
-    public static boolean CanRemoveVmFromPool(Guid vmId, java.util.ArrayList<String> messages) {
+    public static boolean canRemoveVmFromPool(Guid vmId, java.util.ArrayList<String> messages) {
         boolean returnValue = true;
         // Check if the vm is in a pool.
         if (DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(vmId) == null) {
@@ -35,7 +35,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
 
     @Override
     protected boolean canDoAction() {
-        return CanRemoveVmFromPool(getParameters().getVmId(), getReturnValue().getCanDoActionMessages());
+        return canRemoveVmFromPool(getParameters().getVmId(), getReturnValue().getCanDoActionMessages());
     }
 
     @Override

@@ -72,7 +72,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     }
 
-    public static Guid GetVmToAttach(NGuid poolId) {
+    public static Guid getVmToAttach(NGuid poolId) {
         Guid vmGuid = Guid.Empty;
         vmGuid = getPrestartedVmToAttach(poolId);
         if (vmGuid == null || Guid.Empty.equals(vmGuid)) {
@@ -86,7 +86,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
             for (vm_pool_map map : vmPoolMaps) {
-                if (CanAttachNonPrestartedVmToUser(map.getvm_guid())) {
+                if (canAttachNonPrestartedVmToUser(map.getvm_guid())) {
                     return map.getvm_guid();
                 }
             }
@@ -99,7 +99,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (vm_pool_map map : vmPoolMaps) {
-                if (CanAttachPrestartedVmToUser(map.getvm_guid())) {
+                if (canAttachPrestartedVmToUser(map.getvm_guid())) {
                     return map.getvm_guid();
                 }
             }
@@ -113,7 +113,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         int prestartedVmsInPool = 0;
         if (vmPoolMaps != null) {
             for (vm_pool_map map : vmPoolMaps) {
-                if (CanAttachPrestartedVmToUser(map.getvm_guid())) {
+                if (canAttachPrestartedVmToUser(map.getvm_guid())) {
                     prestartedVmsInPool++;
                 }
             }
@@ -131,8 +131,8 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
      */
-    protected static boolean CanAttachNonPrestartedVmToUser(Guid vm_guid) {
-        return IsVmFree(vm_guid, new java.util.ArrayList<String>());
+    protected static boolean canAttachNonPrestartedVmToUser(Guid vm_guid) {
+        return isVmFree(vm_guid, new java.util.ArrayList<String>());
     }
 
     /**
@@ -141,7 +141,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            the VM GUID to check.
      * @return True if can be attached, false otherwise.
      */
-    protected static boolean CanAttachPrestartedVmToUser(Guid vmId) {
+    protected static boolean canAttachPrestartedVmToUser(Guid vmId) {
         boolean returnValue = true;
         java.util.ArrayList<String> messages = new java.util.ArrayList<String>();
 
@@ -172,7 +172,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            The messages.
      * @return <c>true</c> if [is vm free] [the specified vm id]; otherwise, <c>false</c>.
      */
-    protected static boolean IsVmFree(Guid vmId, java.util.ArrayList<String> messages) {
+    protected static boolean isVmFree(Guid vmId, java.util.ArrayList<String> messages) {
         boolean returnValue;
 
         // check that there isn't another user already attached to this VM:
@@ -181,7 +181,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         }
 
         // check that vm can be run:
-        else if (!CanRunPoolVm(vmId, messages)) {
+        else if (!canRunPoolVm(vmId, messages)) {
             returnValue = false;
         }
 
@@ -233,7 +233,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return vmAssignedToUser;
     }
 
-    protected static boolean CanRunPoolVm(Guid vmId, java.util.ArrayList<String> messages) {
+    protected static boolean canRunPoolVm(Guid vmId, java.util.ArrayList<String> messages) {
         VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
 
         // TODO: This is done to keep consistency with VmDAO.getById.
@@ -275,7 +275,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     public static boolean isPrestartedVmForAssignment(Guid vm_guid) {
         VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(vm_guid);
-        if (vmDynamic != null && vmDynamic.getstatus() == VMStatus.Up && CanAttachPrestartedVmToUser(vm_guid)) {
+        if (vmDynamic != null && vmDynamic.getstatus() == VMStatus.Up && canAttachPrestartedVmToUser(vm_guid)) {
             return true;
         } else {
             return false;

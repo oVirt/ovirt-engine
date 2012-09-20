@@ -119,11 +119,11 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             // VDS Command should take care of removing all the snapshots from
                             // the storage).
                             while (!currentGuid.equals(imageTemplate) && !currentGuid.equals(Guid.Empty)) {
-                                RemoveChildren(currentGuid);
+                                removeChildren(currentGuid);
 
                                 DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
                                 if (image != null) {
-                                    RemoveSnapshot(image);
+                                    removeSnapshot(image);
                                     currentGuid = image.getParentId();
                                 } else {
                                     currentGuid = Guid.Empty;
@@ -173,23 +173,23 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         return null;
     }
 
-    private void GetImageChildren(Guid snapshot, List<Guid> children) {
+    private void getImageChildren(Guid snapshot, List<Guid> children) {
         List<Guid> list = new ArrayList<Guid>();
         for (DiskImage image : getDiskImageDao().getAllSnapshotsForParent(snapshot)) {
             list.add(image.getImageId());
         }
         children.addAll(list);
         for (Guid snapshotId : list) {
-            GetImageChildren(snapshotId, children);
+            getImageChildren(snapshotId, children);
         }
     }
 
-    private void RemoveChildren(Guid snapshot) {
+    private void removeChildren(Guid snapshot) {
         List<Guid> children = new ArrayList<Guid>();
-        GetImageChildren(snapshot, children);
+        getImageChildren(snapshot, children);
         Collections.reverse(children);
         for (Guid child : children) {
-            RemoveSnapshot(getDiskImageDao().getSnapshotById(child));
+            removeSnapshot(getDiskImageDao().getSnapshotById(child));
         }
     }
 
@@ -270,7 +270,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             getImageStorageDomainMapDao().remove(
                     new image_storage_domain_map_id(getParameters().getImageId(),
                             getParameters().getStorageDomainId()));
-            UnLockImage();
+            unLockImage();
         }
         setSucceeded(true);
     }
@@ -280,7 +280,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         boolean isShouldBeLocked = getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
                 && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport;
         if (isShouldBeLocked) {
-            LockImage();
+            lockImage();
         }
         // Releasing the lock for cases it was set by the parent command. The lock can be released because the image
         // status was already changed to lock.
@@ -294,7 +294,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             return returnValue;
         } catch (VdcBLLException e) {
             if (isShouldBeLocked) {
-                UnLockImage();
+                unLockImage();
             }
             throw e;
         }

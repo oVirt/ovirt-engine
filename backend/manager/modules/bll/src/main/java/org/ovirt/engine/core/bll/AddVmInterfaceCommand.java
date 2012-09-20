@@ -160,7 +160,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         allInterfaces.add(getParameters().getInterface());
 
         List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId());
-        if (!CheckPCIAndIDELimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
+        if (!checkPciAndIdeLimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 

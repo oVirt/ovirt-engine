@@ -120,7 +120,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         VmStatic vm = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId());
 
         List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId());
-        if (!CheckPCIAndIDELimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
+        if (!checkPciAndIdeLimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
             return false;

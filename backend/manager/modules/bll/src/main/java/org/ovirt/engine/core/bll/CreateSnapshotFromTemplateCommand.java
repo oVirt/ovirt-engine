@@ -29,12 +29,12 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
      * Old image not have to be changed
      */
     @Override
-    protected void ProcessOldImageFromDb() {
+    protected void processOldImageFromDb() {
     }
 
     @Override
-    protected DiskImage CloneDiskImage(Guid newImageGuid) {
-        DiskImage returnValue = super.CloneDiskImage(newImageGuid);
+    protected DiskImage cloneDiskImage(Guid newImageGuid) {
+        DiskImage returnValue = super.cloneDiskImage(newImageGuid);
         returnValue.setit_guid(getImage().getImageId());
         return returnValue;
     }

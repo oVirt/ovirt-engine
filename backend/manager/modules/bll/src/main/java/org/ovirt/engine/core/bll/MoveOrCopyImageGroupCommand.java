@@ -53,7 +53,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
     @Override
     protected void executeCommand() {
-        LockImage();
+        lockImage();
         VDSReturnValue vdsReturnValue = null;
 
         Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
@@ -161,7 +161,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     @Override
     protected void endWithFailure() {
         if (getMoveOrCopyImageOperation() == ImageOperation.Copy) {
-            UnLockImage();
+            unLockImage();
             if (getParameters().getAddImageDomainMapping()) {
                 // remove image-storage mapping
                 getImageStorageDomainMapDao().remove
@@ -172,7 +172,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         }
 
         else {
-            MarkImageAsIllegal();
+            markImageAsIllegal();
         }
 
         setSucceeded(true);

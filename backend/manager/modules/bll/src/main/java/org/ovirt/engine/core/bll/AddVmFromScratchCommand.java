@@ -115,7 +115,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
             VmHandler.LockVm(getParameters().getVmStaticData().getId());
         } else {
             // if no disks send update vm here
-            UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
+            updateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
         }
 
         return ret;

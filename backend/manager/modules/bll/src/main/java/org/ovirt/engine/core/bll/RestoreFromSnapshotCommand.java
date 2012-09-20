@@ -31,7 +31,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     protected void executeCommand() {
 
         super.executeCommand();
-        if (RemoveImages()) {
+        if (removeImages()) {
             if (getParameters().getSnapshot().getType() != SnapshotType.REGULAR) {
                 getImage().setactive(true);
                 getImageDao().update(getImage().getImage());
@@ -41,17 +41,17 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         }
     }
 
-    private boolean RemoveImages() {
+    private boolean removeImages() {
         Guid imageToRemoveId = findImageForSameDrive(getParameters().getRemovedSnapshotId());
 
         switch (getParameters().getSnapshot().getType()) {
         case REGULAR:
-            RemoveOtherImageAndParents(imageToRemoveId, getDiskImage().getParentId());
+            removeOtherImageAndParents(imageToRemoveId, getDiskImage().getParentId());
             break;
         case PREVIEW:
         case STATELESS:
             if (imageToRemoveId != null) {
-                RemoveSnapshot(getDiskImageDao().get(imageToRemoveId));
+                removeSnapshot(getDiskImageDao().get(imageToRemoveId));
             }
 
             break;
@@ -67,12 +67,12 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     }
 
     @Override
-    protected void RemoveSnapshot(DiskImage snapshot) {
-        super.RemoveSnapshot(snapshot);
+    protected void removeSnapshot(DiskImage snapshot) {
+        super.removeSnapshot(snapshot);
         _imagesToDelete.add(_imagesToDelete.size(), snapshot.getImageId());
     }
 
-    private void RemoveOtherImageAndParents(Guid imageId, Guid lastParent) {
+    private void removeOtherImageAndParents(Guid imageId, Guid lastParent) {
         DiskImage image = getDiskImageDao().getSnapshotById(imageId);
         // store other mapped image's parent Id
         Guid currentParent = image.getParentId();
@@ -80,7 +80,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         /**
          * Vitaly //_imagesToDelete.Add(image.image_guid);
          */
-        RemoveSnapshot(image);
+        removeSnapshot(image);
         while (!lastParent.equals(currentParent)) {
             image = getDiskImageDao().getSnapshotById(currentParent);
             // store current image's parent Id
@@ -89,7 +89,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
              * Vitaly
              * //_imagesToDelete.Insert(_imagesToDelete.Count,image.image_guid);
              */
-            RemoveSnapshot(image);
+            removeSnapshot(image);
         }
     }
 

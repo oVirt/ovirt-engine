@@ -115,7 +115,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
         returnValue = returnValue
                 && checkImageConfiguration()
-                && (vm == null || isDiskPassPCIAndIDELimit(getParameters().getDiskInfo()));
+                && (vm == null || isDiskPassPciAndIdeLimit(getParameters().getDiskInfo()));
         returnValue = returnValue && (vm == null || performImagesChecks(vm));
 
         if (returnValue && !hasFreeSpace(getStorageDomain())) {

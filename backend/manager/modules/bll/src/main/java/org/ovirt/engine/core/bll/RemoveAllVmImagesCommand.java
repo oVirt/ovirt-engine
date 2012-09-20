@@ -111,7 +111,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
     }
 
     @Override
-    protected void EndVmCommand() {
+    protected void endVmCommand() {
         setSucceeded(true);
     }
 }

@@ -21,7 +21,7 @@ public class RunVmOnPowerClientCommand<T extends RunVmParams> extends RunVmOnDed
     }
 
     @Override
-    protected VMStatus CreateVm() {
+    protected VMStatus createVm() {
         // Keep old memory to reset after the create call, so will be correct in
         // case of re-runs.
         int oldMemory = getVm().getStaticData().getmem_size_mb();
@@ -32,7 +32,7 @@ public class RunVmOnPowerClientCommand<T extends RunVmParams> extends RunVmOnDed
         }
         getVm().getDynamicData().setguest_requested_memory(getVm().getStaticData().getmem_size_mb());
 
-        VMStatus status = super.CreateVm();
+        VMStatus status = super.createVm();
         getVm().getStaticData().setmem_size_mb(oldMemory);
         return status;
     }

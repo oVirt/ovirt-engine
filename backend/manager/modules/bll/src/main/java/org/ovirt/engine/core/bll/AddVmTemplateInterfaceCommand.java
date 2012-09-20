@@ -75,7 +75,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         java.util.ArrayList<VmNetworkInterface> allInterfaces = new java.util.ArrayList<VmNetworkInterface>(interfaces);
         allInterfaces.add(getParameters().getInterface());
 
-        if (!VmCommand.CheckPCIAndIDELimit(getVmTemplate().getnum_of_monitors(), allInterfaces,
+        if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getnum_of_monitors(), allInterfaces,
                 new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()), getReturnValue().getCanDoActionMessages())) {
             return false;
         }

@@ -28,8 +28,8 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     }
 
     @Override
-    protected DiskImage CloneDiskImage(Guid newImageGuid) {
-        DiskImage returnValue = super.CloneDiskImage(newImageGuid);
+    protected DiskImage cloneDiskImage(Guid newImageGuid) {
+        DiskImage returnValue = super.cloneDiskImage(newImageGuid);
         returnValue.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
         returnValue.setQuotaId(getParameters().getQuotaId());
         // override to have no template
@@ -43,7 +43,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     }
 
     @Override
-    protected void CheckImageValidity() {
+    protected void checkImageValidity() {
         // dont do nothing, overriding base to avoid this check
         // fails when creating vm from template on domain that the template
         // doesnt exist on
@@ -52,7 +52,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     @Override
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
-        mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
+        mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
         mNewCreatedDiskImage.setimage_group_id(Guid.NewGuid());
         Guid storagePoolID = mNewCreatedDiskImage.getstorage_pool_id() != null ? mNewCreatedDiskImage
                 .getstorage_pool_id().getValue() : Guid.Empty;

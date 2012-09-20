@@ -36,14 +36,14 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         storage_domain_static storage = DbFacade.getInstance().getStorageDomainStaticDAO().get(
                 getParameters().getStorageDomainId());
         if (storage.getstorage_domain_type() == StorageDomainType.ImportExport) {
-            VDSReturnValue retVal = ExecuteVerb();
-            BuildOvfReturnValue(retVal.getReturnValue());
+            VDSReturnValue retVal = executeVerb();
+            buildOvfReturnValue(retVal.getReturnValue());
         } else {
             getQueryReturnValue().setReturnValue(new java.util.ArrayList<VM>());
         }
     }
 
-    protected VDSReturnValue ExecuteVerb() {
+    protected VDSReturnValue executeVerb() {
         GetVmsInfoVDSCommandParameters tempVar = new GetVmsInfoVDSCommandParameters(
                 getParameters().getStoragePoolId());
         tempVar.setStorageDomainId(getParameters().getStorageDomainId());
@@ -53,7 +53,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         return retVal;
     }
 
-    protected boolean IsValidExportDomain() {
+    protected boolean isValidExportDomain() {
         storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
                 getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
@@ -63,7 +63,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         return false;
     }
 
-    protected void BuildOvfReturnValue(Object obj) {
+    protected void buildOvfReturnValue(Object obj) {
         boolean shouldAdd = true;
         ArrayList<String> ovfList = (ArrayList<String>) obj;
         OvfManager ovfManager = new OvfManager();
@@ -74,7 +74,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
             existsVmDictionary.put(vm.getId(), vm);
         }
 
-        if (IsValidExportDomain()) {
+        if (isValidExportDomain()) {
             VM vm = null;
             for (String ovf : ovfList) {
                 try {
@@ -95,7 +95,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
 
                             // add disk map
                             Map<Guid, List<DiskImage>> images = ImportVmCommand
-                                    .GetImagesLeaf(diskImages);
+                                    .getImagesLeaf(diskImages);
                             for (Guid id : images.keySet()) {
                                 List<DiskImage> list = images.get(id);
                                 vm.getDiskMap().put(id, list.get(list.size() - 1));

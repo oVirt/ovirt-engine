@@ -147,13 +147,13 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     @Override
     protected void executeCommand() {
-        CheckImageValidity();
+        checkImageValidity();
     }
 
     /**
      * Check if image is valid snapshot of vm
      */
-    protected void CheckImageValidity() {
+    protected void checkImageValidity() {
         try {
             DiskImage diskImage = getImage();
             Guid storagePoolId = diskImage.getstorage_pool_id() != null ? diskImage.getstorage_pool_id().getValue()
@@ -193,7 +193,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return true if snapshot can be created
      */
     // TODO: Should be moved to another class in the hierarchy
-    protected boolean CanCreateSnapshot() {
+    protected boolean canCreateSnapshot() {
         if (ImagesHandler.isVmInPreview(getVmId())) {
             log.error("Cannot create snapshot. Vm is in preview status");
             return false;
@@ -240,7 +240,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      *            the image id of the cloned disk image.
      * @return the cloned disk image. Note that the cloned image's status is 'Locked'.
      */
-    protected DiskImage CloneDiskImage(Guid newImageGuid) {
+    protected DiskImage cloneDiskImage(Guid newImageGuid) {
         return cloneDiskImage(newImageGuid, getDiskImage());
     }
 
@@ -270,7 +270,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
       * @param fromIRS
       *            the IRS disk image.
       */
-    protected void CompleteImageData(DiskImage fromIRS) {
+    protected void completeImageData(DiskImage fromIRS) {
         getDestinationDiskImage().setcreation_date(fromIRS.getcreation_date());
         getDestinationDiskImage().setlast_modified_date(fromIRS.getlast_modified_date());
         getDestinationDiskImage().setlastModified(getDestinationDiskImage().getlast_modified_date());
@@ -288,7 +288,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         to.setWipeAfterDelete(from.isWipeAfterDelete());
     }
 
-    protected void AddDiskImageToDb(DiskImage image, CompensationContext compensationContext) {
+    protected void addDiskImageToDb(DiskImage image, CompensationContext compensationContext) {
         image.setactive(true);
         getImageDao().save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
@@ -327,15 +327,15 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return getDbFacade().getBaseDiskDao();
     }
 
-    protected void LockImage() {
+    protected void lockImage() {
         setImageStatus(ImageStatus.LOCKED);
     }
 
-    protected void UnLockImage() {
+    protected void unLockImage() {
         setImageStatus(ImageStatus.OK);
     }
 
-    protected void MarkImageAsIllegal() {
+    protected void markImageAsIllegal() {
         setImageStatus(ImageStatus.ILLEGAL);
     }
 
@@ -363,7 +363,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                             newImageId)).getReturnValue();
 
             if (newImageIRS != null) {
-                CompleteImageData(newImageIRS);
+                completeImageData(newImageIRS);
             }
 
             // Unlock destination image:
@@ -373,7 +373,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
         if (getDiskImage() != null) {
             // Unlock source image:
-            UnLockImage();
+            unLockImage();
         }
 
         setSucceeded(true);
@@ -381,19 +381,19 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     @Override
     protected void endWithFailure() {
-        UndoActionOnSourceAndDestination();
+        undoActionOnSourceAndDestination();
 
         setSucceeded(true);
     }
 
-    protected void UndoActionOnSourceAndDestination() {
+    protected void undoActionOnSourceAndDestination() {
         if (getDestinationDiskImage() != null) {
-            RemoveSnapshot(getDestinationDiskImage());
+            removeSnapshot(getDestinationDiskImage());
         }
 
         if (getDiskImage() != null) {
             // Unlock source image:
-            UnLockImage();
+            unLockImage();
         }
     }
 
@@ -401,7 +401,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * Vitaly TODO: move it other class in hierarchy
      */
 
-    protected void RemoveSnapshot(DiskImage snapshot) {
+    protected void removeSnapshot(DiskImage snapshot) {
         getImageStorageDomainMapDao().remove(snapshot.getImageId());
         getImageDao().remove(snapshot.getImageId());
         List<DiskImage> imagesForDisk =

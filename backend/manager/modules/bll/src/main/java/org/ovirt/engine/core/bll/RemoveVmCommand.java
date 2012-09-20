@@ -69,8 +69,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         Guid vmId = getVmId();
         hasImages = vm.getDiskList().size() > 0;
 
-        RemoveVmInSpm(vm.getstorage_pool_id(), vmId);
-        if (hasImages && !RemoveVmImages(null)) {
+        removeVmInSpm(vm.getstorage_pool_id(), vmId);
+        if (hasImages && !removeVmImages(null)) {
             return false;
         }
 
@@ -78,7 +78,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    RemoveVmFromDb();
+                    removeVmFromDb();
                     return null;
                 }
             });
@@ -160,7 +160,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         return returnValue;
     }
 
-    protected boolean RemoveVmImages(List<DiskImage> images) {
+    protected boolean removeVmImages(List<DiskImage> images) {
         RemoveAllVmImagesParameters tempVar = new RemoveAllVmImagesParameters(getVmId(), images);
         tempVar.setParentCommand(getActionType());
         tempVar.setEntityId(getParameters().getEntityId());
@@ -199,12 +199,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
     }
 
-    protected void RemoveVmFromDb() {
+    protected void removeVmFromDb() {
         removeLunDisks();
-        RemoveVmUsers();
-        RemoveVmNetwork();
+        removeVmUsers();
+        removeVmNetwork();
         new SnapshotsManager().removeSnapshots(getVmId());
-        RemoveVmStatic();
+        removeVmStatic();
     }
 
     /**
@@ -220,7 +220,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     @Override
-    protected void EndVmCommand() {
+    protected void endVmCommand() {
         try {
             if (acquireLock()) {
                 // Ensures the lock on the VM guid can be acquired. This prevents a race
@@ -231,7 +231,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                     updateDisksAfterVmRemoved();
 
                     // Remove VM from DB.
-                    RemoveVmFromDb();
+                    removeVmFromDb();
                 }
             }
             setSucceeded(true);

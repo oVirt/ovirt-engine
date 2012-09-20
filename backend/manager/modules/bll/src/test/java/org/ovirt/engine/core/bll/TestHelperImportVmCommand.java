@@ -50,7 +50,7 @@ public class TestHelperImportVmCommand extends ImportVmCommand {
     }
 
     @Override
-    protected boolean CheckTemplateInStorageDomain() {
+    protected boolean checkTemplateInStorageDomain() {
         return true;
     }
 

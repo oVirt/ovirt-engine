@@ -118,7 +118,7 @@ public class VmPoolMonitor {
      */
     private boolean prestartVm(Guid vmGuid) {
         boolean prestartVmSucceeded = false;
-        if (VmPoolCommandBase.CanAttachNonPrestartedVmToUser(vmGuid)) {
+        if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid)) {
             VM vmToPrestart = DbFacade.getInstance().getVmDAO().get(vmGuid);
             if (runVmAsStateless(vmToPrestart)) {
                 prestartVmSucceeded = true;

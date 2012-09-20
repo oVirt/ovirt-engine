@@ -170,7 +170,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return hasCapacity;
     }
 
-    public static void DoCompressionCheck(VDS vds, VmDynamic vm) {
+    public static void doCompressionCheck(VDS vds, VmDynamic vm) {
         if (Config.<Boolean> GetValue(ConfigValues.PowerClientSpiceDynamicCompressionManagement)) {
             // compression always enabled on VDS
             if (vds.getvds_type() != VDSType.PowerClient) {
@@ -205,7 +205,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      * should be run at a new thread because of it will lock a new VDSM
      */
     @Override
-    public final void Rerun() {
+    public final void rerun() {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
@@ -216,7 +216,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected void rerunInternal() {
         Guid vdsId = getDestinationVds() != null ? getDestinationVds().getId() : getCurrentVdsId();
-        DecreasePendingVms(vdsId);
+        decreasePendingVms(vdsId);
 
         setSucceeded(false);
         setVm(null);
@@ -242,16 +242,16 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             if (!getReturnValue().getCanDoAction()) {
                 _isRerun = false;
                 log();
-                FailedToRunVm();
+                failedToRunVm();
             }
         } else {
             Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
-            FailedToRunVm();
+            failedToRunVm();
             _isRerun = false;
         }
     }
 
-    protected void FailedToRunVm() {
+    protected void failedToRunVm() {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
@@ -272,8 +272,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      * If there are vdss, not succeeded to run vm - treat them as suspicious.
      */
     @Override
-    public void RunningSucceded() {
-        DecreasePendingVms(getCurrentVdsId());
+    public void runningSucceded() {
+        decreasePendingVms(getCurrentVdsId());
 
         setSucceeded(true);
         setActionReturnValue(VMStatus.Up);
@@ -291,7 +291,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             getVm().setlast_vds_run_on(getCurrentVdsId());
         }
         if (StringUtils.isNotEmpty(getVm().gethibernation_vol_handle())) {
-            HandleHibernatedVm(getActionType(), true);
+            handleHibernatedVm(getActionType(), true);
             // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
             // this method (which is a part of the cached VM command,
             // so the state this method is aware to is RESTORING, in case of RunVmCommand after the VM got suspended.
@@ -321,7 +321,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     @Override
-    protected void EndVmCommand() {
+    protected void endVmCommand() {
         setCommandShouldBeLogged(false);
         setSucceeded(true);
     }
@@ -362,7 +362,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return true;
     }
 
-    protected void DecreasePendingVms(Guid vdsId) {
+    protected void decreasePendingVms(Guid vdsId) {
         synchronized (_decreaseLock) {
             boolean updateDynamic = false;
             VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);

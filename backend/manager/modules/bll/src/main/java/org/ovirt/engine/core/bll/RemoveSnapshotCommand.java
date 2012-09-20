@@ -123,7 +123,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     @Override
-    protected void EndVmCommand() {
+    protected void endVmCommand() {
         initializeObjectState();
         if (getParameters().getTaskGroupSuccess()) {
             getSnapshotDao().remove(getParameters().getSnapshotId());
@@ -131,7 +131,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.BROKEN);
         }
 
-        super.EndVmCommand();
+        super.endVmCommand();
     }
 
     /**

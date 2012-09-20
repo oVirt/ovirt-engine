@@ -72,13 +72,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     @Override
-    protected void FailedToRunVm() {
+    protected void failedToRunVm() {
         if (getVm().getstatus() != VMStatus.Up) {
-            super.FailedToRunVm();
+            super.failedToRunVm();
         }
     }
 
-    protected void InitVdss() {
+    protected void initVdss() {
         setVdsIdRef(new Guid(getVm().getrun_on_vds().toString()));
         setVdsDestinationId(getVdsSelector().GetVdsToRunOn());
         // make _destinationVds null in order to refresh it from db in case it
@@ -98,19 +98,19 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void executeVmCommand() {
-        InitVdss();
-        Perform();
-        ProcessVm();
+        initVdss();
+        perform();
+        processVm();
         setSucceeded(true);
     }
 
-    private void ProcessVm() {
+    private void processVm() {
         if (getVm().getstatus() != VMStatus.Up) {
-            DecreasePendingVms(getVds().getId());
+            decreasePendingVms(getVds().getId());
         }
     }
 
-    private void Perform() {
+    private void perform() {
         getVm().setmigrating_to_vds(_vdsDestinationId);
 
         String srcVdsHost = getVds().gethost_name();
@@ -226,7 +226,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             /**
              * vm went down on the destination and source, migration failed.
              */
-            DecreasePendingVms(getDestinationVds().getId());
+            decreasePendingVms(getDestinationVds().getId());
             _isRerun = true;
             setSucceeded(false);
             log();

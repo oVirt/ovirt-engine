@@ -60,17 +60,17 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                AddDiskImageToDb(mNewCreatedDiskImage, getCompensationContext());
+                addDiskImageToDb(mNewCreatedDiskImage, getCompensationContext());
                 return null;
             }
         });
         freeLock();
-        ProcessImageInIrs();
+        processImageInIrs();
         getReturnValue().setActionReturnValue(mNewCreatedDiskImage);
         setSucceeded(true);
     }
 
-    protected boolean ProcessImageInIrs() {
+    protected boolean processImageInIrs() {
         VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.CreateImage,
                         new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()

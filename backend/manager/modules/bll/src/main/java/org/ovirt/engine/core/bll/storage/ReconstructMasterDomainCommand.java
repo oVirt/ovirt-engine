@@ -144,7 +144,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 List<VM> vmsInPool = (List<VM>) Backend.getInstance()
                      .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
 
-                VmCommand.UpdateVmInSpm(getStoragePool().getId(), vmsInPool);
+                VmCommand.updateVmInSpm(getStoragePool().getId(), vmsInPool);
             }
 
             setSucceeded(commandSucceeded);

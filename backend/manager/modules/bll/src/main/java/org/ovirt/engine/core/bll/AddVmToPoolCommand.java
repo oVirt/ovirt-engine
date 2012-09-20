@@ -28,7 +28,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
      * @return <c>true</c> if this instance [can add vm to pool] the specified
      *         vm id; otherwise, <c>false</c>.
      */
-    public static boolean CanAddVmToPool(Guid vmId, java.util.ArrayList<String> messages, NGuid poolId) {
+    public static boolean canAddVmToPool(Guid vmId, java.util.ArrayList<String> messages, NGuid poolId) {
         boolean returnValue = true;
 
         boolean isRunning = RemoveVmCommand.IsVmRunning(vmId);
@@ -61,7 +61,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
 
     @Override
     protected boolean canDoAction() {
-        return CanAddVmToPool(getParameters().getVmId(), getReturnValue().getCanDoActionMessages(), getParameters()
+        return canAddVmToPool(getParameters().getVmId(), getReturnValue().getCanDoActionMessages(), getParameters()
                 .getVmPoolId());
     }
 

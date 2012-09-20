@@ -52,7 +52,7 @@ VmPoolUserCommandBase<T> {
 
         synchronized (_lockObject) {
             // no available VMs:
-            if (Guid.Empty.equals(GetVmToAttach(getParameters().getVmPoolId())))
+            if (Guid.Empty.equals(getVmToAttach(getParameters().getVmPoolId())))
             {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
                 returnValue = false;

@@ -48,7 +48,7 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
     }
 
     @Override
-    protected void HandleMemoryAdjustments() {
+    protected void handleMemoryAdjustments() {
         if (getDestinationVds() != null) {
             AutoMemoryAdjust(getDestinationVds(), getVm());
         }

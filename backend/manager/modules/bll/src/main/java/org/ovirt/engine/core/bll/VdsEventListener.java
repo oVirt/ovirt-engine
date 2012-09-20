@@ -205,7 +205,7 @@ public class VdsEventListener implements IVdsEventListener {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    RunVmCommandBase.DoCompressionCheck(vds, vmDynamic);
+                    RunVmCommandBase.doCompressionCheck(vds, vmDynamic);
 
                     // Run PowerClientMigrateOnConnectCheck if configured.
                     if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect)
@@ -333,7 +333,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void rerun(Guid vmId) {
         IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmId);
         if (command != null) {
-            command.Rerun();
+            command.rerun();
         }
     }
 
@@ -341,7 +341,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void runningSucceded(Guid vmId) {
         IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmId);
         if (command != null) {
-            command.RunningSucceded();
+            command.runningSucceded();
         }
     }
 
