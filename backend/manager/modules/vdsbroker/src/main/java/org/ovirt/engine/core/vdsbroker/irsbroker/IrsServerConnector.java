@@ -80,6 +80,10 @@ public interface IrsServerConnector {
     public Map<String, Object> moveImage(String spUUID, String srcDomUUID, String dstDomUUID, String imgGUID,
             String vmGUID, int op);
 
+    public Map<String, Object> cloneImageStructure(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID);
+
+    public Map<String, Object> syncImageData(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID, String syncType);
+
     public Map<String, Object> getImageDomainsList(String spUUID, String imgUUID);
 
     public Map<String, Object> setMaxHosts(int maxHosts);

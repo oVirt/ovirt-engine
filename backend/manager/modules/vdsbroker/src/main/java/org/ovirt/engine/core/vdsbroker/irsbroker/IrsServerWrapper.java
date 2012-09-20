@@ -193,6 +193,18 @@ public class IrsServerWrapper implements IIrsServer {
         return wrapper;
     }
 
+    public OneUuidReturnForXmlRpc cloneImageStructure(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.cloneImageStructure(spUUID, srcDomUUID, imgGUID, dstDomUUID);
+        OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    public OneUuidReturnForXmlRpc syncImageData(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID, String syncType) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.syncImageData(spUUID, srcDomUUID, imgGUID, dstDomUUID, syncType);
+        OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
     public StorageDomainGuidListReturnForXmlRpc getImageDomainsList(String spUUID, String imgUUID) {
         Map<String, Object> xmlRpcReturnValue = irsServer.getImageDomainsList(spUUID, imgUUID);
         StorageDomainGuidListReturnForXmlRpc wrapper = new StorageDomainGuidListReturnForXmlRpc(xmlRpcReturnValue);

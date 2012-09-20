@@ -231,4 +231,7 @@ public interface VdsServerConnector {
     @FutureCall(delegeteTo = "ping")
     public FutureTask<Map<String, Object>> futurePing();
 
+    public Map<String, Object> diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk);
+
+    public Map<String, Object> diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk);
 }

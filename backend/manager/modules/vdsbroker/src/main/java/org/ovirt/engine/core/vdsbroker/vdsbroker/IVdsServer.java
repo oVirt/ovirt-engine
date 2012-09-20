@@ -236,4 +236,7 @@ public interface IVdsServer {
 
     GlusterServersListReturnForXmlRpc glusterServersList();
 
+    StatusOnlyReturnForXmlRpc diskReplicateStart(String vmUUID, XmlRpcStruct srcDisk, XmlRpcStruct dstDisk);
+
+    StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, XmlRpcStruct srcDisk, XmlRpcStruct dstDisk);
 }

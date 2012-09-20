@@ -68,6 +68,10 @@ public interface IIrsServer {
     OneUuidReturnForXmlRpc moveImage(String spUUID, String srcDomUUID, String dstDomUUID, String imgGUID,
             String vmGUID, int op, String postZero, String force);
 
+    OneUuidReturnForXmlRpc cloneImageStructure(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID);
+
+    OneUuidReturnForXmlRpc syncImageData(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID, String syncType);
+
     StorageDomainGuidListReturnForXmlRpc getImageDomainsList(String spUUID, String imgUUID);
 
     StatusOnlyReturnForXmlRpc setMaxHosts(int maxHosts);
