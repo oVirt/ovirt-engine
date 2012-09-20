@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -35,8 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class DataCenterStorageListModel extends SearchableListModel
@@ -351,14 +351,21 @@ public class DataCenterStorageListModel extends SearchableListModel
                             {
                                 if (dcStorageModel.getEntity().getStoragePoolFormatType() == null)
                                 {
-                                    // compat logic: in case its not v1 and the version is less than 3.0 - continue.
-                                    if (a.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
+                                    // skip V3 format for DC ver <= 3
+                                    if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V3
                                             && dcStorageModel.getEntity()
                                                     .getcompatibility_version()
-                                                    .compareTo(Version.v3_0) <= 0)
-                                    {
+                                                    .compareTo(Version.v3_0) <= 0) {
                                         continue;
                                     }
+                                    // skip V2 format for DC <= 2.2
+                                    else if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V2
+                                            && dcStorageModel.getEntity()
+                                                    .getcompatibility_version()
+                                                    .compareTo(Version.v2_2) <= 0) {
+                                        continue;
+                                    }
+
                                     addToList = true;
                                 }
                                 else if (dcStorageModel.getEntity().getStoragePoolFormatType() == a.getStorageStaticData()
