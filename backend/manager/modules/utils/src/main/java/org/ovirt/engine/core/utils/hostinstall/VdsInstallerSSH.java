@@ -120,7 +120,7 @@ public class VdsInstallerSSH {
         catch(Exception e) {
             log.debug(
                 String.format(
-                    "Could not connect to server %1$s: %2$s",
+                    "Could not connect to server %1$s",
                     this.client.getDisplayHost()
                 ),
                 e
