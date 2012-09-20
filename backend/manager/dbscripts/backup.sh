@@ -17,7 +17,7 @@ fi
 set_defaults
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-l DIR] -u USERNAME [-v] \n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-l DIR] -u USERNAME [-c] [-v] \n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database       (def. ${PORT})\n"
@@ -25,6 +25,7 @@ usage() {
     printf "\t-u USERNAME   - The username for the database.\n"
     printf "\t-v            - Turn on verbosity (WARNING: lots of output)\n"
     printf "\t-l DIR        - Backup file directory. ${DIR}\n"
+    printf "\t-c            - Backup each row as SQL insert statement.\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
     printf "for more options please run pg_dump --help"
@@ -38,13 +39,14 @@ DEBUG () {
     fi
 }
 
-while getopts hs:d:u:p:l:f:v option; do
+while getopts hs:d:u:p:l:f:cv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;
         d) DATABASE=$OPTARG;;
         u) USERNAME=$OPTARG;;
         l) DIR=$OPTARG;;
+        c) COLUMN_INSERTS=true;;
         v) VERBOSE=true;;
         h) usage;;
     esac
@@ -57,12 +59,18 @@ fi
 
 file=${DATABASE}_`date`.sql
 file=`echo $file | sed "s@ @_@g"`
+column_inserts=""
 
 if [ -n "${DIR}" ]; then
     file="${DIR}/${file}"
 fi
 
-cmd="pg_dump -C -E UTF8  --column-inserts --disable-dollar-quoting  --disable-triggers --format=p -h ${SERVERNAME} -p ${PORT} -U ${USERNAME}  -f ${file}  ${DATABASE}"
+if [  -n "${COLUMN_INSERTS}" ]; then
+    column_inserts=" --column-inserts "
+fi
+
+cmd="pg_dump -C -E UTF8 ${column_inserts} --disable-dollar-quoting  --disable-triggers --format=p -h ${SERVERNAME} -p ${PORT} -U ${USERNAME}  -f ${file}  ${DATABASE}"
+
 echo "Backup of database $DATABASE to $file started..."
 
 if [  -n "${VERBOSE}" ]; then
