@@ -76,7 +76,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
     protected ArrayList<Disk> getNodeObjects(VM vm) {
         ArrayList<Disk> disks = new ArrayList<Disk>();
         for (Disk disk : vm.getDiskMap().values()) {
-            disks.add((Disk) disk);
+            disks.add(disk);
         }
         return disks;
     }
@@ -110,7 +110,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             addTextBoxToPanel(panel, new TextBoxLabel(), "", "80px"); //$NON-NLS-1$ //$NON-NLS-2$
             addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
             addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "110px"); //$NON-NLS-1$
-            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), disk.getActualDiskWithSnapshotsSize(), "110px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(DiskSizeUnit.GIGABYTE), disk.getActualSize(), "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px"); //$NON-NLS-1$
 
             panel.setSpacing(1);
@@ -146,12 +146,12 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             boolean isDiskImage = disk.getDiskStorageType() == DiskStorageType.IMAGE;
             Double actualSize =
                     isDiskImage ? ((DiskImage) disk).getActualDiskWithSnapshotsSize()
-                            : (long) (((LunDisk) disk).getLun().getDeviceSize() * Math.pow(1024, 3));
+                            : (long) (((LunDisk) disk).getLun().getDeviceSize());
             Long virtualSize = isDiskImage ? ((DiskImage) disk).getsize() :
                     (long) (((LunDisk) disk).getLun().getDeviceSize() * Math.pow(1024, 3));
 
             addValueLabelToPanel(panel, new DiskSizeLabel<Long>(DiskSizeUnit.BYTE), virtualSize, "110px"); //$NON-NLS-1$
-            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(DiskSizeUnit.BYTE), actualSize, "110px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(DiskSizeUnit.GIGABYTE), actualSize, "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getDiskStorageType() == DiskStorageType.IMAGE ?
                     ((DiskImage) disk).getcreation_date() : null, "140px"); //$NON-NLS-1$
 
