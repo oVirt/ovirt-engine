@@ -144,7 +144,7 @@ public class EventListModel extends SearchableListModel
         SyncSearch();
     }
 
-    protected void Refresh()
+    protected void refreshModel()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -184,7 +184,7 @@ public class EventListModel extends SearchableListModel
 
         if (command == getRefreshCommand())
         {
-            Refresh();
+            refreshModel();
             UpdatePagingAvailability();
         }
     }

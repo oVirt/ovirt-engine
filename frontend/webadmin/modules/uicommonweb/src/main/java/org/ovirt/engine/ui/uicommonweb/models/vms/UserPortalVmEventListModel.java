@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class UserPortalVmEventListModel extends VmEventListModel {
 
     @Override
-    protected void Refresh() {
+    protected void refreshModel() {
         if (getEntity() == null) {
             return;
         }
