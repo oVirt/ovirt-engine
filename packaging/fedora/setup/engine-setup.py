@@ -117,7 +117,7 @@ def initSequences():
                                                 'functions' : [_findJavaHome]},
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
-                                              { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
+                                              { 'title'     : output_messages.INFO_UPD_ENGINE_CONF,
                                                 'functions' : [_editSysconfig] },
                                               { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
                                                 'functions' : [_updatePgPassFile]}]
@@ -163,7 +163,7 @@ def initSequences():
                         'condition_match' : [],
                         'steps'           : [ { 'title'     : output_messages.INFO_CFG_IPTABLES,
                                                 'functions' : [_configIptables] },
-                                              { 'title'     : output_messages.INFO_START_JBOSS,
+                                              { 'title'     : output_messages.INFO_START_ENGINE,
                                                 'functions' : [_startEngine] } ]
                        },
                       { 'description'     : 'Handling httpd',
@@ -1237,7 +1237,7 @@ def _updatePgPassLine(host, port, db, user, password):
 
 def _encryptDBPass():
     """
-    Encryptes the jboss postgres db password
+    Encryptes the postgres db password
     and store it in conf
     """
     #run encrypt tool on user given password
@@ -1686,17 +1686,17 @@ def _stopEngine(configFile):
 
     #if we don't use an answer file, we need to ask the user if to stop engine
     if not configFile:
-        print output_messages.INFO_NEED_STOP_JBOSS
-        answer = utils.askYesNo(output_messages.INFO_Q_STOP_JBOSS)
+        print output_messages.INFO_NEED_STOP_ENGINE
+        answer = utils.askYesNo(output_messages.INFO_Q_STOP_ENGINE)
         if answer:
-            print output_messages.INFO_STOP_JBOSS,
+            print output_messages.INFO_STOP_ENGINE,
             jservice.stop(True)
         else:
             logging.debug("User chose not to stop engine")
             return False
     else:
-        #we stop the jboss service on a silent install
-        print output_messages.INFO_STOP_JBOSS,
+        #we stop the ovirt-engine service on a silent install
+        print output_messages.INFO_STOP_ENGINE,
         jservice.stop(True)
 
     return True
@@ -1835,7 +1835,7 @@ def _configEncryptedPass():
     except:
         logging.error("ERROR Editing engine local configuration file.")
         logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_JBOSS)
+        raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_ENGINE)
 
 def _editSysconfig():
     """

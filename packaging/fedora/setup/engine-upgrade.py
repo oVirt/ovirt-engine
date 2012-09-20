@@ -82,15 +82,15 @@ MSG_ERROR_RPM_QUERY = "Error: Unable to retrieve rpm versions"
 MSG_ERROR_YUM_UPDATE = "Error: Yum update failed"
 MSG_ERROR_CHECK_LOG = "Error: Upgrade failed.\nplease check log at %s"
 MSG_ERROR_CONNECT_DB = "Error: Failed to connect to database"
-MSG_ERR_FAILED_START_JBOSS_SERVICE = "Error: Can't start JBoss"
-MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN = "Error: Can't stop jboss service. Please shut it down manually."
-MSG_ERR_FAILED_STP_JBOSS_SERVICE = "Error: Can't stop JBoss"
-MSG_ERR_FAILED_STATUS_JBOSS_SERVICE = "Error: Can't get JBoss service status"
+MSG_ERR_FAILED_START_ENGINE_SERVICE = "Error: Can't start ovirt-engine"
+MSG_ERR_FAILED_ENGINE_SERVICE_STILL_RUN = "Error: Can't stop ovirt-engine service. Please shut it down manually."
+MSG_ERR_FAILED_STOP_ENGINE_SERVICE = "Error: Can't stop ovirt-engine"
+MSG_ERR_FAILED_STATUS_ENGINE_SERVICE = "Error: Can't get ovirt-engine service status"
 MSG_ERR_FAILED_START_SERVICE = "Error: Can't start the %s service"
 MSG_ERR_FAILED_STOP_SERVICE = "Error: Can't stop the %s service"
 MSG_ERR_SQL_CODE = "Failed running sql query"
 MSG_ERR_EXP_UPD_DC_TYPE="Failed updating default Data Center Storage Type in %s db"
-MSG_ERROR_JBOSS_PID = "Error: JBoss service is dead, but pid file exists"
+MSG_ERROR_ENGINE_PID = "Error: ovirt-engine service is dead, but pid file exists"
 MSG_ERROR_YUM_TID = "Error: Yum transaction mismatch"
 MSG_ERROR_PGPASS = "Error: DB password file was not found on this system. Verify \
 that this system was previously installed and that there's a password file at %s or %s" % \
@@ -99,7 +99,7 @@ that this system was previously installed and that there's a password file at %s
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
 MSG_INFO_REASON = " **Reason: %s**\n"
-MSG_INFO_STOP_JBOSS = "Stopping JBoss Service"
+MSG_INFO_STOP_ENGINE = "Stopping ovirt-engine Service"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_RENAME_DB = "Rename Database"
 MSG_INFO_RESTORE_DB = "Restore Database name"
@@ -110,18 +110,18 @@ MSG_ERROR_UPGRADE = "\n **Error: Upgrade failed, rolling back**"
 MSG_INFO_DB_RESTORE = "Restoring Database"
 MSG_INFO_YUM_ROLLBACK = "Rolling back rpms"
 MSG_INFO_NO_YUM_ROLLBACK = "Skipping yum rollback"
-MSG_INFO_START_JBOSS = "Starting JBoss"
+MSG_INFO_START_ENGINE = "Starting ovirt-engine"
 MSG_INFO_DB_BACKUP_FILE = "DB Backup available at "
 MSG_INFO_LOG_FILE = "Upgrade log available at"
 MSG_INFO_CHECK_UPDATE = "Checking for updates... (This may take several minutes)"
 MSG_INFO_UPGRADE_OK = "%s upgrade completed successfully!" % basedefs.APP_NAME
 MSG_INFO_STOP_INSTALL_EXIT="Upgrade stopped, Goodbye."
-MSG_INFO_UPDATE_JBOSS_PROFILE="Updating JBoss Profile"
+MSG_INFO_UPDATE_ENGINE_PROFILE="Updating ovirt-engine Profile"
 
-MSG_ALERT_STOP_JBOSS="\nDuring the upgrade process, %s  will not be accessible.\n\
+MSG_ALERT_STOP_ENGINE="\nDuring the upgrade process, %s  will not be accessible.\n\
 All existing running virtual machines will continue but you will not be able to\n\
 start or stop any new virtual machines during the process.\n" % basedefs.APP_NAME
-INFO_Q_STOP_JBOSS="Would you like to proceed"
+INFO_Q_PROCEED="Would you like to proceed"
 MSG_INFO_REPORTS="Perform the following steps to upgrade the history service \
 or the reporting package:\n\
 1. Execute: yum update ovirt-engine-reports*\n\
@@ -139,7 +139,7 @@ def getOptions():
 
     parser.add_option("-u", "--unattended",
                       action="store_true", dest="unattended_upgrade", default=False,
-                      help="unattended upgrade (this option will stop jboss service before upgrading ovirt-engine)")
+                      help="unattended upgrade (this option will stop ovirt-engine service before upgrading)")
 
     parser.add_option("-s", "--force-current-setup-rpm",
                       action="store_true", dest="force_current_setup_rpm", default=False,
@@ -152,43 +152,43 @@ def getOptions():
     (options, args) = parser.parse_args()
     return (options, args)
 
-def checkJbossService(service=basedefs.ENGINE_SERVICE_NAME):
+def checkEngine(service=basedefs.ENGINE_SERVICE_NAME):
     """
-    Ask user to stop jboss service before
+    Ask user to stop ovirt-engine service before
     upgrading ovirt-engine
 
-    returns: true if user choose to stop jboss
+    returns: true if user choose to stop ovirt-engine
     false otherwise
     """
-    logging.debug("checking the status of jbossas service")
+    logging.debug("checking the status of ovirt-engine service")
     cmd = [
         basedefs.EXEC_SERVICE, service , "status",
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=False)
 
     if rc == 0:
-        logging.debug("jbossas service is up and running")
+        logging.debug("ovirt-engine service is up and running")
 
-        print MSG_ALERT_STOP_JBOSS
-        answer = utils.askYesNo(INFO_Q_STOP_JBOSS)
+        print MSG_ALERT_STOP_ENGINE
+        answer = utils.askYesNo(INFO_Q_PROCEED)
 
-        # If user choose yes -> return true (stop jbossas)
+        # If user choose yes -> return true (stop ovirt-engine)
         if answer:
             return True
         else:
-            logging.debug("User chose not to stop jboss")
+            logging.debug("User chose not to stop ovirt-engine")
             return False
 
     elif rc == 1:
         # Proc is dead, pid exists
-        raise Exception(MSG_ERROR_JBOSS_PID)
+        raise Exception(MSG_ERROR_ENGINE_PID)
 
     elif rc == 3:
-        # If jboss is not running, we don't need to stop it
+        # If ovirt-engine is not running, we don't need to stop it
         return True
 
     else:
-        raise Exception(MSG_ERR_FAILED_STATUS_JBOSS_SERVICE)
+        raise Exception(MSG_ERR_FAILED_STATUS_ENGINE_SERVICE)
 
 def initLogging():
     global LOG_FILE
@@ -554,14 +554,14 @@ def stopEngine(service=basedefs.ENGINE_SERVICE_NAME):
     cmd = [
         basedefs.EXEC_SERVICE, service, "stop",
     ]
-    output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STP_JBOSS_SERVICE)
+    output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STOP_ENGINE_SERVICE)
 
 def startEngine():
-    logging.debug("starting jboss service.")
+    logging.debug("starting %s service.", basedefs.ENGINE_SERVICE_NAME)
     cmd = [
         basedefs.EXEC_SERVICE, basedefs.ENGINE_SERVICE_NAME, "start",
     ]
-    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_JBOSS_SERVICE)
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_ENGINE_SERVICE)
 
 def runPost():
     logging.debug("Running post script")
@@ -746,12 +746,12 @@ def main(options):
 
     # No rollback in this case
     try:
-        # We ask the user before stoping jboss or take command line option
-        if options.unattended_upgrade or checkJbossService(engineService):
+        # We ask the user before stoping ovirt-engine or take command line option
+        if options.unattended_upgrade or checkEngine(engineService):
             # Stopping engine
-            runFunc(stopEngineService, MSG_INFO_STOP_JBOSS)
+            runFunc(stopEngineService, MSG_INFO_STOP_ENGINE)
         else:
-            # This means that user chose not to stop jboss
+            # This means that user chose not to stop ovirt-engine
             logging.debug("exiting gracefully")
             print MSG_INFO_STOP_INSTALL_EXIT
             sys.exit(0)
@@ -820,8 +820,8 @@ def main(options):
         raise
 
     finally:
-        # start jboss
-        runFunc([startEngine], MSG_INFO_START_JBOSS)
+        # start engine
+        runFunc([startEngine], MSG_INFO_START_ENGINE)
 
     # Print log location on success
     addAdditionalMessages(etlService.isServiceAvailable())

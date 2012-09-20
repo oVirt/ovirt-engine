@@ -36,19 +36,19 @@ INFO_CREATE_CA="Creating CA"
 INFO_CREATE_DB="Creating Database"
 INFO_UPGRADE_DB="Upgrading Database Schema"
 INFO_UPD_DC_TYPE="Updating the Default Data Center Storage Type"
-INFO_UPD_JBOSS_CONF="Editing JBoss Configuration"
+INFO_UPD_ENGINE_CONF="Updating ovirt-engine service"
 INFO_UPD_RHEVM_CONF="Editing %s Configuration" % basedefs.APP_NAME
 INFO_UPD_CONF="Editing %s Configuration"
 INFO_CFG_NFS="Configuring the Default ISO Domain"
-INFO_START_JBOSS="Starting JBoss Service"
+INFO_START_ENGINE="Starting ovirt-engine Service"
 INFO_START_HTTPD="Starting HTTPD Service"
 INFO_CFG_IPTABLES="Configuring Firewall (iptables)"
 INFO_DSPLY_PARAMS="\n%s will be installed using the following configuration:" % basedefs.APP_NAME
 INFO_USE_PARAMS="Proceed with the configuration listed above"
-INFO_NEED_STOP_JBOSS="\nIn order to proceed the installer must stop the JBoss service"
-INFO_Q_STOP_JBOSS="Would you like to stop the JBoss service"
+INFO_NEED_STOP_ENGINE="\nIn order to proceed the installer must stop the ovirt-engine service"
+INFO_Q_STOP_ENGINE="Would you like to stop the ovirt-engine service"
 INFO_PROCEED="Would you like to proceed"
-INFO_STOP_JBOSS="Stopping JBoss..."
+INFO_STOP_ENGINE="Stopping ovirt-engine service..."
 INFO_STOP_INSTALL_EXIT="Installation stopped, Goodbye."
 INFO_CLOSE_PORTS="Please verify that the specified ports are not used by any service on this host and run setup again"
 INFO_LOGIN_USER="Please use the user \"admin\" and password specified in order to login into %s" % basedefs.APP_NAME
@@ -313,7 +313,7 @@ ERR_EXP_FIND_AND_REPLACE="Failed to replace content in %s"
 ERR_EXP_UPD_XML_CONTENT="Unexpected error: XML query %s returned %s results"
 ERR_EXP_UNKN_XML_OBJ="Unexpected error: given XML is neither string nor instance"
 
-ERR_EXP_FAILED_CONFIG_JBOSS="Failed updating JBoss configuration"
+ERR_EXP_FAILED_CONFIG_ENGINE="Failed updating ovirt-engine configuration"
 
 #edit transaction timeout
 ERR_EXP_UPD_TRANS_TIMEOUT="Failed updating JBoss transaction timeout in %s"

@@ -41,18 +41,17 @@ Check that connection is working and rerun the cleanup utility"
 MSG_ERROR_BACKUP_DB = "Error: Database backup failed"
 MSG_ERROR_DROP_DB = "Error: DB drop operation failed. Check that there are no active connection to the '%s' DB"
 MSG_ERROR_CHECK_LOG = "Error: Cleanup failed.\nplease check log at %s"
-MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN = "Error: Can't stop jboss service. Please shut it down manually."
-MSG_ERR_FAILED_STP_JBOSS_SERVICE = "Error: Can't stop JBoss"
-MSG_ERR_FAILED_STATUS_JBOSS_SERVICE = "Error: Can't get JBoss service status"
+MSG_ERR_FAILED_ENGINE_SERVICE_STILL_RUN = "Error: Can't stop ovirt-engine service. Please shut it down manually."
+MSG_ERR_FAILED_STP_ENGINE_SERVICE = "Error: Can't stop ovirt-engine"
+MSG_ERR_FAILED_STATUS_ENGINE_SERVICE = "Error: Can't get ovirt-engine service status"
 MSG_ERR_CANT_FIND_PGPASS_FILE="Could not find DB password file %s. Skipping DB cleanup" % basedefs.DB_PASS_FILE
 
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
-MSG_INFO_STOP_JBOSS = "Stopping %s service" % basedefs.ENGINE_SERVICE_NAME
+MSG_INFO_STOP_ENGINE = "Stopping %s service" % basedefs.ENGINE_SERVICE_NAME
 MSG_INFO_STOP_NOTIFIERD = "Stopping engine-notifierd service"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_REMOVE_DB = "Removing Database"
-MSG_INFO_REMOVE_SLIMMED = "Removing %s JBoss profile" % (PROD_NAME)
 MSG_INFO_REMOVE_CA = "Removing CA"
 MSG_INFO_UNLINK_EAR = "Removing EAR link"
 MSG_INFO_DB_BACKUP_FILE = "DB Backup available at"
@@ -364,17 +363,17 @@ class DB():
 
         return True
 
-def stopJboss():
+def stopEngine():
     logging.debug("stoping %s service." % basedefs.ENGINE_SERVICE_NAME)
 
     cmd = [
         basedefs.EXEC_SERVICE, basedefs.ENGINE_SERVICE_NAME, "stop",
     ]
-    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STP_JBOSS_SERVICE)
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STP_ENGINE_SERVICE)
 
     # JBoss service sometimes return zero rc even if service is still up
     if "[FAILED]" in output and "Timeout: Shutdown command was sent, but process is still running" in output:
-        raise OSError(MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN)
+        raise OSError(MSG_ERR_FAILED_ENGINE_SERVICE_STILL_RUN)
 
 def stopNotifier():
     logging.debug("stoping engine-notifierd service.")
@@ -417,8 +416,8 @@ def main(options):
 
     print
 
-    # Stop JBoss
-    runFunc(stopJboss, MSG_INFO_STOP_JBOSS)
+    # Stop Engine
+    runFunc(stopEngine, MSG_INFO_STOP_ENGINE)
 
     # Backup DB, drop DB and clean .pgpass file (only if 'basedefs.DB_NAME' db exists)
     if db.exists() and options.drop_db:
