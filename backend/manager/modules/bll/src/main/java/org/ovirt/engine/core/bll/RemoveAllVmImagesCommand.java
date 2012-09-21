@@ -56,7 +56,6 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                 tempVar.setDiskImage(image);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setForceDelete(getParameters().getForceDelete());
-                tempVar.setParentParameters(getParameters());
                 VdcReturnValueBase vdcReturnValue =
                         Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
                                 tempVar,
