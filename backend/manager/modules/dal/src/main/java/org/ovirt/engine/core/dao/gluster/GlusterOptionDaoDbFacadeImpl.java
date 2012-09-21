@@ -2,16 +2,23 @@ package org.ovirt.engine.core.dao.gluster;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-public class GlusterOptionDaoDbFacadeImpl extends BaseDAODbFacade implements GlusterOptionDao {
+public class GlusterOptionDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeOptionEntity, Guid> implements GlusterOptionDao {
     private static final ParameterizedRowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
+
+    public GlusterOptionDaoDbFacadeImpl() {
+        super("GlusterOption");
+        setProcedureNameForGet("GetGlusterOptionById");
+    }
 
     @Override
     public void save(GlusterVolumeOptionEntity option) {
@@ -33,10 +40,14 @@ public class GlusterOptionDaoDbFacadeImpl extends BaseDAODbFacade implements Glu
     }
 
     @Override
+    public void removeAll(Collection<Guid> ids) {
+        getCallsHandler().executeModification("DeleteGlusterVolumeOptions",
+                getCustomMapSqlParameterSource().addValue("ids", StringUtils.join(ids, ',')));
+    }
+
+    @Override
     public GlusterVolumeOptionEntity getById(Guid id) {
-        return getCallsHandler().executeRead(
-                "GetGlusterOptionById", optionRowMapper,
-                getCustomMapSqlParameterSource().addValue("id", id));
+        return getCallsHandler().executeRead("GetGlusterOptionById", optionRowMapper, createIdParameterMapper(id));
     }
 
     @Override
@@ -65,5 +76,20 @@ public class GlusterOptionDaoDbFacadeImpl extends BaseDAODbFacade implements Glu
             option.setValue(rs.getString("option_val"));
             return option;
         }
+    }
+
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(GlusterVolumeOptionEntity option) {
+        return createVolumeOptionParams(option);
+    }
+
+    @Override
+    protected MapSqlParameterSource createIdParameterMapper(Guid id) {
+        return getCustomMapSqlParameterSource().addValue("id", id);
+    }
+
+    @Override
+    protected ParameterizedRowMapper<GlusterVolumeOptionEntity> createEntityRowMapper() {
+        return optionRowMapper;
     }
 }

@@ -8,5 +8,5 @@ import org.ovirt.engine.core.compat.Guid;
  * {@link VmNetworkStatistics}.
  */
 public interface VmNetworkStatisticsDAO extends GenericDao<VmNetworkStatistics, Guid>,
-        MassOperationsDao<VmNetworkStatistics> {
+        MassOperationsDao<VmNetworkStatistics, Guid> {
 }

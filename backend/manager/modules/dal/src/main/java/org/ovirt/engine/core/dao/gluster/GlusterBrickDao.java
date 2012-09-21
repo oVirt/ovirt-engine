@@ -6,11 +6,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.MassOperationsDao;
 
 /**
  * Interface for DB operations on Gluster Bricks.
  */
-public interface GlusterBrickDao extends DAO {
+public interface GlusterBrickDao extends DAO, MassOperationsDao<GlusterBrickEntity, Guid> {
     public void save(GlusterBrickEntity brick);
 
     public GlusterBrickEntity getById(Guid id);

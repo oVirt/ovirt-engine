@@ -2,21 +2,28 @@ package org.ovirt.engine.core.dao.gluster;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
-public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements GlusterBrickDao {
+public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterBrickEntity, Guid> implements GlusterBrickDao {
     // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
     // There will still be a single instance of it, as the DAO itself will be instantiated only once
     private final ParameterizedRowMapper<GlusterBrickEntity> brickRowMapper = new GlusterBrickRowMapper();
+
+    public GlusterBrickDaoDbFacadeImpl() {
+        super("GlusterBrick");
+        setProcedureNameForGet("GetGlusterBrickById");
+    }
 
     @Override
     public void save(GlusterBrickEntity brick) {
@@ -27,6 +34,12 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
     public void removeBrick(Guid brickId) {
         getCallsHandler().executeModification("DeleteGlusterVolumeBrick",
                 getCustomMapSqlParameterSource().addValue("id", brickId));
+    }
+
+    @Override
+    public void removeAll(Collection<Guid> ids) {
+        getCallsHandler().executeModification("DeleteGlusterVolumeBricks",
+                getCustomMapSqlParameterSource().addValue("ids", StringUtils.join(ids, ',')));
     }
 
     @Override
@@ -59,7 +72,7 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
     public GlusterBrickEntity getById(Guid id) {
         return getCallsHandler().executeRead(
                 "GetGlusterBrickById", brickRowMapper,
-                getCustomMapSqlParameterSource().addValue("id", id));
+                createIdParameterMapper(id));
     }
 
     @Override
@@ -114,5 +127,20 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
         return getCallsHandler().executeReadList(
                 "GetGlusterVolumeBricksByServerGuid", brickRowMapper,
                 getCustomMapSqlParameterSource().addValue("server_id", serverId));
+    }
+
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(GlusterBrickEntity brick) {
+        return createBrickParams(brick);
+    }
+
+    @Override
+    protected MapSqlParameterSource createIdParameterMapper(Guid id) {
+        return getCustomMapSqlParameterSource().addValue("id", id);
+    }
+
+    @Override
+    protected ParameterizedRowMapper<GlusterBrickEntity> createEntityRowMapper() {
+        return brickRowMapper;
     }
 }

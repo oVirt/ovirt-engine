@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -9,8 +10,11 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
  *
  * @param T
  *            the type of entity to perform mass operations on.
+ *
+ * @param <ID>
+ *            The type of the entity's id.
  */
-public interface MassOperationsDao<T extends BusinessEntity<?>> {
+public interface MassOperationsDao<T extends BusinessEntity<?>, ID extends Serializable> {
 
     /**
      * Updates the given entities using a more efficient method to update all of them at once, rather than each at a
@@ -29,4 +33,10 @@ public interface MassOperationsDao<T extends BusinessEntity<?>> {
      * @param entities
      */
     void updateAll(String procedureName, Collection<T> entities);
+
+    /**
+     * Removes the entities with given ids
+     * @param ids
+     */
+    void removeAll(Collection<ID> ids);
 }

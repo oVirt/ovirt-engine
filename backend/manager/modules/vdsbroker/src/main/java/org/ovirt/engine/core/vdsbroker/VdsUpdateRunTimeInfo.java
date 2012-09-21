@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -196,8 +197,8 @@ public class VdsUpdateRunTimeInfo {
      * @param dao
      *            The DAO used for updating.
      */
-    private static <T extends BusinessEntity<?>> void updateAllInTransaction
-            (final Collection<T> entities, final MassOperationsDao<T> dao) {
+    private static <T extends BusinessEntity<?>, ID extends Serializable> void updateAllInTransaction
+            (final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
         updateAllInTransaction(null, entities,dao);
     }
 
@@ -215,8 +216,8 @@ public class VdsUpdateRunTimeInfo {
      *            The DAO used for updating.
      */
 
-    private static <T extends BusinessEntity<?>> void updateAllInTransaction
-        (final String procedureName, final Collection<T> entities, final MassOperationsDao<T> dao) {
+    private static <T extends BusinessEntity<?>, ID extends Serializable> void updateAllInTransaction
+        (final String procedureName, final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
     if (!entities.isEmpty()) {
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
             new TransactionMethod<Void>() {

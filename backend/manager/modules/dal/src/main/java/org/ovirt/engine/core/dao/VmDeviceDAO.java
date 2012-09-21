@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOperationsDao<VmDevice> {
+public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOperationsDao<VmDevice, VmDeviceId> {
 
     /**
      * Check if the {@link VmDevice} with the given id exists or not.

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import javax.validation.constraints.NotNull;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.SetVolumeOption;
@@ -14,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  * @see GlusterVolumeEntity
  */
-public class GlusterVolumeOptionEntity extends IVdcQueryable {
+public class GlusterVolumeOptionEntity extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 5770623263518245638L;
 
     @NotNull(message = "VALIDATION.GLUSTER.OPTION.ID.NOT_NULL", groups = { RemoveEntity.class })
@@ -96,6 +97,7 @@ public class GlusterVolumeOptionEntity extends IVdcQueryable {
      * GlusterFS, and hence is generated on the backend side.
      * @return id of the option
      */
+    @Override
     public Guid getId() {
         if(id == null) {
             id = Guid.NewGuid();
@@ -103,6 +105,7 @@ public class GlusterVolumeOptionEntity extends IVdcQueryable {
         return id;
     }
 
+    @Override
     public void setId(Guid id) {
         this.id = id;
     }

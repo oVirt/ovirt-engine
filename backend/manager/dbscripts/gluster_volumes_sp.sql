@@ -194,6 +194,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION DeleteGlusterVolumesByGuids(v_volume_ids VARCHAR(5000))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    DELETE FROM gluster_volumes
+    WHERE id in (select ID from fnSplitterUuid(v_volume_ids));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION DeleteGlusterVolumeByName(v_cluster_id UUID,
                                                     v_vol_name VARCHAR(1000))
     RETURNS VOID
@@ -214,6 +224,14 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION DeleteGlusterVolumeBricks(v_ids VARCHAR(5000))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    DELETE FROM gluster_volume_bricks
+    WHERE id in (select ID from fnSplitterUuid(v_ids));
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION DeleteGlusterVolumeOption(v_id UUID)
     RETURNS VOID
@@ -221,6 +239,15 @@ Create or replace FUNCTION DeleteGlusterVolumeOption(v_id UUID)
 BEGIN
     DELETE FROM gluster_volume_options
     WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION DeleteGlusterVolumeOptions(v_ids VARCHAR(5000))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    DELETE FROM gluster_volume_options
+    WHERE id in (select ID from fnSplitterUuid(v_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 

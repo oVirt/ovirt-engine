@@ -95,7 +95,11 @@ public abstract class DefaultGenericDaoDbFacade<T extends BusinessEntity<ID>, ID
 
     @Override
     public void update(T entity) {
-        getCallsHandler().executeModification(getProcedureNameForUpdate(), createFullParametersMapper(entity));
+        update(entity, getProcedureNameForUpdate());
+    }
+
+    protected void update(T entity, String procedureName) {
+        getCallsHandler().executeModification(procedureName, createFullParametersMapper(entity));
     }
 
     @Override

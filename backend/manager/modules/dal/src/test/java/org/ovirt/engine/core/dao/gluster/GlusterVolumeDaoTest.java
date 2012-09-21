@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -95,6 +96,18 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertTrue(volumes.size() == 1);
         assertFalse(volumes.contains(existingDistVol));
         assertTrue(volumes.contains(existingReplVol));
+    }
+
+    @Test
+    public void testRemoveMultiple() {
+        List<Guid> idsToRemove = new ArrayList<Guid>();
+        idsToRemove.add(EXISTING_VOL_DIST_ID);
+        idsToRemove.add(EXISTING_VOL_REPL_ID);
+
+        dao.removeAll(idsToRemove);
+        List<GlusterVolumeEntity> volumes = dao.getByClusterId(CLUSTER_ID);
+
+        assertTrue(volumes.isEmpty());
     }
 
     @Test

@@ -8,12 +8,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.MassOperationsDao;
 import org.ovirt.engine.core.dao.SearchDAO;
 
 /**
  * Interface for DB operations on Gluster Volumes.
  */
-public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity> {
+public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity>, MassOperationsDao<GlusterVolumeEntity, Guid> {
 
     public void save(GlusterVolumeEntity volume);
 

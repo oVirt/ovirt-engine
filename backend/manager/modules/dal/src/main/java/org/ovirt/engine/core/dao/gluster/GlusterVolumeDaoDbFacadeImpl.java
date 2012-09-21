@@ -6,16 +6,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -23,12 +24,17 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 /**
  * Implementation of the DB Facade for Gluster Volumes.
  */
-public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
+public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeEntity, Guid> implements
         GlusterVolumeDao {
 
     private static final ParameterizedRowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();
     private static final ParameterizedRowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
     private static final ParameterizedRowMapper<TransportType> transportTypeRowMapper = new TransportTypeRowMapper();
+
+    public GlusterVolumeDaoDbFacadeImpl() {
+        super("GlusterVolume");
+        setProcedureNameForGet("GetGlusterVolumeById");
+    }
 
     @Override
     public void save(GlusterVolumeEntity volume) {
@@ -89,6 +95,12 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_id", clusterId)
                         .addValue("vol_name", volName));
+    }
+
+    @Override
+    public void removeAll(Collection<Guid> ids) {
+        getCallsHandler().executeModification("DeleteGlusterVolumesByGuids",
+                getCustomMapSqlParameterSource().addValue("volume_ids", StringUtils.join(ids, ',')));
     }
 
     @Override
@@ -157,16 +169,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     }
 
     private void insertVolumeEntity(GlusterVolumeEntity volume) {
-        getCallsHandler().executeModification(
-                "InsertGlusterVolume",
-                getCustomMapSqlParameterSource()
-                        .addValue("id", volume.getId())
-                        .addValue("cluster_id", volume.getClusterId())
-                        .addValue("vol_name", volume.getName())
-                        .addValue("vol_type", EnumUtils.nameOrNull(volume.getVolumeType()))
-                        .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
-                        .addValue("replica_count", volume.getReplicaCount())
-                        .addValue("stripe_count", volume.getStripeCount()));
+        getCallsHandler().executeModification("InsertGlusterVolume", createFullParametersMapper(volume));
     }
 
     private void insertVolumeBricks(GlusterVolumeEntity volume) {
@@ -288,5 +291,27 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                         .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
                         .addValue("replica_count", volume.getReplicaCount())
                         .addValue("stripe_count", volume.getStripeCount()));
+    }
+
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(GlusterVolumeEntity volume) {
+        return getCustomMapSqlParameterSource()
+                .addValue("id", volume.getId())
+                .addValue("cluster_id", volume.getClusterId())
+                .addValue("vol_name", volume.getName())
+                .addValue("vol_type", EnumUtils.nameOrNull(volume.getVolumeType()))
+                .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
+                .addValue("replica_count", volume.getReplicaCount())
+                .addValue("stripe_count", volume.getStripeCount());
+    }
+
+    @Override
+    protected MapSqlParameterSource createIdParameterMapper(Guid id) {
+        return createVolumeIdParams(id);
+    }
+
+    @Override
+    protected ParameterizedRowMapper<GlusterVolumeEntity> createEntityRowMapper() {
+        return volumeRowMapper;
     }
 }

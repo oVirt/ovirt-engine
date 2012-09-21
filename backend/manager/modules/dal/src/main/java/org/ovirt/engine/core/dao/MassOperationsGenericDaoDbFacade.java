@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
  *            The type of the entity's id.
  */
 public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<ID>, ID extends Serializable>
-        extends DefaultGenericDaoDbFacade<T, ID> implements MassOperationsDao<T> {
+        extends DefaultGenericDaoDbFacade<T, ID> implements MassOperationsDao<T, ID> {
 
     public MassOperationsGenericDaoDbFacade(String entityStoredProcedureName) {
         super(entityStoredProcedureName);
@@ -25,10 +25,6 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
     @Override
     public void updateAll(Collection<T> entities) {
         updateAll(getProcedureNameForUpdate(),entities);
-        for (T entity : entities) {
-            getCallsHandler().executeModification(getProcedureNameForUpdate(),
-                    createFullParametersMapper(entity));
-        }
     }
 
     @Override
@@ -38,12 +34,15 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
      * In case this parameter is null the default procedure is used.
      */
     public void updateAll(String procedureName, Collection<T> entities) {
-        if (procedureName == null) {
-            procedureName = getProcedureNameForUpdate();
-        }
         for (T entity : entities) {
-            getCallsHandler().executeModification(procedureName,
-                    createFullParametersMapper(entity));
+            update(entity, procedureName == null ? getProcedureNameForUpdate() : procedureName);
+        }
+    }
+
+    @Override
+    public void removeAll(Collection<ID> ids) {
+        for (ID id : ids) {
+            remove(id);
         }
     }
 }

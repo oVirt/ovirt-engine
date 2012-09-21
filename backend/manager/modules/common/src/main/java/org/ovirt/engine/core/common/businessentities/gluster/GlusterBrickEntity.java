@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import javax.validation.constraints.NotNull;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
@@ -19,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
  * @see GlusterVolumeEntity
  * @see GlusterBrickStatus
  */
-public class GlusterBrickEntity extends IVdcQueryable {
+public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 7119439284741452278L;
 
     @NotNull(message = "VALIDATION.GLUSTER.BRICK.ID.NOT_NULL", groups = { RemoveBrick.class })
@@ -146,6 +147,7 @@ public class GlusterBrickEntity extends IVdcQueryable {
      * GlusterFS, and hence is generated on the backend side.
      * @return id of the brick
      */
+    @Override
     public Guid getId() {
         return getId(true);
     }
@@ -157,6 +159,7 @@ public class GlusterBrickEntity extends IVdcQueryable {
         return id;
     }
 
+    @Override
     public void setId(Guid id) {
         this.id = id;
     }

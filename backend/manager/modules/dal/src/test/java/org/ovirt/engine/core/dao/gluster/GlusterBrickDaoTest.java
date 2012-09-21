@@ -3,7 +3,9 @@ package org.ovirt.engine.core.dao.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -56,6 +58,20 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
         dao.removeBrick(EXISTING_BRICK_ID);
 
         assertNull(dao.getById(EXISTING_BRICK_ID));
+    }
+
+    @Test
+    public void testRemoveMultiple() {
+        List<GlusterBrickEntity> bricks = dao.getBricksOfVolume(EXISTING_VOL_ID);
+        assertEquals(2, bricks.size());
+
+        List<Guid> idsToRemove = new ArrayList<Guid>();
+        idsToRemove.add(bricks.get(0).getId());
+        idsToRemove.add(bricks.get(1).getId());
+        dao.removeAll(idsToRemove);
+
+        bricks = dao.getBricksOfVolume(EXISTING_VOL_ID);
+        assertTrue(bricks.isEmpty());
     }
 
     @Test

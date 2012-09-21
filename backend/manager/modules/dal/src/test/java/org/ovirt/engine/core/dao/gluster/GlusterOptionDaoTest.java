@@ -3,6 +3,10 @@ package org.ovirt.engine.core.dao.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
@@ -54,5 +58,19 @@ public class GlusterOptionDaoTest extends BaseDAOTestCase {
         assertNotNull(dao.getById(EXISTING_OPTION_ID));
         dao.removeVolumeOption(EXISTING_OPTION_ID);
         assertNull(dao.getById(EXISTING_OPTION_ID));
+    }
+
+    @Test
+    public void testRemoveVolumeOptionMultiple() {
+        List<GlusterVolumeOptionEntity> options = dao.getOptionsOfVolume(EXISTING_VOL_ID);
+        assertEquals(2, options.size());
+
+        List<Guid> idsToRemove = new ArrayList<Guid>();
+        idsToRemove.add(options.get(0).getId());
+        idsToRemove.add(options.get(1).getId());
+        dao.removeAll(idsToRemove);
+
+        options = dao.getOptionsOfVolume(EXISTING_VOL_ID);
+        assertTrue(options.isEmpty());
     }
 }

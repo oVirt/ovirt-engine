@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface VmDynamicDAO extends GenericDao<VmDynamic, Guid>, StatusAwareDao<Guid, VMStatus>,
-        MassOperationsDao<VmDynamic> {
+        MassOperationsDao<VmDynamic, Guid> {
     /**
      * Retrieves all running dynamic VMs for the given VDS instance.
      *
@@ -24,6 +24,7 @@ public interface VmDynamicDAO extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      *            the id
      * @return the dynamic vm
      */
+    @Override
     VmDynamic get(Guid id);
 
     /**
@@ -32,6 +33,7 @@ public interface VmDynamicDAO extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      * @param vm
      *            the vm
      */
+    @Override
     void update(VmDynamic vm);
 
     /**
@@ -40,6 +42,7 @@ public interface VmDynamicDAO extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      * @param vmDynamic
      *            the vm
      */
+    @Override
     void remove(Guid vm);
 
     /**
@@ -48,6 +51,7 @@ public interface VmDynamicDAO extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      * @param vm
      *            the vm
      */
+    @Override
     void save(VmDynamic vm);
 
     /**
