@@ -22,7 +22,7 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
 
     protected bookmarks getBookmark() {
         if (mBookmark == null) {
-            mBookmark = DbFacade.getInstance().getBookmarkDAO()
+            mBookmark = DbFacade.getInstance().getBookmarkDao()
                     .get(getBookmarkId());
         }
         return mBookmark;

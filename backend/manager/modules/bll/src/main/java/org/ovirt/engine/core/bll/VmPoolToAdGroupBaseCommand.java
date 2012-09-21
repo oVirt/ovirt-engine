@@ -19,7 +19,7 @@ public abstract class VmPoolToAdGroupBaseCommand<T extends VmPoolToAdElementPara
 
     public String getVmPoolName() {
         if (mVmPoolName == null && mVmPool == null) {
-            mVmPool = DbFacade.getInstance().getVmPoolDAO().get(getVmPoolId());
+            mVmPool = DbFacade.getInstance().getVmPoolDao().get(getVmPoolId());
             if (mVmPool != null) {
                 mVmPoolName = mVmPool.getvm_pool_name();
             }

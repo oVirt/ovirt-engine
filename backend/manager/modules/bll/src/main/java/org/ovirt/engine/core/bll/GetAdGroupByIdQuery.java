@@ -9,6 +9,6 @@ public class GetAdGroupByIdQuery<P extends GetAdGroupByIdParameters> extends Que
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getAdGroupDAO().get(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getAdGroupDao().get(getParameters().getId()));
     }
 }

@@ -10,7 +10,7 @@ public class GetVmPoolByIdQuery<P extends GetVmPoolByIdParameters> extends Queri
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getVmPoolDAO()
+                getDbFacade().getVmPoolDao()
                         .get(getParameters().getPoolId(), getUserID(), getParameters().isFiltered()));
     }
 }

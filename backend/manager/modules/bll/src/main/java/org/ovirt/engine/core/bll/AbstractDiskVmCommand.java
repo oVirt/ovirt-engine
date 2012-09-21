@@ -52,7 +52,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             if (commandType == VDSCommandType.HotPlugDisk) {
                 LUNs lun = lunDisk.getLun();
                 lun.setLunConnections(new ArrayList<storage_server_connections>(getDbFacade()
-                        .getStorageServerConnectionDAO()
+                        .getStorageServerConnectionDao()
                         .getAllForLun(lun.getLUN_id())));
                 if (!StorageHelperDirector.getInstance()
                         .getItem(lun.getLunConnections().get(0).getstorage_type())
@@ -171,7 +171,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
      * @return The StoragePoolIsoMapDAO
      */
     protected StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
-        return getDbFacade().getStoragePoolIsoMapDAO();
+        return getDbFacade().getStoragePoolIsoMapDao();
     }
 
     public String getDiskAlias() {

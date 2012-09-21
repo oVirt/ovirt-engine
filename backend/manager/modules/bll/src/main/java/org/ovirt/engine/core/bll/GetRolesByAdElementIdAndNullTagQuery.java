@@ -13,6 +13,6 @@ public class GetRolesByAdElementIdAndNullTagQuery<P extends MultilevelAdministra
     protected void executeQueryCommand() {
 
         getQueryReturnValue()
-                .setReturnValue(DbFacade.getInstance().getRoleDAO().getForAdElement(getParameters().getAdElementId()));
+                .setReturnValue(DbFacade.getInstance().getRoleDao().getForAdElement(getParameters().getAdElementId()));
     }
 }

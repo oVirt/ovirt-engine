@@ -46,10 +46,10 @@ public class MacPoolManager {
                 }
             }
 
-            List<VM> vms = DbFacade.getInstance().getVmDAO().getAll();
+            List<VM> vms = DbFacade.getInstance().getVmDao().getAll();
             for (VM vm : vms) {
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                        .getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
+                        .getVmNetworkInterfaceDao().getAllForVm(vm.getId());
                 for (VmNetworkInterface iface : interfaces) {
                     AddMac(iface.getMacAddress());
                 }

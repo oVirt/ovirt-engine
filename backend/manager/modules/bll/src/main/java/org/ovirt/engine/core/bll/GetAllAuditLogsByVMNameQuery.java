@@ -13,7 +13,7 @@ public class GetAllAuditLogsByVMNameQuery<P extends GetAllAuditLogsByVMNameParam
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getAuditLogDAO()
+                getDbFacade().getAuditLogDao()
                         .getAllByVMName(getParameters().getVmName(), getUserID(), getParameters().isFiltered()));
     }
 }

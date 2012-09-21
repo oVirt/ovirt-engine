@@ -11,6 +11,6 @@ public class GetStorageServerConnectionsQuery<P extends VdcQueryParametersBase> 
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getStorageServerConnectionDAO().getAll());
+        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getStorageServerConnectionDao().getAll());
     }
 }

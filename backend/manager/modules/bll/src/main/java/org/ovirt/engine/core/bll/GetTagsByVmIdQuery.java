@@ -12,7 +12,7 @@ public class GetTagsByVmIdQuery<P extends GetTagsByVmIdParameters> extends
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getTagDAO()
+                DbFacade.getInstance().getTagDao()
                         .getAllForVm(getParameters().getVmId()));
     }
 }

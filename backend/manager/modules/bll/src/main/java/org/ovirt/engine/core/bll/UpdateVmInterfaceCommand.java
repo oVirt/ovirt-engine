@@ -49,14 +49,14 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     protected void executeVmCommand() {
         AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
-        this.setVmName(DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
+        this.setVmName(DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId()).getvm_name());
 
         getParameters().getInterface().setSpeed(
                 VmInterfaceType.forValue(
                         getParameters().getInterface().getType()).getSpeed());
 
         DbFacade.getInstance()
-                .getVmNetworkInterfaceDAO()
+                .getVmNetworkInterfaceDao()
                 .update(getParameters().getInterface());
 
         if (macAddressChanged) {
@@ -85,13 +85,13 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     protected boolean canDoAction() {
 
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(getParameters().getVmId());
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getParameters().getVmId());
         if (vmDynamic.getstatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN);
             return false;
         }
 
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
+        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForVm(getParameters().getVmId());
         oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
             @Override
@@ -117,7 +117,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         java.util.ArrayList<VmNetworkInterface> allInterfaces = new java.util.ArrayList<VmNetworkInterface>(interfaces);
         allInterfaces.remove(oldIface);
         allInterfaces.add(getParameters().getInterface());
-        VmStatic vm = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId());
+        VmStatic vm = DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId());
 
         List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId());
         if (!checkPciAndIdeLimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
@@ -146,7 +146,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         // check that the exists in current cluster
-        List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+        List<Network> networks = DbFacade.getInstance().getNetworkDao()
                 .getAllForCluster(vm.getvds_group_id());
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override

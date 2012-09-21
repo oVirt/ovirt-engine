@@ -122,7 +122,7 @@ public abstract class AbstractBackendTest {
         dbUser.setdomain(vdcUser.getDomainControler());
         dbUser.setgroups(vdcUser.getGroupNames());
 
-        DbFacade.getInstance().getDbUserDAO().save(dbUser);
+        DbFacade.getInstance().getDbUserDao().save(dbUser);
 
         SessionDataContainer.getInstance().setUser(getSessionId(), vdcUser);
         ThreadLocalParamsContainer.setHttpSessionId(getSessionId());
@@ -144,7 +144,7 @@ public abstract class AbstractBackendTest {
         perms.setObjectType(VdcObjectType.System);
         perms.setrole_id(PredefinedRoles.SUPER_USER.getId());
         try {
-            DbFacade.getInstance().getPermissionDAO().save(perms);
+            DbFacade.getInstance().getPermissionDao().save(perms);
         } catch (Exception e) {
             System.out.println("User is already super user.");
         }
@@ -181,11 +181,11 @@ public abstract class AbstractBackendTest {
     protected static void removeSessionUser() {
         if (getUser() != null) {
             List<permissions> perms =
-                    DbFacade.getInstance().getPermissionDAO().getAllForAdElement(getUser().getUserId());
+                    DbFacade.getInstance().getPermissionDao().getAllForAdElement(getUser().getUserId());
             for (permissions perm : perms) {
-                DbFacade.getInstance().getPermissionDAO().remove(perm.getId());
+                DbFacade.getInstance().getPermissionDao().remove(perm.getId());
             }
-            DbFacade.getInstance().getDbUserDAO().remove(getUser().getUserId());
+            DbFacade.getInstance().getDbUserDao().remove(getUser().getUserId());
         }
     }
 }

@@ -11,7 +11,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
     public RemoveVmFromPoolCommand(T parameters) {
         super(parameters);
         super.setVmId(parameters.getVmId());
-        vm_pool_map map = DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(parameters.getVmId());
+        vm_pool_map map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(parameters.getVmId());
         if (map != null) {
             setVmPoolId(map.getvm_pool_id());
         }
@@ -20,7 +20,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
     public static boolean canRemoveVmFromPool(Guid vmId, java.util.ArrayList<String> messages) {
         boolean returnValue = true;
         // Check if the vm is in a pool.
-        if (DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(vmId) == null) {
+        if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId) == null) {
             messages.add(VdcBllMessages.VM_POOL_CANNOT_DETACH_VM_NOT_ATTACHED_TO_POOL.toString());
             returnValue = false;
         }
@@ -41,7 +41,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
     @Override
     protected void executeCommand() {
         if (getVmPoolId() != null) {
-            DbFacade.getInstance().getVmPoolDAO().removeVmFromVmPool(getVmId());
+            DbFacade.getInstance().getVmPoolDao().removeVmFromVmPool(getVmId());
             setSucceeded(true);
         }
     }

@@ -45,7 +45,7 @@ public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersB
 
     protected ad_groups getAdGroup() {
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
-            mGroup = DbFacade.getInstance().getAdGroupDAO().get(getGroupId());
+            mGroup = DbFacade.getInstance().getAdGroupDao().get(getGroupId());
         }
         return mGroup;
     }
@@ -56,9 +56,9 @@ public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersB
     }
 
     public static ad_groups initAdGroup(ad_groups adGroup) {
-        ad_groups dbGroup = DbFacade.getInstance().getAdGroupDAO().get(adGroup.getid());
+        ad_groups dbGroup = DbFacade.getInstance().getAdGroupDao().get(adGroup.getid());
         if (dbGroup == null) {
-            DbFacade.getInstance().getAdGroupDAO().save(adGroup);
+            DbFacade.getInstance().getAdGroupDao().save(adGroup);
             dbGroup = adGroup;
         }
         return dbGroup;

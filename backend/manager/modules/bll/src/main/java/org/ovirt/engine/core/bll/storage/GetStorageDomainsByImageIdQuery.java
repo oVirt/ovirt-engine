@@ -11,7 +11,7 @@ public class GetStorageDomainsByImageIdQuery<P extends GetImageByImageIdParamete
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getStorageDomainDAO()
+        getQueryReturnValue().setReturnValue(getDbFacade().getStorageDomainDao()
                 .getAllStorageDomainsByImageId(getParameters().getImageId()));
     }
 }

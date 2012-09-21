@@ -138,7 +138,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // and proceed only if the previous user in the database is null. This
         // is needed to prevent races between different users trying to access
         // the console of the same virtual machine simultaneously.
-        final VmDynamicDAO dao = DbFacade.getInstance().getVmDynamicDAO();
+        final VmDynamicDAO dao = DbFacade.getInstance().getVmDynamicDao();
         if (vm.getAllowConsoleReconnect() || neededPermissions) {
             dao.update(vm.getDynamicData());
             sendTicket();

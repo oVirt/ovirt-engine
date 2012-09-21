@@ -12,7 +12,7 @@ public class GetBookmarkByNameQuery<P extends GetBookmarkByNameParameters> exten
     @Override
     protected void executeQueryCommand() {
         GetBookmarkByNameParameters params = (GetBookmarkByNameParameters) getParameters();
-        bookmarks bookmark = DbFacade.getInstance().getBookmarkDAO()
+        bookmarks bookmark = DbFacade.getInstance().getBookmarkDao()
                 .getByName(params.getBookmarkName());
 
         getQueryReturnValue().setReturnValue(bookmark);

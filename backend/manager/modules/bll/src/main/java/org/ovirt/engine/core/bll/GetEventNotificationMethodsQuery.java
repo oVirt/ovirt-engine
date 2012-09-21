@@ -10,6 +10,6 @@ public class GetEventNotificationMethodsQuery<P extends VdcQueryParametersBase> 
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getEventDAO().getAllEventNotificationMethods());
+        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getEventDao().getAllEventNotificationMethods());
     }
 }

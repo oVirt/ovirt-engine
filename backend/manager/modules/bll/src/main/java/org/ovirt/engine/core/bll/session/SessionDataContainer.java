@@ -174,7 +174,7 @@ public class SessionDataContainer {
     }
 
     protected DbUserDAO getDbUserDAO() {
-        return DbFacade.getInstance().getDbUserDAO();
+        return DbFacade.getInstance().getDbUserDao();
     }
 
     /**

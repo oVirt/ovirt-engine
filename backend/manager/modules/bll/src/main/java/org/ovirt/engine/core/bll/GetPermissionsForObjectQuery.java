@@ -16,7 +16,7 @@ public class GetPermissionsForObjectQuery<P extends GetPermissionsForObjectParam
     @Override
     protected void executeQueryCommand() {
         Guid objectId = getParameters().getObjectId();
-        PermissionDAO dao = getDbFacade().getPermissionDAO();
+        PermissionDAO dao = getDbFacade().getPermissionDao();
         List<permissions> perms;
         if (getParameters().getDirectOnly()) {
             perms = dao.getAllForEntity(objectId, getUserID(), getParameters().isFiltered());

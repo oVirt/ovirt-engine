@@ -11,7 +11,7 @@ public class GetStorageDomainByIdQuery<P extends StorageDomainQueryParametersBas
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getStorageDomainDAO().get(getParameters().getStorageDomainId(),
+                getDbFacade().getStorageDomainDao().get(getParameters().getStorageDomainId(),
                         getUserID(),
                         getParameters().isFiltered()));
     }

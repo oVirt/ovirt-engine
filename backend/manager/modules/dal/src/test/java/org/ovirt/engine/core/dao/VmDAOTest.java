@@ -35,12 +35,12 @@ public class VmDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getVmDAO();
+        dao = dbFacade.getVmDao();
         existingVm = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
         existingVm.setstatus(VMStatus.Up);
-        vmtemplate = dbFacade.getVmTemplateDAO().get(
+        vmtemplate = dbFacade.getVmTemplateDao().get(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
-        existingTemplate = dbFacade.getVmTemplateDAO().get(
+        existingTemplate = dbFacade.getVmTemplateDao().get(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
 
         newVm = new VM();

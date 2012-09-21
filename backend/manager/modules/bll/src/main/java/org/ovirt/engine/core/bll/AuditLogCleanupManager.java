@@ -41,7 +41,7 @@ public class AuditLogCleanupManager {
             log.info("AuditLogCleanupManager::deleteAgedOutAuditLogs - entered");
             DateTime latestTimeToKeep = DateTime.getNow().AddDays(
                     Config.<Integer> GetValue(ConfigValues.AuditLogAgingThreashold) * -1);
-            DbFacade.getInstance().getAuditLogDAO().removeAllBeforeDate(latestTimeToKeep);
+            DbFacade.getInstance().getAuditLogDao().removeAllBeforeDate(latestTimeToKeep);
         } catch (RuntimeException e) {
             log.error("AuditLogCleanupManager::deleteAgedOutAuditLogs() - failed with exception", e);
         }

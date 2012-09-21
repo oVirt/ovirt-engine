@@ -28,7 +28,7 @@ public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBas
 
     protected VDS getVds() {
         if (_vds == null) {
-            _vds = DbFacade.getInstance().getVdsDAO().get(getVdsId());
+            _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
         }
         return _vds;
     }

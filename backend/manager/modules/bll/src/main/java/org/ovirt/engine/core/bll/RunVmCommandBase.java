@@ -348,7 +348,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         for (LunDisk lunDisk : lunDisks) {
             LUNs lun = lunDisk.getLun();
             lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
-                                            .getStorageServerConnectionDAO()
+                                            .getStorageServerConnectionDao()
                                             .getAllForLun(lun.getLUN_id())));
 
             if (!lun.getLunConnections().isEmpty()
@@ -365,7 +365,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected void decreasePendingVms(Guid vdsId) {
         synchronized (_decreaseLock) {
             boolean updateDynamic = false;
-            VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+            VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null)
                 return;
             // VCPU

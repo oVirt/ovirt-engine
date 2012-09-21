@@ -20,16 +20,16 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
         boolean retValue;
         // get notification method
         List<event_notification_methods> event_notification_methods = (DbFacade.getInstance()
-                .getEventDAO().getEventNotificationMethodsById(getParameters().getEventSubscriber().getmethod_id()));
+                .getEventDao().getEventNotificationMethodsById(getParameters().getEventSubscriber().getmethod_id()));
         if (event_notification_methods.size() > 0) {
             // validate event
-            List<event_map> event_map = DbFacade.getInstance().getEventDAO().getEventMapByName(
+            List<event_map> event_map = DbFacade.getInstance().getEventDao().getEventMapByName(
                     getParameters().getEventSubscriber().getevent_up_name());
             if (event_map.size() > 0) {
                 // Validate user
                 DbUser user =
                         DbFacade.getInstance()
-                                .getDbUserDAO()
+                                .getDbUserDao()
                                 .get(getParameters().getEventSubscriber().getsubscriber_id());
                 if (user == null) {
                     addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
@@ -50,7 +50,7 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getEventDAO().unsubscribe(getParameters().getEventSubscriber());
+        DbFacade.getInstance().getEventDao().unsubscribe(getParameters().getEventSubscriber());
         setSucceeded(true);
     }
 }

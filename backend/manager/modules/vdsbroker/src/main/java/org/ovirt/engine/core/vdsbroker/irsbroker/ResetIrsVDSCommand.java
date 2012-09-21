@@ -26,7 +26,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
                             new SpmStopVDSCommandParameters(vdsId, parameters.getStoragePoolId())).getSucceeded()
                     || parameters.getIgnoreStopFailed()) {
                 getCurrentIrsProxyData().ResetIrs();
-                storage_pool pool = DbFacade.getInstance().getStoragePoolDAO().get(parameters.getStoragePoolId());
+                storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(parameters.getStoragePoolId());
                 if (pool != null && (pool.getstatus() == StoragePoolStatus.NotOperational)) {
                     ResourceManager
                             .getInstance()

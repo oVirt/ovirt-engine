@@ -35,9 +35,9 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getVmNetworkInterfaceDAO());
-        vmDevicesDao = prepareDAO(dbFacade.getVmDeviceDAO());
-        StatsDao = prepareDAO(dbFacade.getVmNetworkStatisticsDAO());
+        dao = prepareDAO(dbFacade.getVmNetworkInterfaceDao());
+        vmDevicesDao = prepareDAO(dbFacade.getVmDeviceDao());
+        StatsDao = prepareDAO(dbFacade.getVmNetworkStatisticsDao());
 
         newVmInterface = new VmNetworkInterface();
         newVmInterface.setStatistics(new VmNetworkStatistics());

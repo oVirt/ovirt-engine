@@ -31,17 +31,17 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     }
 
     protected void DetachAllVmsFromUser() {
-        List<VM> vms = DbFacade.getInstance().getVmDAO().getAllForUser(getAdUserId());
+        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForUser(getAdUserId());
         for (VM vm : vms) {
             if (getVmPoolId().equals(vm.getVmPoolId())) {
                 permissions perm = DbFacade
                         .getInstance()
-                        .getPermissionDAO()
+                        .getPermissionDao()
                         .getForRoleAndAdElementAndObject(
                                 PredefinedRoles.ENGINE_USER.getId(),
                                 getAdUserId(), vm.getId());
                 if (perm != null) {
-                    DbFacade.getInstance().getPermissionDAO().remove(perm.getId());
+                    DbFacade.getInstance().getPermissionDao().remove(perm.getId());
                     RestoreVmFromBaseSnapshot(vm);
                 }
             }

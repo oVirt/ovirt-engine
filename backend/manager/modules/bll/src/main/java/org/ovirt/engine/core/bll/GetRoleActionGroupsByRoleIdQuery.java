@@ -11,7 +11,7 @@ public class GetRoleActionGroupsByRoleIdQuery<P extends MultilevelAdministration
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getActionGroupDAO()
+                getDbFacade().getActionGroupDao()
                         .getAllForRole(getParameters().getRoleId()));
     }
 }

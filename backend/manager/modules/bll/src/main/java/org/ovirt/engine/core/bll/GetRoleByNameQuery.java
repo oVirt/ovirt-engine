@@ -13,7 +13,7 @@ public class GetRoleByNameQuery<P extends MultilevelAdministrationByRoleNamePara
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                .getRoleDAO()
+                .getRoleDao()
                 .getByName(getParameters().getRoleName()));
     }
 }

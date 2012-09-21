@@ -10,7 +10,7 @@ public class GetAllStoragePoolsQuery<P extends VdcQueryParametersBase> extends Q
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getStoragePoolDAO()
+        getQueryReturnValue().setReturnValue(getDbFacade().getStoragePoolDao()
                 .getAll(getUserID(), getParameters().isFiltered()));
     }
 }

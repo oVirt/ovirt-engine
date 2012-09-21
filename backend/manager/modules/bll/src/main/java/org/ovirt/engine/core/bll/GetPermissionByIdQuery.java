@@ -12,6 +12,6 @@ public class GetPermissionByIdQuery<P extends MultilevelAdministrationByPermissi
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue()
-                .setReturnValue(DbFacade.getInstance().getPermissionDAO().get(getParameters().getPermissionId()));
+                .setReturnValue(DbFacade.getInstance().getPermissionDao().get(getParameters().getPermissionId()));
     }
 }

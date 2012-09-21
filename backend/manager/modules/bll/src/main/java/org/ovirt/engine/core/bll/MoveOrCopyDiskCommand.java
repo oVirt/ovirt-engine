@@ -258,7 +258,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {
-        return getDbFacade().getVmDeviceDAO();
+        return getDbFacade().getVmDeviceDao();
     }
 
     @Override

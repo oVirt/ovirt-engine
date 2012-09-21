@@ -25,7 +25,7 @@ public class GetAllRolesQueryTest extends AbstractUserQueryTest<MultilevelAdmini
         // Mock the DAO
         RoleDAO roleDAOMock = mock(RoleDAO.class);
         when(roleDAOMock.getAll()).thenReturn(result);
-        when(getDbFacadeMockInstance().getRoleDAO()).thenReturn(roleDAOMock);
+        when(getDbFacadeMockInstance().getRoleDao()).thenReturn(roleDAOMock);
 
         // Execute the query
         getQuery().executeQueryCommand();

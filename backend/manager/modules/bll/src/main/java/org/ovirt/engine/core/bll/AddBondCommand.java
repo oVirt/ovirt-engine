@@ -62,7 +62,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             if (retVal.getSucceeded()) {
                 // set network status (this can change the network status to
                 // operational)
-                VdsStatic vdsStatic = DbFacade.getInstance().getVdsStaticDAO().get(params.getVdsId());
+                VdsStatic vdsStatic = DbFacade.getInstance().getVdsStaticDao().get(params.getVdsId());
                 AttachNetworkToVdsGroupCommand.SetNetworkStatus(vdsStatic.getvds_group_id(), params
                         .getNetwork());
                 setSucceeded(true);
@@ -81,7 +81,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS);
         }
 
-        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(
+        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(
                 getParameters().getVdsId());
 
         // check that bond exists
@@ -134,7 +134,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         // check that the network exists in current cluster
-        List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getVds().getvds_group_id());
+        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(getVds().getvds_group_id());
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {

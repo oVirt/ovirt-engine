@@ -14,6 +14,6 @@ public class GetEventNotificationMethodByTypeQuery<P extends GetEventNotificatio
         String method_typeField = getParameters().getMethodType().name();
 
         getQueryReturnValue()
-                .setReturnValue(DbFacade.getInstance().getEventDAO().getEventNotificationMethodsByType(method_typeField));
+                .setReturnValue(DbFacade.getInstance().getEventDao().getEventNotificationMethodsByType(method_typeField));
     }
 }

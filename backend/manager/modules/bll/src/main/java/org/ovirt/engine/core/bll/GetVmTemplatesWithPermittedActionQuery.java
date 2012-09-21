@@ -12,7 +12,7 @@ public class GetVmTemplatesWithPermittedActionQuery<P extends GetEntitiesWithPer
     @Override
     protected void executeQueryCommand() {
         P params = getParameters();
-        setReturnValue(getDbFacade().getVmTemplateDAO().
+        setReturnValue(getDbFacade().getVmTemplateDao().
                 getTemplatesWithPermittedAction(getUserID(), params.getActionGroup()));
     }
 }

@@ -25,11 +25,11 @@ public class VmPoolHandler {
      *            The VM's id.
      */
     public static void ProcessVmPoolOnStopVm(Guid vmId, CommandContext context) {
-        vm_pool_map map = DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(vmId);
-        List<DbUser> users = DbFacade.getInstance().getDbUserDAO().getAllForVm(vmId);
+        vm_pool_map map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId);
+        List<DbUser> users = DbFacade.getInstance().getDbUserDao().getAllForVm(vmId);
         // Check if this is a Vm from a Vm pool, and is attached to a user
         if (map != null && users != null && !users.isEmpty()) {
-            vm_pools pool = DbFacade.getInstance().getVmPoolDAO().get(map.getvm_pool_id());
+            vm_pools pool = DbFacade.getInstance().getVmPoolDao().get(map.getvm_pool_id());
             if (pool != null && pool.getvm_pool_type() == VmPoolType.Automatic) {
                 // should be only one user in the collection
                 for (DbUser dbUser : users) {

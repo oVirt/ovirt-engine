@@ -22,7 +22,7 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
         try {
             Guid masterDomainIdFromDb =
                     DbFacade.getInstance()
-                            .getStorageDomainDAO()
+                            .getStorageDomainDao()
                             .getMasterStorageDomainIdForPool(getStoragePool().getId());
             Backend.getInstance()
                     .getResourceManager()

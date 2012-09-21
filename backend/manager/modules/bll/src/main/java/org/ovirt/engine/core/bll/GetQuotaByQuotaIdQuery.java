@@ -12,7 +12,7 @@ public class GetQuotaByQuotaIdQuery<P extends GetQuotaByQuotaIdQueryParameters> 
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                .getQuotaDAO()
+                .getQuotaDao()
                 .getById(getParameters().getQuotaId()));
     }
 }

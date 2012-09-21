@@ -12,6 +12,6 @@ public class GetAllEventSubscribersQuery<P extends VdcQueryParametersBase>
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getEventDAO().getAll());
+                DbFacade.getInstance().getEventDao().getAll());
     }
 }

@@ -85,7 +85,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         assertNotSame(true, listOfRepoFiles.isEmpty());
 
         // Test remove Iso
-        StorageDomainDAO storageDomainDao = dbFacade.getStorageDomainDAO();
+        StorageDomainDAO storageDomainDao = dbFacade.getStorageDomainDao();
         storageDomainDao.remove(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3);
         listOfRepoFiles = getActiveIsoDomain();
 

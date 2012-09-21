@@ -245,25 +245,25 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType) {
-        if (DbFacade.getInstance().getLunDAO().get(lun.getLUN_id()) == null) {
-            DbFacade.getInstance().getLunDAO().save(lun);
+        if (DbFacade.getInstance().getLunDao().get(lun.getLUN_id()) == null) {
+            DbFacade.getInstance().getLunDao().save(lun);
         }
         for (storage_server_connections connection : lun.getLunConnections()) {
             List<storage_server_connections> connections = DbFacade.getInstance()
-                    .getStorageServerConnectionDAO().getAllForConnection(connection);
+                    .getStorageServerConnectionDao().getAllForConnection(connection);
             if (connections.isEmpty()) {
                 connection.setid(Guid.NewGuid().toString());
                 connection.setstorage_type(storageType);
-                DbFacade.getInstance().getStorageServerConnectionDAO().save(connection);
+                DbFacade.getInstance().getStorageServerConnectionDao().save(connection);
 
             } else {
                 connection.setid(connections.get(0).getid());
             }
             if (DbFacade.getInstance()
-                    .getStorageServerConnectionLunMapDAO()
+                    .getStorageServerConnectionLunMapDao()
                     .get(new LUN_storage_server_connection_map_id(lun.getLUN_id(),
                             connection.getid())) == null) {
-                DbFacade.getInstance().getStorageServerConnectionLunMapDAO().save(
+                DbFacade.getInstance().getStorageServerConnectionLunMapDao().save(
                         new LUN_storage_server_connection_map(lun.getLUN_id(), connection.getid()));
             }
         }
@@ -339,7 +339,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
-        return getDbFacade().getStoragePoolIsoMapDAO();
+        return getDbFacade().getStoragePoolIsoMapDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {
@@ -347,7 +347,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
-        return getDbFacade().getDiskImageDynamicDAO();
+        return getDbFacade().getDiskImageDynamicDao();
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {
@@ -355,11 +355,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
-        return getDbFacade().getStorageDomainStaticDAO();
+        return getDbFacade().getStorageDomainStaticDao();
     }
 
     protected StorageServerConnectionDAO getStorageServerConnectionDAO() {
-        return getDbFacade().getStorageServerConnectionDAO();
+        return getDbFacade().getStorageServerConnectionDao();
     }
 
     protected IStorageHelper getStorageHelper(storage_domains storageDomain) {

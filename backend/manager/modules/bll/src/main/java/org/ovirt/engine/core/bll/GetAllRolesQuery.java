@@ -9,6 +9,6 @@ public class GetAllRolesQuery<P extends MultilevelAdministrationsQueriesParamete
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getRoleDAO().getAll());
+        getQueryReturnValue().setReturnValue(getDbFacade().getRoleDao().getAll());
     }
 }

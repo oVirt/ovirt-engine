@@ -259,12 +259,12 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                             getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getstatus());
                         }
                         DbFacade.getInstance()
-                                .getStorageDomainStaticDAO()
+                                .getStorageDomainStaticDao()
                                 .update(newMaster.getStorageStaticData());
                         getCompensationContext().snapshotEntity(getStorageDomain().getStorageStaticData());
                         getStorageDomain().setstorage_domain_type(StorageDomainType.Data);
                         DbFacade.getInstance()
-                                .getStorageDomainStaticDAO()
+                                .getStorageDomainStaticDao()
                                 .update(getStorageDomain().getStorageStaticData());
                         getCompensationContext().stateChanged();
                         return null;
@@ -278,7 +278,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     protected AsyncTaskDAO getAsyncTaskDao() {
-        return DbFacade.getInstance().getAsyncTaskDAO();
+        return DbFacade.getInstance().getAsyncTaskDao();
     }
 
     @Override

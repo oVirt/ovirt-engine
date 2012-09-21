@@ -15,7 +15,7 @@ public class GetVdsFreeBondsByVdsIdQuery<P extends GetVdsByVdsIdParameters> exte
     @Override
     protected void executeQueryCommand() {
         final List<VdsNetworkInterface> list =
-                getDbFacade().getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
+                getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
         // we return only bonds that are not active (that have no interfaces
         // related to them)

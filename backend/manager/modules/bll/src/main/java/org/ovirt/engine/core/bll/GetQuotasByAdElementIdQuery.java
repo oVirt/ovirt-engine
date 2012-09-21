@@ -10,7 +10,7 @@ public class GetQuotasByAdElementIdQuery<P extends GetQuotasByAdElementIdQueryPa
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
-                .getQuotaDAO()
+                .getQuotaDao()
                 .getQuotaByAdElementId(getParameters().getAdElementId(), getParameters().getStoragePoolId()));
     }
 }

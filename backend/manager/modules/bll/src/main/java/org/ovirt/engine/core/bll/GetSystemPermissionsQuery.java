@@ -14,7 +14,7 @@ public class GetSystemPermissionsQuery<P extends VdcQueryParametersBase> extends
 
     @Override
     protected void executeQueryCommand() {
-        List<permissions> perms = DbFacade.getInstance().getPermissionDAO().getAllForEntity(
+        List<permissions> perms = DbFacade.getInstance().getPermissionDao().getAllForEntity(
                 MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID);
         getQueryReturnValue().setReturnValue(perms);
     }

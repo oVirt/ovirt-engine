@@ -106,7 +106,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         MigrateAllVdss();
         // set network to operational / non-operational
         for (Guid id : _vdsGroupIds) {
-            List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(id);
+            List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(id);
             for (Network net : networks) {
                 AttachNetworkToVdsGroupCommand.SetNetworkStatus(id, net);
             }
@@ -124,7 +124,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         List<String> nonMigratableVms = new ArrayList<String>();
 
         for (Guid vdsId : getParameters().getVdsIdList()) {
-            VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+            VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null) {
                 log.error(String.format("ResourceManager::vdsMaintenance could not find vds_id = '%1$s'", vdsId));
                 addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
@@ -231,7 +231,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                 List<String> problematicClusters = new ArrayList<String>();
                 List<String> allHostsWithRunningVms = new ArrayList<String>();
                 for (Guid clusterID : clustersAsSet) {
-                    List<VDS> vdsList = DbFacade.getInstance().getVdsDAO().getAllForVdsGroup(clusterID);
+                    List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(clusterID);
                     boolean vdsForMigrationExists =
                             checkIfThereIsVDSToHoldMigratedVMs(getParameters().getVdsIdList(), vdsList);
 
@@ -326,7 +326,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
 
     private void addClusterDetails(Guid vdsGroupID, List<String> clustersWithRunningVms) {
         if (vdsGroupID != null && !vdsGroupID.equals(Guid.Empty)) {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().getWithRunningVms(vdsGroupID);
+            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().getWithRunningVms(vdsGroupID);
             if (vdsGroup != null) {
                 clustersWithRunningVms.add(vdsGroup.getname());
             }

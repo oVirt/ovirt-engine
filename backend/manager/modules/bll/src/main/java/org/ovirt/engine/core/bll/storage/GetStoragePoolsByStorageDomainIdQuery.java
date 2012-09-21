@@ -14,7 +14,7 @@ public class GetStoragePoolsByStorageDomainIdQuery<P extends StorageDomainQueryP
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 DbFacade.getInstance()
-                        .getStoragePoolDAO()
+                        .getStoragePoolDao()
                         .getAllForStorageDomain(
                                 getParameters().getStorageDomainId()));
     }

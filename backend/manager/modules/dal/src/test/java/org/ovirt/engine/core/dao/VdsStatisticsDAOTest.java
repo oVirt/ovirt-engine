@@ -22,9 +22,9 @@ public class VdsStatisticsDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getVdsStatisticsDAO());
-        staticDao = prepareDAO(dbFacade.getVdsStaticDAO());
-        dynamicDao =  prepareDAO(dbFacade.getVdsDynamicDAO());
+        dao = prepareDAO(dbFacade.getVdsStatisticsDao());
+        staticDao = prepareDAO(dbFacade.getVdsStaticDao());
+        dynamicDao =  prepareDAO(dbFacade.getVdsDynamicDao());
         existingVds = staticDao.get(EXISTING_VDS_ID);
 
         newStaticVds = new VdsStatic();

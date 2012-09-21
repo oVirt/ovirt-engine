@@ -31,7 +31,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStoragePoolDAO());
+        dao = prepareDAO(dbFacade.getStoragePoolDao());
 
         existingPool = dao
                 .get(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));

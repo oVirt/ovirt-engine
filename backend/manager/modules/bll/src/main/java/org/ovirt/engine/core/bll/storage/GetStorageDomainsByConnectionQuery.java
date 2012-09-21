@@ -27,12 +27,12 @@ public class GetStorageDomainsByConnectionQuery<P extends GetStorageDomainsByCon
         if (storagePoolId != null) {
             domainsList =
                     DbFacade.getInstance()
-                            .getStorageDomainDAO()
+                            .getStorageDomainDao()
                             .getAllByStoragePoolAndConnection(storagePoolId, connection);
         } else {
             domainsList =
                     DbFacade.getInstance()
-                            .getStorageDomainDAO()
+                            .getStorageDomainDao()
                             .getAllForConnection(connection);
         }
         getQueryReturnValue().setReturnValue(domainsList);

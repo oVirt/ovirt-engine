@@ -49,7 +49,7 @@ public class StorageDomainValidator {
             Guid storageId = imageToDestinationDomainMap.get(image.getId()).getstorage_ids().get(0);
             storage_domains domain = storageDomains.get(storageId);
             if (domain == null) {
-                domain = DbFacade.getInstance().getStorageDomainDAO().get(storageId);
+                domain = DbFacade.getInstance().getStorageDomainDao().get(storageId);
             }
             spaceMap.put(image, domain);
         }

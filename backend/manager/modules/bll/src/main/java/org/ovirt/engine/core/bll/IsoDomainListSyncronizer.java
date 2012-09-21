@@ -206,7 +206,7 @@ public class IsoDomainListSyncronizer {
                 handleErrorLog(tempProblematicRepoFileList);
 
                 // If refresh succeeded print an audit log Indicating that.
-                storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDAO().get(storageDomainId);
+                storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
                 addToAuditLogSuccessMessage(storageDomain.getstorage_name(), fileTypeExtension.name());
             } else {
                 // Print log Indicating the problematic pools.
@@ -295,7 +295,7 @@ public class IsoDomainListSyncronizer {
         // Fetch all the Storage pools for this Iso domain Id.
         List<storage_pool_iso_map> isoMapList =
                 DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO()
+                        .getStoragePoolIsoMapDao()
                         .getAllForStorage(storageDomainId);
         log.debugFormat("Fetched {0} storage pools for {1} file type, in Iso domain {2}.",
                 isoMapList.size(),
@@ -514,7 +514,7 @@ public class IsoDomainListSyncronizer {
         String storageDomainName = "Repository not found";
         if (repoFileMetaData != null && repoFileMetaData.getRepoDomainId() != null) {
             storage_domains storageDomain =
-                    DbFacade.getInstance().getStorageDomainDAO().get(repoFileMetaData.getRepoDomainId());
+                    DbFacade.getInstance().getStorageDomainDao().get(repoFileMetaData.getRepoDomainId());
             if (storageDomain != null) {
                 storageDomainName =
                         String.format("%s (%s file type)",

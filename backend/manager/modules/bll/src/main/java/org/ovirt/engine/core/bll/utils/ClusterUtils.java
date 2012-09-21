@@ -54,6 +54,6 @@ public class ClusterUtils {
 
     public VdsDAO getVdsDao() {
         return DbFacade.getInstance()
-                .getVdsDAO();
+                .getVdsDao();
     }
 }

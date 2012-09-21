@@ -17,12 +17,12 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public final class HighAvailableVmsDirector {
     public static void TryRunHighAvailableVmsOnVmDown(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         TryRunHighAvailableVm(vm.getvds_group_name());
     }
 
     public static void TryRunHighAvailableVdsUp(Guid vdsId) {
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+        VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
         TryRunHighAvailableVm(vds.getvds_group_name());
     }
 

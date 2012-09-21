@@ -37,7 +37,7 @@ public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
             return;
         }
 
-        boolean allVmsRemoved = DbFacade.getInstance().getVmPoolDAO().getVmPoolsMapByVmPoolId(poolId).size() == 0;
+        boolean allVmsRemoved = DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(poolId).size() == 0;
         if (!allVmsRemoved) {
             return;
         }

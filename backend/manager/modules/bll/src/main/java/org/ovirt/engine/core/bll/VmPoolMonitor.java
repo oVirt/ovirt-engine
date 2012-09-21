@@ -27,7 +27,7 @@ public class VmPoolMonitor {
      */
     @OnTimerMethodAnnotation("managePrestartedVmsInAllVmPools")
     public void managePrestartedVmsInAllVmPools() {
-        List<vm_pools> vmPools = DbFacade.getInstance().getVmPoolDAO().getAll();
+        List<vm_pools> vmPools = DbFacade.getInstance().getVmPoolDao().getAll();
          for (vm_pools vmPool : vmPools) {
             managePrestartedVmsInPool(vmPool);
         }
@@ -68,7 +68,7 @@ public class VmPoolMonitor {
      */
     private void prestartVms(Guid vmPoolId, int numOfVmsToPrestart) {
         // Fetch all vms that are in status down
-        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
+        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         int failedAttempts = 0;
         int prestartedVmsCounter = 0;
@@ -119,7 +119,7 @@ public class VmPoolMonitor {
     private boolean prestartVm(Guid vmGuid) {
         boolean prestartVmSucceeded = false;
         if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid)) {
-            VM vmToPrestart = DbFacade.getInstance().getVmDAO().get(vmGuid);
+            VM vmToPrestart = DbFacade.getInstance().getVmDao().get(vmGuid);
             if (runVmAsStateless(vmToPrestart)) {
                 prestartVmSucceeded = true;
             }

@@ -33,7 +33,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             command.Execute();
             VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
 
-            final VM vm = DbFacade.getInstance().getVmDAO().get(parameters.getVmId());
+            final VM vm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());
 
             if (vdsReturnValue.getSucceeded()) {
                 retval = VMStatus.MigratingFrom;
@@ -52,7 +52,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
+                    DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
                     return null;
                 }
             });
@@ -87,7 +87,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                 public Object runInTransaction() {
                     VDS vds = null;
                     try {
-                        vds = DbFacade.getInstance().getVdsDAO().get(vdsManager.getVdsId());
+                        vds = DbFacade.getInstance().getVdsDao().get(vdsManager.getVdsId());
                         vds.setvm_count(vds.getvm_count() + 1);
                         vds.setpending_vcpus_count(vds.getpending_vcpus_count() + vm.getnum_of_cpus());
                         vds.setpending_vmem_size(vds.getpending_vmem_size() + vm.getMinAllocatedMem());

@@ -31,7 +31,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         boolean returnValue = super.canDoAction() && CheckStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Active) && CheckStorageDomainNameLengthValid();
         storage_domain_static oldDomain =
-                DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getId());
+                DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId());
 
         // Only after validating the existing of the storage domain in DB, we set the field lastTimeUsedAsMaster in the
         // storage domain which is about to be updated.
@@ -82,7 +82,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getStorageDomainStaticDAO().update(getStorageDomain().getStorageStaticData());
+        DbFacade.getInstance().getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
         if (_storageDomainNameChanged && getStoragePool() != null) {
             Backend.getInstance()
                     .getResourceManager()

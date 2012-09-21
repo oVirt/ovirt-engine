@@ -68,9 +68,9 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return false;
         }
 
-        targetStoragePool = DbFacade.getInstance().getStoragePoolDAO().getForVdsGroup(getTargetCluster().getId());
+        targetStoragePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(getTargetCluster().getId());
         if (targetStoragePool != null && targetStoragePool.getstorage_pool_type() == StorageType.LOCALFS) {
-            if (!DbFacade.getInstance().getVdsStaticDAO().getAllForVdsGroup(getParameters().getClusterId()).isEmpty()) {
+            if (!DbFacade.getInstance().getVdsStaticDao().getAllForVdsGroup(getParameters().getClusterId()).isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
                 return false;
             }
@@ -118,7 +118,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 VdsStatic staticData = getVds().getStaticData();
                 getCompensationContext().snapshotEntity(staticData);
                 staticData.setvds_group_id(targetClusterId);
-                DbFacade.getInstance().getVdsStaticDAO().update(staticData);
+                DbFacade.getInstance().getVdsStaticDao().update(staticData);
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -236,7 +236,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private VDSGroup getTargetCluster() {
         if (targetCluster == null) {
-            targetCluster = DbFacade.getInstance().getVdsGroupDAO().get(getParameters().getClusterId());
+            targetCluster = DbFacade.getInstance().getVdsGroupDao().get(getParameters().getClusterId());
         }
         return targetCluster;
     }

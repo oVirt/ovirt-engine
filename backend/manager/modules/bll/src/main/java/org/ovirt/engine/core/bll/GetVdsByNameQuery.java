@@ -12,7 +12,7 @@ public class GetVdsByNameQuery<P extends GetVdsByNameParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        List<VDS> vds = getDbFacade().getVdsDAO().getAllWithName(getParameters().getName());
+        List<VDS> vds = getDbFacade().getVdsDao().getAllWithName(getParameters().getName());
 
         if (vds.size() > 0) {
             getQueryReturnValue().setReturnValue(vds.get(0));

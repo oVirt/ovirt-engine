@@ -18,7 +18,7 @@ public class InternalBrokerUtils {
     private static final Guid ADMIN_GUID = Guid.createGuidFromString("fdfc627c-d875-11e0-90f0-83df133b58cc");
 
     private static DbUserDAO getDbUserDAO() {
-        return DbFacade.getInstance().getDbUserDAO();
+        return DbFacade.getInstance().getDbUserDao();
     }
 
     public static ad_groups getGroupByGroupGuid(Guid groupGuid) {

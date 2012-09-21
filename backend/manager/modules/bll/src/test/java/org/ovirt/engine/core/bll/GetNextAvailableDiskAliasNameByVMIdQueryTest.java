@@ -76,7 +76,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
      * @throws Exception
      */
     private void mockDAOForQuery() throws Exception {
-        when(getDbFacadeMockInstance().getVmDAO()).thenReturn(vmDAO);
+        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAO);
         when(getQueryParameters().getVmId()).thenReturn(vmId);
     }
 

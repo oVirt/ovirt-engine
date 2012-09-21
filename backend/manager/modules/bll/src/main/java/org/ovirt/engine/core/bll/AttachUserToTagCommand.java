@@ -17,10 +17,10 @@ public class AttachUserToTagCommand<T extends AttachEntityToTagParameters> exten
         tags_user_map map;
         if (getTagId() != null) {
             for (Guid userGuid : getUserList()) {
-                DbUser user = DbFacade.getInstance().getDbUserDAO().get(userGuid);
-                if (DbFacade.getInstance().getTagDAO().getTagUserByTagIdAndByuserId(getTagId(), userGuid) == null) {
+                DbUser user = DbFacade.getInstance().getDbUserDao().get(userGuid);
+                if (DbFacade.getInstance().getTagDao().getTagUserByTagIdAndByuserId(getTagId(), userGuid) == null) {
                     map = new tags_user_map(getTagId(), userGuid);
-                    DbFacade.getInstance().getTagDAO().attachUserToTag(map);
+                    DbFacade.getInstance().getTagDao().attachUserToTag(map);
                     noActionDone = false;
                     if (user != null) {
                         AppendCustomValue("AttachUsersNames", user.getusername(), ", ");

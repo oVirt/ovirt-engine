@@ -11,6 +11,6 @@ public class GetAllBookmarksQuery<P extends VdcQueryParametersBase> extends Quer
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getBookmarkDAO().getAll());
+                DbFacade.getInstance().getBookmarkDao().getAll());
     }
 }

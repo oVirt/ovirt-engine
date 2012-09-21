@@ -11,6 +11,6 @@ public class GetTagVmMapByTagNameQuery<P extends GetTagVmMapByTagNameParameters>
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getTagDAO().getTagVmMapByTagName(getParameters().getTagName()));
+        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getTagDao().getTagVmMapByTagName(getParameters().getTagName()));
     }
 }

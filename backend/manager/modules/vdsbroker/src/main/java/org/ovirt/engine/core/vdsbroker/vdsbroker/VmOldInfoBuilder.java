@@ -55,7 +55,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         List<Map<String, String>> drives = new ArrayList<Map<String, String>>(vm.getDiskMap().size());
         int ideCount = 0, pciCount = 0;
         List<Disk> disks = getSortedDisks();
-        List<VmDevice> vmDiskDevices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(
+        List<VmDevice> vmDiskDevices = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(), VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName());
         for (Disk temp : disks) {
 
@@ -202,7 +202,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmBootSequence() {
         // get device list for the VM
-        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO()
+        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDao()
                 .getVmDeviceByVmId(vm.getId());
         String bootSeqInDB = VmDeviceCommonUtils.getBootSequence(devices)
                 .toString().toLowerCase();

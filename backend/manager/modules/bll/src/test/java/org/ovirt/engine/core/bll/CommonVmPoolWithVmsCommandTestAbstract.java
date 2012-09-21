@@ -172,7 +172,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     }
 
     private void mockVmNetworkInterfaceDao() {
-        when(dbFacada.getVmNetworkInterfaceDAO()).thenReturn(vmNetworkInterfaceDao);
+        when(dbFacada.getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDao);
         when(vmNetworkInterfaceDao.getAllForTemplate(vmTemplateId))
                 .thenReturn(Collections.<VmNetworkInterface> emptyList());
     }

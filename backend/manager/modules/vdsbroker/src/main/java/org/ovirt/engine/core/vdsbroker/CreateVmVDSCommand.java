@@ -75,7 +75,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                                         public Object runInTransaction() {
                                             HandleVdsInformation();
                                             vm.setrun_on_vds(getVdsId());
-                                            DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
+                                            DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
                                             return null;
                                         }
                                     });
@@ -125,7 +125,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
         Guid guid = getParameters().getVm().getId();
         String vmName = getParameters().getVm().getvm_name();
-        VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDAO().get(guid);
+        VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDao().get(guid);
         if (ResourceManager.getInstance().IsVmDuringInitiating(getParameters().getVm().getId())) {
             log.infoFormat("Vm Running failed - vm {0}:{1} already running", guid, vmName);
             getVDSReturnValue().setReturnValue(vmDynamicFromDb.getstatus());

@@ -197,7 +197,7 @@ public class VdsManager {
                 vm.setDynamicData(vmDynamic);
             }
         }
-        DbFacade.getInstance().getVmDynamicDAO().update(vmDynamic);
+        DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
     }
 
     private VdsUpdateRunTimeInfo _vdsUpdater;
@@ -216,7 +216,7 @@ public class VdsManager {
                     @Override
                     public Object runInTransaction() {
                         {
-                            _vds = DbFacade.getInstance().getVdsDAO().get(getVdsId());
+                            _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
                             if (_vds == null) {
                                 log.errorFormat("ResourceManager::refreshVdsRunTimeInfo - OnTimer is NULL for {0}",
                                         getVdsId());
@@ -347,7 +347,7 @@ public class VdsManager {
     @OnTimerMethodAnnotation("onTimerHandleVdsRecovering")
     public void onTimerHandleVdsRecovering() {
         recoveringJobIdMap.remove(getVdsId());
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(getVdsId());
+        VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
         if (vds.getstatus() == VDSStatus.Initializing) {
             try {
                 ResourceManager
@@ -375,7 +375,7 @@ public class VdsManager {
      * @param dynamicData
      */
     public void UpdateDynamicData(VdsDynamic dynamicData) {
-        DbFacade.getInstance().getVdsDynamicDAO().update(dynamicData);
+        DbFacade.getInstance().getVdsDynamicDao().update(dynamicData);
     }
 
     /**
@@ -384,7 +384,7 @@ public class VdsManager {
      * @param statisticsData
      */
     public void UpdateStatisticsData(VdsStatistics statisticsData) {
-        DbFacade.getInstance().getVdsStatisticsDAO().update(statisticsData);
+        DbFacade.getInstance().getVdsStatisticsDao().update(statisticsData);
     }
 
     public void activate() {
@@ -398,7 +398,7 @@ public class VdsManager {
                         "ResourceManager::activateVds - trying to activate host {0} , meanwhile setting status to Unassigned meanwhile",
                         getVdsId());
             }
-            vds = DbFacade.getInstance().getVdsDAO().get(getVdsId());
+            vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
             /**
              * refresh capabilities
              */
@@ -430,7 +430,7 @@ public class VdsManager {
     public void setStatus(VDSStatus status, VDS vds) {
         synchronized (getLockObj()) {
             if (vds == null) {
-                vds = DbFacade.getInstance().getVdsDAO().get(getVdsId());
+                vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
             }
             if (vds.getprevious_status() != vds.getstatus()) {
                 vds.setprevious_status(vds.getstatus());
@@ -485,7 +485,7 @@ public class VdsManager {
     @OnTimerMethodAnnotation("OnVdsDuringFailureTimer")
     public void OnVdsDuringFailureTimer() {
         synchronized (getLockObj()) {
-            VDS vds = DbFacade.getInstance().getVdsDAO().get(getVdsId());
+            VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
             /**
              * Disable timer if vds returns from suspitious mode
              */

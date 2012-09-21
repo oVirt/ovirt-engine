@@ -230,7 +230,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected BusinessEntitySnapshotDAO getBusinessEntitySnapshotDAO() {
-        return DbFacade.getInstance().getBusinessEntitySnapshotDAO();
+        return DbFacade.getInstance().getBusinessEntitySnapshotDao();
     }
 
     /**
@@ -563,7 +563,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected boolean isBackwardsCompatible() {
         boolean result = true;
         action_version_map actionVersionMap = DbFacade.getInstance()
-                .getActionGroupDAO().getActionVersionMapByActionType(getActionType());
+                .getActionGroupDao().getActionVersionMapByActionType(getActionType());
         // if actionVersionMap not null check cluster level
         // cluster level ok check storage_pool level
         if (actionVersionMap != null

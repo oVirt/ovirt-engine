@@ -78,7 +78,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         if (retVal) {
             // we fectch from db and not using VmTmplate property becase
             // VmTemplate is the one from export domain and not from database
-            VmTemplate tmpl = DbFacade.getInstance().getVmTemplateDAO().get(getVmTemplateId());
+            VmTemplate tmpl = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplateId());
             if (tmpl != null) {
                 retVal = (tmpl.getstatus() != VmTemplateStatus.Locked);
                 if (!retVal) {

@@ -11,6 +11,6 @@ public class GetVmPoolsMapByVmPoolIdQuery<P extends GetVmPoolsMapByVmPoolIdParam
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                                                     .getVmPoolDAO().getVmPoolsMapByVmPoolId(getParameters().getPoolId()));
+                                                     .getVmPoolDao().getVmPoolsMapByVmPoolId(getParameters().getPoolId()));
     }
 }

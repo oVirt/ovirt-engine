@@ -12,7 +12,7 @@ public class GetVmsByUseridQuery<P extends GetVmsByUseridParameters> extends
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getVmDAO()
+                DbFacade.getInstance().getVmDao()
                         .getAllForUser(getParameters().getUserId()));
     }
 }

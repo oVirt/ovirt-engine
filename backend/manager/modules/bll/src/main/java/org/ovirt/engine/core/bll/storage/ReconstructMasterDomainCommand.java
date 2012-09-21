@@ -53,7 +53,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     @Override
     protected boolean canDoAction() {
         List<storage_pool_iso_map> poolDomains = DbFacade.getInstance()
-                .getStoragePoolIsoMapDAO().getAllForStoragePool(getStoragePool().getId());
+                .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());
         for (storage_pool_iso_map poolDomain : poolDomains) {
             if (poolDomain.getstatus() == StorageDomainStatus.Locked) {
                 addInvalidSDStatusMessage(poolDomain.getstatus());
@@ -169,7 +169,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 spm = getVds();
             } else {
                 spm = DbFacade.getInstance()
-                        .getVdsDAO()
+                        .getVdsDao()
                         .get(getStoragePool().getspm_vds_id());
             }
             if (spm != null) {

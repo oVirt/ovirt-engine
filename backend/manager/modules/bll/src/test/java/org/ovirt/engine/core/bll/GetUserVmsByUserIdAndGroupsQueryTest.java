@@ -132,7 +132,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         VM expectedVM = new VM();
         VmDAO vmDaoMock = mock(VmDAO.class);
         when(vmDaoMock.getAllForUserWithGroupsAndUserRoles(requestedUser)).thenReturn(Collections.singletonList(expectedVM));
-        when(getDbFacadeMockInstance().getVmDAO()).thenReturn(vmDaoMock);
+        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDaoMock);
 
         return expectedVM;
     }

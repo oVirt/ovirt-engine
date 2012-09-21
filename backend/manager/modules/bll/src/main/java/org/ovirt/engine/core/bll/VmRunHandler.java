@@ -105,7 +105,7 @@ public class VmRunHandler {
                     // vm has network,
                     // otherwise the vm cannot be run in vdsm
                     if (boot_sequence == BootSequence.N
-                            && DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()).size() == 0) {
+                            && DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()).size() == 0) {
                         message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
                         retValue = false;
                     } else if (vmDisks.size() > 0) {
@@ -135,7 +135,7 @@ public class VmRunHandler {
                                 retValue = false;
                                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
                             } else if (vm.getstatus() == VMStatus.Paused && vm.getrun_on_vds() != null) {
-                                VDS vds = DbFacade.getInstance().getVdsDAO().get(
+                                VDS vds = DbFacade.getInstance().getVdsDao().get(
                                         new Guid(vm.getrun_on_vds().toString()));
                                 if (vds.getstatus() != VDSStatus.Up) {
                                     retValue = false;
@@ -356,10 +356,10 @@ public class VmRunHandler {
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {
-        return DbFacade.getInstance().getVmDeviceDAO();
+        return DbFacade.getInstance().getVmDeviceDao();
     }
 
     protected StorageDomainDAO getStorageDomainDAO() {
-        return DbFacade.getInstance().getStorageDomainDAO();
+        return DbFacade.getInstance().getStorageDomainDao();
     }
 }

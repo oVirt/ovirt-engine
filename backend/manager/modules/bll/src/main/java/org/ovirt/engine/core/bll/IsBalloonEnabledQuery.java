@@ -11,7 +11,7 @@ public class IsBalloonEnabledQuery <P extends GetVmByVmIdParameters> extends Que
 
     @Override
     protected void executeQueryCommand() {
-        VmDeviceDAO dao = getDbFacade().getVmDeviceDAO();
+        VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
         getQueryReturnValue().setReturnValue(dao.isMemBalloonEnabled(getParameters().getId()));
     }
 }

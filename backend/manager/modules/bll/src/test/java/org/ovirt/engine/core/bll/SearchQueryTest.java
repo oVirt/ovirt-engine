@@ -69,22 +69,22 @@ public class SearchQueryTest {
             }
 
             @Override
-            public VmDAO getVmDAO() {
+            public VmDAO getVmDao() {
                 return vmDAO;
             }
 
             @Override
-            public VdsDAO getVdsDAO() {
+            public VdsDAO getVdsDao() {
                 return vdsDAO;
             }
 
             @Override
-            public VdsGroupDAO getVdsGroupDAO() {
+            public VdsGroupDAO getVdsGroupDao() {
                 return vdsGroupDAO;
             }
 
             @Override
-            public StoragePoolDAO getStoragePoolDAO() {
+            public StoragePoolDAO getStoragePoolDao() {
                 return storagePoolDAO;
             }
 
@@ -99,7 +99,7 @@ public class SearchQueryTest {
             }
 
             @Override
-            public QuotaDAO getQuotaDAO() {
+            public QuotaDAO getQuotaDao() {
                 return quotaDAO;
             }
         };

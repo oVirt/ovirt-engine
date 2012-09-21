@@ -31,7 +31,7 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getInterfaceDAO());
+        dao = prepareDAO(dbFacade.getInterfaceDao());
 
         newVdsInterface = new VdsNetworkInterface();
         newVdsInterface.setStatistics(new VdsNetworkStatistics());

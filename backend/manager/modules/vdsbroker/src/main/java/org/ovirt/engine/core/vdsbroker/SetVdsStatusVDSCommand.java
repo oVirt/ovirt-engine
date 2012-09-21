@@ -29,7 +29,7 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
 
             // In case the SPM status has changed during execution in the StoragePool table we have to fetch the VDS
             // (which is a view) again.
-            vds = DbFacade.getInstance().getVdsDAO().get(parameters.getVdsId());
+            vds = DbFacade.getInstance().getVdsDao().get(parameters.getVdsId());
             if (vds.getspm_status() != VdsSpmStatus.None && parameters.getStatus() != VDSStatus.Up) {
                 log.infoFormat("SetVdsStatusVDSCommand::VSD {0} is spm and moved from up calling ResetIrs.",
                         vds.getvds_name());

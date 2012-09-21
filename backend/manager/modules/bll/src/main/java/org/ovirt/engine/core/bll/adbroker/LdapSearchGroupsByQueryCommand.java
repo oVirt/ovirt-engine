@@ -37,6 +37,6 @@ public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredential
     }
 
     private void initGroupFromDb(ad_groups group) {
-        ad_groups dbGroup = DbFacade.getInstance().getAdGroupDAO().get(group.getid());
+        ad_groups dbGroup = DbFacade.getInstance().getAdGroupDao().get(group.getid());
     }
 }

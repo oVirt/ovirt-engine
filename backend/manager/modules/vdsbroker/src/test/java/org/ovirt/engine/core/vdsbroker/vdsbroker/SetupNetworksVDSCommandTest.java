@@ -194,7 +194,7 @@ public class SetupNetworksVDSCommandTest {
         final DbFacade dbFacade = mock(DbFacade.class);
         final VdsDAO vdsDao = mock(VdsDAO.class);
 
-        when(dbFacade.getVdsDAO()).thenReturn(vdsDao);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
 
         // No way to avoid these calls by regular mocking, so must implement anonymously.
         return new SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters>(parameters) {

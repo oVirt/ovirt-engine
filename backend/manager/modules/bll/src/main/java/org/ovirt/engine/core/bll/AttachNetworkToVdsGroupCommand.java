@@ -62,10 +62,10 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     public static void SetNetworkStatus(Guid vdsGroupId, final Network net) {
         NetworkStatus status = NetworkStatus.Operational;
         network_cluster networkCluster =
-                DbFacade.getInstance().getNetworkClusterDAO().get(new NetworkClusterId(vdsGroupId, net.getId()));
+                DbFacade.getInstance().getNetworkClusterDao().get(new NetworkClusterId(vdsGroupId, net.getId()));
 
         if (networkCluster != null) {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(vdsGroupId);
+            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vdsGroupId);
 
             // Search all vds in cluster that have the specify network, if not the
             // network is not active
@@ -98,7 +98,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
 
             networkCluster.setstatus(status);
-            DbFacade.getInstance().getNetworkClusterDAO().updateStatus(networkCluster);
+            DbFacade.getInstance().getNetworkClusterDao().updateStatus(networkCluster);
         }
     }
 

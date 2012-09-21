@@ -26,7 +26,7 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
                                                     new VdsIdVDSCommandParametersBase(getParameters().getVdsId())))
                 .getReturnValue();
 
-        List<storage_domains> vgsFromDb = LinqUtils.filter(DbFacade.getInstance().getStorageDomainDAO().getAll(),
+        List<storage_domains> vgsFromDb = LinqUtils.filter(DbFacade.getInstance().getStorageDomainDao().getAll(),
                 new Predicate<storage_domains>() {
                     @Override
                     public boolean eval(storage_domains storageDomain) {

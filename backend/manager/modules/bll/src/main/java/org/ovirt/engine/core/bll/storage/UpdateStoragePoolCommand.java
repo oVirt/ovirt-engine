@@ -133,7 +133,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private void updateMemberDomainsFormat(StorageFormatType targetFormat) {
         Guid spId = getStoragePool().getId();
-        StorageDomainStaticDAO sdStatDao = DbFacade.getInstance().getStorageDomainStaticDAO();
+        StorageDomainStaticDAO sdStatDao = DbFacade.getInstance().getStorageDomainStaticDao();
         List<storage_domain_static> domains = sdStatDao.getAllForStoragePool(spId);
         for (storage_domain_static domain : domains) {
             StorageDomainType sdType = domain.getstorage_domain_type();
@@ -237,7 +237,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
-        return DbFacade.getInstance().getStorageDomainStaticDAO();
+        return DbFacade.getInstance().getStorageDomainStaticDao();
     }
 
     /**

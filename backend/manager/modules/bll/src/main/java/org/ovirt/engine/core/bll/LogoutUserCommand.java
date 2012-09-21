@@ -17,7 +17,7 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
     public LogoutUserCommand(T parameters) {
         super(parameters);
         if (getCurrentUser() == null) {
-            DbUser dbUser = DbFacade.getInstance().getDbUserDAO().get(parameters.getUserId());
+            DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(parameters.getUserId());
             setCurrentUser(new VdcUser(dbUser.getuser_id(), dbUser.getusername(), dbUser.getdomain()));
         }
     }
@@ -32,7 +32,7 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
         Guid userId = (getParameters()).getUserId();
         String httpSessionId = getParameters().getHttpSessionId();
         if (httpSessionId != null) {
-            DbFacade.getInstance().getDbUserDAO().removeUserSession(httpSessionId, userId);
+            DbFacade.getInstance().getDbUserDao().removeUserSession(httpSessionId, userId);
             SessionDataContainer.getInstance().removeSession(httpSessionId);
         } else if (!StringHelper.EqOp(getParameters().getSessionId(), "")) {
             SessionDataContainer.getInstance().removeSession(getParameters().getSessionId());

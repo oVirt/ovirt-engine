@@ -28,7 +28,7 @@ public final class AsyncTaskFactory {
      * @return
      */
     public static SPMAsyncTask Construct(AsyncTaskCreationInfo creationInfo) {
-        async_tasks asyncTask = DbFacade.getInstance().getAsyncTaskDAO().get(creationInfo.getTaskID());
+        async_tasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(creationInfo.getTaskID());
         if (asyncTask == null || asyncTask.getaction_parameters() == null) {
             asyncTask = new async_tasks(VdcActionType.Unknown, AsyncTaskResultEnum.success,
                             AsyncTaskStatusEnum.running,

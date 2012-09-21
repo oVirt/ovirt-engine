@@ -38,16 +38,16 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
                 messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_RUNNING_VM_TO_POOL.toString());
             }
         }
-        if (DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(vmId) != null) {
+        if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId) != null) {
             returnValue = false;
             if (messages != null) {
                 messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_ATTACHED_TO_POOL.toString());
             }
         }
         if (poolId != null) {
-            VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+            VM vm = DbFacade.getInstance().getVmDao().get(vmId);
             if (vm != null) {
-                vm_pools pool = DbFacade.getInstance().getVmPoolDAO().get(poolId);
+                vm_pools pool = DbFacade.getInstance().getVmPoolDao().get(poolId);
                 if (pool != null) {
                     if (messages != null && !pool.getvds_group_id().equals(vm.getvds_group_id())) {
                         messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER.toString());
@@ -67,7 +67,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getVmPoolDAO().addVmToPool(new vm_pool_map(getVmId(), getVmPoolId()));
+        DbFacade.getInstance().getVmPoolDao().addVmToPool(new vm_pool_map(getVmId(), getVmPoolId()));
         setSucceeded(true);
     }
 

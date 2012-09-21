@@ -34,7 +34,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStorageDomainDAO());
+        dao = prepareDAO(dbFacade.getStorageDomainDao());
         existingDomain = dao.get(EXISTING_DOMAIN_ID);
 
         newStaticDomain = new storage_domain_static();
@@ -400,8 +400,8 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        List<VM> vms = getDbFacade().getVmDAO().getAllForStorageDomain(EXISTING_DOMAIN_ID);
-        List<VmTemplate> templates = getDbFacade().getVmTemplateDAO().getAllForStorageDomain(EXISTING_DOMAIN_ID);
+        List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(EXISTING_DOMAIN_ID);
+        List<VmTemplate> templates = getDbFacade().getVmTemplateDao().getAllForStorageDomain(EXISTING_DOMAIN_ID);
 
         assertFalse(vms.isEmpty());
         assertFalse(templates.isEmpty());
@@ -412,11 +412,11 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         assertNull(dao.get(EXISTING_DOMAIN_ID));
 
         for (VM vm : vms) {
-            assertNull(getDbFacade().getVmDAO().get(vm.getId()));
+            assertNull(getDbFacade().getVmDao().get(vm.getId()));
         }
 
         for (VmTemplate template : templates) {
-            assertNull(getDbFacade().getVmTemplateDAO().get(template.getId()));
+            assertNull(getDbFacade().getVmTemplateDao().get(template.getId()));
         }
 
     }

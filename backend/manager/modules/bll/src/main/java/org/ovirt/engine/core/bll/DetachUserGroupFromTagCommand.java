@@ -17,12 +17,12 @@ public class DetachUserGroupFromTagCommand<T extends AttachEntityToTagParameters
     protected void executeCommand() {
         if (getTagId() != null) {
             for (Guid groupGuid : getGroupList()) {
-                ad_groups group = DbFacade.getInstance().getAdGroupDAO().get(groupGuid);
-                if (DbFacade.getInstance().getTagDAO().getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) != null) {
+                ad_groups group = DbFacade.getInstance().getAdGroupDao().get(groupGuid);
+                if (DbFacade.getInstance().getTagDao().getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) != null) {
                     if (group != null) {
                         AppendCustomValue("DetachGroupsNames", group.getname(), ", ");
                     }
-                    DbFacade.getInstance().getTagDAO().detachUserGroupFromTag(getTagId(), groupGuid);
+                    DbFacade.getInstance().getTagDao().detachUserGroupFromTag(getTagId(), groupGuid);
                     noActionDone = false;
                     setSucceeded(true);
                 }

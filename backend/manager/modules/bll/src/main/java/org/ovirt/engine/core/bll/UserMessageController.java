@@ -23,7 +23,7 @@ public class UserMessageController {
 
     public void AddUserMessageByVds(Guid vdsId, String userMessage) {
         List<Guid> users = new LinkedList<Guid>();
-        for (VmDynamic vm : DbFacade.getInstance().getVmDynamicDAO().getAllRunningForVds(vdsId)) {
+        for (VmDynamic vm : DbFacade.getInstance().getVmDynamicDao().getAllRunningForVds(vdsId)) {
             AddVmUsersToList(users, vm.getId());
         }
         AddUsersMessages(users, userMessage);
@@ -36,7 +36,7 @@ public class UserMessageController {
     }
 
     private static void AddVmUsersToList(List<Guid> input, Guid vmId) {
-        List<DbUser> users = DbFacade.getInstance().getDbUserDAO()
+        List<DbUser> users = DbFacade.getInstance().getDbUserDao()
                 .getAllForVm(vmId);
         if (users != null) {
             for (DbUser user : users) {

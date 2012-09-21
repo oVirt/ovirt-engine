@@ -30,7 +30,7 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<StoragePo
         when(storagePoolDAOMock.get(storagePoolID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        when(dbFacadeMock.getStoragePoolDAO()).thenReturn(storagePoolDAOMock);
+        when(dbFacadeMock.getStoragePoolDao()).thenReturn(storagePoolDAOMock);
 
         getQuery().executeQueryCommand();
 

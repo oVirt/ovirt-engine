@@ -10,7 +10,7 @@ public class GetAllHostsQuery<P extends VdcQueryParametersBase> extends QueriesC
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getVdsDAO()
+        getQueryReturnValue().setReturnValue(getDbFacade().getVdsDao()
                 .getAll(getUserID(), getParameters().isFiltered()));
     }
 }

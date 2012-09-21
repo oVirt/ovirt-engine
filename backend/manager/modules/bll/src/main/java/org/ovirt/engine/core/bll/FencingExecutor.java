@@ -43,7 +43,7 @@ public class FencingExecutor {
         // check if this is a new host, no need to retry , only status is
         // available on new host.
         if (_vds.getId().equals(NO_VDS)) {
-            vdsToRun = LinqUtils.firstOrNull(DbFacade.getInstance().getVdsDAO().getAll(), new Predicate<VDS>() {
+            vdsToRun = LinqUtils.firstOrNull(DbFacade.getInstance().getVdsDao().getAll(), new Predicate<VDS>() {
                 @Override
                 public boolean eval(VDS vds) {
                     return vds.getstatus() == VDSStatus.Up
@@ -60,7 +60,7 @@ public class FencingExecutor {
             // as configured.
             while (count < retries) {
 
-                vdsToRun = LinqUtils.firstOrNull(DbFacade.getInstance().getVdsDAO().getAll(), new Predicate<VDS>() {
+                vdsToRun = LinqUtils.firstOrNull(DbFacade.getInstance().getVdsDao().getAll(), new Predicate<VDS>() {
                     @Override
                     public boolean eval(VDS vds) {
                         return !vds.getId().equals(_vds.getId())
@@ -98,7 +98,7 @@ public class FencingExecutor {
             // skip following code in case of testing a new host status
             if (_vds.getId() != null && !_vds.getId().equals(Guid.Empty)) {
                 // get the host spm status again from the database in order to test it's current state.
-                _vds.setspm_status((DbFacade.getInstance().getVdsDAO().get(_vds.getId()).getspm_status()));
+                _vds.setspm_status((DbFacade.getInstance().getVdsDao().get(_vds.getId()).getspm_status()));
                 // try to stop SPM if action is Restart or Stop and the vds is SPM
                 if ((_action == FenceActionType.Restart || _action == FenceActionType.Stop)
                         && (_vds.getspm_status() != VdsSpmStatus.None)) {

@@ -29,7 +29,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
         try {
             Guid masterDomainIdFromDb =
                     DbFacade.getInstance()
-                            .getStorageDomainDAO()
+                            .getStorageDomainDao()
                             .getMasterStorageDomainIdForPool(getStoragePool().getId());
 
             if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {

@@ -32,7 +32,7 @@ public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<GetVmT
                 Collections.singletonMap(true, new VmTemplate());
         VmTemplateDAO vmTemplateDAOMock = mock(VmTemplateDAO.class);
         when(vmTemplateDAOMock.getAllForImage(imageGuid)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getVmTemplateDAO()).thenReturn(vmTemplateDAOMock);
+        when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDAOMock);
 
         // Mock away the handler
         doNothing().when(getQuery()).updateDisksFromDb(any(VmTemplate.class));

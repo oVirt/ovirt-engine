@@ -129,14 +129,14 @@ public class VmInterfaceManager {
     }
 
     protected VmNetworkStatisticsDAO getVmNetworkStatisticsDAO() {
-        return DbFacade.getInstance().getVmNetworkStatisticsDAO();
+        return DbFacade.getInstance().getVmNetworkStatisticsDao();
     }
 
     protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
+        return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
     protected VmDAO getVmDAO() {
-        return DbFacade.getInstance().getVmDAO();
+        return DbFacade.getInstance().getVmDao();
     }
 }

@@ -18,7 +18,7 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getNetworkDAO().remove(getParameters().getNetwork().getId());
+        DbFacade.getInstance().getNetworkDao().remove(getParameters().getNetwork().getId());
         setSucceeded(true);
     }
 
@@ -37,10 +37,10 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     public static boolean CommonNetworkValidation(final Network network, java.util.ArrayList<String> canDoActionMessages) {
         // check that network is not in use by cluster
         if (network.getstorage_pool_id() != null) {
-            List<VDSGroup> groups = DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(
+            List<VDSGroup> groups = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(
                     network.getstorage_pool_id().getValue());
             for (VDSGroup cluster : groups) {
-                List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+                List<Network> networks = DbFacade.getInstance().getNetworkDao()
                         .getAllForCluster(cluster.getId());
 
                 if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {

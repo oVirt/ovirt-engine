@@ -890,7 +890,7 @@ public class VdsBrokerObjectsBuilder {
      */
     public static void updateNetworkData(VDS vds, XmlRpcStruct xmlRpcStruct) {
         List<VdsNetworkInterface> oldInterfaces =
-                DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(vds.getId());
+                DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vds.getId());
         vds.getInterfaces().clear();
 
         addHostNetworkInterfaces(vds, xmlRpcStruct);

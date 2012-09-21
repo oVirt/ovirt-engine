@@ -105,7 +105,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         Guid ret = Guid.Empty;
         if (getStoragePool() != null) {
             ret = DbFacade.getInstance()
-                    .getStorageDomainDAO()
+                    .getStorageDomainDao()
                     .getMasterStorageDomainIdForPool(getStoragePool().getId());
         }
 
@@ -179,7 +179,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         boolean returnValue = false;
         if (storageDomain != null) {
             // check if there is no pool-domain map
-            returnValue = getDbFacade().getStoragePoolIsoMapDAO().getAllForStorage(storageDomain.getId()).isEmpty();
+            returnValue = getDbFacade().getStoragePoolIsoMapDao().getAllForStorage(storageDomain.getId()).isEmpty();
             if (!returnValue) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
             }

@@ -54,8 +54,8 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     protected void endWithFailure() {
         if (getDestinationDiskImage() != null) {
             DbFacade.getInstance().getBaseDiskDao().remove(getDestinationDiskImage().getimage_group_id());
-            if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId()) != null) {
-                DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
+            if (DbFacade.getInstance().getDiskImageDynamicDao().get(getDestinationDiskImage().getImageId()) != null) {
+                DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
             }
         }
 

@@ -68,12 +68,12 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                DbFacade.getInstance().getStorageDomainStaticDAO().save(getStorageDomain().getStorageStaticData());
+                DbFacade.getInstance().getStorageDomainStaticDao().save(getStorageDomain().getStorageStaticData());
                 getCompensationContext().snapshotNewEntity(getStorageDomain().getStorageStaticData());
                 storage_domain_dynamic newStorageDynamic =
                         new storage_domain_dynamic(null, getStorageDomain().getId(), null);
                 getReturnValue().setActionReturnValue(getStorageDomain().getId());
-                DbFacade.getInstance().getStorageDomainDynamicDAO().save(newStorageDynamic);
+                DbFacade.getInstance().getStorageDomainDynamicDao().save(newStorageDynamic);
                 getCompensationContext().snapshotNewEntity(newStorageDynamic);
                 getCompensationContext().stateChanged();
                 return null;
@@ -94,7 +94,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             @Override
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(getStorageDomain().getStorageDynamicData());
-                DbFacade.getInstance().getStorageDomainDynamicDAO().update(sd.getStorageDynamicData());
+                DbFacade.getInstance().getStorageDomainDynamicDao().update(sd.getStorageDynamicData());
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -198,7 +198,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DATA_DOMAIN_PROHIBITED);
             return false;
         }
-        if (DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null) {
+        if (DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
             returnValue = false;
         }

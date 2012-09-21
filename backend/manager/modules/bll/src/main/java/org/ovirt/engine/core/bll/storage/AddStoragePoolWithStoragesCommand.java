@@ -66,7 +66,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 public Object runInTransaction() {
                     getStoragePool().setstatus(StoragePoolStatus.Maintanance);
                     getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
-                    DbFacade.getInstance().getStoragePoolDAO().update(getStoragePool());
+                    DbFacade.getInstance().getStoragePoolDao().update(getStoragePool());
                     getCompensationContext().stateChanged();
                     StoragePoolStatusHandler.PoolStatusChanged(getStoragePool().getId(),
                             getStoragePool().getstatus());
@@ -84,7 +84,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     // with the pool in db
                     storage_domains storageDomain =
                             DbFacade.getInstance()
-                                    .getStorageDomainDAO()
+                                    .getStorageDomainDao()
                                     .getForStoragePool(storageDomainId,
                                             getStoragePool().getId());
                     StorageHelperDirector.getInstance()
@@ -139,12 +139,12 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             @Override
             public Boolean runInTransaction() {
                 for (Guid storageDomainId : getParameters().getStorages()) {
-                    storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDAO().get(
+                    storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDao().get(
                                 storageDomainId);
                     if (storageDomain != null) {
                         storage_pool_iso_map mapFromDB =
                             DbFacade.getInstance()
-                            .getStoragePoolIsoMapDAO()
+                            .getStoragePoolIsoMapDao()
                                         .get(new StoragePoolIsoMapId(storageDomain.getId(), getStoragePool().getId()));
                         boolean existingInDb = mapFromDB != null;
                         if (existingInDb) {
@@ -185,11 +185,11 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         storageDomain.setstatus(StorageDomainStatus.Locked);
                         if (existingInDb) {
                             DbFacade.getInstance()
-                                        .getStoragePoolIsoMapDAO()
+                                        .getStoragePoolIsoMapDao()
                                         .update(storageDomain.getStoragePoolIsoMapData());
                         } else {
                             DbFacade.getInstance()
-                                        .getStoragePoolIsoMapDAO()
+                                        .getStoragePoolIsoMapDao()
                                         .save(storageDomain.getStoragePoolIsoMapData());
                             getCompensationContext().snapshotNewEntity(storageDomain.getStoragePoolIsoMapData());
                         }
@@ -232,7 +232,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     @Override
                     public Void runInTransaction() {
                         DbFacade.getInstance()
-                                .getStoragePoolIsoMapDAO()
+                                .getStoragePoolIsoMapDao()
                                 .updateStatus(
                                         new StoragePoolIsoMapId(storageDomainId, getStoragePool().getId()),
                                         StorageDomainStatus.InActive);
@@ -250,7 +250,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             boolean _hasData = false;
             StorageFormatType storageFormat = null;
             for (Guid storageDomainId : getParameters().getStorages()) {
-                storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().get(storageDomainId);
+                storage_domains domain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
                 if (isStorageDomainNotNull(domain) && checkDomainCanBeAttached(domain)) {
                     if (domain.getstorage_domain_type() == StorageDomainType.Data) {
                         _hasData = true;

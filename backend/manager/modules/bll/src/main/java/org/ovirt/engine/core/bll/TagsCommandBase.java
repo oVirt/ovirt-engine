@@ -14,7 +14,7 @@ public abstract class TagsCommandBase<T extends TagsActionParametersBase> extend
 
     protected tags getTag() {
         if (mTag == null && getTagId() != null) {
-            mTag = DbFacade.getInstance().getTagDAO().get(getTagId());
+            mTag = DbFacade.getInstance().getTagDao().get(getTagId());
         }
         return mTag;
     }

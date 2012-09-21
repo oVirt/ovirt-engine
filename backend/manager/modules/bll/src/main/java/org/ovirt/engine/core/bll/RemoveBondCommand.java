@@ -44,7 +44,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
     @Override
     protected void executeCommand() {
         VdsNetworkInterface bond = null;
-        List<VdsNetworkInterface> all = DbFacade.getInstance().getInterfaceDAO()
+        List<VdsNetworkInterface> all = DbFacade.getInstance().getInterfaceDao()
                 .getAllInterfacesForVds(getParameters().getVdsId());
         for (VdsNetworkInterface iface : all) {
             if (StringUtils.equals(iface.getName(), getParameters().getBondName())) {
@@ -87,7 +87,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
     @Override
     protected boolean canDoAction() {
         List<VdsNetworkInterface> vdsInterfaces =
-                DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
+                DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
         // check that bond exists
         final VdsNetworkInterface bond = LinqUtils.firstOrNull(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
@@ -124,10 +124,10 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             _interfaces.add(iface.getName());
         }
 
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
         // check if network in cluster and vds active
         if (vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing) {
-            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+            List<Network> networks = DbFacade.getInstance().getNetworkDao()
                     .getAllForCluster(vds.getvds_group_id());
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
@@ -152,7 +152,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;
                 if (vm.getstatus() != VMStatus.Down) {
-                    List<VmNetworkInterface> vmInterfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
+                    List<VmNetworkInterface> vmInterfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                             .getAllForVm(vm.getId());
                     VmNetworkInterface iface = LinqUtils.firstOrNull(vmInterfaces, new Predicate<VmNetworkInterface>() {
                         @Override

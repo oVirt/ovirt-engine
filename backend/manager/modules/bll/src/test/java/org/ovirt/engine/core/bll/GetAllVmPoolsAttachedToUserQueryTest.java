@@ -75,7 +75,7 @@ public class GetAllVmPoolsAttachedToUserQueryTest extends AbstractUserQueryTest<
         vm_pools expectedPool = new vm_pools();
         VmPoolDAO vmDaoPoolMock = mock(VmPoolDAO.class);
         when(vmDaoPoolMock.getAllForUser(requestedUser)).thenReturn(Collections.singletonList(expectedPool));
-        when(getDbFacadeMockInstance().getVmPoolDAO()).thenReturn(vmDaoPoolMock);
+        when(getDbFacadeMockInstance().getVmPoolDao()).thenReturn(vmDaoPoolMock);
 
         return expectedPool;
     }

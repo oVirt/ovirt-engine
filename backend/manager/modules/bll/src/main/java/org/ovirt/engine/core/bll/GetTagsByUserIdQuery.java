@@ -13,7 +13,7 @@ public class GetTagsByUserIdQuery<P extends GetTagsByUserIdParameters> extends
     protected void executeQueryCommand() {
         VdcQueryParametersBase tempVar = getParameters();
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getTagDAO()
+                DbFacade.getInstance().getTagDao()
                         .getAllForUsers((getParameters().getUserId())));
     }
 }

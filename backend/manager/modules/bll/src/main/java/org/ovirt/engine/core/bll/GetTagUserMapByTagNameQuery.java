@@ -11,6 +11,6 @@ public class GetTagUserMapByTagNameQuery<P extends GetTagUserMapByTagNameParamet
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue()
-                .setReturnValue(getDbFacade().getTagDAO().getTagUserMapByTagName(getParameters().getTagName()));
+                .setReturnValue(getDbFacade().getTagDao().getTagUserMapByTagName(getParameters().getTagName()));
     }
 }

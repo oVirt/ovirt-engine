@@ -13,7 +13,7 @@ public class GetAllVmsQuery<P extends VdcQueryParametersBase> extends QueriesCom
     @Override
     protected void executeQueryCommand() {
         List<VM> vmsList = getDbFacade()
-                .getVmDAO().getAll(getUserID(), getParameters().isFiltered());
+                .getVmDao().getAll(getUserID(), getParameters().isFiltered());
         for (VM vm : vmsList) {
             VmHandler.UpdateVmGuestAgentVersion(vm);
         }

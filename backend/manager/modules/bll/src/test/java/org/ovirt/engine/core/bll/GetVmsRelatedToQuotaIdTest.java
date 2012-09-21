@@ -39,7 +39,7 @@ public class GetVmsRelatedToQuotaIdTest extends AbstractQueryTest<GetEntitiesRel
      * Initialize DAO to be used in query.
      */
     private void mockDAOForQuery() {
-        when(getDbFacadeMockInstance().getVmDAO()).thenReturn(vmDAO);
+        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAO);
 
         returnedVms = new ArrayList<VM>();
         when(getQueryParameters().getQuotaId()).thenReturn(quotaId);

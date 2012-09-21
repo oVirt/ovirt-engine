@@ -36,18 +36,18 @@ public class UpdateDisplayToVdsGroupCommand<T extends DisplayNetworkToVdsGroupPa
                 });
         if (oldDisplay != null) {
             oldDisplay.setis_display(false);
-            DbFacade.getInstance().getNetworkClusterDAO().update(oldDisplay);
+            DbFacade.getInstance().getNetworkClusterDao().update(oldDisplay);
         }
 
         _networkCluster.setis_display(getParameters().getIsDisplay());
-        DbFacade.getInstance().getNetworkClusterDAO().update(_networkCluster);
+        DbFacade.getInstance().getNetworkClusterDao().update(_networkCluster);
 
         setSucceeded(true);
     }
 
     @Override
     protected boolean canDoAction() {
-        _allNetworkCluster = DbFacade.getInstance().getNetworkClusterDAO().getAllForCluster(
+        _allNetworkCluster = DbFacade.getInstance().getNetworkClusterDao().getAllForCluster(
                 getParameters().getVdsGroupId());
         _networkCluster = LinqUtils.firstOrNull(_allNetworkCluster,
                 new Predicate<network_cluster>() {

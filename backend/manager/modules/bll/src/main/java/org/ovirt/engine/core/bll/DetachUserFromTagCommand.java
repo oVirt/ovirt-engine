@@ -15,12 +15,12 @@ public class DetachUserFromTagCommand<T extends AttachEntityToTagParameters> ext
     protected void executeCommand() {
         if (getTagId() != null) {
             for (Guid userGuid : getUserList()) {
-                DbUser user = DbFacade.getInstance().getDbUserDAO().get(userGuid);
-                if (DbFacade.getInstance().getTagDAO().getTagUserByTagIdAndByuserId(getTagId(), userGuid) != null) {
+                DbUser user = DbFacade.getInstance().getDbUserDao().get(userGuid);
+                if (DbFacade.getInstance().getTagDao().getTagUserByTagIdAndByuserId(getTagId(), userGuid) != null) {
                     if (user != null) {
                         AppendCustomValue("DetachUsersNames", user.getusername(), ", ");
                     }
-                    DbFacade.getInstance().getTagDAO().detachUserFromTag(getTagId(), userGuid);
+                    DbFacade.getInstance().getTagDao().detachUserFromTag(getTagId(), userGuid);
                     noActionDone = false;
                     setSucceeded(true);
                 }

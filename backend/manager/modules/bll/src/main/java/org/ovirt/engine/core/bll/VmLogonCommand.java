@@ -57,7 +57,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
         if (sentToVM && currentUser != null) {
             vm.setguest_cur_user_name(currentUser.getUserName());
             vm.setguest_cur_user_id(currentUser.getUserId());
-            DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
+            DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
         }
 
         // Done:

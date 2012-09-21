@@ -123,7 +123,7 @@ public class VdsSelector {
     private Guid GetVdsRunOnDestination() {
         Guid result = Guid.Empty;
         if (getDestinationVdsId() != null) {
-            VDS target_vds = DbFacade.getInstance().getVdsDAO().get(getDestinationVdsId());
+            VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
             VmHandler.UpdateVmGuestAgentVersion(getVm());
@@ -142,14 +142,14 @@ public class VdsSelector {
 
     private Guid GetAnyVdsToRunOn() {
         return getVdsToRunOn(DbFacade.getInstance()
-                .getVdsDAO()
+                .getVdsDao()
                 .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
 
     private boolean CanRunOnDestinationVds(List<String> messages, boolean isMigrate) {
         boolean returnValue = false;
         if (getDestinationVdsId() != null) {
-            VDS target_vds = DbFacade.getInstance().getVdsDAO().get(getDestinationVdsId());
+            VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
             returnValue = CanFindVdsToRun(messages, isMigrate,
@@ -160,7 +160,7 @@ public class VdsSelector {
 
     private boolean CanFindAnyVds(List<String> messages, boolean isMigrate) {
         return CanFindVdsToRun(messages, isMigrate,
-                DbFacade.getInstance().getVdsDAO().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
+                DbFacade.getInstance().getVdsDao().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
 
     /**
@@ -356,11 +356,11 @@ public class VdsSelector {
     }
 
     VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
+        return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
     InterfaceDAO getInterfaceDAO() {
-        return DbFacade.getInstance().getInterfaceDAO();
+        return DbFacade.getInstance().getInterfaceDao();
     }
 
     private Guid getBestVdsToRun(List<VDS> list) {

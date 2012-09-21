@@ -78,7 +78,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(newImage.getImageId());
         diskDynamic.setactual_size(getDiskImage().getactual_size());
-        DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
+        DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
 
         setActionReturnValue(newImage);
 
@@ -112,12 +112,12 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     @Override
     protected void endWithFailure() {
         unLockImage();
-        setVmTemplate(DbFacade.getInstance().getVmTemplateDAO()
+        setVmTemplate(DbFacade.getInstance().getVmTemplateDao()
                 .get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {
             getBaseDiskDao().remove(getDestinationDiskImage().getId());
-            if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId()) != null) {
-                DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
+            if (DbFacade.getInstance().getDiskImageDynamicDao().get(getDestinationDiskImage().getImageId()) != null) {
+                DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
             }
             getImageDao().remove(getDestinationImageId());
         }

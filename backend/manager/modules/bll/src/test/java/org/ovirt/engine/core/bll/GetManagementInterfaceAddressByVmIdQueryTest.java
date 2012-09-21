@@ -32,10 +32,10 @@ public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQu
 
         InterfaceDAO interfaceDAOMock = mock(InterfaceDAO.class);
         VmDAO vmDAOMock = mock(VmDAO.class);
-        when(getDbFacadeMockInstance().getVmDAO()).thenReturn(vmDAOMock);
+        when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAOMock);
         when(vmDAOMock.get(vmID)).thenReturn(vm);
         when(interfaceDAOMock.getManagedInterfaceForVds(vdsID.getValue(), getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(managementInterface);
-        when(getDbFacadeMockInstance().getInterfaceDAO()).thenReturn(interfaceDAOMock);
+        when(getDbFacadeMockInstance().getInterfaceDao()).thenReturn(interfaceDAOMock);
 
         getQuery().executeQueryCommand();
 

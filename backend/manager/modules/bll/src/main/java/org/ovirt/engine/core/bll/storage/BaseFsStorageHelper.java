@@ -25,7 +25,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     @Override
     protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
         boolean returnValue = false;
-        storage_server_connections connection = DbFacade.getInstance().getStorageServerConnectionDAO().get(
+        storage_server_connections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
                 storageDomain.getstorage());
         if (connection != null) {
             returnValue = Backend
@@ -73,16 +73,16 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
             storage_domain_static storageDomain) {
         return new ArrayList<storage_server_connections>(
                 Arrays.asList(new storage_server_connections[] { DbFacade.getInstance()
-                        .getStorageServerConnectionDAO().get(storageDomain.getstorage()) }));
+                        .getStorageServerConnectionDao().get(storageDomain.getstorage()) }));
     }
 
     @Override
     public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
         storage_server_connections connection =
-                DbFacade.getInstance().getStorageServerConnectionDAO().get(storageDomain.getstorage());
+                DbFacade.getInstance().getStorageServerConnectionDao().get(storageDomain.getstorage());
 
         if (connection != null) {
-            DbFacade.getInstance().getStorageServerConnectionDAO().remove(connection.getid());
+            DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
         }
 
         return true;

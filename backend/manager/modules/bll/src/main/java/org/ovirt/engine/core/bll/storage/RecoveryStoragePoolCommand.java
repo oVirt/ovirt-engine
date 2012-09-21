@@ -66,7 +66,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                         VdcBllMessages.STORAGE_POOL_REINITIALIZE_WITH_MORE_THAN_ONE_DATA_DOMAIN.toString());
                 returnValue = false;
             } else {
-                storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().get(
+                storage_domains domain = DbFacade.getInstance().getStorageDomainDao().get(
                         _newMasterStorageDomainId);
                 if (domain.getstorage_domain_shared_status() != StorageDomainSharedStatus.Unattached) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
@@ -91,7 +91,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                                         .getNewMasterDomainId(),
                                         getRecoveryStoragePoolParametersData().getStoragePoolId(),
                                         StorageDomainStatus.Active);
-                        DbFacade.getInstance().getStoragePoolIsoMapDAO().save(domainPoolMap);
+                        DbFacade.getInstance().getStoragePoolIsoMapDao().save(domainPoolMap);
                         getCompensationContext().snapshotNewEntity(domainPoolMap);
                         getCompensationContext().stateChanged();
                         return null;

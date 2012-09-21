@@ -82,7 +82,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
-        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
+        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
             for (vm_pool_map map : vmPoolMaps) {
@@ -95,7 +95,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static Guid getPrestartedVmToAttach(NGuid vmPoolId) {
-        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
+        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (vm_pool_map map : vmPoolMaps) {
@@ -108,7 +108,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static int getNumOfPrestartedVmsInPool(NGuid poolId) {
-        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDAO()
+        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(poolId, VMStatus.Up);
         int prestartedVmsInPool = 0;
         if (vmPoolMaps != null) {
@@ -122,7 +122,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static List<vm_pool_map> getListOfVmsInPool(NGuid poolId) {
-        return DbFacade.getInstance().getVmPoolDAO().getVmPoolsMapByVmPoolId(poolId);
+        return DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(poolId);
     }
 
     /**
@@ -196,7 +196,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
                 List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true);
                 Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
-                VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+                VM vm = DbFacade.getInstance().getVmDao().get(vmId);
                 returnValue =
                         ImagesHandler.PerformImagesChecks(vm,
                                 messages,
@@ -224,7 +224,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     private static boolean vmAssignedToUser(Guid vmId, ArrayList<String> messages) {
         boolean vmAssignedToUser = false;
-        if (DbFacade.getInstance().getDbUserDAO().getAllForVm(vmId).size() > 0) {
+        if (DbFacade.getInstance().getDbUserDao().getAllForVm(vmId).size() > 0) {
             vmAssignedToUser = true;
             if (messages != null) {
                 messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
@@ -234,7 +234,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static boolean canRunPoolVm(Guid vmId, java.util.ArrayList<String> messages) {
-        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
 
         // TODO: This is done to keep consistency with VmDAO.getById.
         // It can probably be removed, but that requires some more research
@@ -260,7 +260,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     @Override
     protected List<tags> getTagsAttachedToObject() {
-        return DbFacade.getInstance().getTagDAO()
+        return DbFacade.getInstance().getTagDao()
                 .getAllForVmPools((getParameters().getVmPoolId()).toString());
     }
 
@@ -274,7 +274,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     public static boolean isPrestartedVmForAssignment(Guid vm_guid) {
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(vm_guid);
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vm_guid);
         if (vmDynamic != null && vmDynamic.getstatus() == VMStatus.Up && canAttachPrestartedVmToUser(vm_guid)) {
             return true;
         } else {
@@ -283,6 +283,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected VmPoolDAO getVmPoolDAO() {
-        return getDbFacade().getVmPoolDAO();
+        return getDbFacade().getVmPoolDao();
     }
 }

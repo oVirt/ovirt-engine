@@ -47,7 +47,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             nics.clear();
             bond = params.getInterface().getName();
 
-            List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(
+            List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(
                     params.getVdsId());
 
             for (VdsNetworkInterface i : interfaces) {
@@ -78,7 +78,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                             new VdsIdAndVdsVDSCommandParametersBase(params.getVdsId()));
 
             if (retVal.getSucceeded()) {
-                Guid groupId = DbFacade.getInstance().getVdsDAO().get(params.getVdsId()).getvds_group_id();
+                Guid groupId = DbFacade.getInstance().getVdsDao().get(params.getVdsId()).getvds_group_id();
                 AttachNetworkToVdsGroupCommand.SetNetworkStatus(groupId, params.getNetwork());
                 setSucceeded(true);
             }
@@ -88,7 +88,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
     @Override
     protected boolean canDoAction() {
         T params = getParameters();
-        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDAO()
+        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao()
                 .getAllInterfacesForVds(params.getVdsId());
 
         // check that interface exists
@@ -122,7 +122,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
         // check that the network exists in current cluster
 
-        Map<String, Network> networksByName = Entities.entitiesByName(DbFacade.getInstance().getNetworkDAO()
+        Map<String, Network> networksByName = Entities.entitiesByName(DbFacade.getInstance().getNetworkDao()
                 .getAllForCluster(getVds().getvds_group_id()));
 
         if (!networksByName.containsKey(params.getNetwork().getName())) {

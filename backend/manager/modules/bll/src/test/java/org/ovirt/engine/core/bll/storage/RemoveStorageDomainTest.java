@@ -218,7 +218,7 @@ public class RemoveStorageDomainTest {
             StorageDomainType type,
             StorageType storageType) {
         StorageDomainDAO dao = mock(StorageDomainDAO.class);
-        when(db.getStorageDomainDAO()).thenReturn(dao);
+        when(db.getStorageDomainDao()).thenReturn(dao);
         storage_domains dom = getStorageDomain(domId, poolId, type, storageType);
         when(dao.getForStoragePool(domId, poolId)).thenReturn(dom);
         return dom;
@@ -226,32 +226,32 @@ public class RemoveStorageDomainTest {
 
     protected void expectGetStorageDomainStatic(Guid domId) {
         StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
-        when(db.getStorageDomainStaticDAO()).thenReturn(dao);
+        when(db.getStorageDomainStaticDao()).thenReturn(dao);
         when(dao.get(domId)).thenReturn(getStorageDomainStatic(domId));
     }
 
     protected void expectGetStoragePool(Guid id) {
         StoragePoolDAO dao = mock(StoragePoolDAO.class);
-        when(db.getStoragePoolDAO()).thenReturn(dao);
+        when(db.getStoragePoolDao()).thenReturn(dao);
         when(dao.get(id)).thenReturn(getStoragePool(id));
     }
 
     protected void expectGetIsoMap(Guid id) {
         ArrayList<storage_pool_iso_map> ret = new ArrayList<storage_pool_iso_map>();
         StoragePoolIsoMapDAO dao = mock(StoragePoolIsoMapDAO.class);
-        when(db.getStoragePoolIsoMapDAO()).thenReturn(dao);
+        when(db.getStoragePoolIsoMapDao()).thenReturn(dao);
         when(dao.getAllForStorage(id)).thenReturn(ret);
     }
 
     protected void expectGetVds(Guid id) {
         VdsDAO dao = mock(VdsDAO.class);
-        when(db.getVdsDAO()).thenReturn(dao);
+        when(db.getVdsDao()).thenReturn(dao);
         when(dao.get(id)).thenReturn(getVds(id));
     }
 
     protected void expectGetIsAttached(Guid id, Guid poolId) {
         StoragePoolIsoMapDAO dao = mock(StoragePoolIsoMapDAO.class);
-        when(db.getStoragePoolIsoMapDAO()).thenReturn(dao);
+        when(db.getStoragePoolIsoMapDao()).thenReturn(dao);
         when(dao.get(new StoragePoolIsoMapId(id, poolId))).thenReturn(new storage_pool_iso_map());
     }
 
@@ -272,17 +272,17 @@ public class RemoveStorageDomainTest {
 
     protected void expectBusinessEntitySnapshotDAO() {
         BusinessEntitySnapshotDAO dao = mock(BusinessEntitySnapshotDAO.class);
-        when(db.getBusinessEntitySnapshotDAO()).thenReturn(dao);
+        when(db.getBusinessEntitySnapshotDao()).thenReturn(dao);
     }
 
     protected void expectRemoveStaticFromDb() {
         StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
-        when(db.getStorageDomainStaticDAO()).thenReturn(dao);
+        when(db.getStorageDomainStaticDao()).thenReturn(dao);
     }
 
     protected void expectRemoveDynamicFromDb() {
         StorageDomainDynamicDAO dao = mock(StorageDomainDynamicDAO.class);
-        when(db.getStorageDomainDynamicDAO()).thenReturn(dao);
+        when(db.getStorageDomainDynamicDao()).thenReturn(dao);
     }
 
     protected void expectRemoveFromDb() {

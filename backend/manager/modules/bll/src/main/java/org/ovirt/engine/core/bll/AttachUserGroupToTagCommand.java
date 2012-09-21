@@ -17,10 +17,10 @@ public class AttachUserGroupToTagCommand<T extends AttachEntityToTagParameters> 
     protected void executeCommand() {
         if (getTagId() != null) {
             for (Guid groupGuid : getGroupList()) {
-                ad_groups group = DbFacade.getInstance().getAdGroupDAO().get(groupGuid);
-                if (DbFacade.getInstance().getTagDAO().getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) == null) {
+                ad_groups group = DbFacade.getInstance().getAdGroupDao().get(groupGuid);
+                if (DbFacade.getInstance().getTagDao().getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) == null) {
                     tags_user_group_map map = new tags_user_group_map(groupGuid, getTagId());
-                    DbFacade.getInstance().getTagDAO().attachUserGroupToTag(map);
+                    DbFacade.getInstance().getTagDao().attachUserGroupToTag(map);
                     noActionDone = false;
                     if (group != null) {
                         AppendCustomValue("AttachGroupsNames", group.getname(), ", ");

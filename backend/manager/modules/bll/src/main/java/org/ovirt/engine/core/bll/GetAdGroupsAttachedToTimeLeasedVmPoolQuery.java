@@ -11,6 +11,6 @@ public class GetAdGroupsAttachedToTimeLeasedVmPoolQuery<P extends GetAdGroupsAtt
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getAdGroupDAO().getAllTimeLeasedForPool(getParameters().getId()));
+                getDbFacade().getAdGroupDao().getAllTimeLeasedForPool(getParameters().getId()));
     }
 }

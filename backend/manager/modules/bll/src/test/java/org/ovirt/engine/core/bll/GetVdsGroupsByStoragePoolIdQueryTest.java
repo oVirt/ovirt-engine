@@ -34,7 +34,7 @@ public class GetVdsGroupsByStoragePoolIdQueryTest extends AbstractUserQueryTest<
                 getUser().getUserId(),
                 getQueryParameters().isFiltered())).
                 thenReturn(result);
-        when(getDbFacadeMockInstance().getVdsGroupDAO()).thenReturn(vdsGroupDAOMock);
+        when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGroupDAOMock);
 
         // Execute the query
         getQuery().executeQueryCommand();

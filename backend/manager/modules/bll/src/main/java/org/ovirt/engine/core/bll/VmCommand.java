@@ -166,7 +166,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
             VmHandler.updateDisksFromDb(vm);
             if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
-                vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
+                vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
             }
             for (Disk disk : vm.getDiskMap().values()) {
                 if (disk.isAllowSnapshot()) {
@@ -176,7 +176,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 }
             }
             if (StringUtils.isEmpty(vm.getvmt_name())) {
-                VmTemplate t = DbFacade.getInstance().getVmTemplateDAO().get(vm.getvmt_guid());
+                VmTemplate t = DbFacade.getInstance().getVmTemplateDao().get(vm.getvmt_guid());
                 vm.setvmt_name(t.getname());
             }
             String vmMeta = ovfManager.ExportVm(vm, AllVmImages);
@@ -472,7 +472,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected VmDeviceDAO getVmDeviceDao() {
-        return getDbFacade().getVmDeviceDAO();
+        return getDbFacade().getVmDeviceDao();
     }
 
     /** Overriding to allow spying from this package */
@@ -482,11 +482,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected VmDynamicDAO getVmDynamicDAO() {
-        return getDbFacade().getVmDynamicDAO();
+        return getDbFacade().getVmDynamicDao();
     }
 
     protected TagDAO getTagDAO() {
-        return getDbFacade().getTagDAO();
+        return getDbFacade().getTagDao();
     }
 
     protected DiskDao getDiskDAO() {

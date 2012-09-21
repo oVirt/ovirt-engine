@@ -13,7 +13,7 @@ public class GetTagsByUserGroupIdQuery<P extends GetTagsByUserGroupIdParameters>
     protected void executeQueryCommand() {
         getQueryReturnValue()
                 .setReturnValue(DbFacade.getInstance()
-                                .getTagDAO()
+                                .getTagDao()
                                 .getAllForUserGroups(getParameters().getGroupId()));
     }
 }

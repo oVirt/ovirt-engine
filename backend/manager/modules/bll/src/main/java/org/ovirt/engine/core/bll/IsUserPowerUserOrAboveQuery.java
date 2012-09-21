@@ -19,7 +19,7 @@ public class IsUserPowerUserOrAboveQuery<P extends MultilevelAdministrationByAdE
     protected void executeQueryCommand() {
         final Guid superUserId = new Guid("00000000-0000-0000-0000-000000000001");
         final Guid powerUserId = new Guid("00000000-0000-0000-0001-000000000002");
-        List<permissions> list = DbFacade.getInstance().getPermissionDAO()
+        List<permissions> list = DbFacade.getInstance().getPermissionDao()
                 .getAllForAdElement(getParameters().getAdElementId());
 
         permissions permissions = LinqUtils.firstOrNull(list, new Predicate<permissions>() {

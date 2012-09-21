@@ -17,13 +17,13 @@ public class AttachVmsToTagCommand<T extends AttachEntityToTagParameters> extend
     protected void executeCommand() {
         if (getTagId() != null) {
             for (Guid vmGuid : getVmsList()) {
-                VM vm = DbFacade.getInstance().getVmDAO().get(vmGuid);
-                if (DbFacade.getInstance().getTagDAO().getTagVmByTagIdAndByVmId(getTagId(), vmGuid) == null) {
+                VM vm = DbFacade.getInstance().getVmDao().get(vmGuid);
+                if (DbFacade.getInstance().getTagDao().getTagVmByTagIdAndByVmId(getTagId(), vmGuid) == null) {
                     if (vm != null) {
                         AppendCustomValue("VmsNames", vm.getvm_name(), ", ");
                     }
                     tags_vm_map map = new tags_vm_map(getTagId(), vmGuid);
-                    DbFacade.getInstance().getTagDAO().attachVmToTag(map);
+                    DbFacade.getInstance().getTagDao().attachVmToTag(map);
                     noActionDone = false;
                 } else {
                     if (vm != null) {

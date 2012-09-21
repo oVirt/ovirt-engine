@@ -23,7 +23,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getVdsDAO());
+        dao = prepareDAO(dbFacade.getVdsDao());
         existingVds = dao.get(EXISTING_VDS_ID);
     }
 

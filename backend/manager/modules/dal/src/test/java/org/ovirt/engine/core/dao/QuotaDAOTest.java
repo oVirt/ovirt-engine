@@ -25,7 +25,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getQuotaDAO();
+        dao = dbFacade.getQuotaDao();
     }
 
     @Test

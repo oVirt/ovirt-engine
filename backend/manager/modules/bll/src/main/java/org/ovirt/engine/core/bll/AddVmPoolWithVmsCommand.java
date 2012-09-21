@@ -54,7 +54,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     protected Guid getPoolId() {
         vm_pools vmPool = getVmPool();
 
-        DbFacade.getInstance().getVmPoolDAO().save(vmPool);
+        DbFacade.getInstance().getVmPoolDao().save(vmPool);
 
         return vmPool.getvm_pool_id();
     }

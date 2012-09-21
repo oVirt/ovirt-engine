@@ -22,10 +22,10 @@ public class GetRolesForDelegationByUserQuery<P extends VdcQueryParametersBase> 
     protected void executeQueryCommand() {
         IVdcUser user = getCurrentUser();
         // check the user has SuperUser on System Object, directly or via group membership.
-        List<Role> myRoles = DbFacade.getInstance().getRoleDAO().getAll();
+        List<Role> myRoles = DbFacade.getInstance().getRoleDao().getAll();
         permissions adminPerm = DbFacade
                 .getInstance()
-                .getPermissionDAO()
+                .getPermissionDao()
                 .getForRoleAndAdElementAndObjectWithGroupCheck(
                         PredefinedRoles.SUPER_USER.getId(), user.getUserId(),
                         MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID);

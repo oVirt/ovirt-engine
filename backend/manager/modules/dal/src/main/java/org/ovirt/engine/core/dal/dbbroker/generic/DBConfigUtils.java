@@ -30,7 +30,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
      */
     private static void RefreshVdcOptionCache(DbFacade db) {
         _vdcOptionCache.clear();
-        List<VdcOption> list = db.getVdcOptionDAO().getAll();
+        List<VdcOption> list = db.getVdcOptionDao().getAll();
         for (VdcOption option : list) {
             updateOption(option);
         }
@@ -180,9 +180,9 @@ public class DBConfigUtils extends ConfigUtilsBase {
      */
     @Override
     protected void SetValue(String name, String value, String version) {
-        VdcOption vdcOption = dbfacade.getVdcOptionDAO().getByNameAndVersion(name, version);
+        VdcOption vdcOption = dbfacade.getVdcOptionDao().getByNameAndVersion(name, version);
         vdcOption.setoption_value(value);
-        dbfacade.getVdcOptionDAO().update(vdcOption);
+        dbfacade.getVdcOptionDao().update(vdcOption);
         try {
             // refresh the cache entry after update
             _vdcOptionCache.get(vdcOption.getoption_name()).put(version, GetValue(vdcOption));
@@ -198,7 +198,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                 && values.containsKey(Config.DefaultConfigurationVersion)) {
             returnValue = (String) values.get(Config.DefaultConfigurationVersion);
         } else {
-            VdcOption option = DbFacade.getInstance().getVdcOptionDAO().getByNameAndVersion(name.name(),
+            VdcOption option = DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion(name.name(),
                     Config.DefaultConfigurationVersion);
             if (option != null) {
                 returnValue = option.getoption_value();
@@ -266,7 +266,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
     }
 
     private static VdcOptionDAO getVdcOptionDAO() {
-        return DbFacade.getInstance().getVdcOptionDAO();
+        return DbFacade.getInstance().getVdcOptionDao();
     }
 
     private static void updateOption(VdcOption option) {

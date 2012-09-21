@@ -59,7 +59,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
             List<storage_domain_static> domainsInPool = DbFacade.getInstance()
-                        .getStorageDomainStaticDAO().getAllForStoragePool(getVm().getstorage_pool_id());
+                        .getStorageDomainStaticDao().getAllForStoragePool(getVm().getstorage_pool_id());
             if (domainsInPool.size() > 0) {
                 for (storage_domain_static currDomain : domainsInPool) {
                     if (currDomain.getstorage_domain_type().equals(StorageDomainType.Master)
@@ -247,7 +247,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                             DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
                         retValue = false;
                         addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
-                    } else if (DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(getVmId()) != null) {
+                    } else if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(getVmId()) != null) {
                         retValue = false;
                         addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
                     }
@@ -263,7 +263,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
                     // Check storage before trying to create Images for hibernation.
                     storage_domains domain =
-                            DbFacade.getInstance().getStorageDomainDAO().get(getStorageDomainId().getValue());
+                            DbFacade.getInstance().getStorageDomainDao().get(getStorageDomainId().getValue());
                     if (retValue
                             && !StorageDomainSpaceChecker.hasSpaceForRequest(domain, (getImageSizeInBytes()
                                     + getMetaDataSizeInBytes())/BYTES_IN_GB)) {

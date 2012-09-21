@@ -37,7 +37,7 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
 
     protected DbUser getDbUser() {
         if (mDbUser == null) {
-            mDbUser = DbFacade.getInstance().getDbUserDAO().get(getAdUserId());
+            mDbUser = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
         }
 
         return mDbUser;
@@ -56,7 +56,7 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
 
     public String getAdUserName() {
         if (mAdUserName == null) {
-            DbUser user = DbFacade.getInstance().getDbUserDAO().get(getAdUserId());
+            DbUser user = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
             if (user != null) {
                 mAdUserName = user.getusername();
             }

@@ -12,7 +12,7 @@ public class GetAllVmPoolsAttachedToUserQuery<P extends GetAllVmPoolsAttachedToU
 
     @Override
     protected List<vm_pools> getPrivilegedQueryReturnValue() {
-        List<vm_pools> returnValue = getDbFacade().getVmPoolDAO().getAllForUser(getParameters().getUserId());
+        List<vm_pools> returnValue = getDbFacade().getVmPoolDao().getAllForUser(getParameters().getUserId());
         return returnValue;
     }
 }

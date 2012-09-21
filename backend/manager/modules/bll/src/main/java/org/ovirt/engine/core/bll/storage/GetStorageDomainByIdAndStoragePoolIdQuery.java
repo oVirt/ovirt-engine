@@ -13,7 +13,7 @@ public class GetStorageDomainByIdAndStoragePoolIdQuery<P extends StorageDomainAn
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(getParameters().getStorageDomainId(),
+                DbFacade.getInstance().getStorageDomainDao().getForStoragePool(getParameters().getStorageDomainId(),
                         getParameters().getStoragePoolId()));
     }
 }

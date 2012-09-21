@@ -19,7 +19,7 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fenci
     @Override
     protected void executeQueryCommand() {
         String msg = "";
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
         setVdsId(vds.getId());
         setVdsName(vds.getvds_name());
         FencingExecutor executor = new FencingExecutor(vds, FenceActionType.Status);

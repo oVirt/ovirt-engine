@@ -32,10 +32,10 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
     @Override
     protected void executeVmCommand() {
-        this.setVmName(DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
+        this.setVmName(DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId()).getvm_name());
 
         // return mac to pool
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
+        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForVm(getParameters().getVmId());
 
         VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
@@ -57,18 +57,18 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
         // remove from db
         DbFacade dbFacade = DbFacade.getInstance();
-        dbFacade.getVmNetworkInterfaceDAO().remove(getParameters().getInterfaceId());
-        dbFacade.getVmNetworkStatisticsDAO().remove(getParameters().getInterfaceId());
-        dbFacade.getVmDeviceDAO()
+        dbFacade.getVmNetworkInterfaceDao().remove(getParameters().getInterfaceId());
+        dbFacade.getVmNetworkStatisticsDao().remove(getParameters().getInterfaceId());
+        dbFacade.getVmDeviceDao()
                 .remove(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()));
         setSucceeded(true);
     }
 
     @Override
     protected boolean canDoAction() {
-        VmDynamic vm = DbFacade.getInstance().getVmDynamicDAO().get(getParameters().getVmId());
+        VmDynamic vm = DbFacade.getInstance().getVmDynamicDao().get(getParameters().getVmId());
         if (vm.getstatus() != VMStatus.Down && DbFacade.getInstance()
-                .getVmDeviceDAO()
+                .getVmDeviceDao()
                 .get(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()))
                 .getIsPlugged()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE);

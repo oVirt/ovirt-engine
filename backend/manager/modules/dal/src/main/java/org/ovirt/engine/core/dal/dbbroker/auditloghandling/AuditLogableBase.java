@@ -486,67 +486,67 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public StorageDomainDAO getStorageDomainDAO() {
-        return getDbFacade().getStorageDomainDAO();
+        return getDbFacade().getStorageDomainDao();
     }
 
     public StoragePoolDAO getStoragePoolDAO() {
-        return getDbFacade().getStoragePoolDAO();
+        return getDbFacade().getStoragePoolDao();
     }
 
     public VdsDAO getVdsDAO() {
-        return getDbFacade().getVdsDAO();
+        return getDbFacade().getVdsDao();
     }
 
     public VmTemplateDAO getVmTemplateDAO() {
-        return getDbFacade().getVmTemplateDAO();
+        return getDbFacade().getVmTemplateDao();
     }
 
     protected VmDAO getVmDAO() {
-        return getDbFacade().getVmDAO();
+        return getDbFacade().getVmDao();
     }
 
     public VmStaticDAO getVmStaticDAO() {
-        return getDbFacade().getVmStaticDAO();
+        return getDbFacade().getVmStaticDao();
     }
 
     protected VmStatisticsDAO getVmStatisticsDAO() {
-        return getDbFacade().getVmStatisticsDAO();
+        return getDbFacade().getVmStatisticsDao();
     }
 
     public VdsGroupDAO getVdsGroupDAO() {
-        return getDbFacade().getVdsGroupDAO();
+        return getDbFacade().getVdsGroupDao();
     }
 
     public RoleDAO getRoleDao() {
-        return getDbFacade().getRoleDAO();
+        return getDbFacade().getRoleDao();
     }
 
     public RoleGroupMapDAO getRoleGroupMapDAO() {
-        return getDbFacade().getRoleGroupMapDAO();
+        return getDbFacade().getRoleGroupMapDao();
     }
 
     public PermissionDAO getPermissionDAO() {
-        return getDbFacade().getPermissionDAO();
+        return getDbFacade().getPermissionDao();
     }
 
     public DbUserDAO getDbUserDAO() {
-        return getDbFacade().getDbUserDAO();
+        return getDbFacade().getDbUserDao();
     }
 
     public AdGroupDAO getAdGroupDAO() {
-        return getDbFacade().getAdGroupDAO();
+        return getDbFacade().getAdGroupDao();
     }
 
     protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
-        return getDbFacade().getVmNetworkInterfaceDAO();
+        return getDbFacade().getVmNetworkInterfaceDao();
     }
 
     protected NetworkClusterDAO getNetworkClusterDAO() {
-        return getDbFacade().getNetworkClusterDAO();
+        return getDbFacade().getNetworkClusterDao();
     }
 
     protected NetworkDAO getNetworkDAO() {
-        return getDbFacade().getNetworkDAO();
+        return getDbFacade().getNetworkDao();
     }
 
     protected DbFacade getDbFacade() {

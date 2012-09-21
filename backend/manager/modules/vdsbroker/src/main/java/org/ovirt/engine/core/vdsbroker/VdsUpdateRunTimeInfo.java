@@ -134,15 +134,15 @@ public class VdsUpdateRunTimeInfo {
 
                             @Override
                             public Void runInTransaction() {
-                                getDbFacade().getInterfaceDAO().massUpdateStatisticsForVds(statistics);
+                                getDbFacade().getInterfaceDao().massUpdateStatisticsForVds(statistics);
                                 return null;
                             }
                         });
             }
         }
 
-        updateAllInTransaction(_vmDynamicToSave.values(), getDbFacade().getVmDynamicDAO());
-        updateAllInTransaction(_vmStatisticsToSave.values(), getDbFacade().getVmStatisticsDAO());
+        updateAllInTransaction(_vmDynamicToSave.values(), getDbFacade().getVmDynamicDao());
+        updateAllInTransaction(_vmStatisticsToSave.values(), getDbFacade().getVmStatisticsDao());
 
         final List<VmNetworkStatistics> allVmInterfaceStatistics = new LinkedList<VmNetworkStatistics>();
         for (List<VmNetworkInterface> list : _vmInterfaceStatisticsToSave.values()) {
@@ -151,22 +151,22 @@ public class VdsUpdateRunTimeInfo {
             }
         }
 
-        updateAllInTransaction(allVmInterfaceStatistics, getDbFacade().getVmNetworkStatisticsDAO());
-        updateAllInTransaction(_vmDiskImageDynamicToSave.values(), getDbFacade().getDiskImageDynamicDAO());
+        updateAllInTransaction(allVmInterfaceStatistics, getDbFacade().getVmNetworkStatisticsDao());
+        updateAllInTransaction(_vmDiskImageDynamicToSave.values(), getDbFacade().getDiskImageDynamicDao());
         saveVmDevicesToDb();
     }
 
     private void saveVmDevicesToDb() {
         List<VmDevice> list = new ArrayList<VmDevice>(vmDeviceToSave.values());
         Collections.sort(list);
-        updateAllInTransaction("UpdateVmDeviceRuntimeInfo", list, getDbFacade().getVmDeviceDAO());
+        updateAllInTransaction("UpdateVmDeviceRuntimeInfo", list, getDbFacade().getVmDeviceDao());
 
         if (!removedDeviceIds.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
                     new TransactionMethod<Void>() {
                         @Override
                         public Void runInTransaction() {
-                            getDbFacade().getVmDeviceDAO().removeAll(removedDeviceIds);
+                            getDbFacade().getVmDeviceDao().removeAll(removedDeviceIds);
                             return null;
                         }
                     });
@@ -178,7 +178,7 @@ public class VdsUpdateRunTimeInfo {
 
                         @Override
                         public Void runInTransaction() {
-                            getDbFacade().getVmDeviceDAO().saveAll(newVmDevices);
+                            getDbFacade().getVmDeviceDao().saveAll(newVmDevices);
                             return null;
                         }
                     });
@@ -259,7 +259,7 @@ public class VdsUpdateRunTimeInfo {
                         new TransactionMethod<Map<Guid, VM>>() {
                             @Override
                             public Map<Guid, VM> runInTransaction() {
-                                return getDbFacade().getVmDAO().getAllRunningByVds(_vds.getId());
+                                return getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
                             }
                         });
 
@@ -407,7 +407,7 @@ public class VdsUpdateRunTimeInfo {
 
     private void markIsSetNonOperationalExecuted() {
         if (!_vdsManager.isSetNonOperationalExecuted()) {
-            VdsDynamic vdsDynamic = getDbFacade().getVdsDynamicDAO().get(_vds.getId());
+            VdsDynamic vdsDynamic = getDbFacade().getVdsDynamicDao().get(_vds.getId());
             if (vdsDynamic.getstatus() == VDSStatus.NonOperational) {
                 _vdsManager.setIsSetNonOperationalExecuted(true);
             }
@@ -555,7 +555,7 @@ public class VdsUpdateRunTimeInfo {
             return;
         }
         Map<String, Boolean> bondsWithStatus = new HashMap<String, Boolean>();
-        List<Network> clusterNetworks = getDbFacade().getNetworkDAO()
+        List<Network> clusterNetworks = getDbFacade().getNetworkDao()
                 .getAllForCluster(_vds.getvds_group_id());
         List<String> networks = new ArrayList<String>();
         List<String> brokenNics = new ArrayList<String>();
@@ -969,7 +969,7 @@ public class VdsUpdateRunTimeInfo {
         Guid vmId = new Guid((String) vm.getItem(VdsProperties.vm_guid));
         HashSet<Guid> processedDevices = new HashSet<Guid>();
         Object[] objects = (Object[]) vm.getItem(VdsProperties.Devices);
-        List<VmDevice> devices = getDbFacade().getVmDeviceDAO().getVmDeviceByVmId(vmId);
+        List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmId(vmId);
         Map<VmDeviceId, VmDevice> deviceMap = new HashMap<VmDeviceId, VmDevice>();
         for (VmDevice device : devices) {
             deviceMap.put(device.getId(), device);
@@ -1133,7 +1133,7 @@ public class VdsUpdateRunTimeInfo {
                 clearVm(vmTo);
             }
 
-            VmStatistics vmStatistics = getDbFacade().getVmStatisticsDAO().get(vm.getId());
+            VmStatistics vmStatistics = getDbFacade().getVmStatisticsDao().get(vm.getId());
             if (vmStatistics != null) {
                 DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
                         new DestroyVDSCommand<DestroyVmVDSCommandParameters>(new DestroyVmVDSCommandParameters(
@@ -1367,7 +1367,7 @@ public class VdsUpdateRunTimeInfo {
                     running.add(vmToUpdate);
                 }
 
-                VmDynamic vmDynamic = getDbFacade().getVmDynamicDAO().get(runningVm.getId());
+                VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
                 if (vmDynamic == null || vmDynamic.getstatus() != VMStatus.Unknown) {
                     _vmDynamicToSave.remove(runningVm.getId());
                 }
@@ -1443,7 +1443,7 @@ public class VdsUpdateRunTimeInfo {
             returnValue = true;
         } else if ((vmToUpdate == null && runningVm.getstatus() != VMStatus.MigratingFrom)) {
             // check if the vm exists on another vds
-            VmDynamic vmDynamic = getDbFacade().getVmDynamicDAO().get(runningVm.getId());
+            VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
             if (vmDynamic != null && vmDynamic.getrun_on_vds() != null
                     && !vmDynamic.getrun_on_vds().equals(_vds.getId()) && runningVm.getstatus() != VMStatus.Up) {
                 log.infoFormat(
@@ -1523,13 +1523,13 @@ public class VdsUpdateRunTimeInfo {
     private boolean UpdateVmRunTimeInfo(RefObject<VM> vmToUpdate, VmDynamic vmNewDynamicData) {
         boolean returnValue = false;
         if (vmToUpdate.argvalue == null) {
-            vmToUpdate.argvalue = getDbFacade().getVmDAO().get(vmNewDynamicData.getId());
+            vmToUpdate.argvalue = getDbFacade().getVmDao().get(vmNewDynamicData.getId());
             // if vm exists in db update info
             if (vmToUpdate.argvalue != null) {
                 // TODO: This is done to keep consistency with VmDAO.getById(Guid).
                 // It should probably be removed, but some research is required.
                 vmToUpdate.argvalue.setInterfaces(getDbFacade()
-                        .getVmNetworkInterfaceDAO()
+                        .getVmNetworkInterfaceDao()
                         .getAllForVm(vmToUpdate.argvalue.getId()));
 
                 _vmDict.put(vmToUpdate.argvalue.getId(), vmToUpdate.argvalue);
@@ -1597,7 +1597,7 @@ public class VdsUpdateRunTimeInfo {
         }
 
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
-            vm.setInterfaces(getDbFacade().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
+            vm.setInterfaces(getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
         List<String> macs = new ArrayList<String>();
 

@@ -143,7 +143,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = new ArrayList<VM>();
             getQueryReturnValue().setExceptionString(getQueryReturnValue().getExceptionString());
         } else {
-            returnValue = getDbFacade().getVmDAO().getAllUsingQuery(data.getQuery());
+            returnValue = getDbFacade().getVmDao().getAllUsingQuery(data.getQuery());
             for (VM vm : returnValue) {
                 VmHandler.UpdateVmGuestAgentVersion(vm);
             }
@@ -152,7 +152,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VDS> searchVDSsByDb() {
-        return genericSearch(getDbFacade().getVdsDAO(), true, new Filter<VDS>() {
+        return genericSearch(getDbFacade().getVdsDao(), true, new Filter<VDS>() {
             @Override
             public List<VDS> filter(List<VDS> data) {
                 for (VDS vds : data) {
@@ -199,11 +199,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<DbUser> searchDbUsers() {
-        return genericSearch(getDbFacade().getDbUserDAO(), true, null);
+        return genericSearch(getDbFacade().getDbUserDao(), true, null);
     }
 
     private List<VmTemplate> searchVMTemplates() {
-        return genericSearch(getDbFacade().getVmTemplateDAO(), true, new Filter<VmTemplate>() {
+        return genericSearch(getDbFacade().getVmTemplateDao(), true, new Filter<VmTemplate>() {
             @Override
             public List<VmTemplate> filter(final List<VmTemplate> data) {
                 for (IVdcQueryable vmt_helper : data) {
@@ -227,27 +227,27 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<AuditLog> searchAuditLogEvents() {
-        return genericSearch(getDbFacade().getAuditLogDAO(), false, null);
+        return genericSearch(getDbFacade().getAuditLogDao(), false, null);
     }
 
     private List<vm_pools> searchVmPools() {
-        return genericSearch(getDbFacade().getVmPoolDAO(), true, null);
+        return genericSearch(getDbFacade().getVmPoolDao(), true, null);
     }
 
     private List<VDSGroup> searchClusters() {
-        return genericSearch(getDbFacade().getVdsGroupDAO(), true, null);
+        return genericSearch(getDbFacade().getVdsGroupDao(), true, null);
     }
 
     private List<storage_pool> searchStoragePool() {
-        return genericSearch(getDbFacade().getStoragePoolDAO(), true, null);
+        return genericSearch(getDbFacade().getStoragePoolDao(), true, null);
     }
 
     private List<storage_domains> searchStorageDomain() {
-        return genericSearch(getDbFacade().getStorageDomainDAO(), true, null);
+        return genericSearch(getDbFacade().getStorageDomainDao(), true, null);
     }
 
     private List<Quota> searchQuota() {
-        return genericSearch(getDbFacade().getQuotaDAO(), true, null);
+        return genericSearch(getDbFacade().getQuotaDao(), true, null);
     }
 
     private List<Disk> searchDisk() {

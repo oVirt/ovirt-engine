@@ -74,7 +74,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             // get vm device for Video Cards from DB
             List<VmDevice> vmDevices =
                     DbFacade.getInstance()
-                            .getVmDeviceDAO()
+                            .getVmDeviceDao()
                             .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceType.VIDEO.getName());
             for (VmDevice vmDevice : vmDevices) {
                 // skip unmanaged devices (handled separately)
@@ -134,7 +134,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             // get vm device for this CD from DB
             List<VmDevice> vmDevices =
                     DbFacade.getInstance()
-                            .getVmDeviceDAO()
+                            .getVmDeviceDao()
                             .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                     VmDeviceType.DISK.getName(),
                                     VmDeviceType.CDROM.getName());
@@ -197,7 +197,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             // get vm device for this Floppy from DB
             List<VmDevice> vmDevices =
                     DbFacade.getInstance()
-                            .getVmDeviceDAO()
+                            .getVmDeviceDao()
                             .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                     VmDeviceType.DISK.getName(),
                                     VmDeviceType.FLOPPY.getName());
@@ -228,7 +228,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             // get vm device for this disk from DB
             VmDevice vmDevice =
                     DbFacade.getInstance()
-                            .getVmDeviceDAO()
+                            .getVmDeviceDao()
                             .get(new VmDeviceId(disk.getId(), vm.getId()));
             // skip unamanged devices (handled separtely)
             if (!vmDevice.getIsManaged()) {
@@ -297,7 +297,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         Map<VmDeviceId, VmDevice> devicesByDeviceId =
                 Entities.businessEntitiesById(DbFacade.getInstance()
-                        .getVmDeviceDAO()
+                        .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                 VmDeviceType.INTERFACE.getName(),
                                 VmDeviceType.BRIDGE.getName()));
@@ -363,7 +363,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             // get vm device for Sound device from DB
             List<VmDevice> vmDevices =
                     DbFacade.getInstance()
-                            .getVmDeviceDAO()
+                            .getVmDeviceDao()
                             .getVmDeviceByVmIdAndType(vm.getId(),
                                     VmDeviceType.SOUND.getName());
             for (VmDevice vmDevice : vmDevices) {
@@ -385,7 +385,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 (Map<String, String>) createInfo.getItem(VdsProperties.Custom) : new HashMap<String, String>();
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
-                        .getVmDeviceDAO()
+                        .getVmDeviceDao()
                         .getUnmanagedDevicesByVmId(vm.getId());
         if (vmDevices.size() > 0) {
             StringBuilder id = new StringBuilder();
@@ -550,7 +550,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private void buildVmUsbControllers() {
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
-                        .getVmDeviceDAO()
+                        .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                 VmDeviceType.CONTROLLER.getName(),
                                 VmDeviceType.USB.getName());
@@ -576,7 +576,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private void buildVmUsbSlots() {
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
-                        .getVmDeviceDAO()
+                        .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                 VmDeviceType.REDIR.getName(),
                                 VmDeviceType.SPICEVMC.getName());
@@ -619,7 +619,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             // get vm device for this Balloon from DB
             List<VmDevice> vmDevices =
                     DbFacade.getInstance()
-                            .getVmDeviceDAO()
+                            .getVmDeviceDao()
                             .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                     VmDeviceType.BALLOON.getName(),
                                     VmDeviceType.MEMBALLOON.getName());

@@ -33,7 +33,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
 
     @Override
     protected void executeQueryCommand() {
-        storage_domain_static storage = DbFacade.getInstance().getStorageDomainStaticDAO().get(
+        storage_domain_static storage = DbFacade.getInstance().getStorageDomainStaticDao().get(
                 getParameters().getStorageDomainId());
         if (storage.getstorage_domain_type() == StorageDomainType.ImportExport) {
             VDSReturnValue retVal = executeVerb();
@@ -54,7 +54,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
     }
 
     protected boolean isValidExportDomain() {
-        storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+        storage_domains domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                 getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
         if (domain != null && domain.getstorage_domain_type() == StorageDomainType.ImportExport) {
@@ -68,7 +68,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         ArrayList<String> ovfList = (ArrayList<String>) obj;
         OvfManager ovfManager = new OvfManager();
         ArrayList<VM> vms = new ArrayList<VM>();
-        List<VM> existsVms = DbFacade.getInstance().getVmDAO().getAll();
+        List<VM> existsVms = DbFacade.getInstance().getVmDao().getAll();
         java.util.HashMap<Guid, VM> existsVmDictionary = new java.util.HashMap<Guid, VM>();
         for (VM vm : existsVms) {
             existsVmDictionary.put(vm.getId(), vm);

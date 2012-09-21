@@ -19,7 +19,7 @@ extends QueriesCommandBase<P> {
 
     @Override
     protected void executeQueryCommand() {
-        List<VM> vms = DbFacade.getInstance().getVmDAO().getAllForStorageDomain(
+        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForStorageDomain(
                 getParameters().getStorageDomainId());
         for (VM vm : vms) {
             VmHandler.updateDisksFromDb(vm);

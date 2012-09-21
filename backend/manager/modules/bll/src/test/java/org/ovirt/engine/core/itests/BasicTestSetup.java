@@ -175,7 +175,7 @@ public class BasicTestSetup {
                 addVmFromScratchParams);
         Assert.assertTrue(addVmAction.getSucceeded());
 
-        this.vm = DB_FACADE.getVmDAO().get(vm.getId());
+        this.vm = DB_FACADE.getVmDao().get(vm.getId());
         Assert.assertNotNull(this.vm);
 
         createVmDiskImage(vm, now);
@@ -257,17 +257,17 @@ public class BasicTestSetup {
         dynamicStorageDomain.setused_disk_size(10);
         storageDomain.setStorageDynamicData(dynamicStorageDomain);
 
-        DB_FACADE.getStorageDomainStaticDAO().save(storageDomain.getStorageStaticData());
-        DB_FACADE.getStorageDomainDynamicDAO().save(dynamicStorageDomain);
-        DB_FACADE.getStorageDomainDynamicDAO().update(storageDomain.getStorageDynamicData());
+        DB_FACADE.getStorageDomainStaticDao().save(storageDomain.getStorageStaticData());
+        DB_FACADE.getStorageDomainDynamicDao().save(dynamicStorageDomain);
+        DB_FACADE.getStorageDomainDynamicDao().update(storageDomain.getStorageDynamicData());
         VdcReturnValueBase attachAction = backend.runInternalAction(VdcActionType.AttachStorageDomainToPool,
                 new StorageDomainPoolParametersBase(storageDomainId, dataCenter.getId()));
         Assert.assertTrue(attachAction.getSucceeded());
 
-        storage_pool_iso_map isoMap = DB_FACADE.getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(
+        storage_pool_iso_map isoMap = DB_FACADE.getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 storageDomainId, dataCenter.getId()));
         isoMap.setstatus(StorageDomainStatus.Active);
-        DB_FACADE.getStoragePoolIsoMapDAO().updateStatus(isoMap.getId(), isoMap.getstatus());
+        DB_FACADE.getStoragePoolIsoMapDao().updateStatus(isoMap.getId(), isoMap.getstatus());
 
         storage = storageDomain;
     }
@@ -294,9 +294,9 @@ public class BasicTestSetup {
         host = (VDS) backend.runInternalQuery(VdcQueryType.GetVdsByVdsId, new GetVdsByVdsIdParameters(hostId))
                 .getReturnValue();
         Assert.assertNotNull(host);
-        VDS vds = DB_FACADE.getVdsDAO().get(hostId);
+        VDS vds = DB_FACADE.getVdsDao().get(hostId);
         vds.setstatus(VDSStatus.Up);
-        DB_FACADE.getVdsDynamicDAO().update(vds.getDynamicData());
+        DB_FACADE.getVdsDynamicDao().update(vds.getDynamicData());
     }
 
     private AddVdsCommand<AddVdsActionParameters> createAddVdsCommand(AddVdsActionParameters addHostParams) {
@@ -378,16 +378,16 @@ public class BasicTestSetup {
 
     private void removeUser() {
         Guid userId = getUser().getUserId();
-        List<permissions> perms = DB_FACADE.getPermissionDAO().getAllForAdElement(userId);
+        List<permissions> perms = DB_FACADE.getPermissionDao().getAllForAdElement(userId);
         for (permissions p : perms) {
-            DB_FACADE.getPermissionDAO().remove(p.getId());
+            DB_FACADE.getPermissionDao().remove(p.getId());
         }
-        DB_FACADE.getDbUserDAO().remove(userId);
+        DB_FACADE.getDbUserDao().remove(userId);
         System.out.println("-- removed user " + getUser().getUserName() + " and its permissions -- ");
     }
 
     private void removeDatacenter() {
-        DB_FACADE.getStoragePoolDAO().remove(dataCenter.getId());
+        DB_FACADE.getStoragePoolDao().remove(dataCenter.getId());
         System.out.println("-- removed Data Center " + dataCenter.getname() + "-- ");
     }
 
@@ -398,27 +398,27 @@ public class BasicTestSetup {
     }
 
     private void removeHost() {
-        DB_FACADE.getVdsDynamicDAO().remove(host.getId());
-        DB_FACADE.getVdsStatisticsDAO().remove(host.getId());
-        DB_FACADE.getVdsStaticDAO().remove(host.getId());
+        DB_FACADE.getVdsDynamicDao().remove(host.getId());
+        DB_FACADE.getVdsStatisticsDao().remove(host.getId());
+        DB_FACADE.getVdsStaticDao().remove(host.getId());
         System.out.println("-- removed Host " + host.gethost_name() + " -- ");
     }
 
     private void removeStorage() {
 
         Guid id = storage.getId();
-        DB_FACADE.getStorageDomainDynamicDAO().remove(id);
+        DB_FACADE.getStorageDomainDynamicDao().remove(id);
         List<DiskImage> snapshots = DB_FACADE.getDiskImageDao().getAllSnapshotsForStorageDomain(id);
         for (DiskImage i : snapshots) {
             DB_FACADE.getImageDao().remove(i.getImageId());
         }
-        DB_FACADE.getStorageDomainStaticDAO().remove(id);
+        DB_FACADE.getStorageDomainStaticDao().remove(id);
         System.out.println("-- removed storage " + storage.getstorage_name() + " and its snapshots -- ");
     }
 
     private void removeVM() {
         removeVmDisks();
-        DB_FACADE.getVmDAO().remove(vm.getId());
+        DB_FACADE.getVmDao().remove(vm.getId());
         System.out.println("-- removed VM " + vm.getvm_name() + " and its images -- ");
 
     }

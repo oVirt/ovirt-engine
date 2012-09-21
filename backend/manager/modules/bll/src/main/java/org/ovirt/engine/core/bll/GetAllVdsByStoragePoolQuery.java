@@ -11,7 +11,7 @@ public class GetAllVdsByStoragePoolQuery<P extends GetAllVdsByStoragePoolParamet
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getVdsDAO().getAllForStoragePool
+                getDbFacade().getVdsDao().getAllForStoragePool
                         (getParameters().getStoragePoolId(), getUserID(), getParameters().isFiltered()));
     }
 }

@@ -33,7 +33,7 @@ public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQuery
                 thenReturn(Collections.singletonList(domain));
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        when(dbFacadeMock.getStorageDomainDAO()).thenReturn(storageDomainDAOMock);
+        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDAOMock);
 
         getQuery().executeQueryCommand();
 

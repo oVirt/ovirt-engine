@@ -244,6 +244,6 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
     }
 
     protected InterfaceDAO getInterfaceDAO() {
-        return DbFacade.getInstance().getInterfaceDAO();
+        return DbFacade.getInstance().getInterfaceDao();
     }
 }

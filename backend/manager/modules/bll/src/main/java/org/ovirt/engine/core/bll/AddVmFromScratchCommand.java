@@ -42,7 +42,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
         if (Guid.Empty.equals(storageDomainId) || storageDomainId == null) {
             List<storage_domains> storagesInPool =
                     LinqUtils.filter(DbFacade.getInstance()
-                            .getStorageDomainDAO().getAllForStoragePool(getStoragePoolId().getValue()),
+                            .getStorageDomainDao().getAllForStoragePool(getStoragePoolId().getValue()),
                             new Predicate<storage_domains>() {
                                 @Override
                                 public boolean eval(storage_domains a) {

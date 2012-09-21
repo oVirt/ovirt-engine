@@ -18,7 +18,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends GetEventSub
     protected void executeQueryCommand() {
         List<event_subscriber> list = DbFacade
                 .getInstance()
-                .getEventDAO()
+                .getEventDao()
                 .getAllForSubscriber(
                         getParameters().getSubscriberId());
         if (list.size() > 0) {

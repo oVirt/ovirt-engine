@@ -12,7 +12,7 @@ public class AddBookmarkCommand<T extends BookmarksOperationParameters> extends 
 
     @Override
     protected boolean canDoAction() {
-        if (DbFacade.getInstance().getBookmarkDAO()
+        if (DbFacade.getInstance().getBookmarkDao()
                 .getByName(getBookmark().getbookmark_name()) != null) {
             AddErrorMessages(
                     VdcBllMessages.VAR__ACTION__ADD,
@@ -25,7 +25,7 @@ public class AddBookmarkCommand<T extends BookmarksOperationParameters> extends 
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getBookmarkDAO().save(getBookmark());
+        DbFacade.getInstance().getBookmarkDao().save(getBookmark());
         setSucceeded(true);
     }
 

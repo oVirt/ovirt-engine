@@ -12,7 +12,7 @@ public class GetDbUserByUserIdQuery<P extends GetDbUserByUserIdParameters>
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getDbUserDAO()
+                DbFacade.getInstance().getDbUserDao()
                         .get((getParameters()).getUserId()));
     }
 }

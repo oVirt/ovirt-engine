@@ -30,7 +30,7 @@ public class GetAllAuditLogsByVMNameQueryTest extends AbstractUserQueryTest<GetA
         // Mock the DAOs
         AuditLogDAO auditLogDAOMock = mock(AuditLogDAO.class);
         when(auditLogDAOMock.getAllByVMName(vmName, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(expectedResult));
-        when(getDbFacadeMockInstance().getAuditLogDAO()).thenReturn(auditLogDAOMock);
+        when(getDbFacadeMockInstance().getAuditLogDao()).thenReturn(auditLogDAOMock);
 
         getQuery().executeQueryCommand();
 

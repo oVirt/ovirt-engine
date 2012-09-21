@@ -31,9 +31,9 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
         // Add storage Connection to the database.
         if (isValidConnection && (StringUtils.isNotEmpty(currConnection.getid())
-                || getDbFacade().getStorageServerConnectionDAO().get(currConnection.getid()) == null)) {
+                || getDbFacade().getStorageServerConnectionDao().get(currConnection.getid()) == null)) {
             currConnection.setid(Guid.NewGuid().toString());
-            getDbFacade().getStorageServerConnectionDAO().save(currConnection);
+            getDbFacade().getStorageServerConnectionDao().save(currConnection);
         }
        getReturnValue().setActionReturnValue(getConnection().getid());
         setSucceeded(true);
@@ -43,7 +43,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     protected storage_server_connections getConnection() {
         if (StringUtils.isEmpty(getParameters().getStorageServerConnection().getid())) {
             List<storage_server_connections> connections;
-            if ((connections = DbFacade.getInstance().getStorageServerConnectionDAO().getAllForStorage(
+            if ((connections = DbFacade.getInstance().getStorageServerConnectionDao().getAllForStorage(
                     getParameters().getStorageServerConnection().getconnection())).size() != 0) {
                 getParameters().setStorageServerConnection(connections.get(0));
             }
@@ -73,7 +73,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
         if (returnValue) {
             if (paramConnection.getstorage_type() == StorageType.LOCALFS) {
-                storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().getForVds(getVds().getId());
+                storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVds(getVds().getId());
                 if (storagePool == null || storagePool.getstorage_pool_type() != StorageType.LOCALFS) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_LOCAL_STORAGE_TO_NON_LOCAL_HOST);

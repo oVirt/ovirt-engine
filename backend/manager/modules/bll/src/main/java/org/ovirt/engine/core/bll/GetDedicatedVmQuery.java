@@ -10,6 +10,6 @@ public class GetDedicatedVmQuery<P extends GetDedicatedVmParameters> extends Que
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getVmDAO().getAllForDedicatedPowerClientByVds(getParameters().getId()));
+                getDbFacade().getVmDao().getAllForDedicatedPowerClientByVds(getParameters().getId()));
     }
 }

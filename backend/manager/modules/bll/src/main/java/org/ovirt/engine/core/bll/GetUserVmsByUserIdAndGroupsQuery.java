@@ -14,7 +14,7 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
 
     @Override
     protected List<VM> getPrivilegedQueryReturnValue() {
-        List<VM> vmList = getDbFacade().getVmDAO().getAllForUserWithGroupsAndUserRoles(getParameters().getUserId());
+        List<VM> vmList = getDbFacade().getVmDao().getAllForUserWithGroupsAndUserRoles(getParameters().getUserId());
         for (VM vm : vmList) {
             updateVmGuestAgentVersion(vm);
             if (getParameters().getIncludeDiskData()) {

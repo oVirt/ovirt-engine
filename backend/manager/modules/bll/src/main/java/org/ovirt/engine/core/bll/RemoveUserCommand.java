@@ -39,7 +39,7 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
     @Override
     protected void executeCommand() {
         for (permissions permission : DbFacade.getInstance()
-                .getPermissionDAO()
+                .getPermissionDao()
                 .getAllDirectPermissionsForAdElement(getAdUserId())) {
             PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes(permission);
             tempVar.setShouldBeLogged(false);
@@ -47,14 +47,14 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
                     tempVar,
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         }
-        DbFacade.getInstance().getDbUserDAO().remove(getAdUserId());
+        DbFacade.getInstance().getDbUserDao().remove(getAdUserId());
         setSucceeded(true);
     }
 
     public static boolean CanRemoveUser(Guid user_guid, java.util.ArrayList<String> errors) {
         boolean returnValue = true;
         // check that the user exists in DB
-        if (DbFacade.getInstance().getDbUserDAO().get(user_guid) == null) {
+        if (DbFacade.getInstance().getDbUserDao().get(user_guid) == null) {
             errors.add(VdcBllMessages.USER_MUST_EXIST_IN_DB.toString());
             returnValue = false;
         }

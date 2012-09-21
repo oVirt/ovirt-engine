@@ -30,7 +30,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     public boolean RunForSingleConnectionInHost(storage_domains storageDomain, Guid storagePoolId, int type) {
         boolean returnValue = false;
-        storage_pool pool = DbFacade.getInstance().getStoragePoolDAO().get(storagePoolId);
+        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
         Guid vdsId = pool.getspm_vds_id() != null ? pool.getspm_vds_id().getValue() : Guid.Empty;
 
         if (!vdsId.equals(Guid.Empty)) {
@@ -46,10 +46,10 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     protected void RunForAllConnectionsInPool(VdcActionType type, VDS vds) {
-        storage_pool pool = DbFacade.getInstance().getStoragePoolDAO().get(vds.getstorage_pool_id());
+        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(vds.getstorage_pool_id());
         if (pool.getstatus() != StoragePoolStatus.Uninitialized) {
             List<storage_server_connections> connections = DbFacade.getInstance()
-                    .getStorageServerConnectionDAO().getAllForStoragePool(vds.getstorage_pool_id());
+                    .getStorageServerConnectionDao().getAllForStoragePool(vds.getstorage_pool_id());
             for (storage_server_connections connection : connections) {
                 Backend.getInstance().runInternalAction(type,
                         new StorageServerConnectionParametersBase(connection, vds.getId()));
@@ -92,12 +92,12 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public void removeLun(LUNs lun) {
-        List<LUNs> lunsList = DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(lun.getvolume_group_id());
+        List<LUNs> lunsList = DbFacade.getInstance().getLunDao().getAllForVolumeGroup(lun.getvolume_group_id());
         if (lunsList.size() == 1) {
             for (storage_server_connections connection : filterConnectionsUsedByOthers(lun.getLunConnections(),
                     "",
                     lun.getLUN_id())) {
-                DbFacade.getInstance().getStorageServerConnectionDAO().remove(connection.getid());
+                DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
             }
         }
     }

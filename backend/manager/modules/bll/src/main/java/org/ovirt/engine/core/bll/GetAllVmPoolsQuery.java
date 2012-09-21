@@ -10,6 +10,6 @@ public class GetAllVmPoolsQuery<P extends VdcQueryParametersBase> extends Querie
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getVmPoolDAO().getAll());
+        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getVmPoolDao().getAll());
     }
 }

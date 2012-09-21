@@ -86,7 +86,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private List<VDS> getVdssByUniqueId() {
         if (_vdssByUniqueId == null) {
             VdsInstaller.UpdateUniqueId(getStrippedVdsUniqueId());
-            _vdssByUniqueId = DbFacade.getInstance().getVdsDAO().getAllWithUniqueId(getStrippedVdsUniqueId());
+            _vdssByUniqueId = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(getStrippedVdsUniqueId());
         }
         return _vdssByUniqueId;
     }
@@ -449,7 +449,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         }
 
         boolean returnValue = true;
-        List<VDS> vdss_byHostName = DbFacade.getInstance().getVdsDAO().getAllForHostname(
+        List<VDS> vdss_byHostName = DbFacade.getInstance().getVdsDao().getAllForHostname(
                 getParameters().getVdsHostName());
         int lastIteratedIndex = 1;
         if (vdss_byHostName.size() > 0) {
@@ -472,7 +472,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         for (int i = lastIteratedIndex; i <= 100; i++, lastIteratedIndex = i) {
                             try_host_name = String.format("hostname-was-%1$s-%2$s", getParameters()
                                     .getVdsHostName(), i);
-                            if (DbFacade.getInstance().getVdsDAO().getAllForHostname(try_host_name).size() == 0) {
+                            if (DbFacade.getInstance().getVdsDao().getAllForHostname(try_host_name).size() == 0) {
                                 unique = true;
                                 break;
                             }
@@ -538,7 +538,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             log.infoFormat("Entering");
         }
         boolean returnValue = true;
-        VdsDAO vdsDAO = DbFacade.getInstance().getVdsDAO();
+        VdsDAO vdsDAO = DbFacade.getInstance().getVdsDao();
         List<VDS> hosts = vdsDAO.getAllWithName(getParameters().getVdsName());
         List<String> allHostNames = getAllHostNames(vdsDAO.getAll());
         boolean hostExistInDB = hostToRegister != null;

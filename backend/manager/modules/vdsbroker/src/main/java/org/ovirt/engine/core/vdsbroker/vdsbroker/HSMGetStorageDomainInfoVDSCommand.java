@@ -61,7 +61,7 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                 if (sdStatic.getstorage_type() == StorageType.NFS && xmlRpcStruct.contains("remotePath")) {
                     String path = xmlRpcStruct.getItem("remotePath").toString();
                     List<storage_server_connections> connections = DbFacade.getInstance()
-                            .getStorageServerConnectionDAO().getAllForStorage(path);
+                            .getStorageServerConnectionDao().getAllForStorage(path);
                     if (connections.isEmpty()) {
                         sdStatic.setConnection(new storage_server_connections());
                         sdStatic.getConnection().setconnection(path);

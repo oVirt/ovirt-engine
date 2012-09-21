@@ -14,7 +14,7 @@ public class GetVdsCertificateSubjectByVdsIdQuery<P extends GetVdsByVdsIdParamet
     protected void executeQueryCommand() {
         getQueryReturnValue().setSucceeded(false);
         VDS vds = getDbFacade()
-                .getVdsDAO()
+                .getVdsDao()
                 .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
         if (vds != null) {
             getQueryReturnValue().setSucceeded(true);

@@ -41,7 +41,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     protected boolean canDoAction() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+        storage_domains storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                 getParameters().getStorageDomainId(), getParameters().getStoragePoolId());
         if (storage == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);

@@ -28,7 +28,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
         // Set up the DAOs
         List<storage_domains> expected = Collections.singletonList(new storage_domains());
         StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
-        when(getDbFacadeMockInstance().getStorageDomainDAO()).thenReturn(storageDomainDAOMock);
+        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDAOMock);
         when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
 
         // Run the query
@@ -73,7 +73,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
 
         // Set up the DAOs
         StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
-        when(getDbFacadeMockInstance().getStorageDomainDAO()).thenReturn(storageDomainDAOMock);
+        when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDAOMock);
         when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
 
         // Run the query

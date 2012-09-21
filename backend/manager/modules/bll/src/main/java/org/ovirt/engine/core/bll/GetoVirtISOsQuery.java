@@ -194,7 +194,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         VDS vds = null;
 
         if (vdsId != null) {
-            vds = getDbFacade().getVdsDAO().get(vdsId);
+            vds = getDbFacade().getVdsDao().get(vdsId);
         }
         return vds;
     }

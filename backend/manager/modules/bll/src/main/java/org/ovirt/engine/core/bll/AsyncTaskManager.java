@@ -361,9 +361,9 @@ public final class AsyncTaskManager {
         for (Guid storagePoolID : poolsOfClearedAndOldTasks) {
             log.infoFormat("Cleared all tasks of pool {0}.",
                     storagePoolID);
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(storagePoolID);
+            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolID);
             if (storagePool != null && storagePool.getspm_vds_id() != null) {
-                VDS vds = DbFacade.getInstance().getVdsDAO().get(storagePool.getspm_vds_id());
+                VDS vds = DbFacade.getInstance().getVdsDao().get(storagePool.getspm_vds_id());
                 if (vds != null && vds.getstatus() == VDSStatus.NonOperational) {
                     log.infoFormat(
                             "Vds {0} is spm and non-operational, calling SetNonOperationalVds",

@@ -29,7 +29,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     public VdsBrokerCommand(P parameters) {
         super(parameters);
         mVdsBroker = initializeVdsBroker(parameters.getVdsId());
-        mVds = getDbFacade().getVdsDAO().get(parameters.getVdsId());
+        mVds = getDbFacade().getVdsDao().get(parameters.getVdsId());
     }
 
     /**

@@ -19,7 +19,7 @@ public class MonitoringStrategyFactory {
         multipleMonitoringStrategy.addMonitoringStrategy(glusterMonitoringStrategy);
     }
 
-    private static VdsGroupDAO vdsGroupDao = DbFacade.getInstance().getVdsGroupDAO();
+    private static VdsGroupDAO vdsGroupDao = DbFacade.getInstance().getVdsGroupDao();
 
     /**
      * This method gets the VDS, and returns the correct service strategy, according to the service the cluster that the VDS belongs to supports

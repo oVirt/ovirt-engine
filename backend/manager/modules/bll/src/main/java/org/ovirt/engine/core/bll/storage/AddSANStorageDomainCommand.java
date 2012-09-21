@@ -46,7 +46,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
             getStorageDomain().setstorage(CreateVG());
         }
         if (StringUtils.isNotEmpty(getStorageDomain().getstorage()) && (AddStorageDomainInIrs())) {
-            DbFacade.getInstance().getStorageDomainStaticDAO().update(getStorageDomain().getStorageStaticData());
+            DbFacade.getInstance().getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
             UpdateStorageDomainDynamicFromIrs();
             ProceedVGLunsInDb();
             setSucceeded(true);

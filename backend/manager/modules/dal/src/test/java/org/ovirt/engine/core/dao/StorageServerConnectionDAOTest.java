@@ -26,7 +26,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStorageServerConnectionDAO());
+        dao = prepareDAO(dbFacade.getStorageServerConnectionDao());
 
         existingConnection = dao.get("0cc146e8-e5ed-482c-8814-270bc48c297f");
 

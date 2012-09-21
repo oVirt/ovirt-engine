@@ -20,7 +20,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MIGRATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
         Guid destinationId = getVdsDestinationId();
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(destinationId);
+        VDS vds = DbFacade.getInstance().getVdsDao().get(destinationId);
         if (vds == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             return false;

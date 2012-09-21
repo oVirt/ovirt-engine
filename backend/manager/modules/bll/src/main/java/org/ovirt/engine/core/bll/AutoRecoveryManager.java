@@ -51,7 +51,7 @@ public class AutoRecoveryManager {
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer() {
         DbFacade dbFacade = getDbFacade();
-        check(dbFacade.getVdsDAO(),
+        check(dbFacade.getVdsDao(),
                 VdcActionType.ActivateVds,
                 new DoWithClosure<VDS, VdcActionParametersBase>() {
             @Override
@@ -61,7 +61,7 @@ public class AutoRecoveryManager {
                 return params;
             }
         }, "hosts");
-        check(dbFacade.getStorageDomainDAO(),
+        check(dbFacade.getStorageDomainDao(),
                 VdcActionType.ConnectDomainToStorage,
                 new DoWithClosure<storage_domains, VdcActionParametersBase>() {
             @Override

@@ -18,7 +18,7 @@ public class GetNetworkDisplayByClusterIdQuery<P extends VdsGroupQueryParamenter
     @Override
     protected void executeQueryCommand() {
         Guid vdsgroupid = getParameters().getVdsGroupId();
-        List<network_cluster> all = DbFacade.getInstance().getNetworkClusterDAO().getAllForCluster(vdsgroupid);
+        List<network_cluster> all = DbFacade.getInstance().getNetworkClusterDao().getAllForCluster(vdsgroupid);
         final network_cluster nc = LinqUtils.firstOrNull(all, new Predicate<network_cluster>() {
             @Override
             public boolean eval(network_cluster network_cluster) {
@@ -27,7 +27,7 @@ public class GetNetworkDisplayByClusterIdQuery<P extends VdsGroupQueryParamenter
         });
         if (nc != null) {
             getQueryReturnValue().setReturnValue(
-                    LinqUtils.firstOrNull(DbFacade.getInstance().getNetworkDAO().getAllForCluster(vdsgroupid),
+                    LinqUtils.firstOrNull(DbFacade.getInstance().getNetworkDao().getAllForCluster(vdsgroupid),
                             new Predicate<Network>() {
                                 @Override
                                 public boolean eval(Network network) {

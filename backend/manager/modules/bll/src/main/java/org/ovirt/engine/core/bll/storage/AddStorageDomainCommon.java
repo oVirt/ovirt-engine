@@ -28,7 +28,7 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
     @Override
     protected String getStorageArgs() {
         return DbFacade.getInstance()
-                .getStorageServerConnectionDAO()
+                .getStorageServerConnectionDao()
                 .get(getStorageDomain().getstorage())
                 .getconnection();
     }

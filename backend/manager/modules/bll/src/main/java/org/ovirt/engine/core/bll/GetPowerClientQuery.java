@@ -31,7 +31,7 @@ public class GetPowerClientQuery<P extends GetPowerClientByClientInfoParameters>
                 log.infoFormat("Checking if client is a power client. client IP={0}", client_ip);
             }
 
-            List<VDS> targetVDS = DbFacade.getInstance().getVdsDAO().getAllForHostname(client_ip);
+            List<VDS> targetVDS = DbFacade.getInstance().getVdsDao().getAllForHostname(client_ip);
             // DbFacade.Instance.GetVdsByHost(client_ip);
             if (targetVDS.size() == 1 && targetVDS.get(0).getvds_type() == VDSType.PowerClient) {
                 if (powerClientLogDetection) {

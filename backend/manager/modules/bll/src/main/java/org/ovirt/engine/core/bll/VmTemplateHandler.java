@@ -60,7 +60,7 @@ public class VmTemplateHandler {
      */
     public static boolean isTemplateStatusIsNotLocked(Guid id) {
         boolean returnValue = false;
-        VmTemplate template = DbFacade.getInstance().getVmTemplateDAO().get(id);
+        VmTemplate template = DbFacade.getInstance().getVmTemplateDao().get(id);
         if ((template != null) && (template.getstatus() != VmTemplateStatus.Locked)) {
             returnValue = true;
         }
@@ -109,13 +109,13 @@ public class VmTemplateHandler {
      */
     private static void SetVmTemplateStatus(
             Guid vmTemplateGuid, VmTemplateStatus status, CompensationContext compensationContext) {
-        VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDAO().get(vmTemplateGuid);
+        VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDao().get(vmTemplateGuid);
         if (vmTemplate != null) {
             if (compensationContext != null) {
                 compensationContext.snapshotEntityStatus(vmTemplate, vmTemplate.getstatus());
             }
             vmTemplate.setstatus(status);
-            DbFacade.getInstance().getVmTemplateDAO().update(vmTemplate);
+            DbFacade.getInstance().getVmTemplateDao().update(vmTemplate);
         } else {
             log.warnFormat(
                     "VmTemplateHandler::SetVmTemplateStatus: vmTemplate is null, not setting status '{0}' to vmTemplate",

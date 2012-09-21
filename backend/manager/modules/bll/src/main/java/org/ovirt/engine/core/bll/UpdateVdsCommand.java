@@ -50,7 +50,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
     @Override
     protected boolean canDoAction() {
         boolean returnValue = false;
-        _oldVds = DbFacade.getInstance().getVdsDAO().get(getVdsId());
+        _oldVds = DbFacade.getInstance().getVdsDao().get(getVdsId());
 
         if (_oldVds != null && getParameters().getVdsStaticData() != null) {
             String compatibilityVersion = _oldVds.getvds_group_compatibility_version().toString();
@@ -176,8 +176,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         // set clusters network to be operational (if needed)
         if (_oldVds.getstatus() == VDSStatus.Up) {
             List<network_cluster> networkClusters = DbFacade.getInstance()
-            .getNetworkClusterDAO().getAllForCluster(_oldVds.getvds_group_id());
-            List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+            .getNetworkClusterDao().getAllForCluster(_oldVds.getvds_group_id());
+            List<Network> networks = DbFacade.getInstance().getNetworkDao()
             .getAllForCluster(_oldVds.getvds_group_id());
             for (network_cluster item : networkClusters) {
                 for (Network net : networks) {
@@ -202,7 +202,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
             @Override
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(getVds().getStaticData());
-                DbFacade.getInstance().getVdsStaticDAO().update(getParameters().getVdsStaticData());
+                DbFacade.getInstance().getVdsStaticDao().update(getParameters().getVdsStaticData());
                 getCompensationContext().stateChanged();
                 return null;
             }

@@ -69,7 +69,7 @@ public final class ImagesHandler {
             Map<Guid, storage_domains> destStorages, boolean notCheckSize) {
         List<storage_domains> domains =
                 DbFacade.getInstance()
-                        .getStorageDomainDAO()
+                        .getStorageDomainDao()
                         .getAllForStoragePool(template.getstorage_pool_id().getValue());
         fillImagesMapBasedOnTemplate(template, domains, diskInfoDestinationMap, destStorages, notCheckSize);
     }
@@ -287,7 +287,7 @@ public final class ImagesHandler {
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
         diskDynamic.setactual_size(image.getactual_size());
-        DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
+        DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
         if (imageStorageDomainMap != null) {
             DbFacade.getInstance().getImageStorageDomainMapDao().save(imageStorageDomainMap);
         }
@@ -425,7 +425,7 @@ public final class ImagesHandler {
             Collection<? extends Disk> disksConfigList,
             List<String> messages) {
         boolean result = true;
-        storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDAO().get(storageDomainId);
+        storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
         for (Disk diskInfo : disksConfigList) {
             if (DiskStorageType.IMAGE == diskInfo.getDiskStorageType()) {
                 result = CheckImageConfiguration(storageDomain, (DiskImage) diskInfo, messages);
@@ -538,7 +538,7 @@ public final class ImagesHandler {
                 }
             }
             for (Guid domainId : domainsIds) {
-                storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+                storage_domains domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                         domainId, storagePoolId);
                 if (checkStorageDomain) {
                     StorageDomainValidator storageDomainValidator =
@@ -648,7 +648,7 @@ public final class ImagesHandler {
 
     public static void removeLunDisk(LunDisk lunDisk) {
         DbFacade.getInstance()
-                .getVmDeviceDAO()
+                .getVmDeviceDao()
                 .remove(new VmDeviceId(lunDisk.getId(),
                         null));
         LUNs lun = lunDisk.getLun();
@@ -658,7 +658,7 @@ public final class ImagesHandler {
         DbFacade.getInstance().getBaseDiskDao().remove(lunDisk.getId());
 
         lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
-                .getStorageServerConnectionDAO()
+                .getStorageServerConnectionDao()
                 .getAllForLun(lun.getLUN_id())));
 
         if (!lun.getLunConnections().isEmpty()) {
@@ -672,12 +672,12 @@ public final class ImagesHandler {
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()
                 .remove(diskImage.getImageId());
-        DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getImageId());
+        DbFacade.getInstance().getDiskImageDynamicDao().remove(diskImage.getImageId());
         DbFacade.getInstance().getImageDao().remove(diskImage.getImageId());
     }
 
     public static void removeDiskFromVm(Guid vmGuid, Guid diskId) {
-        DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(diskId, vmGuid));
+        DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(diskId, vmGuid));
         DbFacade.getInstance().getBaseDiskDao().remove(diskId);
     }
 

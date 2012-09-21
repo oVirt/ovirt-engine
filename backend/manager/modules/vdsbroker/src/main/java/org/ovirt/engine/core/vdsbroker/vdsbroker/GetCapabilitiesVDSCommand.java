@@ -10,7 +10,7 @@ public class GetCapabilitiesVDSCommand<P extends VdsIdAndVdsVDSCommandParameters
     public GetCapabilitiesVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
         if (getVds() == null) {
-            setVds(DbFacade.getInstance().getVdsDAO().get(parameters.getVdsId()));
+            setVds(DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
             parameters.setVds(getVds());
         }
     }

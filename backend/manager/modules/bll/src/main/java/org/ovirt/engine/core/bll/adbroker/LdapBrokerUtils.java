@@ -237,7 +237,7 @@ public class LdapBrokerUtils {
      */
     private static void AddGroupToUser(AdUser user, String groupName) {
         if (!user.getGroups().containsKey(groupName)) {
-            ad_groups group = DbFacade.getInstance().getAdGroupDAO().getByName(groupName);
+            ad_groups group = DbFacade.getInstance().getAdGroupDao().getByName(groupName);
             if (group != null) {
                 user.getGroups().put(groupName, group);
             } else {

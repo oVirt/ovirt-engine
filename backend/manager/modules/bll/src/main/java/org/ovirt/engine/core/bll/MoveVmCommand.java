@@ -96,7 +96,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
         if (retValue
                 && DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO()
+                        .getStoragePoolIsoMapDao()
                         .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                 getVm().getstorage_pool_id())) == null) {
             retValue = false;

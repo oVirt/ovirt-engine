@@ -40,7 +40,7 @@ public class CreateComputerAccountCommand<T extends CreateComputerAccountParamet
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        final VmStatic vmStatic = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId());
+        final VmStatic vmStatic = DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId());
         if (vmStatic != null) {
             setComputerName(vmStatic.getvm_name());
             returnValue =

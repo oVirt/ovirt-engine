@@ -61,7 +61,7 @@ VmPoolUserCommandBase<T> {
 
         // check user isn't already attached to vm from this pool
         if (returnValue) {
-            List<VM> vmsForUser = DbFacade.getInstance().getVmDAO().getAllForUser(getAdUserId());
+            List<VM> vmsForUser = DbFacade.getInstance().getVmDao().getAllForUser(getAdUserId());
 
             for (VM vm : vmsForUser) {
                 if (vm.getVmPoolId() != null && getVmPoolId().equals(vm.getVmPoolId())) {
@@ -252,12 +252,12 @@ VmPoolUserCommandBase<T> {
         if (!Guid.Empty.equals(getAdUserId())) {
             permissions perm = DbFacade
                     .getInstance()
-                    .getPermissionDAO()
+                    .getPermissionDao()
                     .getForRoleAndAdElementAndObject(
                             PredefinedRoles.ENGINE_USER.getId(), getAdUserId(),
                             getVmId());
             if (perm != null) {
-                DbFacade.getInstance().getPermissionDAO().remove(perm.getId());
+                DbFacade.getInstance().getPermissionDao().remove(perm.getId());
             }
         }
     }

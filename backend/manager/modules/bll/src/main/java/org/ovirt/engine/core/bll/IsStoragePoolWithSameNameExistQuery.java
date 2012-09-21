@@ -12,7 +12,7 @@ public class IsStoragePoolWithSameNameExistQuery<P extends IsStoragePoolWithSame
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                .getStoragePoolDAO()
+                .getStoragePoolDao()
                 .getByName(getParameters().getStoragePoolName()) != null);
     }
 }

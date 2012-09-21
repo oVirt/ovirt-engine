@@ -15,7 +15,7 @@ public class AddTagCommand<T extends TagsOperationParameters> extends TagsComman
     protected void executeCommand()
 
     {
-        DbFacade.getInstance().getTagDAO().save(getTag());
+        DbFacade.getInstance().getTagDao().save(getTag());
         TagsDirector.getInstance().AddTag(getTag());
 
         setSucceeded(true);
@@ -23,7 +23,7 @@ public class AddTagCommand<T extends TagsOperationParameters> extends TagsComman
 
     @Override
     protected boolean canDoAction() {
-        tags tag = DbFacade.getInstance().getTagDAO()
+        tags tag = DbFacade.getInstance().getTagDao()
                 .getByName(getParameters().getTag().gettag_name());
         if (tag != null) {
             addCanDoActionMessage(VdcBllMessages.TAGS_SPECIFY_TAG_IS_IN_USE);

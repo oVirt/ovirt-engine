@@ -18,7 +18,7 @@ public class AsyncTaskUtils {
     public static void addOrUpdateTaskInDB(SPMAsyncTask asyncTask) {
         try {
             if (asyncTask.getParameters().getDbAsyncTask() != null) {
-                if (DbFacade.getInstance().getAsyncTaskDAO().get(asyncTask.getTaskID()) == null) {
+                if (DbFacade.getInstance().getAsyncTaskDao().get(asyncTask.getTaskID()) == null) {
                     log.infoFormat("Adding task {0} to DataBase",
                             asyncTask.getTaskID());
                     saveAsyncTaskInDB(asyncTask);
@@ -39,7 +39,7 @@ public class AsyncTaskUtils {
      *            async task entity to be saved in DB
      */
     public static void saveAsyncTaskInDB(SPMAsyncTask asyncTask) {
-        DbFacade.getInstance().getAsyncTaskDAO().save(asyncTask.getParameters().getDbAsyncTask(),asyncTask.getEntityType(),asyncTask.getAssociatedEntities());
+        DbFacade.getInstance().getAsyncTaskDao().save(asyncTask.getParameters().getDbAsyncTask(),asyncTask.getEntityType(),asyncTask.getAssociatedEntities());
 
     }
 
@@ -48,7 +48,7 @@ public class AsyncTaskUtils {
      * @param dbAsyncTask async task entity to be updated in DB
      */
     public static void updateAsyncTaskInDB(SPMAsyncTask asyncTask) {
-        DbFacade.getInstance().getAsyncTaskDAO().update(asyncTask.getParameters().getDbAsyncTask());
+        DbFacade.getInstance().getAsyncTaskDao().update(asyncTask.getParameters().getDbAsyncTask());
 
     }
 

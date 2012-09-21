@@ -11,7 +11,7 @@ public class GetVdsByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends Queri
     @Override
     protected void executeQueryCommand() {
         VDS vds = getDbFacade()
-                .getVdsDAO()
+                .getVdsDao()
                 .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
 
         if (vds != null) {

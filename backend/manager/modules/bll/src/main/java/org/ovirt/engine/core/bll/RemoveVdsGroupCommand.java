@@ -18,7 +18,7 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getVdsGroupDAO().remove(getVdsGroup().getId());
+        DbFacade.getInstance().getVdsGroupDao().remove(getVdsGroup().getId());
         setSucceeded(true);
     }
 
@@ -37,22 +37,22 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
                 returnValue = false;
             }
 
-            if (DbFacade.getInstance().getVdsStaticDAO()
+            if (DbFacade.getInstance().getVdsStaticDao()
                     .getAllForVdsGroup(getVdsGroup().getId()).size() != 0) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_VDS_GROUP_VDS_DETECTED);
                 returnValue = false;
             }
-            if (DbFacade.getInstance().getVmStaticDAO()
+            if (DbFacade.getInstance().getVmStaticDao()
                     .getAllByVdsGroup(getVdsGroup().getId()).size() != 0) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_REMOVE_VDS_GROUP_VMS_DETECTED);
                 returnValue = false;
             }
-            if (DbFacade.getInstance().getVmTemplateDAO()
+            if (DbFacade.getInstance().getVmTemplateDao()
                     .getAllForVdsGroup(getVdsGroup().getId()).size() != 0) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_VDS_GROUP_VMTS_DETECTED);
                 returnValue = false;
             }
-            if ((list = DbFacade.getInstance().getVmPoolDAO().getAll()).size() > 0) {
+            if ((list = DbFacade.getInstance().getVmPoolDao().getAll()).size() > 0) {
                 for (vm_pools pool : list) {
                     if (pool.getvds_group_id().equals(getVdsGroup().getId())) {
                         addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_REMOVE_HAS_VM_POOLS);

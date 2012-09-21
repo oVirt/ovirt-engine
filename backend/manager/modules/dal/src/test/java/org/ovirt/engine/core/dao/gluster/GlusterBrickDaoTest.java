@@ -25,7 +25,7 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getGlusterBrickDao();
-        server = dbFacade.getVdsStaticDAO().get(SERVER_ID);
+        server = dbFacade.getVdsStaticDao().get(SERVER_ID);
     }
 
     @Test

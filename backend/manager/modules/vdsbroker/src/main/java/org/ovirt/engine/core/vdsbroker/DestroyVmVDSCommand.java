@@ -28,8 +28,8 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
             final DestroyVmVDSCommandParameters parameters = getParameters();
             ResourceManager.getInstance().RemoveAsyncRunningVm(parameters.getVmId());
 
-            final VM curVm = DbFacade.getInstance().getVmDAO().get(parameters.getVmId());
-            curVm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(curVm.getId()));
+            final VM curVm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());
+            curVm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(curVm.getId()));
 
             DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
                     new DestroyVDSCommand<DestroyVmVDSCommandParameters>(parameters);
@@ -50,13 +50,13 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                         try {
                             curVm.guestLogoutTimeTreatmentAfterDestroy();
                             // SaveVmDynamicToDBThreaded(curVm);
-                            DbFacade.getInstance().getVmDynamicDAO().update(curVm.getDynamicData());
-                            DbFacade.getInstance().getVmStatisticsDAO().update(curVm.getStatisticsData());
+                            DbFacade.getInstance().getVmDynamicDao().update(curVm.getDynamicData());
+                            DbFacade.getInstance().getVmStatisticsDao().update(curVm.getStatisticsData());
                             List<VmNetworkInterface> interfaces = curVm.getInterfaces();
                             if (interfaces != null && interfaces.size() > 0) {
                                 for (VmNetworkInterface ifc : interfaces) {
                                     VmNetworkStatistics stats = ifc.getStatistics();
-                                    DbFacade.getInstance().getVmNetworkStatisticsDAO().update(stats);
+                                    DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
                                 }
                             }
                         } catch (RepositoryException ex) {

@@ -116,11 +116,11 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         doReturn(vdsBrokerFrontendMock).when(getQuery()).getVdsBroker();
 
         lunDAOMock = mock(LunDAO.class);
-        when(dbFacadeMock.getLunDAO()).thenReturn(lunDAOMock);
+        when(dbFacadeMock.getLunDao()).thenReturn(lunDAOMock);
         vdsDAOMock = mock(VdsDAO.class);
-        when(dbFacadeMock.getVdsDAO()).thenReturn(vdsDAOMock);
+        when(dbFacadeMock.getVdsDao()).thenReturn(vdsDAOMock);
         storageDomainDAOMock = mock(StorageDomainDAO.class);
-        when(dbFacadeMock.getStorageDomainDAO()).thenReturn(storageDomainDAOMock);
+        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDAOMock);
     }
 
     /**

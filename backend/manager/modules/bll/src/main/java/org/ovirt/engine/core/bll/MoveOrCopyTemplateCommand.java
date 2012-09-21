@@ -126,7 +126,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
             if (retValue
                     && DbFacade.getInstance()
-                            .getStoragePoolIsoMapDAO()
+                            .getStoragePoolIsoMapDao()
                             .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                                     getVmTemplate().getstorage_pool_id().getValue())) == null) {
                 retValue = false;

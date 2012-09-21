@@ -13,6 +13,6 @@ public class GetTagUserGroupMapByTagNameQuery<P extends GetTagUserGroupMapByTagN
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue()
-                .setReturnValue(DbFacade.getInstance().getTagDAO().getTagUserGroupMapsForTagName(getParameters().getTagName()));
+                .setReturnValue(DbFacade.getInstance().getTagDao().getTagUserGroupMapsForTagName(getParameters().getTagName()));
     }
 }

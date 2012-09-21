@@ -11,7 +11,7 @@ public class GetVmsRunningOnVDSQuery<P extends GetVmsRunningOnVDSParameters> ext
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getVmDAO().getAllRunningByVds(getParameters().getId()));
+                DbFacade.getInstance().getVmDao().getAllRunningByVds(getParameters().getId()));
         // ResourceManager.Instance.GetVmsRunningOnVDS(((GetVmsRunningOnVDSParameters)Parameters).Id);
     }
 }

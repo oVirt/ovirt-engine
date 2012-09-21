@@ -20,10 +20,10 @@ public class GetAvailableStoragePoolVersionsQuery<P extends GetAvailableStorageP
     protected void executeQueryCommand() {
         if (getParameters().getStoragePoolId() != null) {
             java.util.ArrayList<Version> result = new java.util.ArrayList<Version>();
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(
+            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                     getParameters().getStoragePoolId().getValue());
             if (storagePool != null) {
-                List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(
+                List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(
                         storagePool.getId(), getUserID(), getParameters().isFiltered());
 
                 for (Version supportedVer : Config

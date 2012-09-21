@@ -39,7 +39,7 @@ public class TagsHandler implements ITagsHandler {
     public static boolean IsUserAttachedToTag(Guid tagId, Guid userId) {
         return (DbFacade
                 .getInstance()
-                .getTagDAO()
+                .getTagDao()
                 .getAllForUsersWithIds(
                         TagsDirector.getInstance()
                                 .GetTagIdAndChildrenIds(tagId)).size() != 0);
@@ -48,7 +48,7 @@ public class TagsHandler implements ITagsHandler {
     public static boolean IsUserGroupAttachedToTag(Guid tagId, Guid groupId) {
         return (DbFacade
                 .getInstance()
-                .getTagDAO()
+                .getTagDao()
                 .getAllForUsersWithIds(
                         TagsDirector.getInstance()
                                 .GetTagIdAndChildrenIds(tagId)).size() != 0);
@@ -57,7 +57,7 @@ public class TagsHandler implements ITagsHandler {
     public static boolean IsVmAttachedToTag(Guid tagId, Guid vmId) {
         return (DbFacade
                 .getInstance()
-                .getTagDAO()
+                .getTagDao()
                 .getAllVmTagsWithIds(
                         TagsDirector.getInstance()
                                 .GetTagIdAndChildrenIds(tagId)).size() != 0);
@@ -66,7 +66,7 @@ public class TagsHandler implements ITagsHandler {
     public static boolean IsVdsAttachedToTag(Guid tagId, int vdsId) {
         return (DbFacade
                 .getInstance()
-                .getTagDAO()
+                .getTagDao()
                 .getAllForVdsWithIds(
                         TagsDirector.getInstance()
                                 .GetTagIdAndChildrenIds(tagId)).size() != 0);

@@ -10,7 +10,7 @@ public class GetVmInterfacesByVmIdQuery<P extends GetVmByVmIdParameters> extends
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getVmNetworkInterfaceDAO()
+                getDbFacade().getVmNetworkInterfaceDao()
                         .getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }

@@ -34,7 +34,7 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
         when(permissionDAOMock.getAllForAdElement
                 (adElementGuid, getUser().getUserId(), getQueryParameters().isFiltered())).
                 thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getPermissionDAO()).thenReturn(permissionDAOMock);
+        when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAOMock);
 
         getQuery().executeQueryCommand();
 

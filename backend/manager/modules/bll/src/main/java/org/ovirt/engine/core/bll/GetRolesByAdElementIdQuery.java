@@ -13,7 +13,7 @@ public class GetRolesByAdElementIdQuery<P extends MultilevelAdministrationByAdEl
     protected void executeQueryCommand() {
 
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getRoleDAO()
+                DbFacade.getInstance().getRoleDao()
                         .getAllForAdElement(getParameters().getAdElementId()));
     }
 }

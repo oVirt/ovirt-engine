@@ -9,6 +9,6 @@ public class GetVdsGroupByNameQuery<P extends GetVdsGroupByNameParameters> exten
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getVdsGroupDAO().getByName(getParameters().getName()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getVdsGroupDao().getByName(getParameters().getName()));
     }
 }

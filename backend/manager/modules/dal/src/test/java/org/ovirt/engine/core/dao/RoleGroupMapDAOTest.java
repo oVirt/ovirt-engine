@@ -23,7 +23,7 @@ public class RoleGroupMapDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getRoleGroupMapDAO());
+        dao = prepareDAO(dbFacade.getRoleGroupMapDao());
 
         existingRoleGroupMap = dao.getByActionGroupAndRole(ActionGroup.VM_BASIC_OPERATIONS, EXISTING_ROLE_ID);
 

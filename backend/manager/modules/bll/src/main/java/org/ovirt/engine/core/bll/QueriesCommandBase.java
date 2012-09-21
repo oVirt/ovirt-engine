@@ -191,7 +191,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     }
 
     protected ActionGroupDAO getActionGroupDao() {
-        return getDbFacade().getActionGroupDAO();
+        return getDbFacade().getActionGroupDao();
     }
 
     protected BackendInternal getBackend() {

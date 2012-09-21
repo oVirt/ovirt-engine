@@ -65,7 +65,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void vdsMovedToMaintanance(Guid vdsId) {
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+        VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
         MaintananceVdsCommand.ProcessStorageOnVdsInactive(vds);
         ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, true);
     }
@@ -145,7 +145,7 @@ public class VdsEventListener implements IVdsEventListener {
                         // migrate vms that its their default vds and failback
                         // is on
                         List<VmStatic> vmsToMigrate =
-                                DbFacade.getInstance().getVmStaticDAO().getAllWithFailbackByVds(vdsId);
+                                DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vdsId);
                         java.util.ArrayList<VdcActionParametersBase> vmToServerParametersList = Helper.ToList(LinqUtils
                                 .foreach(vmsToMigrate, new Function<VmStatic, VdcActionParametersBase>() {
                                     @Override
@@ -172,7 +172,7 @@ public class VdsEventListener implements IVdsEventListener {
                          * //HighAvailableVmsDirector
                          * .TryRunHighAvailableVdsUp(vdsId);
                          */
-                        List<VM> vms = DbFacade.getInstance().getVmDAO().getAllForDedicatedPowerClientByVds(vdsId);
+                        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForDedicatedPowerClientByVds(vdsId);
                         if (vms.size() != 0) {
                             if (Config
                                     .<Boolean> GetValue(ConfigValues.PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts)) {
@@ -196,7 +196,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnClientIpChange(final VDS vds, final Guid vmId) {
-        final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(vmId);
+        final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
         // when a spice client connects to the VM, we need to check if the
         // client is local or remote to adjust compression and migration aspects
         // we first check if we need to disable/enable compression for power
@@ -225,7 +225,7 @@ public class VdsEventListener implements IVdsEventListener {
         else {
             vmDynamic.setguest_cur_user_id(null);
             vmDynamic.setguest_cur_user_name(null);
-            DbFacade.getInstance().getVmDynamicDAO().update(vmDynamic);
+            DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
         }
     }
 

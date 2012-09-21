@@ -45,7 +45,7 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
     @SuppressWarnings("unchecked")
     protected Map<String, String>[] BuildStructFromConnectionListObject() {
         final storage_pool storage_pool =
-                DbFacade.getInstance().getStoragePoolDAO().getForVds(getParameters().getVdsId());
+                DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
         final Map<String, String>[] result = new HashMap[getParameters().getConnectionList().size()];
         int i = 0;
         for (storage_server_connections connection : getParameters().getConnectionList()) {

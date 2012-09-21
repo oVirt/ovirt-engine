@@ -107,7 +107,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     public static boolean IsVmRunning(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm != null) {
             return VM.isStatusUpOrPaused(vm.getstatus()) || vm.getstatus() == VMStatus.Unknown;
         }
@@ -226,7 +226,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 // Ensures the lock on the VM guid can be acquired. This prevents a race
                 // between executeVmCommand (for example, of a first multiple VMs removal that includes VM A,
                 // and a second multiple VMs removal that include the same VM).
-                setVm(DbFacade.getInstance().getVmDAO().get(getVmId()));
+                setVm(DbFacade.getInstance().getVmDao().get(getVmId()));
                 if (getVm() != null) {
                     updateDisksAfterVmRemoved();
 

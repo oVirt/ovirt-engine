@@ -41,7 +41,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
             java.util.ArrayList<Guid> guidsFromIrs = (java.util.ArrayList<Guid>) vdsReturnValue.getReturnValue();
             java.util.HashSet<Guid> guidsFromDb = new java.util.HashSet<Guid>();
             if (guidsFromIrs.size() > 0) {
-                List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDAO().getAll();
+                List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDao().getAll();
                 for (storage_domains domain : domainsInDb) {
                     guidsFromDb.add(domain.getId());
                 }

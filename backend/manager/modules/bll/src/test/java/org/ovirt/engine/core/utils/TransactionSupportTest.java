@@ -273,7 +273,7 @@ public class TransactionSupportTest {
                 b.setbookmark_id(Guid.NewGuid());
                 b.setbookmark_name("MyBookmark");
                 b.setbookmark_value("test");
-                dbFacade.getBookmarkDAO().save(b);
+                dbFacade.getBookmarkDao().save(b);
                 // open a new transaction
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
                     @Override
@@ -285,9 +285,9 @@ public class TransactionSupportTest {
                         }
                         // TAKE DB lOCK
                         // open a new transaction
-                        bookmarks c = dbFacade2.getBookmarkDAO().getByName("MyBookmark");
+                        bookmarks c = dbFacade2.getBookmarkDao().getByName("MyBookmark");
                         c.setbookmark_value("test2");
-                        dbFacade2.getBookmarkDAO().update(c);
+                        dbFacade2.getBookmarkDao().update(c);
                         throw new RuntimeException();
                         // validate that the inner and outer
                         // transactions are not equals

@@ -129,7 +129,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             );
         }
 
-        VdsGroupDAO vdsGroupDao = DbFacade.getInstance().getVdsGroupDAO();
+        VdsGroupDAO vdsGroupDao = DbFacade.getInstance().getVdsGroupDao();
         Guid vdsGroupId = vds.getvds_group_id();
         VDSGroup vdsGroup = vdsGroupDao.get(vdsGroupId);
 
@@ -475,8 +475,8 @@ public class VdsInstaller implements IVdsInstallerCallback {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                DbFacade.getInstance().getVdsStaticDAO().update(_vds.getStaticData());
-                DbFacade.getInstance().getVdsDynamicDAO().update(_vds.getDynamicData());
+                DbFacade.getInstance().getVdsStaticDao().update(_vds.getStaticData());
+                DbFacade.getInstance().getVdsDynamicDao().update(_vds.getDynamicData());
                 return null;
             }
         });
@@ -488,11 +488,11 @@ public class VdsInstaller implements IVdsInstallerCallback {
     // old id: BoardId
     public static void UpdateUniqueId(String id) {
         String uniqueId = (id.indexOf('_') > 0) ? id.substring(0, id.indexOf('_')) : id;
-        List<VDS> list = DbFacade.getInstance().getVdsDAO().getAllWithUniqueId(uniqueId);
+        List<VDS> list = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(uniqueId);
         if (list.size() > 0 && !id.equals(uniqueId)) {
             // save the new format of uniqueid
             list.get(0).setUniqueId(id);
-            DbFacade.getInstance().getVdsStaticDAO().update(list.get(0).getStaticData());
+            DbFacade.getInstance().getVdsStaticDao().update(list.get(0).getStaticData());
         }
     }
 
@@ -504,7 +504,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             log.infoFormat("Installation of {0}. Assigning unique id {1} to Host. (Stage: {2})", _serverName, uniqueId,
                     getCurrentInstallStage());
             _vds.setUniqueId(uniqueId);
-            DbFacade.getInstance().getVdsStaticDAO().update(_vds.getStaticData());
+            DbFacade.getInstance().getVdsStaticDao().update(_vds.getStaticData());
             _currentInstallStage = VdsInstallStages.forValue(_currentInstallStage.getValue() + 1);
             return true;
         }

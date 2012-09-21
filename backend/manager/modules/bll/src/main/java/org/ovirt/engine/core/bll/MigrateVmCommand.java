@@ -66,7 +66,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     protected VDS getDestinationVds() {
         if (_destinationVds == null && _vdsDestinationId != null) {
-            _destinationVds = DbFacade.getInstance().getVdsDAO().get(_vdsDestinationId);
+            _destinationVds = DbFacade.getInstance().getVdsDao().get(_vdsDestinationId);
         }
         return _destinationVds;
     }

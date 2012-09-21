@@ -11,7 +11,7 @@ public class GetVdsGroupByIdQuery<P extends GetVdsGroupByIdParameters> extends Q
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 getDbFacade()
-                        .getVdsGroupDAO()
+                        .getVdsGroupDao()
                         .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered()));
     }
 }

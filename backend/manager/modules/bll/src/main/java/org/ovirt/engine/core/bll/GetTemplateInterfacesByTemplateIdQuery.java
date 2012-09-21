@@ -9,7 +9,7 @@ public class GetTemplateInterfacesByTemplateIdQuery<P extends GetVmTemplateParam
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getVmNetworkInterfaceDAO()
+        getQueryReturnValue().setReturnValue(getDbFacade().getVmNetworkInterfaceDao()
                 .getAllForTemplate(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }

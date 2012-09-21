@@ -59,7 +59,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
             log.errorFormat(
                     "IrsBroker::getImageInfo::Failed getting image info imageId = {0} does not exist on domainName = {1} , domainId = {2},  error code: {3}, message: {4}",
                     getParameters().getImageId().toString(),
-                    DbFacade.getInstance().getStorageDomainStaticDAO()
+                    DbFacade.getInstance().getStorageDomainStaticDao()
                             .get(getParameters().getStorageDomainId())
                             .getstorage_name(),
                     getParameters()

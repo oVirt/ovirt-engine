@@ -10,7 +10,7 @@ public class GetVmByVmIdQuery<P extends GetVmByVmIdParameters> extends QueriesCo
 
     @Override
     protected void executeQueryCommand() {
-        VM vm = getDbFacade().getVmDAO().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        VM vm = getDbFacade().getVmDao().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         if (vm != null) {
             // Note that retrieving the VM is already filtered, and if there are no permissions for it, null will be
             // returned.

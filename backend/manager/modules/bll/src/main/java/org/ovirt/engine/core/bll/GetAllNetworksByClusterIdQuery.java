@@ -12,7 +12,7 @@ public class GetAllNetworksByClusterIdQuery<P extends VdsGroupQueryParamenters> 
     protected void executeQueryCommand() {
         Guid vdsgroupid = getParameters().getVdsGroupId();
         getQueryReturnValue().setReturnValue(getDbFacade()
-                .getNetworkDAO()
+                .getNetworkDao()
                 .getAllForCluster(vdsgroupid, getUserID(), getParameters().isFiltered()));
     }
 }

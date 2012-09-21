@@ -43,7 +43,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
 
     @Override
     protected void executeCommand() {
-        List<VM> vms = DbFacade.getInstance().getVmDAO().getAllRunningForVds(getVdsId());
+        List<VM> vms = DbFacade.getInstance().getVmDao().getAllRunningForVds(getVdsId());
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
         java.util.ArrayList<VdcActionParametersBase> runVmParamsList =
                 new java.util.ArrayList<VdcActionParametersBase>();
@@ -90,7 +90,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
     }
 
     private boolean hasVMs() {
-        List<VM> vms = DbFacade.getInstance().getVmDAO().getAllRunningForVds(getVdsId());
+        List<VM> vms = DbFacade.getInstance().getVmDao().getAllRunningForVds(getVdsId());
         return (vms.size() > 0);
     }
 }

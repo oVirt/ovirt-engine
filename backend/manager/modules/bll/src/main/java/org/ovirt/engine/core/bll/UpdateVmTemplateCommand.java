@@ -35,7 +35,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     @Override
     protected boolean canDoAction() {
         boolean returnValue = false;
-        mOldTemplate = DbFacade.getInstance().getVmTemplateDAO().get(getVmTemplate().getId());
+        mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
         VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
         if (mOldTemplate != null) {
             if (VmTemplateHandler.BlankVmTemplateId.equals(mOldTemplate.getId())) {
@@ -99,7 +99,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     private void UpdateVmTemplate() {
-        DbFacade.getInstance().getVmTemplateDAO().update(getVmTemplate());
+        DbFacade.getInstance().getVmTemplateDao().update(getVmTemplate());
     }
 
     @Override

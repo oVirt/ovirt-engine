@@ -22,7 +22,7 @@ public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsI
             vds = TransactionSupport.executeInNewTransaction(new TransactionMethod<VDS>() {
                 @Override
                 public VDS runInTransaction() {
-                    return DbFacade.getInstance().getVdsDAO().get(getVdsId());
+                    return DbFacade.getInstance().getVdsDao().get(getVdsId());
                 }
             });
 

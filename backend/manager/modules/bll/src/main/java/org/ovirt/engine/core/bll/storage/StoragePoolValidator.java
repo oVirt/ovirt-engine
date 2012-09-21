@@ -48,7 +48,7 @@ public class StoragePoolValidator {
     }
 
     protected VdsGroupDAO getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDAO();
+        return DbFacade.getInstance().getVdsGroupDao();
     }
 
     /**

@@ -59,7 +59,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
 
             @Override
             public Void runInTransaction() {
-                VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDAO().get(getVds().getId());
+                VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(getVds().getId());
                 vdsDynamic.setnet_config_dirty(getVds().getnet_config_dirty());
                 ResourceManager.getInstance().runVdsCommand(VDSCommandType.UpdateVdsDynamicData,
                         new UpdateVdsDynamicDataVDSCommandParameters(vdsDynamic));
@@ -83,7 +83,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
 
         if (vds.getstatus() != VDSStatus.Maintenance) {
 
-            List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDAO()
+            List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDao()
                     .getAllForCluster(vds.getvds_group_id());
             Map<String, String> customLogValues;
 
@@ -132,7 +132,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
     }
 
     private static void persistTopology(VDS vds) {
-        InterfaceDAO interfaceDAO = DbFacade.getInstance().getInterfaceDAO();
+        InterfaceDAO interfaceDAO = DbFacade.getInstance().getInterfaceDao();
         List<VdsNetworkInterface> dbIfaces = interfaceDAO.getAllInterfacesForVds(vds.getId());
         List<String> updatedIfaces = new ArrayList<String>();
 

@@ -25,7 +25,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getNetworkDAO().update(getParameters().getNetwork());
+        DbFacade.getInstance().getNetworkDao().update(getParameters().getNetwork());
 
         for (VDSGroup cluster : _clusters) {
             AttachNetworkToVdsGroupCommand.SetNetworkStatus(cluster.getId(), getParameters().getNetwork());
@@ -35,7 +35,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAll();
+        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAll();
 
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
@@ -121,9 +121,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         // check if the network in use with running vm
-        _clusters = DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
+        _clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(getStoragePool().getId());
         for (VDSGroup cluster : _clusters) {
-            List<VmStatic> vms = DbFacade.getInstance().getVmStaticDAO().getAllByGroupAndNetworkName(cluster.getId(),
+            List<VmStatic> vms = DbFacade.getInstance().getVmStaticDao().getAllByGroupAndNetworkName(cluster.getId(),
                     getParameters().getNetwork().getname());
             if (vms.size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);

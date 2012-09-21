@@ -57,7 +57,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                         .getvds_name(), getVds().getcpu_flags());
             } else {
                 // update group with the cpu name
-                VDSGroup grp = DbFacade.getInstance().getVdsGroupDAO().get(getVds().getvds_group_id());
+                VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getvds_group_id());
                 grp.setcpu_name(sc.getCpuName());
 
                 // use suppress in order to update group even if action fails

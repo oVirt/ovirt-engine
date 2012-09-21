@@ -82,7 +82,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         List<DiskImage> vmtImages = providedVmtImages;
         if (checkStorageDomain) {
             StorageDomainValidator storageDomainValidator =
-                    new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+                    new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                             storageDomainId, vmTemplate.getstorage_pool_id()));
             returnValue = storageDomainValidator.isDomainExistAndActive(reasons);
         }
@@ -206,7 +206,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
 
             // TODO remove this when the API changes
             template.getInterfaces().clear();
-            for (VmNetworkInterface iface : DbFacade.getInstance().getVmNetworkInterfaceDAO()
+            for (VmNetworkInterface iface : DbFacade.getInstance().getVmNetworkInterfaceDao()
                     .getAllForTemplate(template.getId())) {
                 template.getInterfaces().add(iface);
             }
@@ -241,11 +241,11 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     }
 
     protected void RemoveNetwork() {
-        List<VmNetworkInterface> list = DbFacade.getInstance().getVmNetworkInterfaceDAO()
+        List<VmNetworkInterface> list = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForTemplate(getVmTemplateId());
         for (VmNetworkInterface iface : list) {
-            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(iface.getId(), getVmTemplateId()));
-            DbFacade.getInstance().getVmNetworkInterfaceDAO().remove(iface.getId());
+            DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(iface.getId(), getVmTemplateId()));
+            DbFacade.getInstance().getVmNetworkInterfaceDao().remove(iface.getId());
             // \\DbFacade.Instance.RemoveInterfaceStatistics(iface.id);
         }
     }

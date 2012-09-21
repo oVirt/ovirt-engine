@@ -13,7 +13,7 @@ public class GetStorageServerConnectionByIdQuery<P extends StorageServerConnecti
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance().
-                getStorageServerConnectionDAO().get(getParameters().
+                getStorageServerConnectionDao().get(getParameters().
                                                                             getServerConnectionId()));
     }
 }

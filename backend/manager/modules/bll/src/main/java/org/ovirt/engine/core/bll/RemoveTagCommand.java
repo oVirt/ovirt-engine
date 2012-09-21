@@ -20,7 +20,7 @@ public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCo
             String[] IDsArray = tagIdAndChildrenIds.split("[,]", -1);
             for (String id : IDsArray) {
                 id = id.replace("'", "");
-                DbFacade.getInstance().getTagDAO().remove(new Guid(id));
+                DbFacade.getInstance().getTagDao().remove(new Guid(id));
             }
             setSucceeded(true);
         }
@@ -29,7 +29,7 @@ public class RemoveTagCommand<T extends TagsActionParametersBase> extends TagsCo
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        if (getTagId() == null || DbFacade.getInstance().getTagDAO().get(getTagId()) == null) {
+        if (getTagId() == null || DbFacade.getInstance().getTagDao().get(getTagId()) == null) {
             addCanDoActionMessage(VdcBllMessages.TAGS_CANNOT_REMOVE_TAG_NOT_EXIST);
             returnValue = false;
         }

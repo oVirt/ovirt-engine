@@ -87,17 +87,17 @@ public class VdsHandler extends BaseHandler {
     }
 
     public static boolean isVdsWithSameNameExistStatic(String vdsName) {
-        VdsStatic vds = DbFacade.getInstance().getVdsStaticDAO().get(vdsName);
+        VdsStatic vds = DbFacade.getInstance().getVdsStaticDao().get(vdsName);
         return (vds != null);
     }
 
     public static boolean isVdsWithSameHostExistStatic(String hostName) {
-        List<VdsStatic> vds = DbFacade.getInstance().getVdsStaticDAO().getAllForHost(hostName);
+        List<VdsStatic> vds = DbFacade.getInstance().getVdsStaticDao().getAllForHost(hostName);
         return (vds.size() != 0);
     }
 
     public static boolean isVdsWithSameIpExistsStatic(String ipAddress) {
-        List<VdsStatic> vds = DbFacade.getInstance().getVdsStaticDAO().getAllWithIpAddress(ipAddress);
+        List<VdsStatic> vds = DbFacade.getInstance().getVdsStaticDao().getAllWithIpAddress(ipAddress);
         return (vds.size() != 0);
     }
 
@@ -129,9 +129,9 @@ public class VdsHandler extends BaseHandler {
     public static boolean isVdsExistForPendingOvirt(VdsStatic vdsStatic, ArrayList<String> messages, Guid oVirtId) {
         boolean exists = false;
 
-        VdsStatic existVds = DbFacade.getInstance().getVdsStaticDAO().get(vdsStatic.getvds_name());
+        VdsStatic existVds = DbFacade.getInstance().getVdsStaticDao().get(vdsStatic.getvds_name());
         if (existVds != null && !oVirtId.equals(existVds.getId())) {
-            VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDAO().get(existVds.getId());
+            VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(existVds.getId());
             if (vdsDynamic != null && !isPendingOvirt(existVds.getvds_type(), vdsDynamic.getstatus())) {
                 messages.add(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS.toString());
                 exists = true;
@@ -139,7 +139,7 @@ public class VdsHandler extends BaseHandler {
         }
 
         if (!exists) {
-            List<VDS> vdsList = DbFacade.getInstance().getVdsDAO().getAllForHostname(vdsStatic.gethost_name());
+            List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForHostname(vdsStatic.gethost_name());
             for (VDS vds : vdsList) {
                 if (!isPendingOvirt(vds) || (!oVirtId.equals(vds.getId()))) {
                     messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST.toString());

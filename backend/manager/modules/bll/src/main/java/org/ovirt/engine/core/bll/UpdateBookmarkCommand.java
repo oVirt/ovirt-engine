@@ -22,7 +22,7 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
         if (updated == null) {
             AddInvalidIdErrorMessages(VdcBllMessages.VAR__ACTION__UPDATE);
         } else {
-            bookmarks current = DbFacade.getInstance().getBookmarkDAO()
+            bookmarks current = DbFacade.getInstance().getBookmarkDao()
                     .getByName(updated.getbookmark_name());
 
             if (!(current == null || current.getbookmark_id().equals(
@@ -40,7 +40,7 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getBookmarkDAO().update(getBookmark());
+        DbFacade.getInstance().getBookmarkDao().update(getBookmark());
         setSucceeded(true);
     }
 

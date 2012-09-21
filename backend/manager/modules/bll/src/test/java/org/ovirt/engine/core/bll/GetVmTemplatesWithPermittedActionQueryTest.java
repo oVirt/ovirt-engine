@@ -29,7 +29,7 @@ public class GetVmTemplatesWithPermittedActionQueryTest
         // Mock the DAO
         VmTemplateDAO vmTemplateDAOMock = mock(VmTemplateDAO.class);
         when(vmTemplateDAOMock.getTemplatesWithPermittedAction(getUser().getUserId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
-        when(getDbFacadeMockInstance().getVmTemplateDAO()).thenReturn(vmTemplateDAOMock);
+        when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDAOMock);
 
         getQuery().executeQueryCommand();
 

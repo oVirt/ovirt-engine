@@ -23,7 +23,7 @@ public class GetVdsHooksByIdQuery<P extends GetVdsHooksByIdParameters> extends Q
     @Override
     protected void executeQueryCommand() {
 
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
         ValueObjectMap result = new ValueObjectMap();
         if (vds != null) {
             result = VdsHooksParser.parseHooks(vds.getHooksStr());

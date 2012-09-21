@@ -38,9 +38,9 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getVmStaticDAO();
+        dao = dbFacade.getVmStaticDao();
         existingVmStatic = dao.get(EXISTING_VM_ID);
-        vmtemplate = dbFacade.getVmTemplateDAO().get(
+        vmtemplate = dbFacade.getVmTemplateDao().get(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
         newVmStatic = new VmStatic();
         newVmStatic.setId(Guid.NewGuid());
@@ -91,7 +91,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllStaticByStoragePool() {
-        NGuid spID = dbFacade.getVdsGroupDAO().get(newVmStatic.getvds_group_id()).getstorage_pool_id();
+        NGuid spID = dbFacade.getVdsGroupDao().get(newVmStatic.getvds_group_id()).getstorage_pool_id();
 
         assertNotNull(spID.getValue());
 

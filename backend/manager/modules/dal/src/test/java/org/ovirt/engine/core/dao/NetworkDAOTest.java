@@ -24,7 +24,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getNetworkDAO());
+        dao = prepareDAO(dbFacade.getNetworkDao());
 
         cluster = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
         datacenter = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
@@ -164,7 +164,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testSave() {
-        List<network_cluster> clustersFromDB = dbFacade.getNetworkClusterDAO().getAllForCluster(cluster);
+        List<network_cluster> clustersFromDB = dbFacade.getNetworkClusterDao().getAllForCluster(cluster);
         network_cluster clusterFromDB = clustersFromDB.get(0);
         assertNotNull(clusterFromDB);
         new_net.setCluster(clusterFromDB);

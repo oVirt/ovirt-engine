@@ -18,12 +18,12 @@ public class GetNonOperationalVdsQuery<P extends NetworkNonOperationalQueryParam
     @Override
     protected void executeQueryCommand() {
         java.util.ArrayList<VdsStatic> retVal = new java.util.ArrayList<VdsStatic>();
-        List<VdsStatic> vdsList = DbFacade.getInstance().getVdsStaticDAO().getAllForVdsGroup(
+        List<VdsStatic> vdsList = DbFacade.getInstance().getVdsStaticDao().getAllForVdsGroup(
                 getParameters().getVdsGroupId());
 
         for (VdsStatic vds : vdsList) {
             List<VdsNetworkInterface> interfaces = DbFacade.getInstance()
-                    .getInterfaceDAO().getAllInterfacesForVds(vds.getId());
+                    .getInterfaceDao().getAllInterfacesForVds(vds.getId());
             if (LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface i) {

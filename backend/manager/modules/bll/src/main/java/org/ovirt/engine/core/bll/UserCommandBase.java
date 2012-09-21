@@ -55,7 +55,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
 
     public String getAdUserName() {
         if (mAdUserName == null) {
-            DbUser user = DbFacade.getInstance().getDbUserDAO().get(getAdUserId());
+            DbUser user = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
             if (user != null) {
                 mAdUserName = user.getusername();
             }
@@ -69,7 +69,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
 
     @SuppressWarnings("deprecation")
     public static DbUser initUser(VdcUser vdcUser, String sessionId) {
-        DbUser dbUser = DbFacade.getInstance().getDbUserDAO().get(vdcUser.getUserId());
+        DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(vdcUser.getUserId());
         if (dbUser == null) {
             AdUser adUser = (AdUser) LdapFactory
                     .getInstance(vdcUser.getDomainControler())
@@ -80,7 +80,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
                 throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
             }
             dbUser = new DbUser(adUser);
-            DbFacade.getInstance().getDbUserDAO().save(dbUser);
+            DbFacade.getInstance().getDbUserDao().save(dbUser);
         }
         return dbUser;
     }
@@ -92,13 +92,13 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
      * @return newly create
      */
     public static DbUser persistAuthenticatedUser(AdUser adUser) {
-        DbUser dbUser = DbFacade.getInstance().getDbUserDAO().get(adUser.getUserId());
+        DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(adUser.getUserId());
         boolean newUser = dbUser == null;
         dbUser = new DbUser(adUser);
         if (newUser) {
-            DbFacade.getInstance().getDbUserDAO().save(dbUser);
+            DbFacade.getInstance().getDbUserDao().save(dbUser);
         } else {
-            DbFacade.getInstance().getDbUserDAO().update(dbUser);
+            DbFacade.getInstance().getDbUserDao().update(dbUser);
         }
         return dbUser;
     }
@@ -116,7 +116,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
         DbUser adElement;
         if (elements != null && elements.size() > 0
                 && (adElement = (DbUser) ((elements.get(0) instanceof DbUser) ? elements.get(0) : null)) != null) {
-            for (permissions permission : DbFacade.getInstance().getPermissionDAO().getAllForAdElement(adElementId)) {
+            for (permissions permission : DbFacade.getInstance().getPermissionDao().getAllForAdElement(adElementId)) {
                 Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
                         new PermissionsOperationsParametes(permission));
             }
@@ -125,13 +125,13 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
 
     public static boolean CanAttachVmTo(Guid vmId, java.util.ArrayList<String> message) {
         boolean returnValue = true;
-        VmStatic vmStatic = DbFacade.getInstance().getVmStaticDAO().get(vmId);
+        VmStatic vmStatic = DbFacade.getInstance().getVmStaticDao().get(vmId);
         if (vmStatic == null) {
             message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
             returnValue = false;
         }
 
-        if (DbFacade.getInstance().getVmPoolDAO().getVmPoolMapByVmGuid(vmId) != null) {
+        if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId) != null) {
             returnValue = false;
             message.add(VdcBllMessages.USER_CANNOT_ATTACH_TO_VM_IN_POOL.toString());
         }

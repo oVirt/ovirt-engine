@@ -41,7 +41,7 @@ public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<Get
      * Initialize DAO to be used in query.
      */
     private void mockDAOForQuery() {
-        when(getDbFacadeMockInstance().getVmTemplateDAO()).thenReturn(vmTemplateDAO);
+        when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDAO);
 
         returnedVmTemplates = new ArrayList<VmTemplate>();
         when(getQueryParameters().getQuotaId()).thenReturn(quotaId);

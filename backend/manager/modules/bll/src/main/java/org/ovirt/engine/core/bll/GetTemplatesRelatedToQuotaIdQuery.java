@@ -14,7 +14,7 @@ public class GetTemplatesRelatedToQuotaIdQuery<P extends GetEntitiesRelatedToQuo
     @Override
     protected void executeQueryCommand() {
         List<VmTemplate> vmTemplates =
-                getDbFacade().getVmTemplateDAO().getAllTemplatesRelatedToQuotaId(getParameters().getQuotaId());
+                getDbFacade().getVmTemplateDao().getAllTemplatesRelatedToQuotaId(getParameters().getQuotaId());
         for (VmTemplate vmTemplate : vmTemplates) {
             VmTemplateHandler.UpdateDisksFromDb(vmTemplate);
         }

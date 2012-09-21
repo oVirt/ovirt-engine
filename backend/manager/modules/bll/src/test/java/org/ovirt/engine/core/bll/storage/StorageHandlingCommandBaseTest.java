@@ -34,7 +34,7 @@ public class StorageHandlingCommandBaseTest {
         dao = mock(StoragePoolDAO.class);
         cmd = new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(createStoragePool()));
 
-        when(facade.getStoragePoolDAO()).thenReturn(dao);
+        when(facade.getStoragePoolDao()).thenReturn(dao);
     }
 
     @Test

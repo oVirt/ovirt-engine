@@ -1409,9 +1409,9 @@ public class SetupNetworksHelperTest {
         when(helper.getVmInterfaceManager()).thenReturn(vmInterfaceManager);
         DbFacade dbFacade = mock(DbFacade.class);
         doReturn(dbFacade).when(helper).getDbFacade();
-        doReturn(interfaceDAO).when(dbFacade).getInterfaceDAO();
-        doReturn(mock(VdsDAO.class)).when(dbFacade).getVdsDAO();
-        doReturn(networkDAO).when(dbFacade).getNetworkDAO();
+        doReturn(interfaceDAO).when(dbFacade).getInterfaceDao();
+        doReturn(mock(VdsDAO.class)).when(dbFacade).getVdsDao();
+        doReturn(networkDAO).when(dbFacade).getNetworkDao();
 
         return helper;
     }

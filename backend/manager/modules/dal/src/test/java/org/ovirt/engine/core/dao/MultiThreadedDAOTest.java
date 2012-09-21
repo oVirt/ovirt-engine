@@ -36,7 +36,7 @@ public class MultiThreadedDAOTest extends BaseDAOTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getTagDAO());
+        dao = prepareDAO(dbFacade.getTagDao());
     }
 
     @Test

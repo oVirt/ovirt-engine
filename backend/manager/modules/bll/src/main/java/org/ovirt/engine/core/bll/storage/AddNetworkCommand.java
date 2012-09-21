@@ -20,7 +20,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     @Override
     protected void executeCommand() {
         getParameters().getNetwork().setId(Guid.NewGuid());
-        DbFacade.getInstance().getNetworkDAO().save(getParameters().getNetwork());
+        DbFacade.getInstance().getNetworkDao().save(getParameters().getNetwork());
         getReturnValue().setActionReturnValue(getParameters().getNetwork().getId());
         setSucceeded(true);
     }
@@ -52,10 +52,10 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         List<Network> all;
         if (getParameters().getNetwork().getstorage_pool_id() != null
                 && !getParameters().getNetwork().getstorage_pool_id().getValue().equals(Guid.Empty)) {
-            all = DbFacade.getInstance().getNetworkDAO().getAllForDataCenter(
+            all = DbFacade.getInstance().getNetworkDao().getAllForDataCenter(
                     getParameters().getNetwork().getstorage_pool_id().getValue());
         } else {
-            all = DbFacade.getInstance().getNetworkDAO().getAll();
+            all = DbFacade.getInstance().getNetworkDao().getAll();
         }
         boolean exists = null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
             @Override

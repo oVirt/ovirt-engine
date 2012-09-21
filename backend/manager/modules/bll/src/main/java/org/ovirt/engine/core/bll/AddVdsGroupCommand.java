@@ -64,14 +64,14 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                     Config.<Integer> GetValue(ConfigValues.CpuOverCommitDurationMinutes));
         }
         CheckMaxMemoryOverCommitValue();
-        DbFacade.getInstance().getVdsGroupDAO().save(getVdsGroup());
+        DbFacade.getInstance().getVdsGroupDao().save(getVdsGroup());
 
         // add default network
         if (getParameters().getVdsGroup().getstorage_pool_id() != null) {
             final String networkName = Config.<String> GetValue(ConfigValues.ManagementNetwork);
             List<Network> networks = DbFacade
                     .getInstance()
-                    .getNetworkDAO()
+                    .getNetworkDao()
                     .getAllForDataCenter(
                             getParameters().getVdsGroup().getstorage_pool_id()
                                     .getValue());
@@ -83,7 +83,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                 }
             });
             if (net != null) {
-                DbFacade.getInstance().getNetworkClusterDAO().save(
+                DbFacade.getInstance().getNetworkClusterDao().save(
                         new network_cluster(getParameters().getVdsGroup().getId(), net.getId(),
                                 NetworkStatus.Operational, false, true));
             }
@@ -103,7 +103,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         boolean result = super.canDoAction();
         getReturnValue().getCanDoActionMessages()
                 .add(VdcBllMessages.VAR__ACTION__CREATE.toString());
-        if (DbFacade.getInstance().getVdsGroupDAO().getByName(getVdsGroup().getname()) != null) {
+        if (DbFacade.getInstance().getVdsGroupDao().getByName(getVdsGroup().getname()) != null) {
             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
             result = false;
         } else if (getVdsGroup().supportsVirtService()
@@ -130,7 +130,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         }
 
         if (result && getVdsGroup().getstorage_pool_id() != null) {
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(
+            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                     getVdsGroup().getstorage_pool_id().getValue());
             // Making sure the given SP ID is valid to prevent
             // breaking Fk_vds_groups_storage_pool_id
@@ -142,7 +142,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             } else if (storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
                 // we allow only one cluster in localfs data center
                 if (!DbFacade.getInstance()
-                        .getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getstorage_pool_id().getValue())
+                        .getVdsGroupDao().getAllForStoragePool(getVdsGroup().getstorage_pool_id().getValue())
                         .isEmpty()) {
                     getReturnValue().getCanDoActionMessages().add(
                             VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE

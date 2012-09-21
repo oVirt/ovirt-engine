@@ -29,7 +29,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     protected void executeCommand() {
         AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
         DbFacade.getInstance()
-                .getVmNetworkInterfaceDAO()
+                .getVmNetworkInterfaceDao()
                 .update(getParameters().getInterface());
         setSucceeded(true);
     }
@@ -41,7 +41,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
+        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                     .getAllForTemplate(getParameters().getVmTemplateId());
 
         if (getVmTemplate() == null) {

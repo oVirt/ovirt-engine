@@ -34,7 +34,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getNetworkClusterDAO().remove(getParameters().getVdsGroupId(),
+        DbFacade.getInstance().getNetworkClusterDao().remove(getParameters().getVdsGroupId(),
                 getParameters().getNetwork().getId());
         setSucceeded(true);
     }
@@ -49,7 +49,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         }
 
         // check that there is no vm running with this network
-        List<VmStatic> vms = DbFacade.getInstance().getVmStaticDAO().getAllByGroupAndNetworkName(
+        List<VmStatic> vms = DbFacade.getInstance().getVmStaticDao().getAllByGroupAndNetworkName(
                 getParameters().getVdsGroupId(), getParameters().getNetwork().getname());
         if (vms.size() > 0) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_VM);
@@ -59,11 +59,11 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         }
 
         // chech that no template is using this network
-        List<VmTemplate> templates = DbFacade.getInstance().getVmTemplateDAO()
+        List<VmTemplate> templates = DbFacade.getInstance().getVmTemplateDao()
                 .getAllForVdsGroup(getParameters().getVdsGroupId());
         for (VmTemplate tmpl : templates) {
             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                    .getVmNetworkInterfaceDAO().getAllForTemplate(tmpl.getId());
+                    .getVmNetworkInterfaceDao().getAllForTemplate(tmpl.getId());
             if (LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
                 @Override
                 public boolean eval(VmNetworkInterface t) {
@@ -88,7 +88,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                        .getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
+                        .getVmNetworkInterfaceDao().getAllForVm(vm.getId());
                 VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
                     @Override
                     public boolean eval(VmNetworkInterface i) {

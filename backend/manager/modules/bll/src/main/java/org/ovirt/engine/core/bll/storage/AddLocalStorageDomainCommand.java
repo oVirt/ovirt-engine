@@ -36,7 +36,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
         boolean retVal = super.canDoAction();
 
         if (retVal) {
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().getForVds(getParameters().getVdsId());
+            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
 
             if (storagePool == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_CLUSTER_HAVE_NOT_EXISTING_DATA_CENTER_NETWORK);
@@ -58,7 +58,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             if (retVal && this.getVds().getvds_type() == VDSType.oVirtNode) {
 
                 storage_server_connections conn =
-                        DbFacade.getInstance().getStorageServerConnectionDAO().get(getParameters().getStorageDomain()
+                        DbFacade.getInstance().getStorageServerConnectionDao().get(getParameters().getStorageDomain()
                                 .getstorage());
 
                 String rhevhLocalFSPath = Config.<String> GetValue(ConfigValues.RhevhLocalFSPath);

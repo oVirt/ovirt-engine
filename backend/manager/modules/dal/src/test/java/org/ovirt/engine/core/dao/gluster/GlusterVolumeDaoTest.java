@@ -40,7 +40,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getGlusterVolumeDao();
-        server = dbFacade.getVdsStaticDAO().get(SERVER_ID);
+        server = dbFacade.getVdsStaticDao().get(SERVER_ID);
         existingDistVol = dao.getById(EXISTING_VOL_DIST_ID);
         existingReplVol = dao.getById(EXISTING_VOL_REPL_ID);
     }

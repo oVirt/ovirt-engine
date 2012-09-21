@@ -37,7 +37,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
                                         getStoragePool().getId(),
                                         !_newMasterStorageDomainId.equals(Guid.Empty) ? _newMasterStorageDomainId
                                                 : DbFacade.getInstance()
-                                                        .getStorageDomainDAO()
+                                                        .getStorageDomainDao()
                                                         .getMasterStorageDomainIdForPool(
                                                                 getStoragePool().getId()), getStoragePool()
                                                 .getmaster_domain_version()));

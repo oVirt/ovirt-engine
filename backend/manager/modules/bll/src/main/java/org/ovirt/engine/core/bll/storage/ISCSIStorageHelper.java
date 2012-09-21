@@ -39,7 +39,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         boolean isSuccess = true;
         List<storage_server_connections> list =
                 (lun == null) ? DbFacade.getInstance()
-                        .getStorageServerConnectionDAO().getAllForVolumeGroup(storageDomain.getstorage())
+                        .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage())
                         : lun.getLunConnections();
 
         if (list.size() != 0) {
@@ -78,7 +78,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
         List<String> lunsByVg =
-                lunId.isEmpty() ? LinqUtils.foreach(DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(vgId),
+                lunId.isEmpty() ? LinqUtils.foreach(DbFacade.getInstance().getLunDao().getAllForVolumeGroup(vgId),
                         new Function<LUNs, String>() {
                             @Override
                             public String eval(LUNs a) {
@@ -102,7 +102,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 new ArrayList<storage_server_connections>();
         for (storage_server_connections connection : connections) {
             List<String> list = LinqUtils.foreach(
-                    DbFacade.getInstance().getLunDAO().getAllForStorageServerConnection(connection.getid()),
+                    DbFacade.getInstance().getLunDao().getAllForStorageServerConnection(connection.getid()),
                     new Function<LUNs, String>() {
                         @Override
                         public String eval(LUNs a) {
@@ -146,7 +146,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             }
         });
         for (String failedConnection : failedConnectionsList) {
-            List<LUNs> failedLuns = DbFacade.getInstance().getLunDAO()
+            List<LUNs> failedLuns = DbFacade.getInstance().getLunDao()
                     .getAllForStorageServerConnection(failedConnection);
             if (!failedLuns.isEmpty()) {
                 for (LUNs lun : failedLuns) {
@@ -156,7 +156,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     List<String> strings =
                             LinqUtils.foreach(
                                     DbFacade.getInstance()
-                                            .getStorageServerConnectionLunMapDAO()
+                                            .getStorageServerConnectionLunMapDao()
                                             .getAll(lun.getLUN_id()),
                                     new Function<LUN_storage_server_connection_map, String>() {
                                         @Override
@@ -189,18 +189,18 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     @Override
     public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
         final List<storage_server_connections> list = DbFacade.getInstance()
-                .getStorageServerConnectionDAO().getAllForVolumeGroup(storageDomain.getstorage());
-        final List<LUNs> lunsList = DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(storageDomain.getstorage());
+                .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
+        final List<LUNs> lunsList = DbFacade.getInstance().getLunDao().getAllForVolumeGroup(storageDomain.getstorage());
         int numOfRemovedLuns = 0;
         for (LUNs lun : lunsList) {
             if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUN_id()) == null) {
-                DbFacade.getInstance().getLunDAO().remove(lun.getLUN_id());
+                DbFacade.getInstance().getLunDao().remove(lun.getLUN_id());
                 numOfRemovedLuns++;
             }
         }
         if (numOfRemovedLuns > 0) {
             for (storage_server_connections connection : FilterConnectionsUsedByOthers(list, storageDomain.getstorage())) {
-                DbFacade.getInstance().getStorageServerConnectionDAO().remove(connection.getid());
+                DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
             }
         }
         return true;
@@ -242,6 +242,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     @Override
     public List<storage_server_connections> GetStorageServerConnectionsByDomain(
             storage_domain_static storageDomain) {
-        return DbFacade.getInstance().getStorageServerConnectionDAO().getAllForVolumeGroup(storageDomain.getstorage());
+        return DbFacade.getInstance().getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
     }
 }

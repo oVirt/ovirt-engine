@@ -12,6 +12,6 @@ public class IsVdsGroupWithSameNameExistQuery<P extends IsVdsGroupWithSameNameEx
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getVdsGroupDAO().getByName(getParameters().getName()) != null);
+                DbFacade.getInstance().getVdsGroupDao().getByName(getParameters().getName()) != null);
     }
 }

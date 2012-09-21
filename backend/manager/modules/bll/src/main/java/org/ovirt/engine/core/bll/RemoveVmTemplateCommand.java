@@ -97,7 +97,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             List<String> problematicDomains = new ArrayList<String>();
             for (Guid domainId : storageDomainsList) {
                 if (!allDomainsList.contains(domainId)) {
-                    storage_domain_static domain = DbFacade.getInstance().getStorageDomainStaticDAO().get(domainId);
+                    storage_domain_static domain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
                     if (domain == null) {
                         problematicDomains.add(domainId.toString());
                     } else {
@@ -129,7 +129,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check no vms from this template on selected domains
-        List<VM> vms = DbFacade.getInstance().getVmDAO().getAllWithTemplate(vmTemplateId);
+        List<VM> vms = DbFacade.getInstance().getVmDao().getAllWithTemplate(vmTemplateId);
         List<String> problematicVmNames = new ArrayList<String>();
         for (VM vm : vms) {
             if (getParameters().isRemoveTemplateFromDb()) {
@@ -202,7 +202,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private void RemoveTemplateFromDb() {
         RemoveNetwork();
-        DbFacade.getInstance().getVmTemplateDAO().remove(getVmTemplate().getId());
+        DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplate().getId());
     }
 
     protected boolean RemoveVmTemplateImages() {

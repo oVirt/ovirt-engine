@@ -18,7 +18,7 @@ public class VdcOptionDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getVdcOptionDAO());
+        dao = prepareDAO(dbFacade.getVdcOptionDao());
 
         existingOption = dao.getByNameAndVersion("UserDefinedVmPropertiesKey1", "general");
 

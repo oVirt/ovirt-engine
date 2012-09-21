@@ -26,7 +26,7 @@ public class AddVmPoolCommand<T extends VmPoolOperationParameters> extends VmPoo
     protected void executeCommand() {
         vm_pools vmPool = getVmPool();
 
-        DbFacade.getInstance().getVmPoolDAO().save(vmPool);
+        DbFacade.getInstance().getVmPoolDao().save(vmPool);
         setActionReturnValue(vmPool.getvm_pool_id());
         setSucceeded(true);
     }

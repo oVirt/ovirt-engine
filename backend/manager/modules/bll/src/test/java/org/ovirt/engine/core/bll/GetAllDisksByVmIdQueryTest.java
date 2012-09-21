@@ -77,7 +77,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
 
         // VM Device DAO
         vmDeviceDAOMock = mock(VmDeviceDAO.class);
-        when(dbFacadeMock.getVmDeviceDAO()).thenReturn(vmDeviceDAOMock);
+        when(dbFacadeMock.getVmDeviceDao()).thenReturn(vmDeviceDAOMock);
         when(vmDeviceDAOMock.getVmDeviceByVmIdTypeAndDevice(vmID,
                 VmDeviceType.DISK.getName(),
                 VmDeviceType.DISK.getName(),

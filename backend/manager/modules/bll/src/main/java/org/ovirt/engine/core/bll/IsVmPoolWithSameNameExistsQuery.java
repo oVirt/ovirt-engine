@@ -12,6 +12,6 @@ public class IsVmPoolWithSameNameExistsQuery<P extends IsVmPoolWithSameNameExist
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getVmPoolDAO().getByName(getParameters().getVmPoolName()) != null);
+                DbFacade.getInstance().getVmPoolDao().getByName(getParameters().getVmPoolName()) != null);
     }
 }

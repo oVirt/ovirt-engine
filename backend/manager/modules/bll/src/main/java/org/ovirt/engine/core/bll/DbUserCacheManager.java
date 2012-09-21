@@ -62,7 +62,7 @@ public class DbUserCacheManager {
     public void init() {
         if (!initialized) {
             // clean all user sessions in DB
-            DbFacade.getInstance().getDbUserDAO().removeAllSessions();
+            DbFacade.getInstance().getDbUserDao().removeAllSessions();
 
             int mRefreshRate = Config.<Integer> GetValue(ConfigValues.UserRefreshRate);
             jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this, "OnTimer", new Class[] {},
@@ -149,7 +149,7 @@ public class DbUserCacheManager {
             }
         }
         if (succeded) {
-            DbFacade.getInstance().getDbUserDAO().update(dbUser);
+            DbFacade.getInstance().getDbUserDao().update(dbUser);
         } else {
         }
     }
@@ -157,7 +157,7 @@ public class DbUserCacheManager {
     public void refreshAllUserData(List<ad_groups> updatedGroups) {
         try {
             log.info("DbUserCacheManager::refreshAllUserData() - entered");
-            List<DbUser> allUsers = DbFacade.getInstance().getDbUserDAO().getAll();
+            List<DbUser> allUsers = DbFacade.getInstance().getDbUserDao().getAll();
 
             List<String> domainsList = LdapBrokerUtils.getDomainsList(true);
             List<DbUser> filteredUsers = LinqUtils.filter(allUsers, new UsersPerDomainPredicate(domainsList));
@@ -208,7 +208,7 @@ public class DbUserCacheManager {
                                 log.warnFormat("User {0} not found in directory sevrer, its status switched to InActive",
                                         dbUser.getname());
                                 dbUser.setstatus(AsyncTaskStatusEnum.unknown.getValue());
-                                DbFacade.getInstance().getDbUserDAO().update(dbUser);
+                                DbFacade.getInstance().getDbUserDao().update(dbUser);
                             }
                         }
                     }
@@ -232,7 +232,7 @@ public class DbUserCacheManager {
     }
 
     private List<ad_groups> updateGroups() {
-        List<ad_groups> groups = DbFacade.getInstance().getAdGroupDAO().getAll();
+        List<ad_groups> groups = DbFacade.getInstance().getAdGroupDao().getAll();
         for (ad_groups group : groups) {
             /**
              * Vitaly workaround. Temporary treatment on missing group domains
@@ -279,13 +279,13 @@ public class DbUserCacheManager {
                     if (group.getstatus() == AdRefStatus.Active
                                 && (groupFromAD == null || groupFromAD.getstatus() == AdRefStatus.Inactive)) {
                         group.setstatus(AdRefStatus.Inactive);
-                        DbFacade.getInstance().getAdGroupDAO().update(group);
+                        DbFacade.getInstance().getAdGroupDao().update(group);
                     } else if (groupFromAD != null
                                 && (!StringUtils.equals(group.getname(), groupFromAD.getname())
                                         || group.getstatus() != groupFromAD
                                                 .getstatus() || !StringUtils.equals(group.getDistinguishedName(),
                                         groupFromAD.getDistinguishedName()))) {
-                        DbFacade.getInstance().getAdGroupDAO().update(groupFromAD);
+                        DbFacade.getInstance().getAdGroupDao().update(groupFromAD);
                     }
                     // memberOf is not persistent and should be set in the returned groups list from the LDAP queries
                     if (groupFromAD != null) {

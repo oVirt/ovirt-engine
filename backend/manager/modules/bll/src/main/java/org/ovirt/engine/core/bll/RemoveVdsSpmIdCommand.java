@@ -23,10 +23,10 @@ public class RemoveVdsSpmIdCommand<T extends VdsActionParameters> extends AddVds
     @Override
     protected void executeCommand() {
         if (getParameters().isCompensationEnabled()) {
-            getCompensationContext().snapshotEntity(DbFacade.getInstance().getVdsSpmIdMapDAO().get(getVdsId()));
+            getCompensationContext().snapshotEntity(DbFacade.getInstance().getVdsSpmIdMapDao().get(getVdsId()));
         }
 
-        DbFacade.getInstance().getVdsSpmIdMapDAO().remove(getVdsId());
+        DbFacade.getInstance().getVdsSpmIdMapDao().remove(getVdsId());
         if (getParameters().isCompensationEnabled()) {
             getCompensationContext().stateChanged();
         }
@@ -36,6 +36,6 @@ public class RemoveVdsSpmIdCommand<T extends VdsActionParameters> extends AddVds
     @Override
     protected boolean canDoAction() {
         // check that there is spm id for this vds
-        return DbFacade.getInstance().getVdsSpmIdMapDAO().get(getVdsId()) != null;
+        return DbFacade.getInstance().getVdsSpmIdMapDao().get(getVdsId()) != null;
     }
 }

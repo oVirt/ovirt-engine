@@ -387,7 +387,7 @@ public class SnapshotsManager {
     }
 
     protected VmDeviceDAO getVmDeviceDao() {
-        return DbFacade.getInstance().getVmDeviceDAO();
+        return DbFacade.getInstance().getVmDeviceDao();
     }
 
     protected BaseDiskDao getBaseDiskDao() {
@@ -395,7 +395,7 @@ public class SnapshotsManager {
     }
 
     protected VmDAO getVmDao() {
-        return DbFacade.getInstance().getVmDAO();
+        return DbFacade.getInstance().getVmDao();
     }
 
     protected SnapshotDao getSnapshotDao() {
@@ -403,11 +403,11 @@ public class SnapshotsManager {
     }
 
     protected VmDynamicDAO getVmDynamicDao() {
-        return DbFacade.getInstance().getVmDynamicDAO();
+        return DbFacade.getInstance().getVmDynamicDao();
     }
 
     protected VmStaticDAO getVmStaticDao() {
-        return DbFacade.getInstance().getVmStaticDAO();
+        return DbFacade.getInstance().getVmStaticDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {
@@ -419,14 +419,14 @@ public class SnapshotsManager {
     }
 
     protected VdsGroupDAO getVdsGroupDao() {
-        return DbFacade.getInstance().getVdsGroupDAO();
+        return DbFacade.getInstance().getVdsGroupDao();
     }
 
     protected VmTemplateDAO getVmTemplateDao() {
-        return DbFacade.getInstance().getVmTemplateDAO();
+        return DbFacade.getInstance().getVmTemplateDao();
     }
 
     protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
+        return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 }

@@ -27,7 +27,7 @@ public class GetAvailableClusterVersionsQuery<P extends GetAvailableClusterVersi
     protected void executeQueryCommand() {
         if (getParameters().getVdsGroupId() != null) {
             ArrayList<Version> result = new ArrayList<Version>();
-            VDSGroup cluster = getDbFacade().getVdsGroupDAO().get(getParameters().getVdsGroupId());
+            VDSGroup cluster = getDbFacade().getVdsGroupDao().get(getParameters().getVdsGroupId());
             if (cluster != null) {
                 SearchParameters p = new SearchParameters(MessageFormat.format(
                         StorageHandlingCommandBase.UpVdssInCluster, cluster.getname()), SearchType.VDS);

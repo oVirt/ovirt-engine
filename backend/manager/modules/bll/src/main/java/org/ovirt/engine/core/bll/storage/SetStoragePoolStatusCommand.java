@@ -24,17 +24,17 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
     protected void executeCommand() {
         getStoragePool().setstatus(getParameters().getStatus());
         setVdsIdRef(getStoragePool().getspm_vds_id());
-        DbFacade.getInstance().getStoragePoolDAO().updateStatus(getStoragePool().getId(), getStoragePool().getstatus());
+        DbFacade.getInstance().getStoragePoolDao().updateStatus(getStoragePool().getId(), getStoragePool().getstatus());
         if (getParameters().getStatus() == StoragePoolStatus.Problematic
                 || getParameters().getStatus() == StoragePoolStatus.NotOperational) {
             List<storage_pool_iso_map> storagesStatusInPool = DbFacade.getInstance()
-                    .getStoragePoolIsoMapDAO().getAllForStoragePool(getStoragePool().getId());
+                    .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());
             for (storage_pool_iso_map storageStatusInPool : storagesStatusInPool) {
                 if (storageStatusInPool.getstatus() != null
                         && storageStatusInPool.getstatus() == StorageDomainStatus.Active) {
                     storageStatusInPool.setstatus(StorageDomainStatus.Unknown);
                     DbFacade.getInstance()
-                            .getStoragePoolIsoMapDAO()
+                            .getStoragePoolIsoMapDao()
                             .updateStatus(storageStatusInPool.getId(), storageStatusInPool.getstatus());
                 }
             }

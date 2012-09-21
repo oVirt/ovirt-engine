@@ -89,7 +89,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         super.setUp();
 
         // Retrieve all three vmstatics that were defined by fixtures and put in an array
-        vmStatics = dbFacade.getVmStaticDAO().getAllByName(STATIC_VM_NAME);
+        vmStatics = dbFacade.getVmStaticDao().getAllByName(STATIC_VM_NAME);
         vmStaticArrayInDescOrder = new VmStatic[NUM_OF_VM_STATIC_IN_FIXTURES];
         guidsArrayToBeChecked = new Guid[NUM_OF_VM_STATIC_IN_FIXTURES];
         vmStaticGuidsInDb = getListOfGuidFromListOfVmStatics(vmStatics);
@@ -104,7 +104,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void restoreFixtures() {
         Iterator<VmStatic> vmStaticIterator = vmStatics.iterator();
         while (vmStaticIterator.hasNext()) {
-            dbFacade.getVmStaticDAO().update((VmStatic) vmStaticIterator.next());
+            dbFacade.getVmStaticDao().update((VmStatic) vmStaticIterator.next());
         }
     }
 
@@ -159,14 +159,14 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testUpdateLastAdminCheckStatus() {
 
         // Getting a nonAdmin user that is defined in the fixtures
-        DbUser nonAdminUser = dbFacade.getDbUserDAO().getByUsername("userportal2@testportal.redhat.com");
+        DbUser nonAdminUser = dbFacade.getDbUserDao().getByUsername("userportal2@testportal.redhat.com");
 
         assertNotNull(nonAdminUser);
         assertFalse(nonAdminUser.getLastAdminCheckStatus());
 
         // execute and validate when not admin
         dbFacade.updateLastAdminCheckStatus(nonAdminUser.getuser_id());
-        nonAdminUser = dbFacade.getDbUserDAO().get(nonAdminUser.getuser_id());
+        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getuser_id());
 
         assertFalse(nonAdminUser.getLastAdminCheckStatus());
 
@@ -180,12 +180,12 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         perms.setObjectType(VdcObjectType.System);
 
         // Save the permission to the DB and make sure it has been saved
-        dbFacade.getPermissionDAO().save(perms);
-        assertNotNull(dbFacade.getPermissionDAO().get(perms.getId()));
+        dbFacade.getPermissionDao().save(perms);
+        assertNotNull(dbFacade.getPermissionDao().get(perms.getId()));
 
         // execute and validate when admin
         dbFacade.updateLastAdminCheckStatus(nonAdminUser.getuser_id());
-        nonAdminUser = dbFacade.getDbUserDAO().get(nonAdminUser.getuser_id());
+        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getuser_id());
 
         assertTrue(nonAdminUser.getLastAdminCheckStatus());
     }
@@ -335,7 +335,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
      */
     private void updateArrayOfVmStaticsInDb(VmStatic[] vmStaticArray) {
         for (int i = 0; i < vmStaticArray.length; i++) {
-            dbFacade.getVmStaticDAO().update(vmStaticArray[i]);
+            dbFacade.getVmStaticDao().update(vmStaticArray[i]);
         }
     }
 
@@ -370,19 +370,19 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testIsStoragePoolMasterUpWhenDown() {
-        storage_pool storagePoolToCheck = dbFacade.getStoragePoolDAO().get(STORAGE_POOL_WITH_MASTER_DOWN);
+        storage_pool storagePoolToCheck = dbFacade.getStoragePoolDao().get(STORAGE_POOL_WITH_MASTER_DOWN);
         assertNotNull(storagePoolToCheck);
 
         Guid masterStorageDomainGuid =
-                dbFacade.getStorageDomainDAO().getMasterStorageDomainIdForPool(STORAGE_POOL_WITH_MASTER_DOWN);
+                dbFacade.getStorageDomainDao().getMasterStorageDomainIdForPool(STORAGE_POOL_WITH_MASTER_DOWN);
         assertNotNull(masterStorageDomainGuid);
 
-        storage_pool_iso_map storagePoolIsoMapToCheck = dbFacade.getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(
+        storage_pool_iso_map storagePoolIsoMapToCheck = dbFacade.getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 masterStorageDomainGuid, storagePoolToCheck.getId()));
         assertNotNull(storagePoolIsoMapToCheck);
 
         storagePoolIsoMapToCheck.setstatus(StorageDomainStatus.InActive);
-        dbFacade.getStoragePoolIsoMapDAO().update(storagePoolIsoMapToCheck);
+        dbFacade.getStoragePoolIsoMapDao().update(storagePoolIsoMapToCheck);
         assertFalse(dbFacade.IsStoragePoolMasterUp(STORAGE_POOL_WITH_MASTER_DOWN));
     }
 
@@ -393,7 +393,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForVM() {
-        VmStatic vmStatic = dbFacade.getVmStaticDAO().get(VM_ID);
+        VmStatic vmStatic = dbFacade.getVmStaticDao().get(VM_ID);
         assertNotNull(vmStatic);
         String name = vmStatic.getvm_name();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM)));
@@ -401,7 +401,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForVmTemplate() {
-        VmTemplate vmTemplate = dbFacade.getVmTemplateDAO().get(VM_TEMPLATE_ID);
+        VmTemplate vmTemplate = dbFacade.getVmTemplateDao().get(VM_TEMPLATE_ID);
         assertNotNull(vmTemplate);
         String name = vmTemplate.getname();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_TEMPLATE_ID, VdcObjectType.VmTemplate)));
@@ -409,7 +409,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForHost() {
-        VdsStatic vds = dbFacade.getVdsStaticDAO().get(VDS_ID);
+        VdsStatic vds = dbFacade.getVdsStaticDao().get(VDS_ID);
         assertNotNull(vds);
         String name = vds.getvds_name();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VDS_ID, VdcObjectType.VDS)));
@@ -417,7 +417,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForVmPool() {
-        vm_pools vmPool = dbFacade.getVmPoolDAO().get(VM_POOL_ID);
+        vm_pools vmPool = dbFacade.getVmPoolDao().get(VM_POOL_ID);
         assertNotNull(vmPool);
         String name = vmPool.getvm_pool_name();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool)));
@@ -425,7 +425,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForTag() {
-        tags tag = dbFacade.getTagDAO().get(TAG_ID);
+        tags tag = dbFacade.getTagDao().get(TAG_ID);
         assertNotNull(tag);
         String name = tag.gettag_name();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags)));
@@ -433,7 +433,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForBookmark() {
-        bookmarks bookmark = dbFacade.getBookmarkDAO().get(BOOKMARK_ID);
+        bookmarks bookmark = dbFacade.getBookmarkDao().get(BOOKMARK_ID);
         assertNotNull(bookmark);
         String name = bookmark.getbookmark_name();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks)));
@@ -441,7 +441,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForCluster() {
-        VDSGroup vdsGroup = dbFacade.getVdsGroupDAO().get(CLUSTER_ID);
+        VDSGroup vdsGroup = dbFacade.getVdsGroupDao().get(CLUSTER_ID);
         assertNotNull(vdsGroup);
         String name = vdsGroup.getname();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.VdsGroups)));
@@ -449,7 +449,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForStorageDomain() {
-        storage_domains storageDomain = dbFacade.getStorageDomainDAO().get(STORAGE_DOMAIN_ID);
+        storage_domains storageDomain = dbFacade.getStorageDomainDao().get(STORAGE_DOMAIN_ID);
         assertNotNull(storageDomain);
         String name = storageDomain.getstorage_name();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_DOMAIN_ID, VdcObjectType.Storage)));
@@ -457,7 +457,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForDataCenter() {
-        storage_pool storagePool = dbFacade.getStoragePoolDAO().get(STORAGE_POOL_ID);
+        storage_pool storagePool = dbFacade.getStoragePoolDao().get(STORAGE_POOL_ID);
         assertNotNull(storagePool);
         String name = storagePool.getname();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool)));
@@ -465,7 +465,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForUser() {
-        DbUser dbUser = dbFacade.getDbUserDAO().get(USER_ID);
+        DbUser dbUser = dbFacade.getDbUserDao().get(USER_ID);
         assertNotNull(dbUser);
         String name = dbUser.getusername();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(USER_ID, VdcObjectType.User)));
@@ -473,7 +473,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForRole() {
-        Role role = dbFacade.getRoleDAO().get(ROLE_ID);
+        Role role = dbFacade.getRoleDao().get(ROLE_ID);
         assertNotNull(role);
         String name = role.getname();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role)));
@@ -481,7 +481,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForQuota() {
-        Quota quota = dbFacade.getQuotaDAO().getById(QUOTA_ID);
+        Quota quota = dbFacade.getQuotaDao().getById(QUOTA_ID);
         assertNotNull(quota);
         String name = quota.getQuotaName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(QUOTA_ID, VdcObjectType.Quota)));
@@ -497,7 +497,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForVmInterface() {
-        VmNetworkInterface vmInterface = dbFacade.getVmNetworkInterfaceDAO().get(VM_INTERFACE_ID);
+        VmNetworkInterface vmInterface = dbFacade.getVmNetworkInterfaceDao().get(VM_INTERFACE_ID);
         assertNotNull(vmInterface);
         String name = vmInterface.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_INTERFACE_ID, VdcObjectType.VmInterface)));
@@ -506,19 +506,19 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     @Test
     public void testSaveIsInitialized(){
         // The vm starts out as initialized
-        VmStatic vmStaticForTest = dbFacade.getVmStaticDAO().get(VM_STATIC_GUID);
+        VmStatic vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
         assertNotNull(vmStaticForTest);
         assertTrue(vmStaticForTest.getis_initialized());
 
         // Change it into uninitialized and make sure that the change succeeded
         dbFacade.SaveIsInitialized(vmStaticForTest.getId(), !INITIALIZED);
-        vmStaticForTest = dbFacade.getVmStaticDAO().get(VM_STATIC_GUID);
+        vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
         assertNotNull(vmStaticForTest);
         assertFalse(vmStaticForTest.getis_initialized());
 
         // Change it back to initialized and make sure that the change succeeded
         dbFacade.SaveIsInitialized(vmStaticForTest.getId(), INITIALIZED);
-        vmStaticForTest = dbFacade.getVmStaticDAO().get(VM_STATIC_GUID);
+        vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
         assertNotNull(vmStaticForTest);
         assertTrue(vmStaticForTest.getis_initialized());
     }

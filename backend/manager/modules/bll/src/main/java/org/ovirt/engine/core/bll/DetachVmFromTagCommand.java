@@ -16,12 +16,12 @@ public class DetachVmFromTagCommand<T extends AttachEntityToTagParameters> exten
     protected void executeCommand() {
         for (Guid vmGuid : getVmsList()) {
             if (getTagId() != null
-                    && DbFacade.getInstance().getTagDAO().getTagVmByTagIdAndByVmId(getTagId(), vmGuid) != null) {
-                VM vm = DbFacade.getInstance().getVmDAO().get(vmGuid);
+                    && DbFacade.getInstance().getTagDao().getTagVmByTagIdAndByVmId(getTagId(), vmGuid) != null) {
+                VM vm = DbFacade.getInstance().getVmDao().get(vmGuid);
                 if (vm != null) {
                     AppendCustomValue("VmsNames", vm.getvm_name(), ", ");
                 }
-                DbFacade.getInstance().getTagDAO().detachVmFromTag(getTagId(), vmGuid);
+                DbFacade.getInstance().getTagDao().detachVmFromTag(getTagId(), vmGuid);
                 setSucceeded(true);
             }
         }

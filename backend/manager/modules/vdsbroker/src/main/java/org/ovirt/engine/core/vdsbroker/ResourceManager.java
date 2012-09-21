@@ -57,7 +57,7 @@ public class ResourceManager {
 
     public void init() {
         log.info("ResourceManager::ResourceManager::Entered");
-        List<VDS> allVdsList = DbFacade.getInstance().getVdsDAO().getAll();
+        List<VDS> allVdsList = DbFacade.getInstance().getVdsDao().getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
         for (VDS helper_vds : allVdsList)
         {
@@ -68,14 +68,14 @@ public class ResourceManager {
         }
 
         // Cleanup all vms dynamic data. This is defencive code on power crash
-        List<VM> vms = DbFacade.getInstance().getVmDAO().getAll();
+        List<VM> vms = DbFacade.getInstance().getVmDao().getAll();
         for (VM vm : vms) {
             if (!VM.isStatusDown(vm.getstatus())) {
                 // check if vm should be suspended
                 if (vm.getstatus() == VMStatus.SavingState) {
                     InternalSetVmStatus(vm, VMStatus.Suspended);
-                    DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
-                    DbFacade.getInstance().getVmStatisticsDAO().update(vm.getStatisticsData());
+                    DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
+                    DbFacade.getInstance().getVmStatisticsDao().update(vm.getStatisticsData());
                 } else {
                     if (vm.getrun_on_vds() != null) {
                         MultiValueMapUtils.addToMap(vm.getrun_on_vds().getValue(),
@@ -229,13 +229,13 @@ public class ResourceManager {
     }
 
     private void storeVm(VM vm) {
-        DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
-        DbFacade.getInstance().getVmStatisticsDAO().update(vm.getStatisticsData());
+        DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
+        DbFacade.getInstance().getVmStatisticsDao().update(vm.getStatisticsData());
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces != null) {
             for (VmNetworkInterface ifc : interfaces) {
                 VmNetworkStatistics stats = ifc.getStatistics();
-                DbFacade.getInstance().getVmNetworkStatisticsDAO().update(stats);
+                DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
             }
         }
     }

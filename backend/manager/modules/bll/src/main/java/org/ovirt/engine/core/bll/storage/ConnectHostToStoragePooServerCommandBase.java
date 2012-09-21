@@ -68,7 +68,7 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
                 GetStorageDomainsByStoragePoolId(StorageDomainType.ImportExport);
 
         java.util.HashSet<storage_server_connections> connections = new java.util.HashSet<storage_server_connections>(
-                DbFacade.getInstance().getStorageServerConnectionDAO().getAllForStoragePool(getStoragePool().getId()));
+                DbFacade.getInstance().getStorageServerConnectionDao().getAllForStoragePool(getStoragePool().getId()));
         if (isoDomains.size() != 0) {
             _isoType = isoDomains.get(0).getstorage_type();
             java.util.HashSet<storage_server_connections> isoConnections =
@@ -117,7 +117,7 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
     }
 
     protected java.util.ArrayList<storage_domains> GetStorageDomainsByStoragePoolId(StorageDomainType type) {
-        List<storage_domains> allDomains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
+        List<storage_domains> allDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
                 getStoragePool().getId());
         java.util.ArrayList<storage_domains> domains = new java.util.ArrayList<storage_domains>();
         for (storage_domains s : allDomains) {

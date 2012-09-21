@@ -21,7 +21,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
 
     @Override
     protected void executeQueryCommand() {
-        final List<VdsNetworkInterface> list = getDbFacade().getInterfaceDAO()
+        final List<VdsNetworkInterface> list = getDbFacade().getInterfaceDao()
                 .getAllInterfacesForVds(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
 
         // 1. here we return all interfaces (eth0, eth1, eth2) - the first
@@ -45,9 +45,9 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
         List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>(list.size());
 
         if (!list.isEmpty()) {
-            VdsStatic vdsStatic = getDbFacade().getVdsStaticDAO().get(getParameters().getVdsId());
+            VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getVdsId());
             Map<String, Network> networks = Entities.entitiesByName(
-                    getDbFacade().getNetworkDAO().getAllForCluster(vdsStatic.getvds_group_id()));
+                    getDbFacade().getNetworkDao().getAllForCluster(vdsStatic.getvds_group_id()));
             for (final VdsNetworkInterface i : list) {
                 if (i.getBonded() == null || (i.getBonded() != null && i.getBonded())
                             && LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {

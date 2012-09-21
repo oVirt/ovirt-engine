@@ -139,7 +139,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         for (String groupDN : groupDNList) {
             String groupName = LdapBrokerUtils.generateGroupDisplayValue(groupDN);
             if (!groupsDict.containsKey(groupName)) {
-                ad_groups group = DbFacade.getInstance().getAdGroupDAO().getByName(groupName);
+                ad_groups group = DbFacade.getInstance().getAdGroupDao().getByName(groupName);
                 if (group == null) {
                     group = new ad_groups();
                     group.setname(groupName);

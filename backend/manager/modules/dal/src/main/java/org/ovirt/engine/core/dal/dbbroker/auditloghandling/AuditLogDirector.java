@@ -765,7 +765,7 @@ public final class AuditLogDirector {
                     auditLog = new AuditLog(logType, severity, resolvedMessage, null, null, null, null, null, null,
                             null, null);
                 }
-                getDbFacadeInstance().getAuditLogDAO().save(auditLog);
+                getDbFacadeInstance().getAuditLogDao().save(auditLog);
                 if (!"".equals(loggerString)) {
                     log.infoFormat(loggerString, resolvedMessage);
                 }

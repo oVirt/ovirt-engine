@@ -78,11 +78,11 @@ public class AttachStorageDomainToPoolCommandTest {
 
         doReturn(dbFacade).when(cmd).getDbFacade();
 
-        when(dbFacade.getStoragePoolIsoMapDAO()).thenReturn(isoMapDAO);
-        when(dbFacade.getStoragePoolDAO()).thenReturn(storagePoolDAO);
-        when(dbFacade.getVdsDAO()).thenReturn(vdsDAO);
-        when(dbFacade.getStorageDomainDAO()).thenReturn(storageDomainDAO);
-        when(dbFacade.getStorageDomainStaticDAO()).thenReturn(storageDomainStaticDAO);
+        when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDAO);
+        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
+        when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
+        when(dbFacade.getStorageDomainStaticDao()).thenReturn(storageDomainStaticDAO);
         storage_pool pool = new storage_pool();
         pool.setstatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);

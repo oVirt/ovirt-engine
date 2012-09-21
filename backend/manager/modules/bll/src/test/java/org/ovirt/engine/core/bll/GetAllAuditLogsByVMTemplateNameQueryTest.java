@@ -33,7 +33,7 @@ public class GetAllAuditLogsByVMTemplateNameQueryTest
         when(auditLogDAOMock.getAllByVMTemplateName(vmTemplateName,
                 getUser().getUserId(),
                 getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(expectedResult));
-        when(getDbFacadeMockInstance().getAuditLogDAO()).thenReturn(auditLogDAOMock);
+        when(getDbFacadeMockInstance().getAuditLogDao()).thenReturn(auditLogDAOMock);
 
         getQuery().executeQueryCommand();
 

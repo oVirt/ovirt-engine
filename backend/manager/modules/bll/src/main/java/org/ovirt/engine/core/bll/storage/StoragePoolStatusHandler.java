@@ -56,7 +56,7 @@ public final class StoragePoolStatusHandler {
     public void onTimeout() {
         if (_nonOperationalPools.containsKey(poolId)) {
             try {
-                storage_pool pool = DbFacade.getInstance().getStoragePoolDAO().get(poolId);
+                storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(poolId);
                 if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
                     NonOperationalPoolTreatment(pool);
                 }
@@ -103,7 +103,7 @@ public final class StoragePoolStatusHandler {
     }
 
     public static void Init() {
-        List<storage_pool> allPools = DbFacade.getInstance().getStoragePoolDAO().getAll();
+        List<storage_pool> allPools = DbFacade.getInstance().getStoragePoolDao().getAll();
         for (storage_pool pool : allPools) {
             if (pool.getstatus() == StoragePoolStatus.NotOperational) {
                 PoolStatusChanged(pool.getId(), StoragePoolStatus.NotOperational);

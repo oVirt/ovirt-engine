@@ -11,6 +11,6 @@ public class GetTimeLeasedUsersByVmPoolIdQuery<P extends GetTimeLeasedUsersByVmP
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getDbUserDAO().getAllTimeLeasedUsersForVm(getParameters().getId()));
+                getDbFacade().getDbUserDao().getAllTimeLeasedUsersForVm(getParameters().getId()));
     }
 }

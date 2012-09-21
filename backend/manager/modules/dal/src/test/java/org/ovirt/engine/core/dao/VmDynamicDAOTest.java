@@ -26,7 +26,7 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getVmDynamicDAO();
+        dao = dbFacade.getVmDynamicDao();
         existingVm = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
         existingVm.setstatus(VMStatus.Up);
 

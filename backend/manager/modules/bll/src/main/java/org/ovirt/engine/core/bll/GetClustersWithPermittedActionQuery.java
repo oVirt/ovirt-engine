@@ -12,7 +12,7 @@ public class GetClustersWithPermittedActionQuery<P extends GetEntitiesWithPermit
     @Override
     protected void executeQueryCommand() {
         P params = getParameters();
-        setReturnValue(getDbFacade().getVdsGroupDAO().getClustersWithPermittedAction(getUserID(),
+        setReturnValue(getDbFacade().getVdsGroupDao().getClustersWithPermittedAction(getUserID(),
                 params.getActionGroup()));
     }
 }

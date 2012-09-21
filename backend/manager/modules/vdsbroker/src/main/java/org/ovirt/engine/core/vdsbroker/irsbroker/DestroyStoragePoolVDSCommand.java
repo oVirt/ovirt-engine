@@ -11,7 +11,7 @@ public class DestroyStoragePoolVDSCommand<P extends IrsBaseVDSCommandParameters>
 
     @Override
     protected void ExecuteIrsBrokerCommand() {
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(this.getCurrentIrsProxyData().getCurrentVdsId());
+        VDS vds = DbFacade.getInstance().getVdsDao().get(this.getCurrentIrsProxyData().getCurrentVdsId());
         status = getIrsProxy().destroyStoragePool(getParameters().getStoragePoolId().toString(),
                 vds.getvds_spm_id(), getParameters().getStoragePoolId().toString());
         ProceedProxyReturnValue();

@@ -19,7 +19,7 @@ public class GetVlanParanetQuery<P extends GetAllChildVlanInterfacesQueryParamet
     protected void executeQueryCommand() {
         if (((VdsNetworkInterface) getParameters().getInterface()).getVlanId() != null) {
             List<VdsNetworkInterface> vdsInterfaces = DbFacade.getInstance()
-                    .getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
+                    .getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
             for (int i = 0; i < vdsInterfaces.size(); i++) {
                 if (NetworkUtils.interfaceBasedOn(getParameters().getInterface().getName(),
                         vdsInterfaces.get(i).getName())) {

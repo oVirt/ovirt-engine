@@ -341,11 +341,11 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     }
 
     protected VdsStaticDAO getVdsStaticDAO() {
-        return getDbFacade().getVdsStaticDAO();
+        return getDbFacade().getVdsStaticDao();
     }
 
     @Override
     protected NetworkDAO getNetworkDAO() {
-        return getDbFacade().getNetworkDAO();
+        return getDbFacade().getNetworkDao();
     }
 }

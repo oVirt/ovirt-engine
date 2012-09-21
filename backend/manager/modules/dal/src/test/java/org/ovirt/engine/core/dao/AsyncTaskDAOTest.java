@@ -37,7 +37,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getAsyncTaskDAO());
+        dao = prepareDAO(dbFacade.getAsyncTaskDao());
         params = new VdcActionParametersBase();
         params.setSessionId("ASESSIONID");
         params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);

@@ -74,7 +74,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
     }
 
     protected VmDAO getVmDao() {
-        return getDbFacade().getVmDAO();
+        return getDbFacade().getVmDao();
     }
 
     protected SnapshotsManager getSnapshotManager() {

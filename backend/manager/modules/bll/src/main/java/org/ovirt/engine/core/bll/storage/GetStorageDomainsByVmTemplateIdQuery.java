@@ -27,7 +27,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
     protected void executeQueryCommand() {
         vmTemplate =
                 DbFacade.getInstance()
-                        .getVmTemplateDAO()
+                        .getVmTemplateDao()
                         .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         ArrayList<storage_domains> result = new ArrayList<storage_domains>();
 
@@ -54,7 +54,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
 
     protected storage_domains getStorageDomain(Guid domainId) {
         return DbFacade.getInstance()
-                .getStorageDomainDAO()
+                .getStorageDomainDao()
                 .getForStoragePool(domainId, vmTemplate.getstorage_pool_id().getValue());
     }
 }

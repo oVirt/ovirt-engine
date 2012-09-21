@@ -29,7 +29,7 @@ public class GetVmPoolByIdQueryTest extends AbstractUserQueryTest<GetVmPoolByIdP
         when(vmPoolDAOMock.get(vmPoolID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
-        when(dbFacadeMock.getVmPoolDAO()).thenReturn(vmPoolDAOMock);
+        when(dbFacadeMock.getVmPoolDao()).thenReturn(vmPoolDAOMock);
 
         getQuery().executeQueryCommand();
 

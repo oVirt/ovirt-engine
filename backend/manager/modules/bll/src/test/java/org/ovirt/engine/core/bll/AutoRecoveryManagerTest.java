@@ -61,14 +61,14 @@ public class AutoRecoveryManagerTest {
         final VDS vds = new VDS();
         vdss.add(vds);
         when(vdsDaoMock.listFailedAutorecoverables()).thenReturn(vdss);
-        when(dbFacadeMock.getVdsDAO()).thenReturn(vdsDaoMock);
+        when(dbFacadeMock.getVdsDao()).thenReturn(vdsDaoMock);
 
         storage_domains domain = new storage_domains();
         domain.setstorage_pool_id(Guid.NewGuid());
         storageDomains.add(domain);
         final StorageDomainDAO storageDomainDaoMock = mock(StorageDomainDAO.class);
         when(storageDomainDaoMock.listFailedAutorecoverables()).thenReturn(storageDomains);
-        when(dbFacadeMock.getStorageDomainDAO()).thenReturn(storageDomainDaoMock);
+        when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDaoMock);
     }
 
     @Test

@@ -12,6 +12,6 @@ public class GetRoleByIdQuery<P extends MultilevelAdministrationByRoleIdParamete
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getRoleDAO().get(getParameters().getRoleId()));
+        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getRoleDao().get(getParameters().getRoleId()));
     }
 }

@@ -15,7 +15,7 @@ public class GetStorageDomainListByIdQuery<P extends StorageDomainQueryParameter
 
     @Override
     protected void executeQueryCommand() {
-        List<storage_domains> result = DbFacade.getInstance().getStorageDomainDAO().getAllForStorageDomain(
+        List<storage_domains> result = DbFacade.getInstance().getStorageDomainDao().getAllForStorageDomain(
                 getParameters().getStorageDomainId());
         java.util.ArrayList<storage_domains> temp = new java.util.ArrayList<storage_domains>(result);
         for (storage_domains domain : temp) {

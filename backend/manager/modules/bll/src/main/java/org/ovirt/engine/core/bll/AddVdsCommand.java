@@ -200,7 +200,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      */
     private boolean removeDeprecatedOvirtEntry(final Guid oVirtId) {
 
-        final VDS vds = DbFacade.getInstance().getVdsDAO().get(oVirtId);
+        final VDS vds = DbFacade.getInstance().getVdsDao().get(oVirtId);
         if (vds == null || !VdsHandler.isPendingOvirt(vds)) {
             return false;
         }
@@ -246,7 +246,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private void AddVdsStaticToDb() {
         getParameters().getVdsStaticData().setserver_SSL_enabled(
                 Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
-        DbFacade.getInstance().getVdsStaticDAO().save(getParameters().getVdsStaticData());
+        DbFacade.getInstance().getVdsStaticDao().save(getParameters().getVdsStaticData());
         getCompensationContext().snapshotNewEntity(getParameters().getVdsStaticData());
         setVdsIdRef(getParameters().getVdsStaticData().getId());
         setVds(null);
@@ -262,14 +262,14 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         } else if (getParameters().getAddPending()) {
             vdsDynamic.setstatus(VDSStatus.PendingApproval);
         }
-        DbFacade.getInstance().getVdsDynamicDAO().save(vdsDynamic);
+        DbFacade.getInstance().getVdsDynamicDao().save(vdsDynamic);
         getCompensationContext().snapshotNewEntity(vdsDynamic);
     }
 
     private void AddVdsStatisticsToDb() {
         VdsStatistics vdsStatistics = new VdsStatistics();
         vdsStatistics.setId(getParameters().getVdsStaticData().getId());
-        DbFacade.getInstance().getVdsStatisticsDAO().save(vdsStatistics);
+        DbFacade.getInstance().getVdsStatisticsDao().save(vdsStatistics);
         getCompensationContext().snapshotNewEntity(vdsStatistics);
     }
 
@@ -439,12 +439,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     private boolean validateSingleHostAttachedToLocalStorage() {
         boolean retrunValue = true;
-        storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().getForVdsGroup(
+        storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(
                 getParameters().getVdsStaticData().getvds_group_id());
 
         if (storagePool != null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
             if (!DbFacade.getInstance()
-                    .getVdsStaticDAO()
+                    .getVdsStaticDao()
                     .getAllForVdsGroup(getParameters().getVdsStaticData().getvds_group_id())
                     .isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);

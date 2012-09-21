@@ -29,7 +29,7 @@ public class GetRoleActionGroupsByRoleIdQueryTest extends AbstractUserQueryTest<
         // Mock the DAO
         ActionGroupDAO actionGroupDAOMock = mock(ActionGroupDAO.class);
         when(actionGroupDAOMock.getAllForRole(roleId)).thenReturn(expected);
-        when(getDbFacadeMockInstance().getActionGroupDAO()).thenReturn(actionGroupDAOMock);
+        when(getDbFacadeMockInstance().getActionGroupDao()).thenReturn(actionGroupDAOMock);
 
         // Execute the query and assert the result
         getQuery().executeQueryCommand();

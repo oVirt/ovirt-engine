@@ -42,7 +42,7 @@ public class PermissionTest extends AbstractBackendTest {
         runAsSuperAdmin();
 
         DbUser user = new DbUser(new AdUser("jnuit-testUser", "123345", Guid.NewGuid(), "example.com"));
-        DbFacade.getInstance().getDbUserDAO().save(user);
+        DbFacade.getInstance().getDbUserDao().save(user);
         permissions perms = new permissions(user.getuser_id(), Guid.NewGuid(), PredefinedRoles.DATA_CENTER_ADMIN
                 .getId());
         perms.setObjectId(getBasicSetup().getDataCenter().getId());
@@ -71,7 +71,7 @@ public class PermissionTest extends AbstractBackendTest {
         runAsSuperAdmin();
 
         DbUser user = new DbUser(new AdUser("jnuit-testUser1", "123345", Guid.NewGuid(), "example.com"));
-        DbFacade.getInstance().getDbUserDAO().save(user);
+        DbFacade.getInstance().getDbUserDao().save(user);
 
         permissions perms = new permissions(user.getuser_id(), Guid.NewGuid(), PredefinedRoles.DATA_CENTER_ADMIN
                 .getId());

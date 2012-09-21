@@ -54,7 +54,7 @@ public class VmLogoffCommand<T extends LogoffVmParameters> extends VmOperationCo
         if (sentToVM) {
             vm.setguest_cur_user_name(null);
             vm.setguest_cur_user_id(null);
-            DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
+            DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
         }
 
         // Done:

@@ -49,7 +49,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     public FenceVdsManualyCommand(T parameters) {
         super(parameters);
-        _problematicVds = DbFacade.getInstance().getVdsDAO().get(parameters.getVdsId());
+        _problematicVds = DbFacade.getInstance().getVdsDao().get(parameters.getVdsId());
     }
 
     public Guid getProblematicVdsId() {
@@ -148,7 +148,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         _fenceSpmCalled = false;
 
         storage_domains masterDomain = LinqUtils.firstOrNull(
-                DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId()),
+                DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(getStoragePool().getId()),
                 new Predicate<storage_domains>() {
                     @Override
                     public boolean eval(storage_domains a) {
@@ -206,7 +206,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     private void resetIrs() {
         if (getStoragePool().getspm_vds_id() != null) {
             VDS currentSPMVds =
-                    DbFacade.getInstance().getVdsDAO().get(getStoragePool().getspm_vds_id());
+                    DbFacade.getInstance().getVdsDao().get(getStoragePool().getspm_vds_id());
             ResetIrsVDSCommandParameters tempVar =
                     new ResetIrsVDSCommandParameters(getStoragePool()
                             .getId(), currentSPMVds.gethost_name(), currentSPMVds.getId());

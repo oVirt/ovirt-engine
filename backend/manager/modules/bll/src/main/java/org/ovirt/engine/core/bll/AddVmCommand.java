@@ -128,7 +128,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected List<VmNetworkInterface> getVmInterfaces() {
         if (_vmInterfaces == null) {
             List<VmNetworkInterface> vmNetworkInterfaces =
-                    DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplate().getId());
+                    DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForTemplate(getVmTemplate().getId());
             _vmInterfaces =
                     (vmNetworkInterfaces != null) ? vmNetworkInterfaces
                             : new ArrayList<VmNetworkInterface>();
@@ -229,7 +229,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean hostToRunExist() {
         if (getParameters().getVmStaticData().getdedicated_vm_for_vds() != null) {
-            if (DbFacade.getInstance().getVdsDAO().get(getParameters().getVmStaticData().getdedicated_vm_for_vds()) == null) {
+            if (DbFacade.getInstance().getVdsDao().get(getParameters().getVmStaticData().getdedicated_vm_for_vds()) == null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
                 return false;
             }
@@ -378,7 +378,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
             Guid storageDomainId = diskImage.getstorage_ids().get(0);
             if (destStorages.get(storageDomainId) == null) {
-                storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+                storage_domains storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                         storageDomainId, getStoragePoolId());
                 StorageDomainValidator validator =
                         new StorageDomainValidator(storage);
@@ -528,7 +528,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected static boolean IsLegalClusterId(Guid clusterId, List<String> reasons) {
         // check given cluster id
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(clusterId);
+        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(clusterId);
         boolean legalClusterId = (vdsGroup != null);
         if (!legalClusterId) {
             reasons.add(VdcBllErrors.VM_INVALID_SERVER_CLUSTER_ID.toString());
@@ -574,9 +574,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iface.setVmTemplateId(null);
             iface.setVmId(getParameters().getVmStaticData().getId());
-            DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iface);
+            DbFacade.getInstance().getVmNetworkInterfaceDao().save(iface);
             getCompensationContext().snapshotNewEntity(iface);
-            DbFacade.getInstance().getVmNetworkStatisticsDAO().save(iface.getStatistics());
+            DbFacade.getInstance().getVmNetworkStatisticsDao().save(iface.getStatistics());
             getCompensationContext().snapshotNewEntity(iface.getStatistics());
         }
     }
@@ -614,14 +614,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         tempVar.setvm_ip("");
         tempVar.setdisplay_type(getParameters().getVmStaticData().getdefault_display_type());
         VmDynamic vmDynamic = tempVar;
-        DbFacade.getInstance().getVmDynamicDAO().save(vmDynamic);
+        DbFacade.getInstance().getVmDynamicDao().save(vmDynamic);
         getCompensationContext().snapshotNewEntity(vmDynamic);
     }
 
     void addVmStatistics() {
         VmStatistics stats = new VmStatistics();
         stats.setId(getVmId());
-        DbFacade.getInstance().getVmStatisticsDAO().save(stats);
+        DbFacade.getInstance().getVmStatisticsDao().save(stats);
         getCompensationContext().snapshotNewEntity(stats);
     }
 
@@ -763,11 +763,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected VmDynamicDAO getVmDynamicDao() {
-        return DbFacade.getInstance().getVmDynamicDAO();
+        return DbFacade.getInstance().getVmDynamicDao();
     }
 
     protected VmStaticDAO getVmStaticDao() {
-        return DbFacade.getInstance().getVmStaticDAO();
+        return DbFacade.getInstance().getVmStaticDao();
     }
 
     @Override

@@ -63,8 +63,8 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             @Override
             public Object runInTransaction() {
                 getStorageHelper(dom).StorageDomainRemoved(dom.getStorageStaticData());
-                getDbFacade().getStorageDomainDynamicDAO().remove(dom.getId());
-                getDbFacade().getStorageDomainStaticDAO().remove(dom.getId());
+                getDbFacade().getStorageDomainDynamicDao().remove(dom.getId());
+                getDbFacade().getStorageDomainStaticDao().remove(dom.getId());
                 return null;
             }
         });
@@ -173,7 +173,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         Guid storageDomainId = storageDomain.getId();
         Guid storagePoolId = storageDomain.getstorage_pool_id().getValue();
 
-        return getDbFacade().getStoragePoolIsoMapDAO()
+        return getDbFacade().getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(storageDomainId, storagePoolId)) != null;
     }
 

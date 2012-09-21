@@ -108,7 +108,7 @@ public abstract class VdsLoadBalancingAlgorithm {
     }
 
     public void LoadBalance() {
-        setAllRelevantVdss(DbFacade.getInstance().getVdsDAO().getAllForVdsGroupWithoutMigrating(getVdsGroup().getId()));
+        setAllRelevantVdss(DbFacade.getInstance().getVdsDao().getAllForVdsGroupWithoutMigrating(getVdsGroup().getId()));
         log.infoFormat("VdsLoadBalancer: number of relevant vdss (no migration, no pending): {0}.",
                 getAllRelevantVdss().size());
         InitOverUtilizedList();
@@ -277,7 +277,7 @@ public abstract class VdsLoadBalancingAlgorithm {
     }
 
     private java.util.List<VM> getMigrableVmsRunningOnVds(Guid vdsId) {
-        List<VM> vmsFromDB = DbFacade.getInstance().getVmDAO().getAllRunningForVds(vdsId);
+        List<VM> vmsFromDB = DbFacade.getInstance().getVmDao().getAllRunningForVds(vdsId);
 
         List<VM> vms = LinqUtils.filter(vmsFromDB, new Predicate<VM>() {
             @Override

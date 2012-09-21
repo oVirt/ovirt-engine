@@ -30,21 +30,21 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         String event_name = getParameters().getEventSubscriber().getevent_up_name();
         int method_id = getParameters().getEventSubscriber().getmethod_id();
         List<event_subscriber> subscriptions = DbFacade.getInstance()
-                .getEventDAO().getAllForSubscriber(subscriberId);
+                .getEventDao().getAllForSubscriber(subscriberId);
         if (IsAlreadySubscribed(subscriptions, subscriberId, event_name, method_id)) {
             addCanDoActionMessage(VdcBllMessages.EN_ALREADY_SUBSCRIBED);
             retValue = false;
         } else {
             // get notification method
             List<event_notification_methods> event_notification_methods = (DbFacade.getInstance()
-                    .getEventDAO().getEventNotificationMethodsById(method_id));
+                    .getEventDao().getEventNotificationMethodsById(method_id));
             if (event_notification_methods.size() > 0) {
                 // validate event
-                List<event_map> event_map = DbFacade.getInstance().getEventDAO().getEventMapByName(event_name);
+                List<event_map> event_map = DbFacade.getInstance().getEventDao().getEventMapByName(event_name);
                 if (event_map.size() > 0) {
                     String domain = getParameters().getDomain();
                     // Validate user
-                    DbUser user = DbFacade.getInstance().getDbUserDAO().get(subscriberId);
+                    DbUser user = DbFacade.getInstance().getDbUserDao().get(subscriberId);
                     if (user == null) {
                         // If user exists in AD and does not exist in DB - try to add it to DB
                         // If an exception is thrown while trying, handle it and and fail with the relevant message
@@ -111,7 +111,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         if (getParameters().getEventSubscriber().gettag_name() == null) {
             getParameters().getEventSubscriber().settag_name("");
         }
-        DbFacade.getInstance().getEventDAO().subscribe(getParameters().getEventSubscriber());
+        DbFacade.getInstance().getEventDao().subscribe(getParameters().getEventSubscriber());
         setSucceeded(true);
     }
 }

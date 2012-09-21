@@ -301,6 +301,6 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {
-        return getDbFacade().getVmDeviceDAO();
+        return getDbFacade().getVmDeviceDao();
     }
 }

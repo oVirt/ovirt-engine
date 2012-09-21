@@ -31,7 +31,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getVmTemplateDAO();
+        dao = dbFacade.getVmTemplateDao();
 
         existingTemplate = dao.get(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
@@ -181,7 +181,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newVmTemplate);
 
-        VmTemplate result = dbFacade.getVmTemplateDAO().get(newVmTemplate.getId());
+        VmTemplate result = dbFacade.getVmTemplateDao().get(newVmTemplate.getId());
 
         assertNotNull(result);
         assertEquals(newVmTemplate, result);
@@ -196,7 +196,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
 
         dao.update(existingTemplate);
 
-        VmTemplate result = dbFacade.getVmTemplateDAO().get(existingTemplate.getId());
+        VmTemplate result = dbFacade.getVmTemplateDao().get(existingTemplate.getId());
 
         assertNotNull(result);
         assertEquals(existingTemplate, result);
@@ -222,13 +222,13 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        VmTemplate before = dbFacade.getVmTemplateDAO().get(DELETABLE_TEMPLATE_ID);
+        VmTemplate before = dbFacade.getVmTemplateDao().get(DELETABLE_TEMPLATE_ID);
 
         assertNotNull(before);
 
         dao.remove(DELETABLE_TEMPLATE_ID);
 
-        VmTemplate after = dbFacade.getVmTemplateDAO().get(DELETABLE_TEMPLATE_ID);
+        VmTemplate after = dbFacade.getVmTemplateDao().get(DELETABLE_TEMPLATE_ID);
 
         assertNull(after);
     }

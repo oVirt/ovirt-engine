@@ -10,7 +10,7 @@ public class GetAllRelevantQuotasForVdsGroupQuery<P extends GetAllRelevantQuotas
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
-                .getQuotaDAO()
+                .getQuotaDao()
                 .getAllRelevantQuotasForVdsGroup(getParameters().getVdsGroupId(),
                         getUserID(),
                         getParameters().isFiltered()));

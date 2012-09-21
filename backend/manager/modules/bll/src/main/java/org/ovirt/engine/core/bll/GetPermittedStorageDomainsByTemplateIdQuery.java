@@ -16,7 +16,7 @@ public class GetPermittedStorageDomainsByTemplateIdQuery<P extends GetPermittedS
     @Override
     protected storage_domains getStorageDomain(Guid domainId) {
         return DbFacade.getInstance()
-                .getStorageDomainDAO()
+                .getStorageDomainDao()
                 .getPermittedStorageDomainsById(getUserID(), getParameters().getActionGroup(), domainId);
     }
 

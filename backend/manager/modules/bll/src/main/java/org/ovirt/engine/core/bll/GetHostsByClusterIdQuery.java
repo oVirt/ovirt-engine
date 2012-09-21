@@ -11,7 +11,7 @@ public class GetHostsByClusterIdQuery<P extends GetHostsByClusterIdParameters> e
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                        .getVdsDAO()
+                        .getVdsDao()
                         .getAllForVdsGroup(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 

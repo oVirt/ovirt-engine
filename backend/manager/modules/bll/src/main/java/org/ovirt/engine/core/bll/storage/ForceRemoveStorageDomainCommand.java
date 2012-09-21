@@ -53,7 +53,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
                 .StorageDomainRemoved(getStorageDomain().getStorageStaticData());
 
-        DbFacade.getInstance().getStorageDomainDAO().remove(getStorageDomain().getId());
+        DbFacade.getInstance().getStorageDomainDao().remove(getStorageDomain().getId());
 
         if (getStoragePool() != null) {
             // if iso reset path for pool

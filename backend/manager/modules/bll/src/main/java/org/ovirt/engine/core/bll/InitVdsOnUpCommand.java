@@ -90,10 +90,10 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     private void processStoragePoolStatus() {
         if (getVds().getspm_status() != VdsSpmStatus.None) {
-            storage_pool pool = DbFacade.getInstance().getStoragePoolDAO().get(getVds().getstorage_pool_id());
+            storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getstorage_pool_id());
             if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
                 pool.setstatus(StoragePoolStatus.Problematic);
-                DbFacade.getInstance().getStoragePoolDAO().updateStatus(pool.getId(), pool.getstatus());
+                DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(), pool.getstatus());
                 StoragePoolStatusHandler.PoolStatusChanged(pool.getId(), pool.getstatus());
             }
         }
@@ -240,7 +240,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
     }
 
     public InterfaceDAO getInterfaceDAO() {
-        return getDbFacade().getInterfaceDAO();
+        return getDbFacade().getInterfaceDao();
     }
 
     private List<VdsNetworkInterface> getVdsInterfaces(Guid vdsId) {

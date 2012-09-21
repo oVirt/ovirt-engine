@@ -223,7 +223,7 @@ public class SetupNetworksHelper {
     private Map<String, Network> getExistingClusterNetworks() {
         if (existingClusterNetworks == null) {
             existingClusterNetworks = Entities.entitiesByName(
-                    getDbFacade().getNetworkDAO().getAllForCluster(vdsGroupId));
+                    getDbFacade().getNetworkDao().getAllForCluster(vdsGroupId));
         }
 
         return existingClusterNetworks;
@@ -232,7 +232,7 @@ public class SetupNetworksHelper {
     private Map<String, VdsNetworkInterface> getExistingIfaces() {
         if (existingIfaces == null) {
             List<VdsNetworkInterface> ifaces =
-                    getDbFacade().getInterfaceDAO().getAllInterfacesForVds(params.getVdsId());
+                    getDbFacade().getInterfaceDao().getAllInterfacesForVds(params.getVdsId());
 
             for (VdsNetworkInterface iface : ifaces) {
                 iface.setNetworkImplementationDetails(

@@ -29,7 +29,7 @@ public final class AlertDirector {
      *            The type.
      */
     public static void RemoveVdsAlert(Guid vdsId, AuditLogType type) {
-        DbFacade.getInstance().getAuditLogDAO().removeAllOfTypeForVds(vdsId, type.getValue());
+        DbFacade.getInstance().getAuditLogDao().removeAllOfTypeForVds(vdsId, type.getValue());
     }
 
     /**
@@ -41,6 +41,6 @@ public final class AlertDirector {
      *            if set to <c>true</c> [remove config alerts].
      */
     public static void RemoveAllVdsAlerts(Guid vdsId, boolean removeConfigAlerts) {
-        DbFacade.getInstance().getAuditLogDAO().removeAllForVds(vdsId, removeConfigAlerts);
+        DbFacade.getInstance().getAuditLogDao().removeAllForVds(vdsId, removeConfigAlerts);
     }
 }

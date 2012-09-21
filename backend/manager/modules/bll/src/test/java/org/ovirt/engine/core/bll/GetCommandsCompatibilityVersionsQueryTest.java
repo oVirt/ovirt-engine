@@ -69,6 +69,6 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
         // Mock the DAOs
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
         actionGroupDaoMock = mock(ActionGroupDAO.class);
-        when(dbFacadeMock.getActionGroupDAO()).thenReturn(actionGroupDaoMock);
+        when(dbFacadeMock.getActionGroupDao()).thenReturn(actionGroupDaoMock);
     }
 }

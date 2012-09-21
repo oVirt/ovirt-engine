@@ -82,19 +82,19 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
 
     protected StorageServerConnectionDAO setUpStorageServerConnectionDAO() {
         StorageServerConnectionDAO dao = mock(StorageServerConnectionDAO.class);
-        when(getDbFacadeMockInstance().getStorageServerConnectionDAO()).thenReturn(dao);
+        when(getDbFacadeMockInstance().getStorageServerConnectionDao()).thenReturn(dao);
         return dao;
     }
 
     protected StorageServerConnectionLunMapDAO setUpStorageServerConnectionLunMapDAO() {
         StorageServerConnectionLunMapDAO dao = mock(StorageServerConnectionLunMapDAO.class);
-        when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDAO()).thenReturn(dao);
+        when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDao()).thenReturn(dao);
         return dao;
     }
 
     protected void expectGetLunsForVg(String vgId) {
         LunDAO dao = mock(LunDAO.class);
-        when(getDbFacadeMockInstance().getLunDAO()).thenReturn(dao);
+        when(getDbFacadeMockInstance().getLunDao()).thenReturn(dao);
         when(dao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns());
     }
 

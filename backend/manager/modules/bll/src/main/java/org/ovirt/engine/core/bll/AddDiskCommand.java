@@ -215,7 +215,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      * @return The StorageDomainStaticDAO
      */
     protected StorageDomainStaticDAO getStorageDomainStaticDao() {
-        return DbFacade.getInstance().getStorageDomainStaticDAO();
+        return DbFacade.getInstance().getStorageDomainStaticDao();
     }
 
     @Override

@@ -33,7 +33,7 @@ public class GetQuotaStorageByQuotaIdQueryTest
         // Mock the DAO
         QuotaDAO quotaDAO = mock(QuotaDAO.class);
         when(quotaDAO.getQuotaStorageByQuotaGuidWithGeneralDefault(quotaId)).thenReturn(Collections.singletonList(group));
-        when(getDbFacadeMockInstance().getQuotaDAO()).thenReturn(quotaDAO);
+        when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDAO);
 
         // Execute the query
         getQuery().executeQueryCommand();

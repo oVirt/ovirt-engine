@@ -15,12 +15,12 @@ public class DetachVdsFromTagCommand<T extends AttachVdsToTagParameters> extends
     @Override
     protected void executeCommand() {
         for (Guid vdsId : getVdsList()) {
-            if (getTagId() != null && DbFacade.getInstance().getTagDAO().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) != null) {
-                VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+            if (getTagId() != null && DbFacade.getInstance().getTagDao().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) != null) {
+                VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
                 if (vds != null) {
                     AppendCustomValue("VdsNames", vds.getvds_name(), ", ");
                 }
-                DbFacade.getInstance().getTagDAO().detachVdsFromTag(getTagId(), vdsId);
+                DbFacade.getInstance().getTagDao().detachVdsFromTag(getTagId(), vdsId);
                 setSucceeded(true);
             }
         }

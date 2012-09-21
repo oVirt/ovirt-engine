@@ -178,10 +178,10 @@ public class DbFacade {
     public <T extends GenericDao<?, ?>> T getDaoForEntity(Class<? extends BusinessEntity<?>> entityClass) {
         @SuppressWarnings("unchecked")
         Class<T> daoType = (Class<T>) mapEntityToDao.get(entityClass);
-        return getDAO(daoType);
+        return getDao(daoType);
     }
 
-    protected <T extends DAO> T getDAO(Class<T> daoType) {
+    protected <T extends DAO> T getDao(Class<T> daoType) {
         T dao = DaoFactory.get(daoType);
         if (dao instanceof BaseDAODbFacade) {
             BaseDAODbFacade dbFacadeDAO = (BaseDAODbFacade)dao;
@@ -283,7 +283,7 @@ public class DbFacade {
     }
 
     public boolean IsStoragePoolMasterUp(Guid storagePoolId) {
-        List<storage_domains> domains = getStorageDomainDAO().getAllForStoragePool(storagePoolId);
+        List<storage_domains> domains = getStorageDomainDao().getAllForStoragePool(storagePoolId);
         storage_domains master = LinqUtils.firstOrNull(domains, new Predicate<storage_domains>() {
             @Override
             public boolean eval(storage_domains storage_domains) {
@@ -366,8 +366,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public BookmarkDAO getBookmarkDAO() {
-        return getDAO(BookmarkDAO.class);
+    public BookmarkDAO getBookmarkDao() {
+        return getDao(BookmarkDAO.class);
 
     }
 
@@ -376,8 +376,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public DbUserDAO getDbUserDAO() {
-       return getDAO(DbUserDAO.class);
+    public DbUserDAO getDbUserDao() {
+       return getDao(DbUserDAO.class);
     }
 
     /**
@@ -385,8 +385,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VdsDAO getVdsDAO() {
-        return getDAO(VdsDAO.class);
+    public VdsDAO getVdsDao() {
+        return getDao(VdsDAO.class);
     }
 
     /**
@@ -394,8 +394,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VdsStaticDAO getVdsStaticDAO() {
-        return getDAO(VdsStaticDAO.class);
+    public VdsStaticDAO getVdsStaticDao() {
+        return getDao(VdsStaticDAO.class);
     }
 
     /**
@@ -403,8 +403,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VdsDynamicDAO getVdsDynamicDAO() {
-        return getDAO(VdsDynamicDAO.class);
+    public VdsDynamicDAO getVdsDynamicDao() {
+        return getDao(VdsDynamicDAO.class);
     }
 
     /**
@@ -412,8 +412,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VdsStatisticsDAO getVdsStatisticsDAO() {
-        return getDAO(VdsStatisticsDAO.class);
+    public VdsStatisticsDAO getVdsStatisticsDao() {
+        return getDao(VdsStatisticsDAO.class);
     }
 
     /**
@@ -421,8 +421,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VdsSpmIdMapDAO getVdsSpmIdMapDAO() {
-        return getDAO(VdsSpmIdMapDAO.class);
+    public VdsSpmIdMapDAO getVdsSpmIdMapDao() {
+        return getDao(VdsSpmIdMapDAO.class);
     }
 
     /**
@@ -430,8 +430,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VdsGroupDAO getVdsGroupDAO() {
-        return getDAO(VdsGroupDAO.class);
+    public VdsGroupDAO getVdsGroupDao() {
+        return getDao(VdsGroupDAO.class);
     }
 
     /**
@@ -439,8 +439,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public AuditLogDAO getAuditLogDAO() {
-        return getDAO(AuditLogDAO.class);
+    public AuditLogDAO getAuditLogDao() {
+        return getDao(AuditLogDAO.class);
     }
 
     /**
@@ -448,8 +448,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public LunDAO getLunDAO() {
-        return getDAO(LunDAO.class);
+    public LunDAO getLunDao() {
+        return getDao(LunDAO.class);
     }
 
     /**
@@ -457,8 +457,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public InterfaceDAO getInterfaceDAO() {
-        return getDAO(InterfaceDAO.class);
+    public InterfaceDAO getInterfaceDao() {
+        return getDao(InterfaceDAO.class);
     }
 
     /**
@@ -466,8 +466,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
-        return getDAO(VmNetworkInterfaceDAO.class);
+    public VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
+        return getDao(VmNetworkInterfaceDAO.class);
     }
 
     /**
@@ -475,8 +475,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VmNetworkStatisticsDAO getVmNetworkStatisticsDAO() {
-        return getDAO(VmNetworkStatisticsDAO.class);
+    public VmNetworkStatisticsDAO getVmNetworkStatisticsDao() {
+        return getDao(VmNetworkStatisticsDAO.class);
     }
 
     /**
@@ -484,8 +484,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public RoleGroupMapDAO getRoleGroupMapDAO() {
-        return getDAO(RoleGroupMapDAO.class);
+    public RoleGroupMapDAO getRoleGroupMapDao() {
+        return getDao(RoleGroupMapDAO.class);
     }
 
     /**
@@ -493,8 +493,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VmTemplateDAO getVmTemplateDAO() {
-        return getDAO(VmTemplateDAO.class);
+    public VmTemplateDAO getVmTemplateDao() {
+        return getDao(VmTemplateDAO.class);
     }
 
     /**
@@ -502,8 +502,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VmDAO getVmDAO() {
-        return getDAO(VmDAO.class);
+    public VmDAO getVmDao() {
+        return getDao(VmDAO.class);
     }
 
     /**
@@ -511,8 +511,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VmDynamicDAO getVmDynamicDAO() {
-        return getDAO(VmDynamicDAO.class);
+    public VmDynamicDAO getVmDynamicDao() {
+        return getDao(VmDynamicDAO.class);
     }
 
     /**
@@ -520,8 +520,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public TagDAO getTagDAO() {
-        return getDAO(TagDAO.class);
+    public TagDAO getTagDao() {
+        return getDao(TagDAO.class);
     }
 
     /**
@@ -530,7 +530,7 @@ public class DbFacade {
      * @return the dao
      */
     public BaseDiskDao getBaseDiskDao() {
-        return getDAO(BaseDiskDao.class);
+        return getDao(BaseDiskDao.class);
     }
 
     /**
@@ -539,7 +539,7 @@ public class DbFacade {
      * @return the dao
      */
     public DiskDao getDiskDao() {
-        return getDAO(DiskDao.class);
+        return getDao(DiskDao.class);
     }
 
     /**
@@ -548,7 +548,7 @@ public class DbFacade {
      * @return the dao
      */
     public DiskLunMapDao getDiskLunMapDao() {
-        return getDAO(DiskLunMapDao.class);
+        return getDao(DiskLunMapDao.class);
     }
 
     /**
@@ -557,7 +557,7 @@ public class DbFacade {
      * @return the dao
      */
     public ImageDao getImageDao() {
-        return getDAO(ImageDao.class);
+        return getDao(ImageDao.class);
     }
 
     /**
@@ -566,7 +566,7 @@ public class DbFacade {
      * @return the dao
      */
     public DiskImageDAO getDiskImageDao() {
-        return getDAO(DiskImageDAO.class);
+        return getDao(DiskImageDAO.class);
     }
 
     /**
@@ -574,8 +574,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public DiskImageDynamicDAO getDiskImageDynamicDAO() {
-        return getDAO(DiskImageDynamicDAO.class);
+    public DiskImageDynamicDAO getDiskImageDynamicDao() {
+        return getDao(DiskImageDynamicDAO.class);
     }
 
     /**
@@ -583,8 +583,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public EventDAO getEventDAO() {
-        return getDAO(EventDAO.class);
+    public EventDAO getEventDao() {
+        return getDao(EventDAO.class);
     }
 
     /**
@@ -592,8 +592,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public ActionGroupDAO getActionGroupDAO() {
-        return getDAO(ActionGroupDAO.class);
+    public ActionGroupDAO getActionGroupDao() {
+        return getDao(ActionGroupDAO.class);
     }
 
     /**
@@ -601,8 +601,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public RoleDAO getRoleDAO() {
-        return getDAO(RoleDAO.class);
+    public RoleDAO getRoleDao() {
+        return getDao(RoleDAO.class);
     }
 
     /**
@@ -610,8 +610,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public AsyncTaskDAO getAsyncTaskDAO() {
-        return getDAO(AsyncTaskDAO.class);
+    public AsyncTaskDAO getAsyncTaskDao() {
+        return getDao(AsyncTaskDAO.class);
     }
 
     /**
@@ -619,8 +619,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public AdGroupDAO getAdGroupDAO() {
-        return getDAO(AdGroupDAO.class);
+    public AdGroupDAO getAdGroupDao() {
+        return getDao(AdGroupDAO.class);
     }
 
     /**
@@ -628,8 +628,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public NetworkDAO getNetworkDAO() {
-        return getDAO(NetworkDAO.class);
+    public NetworkDAO getNetworkDao() {
+        return getDao(NetworkDAO.class);
     }
 
     /**
@@ -637,8 +637,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public NetworkClusterDAO getNetworkClusterDAO() {
-        return getDAO(NetworkClusterDAO.class);
+    public NetworkClusterDAO getNetworkClusterDao() {
+        return getDao(NetworkClusterDAO.class);
     }
 
     /**
@@ -646,8 +646,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public PermissionDAO getPermissionDAO() {
-        return getDAO(PermissionDAO.class);
+    public PermissionDAO getPermissionDao() {
+        return getDao(PermissionDAO.class);
     }
 
     /**
@@ -655,8 +655,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public StorageDomainDAO getStorageDomainDAO() {
-        return getDAO(StorageDomainDAO.class);
+    public StorageDomainDAO getStorageDomainDao() {
+        return getDao(StorageDomainDAO.class);
     }
 
     /**
@@ -664,8 +664,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public StorageDomainStaticDAO getStorageDomainStaticDAO() {
-        return getDAO(StorageDomainStaticDAO.class);
+    public StorageDomainStaticDAO getStorageDomainStaticDao() {
+        return getDao(StorageDomainStaticDAO.class);
     }
 
     /**
@@ -673,8 +673,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public StorageDomainDynamicDAO getStorageDomainDynamicDAO() {
-        return getDAO(StorageDomainDynamicDAO.class);
+    public StorageDomainDynamicDAO getStorageDomainDynamicDao() {
+        return getDao(StorageDomainDynamicDAO.class);
     }
 
     /**
@@ -683,7 +683,7 @@ public class DbFacade {
      * @return Repository file meta data dao.
      */
     public RepoFileMetaDataDAO getRepoFileMetaDataDao() {
-        return getDAO(RepoFileMetaDataDAO.class);
+        return getDao(RepoFileMetaDataDAO.class);
     }
 
     /**
@@ -692,7 +692,7 @@ public class DbFacade {
      * @return the dao
      */
     public SnapshotDao getSnapshotDao() {
-        return getDAO(SnapshotDao.class);
+        return getDao(SnapshotDao.class);
     }
 
     /**
@@ -701,7 +701,7 @@ public class DbFacade {
      * @return the dao
      */
     public ImageStorageDomainMapDao getImageStorageDomainMapDao() {
-        return getDAO(ImageStorageDomainMapDao.class);
+        return getDao(ImageStorageDomainMapDao.class);
     }
 
     /**
@@ -709,8 +709,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public StoragePoolDAO getStoragePoolDAO() {
-        return getDAO(StoragePoolDAO.class);
+    public StoragePoolDAO getStoragePoolDao() {
+        return getDao(StoragePoolDAO.class);
     }
 
     /**
@@ -718,8 +718,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
-        return getDAO(StoragePoolIsoMapDAO.class);
+    public StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+        return getDao(StoragePoolIsoMapDAO.class);
     }
 
     /**
@@ -727,8 +727,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public StorageServerConnectionDAO getStorageServerConnectionDAO() {
-        return getDAO(StorageServerConnectionDAO.class);
+    public StorageServerConnectionDAO getStorageServerConnectionDao() {
+        return getDao(StorageServerConnectionDAO.class);
     }
 
     /**
@@ -736,8 +736,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public StorageServerConnectionLunMapDAO getStorageServerConnectionLunMapDAO() {
-        return getDAO(StorageServerConnectionLunMapDAO.class);
+    public StorageServerConnectionLunMapDAO getStorageServerConnectionLunMapDao() {
+        return getDao(StorageServerConnectionLunMapDAO.class);
     }
 
     /**
@@ -745,16 +745,16 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VdcOptionDAO getVdcOptionDAO() {
-        return getDAO(VdcOptionDAO.class);
+    public VdcOptionDAO getVdcOptionDao() {
+        return getDao(VdcOptionDAO.class);
     }
 
     /**
      * Returns the singleton instance of {@link BusinessEntitySnapshotDAO}.
      * @return
      */
-    public BusinessEntitySnapshotDAO getBusinessEntitySnapshotDAO() {
-        return getDAO(BusinessEntitySnapshotDAO.class);
+    public BusinessEntitySnapshotDAO getBusinessEntitySnapshotDao() {
+        return getDao(BusinessEntitySnapshotDAO.class);
     }
 
 
@@ -763,12 +763,12 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VmPoolDAO getVmPoolDAO() {
-        return getDAO(VmPoolDAO.class);
+    public VmPoolDAO getVmPoolDao() {
+        return getDao(VmPoolDAO.class);
     }
 
-    public VmStaticDAO getVmStaticDAO() {
-        return getDAO(VmStaticDAO.class);
+    public VmStaticDAO getVmStaticDao() {
+        return getDao(VmStaticDAO.class);
     }
 
     /**
@@ -776,8 +776,8 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public VmStatisticsDAO getVmStatisticsDAO() {
-        return getDAO(VmStatisticsDAO.class);
+    public VmStatisticsDAO getVmStatisticsDao() {
+        return getDao(VmStatisticsDAO.class);
     }
 
     /**
@@ -785,12 +785,12 @@ public class DbFacade {
      *
      * @return the dao
      */
-    public QuotaDAO getQuotaDAO() {
-        return getDAO(QuotaDAO.class);
+    public QuotaDAO getQuotaDao() {
+        return getDao(QuotaDAO.class);
     }
 
-    public VmDeviceDAO getVmDeviceDAO() {
-        return getDAO(VmDeviceDAO.class);
+    public VmDeviceDAO getVmDeviceDao() {
+        return getDao(VmDeviceDAO.class);
     }
 
     /**
@@ -800,7 +800,7 @@ public class DbFacade {
      * @return the dao
      */
     public JobDao getJobDao() {
-        return getDAO(JobDao.class);
+        return getDao(JobDao.class);
     }
 
     /**
@@ -809,7 +809,7 @@ public class DbFacade {
      * @return the dao
      */
     public JobSubjectEntityDao getJobSubjectEntityDao() {
-        return getDAO(JobSubjectEntityDao.class);
+        return getDao(JobSubjectEntityDao.class);
     }
 
     /**
@@ -818,7 +818,7 @@ public class DbFacade {
      * @return the dao
      */
     public StepDao getStepDao() {
-        return getDAO(StepDao.class);
+        return getDao(StepDao.class);
     }
 
     /**
@@ -827,7 +827,7 @@ public class DbFacade {
      * @return the dao
      */
     public GlusterVolumeDao getGlusterVolumeDao() {
-        return getDAO(GlusterVolumeDao.class);
+        return getDao(GlusterVolumeDao.class);
     }
 
     /**
@@ -836,7 +836,7 @@ public class DbFacade {
      * @return the dao
      */
     public GlusterBrickDao getGlusterBrickDao() {
-        return getDAO(GlusterBrickDao.class);
+        return getDao(GlusterBrickDao.class);
     }
 
     /**
@@ -845,7 +845,7 @@ public class DbFacade {
      * @return the dao
      */
     public GlusterOptionDao getGlusterOptionDao() {
-        return getDAO(GlusterOptionDao.class);
+        return getDao(GlusterOptionDao.class);
     }
 
     public void setOnStartConnectionTimeout(int onStartConnectionTimeout) {

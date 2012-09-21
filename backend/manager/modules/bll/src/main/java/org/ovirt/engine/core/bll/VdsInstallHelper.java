@@ -45,7 +45,7 @@ public class VdsInstallHelper{
     }
 
     public static List<VDS> getVdssByUniqueId(final Guid vdsId, String uniqueIdToCheck) {
-        List<VDS> list = DbFacade.getInstance().getVdsDAO().getAllWithUniqueId(uniqueIdToCheck);
+        List<VDS> list = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(uniqueIdToCheck);
         return LinqUtils.filter(list, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS vds) {

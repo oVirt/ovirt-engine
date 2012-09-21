@@ -82,7 +82,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         boolean retValue = false;
         // check if user is subscribed to the event
         List<event_subscriber> list = DbFacade.getInstance()
-                .getEventDAO()
+                .getEventDao()
                 .getAllForSubscriber(event_subscriber.getsubscriber_id());
         if (list.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.EN_NOT_SUBSCRIBED);
@@ -112,7 +112,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      */
     protected boolean ValidateTag(String tagName) {
         boolean retValue = true;
-        tags tag = DbFacade.getInstance().getTagDAO().getByName(tagName);
+        tags tag = DbFacade.getInstance().getTagDao().getByName(tagName);
         if (tag == null) {
 
             addCanDoActionMessage(VdcBllMessages.EN_UNKNOWN_TAG_NAME);

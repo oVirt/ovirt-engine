@@ -11,7 +11,7 @@ public class GetPermissionsToConsumeQuotaByQuotaIdQuery<P extends GetEntitiesRel
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
-                .getPermissionDAO()
+                .getPermissionDao()
                 .getConsumedPermissionsForQuotaId(getParameters().getQuotaId()));
     }
 }

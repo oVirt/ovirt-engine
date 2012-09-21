@@ -59,7 +59,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                 storage_pool_iso_map mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
                 getCompensationContext().snapshotEntity(mapToRemove);
                 DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO()
+                        .getStoragePoolIsoMapDao()
                         .remove(new StoragePoolIsoMapId(mapToRemove.getstorage_id(),
                                 mapToRemove.getstorage_pool_id()));
                 getCompensationContext().stateChanged();

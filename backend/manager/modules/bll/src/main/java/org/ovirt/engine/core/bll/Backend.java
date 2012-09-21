@@ -260,7 +260,7 @@ public class Backend implements BackendInternal {
     private static void compensate() {
         // get all command snapshot entries
         List<KeyValue> commandSnapshots =
-                DbFacade.getInstance().getBusinessEntitySnapshotDAO().getAllCommands();
+                DbFacade.getInstance().getBusinessEntitySnapshotDao().getAllCommands();
         for (KeyValue commandSnapshot : commandSnapshots) {
             // create an instance of the related command by its class name and command id
             CommandBase<?> cmd =

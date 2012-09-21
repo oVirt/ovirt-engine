@@ -26,7 +26,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     @Override
     protected void executeCommand() {
         if (getVmPoolId() != null && CanRemoveVmPoolWithoutReasons(getVmPoolId())) {
-            DbFacade.getInstance().getVmPoolDAO().remove(getVmPoolId());
+            DbFacade.getInstance().getVmPoolDao().remove(getVmPoolId());
             setSucceeded(true);
         }
     }
@@ -43,7 +43,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
 
     public static boolean CanRemoveVmPool(NGuid vmPoolId, java.util.ArrayList<String> reasons) {
         boolean returnValue = true;
-        if (DbFacade.getInstance().getVmPoolDAO().getVmPoolsMapByVmPoolId(vmPoolId).size() != 0) {
+        if (DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(vmPoolId).size() != 0) {
             returnValue = false;
             reasons.add(VdcBllMessages.VM_POOL_CANNOT_REMOVE_VM_POOL_WITH_VMS.toString());
         }

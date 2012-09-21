@@ -163,7 +163,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private void setVmTemplateIdParameter() {
         Map<Boolean, VmTemplate> templateMap =
                 // Disk image is the only disk type that can be part of the template disks.
-                getDbFacade().getVmTemplateDAO().getAllForImage(((DiskImage) disk).getImageId());
+                getDbFacade().getVmTemplateDao().getAllForImage(((DiskImage) disk).getImageId());
 
         if (!templateMap.isEmpty()) {
             setVmTemplateId(templateMap.values().iterator().next().getId());
@@ -194,7 +194,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         }
         if (retValue) {
             List<String> problematicVmNames = new ArrayList<String>();
-            List<VM> vms = DbFacade.getInstance().getVmDAO().getAllWithTemplate(getVmTemplateId());
+            List<VM> vms = DbFacade.getInstance().getVmDao().getAllWithTemplate(getVmTemplateId());
             for (VM vm : vms) {
                 List<Disk> vmDisks = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
                 for (Disk vmDisk : vmDisks) {
@@ -246,7 +246,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     protected VmDeviceDAO getVmDeviceDAO() {
         return DbFacade.getInstance()
-                .getVmDeviceDAO();
+                .getVmDeviceDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {

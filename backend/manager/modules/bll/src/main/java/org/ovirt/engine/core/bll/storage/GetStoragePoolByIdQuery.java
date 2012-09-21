@@ -12,7 +12,7 @@ public class GetStoragePoolByIdQuery<P extends StoragePoolQueryParametersBase> e
     protected void executeQueryCommand() {
         getQueryReturnValue()
                 .setReturnValue(getDbFacade()
-                        .getStoragePoolDAO()
+                        .getStoragePoolDao()
                         .get(getParameters().getStoragePoolId(), getUserID(), getParameters().isFiltered()));
     }
 }

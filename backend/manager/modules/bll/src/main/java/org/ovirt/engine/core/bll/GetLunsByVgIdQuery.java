@@ -71,7 +71,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     }
 
     protected List<LUNs> getLunsForVgId(String vgId) {
-        return getDbFacade().getLunDAO().getAllForVolumeGroup(getVgId());
+        return getDbFacade().getLunDao().getAllForVolumeGroup(getVgId());
     }
 
     protected Map<String, LUNs> getLunsFromDeviceMap(StorageType storageType) {
@@ -95,11 +95,11 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     }
 
     protected List<LUN_storage_server_connection_map> getLunConnections(String lunId) {
-        return getDbFacade().getStorageServerConnectionLunMapDAO().getAll(lunId);
+        return getDbFacade().getStorageServerConnectionLunMapDao().getAll(lunId);
     }
 
     protected storage_server_connections getConnection(String cnxId) {
-        return getDbFacade().getStorageServerConnectionDAO().get(cnxId);
+        return getDbFacade().getStorageServerConnectionDao().get(cnxId);
     }
 
     protected void addConnection(LUNs lun, storage_server_connections cnx) {

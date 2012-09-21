@@ -32,7 +32,7 @@ public class IsBalloonEnabledQueryTest extends AbstractQueryTest<GetVmByVmIdPara
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
         // VM Device DAO
         vmDeviceDAOMock = mock(VmDeviceDAO.class);
-        when(dbFacadeMock.getVmDeviceDAO()).thenReturn(vmDeviceDAOMock);
+        when(dbFacadeMock.getVmDeviceDao()).thenReturn(vmDeviceDAOMock);
     }
 
     @Test

@@ -36,10 +36,10 @@ public class FCPStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
-        List<LUNs> lunsList = DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(storageDomain.getstorage());
+        List<LUNs> lunsList = DbFacade.getInstance().getLunDao().getAllForVolumeGroup(storageDomain.getstorage());
         if (lunsList.size() != 0) {
             for (LUNs lun : lunsList) {
-                DbFacade.getInstance().getLunDAO().remove(lun.getLUN_id());
+                DbFacade.getInstance().getLunDao().remove(lun.getLUN_id());
             }
         }
         return true;

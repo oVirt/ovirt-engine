@@ -72,7 +72,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 @Override
                 public Void runInTransaction() {
                     // set network to operational / non-operational
-                    List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+                    List<Network> networks = DbFacade.getInstance().getNetworkDao()
                             .getAllForCluster(vds.getvds_group_id());
                     for (Network net : networks) {
                         AttachNetworkToVdsGroupCommand.SetNetworkStatus(vds.getvds_group_id(), net);

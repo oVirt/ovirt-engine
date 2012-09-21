@@ -19,25 +19,25 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
     @Override
     protected void ExecuteVDSCommand() {
         SetVmStatusVDSCommandParameters parameters = getParameters();
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(parameters.getVmId());
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(parameters.getVmId());
         vmDynamic.setstatus(parameters.getStatus());
         if (VM.isStatusDown(parameters.getStatus())) {
             ResourceManager.getInstance().RemoveAsyncRunningVm(parameters.getVmId());
-            VmStatistics vmStatistics = DbFacade.getInstance().getVmStatisticsDAO().get(parameters.getVmId());
+            VmStatistics vmStatistics = DbFacade.getInstance().getVmStatisticsDao().get(parameters.getVmId());
             VM vm = new VM(null, vmDynamic, vmStatistics);
             ResourceManager.getInstance().InternalSetVmStatus(vm, parameters.getStatus());
-            DbFacade.getInstance().getVmStatisticsDAO().update(vm.getStatisticsData());
+            DbFacade.getInstance().getVmStatisticsDao().update(vm.getStatisticsData());
             List<VmNetworkInterface> interfaces = vm.getInterfaces();
             if (interfaces != null && interfaces.size() > 0) {
                 for (VmNetworkInterface ifc : interfaces) {
                     VmNetworkStatistics stats = ifc.getStatistics();
-                    DbFacade.getInstance().getVmNetworkStatisticsDAO().update(stats);
+                    DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
                 }
             }
 
         } else if (parameters.getStatus() == VMStatus.Unknown) {
             ResourceManager.getInstance().RemoveAsyncRunningVm(parameters.getVmId());
         }
-        DbFacade.getInstance().getVmDynamicDAO().update(vmDynamic);
+        DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
     }
 }

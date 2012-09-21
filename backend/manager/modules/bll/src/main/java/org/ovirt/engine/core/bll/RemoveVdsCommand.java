@@ -104,7 +104,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
     }
 
     protected VdsDynamicDAO getVdsDynamicDAO() {
-        return DbFacade.getInstance().getVdsDynamicDAO();
+        return DbFacade.getInstance().getVdsDynamicDao();
     }
 
     private boolean StatusLegalForRemove(Guid vdsId) {
@@ -132,7 +132,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
     }
 
     private void RemoveVdsStaticFromDb() {
-        DbFacade.getInstance().getVdsStaticDAO().remove(getVdsId());
+        DbFacade.getInstance().getVdsStaticDao().remove(getVdsId());
     }
 
     private void RemoveVdsDynamicFromDb() {
@@ -140,7 +140,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
     }
 
     private void RemoveVdsStatisticsFromDb() {
-        DbFacade.getInstance().getVdsStatisticsDAO().remove(getVdsId());
+        DbFacade.getInstance().getVdsStatisticsDao().remove(getVdsId());
     }
 
     private boolean CanRemoveVds(Guid vdsId, java.util.ArrayList<String> text) {

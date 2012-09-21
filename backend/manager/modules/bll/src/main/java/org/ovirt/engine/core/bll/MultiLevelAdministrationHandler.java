@@ -34,15 +34,15 @@ public class MultiLevelAdministrationHandler {
     private static Log log = LogFactory.getLog(MultiLevelAdministrationHandler.class);
 
     public static PermissionDAO getPermissionDAO() {
-        return DbFacade.getInstance().getPermissionDAO();
+        return DbFacade.getInstance().getPermissionDao();
     }
 
     public static RoleDAO getRoleDAO() {
-        return DbFacade.getInstance().getRoleDAO();
+        return DbFacade.getInstance().getRoleDao();
     }
 
     public static DbUserDAO getDbUserDAO() {
-        return DbFacade.getInstance().getDbUserDAO();
+        return DbFacade.getInstance().getDbUserDao();
     }
 
     /**

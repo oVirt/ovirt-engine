@@ -28,14 +28,14 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getNetworkClusterDAO());
+        dao = prepareDAO(dbFacade.getNetworkClusterDao());
 
-        VdsGroupDAO vdsGroupDAO = prepareDAO(dbFacade.getVdsGroupDAO());
+        VdsGroupDAO vdsGroupDAO = prepareDAO(dbFacade.getVdsGroupDao());
 
         cluster = vdsGroupDAO.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
         freeCluster = vdsGroupDAO.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
 
-        NetworkDAO networkDAO = prepareDAO(dbFacade.getNetworkDAO());
+        NetworkDAO networkDAO = prepareDAO(dbFacade.getNetworkDao());
 
         network = networkDAO.getByName("engine");
         networkNoCluster = networkDAO.getByName("engine3");

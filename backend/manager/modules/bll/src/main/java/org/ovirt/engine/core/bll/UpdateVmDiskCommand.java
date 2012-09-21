@@ -110,7 +110,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         boolean retValue = true;
         if (_oldDisk.getDiskInterface() != getParameters().getDiskInfo().getDiskInterface()) {
             List<VmNetworkInterface> allVmInterfaces = DbFacade.getInstance()
-                    .getVmNetworkInterfaceDAO().getAllForVm(getVmId());
+                    .getVmNetworkInterfaceDao().getAllForVm(getVmId());
 
             List<Disk> allVmDisks = getDiskDao().getAllForVm(getVmId());
             allVmDisks.removeAll(LinqUtils.filter(allVmDisks, new Predicate<Disk>() {

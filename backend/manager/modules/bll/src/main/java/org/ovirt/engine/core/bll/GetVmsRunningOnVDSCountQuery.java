@@ -11,6 +11,6 @@ public class GetVmsRunningOnVDSCountQuery<P extends GetVmsRunningOnVDSCountParam
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getVdsDynamicDAO().get(getParameters().getId()).getvm_count());
+                DbFacade.getInstance().getVdsDynamicDao().get(getParameters().getId()).getvm_count());
     }
 }

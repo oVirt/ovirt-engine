@@ -74,7 +74,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new HotPlugUnplgNicVDSParameters(getVdsId(),
                             getVm(),
-                            DbFacade.getInstance().getVmNetworkInterfaceDAO().get(getParameters().getNicId()),
+                            DbFacade.getInstance().getVmNetworkInterfaceDao().get(getParameters().getNicId()),
                             vmDevice));
         }
         // In any case, the device is updated
@@ -119,7 +119,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     protected InterfaceDAO getInterfaceDAO() {
-        return getDbFacade().getInterfaceDAO();
+        return getDbFacade().getInterfaceDao();
     }
 
     private boolean hotPlugVmNicRequired(VMStatus vmStatus) {

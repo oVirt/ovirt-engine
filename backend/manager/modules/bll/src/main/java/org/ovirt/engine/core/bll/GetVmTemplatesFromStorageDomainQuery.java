@@ -18,7 +18,7 @@ public class GetVmTemplatesFromStorageDomainQuery<P extends StorageDomainQueryPa
     @Override
     protected void executeQueryCommand() {
         List<VmTemplate> returnValue = DbFacade.getInstance()
-                .getVmTemplateDAO()
+                .getVmTemplateDao()
                         .getAllForStorageDomain(getParameters().getStorageDomainId(),
                                 getUserID(),
                                 getParameters().isFiltered());

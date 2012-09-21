@@ -25,7 +25,7 @@ public class GetVdsHooksById2Query<P extends GetVdsHooksByIdParameters> extends 
     @Override
     protected void executeQueryCommand() {
 
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
         Map<String, Object> result = new HashMap<String, Object>();
         if (vds != null) {
             result = VdsHooksParser.parseHooks2(vds.getHooksStr());

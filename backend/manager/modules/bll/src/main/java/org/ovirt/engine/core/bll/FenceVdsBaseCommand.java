@@ -105,7 +105,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                         ?
                         0
                         :
-                        DbFacade.getInstance().getAuditLogDAO().getTimeToWaitForNextPmOp(getVds().getvds_name(), event);
+                        DbFacade.getInstance().getAuditLogDao().getTimeToWaitForNextPmOp(getVds().getvds_name(), event);
                 if (secondsLeftToNextPmOp <= 0) {
                     // try to get vds status
                     _executor = createExecutorForProxyCheck();

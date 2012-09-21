@@ -47,7 +47,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             bond = NetworkUtils.StripVlan(getParameters().getInterface().getName());
 
             List<VdsNetworkInterface> interfaces = getDbFacade()
-                    .getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
+                    .getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
             for (VdsNetworkInterface i : interfaces) {
                 if (StringUtils.equals(i.getBondName(), bond)) {
@@ -79,7 +79,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
     @Override
     protected boolean canDoAction() {
-        List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDAO()
+        List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDao()
                 .getAllInterfacesForVds(getParameters().getVdsId());
         VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
@@ -97,7 +97,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
 
         // set the network object if we don't got in the parameters
         if (getParameters().getNetwork() == null || getParameters().getNetwork().getCluster() == null) {
-            List<Network> networks = getDbFacade().getNetworkDAO()
+            List<Network> networks = getDbFacade().getNetworkDao()
                             .getAllForCluster(getVdsGroupId());
             for (Network n : networks) {
                 if (n.getname().equals(iface.getNetworkName())) {
@@ -125,7 +125,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         if ((vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing)
                 && getParameters().getNetwork().getCluster() != null
                 && getParameters().getNetwork().getCluster().getstatus() == NetworkStatus.Operational) {
-            List<Network> networks = getDbFacade().getNetworkDAO().getAllForCluster(vds.getvds_group_id());
+            List<Network> networks = getDbFacade().getNetworkDao().getAllForCluster(vds.getvds_group_id());
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network network) {

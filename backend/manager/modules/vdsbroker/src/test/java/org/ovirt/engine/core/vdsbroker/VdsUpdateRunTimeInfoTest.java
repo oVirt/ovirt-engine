@@ -148,10 +148,10 @@ public class VdsUpdateRunTimeInfoTest {
     }
 
     private void initConditions() {
-        when(dbFacade.getVdsGroupDAO()).thenReturn(groupDAO);
-        when(dbFacade.getVmDAO()).thenReturn(vmDAO);
-        when(dbFacade.getAuditLogDAO()).thenReturn(mockAuditLogDao);
-        when(dbFacade.getVmDeviceDAO()).thenReturn(vmDeviceDAO);
+        when(dbFacade.getVdsGroupDao()).thenReturn(groupDAO);
+        when(dbFacade.getVmDao()).thenReturn(vmDAO);
+        when(dbFacade.getAuditLogDao()).thenReturn(mockAuditLogDao);
+        when(dbFacade.getVmDeviceDao()).thenReturn(vmDeviceDAO);
         when(groupDAO.get((Guid) any())).thenReturn(cluster);
         Map<Guid, VM> emptyMap = Collections.emptyMap();
         when(vmDAO.getAllRunningByVds(vds.getId())).thenReturn(emptyMap);

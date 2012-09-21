@@ -12,7 +12,7 @@ public class GetEventSubscribersBySubscriberIdQuery<P extends GetEventSubscriber
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getEventDAO()
+                DbFacade.getInstance().getEventDao()
                         .getAllForSubscriber(getParameters().getSubscriberId()));
     }
 }

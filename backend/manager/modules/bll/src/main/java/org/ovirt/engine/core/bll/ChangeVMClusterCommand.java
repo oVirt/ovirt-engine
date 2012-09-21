@@ -43,7 +43,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             return false;
         } else {
             if (ObjectIdentityChecker.CanUpdateField(vm, "vds_group_id", vm.getstatus())) {
-                targetCluster = DbFacade.getInstance().getVdsGroupDAO().get(getParameters().getClusterId());
+                targetCluster = DbFacade.getInstance().getVdsGroupDao().get(getParameters().getClusterId());
                 if (targetCluster == null) {
                     addCanDoActionMessage(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
                     return false;
@@ -55,7 +55,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                     return false;
                 }
 
-                List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
+                List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForVm(getParameters().getVmId());
 
                 // Get if the cluster chosen got limit of nics.
@@ -78,7 +78,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 }
 
                 // Check the destination cluster have all the networks that the VM use
-                List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getParameters().getClusterId());
+                List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(getParameters().getClusterId());
                 StringBuilder missingNets = new StringBuilder();
                 for (VmNetworkInterface iface: interfaces) {
                     String netName = iface.getNetworkName();
@@ -137,9 +137,9 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
 
         // update vm interfaces
-        List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+        List<Network> networks = DbFacade.getInstance().getNetworkDao()
                 .getAllForCluster(getParameters().getClusterId());
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
+        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForVm(getParameters().getVmId());
 
         for (final VmNetworkInterface iface : interfaces) {
@@ -153,7 +153,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             // interface connection
             if (net == null) {
                 iface.setNetworkName(null);
-                DbFacade.getInstance().getVmNetworkInterfaceDAO().update(iface);
+                DbFacade.getInstance().getVmNetworkInterfaceDao().update(iface);
             }
         }
 
@@ -163,7 +163,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
 
         vm.setvds_group_id(getParameters().getClusterId());
-        DbFacade.getInstance().getVmStaticDAO().update(vm.getStaticData());
+        DbFacade.getInstance().getVmStaticDao().update(vm.getStaticData());
         setSucceeded(true);
     }
 

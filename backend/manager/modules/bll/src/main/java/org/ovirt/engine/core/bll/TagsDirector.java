@@ -109,7 +109,7 @@ public class TagsDirector {
     }
 
     protected TagDAO getTagDAO() {
-        return DbFacade.getInstance().getTagDAO();
+        return DbFacade.getInstance().getTagDao();
     }
 
     private void RemoveTagAndChildren(tags tag) {

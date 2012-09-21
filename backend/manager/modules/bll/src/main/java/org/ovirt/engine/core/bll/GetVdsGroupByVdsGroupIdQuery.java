@@ -11,6 +11,6 @@ public class GetVdsGroupByVdsGroupIdQuery<P extends GetVdsGroupByVdsGroupIdParam
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getVdsGroupDAO().get(getParameters().getVdsGroupId()));
+                DbFacade.getInstance().getVdsGroupDao().get(getParameters().getVdsGroupId()));
     }
 }

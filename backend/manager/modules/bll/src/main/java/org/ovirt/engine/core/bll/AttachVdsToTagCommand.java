@@ -18,13 +18,13 @@ public class AttachVdsToTagCommand<T extends AttachVdsToTagParameters> extends V
         tags_vds_map map;
         if (getTagId() != null) {
             for (Guid vdsId : getVdsList()) {
-                VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
-                if (DbFacade.getInstance().getTagDAO().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) == null) {
+                VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+                if (DbFacade.getInstance().getTagDao().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) == null) {
                     if (vds != null) {
                         AppendCustomValue("VdsNames", vds.getvds_name(), ", ");
                     }
                     map = new tags_vds_map(getTagId(), vdsId);
-                    DbFacade.getInstance().getTagDAO().attachVdsToTag(map);
+                    DbFacade.getInstance().getTagDao().attachVdsToTag(map);
                     noActionDone = false;
                 } else {
                     if (vds != null) {

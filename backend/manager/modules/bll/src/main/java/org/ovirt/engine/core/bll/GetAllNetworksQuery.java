@@ -12,10 +12,10 @@ public class GetAllNetworksQuery<P extends GetAllNetworkQueryParamenters> extend
     protected void executeQueryCommand() {
         if (getParameters().getStoragePoolId() == null
                 || getParameters().getStoragePoolId().equals(Guid.Empty)) {
-            getQueryReturnValue().setReturnValue(getDbFacade().getNetworkDAO().getAll());
+            getQueryReturnValue().setReturnValue(getDbFacade().getNetworkDao().getAll());
         } else {
             getQueryReturnValue().setReturnValue(
-                    getDbFacade().getNetworkDAO().getAllForDataCenter(getParameters().getStoragePoolId()));
+                    getDbFacade().getNetworkDao().getAllForDataCenter(getParameters().getStoragePoolId()));
         }
     }
 }

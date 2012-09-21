@@ -105,7 +105,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         if (!StringUtils.isEmpty(getParameters().getHttpSessionId())) {
             user_sessions user_sessions = new user_sessions("", "", new Date(), "", getParameters()
                     .getHttpSessionId(), adUser.getUserId());
-            DbFacade.getInstance().getDbUserDAO().saveSession(user_sessions);
+            DbFacade.getInstance().getDbUserDao().saveSession(user_sessions);
         }
     }
 

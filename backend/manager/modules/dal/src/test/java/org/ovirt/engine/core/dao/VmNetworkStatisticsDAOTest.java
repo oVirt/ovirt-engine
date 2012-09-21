@@ -28,7 +28,7 @@ public class VmNetworkStatisticsDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getVmNetworkStatisticsDAO());
+        dao = prepareDAO(dbFacade.getVmNetworkStatisticsDao());
 
         newVmStatistics = new VmNetworkStatistics();
         newVmStatistics.setId(NEW_INTERFACE_ID);
@@ -79,14 +79,14 @@ public class VmNetworkStatisticsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        List<VmNetworkInterface> before = dbFacade.getVmNetworkInterfaceDAO().getAllForVm(VM_ID);
+        List<VmNetworkInterface> before = dbFacade.getVmNetworkInterfaceDao().getAllForVm(VM_ID);
         VmNetworkStatistics stats = before.get(0).getStatistics();
 
         stats.setReceiveDropRate(999.0);
 
         dao.update(stats);
 
-        List<VmNetworkInterface> after = dbFacade.getVmNetworkInterfaceDAO().getAllForVm(VM_ID);
+        List<VmNetworkInterface> after = dbFacade.getVmNetworkInterfaceDao().getAllForVm(VM_ID);
         boolean found = false;
 
         for (VmNetworkInterface ifaced : after) {

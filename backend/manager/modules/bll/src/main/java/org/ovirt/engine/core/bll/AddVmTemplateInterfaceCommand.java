@@ -40,7 +40,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                         getParameters().getInterface().getType()).getSpeed());
 
         DbFacade.getInstance()
-                .getVmNetworkInterfaceDAO()
+                .getVmNetworkInterfaceDao()
                 .save(getParameters().getInterface());
         // \\DbFacade.Instance.addInterfaceStatistics(AddVmTemplateInterfaceParameters.Interface.InterfaceStatistics);
 
@@ -53,7 +53,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
     @Override
     protected boolean canDoAction() {
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
+        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForTemplate(getParameters().getVmTemplateId());
         if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
                 getParameters().getInterface().getName(),
@@ -81,7 +81,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         }
 
         // check that the network exists in current cluster
-        List<Network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getVmTemplate().getvds_group_id());
+        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(getVmTemplate().getvds_group_id());
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {

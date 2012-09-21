@@ -29,7 +29,7 @@ public final class VdsLoadBalancer {
     public void PerformLoadBalancing() {
         log.debugFormat("VdsLoadBalancer: Load Balancer timer entered.");
         // get all clusters
-        List<VDSGroup> groups = DbFacade.getInstance().getVdsGroupDAO().getAll();
+        List<VDSGroup> groups = DbFacade.getInstance().getVdsGroupDao().getAll();
         for (VDSGroup group : groups) {
             if (group.getselection_algorithm() != VdsSelectionAlgorithm.None) {
                 VdsLoadBalancingAlgorithm loadBalancingAlgorithm = VdsLoadBalancingAlgorithm

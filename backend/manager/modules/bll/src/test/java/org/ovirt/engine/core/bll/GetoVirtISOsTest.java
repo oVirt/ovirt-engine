@@ -47,7 +47,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        when(getDbFacadeMockInstance().getVdsDAO()).thenReturn(vdsDAO);
+        when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAO);
     }
 
     @Test

@@ -131,7 +131,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     }
 
     protected QuotaDAO getQuotaDAO() {
-        return getDbFacade().getQuotaDAO();
+        return getDbFacade().getQuotaDao();
     }
 
     public String getQuotaName() {

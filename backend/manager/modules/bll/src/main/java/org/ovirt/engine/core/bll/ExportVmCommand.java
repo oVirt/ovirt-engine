@@ -98,7 +98,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // check that the target and source domain are in the same storage_pool
         if (DbFacade.getInstance()
-                .getStoragePoolIsoMapDAO()
+                .getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getstorage_pool_id())) == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
@@ -216,7 +216,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (interfaces != null) {
             // TODO remove this when the API changes
             interfaces.clear();
-            interfaces.addAll(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
+            interfaces.addAll(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
         for (Disk disk : vm.getDiskMap().values()) {
             if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
@@ -242,7 +242,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             }
         }
         if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
-            VmTemplate t = DbFacade.getInstance().getVmTemplateDAO()
+            VmTemplate t = DbFacade.getInstance().getVmTemplateDao()
                         .get(vm.getvmt_guid());
             vm.setvmt_name(t.getname());
         }

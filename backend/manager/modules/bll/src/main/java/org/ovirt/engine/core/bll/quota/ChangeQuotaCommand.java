@@ -32,7 +32,7 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
         }
-        if (getDbFacade().getQuotaDAO().getById(getQuotaId()) == null) {
+        if (getDbFacade().getQuotaDao().getById(getQuotaId()) == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }

@@ -71,7 +71,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
     }
 
     protected void orderListOfRunningVmsOnVds(Guid vdsId) {
-        vms = DbFacade.getInstance().getVmDAO().getAllRunningForVds(vdsId);
+        vms = DbFacade.getInstance().getVmDao().getAllRunningForVds(vdsId);
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
     }
 
@@ -148,7 +148,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
     public boolean CanMaintananceVds(Guid vdsId, java.util.ArrayList<String> reasons) {
         boolean returnValue = true;
         // VDS vds = ResourceManager.Instance.getVds(vdsId);
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+        VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
         // we can get here when vds status was set already to Maintenance
         if ((vds.getstatus() != VDSStatus.Maintenance) && (vds.getstatus() != VDSStatus.NonResponsive)
                 && (vds.getstatus() != VDSStatus.Up) && (vds.getstatus() != VDSStatus.Error)
@@ -177,7 +177,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
 
         if (!vds.getstorage_pool_id().equals(Guid.Empty)
                 && StoragePoolStatus.Uninitialized != DbFacade.getInstance()
-                        .getStoragePoolDAO()
+                        .getStoragePoolDao()
                         .get(vds.getstorage_pool_id())
                         .getstatus()
                 && Backend

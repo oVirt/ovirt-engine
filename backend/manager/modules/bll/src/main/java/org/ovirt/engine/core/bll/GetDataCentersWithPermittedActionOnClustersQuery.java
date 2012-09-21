@@ -12,7 +12,7 @@ public class GetDataCentersWithPermittedActionOnClustersQuery<P extends GetEntit
     @Override
     protected void executeQueryCommand() {
         P params = getParameters();
-        setReturnValue(getDbFacade().getStoragePoolDAO().
+        setReturnValue(getDbFacade().getStoragePoolDao().
                 getDataCentersWithPermittedActionOnClusters(getUserID(), params.getActionGroup()));
     }
 }

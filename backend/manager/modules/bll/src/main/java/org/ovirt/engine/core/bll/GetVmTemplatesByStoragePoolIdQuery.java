@@ -19,7 +19,7 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends GetVmTemplatesByStorag
 
     @Override
     protected void executeQueryCommand() {
-        storage_pool pool = DbFacade.getInstance().getStoragePoolDAO().get(getParameters().getStoragePoolId());
+        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(getParameters().getStoragePoolId());
         SearchParameters p = new SearchParameters(String.format("Templates: DataCenter = %1$s", pool.getname()),
                 SearchType.VmTemplate);
         p.setMaxCount(Integer.MAX_VALUE);
@@ -27,7 +27,7 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends GetVmTemplatesByStorag
 
         if (returnValue != null && returnValue.getSucceeded()) {
             List<VmTemplate> templateList = (List) returnValue.getReturnValue();
-            VmTemplate blank = DbFacade.getInstance().getVmTemplateDAO()
+            VmTemplate blank = DbFacade.getInstance().getVmTemplateDao()
                     .get(VmTemplateHandler.BlankVmTemplateId);
             if (!templateList.contains(blank)) {
                 templateList.add(0, blank);

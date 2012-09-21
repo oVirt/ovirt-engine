@@ -10,7 +10,7 @@ public class GetAllStorageDomainsQuery<P extends VdcQueryParametersBase> extends
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getStorageDomainDAO()
+        getQueryReturnValue().setReturnValue(getDbFacade().getStorageDomainDao()
                 .getAll(getUserID(), getParameters().isFiltered()));
     }
 }

@@ -20,7 +20,7 @@ public class GetAvailableClustersByServerCpuQuery<P extends GetAvailableClusters
     @Override
     protected void executeQueryCommand() {
         // get all clusters
-        List<VDSGroup> allClusters = DbFacade.getInstance().getVdsGroupDAO().getAll();
+        List<VDSGroup> allClusters = DbFacade.getInstance().getVdsGroupDao().getAll();
         // get all available cpu names
 
         String cpuName = getParameters().getCpuName();

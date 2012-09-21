@@ -192,7 +192,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         if (diskInfoDestinationMap.isEmpty()) {
             List<storage_domains> domains =
                     DbFacade.getInstance()
-                            .getStorageDomainDAO()
+                            .getStorageDomainDao()
                             .getAllForStoragePool(getStoragePoolId().getValue());
             Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
             for (storage_domains storageDomain : domains) {

@@ -31,8 +31,8 @@ public class VmStatisticsDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        vmStaticDao = dbFacade.getVmStaticDAO();
-        dao = dbFacade.getVmStatisticsDAO();
+        vmStaticDao = dbFacade.getVmStaticDao();
+        dao = dbFacade.getVmStatisticsDao();
         newVmStatic = vmStaticDao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001"));
         newVmStatistics = new VmStatistics();
     }

@@ -27,7 +27,7 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
     protected VDS getDestinationVds() {
         if (_destinationVds == null) {
             if (getParameters().getDestinationVdsId() != null) {
-                VDS powerclient = DbFacade.getInstance().getVdsDAO().get(getParameters().getDestinationVdsId());
+                VDS powerclient = DbFacade.getInstance().getVdsDao().get(getParameters().getDestinationVdsId());
                 boolean powerClientLogDetection =
                         Config.<Boolean> GetValue(ConfigValues.PowerClientLogDetection);
                 if (powerclient != null && powerclient.getvds_type() == VDSType.PowerClient) {

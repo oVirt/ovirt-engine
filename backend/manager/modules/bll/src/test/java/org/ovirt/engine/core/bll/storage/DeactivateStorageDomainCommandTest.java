@@ -68,10 +68,10 @@ public class DeactivateStorageDomainCommandTest {
         doReturn(mock(IStorageHelper.class)).when(cmd).getStorageHelper(any(storage_domains.class));
         doReturn(dbFacade).when(cmd).getDbFacade();
 
-        when(dbFacade.getStoragePoolIsoMapDAO()).thenReturn(isoMapDAO);
-        when(dbFacade.getStoragePoolDAO()).thenReturn(storagePoolDAO);
-        when(dbFacade.getVdsDAO()).thenReturn(vdsDAO);
-        when(dbFacade.getStorageDomainDAO()).thenReturn(storageDomainDAO);
+        when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDAO);
+        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
+        when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(new storage_pool());
         when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new storage_domains());

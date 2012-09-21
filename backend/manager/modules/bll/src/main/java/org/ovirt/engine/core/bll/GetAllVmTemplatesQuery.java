@@ -13,7 +13,7 @@ public class GetAllVmTemplatesQuery<P extends VdcQueryParametersBase> extends Qu
     @Override
     protected void executeQueryCommand() {
         List<VmTemplate> retval =
-                getDbFacade().getVmTemplateDAO().getAll(getUserID(), getParameters().isFiltered());
+                getDbFacade().getVmTemplateDao().getAll(getUserID(), getParameters().isFiltered());
         for (VmTemplate template : retval) {
             AnonymousMethod1(template);
         }

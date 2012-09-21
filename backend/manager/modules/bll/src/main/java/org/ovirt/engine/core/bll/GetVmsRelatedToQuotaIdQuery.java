@@ -15,7 +15,7 @@ public class GetVmsRelatedToQuotaIdQuery<P extends GetEntitiesRelatedToQuotaIdPa
 
     @Override
     protected void executeQueryCommand() {
-        List<VM> vms = getDbFacade().getVmDAO().getAllVmsRelatedToQuotaId(
+        List<VM> vms = getDbFacade().getVmDao().getAllVmsRelatedToQuotaId(
                 getParameters().getQuotaId());
         for (VM vm : vms) {
             VmHandler.updateDisksFromDb(vm);

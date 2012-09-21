@@ -106,7 +106,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Override
     protected void executeCommand() {
         // get vm status from db to check its really down before locking
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(getVmId());
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getVmId());
         if (vmDynamic.getstatus() != VMStatus.Down) {
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
@@ -221,12 +221,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         Set<Guid> destImageDomains = getStorageGuidSet();
         destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
         for (Guid destImageDomain : destImageDomains) {
-            storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+            storage_domains storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                     destImageDomain, getVm().getstorage_pool_id());
             if (storage == null) {
                 // if storage is null then we need to check if it doesn't exist or
                 // domain is not in the same storage pool as the vm
-                if (DbFacade.getInstance().getStorageDomainStaticDAO().get(destImageDomain) == null) {
+                if (DbFacade.getInstance().getStorageDomainStaticDao().get(destImageDomain) == null) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
                 } else {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
@@ -298,7 +298,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getVmTemplate().setQuotaId(getQuotaId());
         getVmTemplate().setdedicated_vm_for_vds(getParameters().getMasterVm().getdedicated_vm_for_vds());
         getVmTemplate().setMigrationSupport(getParameters().getMasterVm().getMigrationSupport());
-        DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
+        DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
     }
@@ -307,7 +307,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         List<VmNetworkInterface> templateInterfaces = new ArrayList<VmNetworkInterface>();
         List<VmNetworkInterface> interfaces = DbFacade
                 .getInstance()
-                .getVmNetworkInterfaceDAO()
+                .getVmNetworkInterfaceDao()
                 .getAllForVm(
                         getParameters().getMasterVm().getId());
         for (VmNetworkInterface iface : interfaces) {
@@ -319,7 +319,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             iDynamic.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iDynamic.setType(iface.getType());
             templateInterfaces.add(iDynamic);
-            DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iDynamic);
+            DbFacade.getInstance().getVmNetworkInterfaceDao().save(iDynamic);
         }
         return templateInterfaces;
     }
@@ -414,7 +414,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // if template exist in db remove it
         if (getVmTemplate() != null) {
             RemoveTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(), getVmTemplateId());
-            DbFacade.getInstance().getVmTemplateDAO().remove(getVmTemplateId());
+            DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplateId());
             RemoveNetwork();
         }
 

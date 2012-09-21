@@ -10,7 +10,7 @@ public class GetAllVdsGroupsQuery<P extends VdcQueryParametersBase> extends Quer
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
-                .getVdsGroupDAO()
+                .getVdsGroupDao()
                 .getAll(getUserID(), getParameters().isFiltered()));
     }
 }

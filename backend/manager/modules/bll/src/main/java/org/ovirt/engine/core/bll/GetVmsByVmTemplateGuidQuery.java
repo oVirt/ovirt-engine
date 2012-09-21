@@ -11,7 +11,7 @@ public class GetVmsByVmTemplateGuidQuery<P extends GetVmsByVmTemplateGuidParamet
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
-                .getVmDAO()
+                .getVmDao()
                 .getAllWithTemplate(getParameters().getId()));
     }
 }

@@ -56,7 +56,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     protected void executeCommand() {
         final storage_pool_iso_map map =
                 DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO()
+                        .getStoragePoolIsoMapDao()
                         .get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
         changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
@@ -73,7 +73,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
             @Override
             public Void runInTransaction() {
                 map.setstatus(StorageDomainStatus.Active);
-                DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getstatus());
                 if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
                     calcStoragePoolStatusByDomainsStatus();
                 }

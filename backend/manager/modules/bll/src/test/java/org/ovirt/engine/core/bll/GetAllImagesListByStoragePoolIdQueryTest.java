@@ -80,7 +80,7 @@ public class GetAllImagesListByStoragePoolIdQueryTest
 
         StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
         when(storageDomainDAOMock.getIsoStorageDomainIdForPool(getQueryParameters().getStoragePoolId())).thenReturn(storageDomainId);
-        when(getQuery().getDbFacade().getStorageDomainDAO()).thenReturn(storageDomainDAOMock);
+        when(getQuery().getDbFacade().getStorageDomainDao()).thenReturn(storageDomainDAOMock);
 
         assertEquals("wrong storage domain id", storageDomainId, getQuery().getStorageDomainId());
     }
@@ -108,6 +108,6 @@ public class GetAllImagesListByStoragePoolIdQueryTest
                 storagePoolId,
                 getUser().getUserId(),
                 getQueryParameters().isFiltered())).thenReturn(pool);
-        when(getQuery().getDbFacade().getStoragePoolDAO()).thenReturn(storagePoolDAOMock);
+        when(getQuery().getDbFacade().getStoragePoolDao()).thenReturn(storagePoolDAOMock);
     }
 }

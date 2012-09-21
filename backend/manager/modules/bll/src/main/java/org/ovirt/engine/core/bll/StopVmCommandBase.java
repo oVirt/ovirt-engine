@@ -96,12 +96,12 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
             // remove all unmanaged devices of a stateless VM
             List<VmDevice> vmDevices =
                 DbFacade.getInstance()
-                        .getVmDeviceDAO()
+                        .getVmDeviceDao()
                         .getUnmanagedDevicesByVmId(getVm().getId());
             for (VmDevice device : vmDevices) {
                 // do not remove device if appears in white list
                 if (! VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
-                    DbFacade.getInstance().getVmDeviceDAO().remove(device.getId());
+                    DbFacade.getInstance().getVmDeviceDao().remove(device.getId());
                 }
             }
         }
@@ -116,10 +116,10 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     private boolean isRunOnce() {
         List<VmDevice> cdList =
             DbFacade.getInstance()
-                    .getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(getVm().getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName());
+                    .getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(getVm().getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName());
         List<VmDevice> floppyList =
             DbFacade.getInstance()
-                    .getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(getVm().getId(), VmDeviceType.DISK.getName(), VmDeviceType.FLOPPY.getName());
+                    .getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(getVm().getId(), VmDeviceType.DISK.getName(), VmDeviceType.FLOPPY.getName());
 
         return (cdList.size() > 1 || floppyList.size() > 1);
     }
@@ -167,7 +167,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
                             new UpdateVmDynamicDataVDSCommandParameters(getVm().getrun_on_vds().getValue(),
                                     vmDynamicData));
         } else {
-            DbFacade.getInstance().getVmDynamicDAO().update(vmDynamicData);
+            DbFacade.getInstance().getVmDynamicDao().update(vmDynamicData);
         }
     }
 
@@ -179,7 +179,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
             getVm().setstatus(VMStatus.Down);
             getVm().sethibernation_vol_handle(null);
 
-            DbFacade.getInstance().getVmDynamicDAO().update(getVm().getDynamicData());
+            DbFacade.getInstance().getVmDynamicDao().update(getVm().getDynamicData());
         }
 
         else {

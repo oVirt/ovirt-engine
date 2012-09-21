@@ -57,7 +57,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         /**
          * Detach master storage domain last.
          */
-        List<storage_domains> storageDomains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
+        List<storage_domains> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
                     getStoragePool().getId());
         Collections.sort(storageDomains, new Comparator<storage_domains>() {
             @Override
@@ -82,7 +82,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             @Override
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(getStoragePool());
-                DbFacade.getInstance().getStoragePoolDAO().remove(getStoragePool().getId());
+                DbFacade.getInstance().getStoragePoolDao().remove(getStoragePool().getId());
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -95,11 +95,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
             @Override
             public Void runInTransaction() {
-                final List<Network> networks = DbFacade.getInstance().getNetworkDAO()
+                final List<Network> networks = DbFacade.getInstance().getNetworkDao()
                         .getAllForDataCenter(getStoragePoolId().getValue());
                 for (final Network net : networks) {
                     getCompensationContext().snapshotEntity(net);
-                    DbFacade.getInstance().getNetworkDAO().remove(net.getId());
+                    DbFacade.getInstance().getNetworkDao().remove(net.getId());
                 }
                 getCompensationContext().stateChanged();
                 return null;
@@ -140,7 +140,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
                 masterDomain.setstatus(StorageDomainStatus.Locked);
                 DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO()
+                        .getStoragePoolIsoMapDao()
                         .update(masterDomain.getStoragePoolIsoMapData());
                 getCompensationContext().stateChanged();
                 return null;
@@ -171,7 +171,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
                 masterDomain.setstorage_domain_type(StorageDomainType.Data);
-                DbFacade.getInstance().getStorageDomainStaticDAO().update(masterDomain.getStorageStaticData());
+                DbFacade.getInstance().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -193,7 +193,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
                 DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO()
+                        .getStoragePoolIsoMapDao()
                         .remove(masterDomain.getStoragePoolIsoMapData().getId());
                 getCompensationContext().stateChanged();
                 return null;
@@ -262,7 +262,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 // as it will be impossible to remove it.
                 StorageHelperDirector.getInstance().getItem(domain.getstorage_type())
                         .StorageDomainRemoved(domain.getStorageStaticData());
-                DbFacade.getInstance().getStorageDomainDAO().remove(domain.getId());
+                DbFacade.getInstance().getStorageDomainDao().remove(domain.getId());
                 return null;
             }
         });
@@ -313,7 +313,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             return false;
         }
         final List<storage_domains> poolDomains =
-                DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
+                DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
                         getStoragePool().getId());
         final List<storage_domains> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
@@ -335,7 +335,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 }
             }
             final List<VmStatic> vms =
-                    DbFacade.getInstance().getVmStaticDAO().getAllByStoragePoolId(getStoragePool().getId());
+                    DbFacade.getInstance().getVmStaticDao().getAllByStoragePoolId(getStoragePool().getId());
             if (vms.size() > 0) {
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS);
             }

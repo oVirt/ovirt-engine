@@ -40,7 +40,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().OriginalTemplate, getCompensationContext());
         getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
-        DbFacade.getInstance().getVmStaticDAO().update(getVm().getStaticData());
+        DbFacade.getInstance().getVmStaticDao().update(getVm().getStaticData());
         // if there are no tasks, we can end the command right away.
         if (getTaskIdList().isEmpty()) {
             endSuccessfully();

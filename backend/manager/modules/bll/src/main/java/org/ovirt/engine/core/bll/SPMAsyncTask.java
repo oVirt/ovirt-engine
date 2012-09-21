@@ -234,7 +234,7 @@ public class SPMAsyncTask {
 
     protected void RemoveTaskFromDB() {
         try {
-            if (DbFacade.getInstance().getAsyncTaskDAO().remove(getTaskID()) != 0) {
+            if (DbFacade.getInstance().getAsyncTaskDao().remove(getTaskID()) != 0) {
                 log.infoFormat("BaseAsyncTask::RemoveTaskFromDB: Removed task {0} from DataBase", getTaskID());
             }
         }

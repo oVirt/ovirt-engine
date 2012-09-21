@@ -41,7 +41,7 @@ public class QuotaManager {
 
     private static QuotaDAO getQuotaDAO() {
         return DbFacade.getInstance()
-                .getQuotaDAO();
+                .getQuotaDao();
     }
 
     private AuditLogableBase getLoggableQuotaStorageParams(String quotaName,
@@ -582,7 +582,7 @@ public class QuotaManager {
     }
 
     public void rollbackQuota(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm != null) {
             rollbackQuota(vm.getstorage_pool_id(), Arrays.asList(vm.getQuotaId()));
         }

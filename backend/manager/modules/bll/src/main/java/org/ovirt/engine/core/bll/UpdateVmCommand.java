@@ -125,11 +125,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!getVm().getvds_group_id().equals(getParameters().getVmStaticData().getvds_group_id())) {
             List<Network> networks = DbFacade
                     .getInstance()
-                    .getNetworkDAO()
+                    .getNetworkDao()
                     .getAllForCluster(
                             getParameters().getVmStaticData().getvds_group_id());
             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                    .getVmNetworkInterfaceDAO()
+                    .getVmNetworkInterfaceDao()
                     .getAllForVm(getParameters().getVmStaticData().getId());
             for (final VmNetworkInterface iface : interfaces) {
                 Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
@@ -142,7 +142,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 // interface connection
                 if (net == null) {
                     iface.setNetworkName(null);
-                    DbFacade.getInstance().getVmNetworkInterfaceDAO().update(iface);
+                    DbFacade.getInstance().getVmNetworkInterfaceDao().update(iface);
                 }
 
             }

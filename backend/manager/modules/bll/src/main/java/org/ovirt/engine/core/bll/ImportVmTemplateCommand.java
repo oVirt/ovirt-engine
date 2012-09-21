@@ -219,7 +219,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Override
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
-        return DbFacade.getInstance().getStorageDomainStaticDAO();
+        return DbFacade.getInstance().getStorageDomainStaticDao();
     }
 
     /**
@@ -330,7 +330,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getVmTemplate().setstatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
         VmHandler.updateImportedVmUsbPolicy(getVmTemplate());
-        DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
+        DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;
         for (DiskImage image : getParameters().getImages()) {
@@ -348,7 +348,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(image.getImageId());
             diskDynamic.setactual_size(image.getactual_size());
-            DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
+            DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
             getCompensationContext().snapshotNewEntity(diskDynamic);
         }
     }
@@ -385,9 +385,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             iDynamic.setSpeed(iface.getSpeed());
             iDynamic.setType(iface.getType());
 
-            DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iDynamic);
+            DbFacade.getInstance().getVmNetworkInterfaceDao().save(iDynamic);
             getCompensationContext().snapshotNewEntity(iDynamic);
-            DbFacade.getInstance().getVmNetworkStatisticsDAO().save(iStat);
+            DbFacade.getInstance().getVmNetworkStatisticsDao().save(iStat);
             getCompensationContext().snapshotNewEntity(iStat);
         }
 
@@ -407,18 +407,18 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     protected void removeNetwork() {
         List<VmNetworkInterface> list =
-                DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplateId());
+                DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForTemplate(getVmTemplateId());
         for (VmNetworkInterface iface : list) {
-            DbFacade.getInstance().getVmNetworkInterfaceDAO().remove(iface.getId());
+            DbFacade.getInstance().getVmNetworkInterfaceDao().remove(iface.getId());
         }
     }
 
     protected void removeImages() {
         for (DiskImage image : getParameters().getImages()) {
-            DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getImageId());
+            DbFacade.getInstance().getDiskImageDynamicDao().remove(image.getImageId());
             DbFacade.getInstance().getImageStorageDomainMapDao().remove(image.getImageId());
             DbFacade.getInstance().getImageDao().remove(image.getImageId());
-            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getId(), null));
+            DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(image.getId(), null));
             DbFacade.getInstance().getBaseDiskDao().remove(image.getId());
         }
     }
@@ -428,7 +428,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         removeNetwork();
         removeImages();
 
-        DbFacade.getInstance().getVmTemplateDAO().remove(getVmTemplateId());
+        DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplateId());
         rollbackQuota();
         setSucceeded(true);
     }

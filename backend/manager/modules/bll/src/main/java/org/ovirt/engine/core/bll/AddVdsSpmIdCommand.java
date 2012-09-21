@@ -33,14 +33,14 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     protected boolean canDoAction() {
         // check if vds already has vds spm id and storage pool exists
         return !Guid.Empty.equals(getVds().getstorage_pool_id())
-                && DbFacade.getInstance().getVdsSpmIdMapDAO().get(getVdsId()) == null;
+                && DbFacade.getInstance().getVdsSpmIdMapDao().get(getVdsId()) == null;
     }
 
     @Override
     protected void executeCommand() {
         // according to shaharf the first id is 1
         int selectedId = 1;
-        List<vds_spm_id_map> list = DbFacade.getInstance().getVdsSpmIdMapDAO().getAll(
+        List<vds_spm_id_map> list = DbFacade.getInstance().getVdsSpmIdMapDao().getAll(
                 getVds().getstorage_pool_id());
         List<Integer> map = LinqUtils.foreach(list, new Function<vds_spm_id_map, Integer>() {
             @Override
@@ -57,7 +57,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
             }
         }
         vds_spm_id_map newMap = new vds_spm_id_map(getVds().getstorage_pool_id(), getVdsId(), selectedId);
-        DbFacade.getInstance().getVdsSpmIdMapDAO().save(newMap);
+        DbFacade.getInstance().getVdsSpmIdMapDao().save(newMap);
         if (getParameters().isCompensationEnabled()) {
             getCompensationContext().snapshotNewEntity(newMap);
             getCompensationContext().stateChanged();

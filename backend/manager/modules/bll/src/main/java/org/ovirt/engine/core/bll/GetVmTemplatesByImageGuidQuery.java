@@ -17,7 +17,7 @@ public class GetVmTemplatesByImageGuidQuery<P extends GetVmTemplatesByImageGuidP
     @Override
     protected void executeQueryCommand() {
         Map<Boolean, VmTemplate> templateMap =
-                getDbFacade().getVmTemplateDAO().getAllForImage(getParameters().getImageGuid());
+                getDbFacade().getVmTemplateDao().getAllForImage(getParameters().getImageGuid());
 
         if (!templateMap.values().isEmpty()) {
             updateDisksFromDb(templateMap.values().iterator().next());

@@ -11,6 +11,6 @@ public class GetNotificationEventMapQuery<P extends VdcQueryParametersBase> exte
     @Override
     protected void executeQueryCommand() {
 
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getEventDAO().getAllEventMaps());
+        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getEventDao().getAllEventMaps());
     }
 }

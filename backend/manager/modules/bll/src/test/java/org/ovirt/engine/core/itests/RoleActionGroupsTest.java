@@ -43,7 +43,7 @@ public class RoleActionGroupsTest extends AbstractBackendTest {
         roleId = (Guid) action.getActionReturnValue();
 
         Assert.assertTrue(action.getSucceeded());
-        List<RoleGroupMap> getRoleGroupMapsByRoleId = DbFacade.getInstance().getRoleGroupMapDAO().getAllForRole(roleId);
+        List<RoleGroupMap> getRoleGroupMapsByRoleId = DbFacade.getInstance().getRoleGroupMapDao().getAllForRole(roleId);
         Assert.assertTrue(getRoleGroupMapsByRoleId.size() == 1);
         Assert.assertTrue(getRoleGroupMapsByRoleId.get(0).getActionGroup() == ActionGroup.CHANGE_VM_CD);
 
@@ -62,7 +62,7 @@ public class RoleActionGroupsTest extends AbstractBackendTest {
         VdcReturnValueBase action = backend.RunAction(VdcActionType.AttachActionGroupsToRole,
                 sessionize(new ActionGroupsToRoleParameter(roleId, groups)));
         Assert.assertTrue(action.getSucceeded());
-        List<RoleGroupMap> getRoleGroupMapsByRoleId = DbFacade.getInstance().getRoleGroupMapDAO().getAllForRole(roleId);
+        List<RoleGroupMap> getRoleGroupMapsByRoleId = DbFacade.getInstance().getRoleGroupMapDao().getAllForRole(roleId);
         Assert.assertTrue(getRoleGroupMapsByRoleId.size() == 5);
 
     }
@@ -79,7 +79,7 @@ public class RoleActionGroupsTest extends AbstractBackendTest {
                 sessionize(new ActionGroupsToRoleParameter(roleId, groups)));
 
         Assert.assertTrue(action.getSucceeded());
-        List<RoleGroupMap> getRoleGroupMapsByRoleId = DbFacade.getInstance().getRoleGroupMapDAO().getAllForRole(roleId);
+        List<RoleGroupMap> getRoleGroupMapsByRoleId = DbFacade.getInstance().getRoleGroupMapDao().getAllForRole(roleId);
         Assert.assertTrue(getRoleGroupMapsByRoleId.size() == 3);
 
     }
@@ -90,7 +90,7 @@ public class RoleActionGroupsTest extends AbstractBackendTest {
         runAsSuperAdmin();
 
         VdcReturnValueBase action = backend.RunAction(VdcActionType.RemoveRole, sessionize(new RolesParameterBase(roleId)));
-        List<RoleGroupMap> groups = DbFacade.getInstance().getRoleGroupMapDAO().getAllForRole(roleId);
+        List<RoleGroupMap> groups = DbFacade.getInstance().getRoleGroupMapDao().getAllForRole(roleId);
         Assert.assertTrue(groups == null || groups.isEmpty());
     }
 }

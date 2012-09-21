@@ -60,7 +60,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
         StoragePoolValidator storagePoolValidator =
                 new StoragePoolValidator(getStoragePool(), getReturnValue().getCanDoActionMessages());
-        if (result && DbFacade.getInstance().getStoragePoolDAO().getByName(getStoragePool().getname()) != null) {
+        if (result && DbFacade.getInstance().getStoragePoolDao().getByName(getStoragePool().getname()) != null) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         } else if (!CheckStoragePoolNameLengthValid()) {

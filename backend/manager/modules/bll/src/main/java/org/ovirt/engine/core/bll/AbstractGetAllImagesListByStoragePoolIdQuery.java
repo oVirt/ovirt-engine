@@ -20,7 +20,7 @@ public abstract class AbstractGetAllImagesListByStoragePoolIdQuery<P extends Get
     @Override
     protected Guid getStorageDomainId() {
         if (doesUserHavePemissionsOnStoragePool()) {
-            return getDbFacade().getStorageDomainDAO().getIsoStorageDomainIdForPool(getStoragePoolId());
+            return getDbFacade().getStorageDomainDao().getIsoStorageDomainIdForPool(getStoragePoolId());
         }
         return null;
     }
@@ -39,7 +39,7 @@ public abstract class AbstractGetAllImagesListByStoragePoolIdQuery<P extends Get
      */
     private boolean doesUserHavePemissionsOnStoragePool() {
         storage_pool pool =
-                getDbFacade().getStoragePoolDAO().get(getStoragePoolId(),
+                getDbFacade().getStoragePoolDao().get(getStoragePoolId(),
                         getUserID(),
                         getParameters().isFiltered());
         return pool != null;

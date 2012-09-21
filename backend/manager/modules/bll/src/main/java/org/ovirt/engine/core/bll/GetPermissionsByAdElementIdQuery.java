@@ -11,7 +11,7 @@ public class GetPermissionsByAdElementIdQuery<P extends MultilevelAdministration
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getPermissionDAO().getAllForAdElement
+                getDbFacade().getPermissionDao().getAllForAdElement
                         (getParameters().getAdElementId(),
                                 getUserID(),
                                 getParameters().isFiltered()));

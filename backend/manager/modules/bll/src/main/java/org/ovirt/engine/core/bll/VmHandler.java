@@ -131,7 +131,7 @@ public class VmHandler {
     }
 
     public static boolean isVmWithSameNameExistStatic(String vmName) {
-        List<VmStatic> vmStatic = DbFacade.getInstance().getVmStaticDAO().getAllByName(vmName);
+        List<VmStatic> vmStatic = DbFacade.getInstance().getVmStaticDao().getAllByName(vmName);
         return (vmStatic.size() != 0);
     }
 
@@ -182,7 +182,7 @@ public class VmHandler {
      *            - The ID of the VM.
      */
     public static void checkStatusAndLockVm(Guid vmId) {
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(vmId);
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
         checkStatusBeforeLock(vmDynamic.getstatus());
         LockVm(vmId);
     }
@@ -198,7 +198,7 @@ public class VmHandler {
      *            - Used to save the old VM status for compensation purposes.
      */
     public static void checkStatusAndLockVm(Guid vmId, CompensationContext compensationContext) {
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(vmId);
+        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
         checkStatusBeforeLock(vmDynamic.getstatus());
         LockVm(vmDynamic, compensationContext);
     }
@@ -266,7 +266,7 @@ public class VmHandler {
     }
 
     public static void updateNetworkInterfacesFromDb(VM vm) {
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
+        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId());
         vm.setInterfaces(interfaces);
     }
 

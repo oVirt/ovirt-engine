@@ -14,7 +14,7 @@ public class GetPermittedStorageDomainsByStoragePoolIdQuery<P extends GetPermitt
     protected void executeQueryCommand() {
         P params = getParameters();
         setReturnValue(DbFacade.getInstance()
-                .getStorageDomainDAO()
+                .getStorageDomainDao()
                 .getPermittedStorageDomainsByStoragePool(getUserID(), params.getActionGroup(), params.getStoragePoolId()));
     }
 }

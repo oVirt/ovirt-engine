@@ -18,7 +18,7 @@ public class GetVmPayloadQuery<P extends GetVmByVmIdParameters> extends QueriesC
 
     @Override
     protected void executeQueryCommand() {
-        VmDeviceDAO dao = getDbFacade().getVmDeviceDAO();
+        VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
         List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceType.DISK.getName());
 
         for (VmDevice disk: disks) {

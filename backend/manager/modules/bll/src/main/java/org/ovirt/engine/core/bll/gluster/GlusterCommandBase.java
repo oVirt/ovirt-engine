@@ -121,6 +121,6 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     public VdsStaticDAO getVdsStaticDao() {
-        return getDbFacade().getVdsStaticDAO();
+        return getDbFacade().getVdsStaticDao();
     }
 }

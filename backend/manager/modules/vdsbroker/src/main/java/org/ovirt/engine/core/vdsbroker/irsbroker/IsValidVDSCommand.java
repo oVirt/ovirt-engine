@@ -14,7 +14,7 @@ public class IsValidVDSCommand<P extends IrsBaseVDSCommandParameters> extends Ir
 
     @Override
     protected void ExecuteVDSCommand() {
-        storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(
+        storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                 getParameters().getStoragePoolId());
         try {
             getVDSReturnValue().setReturnValue(

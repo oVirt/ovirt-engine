@@ -14,7 +14,7 @@ public class GetUsersByVmidQuery<P extends GetUsersByVmidParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        List<DbUser> users = DbFacade.getInstance().getDbUserDAO()
+        List<DbUser> users = DbFacade.getInstance().getDbUserDao()
                 .getAllForVm(getParameters().getVmId());
 
         getQueryReturnValue().setReturnValue(users);

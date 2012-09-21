@@ -23,8 +23,8 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStorageDomainDynamicDAO());
-        staticDao = prepareDAO(dbFacade.getStorageDomainStaticDAO());
+        dao = prepareDAO(dbFacade.getStorageDomainDynamicDao());
+        staticDao = prepareDAO(dbFacade.getStorageDomainStaticDao());
 
         existingDynamic = dao.get(EXISTING_DOMAIN_ID);
 
