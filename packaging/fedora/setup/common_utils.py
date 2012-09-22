@@ -17,6 +17,7 @@ import types
 import shutil
 import time
 import tempfile
+import csv
 
 """
 ENUM implementation for python (from the vdsm team)
@@ -381,6 +382,24 @@ def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError
         "-c", sqlQuery,
     ]
     return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=env)
+
+def parseRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
+    ret = []
+    sqlQuery = "copy (%s) to stdout with csv header;" % sqlQuery.replace(";", "")
+    out, rc = execRemoteSqlCommand(
+        userName,
+        dbHost,
+        dbPort,
+        dbName,
+        sqlQuery,
+        failOnError,
+        errMsg
+    )
+    if rc == 0:
+        # we want reusable list, so load all into memory
+        ret = [x for x in csv.DictReader(out.splitlines(True))]
+
+    return ret, rc
 
 def replaceWithLink(target, link):
     """
