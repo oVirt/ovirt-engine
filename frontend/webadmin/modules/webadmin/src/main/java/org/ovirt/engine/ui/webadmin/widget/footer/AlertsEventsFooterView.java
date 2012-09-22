@@ -201,6 +201,9 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     }
 
     void setAlertCount(int count) {
+        if (alertImage == null) {
+            return;
+        }
 
         String countStr = constants.alertsEventFooter() + " (" + count + ")"; //$NON-NLS-1$  //$NON-NLS-2$
 

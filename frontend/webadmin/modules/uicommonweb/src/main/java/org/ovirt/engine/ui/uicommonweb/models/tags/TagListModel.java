@@ -210,7 +210,7 @@ public class TagListModel extends SearchableListModel
     {
         super.ItemsChanged();
 
-        if (getSelectionNodeList().isEmpty() && getAttachedTagsToEntities() != null)
+        if (getSelectionNodeList() != null && getSelectionNodeList().isEmpty() && getAttachedTagsToEntities() != null)
         {
             AttachedTagsToEntitiesChanged();
         }

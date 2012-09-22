@@ -152,8 +152,25 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     }
 
     @Override
+    public void displayVmOsImages(boolean dispaly) {
+        osImage.setVisible(dispaly);
+        vmImage.setVisible(dispaly);
+    }
+
+    @Override
     public HasClickHandlers getEditButton() {
         return editProtocolLink;
     }
 
+    @Override
+    public void clear() {
+        vmName.setText(null);
+        vmDescription.setText(null);
+        protocolMessage.setText(null);
+        memory.setValue(null);
+        numberOfCores.setValue(null);
+        operatingSystem.getElement().setInnerHTML(""); //$NON-NLS-1$
+        disks.clear();
+        displayVmOsImages(false);
+    }
 }
