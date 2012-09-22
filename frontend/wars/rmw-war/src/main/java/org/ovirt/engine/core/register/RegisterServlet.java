@@ -78,7 +78,11 @@ public class RegisterServlet extends HttpServlet {
             log.debug("Using the following parameters to call query:\nIP: " + strIP + ", Name: "
                     + strName + ", UUID: " + strID + ", Port: " + nPort + otpMessage);
 
-            params = new RegisterVdsParameters(Guid.Empty, strIP, strName, strID, nPort, MASK,
+            /*
+             * Ignore MAC if exists (old format)
+             */
+            String strIDNoMAC = strID.split("_")[0];
+            params = new RegisterVdsParameters(Guid.Empty, strIP, strName, strIDNoMAC, nPort, MASK,
                     Guid.Empty, VDSType.oVirtNode);
 
             params.setOtp(otp);

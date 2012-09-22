@@ -97,12 +97,24 @@ that this system was previously installed and that there's a password file at %s
 (basedefs.DB_PASS_FILE, basedefs.ORIG_PASS_FILE)
 MSG_ERROR_FAILED_CONVERT_ENGINE_KEY = "Error: Can't convert engine key to PKCS#12 fomat"
 MSG_ERROR_SSH_KEY_SYMLINK = "Error: SSH key should not be symlink"
+MSG_ERROR_UUID_VALIDATION_FAILED = (
+    "Pre-upgade host UUID validation failed\n"
+    "\n"
+    "Please move the following hosts to maintenance mode before upgrade:\n"
+    "%s"
+    "\n"
+)
+MSG_ERROR_UUID_FAILED_HOST = "   - Host %s(%s), reason: %s\n"
+MSG_ERROR_UUID_FAILED_REASON_EMPTYUUID = "empty UUID"
+MSG_ERROR_UUID_FAILED_REASON_NOUUID = "no BIOS UUID"
+MSG_ERROR_UUID_FAILED_REASON_DUPUUID = "duplicate BIOS UUID"
 
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
 MSG_INFO_REASON = " **Reason: %s**\n"
 MSG_INFO_STOP_ENGINE = "Stopping ovirt-engine service"
 MSG_INFO_STOP_DB = "Stopping DB related services"
+MSG_INFO_PREUPGRADE = "Pre-upgrade validations"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_RENAME_DB = "Rename Database"
 MSG_INFO_RESTORE_DB = "Restore Database name"
@@ -122,6 +134,19 @@ MSG_INFO_STOP_INSTALL_EXIT="Upgrade stopped, Goodbye."
 MSG_INFO_UPDATE_ENGINE_PROFILE="Updating ovirt-engine Profile"
 MSG_INFO_PKI_PREPARE = "Preparing CA"
 MSG_INFO_PKI_ROLLBACK = "Restoring CA"
+MSG_INFO_UUID_VALIDATION_INFO = (
+    "NOTICE:\n"
+    "\n"
+    "  The following hosts must be reinstalled. If reason is BIOS\n"
+    "  duplicate UUID execute the following command on each host before\n"
+    "  reinstallation:\n"
+    "  # uuidgen > /etc/vdsm/vdsm.id\n"
+    "  If you are running rhev-h or ovirt-node, restart vdsm-reg service:\n"
+    "  # service vdsm-reg restart\n"
+    "\n"
+    "%s"
+    "."
+)
 
 MSG_ALERT_STOP_ENGINE="\nDuring the upgrade process, %s  will not be accessible.\n\
 All existing running virtual machines will continue but you will not be able to\n\
@@ -136,6 +161,7 @@ or the reporting package:\n\
 # GLOBAL
 logFile = "ovirt-engine-upgrade.log"
 messages = []
+hostids = {}
 
 # Code
 def getOptions():
@@ -705,6 +731,9 @@ def isUpdateRelatedToDb(yumo):
         if yumo.isCandidateForUpdate(rpm):
             related = True
 
+    if hostids:
+        related = True
+
     logging.debug("isUpdateRelatedToDb value is %s"%(str(related)))
     return related
 
@@ -796,6 +825,77 @@ def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION):
 
     return False
 
+def preupgradeUUIDCheck():
+    VDSStatus_Maintenance = 2
+
+    query="select vds_id, vds_name, host_name, vds_unique_id, status from vds;"
+    out, rc = utils.parseRemoteSqlCommand(
+        SERVER_ADMIN,
+        SERVER_NAME,
+        SERVER_PORT,
+        basedefs.DB_NAME,
+        query,
+        True,
+        MSG_ERROR_CONNECT_DB
+    )
+
+    def get_dups(l):
+        """python-2.6 has no collections.Counter"""
+
+        _seen = set()
+        return [x for x in l if x in _seen or _seen.add(x)]
+
+    dups = get_dups([i['vds_unique_id'].split('_')[0] for i in out])
+    ok = True
+    msgs = ""
+    global hostids
+    for r in out:
+        warn = False
+        if r['vds_unique_id'] == "":
+            warn = True
+            r['message'] = MSG_ERROR_UUID_FAILED_REASON_EMPTYUUID
+        elif r['vds_unique_id'].startswith('_') or r['vds_unique_id'].startswith('Not_'):
+            warn = True
+            r['message'] = MSG_ERROR_UUID_FAILED_REASON_NOUUID
+        elif r['vds_unique_id'].split('_')[0] in dups:
+            warn = True
+            r['message'] = MSG_ERROR_UUID_FAILED_REASON_DUPUUID
+
+        if warn:
+            msgs += MSG_ERROR_UUID_FAILED_HOST % (
+                r['vds_name'],
+                r['host_name'],
+                r['message']
+            )
+            if int(r['status']) != VDSStatus_Maintenance:
+                ok = False
+        else:
+            if '_' in r['vds_unique_id']:
+                hostids[r['vds_id']] = r['vds_unique_id'].split('_')[0]
+
+    if not ok:
+        raise Exception(MSG_ERROR_UUID_VALIDATION_FAILED % msgs)
+
+    if msgs != "":
+        global messages
+        messages.append(MSG_INFO_UUID_VALIDATION_INFO % msgs)
+
+def modifyUUIDs():
+    for vds_id, vds_unique_id in hostids.items():
+        query="UPDATE vds_static SET vds_unique_id='%s' where vds_id='%s';" % (
+            vds_unique_id,
+            vds_id
+        )
+        utils.execRemoteSqlCommand(
+            SERVER_ADMIN,
+            SERVER_NAME,
+            SERVER_PORT,
+            basedefs.DB_NAME,
+            query,
+            True,
+            MSG_ERROR_CONNECT_DB
+        )
+
 def main(options):
 
     # we do not wish to be interrupted
@@ -828,8 +928,9 @@ def main(options):
 
     # Functions/parameters definitions
     stopEngineService = [stopEngine]
+    preupgradeFunc = [preupgradeUUIDCheck]
     upgradeFunc = [rhyum.update]
-    postFunc = [runPost]
+    postFunc = [modifyUUIDs, ca.commit, runPost]
     engineService = basedefs.ENGINE_SERVICE_NAME
     # define db connections services
     etlService = utils.Service(basedefs.ETL_SERVICE_NAME)
@@ -884,6 +985,9 @@ def main(options):
             print MSG_INFO_STOP_INSTALL_EXIT
             sys.exit(0)
 
+        # Preupgrade checks
+        runFunc(preupgradeFunc, MSG_INFO_PREUPGRADE)
+
         # Backup DB
         if updateRelatedToDB:
             runFunc([db.backup], MSG_INFO_BACKUP_DB)
@@ -915,7 +1019,7 @@ def main(options):
         runFunc([ca.prepare], MSG_INFO_PKI_PREPARE)
 
         # post install conf
-        runFunc([ca.commit, postFunc], MSG_INFO_RUN_POST)
+        runFunc(postFunc, MSG_INFO_RUN_POST)
 
     except:
         logging.error(traceback.format_exc())

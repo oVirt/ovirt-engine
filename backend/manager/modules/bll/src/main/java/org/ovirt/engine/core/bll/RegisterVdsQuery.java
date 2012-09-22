@@ -85,7 +85,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     private List<VDS> getVdssByUniqueId() {
         if (_vdssByUniqueId == null) {
-            VdsInstaller.UpdateUniqueId(getStrippedVdsUniqueId());
             _vdssByUniqueId = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(getStrippedVdsUniqueId());
         }
         return _vdssByUniqueId;
@@ -106,6 +105,21 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 returnValue.setExceptionString("Cannot register Host - no Hostname address specified.");
                 return false;
             }
+
+            String vdsUniqueId = getParameters().getVdsUniqueId();
+            if (StringUtils.isEmpty(vdsUniqueId)) {
+                returnValue.setExceptionString(
+                    String.format(
+                        "Cannot register host '%1$s' - host id is empty.",
+                        hostName
+                    )
+                );
+                AuditLogableBase logable = new AuditLogableBase();
+                logable.AddCustomValue("VdsHostName", hostName);
+                AuditLogDirector.log(logable, AuditLogType.VDS_REGISTER_EMPTY_ID);
+                return false;
+            }
+
             List<VDS> vdssByUniqueId = getVdssByUniqueId();
             if (vdssByUniqueId.size() > 1) {
                 returnValue.setExceptionString("Cannot register Host - unique id is ambigious.");

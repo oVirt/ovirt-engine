@@ -20,6 +20,7 @@ public class VdsInstallHelper{
 
     private VdsInstallerSSH wrapper;
     private SimpleCallback callback;
+    private String server;
 
     public VdsInstallHelper() {
         callback = new SimpleCallback();
@@ -28,6 +29,7 @@ public class VdsInstallHelper{
     }
 
     public boolean connectToServer(String server, String passwd, long timeout) {
+        this.server = server;
         return wrapper.connect(server, passwd, timeout);
     }
 
@@ -35,7 +37,16 @@ public class VdsInstallHelper{
         wrapper.executeCommand(
             Config.<String> GetValue(ConfigValues.BootstrapNodeIDCommand)
         );
-        return callback.serverUniqueId;
+        String serverUniqueId = callback.serverUniqueId.trim();
+        if (serverUniqueId.isEmpty()) {
+            throw new RuntimeException(
+                String.format(
+                    "Got empty unique id from host '%1$s'",
+                    server
+                )
+            );
+        }
+        return serverUniqueId;
     }
 
     public void shutdown() {

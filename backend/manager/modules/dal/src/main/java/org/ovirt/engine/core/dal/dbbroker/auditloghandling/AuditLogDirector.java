@@ -193,6 +193,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAMES_ALL_TAKEN, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_REGISTER_NAME_IS_ACTIVE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_REGISTER_AUTO_APPROVE_PATTERN, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.VDS_REGISTER_EMPTY_ID, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_REGISTER_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_REGISTER_SUCCEEDED, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_REGISTER_EXISTING_VDS_UPDATE_FAILED, AuditLogSeverity.ERROR);

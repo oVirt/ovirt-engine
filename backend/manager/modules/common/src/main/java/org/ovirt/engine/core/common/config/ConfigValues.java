@@ -1401,24 +1401,22 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(
+        "IDFILE=/etc/vdsm/vdsm.id; " +
+        "if [ -r \"${IDFILE}\" ]; then " +
+            "cat \"${IDFILE}\"; " +
+        "else " +
             "UUID=\"$(" +
                 "dmidecode -s system-uuid 2> /dev/null | " +
                 "sed -e 's/.*Not.*//' " +
             ")\"; " +
-            "MAC=$(" +
-                "(" +
-                    "find /sys/class/net/*/device | while read f; do " +
-                        "cat \"$(dirname \"$f\")/address\" 2> /dev/null; " +
-                    "done; " +
-                    "[ -d /proc/net/bonding ] && " +
-                        "find /proc/net/bonding -type f -exec cat '{}' \\; | " +
-                        "grep 'Permanent HW addr:' | " +
-                        "sed 's/.* //'" +
-                ") | sed -e '/00:00:00:00/d' -e '/^$/d' | " +
-                "sed -e '/00:00:00:00/d' -e '/^$/d' | " +
-                "sort -u | head -n 1" +
-           "); " +
-           "echo \"${UUID}_${MAC}\""
+            "if [ -z \"${UUID}\" ]; then " +
+                "UUID=\"$(uuidgen 2> /dev/null)\" && " +
+                "mkdir -p \"$(dirname \"${IDFILE}\")\" && " +
+                "echo \"${UUID}\" > \"${IDFILE}\" && " +
+                "chmod 0644 \"${IDFILE}\"; " +
+            "fi; " +
+            "[ -n \"${UUID}\" ] && echo \"${UUID}\"; " +
+        "fi"
     )
     BootstrapNodeIDCommand(372),
 

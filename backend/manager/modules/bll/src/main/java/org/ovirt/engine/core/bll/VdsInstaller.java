@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -304,6 +303,13 @@ public class VdsInstaller implements IVdsInstallerCallback {
             _wrapper.executeCommand(
                 Config.<String> GetValue(ConfigValues.BootstrapNodeIDCommand)
             );
+            if (!_executionSucceded) {
+                log.errorFormat(
+                    "Get unique id of '{0}' failed, may be due to empty node id (Stage: {1})",
+                    _serverName,
+                    getCurrentInstallStage()
+                );
+            }
             break;
         }
         case UploadScript: {
@@ -483,22 +489,17 @@ public class VdsInstaller implements IVdsInstallerCallback {
 
     }
 
-    // for backward compatibility we update the old id to new id
-    // new id: BoardId_MacAddress
-    // old id: BoardId
-    public static void UpdateUniqueId(String id) {
-        String uniqueId = (id.indexOf('_') > 0) ? id.substring(0, id.indexOf('_')) : id;
-        List<VDS> list = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(uniqueId);
-        if (list.size() > 0 && !id.equals(uniqueId)) {
-            // save the new format of uniqueid
-            list.get(0).setUniqueId(id);
-            DbFacade.getInstance().getVdsStaticDao().update(list.get(0).getStaticData());
-        }
-    }
-
     private boolean InsertUniqueId(String message) {
-        String uniqueId = message.trim();
-        UpdateUniqueId(uniqueId);
+        String uniqueId = message == null ? "" : message.trim();
+
+        if (StringUtils.isEmpty(uniqueId)) {
+            log.errorFormat(
+                "Got empty unique id for host '{0}'. (Stage: {1})",
+                _serverName,
+                getCurrentInstallStage()
+            );
+            return false;
+        }
 
         if (VdsInstallHelper.isVdsUnique(_vds.getId(), uniqueId)) {
             log.infoFormat("Installation of {0}. Assigning unique id {1} to Host. (Stage: {2})", _serverName, uniqueId,
