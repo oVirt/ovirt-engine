@@ -370,6 +370,13 @@ def isTcpPortOpen(port):
             logging.debug("TCP port %s is open by process %s, PID %s" % (port, process, pid))
     return (answer, process, pid)
 
+def getPgPassEnv():
+    # .pgpass definition
+    if os.path.exists(basedefs.DB_PASS_FILE):
+        return { "PGPASSFILE" : basedefs.DB_PASS_FILE }
+    else:
+        raise Exception(output_messages.ERR_PGPASS)
+
 def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_CODE, maskList=[], useShell=False, usePipeFiles=False, envDict=None):
     """
     Run external shell command with 'shell=false'
@@ -391,10 +398,8 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
         (stdOutFD, stdOutFile) = tempfile.mkstemp(dir="/tmp")
         (stdInFD, stdInFile) = tempfile.mkstemp(dir="/tmp")
 
-    # Update os.environ with env if provided
+    # Copy os.environ and update with envDict if provided
     env = os.environ.copy()
-    if not "PGPASSFILE" in env.keys():
-        env["PGPASSFILE"] = basedefs.DB_PASS_FILE
     env.update(envDict or {})
 
     # We use close_fds to close any file descriptors we have so it won't be copied to forked childs
@@ -428,9 +433,7 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
         raise Exception(msg)
     return ("".join(output.splitlines(True)), proc.returncode)
 
-#TODO: refactor this and previous functions into same execution.
 def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
-    env = { "PGPASSFILE" : basedefs.DB_PASS_FILE }
     logging.debug("running sql query '%s' on db server: \'%s\'." % (sqlQuery, dbHost))
     cmd = [
         basedefs.EXEC_PSQL,
@@ -440,7 +443,7 @@ def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError
         "-d", dbName,
         "-c", sqlQuery,
     ]
-    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=env)
+    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=getPgPassEnv())
 
 def parseRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
     ret = []
@@ -714,9 +717,9 @@ def getDbConfig(param, user=None):
 
     inDbAdminSection = False
     inDbUserSection = False
-    if (os.path.exists(basedefs.DB_PASS_FILE)):
-        logging.debug("found existing pgpass file, fetching DB %s value" % param)
-        with open (basedefs.DB_PASS_FILE) as pgPassFile:
+    if os.path.exists(basedefs.DB_PASS_FILE):
+        logging.debug("found existing pgpass file %s, fetching DB %s value", basedefs.DB_PASS_FILE, param)
+        with open(basedefs.DB_PASS_FILE, 'r') as pgPassFile:
             for line in pgPassFile:
 
                 # find the line with "DB ADMIN"
@@ -725,18 +728,18 @@ def getDbConfig(param, user=None):
                     continue
 
                 if inDbAdminSection and param == "admin" and \
-                   not line.startswith("#"):
-                    # Means we're on DB ADMIN line, as it's for all DBs
-                    dbcreds = line.split(":", 4)
-                    return dbcreds[field[param]]
+                    not line.startswith("#"):
+                        # Means we're on DB ADMIN line, as it's for all DBs
+                        dbcreds = line.split(":", 4)
+                        return dbcreds[field[param]]
 
                 # Fetch the password if needed
                 if param == "password" \
-                   and user \
-                   and not line.startswith("#"):
-                    dbcreds = line.split(":", 4)
-                    if dbcreds[3] == user:
-                        return dbcreds[field[param]]
+                    and user \
+                    and not line.startswith("#"):
+                        dbcreds = line.split(":", 4)
+                        if dbcreds[3] == user:
+                            return dbcreds[field[param]]
 
                 # find the line with "DB USER"
                 if basedefs.PGPASS_FILE_USER_LINE in line:
@@ -776,7 +779,7 @@ def backupDB(db, user, backupFile, host="localhost", port="5432"):
         "-p", port,
         db,
     ]
-    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_BACKUP)
+    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_BACKUP, envDict=getPgPassEnv())
     logging.debug("%s DB Backup completed successfully"%(db))
 
 def restoreDB(user, host, port, backupFile):
@@ -799,7 +802,8 @@ def restoreDB(user, host, port, backupFile):
         "-d", basedefs.DB_POSTGRES,
         "-f", backupFile,
     ]
-    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_RESTORE)
+
+    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_RESTORE, envDict=getPgPassEnv())
     logging.debug("DB Restore completed successfully")
 
 def renameDB(oldname, newname):
@@ -962,7 +966,7 @@ def clearDbConnections(dbName):
         "-U", getDbAdminUser(),
         "-c", query,
     ]
-    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_BLOCK)
+    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_BLOCK, envDict=getPgPassEnv())
 
     # Disconnect active connections
     logging.info("Disconnect active connections from DB '%s'" % dbName)
@@ -972,7 +976,7 @@ def clearDbConnections(dbName):
         "-U", getDbAdminUser(),
         "-c", query,
     ]
-    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_CLEAR)
+    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_CLEAR, envDict=getPgPassEnv())
 
 def listTempDbs():
     """ Create a list of temp DB's on the server with regex 'engine_*' """
@@ -985,7 +989,7 @@ def listTempDbs():
         "-p", getDbPort(),
         "--list",
     ]
-    output, rc = execCmd(cmdList=cmd, msg=output_messages.ERR_DB_TEMP_LIST)
+    output, rc = execCmd(cmdList=cmd, msg=output_messages.ERR_DB_TEMP_LIST, envDict=getPgPassEnv())
     if rc:
         logging.error(output_messages.ERR_DB_TEMP_LIST)
         raise Exception ("\n" + output_messages.ERR_DB_TEMP_LIST + "\n")

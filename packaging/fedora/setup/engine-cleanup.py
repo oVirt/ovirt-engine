@@ -263,6 +263,7 @@ class DB():
     def __init__(self):
         self.sqlfile = tempfile.mkstemp(suffix=".sql", dir=basedefs.DIR_DB_BACKUPS)[1]
         self.dropped = False
+        self.env = utils.getPgPassEnv()
 
     def __del__(self):
         if self.dropped:
@@ -280,7 +281,6 @@ class DB():
         logging.debug("DB Backup started")
 
         # .pgpass update
-        env = {"PGPASSFILE" : basedefs.DB_PASS_FILE}
         cmd = [
             basedefs.EXEC_PGDUMP,
             "-C", "-E", "UTF8",
@@ -294,7 +294,7 @@ class DB():
             "-f", self.sqlfile,
             basedefs.DB_NAME,
         ]
-        utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB, envDict=env)
+        utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB, envDict=self.env)
         logging.debug("DB Backup completed successfully")
 
     def drop(self):
@@ -310,7 +310,6 @@ class DB():
         # Drop DBs - including the tempoarary ones created during upgrade operations
         # go over all dbs in the list of temp DBs and remove them
         for dbname in utils.listTempDbs():
-            env = {"PGPASSFILE" : basedefs.DB_PASS_FILE}
             cmd = [
                 basedefs.EXEC_DROPDB,
                 "-w",
@@ -319,7 +318,7 @@ class DB():
                 "-p", DB_PORT,
                 dbname,
             ]
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=False, msg=MSG_ERROR_DROP_DB, envDict=env)
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=False, msg=MSG_ERROR_DROP_DB, envDict=self.env)
             if rc:
                 logging.error(MSG_ERROR_DROP_DB % dbname)
                 raise Exception(MSG_ERROR_DROP_DB % dbname)
@@ -352,7 +351,13 @@ class DB():
             # If we're here, it means something is wrong, either there is a real db error
             # or the db is not installed, let's check
             logging.debug("checking if db is already installed..")
-            out, rc = utils.execRemoteSqlCommand(DB_ADMIN, DB_HOST, DB_PORT, basedefs.DB_NAME, "select 1")
+            out, rc = utils.execRemoteSqlCommand(
+                userName=DB_ADMIN,
+                dbHost=DB_HOST,
+                dbPort=DB_PORT,
+                dbName=basedefs.DB_NAME,
+                sqlQuery="select 1",
+            )
             if rc != 0:
                 if utils.verifyStringFormat(out,".*FATAL:\s*database\s*\"%s\"\s*does not exist" % (PREFIX)):
                     # This means that the db is not installed, so we return false

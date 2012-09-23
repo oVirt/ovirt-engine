@@ -333,6 +333,7 @@ class DB():
         self.dbrenamed = False
         self.name = basedefs.DB_NAME
 
+
     def __del__(self):
         if self.updated:
             logging.debug(MSG_INFO_DB_BACKUP_FILE + self.sqlfile)
@@ -356,7 +357,7 @@ class DB():
             "-f", self.sqlfile,
             basedefs.DB_NAME,
         ]
-        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB)
+        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB, envDict=utils.getPgPassEnv())
         logging.debug("DB Backup completed successfully")
 
     def restore(self):
@@ -376,9 +377,6 @@ class DB():
             ]
             output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_DROP_DB)
 
-            # .pgpass definition
-            env = { "PGPASSFILE" : basedefs.DB_PASS_FILE }
-
             # Restore
             cmd = [
                 basedefs.EXEC_PSQL,
@@ -388,7 +386,7 @@ class DB():
                 "-d", basedefs.DB_TEMPLATE,
                 "-f", self.sqlfile,
             ]
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB, envDict=env)
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB, envDict=utils.getPgPassEnv())
             logging.debug("DB Restore completed successfully")
         else:
             logging.debug("No DB Restore needed")
@@ -646,23 +644,23 @@ def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION):
     """
     queryCheckDCVersions="SELECT compatibility_version FROM storage_pool;"
     dcVersions, rc = utils.execRemoteSqlCommand(
-        SERVER_ADMIN,
-        SERVER_NAME,
-        SERVER_PORT,
-        basedefs.DB_NAME,
-        queryCheckDCVersions,
-        True,
-        MSG_ERROR_CONNECT_DB,
+        userName=SERVER_ADMIN,
+        dbHost=SERVER_NAME,
+        dbPort=SERVER_PORT,
+        dbName=basedefs.DB_NAME,
+        sqlQuery=queryCheckDCVersions,
+        failOnError=True,
+        errMsg=MSG_ERROR_CONNECT_DB,
     )
     queryCheckClusterVersions="SELECT compatibility_version FROM vds_groups;"
     clusterVersions, rc = utils.execRemoteSqlCommand(
-        SERVER_ADMIN,
-        SERVER_NAME,
-        SERVER_PORT,
-        basedefs.DB_NAME,
-        queryCheckClusterVersions,
-        True,
-        MSG_ERROR_CONNECT_DB
+        userName=SERVER_ADMIN,
+        dbHost=SERVER_NAME,
+        dbPort=SERVER_PORT,
+        dbName=basedefs.DB_NAME,
+        sqlQuery=queryCheckClusterVersions,
+        failOnError=True,
+        errMsg=MSG_ERROR_CONNECT_DB,
     )
 
     for versions in dcVersions, clusterVersions:

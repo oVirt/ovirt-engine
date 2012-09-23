@@ -200,8 +200,16 @@ WARN_INSTALL_GPG_KEY = (
 # Ping failed
 ERR_PING = "Error: the provided hostname is unreachable"
 
-# Error creating temp pgpass file
+# Errors with pgpass file
 ERR_BACKUP_PGPASS = "Error: Failed to backup pgpass to temp file %s. Check file permissions."
+ERR_PGPASS = (
+    "Error: DB password file was not found on this system. Verify "
+    "that this system was previously installed and that there's a "
+    "password file at %s or %s" % (
+        basedefs.DB_PASS_FILE,
+        basedefs.ORIG_PASS_FILE
+    )
+)
 
 #runFunction
 ERR_EXP_RUN_FUNCTION="Internal error, Please report this issue"
