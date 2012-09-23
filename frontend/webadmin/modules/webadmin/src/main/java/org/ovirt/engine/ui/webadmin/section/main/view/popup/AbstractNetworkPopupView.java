@@ -152,6 +152,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public void postModelEnabled(boolean enabled) {
           messageLabel.setVisible(!enabled);
+          setApplyEnabled(!enabled);
     }
 
     @Override
