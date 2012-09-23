@@ -1007,6 +1007,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void processExceptionToClient(VdcFault fault) {
         fault.setSessionID(getParameters().getSessionId());
+        _returnValue.getExecuteFailedMessages().add(fault.getError().name());
         _returnValue.setFault(fault);
     }
 
