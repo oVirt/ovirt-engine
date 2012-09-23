@@ -651,6 +651,10 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.MAC_ADDRESS_IS_IN_USE, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_NETWORKS_OUT_OF_SYNC, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.NETWORK_ACTIVATE_VM_INTERFACE_SUCCESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.NETWORK_ACTIVATE_VM_INTERFACE_FAILURE, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_SUCCESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_FAILURE, AuditLogSeverity.ERROR);
     }
 
     private static void initConfigSeverities() {

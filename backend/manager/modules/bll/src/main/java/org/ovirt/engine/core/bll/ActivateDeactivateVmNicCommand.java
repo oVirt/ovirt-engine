@@ -3,18 +3,21 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -26,6 +29,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
     private VmDevice vmDevice;
+    private VmNetworkInterface vmNetworkInterface;
 
     public ActivateDeactivateVmNicCommand(T parameters) {
         super(parameters);
@@ -53,7 +57,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
         if (returnValue) {
             vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNicId(), getParameters().getVmId()));
-            if (vmDevice == null) {
+            vmNetworkInterface = getVmNetworkInterfaceDao().get(getParameters().getNicId());
+            if (vmDevice == null || vmNetworkInterface == null) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
             }
@@ -69,6 +74,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Override
     protected void executeVmCommand() {
+        AddCustomValue("InterfaceName", vmNetworkInterface.getName());
+        AddCustomValue("InterfaceType", VmInterfaceType.forValue(vmNetworkInterface.getType())
+                .getInterfaceTranslation());
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getstatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),
@@ -102,6 +110,17 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
 
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        if (getParameters().getAction() == PlugAction.PLUG) {
+            return getSucceeded() ? AuditLogType.NETWORK_ACTIVATE_VM_INTERFACE_SUCCESS
+                    : AuditLogType.NETWORK_ACTIVATE_VM_INTERFACE_FAILURE;
+        } else {
+            return getSucceeded() ? AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_SUCCESS
+                    : AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_FAILURE;
+        }
+    }
+
     private boolean activateDeactivateVmNicAllowed(VMStatus vmStatus) {
         return vmStatus == VMStatus.Up || vmStatus == VMStatus.Down;
     }
@@ -120,6 +139,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     protected InterfaceDAO getInterfaceDAO() {
         return getDbFacade().getInterfaceDao();
+    }
+
+    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
+        return getDbFacade().getVmNetworkInterfaceDao();
     }
 
     private boolean hotPlugVmNicRequired(VMStatus vmStatus) {
