@@ -130,6 +130,13 @@ public class QuotaManager {
             List<StorageQuotaValidationParameter> parameters) {
         lock.readLock().lock();
         try {
+            if (storagePool == null){
+                log.debug("Null storage pool was passed to 'QuotaManager.decreaseStorageQuota()'");
+                if (parameters.isEmpty() || parameters.get(0).getQuotaId() == null) {
+                    return;
+                }
+                storagePool = extractStoragePoolFromQuota(parameters.get(0).getQuotaId());
+            }
             if (!storagePoolQuotaMap.containsKey(storagePool.getId())) {
                 return;
             }
@@ -625,11 +632,28 @@ public class QuotaManager {
         return false;
     }
 
+    /**
+     * This will create a new storage_pool object and set its ID and QuotaEnforcementType.
+     * If the quota was located in the DB these values will be taken from the quota. If not
+     * these values will be set ID=Guid.Empty, QuotaEnforcementType=DISABLED.
+     *
+     * Notice: The storage_pool object is not the full object obtained from DB but only a synthetic
+     * object to hold this two fields.
+     *
+     * @param quotaId - the id of the quota to locate in DB
+     * @return - the new synthetic storage_pool
+     */
     private storage_pool extractStoragePoolFromQuota(Guid quotaId) {
-        storage_pool storagePool;Quota quota = getQuotaDAO().getById(quotaId);
+        storage_pool storagePool;
+        Quota quota = getQuotaDAO().getById(quotaId);
         storagePool = new storage_pool();
-        storagePool.setId(quota.getStoragePoolId());
-        storagePool.setQuotaEnforcementType(quota.getQuotaEnforcementType());
+        if (quota != null){
+            storagePool.setId(quota.getStoragePoolId());
+            storagePool.setQuotaEnforcementType(quota.getQuotaEnforcementType());
+        } else {
+            storagePool.setId(Guid.Empty);
+            storagePool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.DISABLED);
+        }
         return storagePool;
     }
 }
