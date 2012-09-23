@@ -12,7 +12,21 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.Timer;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+/**
+ * The GridTimer holds information about the current refresh rate.
+ * The GridTimer can work in one of two modes:
+ *  1. Normal mode - in this mode the rate will be determined by selecting one out
+ *     of 5 intervals (5,10,20,30,60 sec).
+ *  2. Fast-Forward mode - in this mode the timer enters a cycle:
+ *              - 3  fast (2 sec) refresh rotations
+ *              - 30 medium (4 sec) refresh rotations
+ *              - 3  slow (8 sec) refresh rotations
+ *     After completing the cycle the GridTimer will return to Normal mode (with the last set
+ *     refresh rate). This mode is triggered by the fastForward() method. each call reset the cycle
+ *     to the start point.
+ */
 public abstract class GridTimer extends Timer implements HasValueChangeHandlers<String> {
 
     private enum RATE {
@@ -144,13 +158,18 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
     }
 
     /**
-     * get the refresh rate in seconds
+     * Get the refresh rate
+     * @return refresh rate in milliseconds
      */
     public int getRefreshRate() {
         RATE rate = rateCycle[currentRate];
         return rate == RATE.NORMAL ? normalInterval : rate.getInterval();
     }
 
+    /**
+     * Is this GridTimer currently running on Fast-Forward mode
+     * @return - true if running in Fast-Forward mode. false otherwise.
+     */
     public boolean isFastForwarding() {
         return rateCycle[currentRate] != RATE.NORMAL;
     }
@@ -224,8 +243,9 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
     }
 
     private String getValue() {
-        return (isActive() ? "Refresh Status: Active(" : "Inactive(") + (isPaused() ? "paused)" : "running)") + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                + " Rate: " + rateCycle[currentRate] + "(" + getRefreshRate() / 1000 + " sec)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        logger.fine((isActive() ? "Refresh Status: Active(" : "Inactive(") + (isPaused() ? "paused)" : "running)") + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                + " Rate: " + rateCycle[currentRate] + "(" + getRefreshRate() / 1000 + " sec)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$); }
+        return ConstantsManager.getInstance().getMessages().refreshInterval(getRefreshRate() / 1000);
     }
 
     private void doStop() {

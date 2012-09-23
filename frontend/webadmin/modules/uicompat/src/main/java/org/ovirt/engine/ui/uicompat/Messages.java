@@ -161,4 +161,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("The max allowed num of VMs is {0} when the length of the pool name is {1}")
     String numOfVmsInPoolInvalod(int maxLength, int vmsInPool);
+
+    @DefaultMessage("Refresh Interval: {0} sec")
+    String refreshInterval(int intervalSec);
 }
