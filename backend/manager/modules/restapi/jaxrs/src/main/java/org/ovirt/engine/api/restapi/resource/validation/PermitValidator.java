@@ -5,6 +5,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
+import org.ovirt.engine.api.restapi.types.PermitMapper;
 
 import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
@@ -20,7 +21,8 @@ public class PermitValidator implements Validator<Permit> {
             if (permit.isSetId()) {
                 boolean valid = false;
                 for (PermitType permitType : PermitType.values()) {
-                    if (permitType.getId() == Integer.valueOf(permit.getId())) {
+                    Permit mappedPermit = PermitMapper.map(permitType, (Permit)null);
+                    if (mappedPermit != null && mappedPermit.getId().equals(permit.getId())) {
                         valid = true;
                         break;
                     }

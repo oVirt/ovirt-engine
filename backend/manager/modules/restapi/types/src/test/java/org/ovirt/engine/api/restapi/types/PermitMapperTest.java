@@ -18,7 +18,7 @@ public class PermitMapperTest extends AbstractInvertibleMappingTest<Permit, Acti
         from.setId(Integer.toString(actionGroup.getId()));
         PermitType permitType = PermitMapper.map(actionGroup, (PermitType)null);
         from.setName(permitType.value());
-        from.setAdministrative(permitType.getRole()==RoleType.ADMIN);
+        from.setAdministrative(actionGroup.getRoleType().toString().equals(RoleType.ADMIN.toString()));
         return from;
     }
 

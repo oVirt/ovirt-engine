@@ -18,98 +18,83 @@ package org.ovirt.engine.api.model;
 
 
 public enum PermitType {
-    CREATE_VM(1, RoleType.USER),
-    DELETE_VM(2, RoleType.USER),
-    EDIT_VM_PROPERTIES(3, RoleType.USER),
-    VM_BASIC_OPERATIONS(4, RoleType.USER),
-    CHANGE_VM_CD(5, RoleType.USER),
-    MIGRATE_VM(6, RoleType.USER),
-    CONNECT_TO_VM(7, RoleType.USER),
-    IMPORT_EXPORT_VM(8, RoleType.ADMIN),
-    CONFIGURE_VM_NETWORK(9, RoleType.USER),
-    CONFIGURE_VM_STORAGE(10, RoleType.USER),
-    MOVE_VM(11, RoleType.USER),
-    MANIPULATE_VM_SNAPSHOTS(12, RoleType.USER),
-    RECONNECT_TO_VM(13, RoleType.ADMIN),
-    CHANGE_VM_CUSTOM_PROPERTIES(14, RoleType.ADMIN),
+    CREATE_VM,
+    DELETE_VM,
+    EDIT_VM_PROPERTIES,
+    VM_BASIC_OPERATIONS,
+    CHANGE_VM_CD,
+    MIGRATE_VM,
+    CONNECT_TO_VM,
+    IMPORT_EXPORT_VM,
+    CONFIGURE_VM_NETWORK,
+    CONFIGURE_VM_STORAGE,
+    MOVE_VM,
+    MANIPULATE_VM_SNAPSHOTS,
+    RECONNECT_TO_VM,
+    CHANGE_VM_CUSTOM_PROPERTIES,
     // host (vds) actions groups
-    CREATE_HOST(100, RoleType.ADMIN),
-    EDIT_HOST_CONFIGURATION(101, RoleType.ADMIN),
-    DELETE_HOST(102, RoleType.ADMIN),
-    MANIPUTLATE_HOST(103, RoleType.ADMIN),
-    CONFIGURE_HOST_NETWORK(104, RoleType.ADMIN),
+    CREATE_HOST,
+    EDIT_HOST_CONFIGURATION,
+    DELETE_HOST,
+    MANIPUTLATE_HOST,
+    CONFIGURE_HOST_NETWORK,
     // templates actions groups
-    CREATE_TEMPLATE(200, RoleType.USER),
-    EDIT_TEMPLATE_PROPERTIES(201, RoleType.USER),
-    DELETE_TEMPLATE(202, RoleType.USER),
-    COPY_TEMPLATE(203, RoleType.USER),
-    CONFIGURE_TEMPLATE_NETWORK(204, RoleType.USER),
+    CREATE_TEMPLATE,
+    EDIT_TEMPLATE_PROPERTIES,
+    DELETE_TEMPLATE,
+    COPY_TEMPLATE,
+    CONFIGURE_TEMPLATE_NETWORK,
     // vm pools actions groups
-    CREATE_VM_POOL(300, RoleType.USER),
-    EDIT_VM_POOL_CONFIGURATION(301, RoleType.USER),
-    DELETE_VM_POOL(302, RoleType.USER),
-    VM_POOL_BASIC_OPERATIONS(303, RoleType.USER),
+    CREATE_VM_POOL,
+    EDIT_VM_POOL_CONFIGURATION,
+    DELETE_VM_POOL,
+    VM_POOL_BASIC_OPERATIONS,
     // clusters actions groups
-    CREATE_CLUSTER(400, RoleType.ADMIN),
-    EDIT_CLUSTER_CONFIGURATION(401, RoleType.ADMIN),
-    DELETE_CLUSTER(402, RoleType.ADMIN),
-    CONFIGURE_CLUSTER_NETWORK(403, RoleType.ADMIN),
+    CREATE_CLUSTER,
+    EDIT_CLUSTER_CONFIGURATION,
+    DELETE_CLUSTER,
+    CONFIGURE_CLUSTER_NETWORK,
     // users and MLA actions groups
-    MANIPULATE_USERS(500, RoleType.ADMIN),
-    MANIPULATE_ROLES(501, RoleType.ADMIN),
-    MANIPULATE_PERMISSIONS(502, RoleType.USER),
+    MANIPULATE_USERS,
+    MANIPULATE_ROLES,
+    MANIPULATE_PERMISSIONS,
     // storage domains actions groups
-    CREATE_STORAGE_DOMAIN(600, RoleType.ADMIN),
-    EDIT_STORAGE_DOMAIN_CONFIGURATION(601, RoleType.ADMIN),
-    DELETE_STORAGE_DOMAIN(602, RoleType.ADMIN),
-    MANIPULATE_STORAGE_DOMAIN(603, RoleType.ADMIN),
+    CREATE_STORAGE_DOMAIN,
+    EDIT_STORAGE_DOMAIN_CONFIGURATION,
+    DELETE_STORAGE_DOMAIN,
+    MANIPULATE_STORAGE_DOMAIN,
     // storage pool actions groups
-    CREATE_STORAGE_POOL(700, RoleType.ADMIN),
-    DELETE_STORAGE_POOL(701, RoleType.ADMIN),
-    EDIT_STORAGE_POOL_CONFIGURATION(702, RoleType.ADMIN),
-    CONFIGURE_STORAGE_POOL_NETWORK(703, RoleType.ADMIN),
+    CREATE_STORAGE_POOL,
+    DELETE_STORAGE_POOL,
+    EDIT_STORAGE_POOL_CONFIGURATION,
+    CONFIGURE_STORAGE_POOL_NETWORK,
 
     // rhevm generic
-    CONFIGURE_RHEVM(800, RoleType.ADMIN),
+    CONFIGURE_RHEVM,
 
     // Quota
-    CONFIGURE_QUOTA(900, RoleType.ADMIN),
-    CONSUME_QUOTA(901, RoleType.USER),
+    CONFIGURE_QUOTA,
+    CONSUME_QUOTA,
 
     // Gluster
-    CREATE_GLUSTER_VOLUME(1000, RoleType.ADMIN),
-    MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN),
-    DELETE_GLUSTER_VOLUME(1002, RoleType.ADMIN),
+    CREATE_GLUSTER_VOLUME,
+    MANIPULATE_GLUSTER_VOLUME,
+    DELETE_GLUSTER_VOLUME,
 
     // Disks action groups
-    CREATE_DISK(1100, RoleType.USER),
-    ATTACH_DISK(1101, RoleType.USER),
-    EDIT_DISK_PROPERTIES(1102, RoleType.USER),
-    CONFIGURE_DISK_STORAGE(1103, RoleType.USER),
-    DELETE_DISK(1104, RoleType.USER),
+    CREATE_DISK,
+    ATTACH_DISK,
+    EDIT_DISK_PROPERTIES,
+    CONFIGURE_DISK_STORAGE,
+    DELETE_DISK,
 
     // Vm Interface action groups
-    PORT_MIRRORING(1104, RoleType.ADMIN),
+    PORT_MIRRORING,
 
     // Login action group
-    LOGIN(1300, RoleType.USER);
-
-    private int id;
-    private RoleType role;
-    private PermitType(int id, RoleType role) {
-        this.id = id;
-        this.role = role;
-    }
+    LOGIN;
 
     public String value() {
         return name().toLowerCase();
-    }
-
-    public RoleType getRole() {
-        return role;
-    }
-
-    public int getId() {
-        return id;
     }
 }
