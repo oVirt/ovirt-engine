@@ -166,7 +166,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
 
-        setDefaultSearchString("Disks:"); //$NON-NLS-1$
+        setDefaultSearchString("Disks: disk_type = image"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.DISK_OBJ_NAME, SearchObjects.DISK_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);

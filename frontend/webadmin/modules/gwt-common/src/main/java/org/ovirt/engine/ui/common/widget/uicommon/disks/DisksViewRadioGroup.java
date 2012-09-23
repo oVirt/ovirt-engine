@@ -39,7 +39,7 @@ public class DisksViewRadioGroup extends Composite {
         buttonsPanel.add(imagesButton);
         buttonsPanel.add(lunsButton);
 
-        allButton.setValue(true);
+        setDiskStorageType(DiskStorageType.IMAGE);
         localize(constants);
 
         return buttonsPanel;

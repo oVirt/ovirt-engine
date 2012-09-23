@@ -51,16 +51,12 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         initTableOverhead();
         initWidget(getTable());
 
-        handleRadioButtonClick(null);
-
         modelProvider.getModel().getDiskViewType().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 EntityModel diskViewType = (EntityModel) sender;
-                if (!disksViewRadioGroup.getAllButton().getValue()) {
-                    disksViewRadioGroup.getAllButton().setValue(diskViewType.getEntity() == null);
-                    handleRadioButtonClick(null);
-                }
+                disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
+                onDiskViewTypeChanged();
             }
         });
     }
@@ -69,17 +65,16 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         @Override
         public void onClick(ClickEvent event) {
             if (((RadioButton) event.getSource()).getValue()) {
-                handleRadioButtonClick(event);
+                getMainModel().getDiskViewType().setEntity(disksViewRadioGroup.getDiskStorageType());
             }
         }
     };
 
-    void handleRadioButtonClick(ClickEvent event) {
+    void onDiskViewTypeChanged() {
         boolean all = disksViewRadioGroup.getAllButton().getValue();
         boolean images = disksViewRadioGroup.getImagesButton().getValue();
         boolean luns = disksViewRadioGroup.getLunsButton().getValue();
 
-        getMainModel().getDiskViewType().setEntity(disksViewRadioGroup.getDiskStorageType());
         searchByDiskViewType(disksViewRadioGroup.getDiskStorageType());
 
         getTable().ensureColumnPresent(

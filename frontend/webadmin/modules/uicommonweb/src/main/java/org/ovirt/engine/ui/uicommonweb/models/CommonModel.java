@@ -1043,7 +1043,8 @@ public class CommonModel extends ListModel
                 }
                 else if (diskList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Disk: datacenter.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue =
+                            StringFormat.format("Disk: datacenter.name = %1$s and disk_type = image", model.getTitle()); //$NON-NLS-1$
                 }
                 else if (quotaList.IsSearchStringMatch(source)) {
                     prefix.argvalue = StringFormat.format("Quota: storagepoolname = %1$s", model.getTitle()); //$NON-NLS-1$
