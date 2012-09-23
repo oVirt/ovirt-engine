@@ -108,10 +108,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                         activateParameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         if (!activateVmNicReturnValue.getSucceeded()) {
-            getReturnValue().getExecuteFailedMessages().add("Failed activating nic.");
-            getReturnValue().getCanDoActionMessages().addAll(activateVmNicReturnValue.getCanDoActionMessages());
-            getReturnValue().getCanDoActionMessages().remove(VdcBllMessages.VAR__ACTION__ADD.name());
-            getReturnValue().setCanDoAction(false);
+            propagateFailure(activateVmNicReturnValue);
         }
         return activateVmNicReturnValue.getSucceeded();
     }
@@ -267,5 +264,12 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                     ActionGroup.PORT_MIRRORING));
         }
         return permissionList;
+    }
+
+    private void propagateFailure(VdcReturnValueBase internalReturnValue) {
+        getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
+        getReturnValue().setFault(internalReturnValue.getFault());
+        getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
+        getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
     }
 }

@@ -43,6 +43,8 @@ public enum VdcBllErrors {
     FailedToUnPlugDisk(46),
     MIGRATION_CANCEL_ERROR(47),
     SNAPSHOT_FAILED(48),
+    ACTIVATE_NIC_FAILED(49),
+    DEACTIVATE_NIC_FAILED(50),
     recovery(99),
     GeneralException(100),
     StorageException(200),
