@@ -21,9 +21,11 @@ import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,6 +35,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 /**
  * Initialize Vds on its loading. For storages: First connect all storage
@@ -40,6 +43,7 @@ import org.ovirt.engine.core.dao.InterfaceDAO;
  *
  * After server initialized - its will be moved to Up status.
  */
+@SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
     private boolean _fencingSucceeded = true;
@@ -130,10 +134,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                 _connectStorageSucceeded = true;
                 try {
                     setStoragePool(null);
-                    returnValue = _connectPoolSucceeded = Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
+                    returnValue = _connectPoolSucceeded = runVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
                                     new ConnectStoragePoolVDSCommandParameters(getVds().getId(), getVds()
                                             .getstorage_pool_id(), getVds().getvds_spm_id(), getMasterDomainIdFromDb(),
@@ -143,6 +144,13 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                             .getname());
                     returnValue = false;
                 }
+                if(returnValue) {
+                    returnValue = proceedVdsStats();
+                    if(!returnValue) {
+                        AuditLogDirector.log(new AuditLogableBase(getVdsId()),
+                                AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
+                    }
+                }
                 // if couldn't connect check if this is the only vds
                 // return true if connect succeeded or it's the only vds
                 if (!returnValue && suppressCheck) {
@@ -151,6 +159,26 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                     returnValue = true;
                 }
             }
+        }
+        return returnValue;
+    }
+
+    protected boolean proceedVdsStats() {
+        boolean returnValue = true;
+        try {
+            runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+            if (IrsBrokerCommand.isDomainsReportedAsProblematic(getVds().getstorage_pool_id(), getVds().getDomains())) {
+                log.errorFormat("One of the Storage Domains of host {0} in pool {1} is problematic",
+                        getVds().getvds_name(),
+                        getStoragePool()
+                                .getname());
+                returnValue = false;
+            }
+        } catch (VdcBLLException e) {
+            log.errorFormat("Could not get Host statistics for Host {0}, Error is {1}",
+                    getVds().getvds_name(),
+                    e);
+            returnValue = false;
         }
         return returnValue;
     }

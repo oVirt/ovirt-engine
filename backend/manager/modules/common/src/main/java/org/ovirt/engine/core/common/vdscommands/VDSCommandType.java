@@ -5,6 +5,7 @@ public enum VDSCommandType {
     RemoveVds("org.ovirt.engine.core.vdsbroker"),
     ActivateVds("org.ovirt.engine.core.vdsbroker"),
     FenceVds("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CreateVm("org.ovirt.engine.core.vdsbroker"),
     DestroyVm("org.ovirt.engine.core.vdsbroker"),
     Pause("org.ovirt.engine.core.vdsbroker.vdsbroker"),

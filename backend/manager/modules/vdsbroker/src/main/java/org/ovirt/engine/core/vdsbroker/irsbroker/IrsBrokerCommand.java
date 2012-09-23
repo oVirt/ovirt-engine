@@ -87,6 +87,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
     }
 
+    public static boolean isDomainsReportedAsProblematic(Guid storagePoolId, List<VDSDomainsData> vdsDomainsData) {
+        IrsProxyData proxy = _irsProxyData.get(storagePoolId);
+        if (proxy != null) {
+            return proxy.isDomainsReportedAsProblematic(vdsDomainsData);
+        }
+        return false;
+    }
+
     public static void lockDbSave(Guid storagePoolId) {
         IrsProxyData proxy = _irsProxyData.get(storagePoolId);
         if (proxy != null) {
@@ -1098,14 +1106,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     List<Guid> domainsSeenByVdsInProblem = new ArrayList<Guid>();
                     for (VDSDomainsData tempData : data) {
                         if (domainsInPool.contains(tempData.getDomainId())) {
-                            if (isDomainReportedAsProblematic(tempData)) {
+                            if (isDomainReportedAsProblematic(tempData, false)) {
                                 domainsSeenByVdsInProblem.add(tempData.getDomainId());
                             } else if (tempData.getDelay() > Config.<Double> GetValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
                                 logDelayedDomain(vdsId, tempData);
                             }
                         } else if (inActiveDomainsInPool.contains(tempData.getDomainId())
-                                && !isDomainReportedAsProblematic(tempData)) {
-                            log.warnFormat("Storage {0} was reported by vds {1} as active in pool {2}, moving to active status",
+                                && !isDomainReportedAsProblematic(tempData, false)) {
+                            log.warnFormat("Storage Domain {0} was reported by Host {1} as Active in Pool {2}, moving to active status",
                                     tempData.getDomainId(),
                                     vdsName,
                                     _storagePoolId);
@@ -1154,12 +1162,47 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
         }
 
-        private boolean isDomainReportedAsProblematic(VDSDomainsData tempData) {
+        public boolean isDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData) {
+            Set<Guid> domainsInPool = new HashSet<Guid>(
+                    DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                            _storagePoolId, StorageDomainStatus.Active));
+            domainsInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                    _storagePoolId, StorageDomainStatus.Unknown));
+            List<Guid> domainWhicWereSeen = new ArrayList<Guid>();
+            for (VDSDomainsData vdsDomainData : vdsDomainsData) {
+                if (domainsInPool.contains(vdsDomainData.getDomainId())) {
+                    if (isDomainReportedAsProblematic(vdsDomainData, true)) {
+                        return true;
+                    }
+                    domainWhicWereSeen.add(vdsDomainData.getDomainId());
+                }
+            }
+            domainsInPool.removeAll(domainWhicWereSeen);
+            if (domainsInPool.size() > 0) {
+                for (Guid domainId : domainsInPool) {
+                    log.errorFormat("Domain {0} is not seen by Host", domainId);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private boolean isDomainReportedAsProblematic(VDSDomainsData tempData, boolean isLog) {
             if (tempData.getCode() != 0) {
+                if (isLog) {
+                    log.errorFormat("Domain {0} was reported with error code {1}",
+                            tempData.getDomainId(),
+                            tempData.getCode());
+                }
                 return true;
             }
             if (tempData.getLastCheck() > Config
                     .<Double> GetValue(ConfigValues.MaxStorageVdsTimeoutCheckSec)) {
+                if (isLog) {
+                    log.errorFormat("Domain {0} check timeot {1} is too big",
+                            tempData.getDomainId(),
+                            tempData.getLastCheck());
+                }
                 return true;
             }
             return false;
