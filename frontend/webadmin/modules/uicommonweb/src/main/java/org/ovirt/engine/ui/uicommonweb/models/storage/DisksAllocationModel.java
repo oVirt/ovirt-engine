@@ -166,6 +166,7 @@ public class DisksAllocationModel extends EntityModel
     private boolean isSingleDiskCopy;
     private boolean isVolumeFormatAvailable;
     private boolean isVolumeFormatChangable;
+    private boolean isAliasChangable;
     private boolean isSourceStorageDomainAvailable;
     private boolean isSourceStorageDomainChangable;
     private boolean isSourceStorageDomainNameAvailable;
@@ -307,6 +308,7 @@ public class DisksAllocationModel extends EntityModel
             diskModel.getSourceStorageDomain().setIsChangable(!isSingleStorageDomain && isSourceStorageDomainChangable);
             diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
             diskModel.getVolumeType().setIsChangable(isVolumeFormatChangable);
+            diskModel.getAlias().setIsChangable(isAliasChangable);
 
             if (diskModel.getSourceStorageDomain().getItems() != null
                     && diskModel.getSourceStorageDomain().getItems().iterator().hasNext()) {
@@ -338,6 +340,8 @@ public class DisksAllocationModel extends EntityModel
             ArrayList<Guid> storageIdList = new ArrayList<Guid>();
             storageIdList.add(storageId);
             diskImage.setstorage_ids(storageIdList);
+            diskImage.setDiskAlias((String) diskModel.getAlias().getEntity());
+
             if (diskModel.getQuota().getSelectedItem() != null) {
                 if (!isSingle) {
                     diskImage.setQuotaId(((Quota) diskModel.getQuota().getSelectedItem()).getId());
@@ -400,6 +404,14 @@ public class DisksAllocationModel extends EntityModel
 
     public boolean getIsVolumeFormatAvailable() {
         return isVolumeFormatAvailable;
+    }
+
+    public boolean getIsAliasChangable() {
+        return isAliasChangable;
+    }
+
+    public void setIsAliasChangable(boolean isAliasChangable) {
+        this.isAliasChangable = isAliasChangable;
     }
 
     public void setIsVolumeFormatChangable(boolean isVolumeFormatChangable) {

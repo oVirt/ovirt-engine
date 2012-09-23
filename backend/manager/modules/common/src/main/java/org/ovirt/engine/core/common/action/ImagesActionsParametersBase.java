@@ -10,6 +10,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     private Guid imageId = Guid.Empty;
     private Guid destinationImageId = Guid.Empty;
+    private String diskAlias;
     private String description;
     private Date oldLastModifiedValue;
     private Guid vmSnapshotId;
@@ -42,6 +43,14 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public void setDestinationImageId(Guid value) {
         destinationImageId = value;
+    }
+
+    public String getDiskAlias() {
+        return diskAlias;
+    }
+
+    public void setDiskAlias(String diskAlias) {
+        this.diskAlias = diskAlias;
     }
 
     public String getDescription() {

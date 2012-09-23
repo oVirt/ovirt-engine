@@ -425,6 +425,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     private DiskImage makeNewImage(Guid storageId, DiskImage image) {
         DiskImage newImage = new DiskImage();
         newImage.setImageId(image.getImageId());
+        newImage.setDiskAlias(image.getDiskAlias());
         newImage.setvolume_format(image.getvolume_format());
         newImage.setvolume_type(image.getvolume_type());
         ArrayList<Guid> storageIds = new ArrayList<Guid>();
@@ -636,6 +637,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
                         dit.getImageId(), getParameters().getVmStaticData().getId());
                 tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0));
+                tempVar.setDiskAlias(diskInfoDestinationMap.get(dit.getId()).getDiskAlias());
                 tempVar.setStorageDomainId(dit.getstorage_ids().get(0));
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);

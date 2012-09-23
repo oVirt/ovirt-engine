@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
@@ -45,6 +46,9 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     {
         super.Initialize(systemTreeSelectedItem);
         getModel().getTemplate().setIsChangable(false);
+
+        DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
+        disksAllocationModel.setIsAliasChangable(true);
 
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {

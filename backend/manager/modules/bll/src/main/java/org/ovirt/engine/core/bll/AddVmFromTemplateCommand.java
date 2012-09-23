@@ -74,6 +74,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                         getParameters().getVmStaticData().getId(), diskInfo);
                 p.setStorageDomainId(disk.getstorage_ids().get(0));
                 p.setDestStorageDomainId(diskInfoDestinationMap.get(disk.getId()).getstorage_ids().get(0));
+                p.setDiskAlias(diskInfoDestinationMap.get(disk.getId()).getDiskAlias());
                 p.setVmSnapshotId(getVmSnapshotId());
                 p.setParentCommand(VdcActionType.AddVmFromTemplate);
                 p.setParentParameters(getParameters());

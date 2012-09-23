@@ -210,6 +210,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
         getModel().getProvisioningClone_IsSelected().setEntity(provisioning);
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
         getModel().getDisksAllocationModel().setIsVolumeFormatChangable(provisioning);
+        getModel().getDisksAllocationModel().setIsAliasChangable(true);
 
         InitStorageDomains();
     }

@@ -319,6 +319,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                         getParameters().getVmId(),
                         getDiskImageInfo());
         parameters.setQuotaId(getQuotaId());
+        parameters.setDiskAlias(getDiskAlias());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
         parameters.setParentCommand(VdcActionType.AddDisk);
         parameters.setEntityId(getParameters().getEntityId());

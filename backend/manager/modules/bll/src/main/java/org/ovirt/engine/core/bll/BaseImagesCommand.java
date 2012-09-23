@@ -261,6 +261,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         retDiskImage.setId(getImageGroupId());
         retDiskImage.setlast_modified_date(new Date());
         retDiskImage.setQuotaId(getParameters().getQuotaId());
+        retDiskImage.setDiskAlias(getParameters().getDiskAlias());
         return retDiskImage;
     }
 

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
@@ -49,7 +50,11 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @UiField
     @Ignore
-    EntityModelLabelEditor diskNameLabel;
+    EntityModelLabelEditor diskAliasLabel;
+
+    @UiField
+    @Path(value = "alias.entity")
+    EntityModelTextBoxEditor diskAliasEditor;
 
     @UiField
     @Ignore
@@ -113,7 +118,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     void updateStyles(Boolean isNarrowStyle) {
         String editorStyle = isNarrowStyle ? style.editorContentNarrow() : style.editorContent();
 
-        updateEditorStyle(diskNameLabel, editorStyle);
+        updateEditorStyle(diskAliasLabel, editorStyle);
+        updateEditorStyle(diskAliasEditor, editorStyle);
         updateEditorStyle(diskSizeLabel, editorStyle);
         updateEditorStyle(sourceStorageLabel, editorStyle);
         updateEditorStyle(volumeTypeListEditor, editorStyle);
@@ -128,11 +134,16 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         editor.setLabelStyleName(style.editorLabel());
     }
 
+    public void setIsAliasChangeable(boolean changeable) {
+        diskAliasLabel.setVisible(!changeable);
+        diskAliasEditor.setVisible(changeable);
+    }
+
     @Override
     public void edit(final DiskModel object) {
         Driver.driver.edit(object);
 
-        diskNameLabel.asValueBox().setValue(object.getAlias().getEntity());
+        diskAliasLabel.asValueBox().setValue(object.getAlias().getEntity());
         diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Long>(DiskSizeUnit.GIGABYTE).render(
                 (Long) object.getSize().getEntity())));
 
@@ -151,8 +162,10 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @Override
     public void setElementId(String elementId) {
-        diskNameLabel.setElementId(
+        diskAliasLabel.setElementId(
                 ElementIdUtils.createElementId(elementId, "diskName")); //$NON-NLS-1$
+        diskAliasEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "diskAlias")); //$NON-NLS-1$
         diskSizeLabel.setElementId(
                 ElementIdUtils.createElementId(elementId, "diskSize")); //$NON-NLS-1$
         sourceStorageLabel.setElementId(

@@ -15,7 +15,7 @@
 		}
 		
 		.editorContent {
-			width: 100px;
+			width: 110px;
 			margin-left: 5px;
 		}
 		
@@ -26,7 +26,8 @@
 	</ui:style>	
 	
 	<g:HorizontalPanel width="100%">
-		<e:EntityModelLabelEditor ui:field="diskNameLabel" />
+		<e:EntityModelLabelEditor ui:field="diskAliasLabel" />
+		<e:EntityModelTextBoxEditor ui:field="diskAliasEditor" />
 		<e:EntityModelLabelEditor ui:field="diskSizeLabel" />
 		<e:EntityModelLabelEditor ui:field="sourceStorageLabel" />
 		<e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
