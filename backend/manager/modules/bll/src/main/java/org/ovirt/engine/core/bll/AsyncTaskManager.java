@@ -288,10 +288,13 @@ public final class AsyncTaskManager {
         // For each pool Id (SPM) ,add its tasks to the map.
         for (Guid storagePoolID : poolsOfActiveTasks) {
             try {
-                poolsAsyncTaskMap.put(storagePoolID, new HashMap<Guid, AsyncTaskStatus>(
+                Map<Guid, AsyncTaskStatus> map =
                         (Map<Guid, AsyncTaskStatus>) Backend.getInstance().getResourceManager().RunVdsCommand(
                                 VDSCommandType.SPMGetAllTasksStatuses,
-                                new IrsBaseVDSCommandParameters(storagePoolID)).getReturnValue()));
+                                new IrsBaseVDSCommandParameters(storagePoolID)).getReturnValue();
+                if (map != null) {
+                    poolsAsyncTaskMap.put(storagePoolID, map);
+                }
             } catch (RuntimeException e) {
                 if ((e instanceof VdcBLLException) &&
                         (((VdcBLLException) e).getErrorCode() == VdcBllErrors.VDS_NETWORK_ERROR)) {

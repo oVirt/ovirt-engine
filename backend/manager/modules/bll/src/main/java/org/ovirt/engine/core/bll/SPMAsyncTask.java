@@ -307,14 +307,8 @@ public class SPMAsyncTask {
 
     /**
      * Print log message, Checks if the cachedStatusTask is null, (indicating the task was not found in the SPM).
-     * If so returns {@link AsyncTaskStatusEnum#running} status, otherwise returns the status as given.<br>
+     * If so returns {@link AsyncTaskStatusEnum#unknown} status, otherwise returns the status as given.<br>
      * <br>
-     * <b>Note:</b> The task is returned as running since we need to support a case where there is a change of SPM,
-     * or the SPM is just recovering from crash, and the SPM might return that it doesn't know that this task exists,
-     * but in actuality it exists. If in this case {@link AsyncTaskStatusEnum#unknown} is returned then the task
-     * will become a permanent zombie task since it won't be polled, so take notice if you ever want to change this
-     * behavior.
-     *
      * @param cachedStatusTask The status from the SPM, or <code>null</code> is the task wasn't found in the SPM.
      * @return - Updated status task
      */
@@ -324,14 +318,12 @@ public class SPMAsyncTask {
         // If the cachedStatusTask is null ,that means the task has not been found in the SPM.
         if (cachedStatusTask == null) {
             // Set to running in order to continue polling the task in case SPM hasn't loaded the tasks yet..
-            returnedStatusTask = new AsyncTaskStatus(AsyncTaskStatusEnum.running);
+            returnedStatusTask = new AsyncTaskStatus(AsyncTaskStatusEnum.unknown);
 
-            if (getLastTaskStatus().getStatus() != returnedStatusTask.getStatus()) {
-                log.errorFormat("SPMAsyncTask::PollTask: Task '{0}' (Parent Command {1}, Parameters Type {2}) " +
-                        "was not found in VDSM, will change its status to running.",
+            log.errorFormat("SPMAsyncTask::PollTask: Task '{0}' (Parent Command {1}, Parameters Type {2}) " +
+                        "was not found in VDSM, will change its status to unknown.",
                         getTaskID(), (getParameters().getDbAsyncTask().getaction_type()),
                         getParameters().getClass().getName());
-            }
         } else {
             returnedStatusTask = cachedStatusTask;
         }
