@@ -1,6 +1,8 @@
+package org.ovirt.engine.core.bll;
+
 /**
  * TODO:
- * Commented out test class in order to cancel dependency on PowerMock
+ * Commented out test most of the class in order to cancel dependency on PowerMock
  * This should be revisited.
  */
 
@@ -48,6 +50,45 @@
 //import org.powermock.core.classloader.annotations.PrepareForTest;
 //import org.powermock.modules.junit4.PowerMockRunner;
 //
+
+
+
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.utils.RandomUtils;
+
+/** A test case for the {@link VmHandler} class. */
+public class VmHandlerTest {
+
+    @Before
+    public void setUp() {
+        VmHandler.Init();
+    }
+
+    @Test
+    public void testUpdateFieldsNameInStatusUp() {
+        VmStatic src = new VmStatic();
+        src.setvm_name(RandomUtils.instance().nextString(10));
+        src.setInterfaces(new ArrayList<VmNetworkInterface>(2));
+
+        VmStatic dest = new VmStatic();
+        dest.setvm_name(RandomUtils.instance().nextString(10));
+
+        System.out.println(VmHandler.mUpdateVmsStatic.IsUpdateValid(src, dest, VMStatus.Up));
+
+        assertTrue("Update should be valid for different names",
+                VmHandler.mUpdateVmsStatic.IsUpdateValid(src, dest));
+    }
+
+}
+
 //@PrepareForTest({ DbFacade.class, TransactionSupport.class, Config.class, Backend.class })
 //@RunWith(PowerMockRunner.class)
 //public class VmHandlerTest {
