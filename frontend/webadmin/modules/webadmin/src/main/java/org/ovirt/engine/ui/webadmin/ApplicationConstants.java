@@ -2199,4 +2199,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("[No jobs available]")
     String emptyJobMessage();
+
+    @DefaultStringValue("These calculations represents the max growth potential and may differ from the actual consumption. Please refer documentation for further explanations.")
+    String quotaCalculationsMessage();
 }

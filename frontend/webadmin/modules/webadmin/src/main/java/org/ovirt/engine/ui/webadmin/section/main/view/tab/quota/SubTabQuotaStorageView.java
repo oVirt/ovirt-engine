@@ -7,6 +7,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.TextCellWithEditableTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithEditableTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
@@ -45,7 +47,7 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         },
                 constants.nameQuotaStorage());
 
-        getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
+        getTable().addColumn(new TextColumnWithEditableTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
                 String str;
@@ -58,6 +60,13 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
                 }
                 return (object.getStorageSizeGBUsage() == 0 ? 0
                         : diskSizeRenderer.render(object.getStorageSizeGBUsage())) + str;
+            }
+
+            @Override
+            public TextCellWithEditableTooltip getCell() {
+                TextCellWithEditableTooltip textCellWithEditableTooltip = super.getCell();
+                textCellWithEditableTooltip.setTitle(constants.quotaCalculationsMessage());
+                return textCellWithEditableTooltip;
             }
         },
                 constants.usedStorageTotalQuotaStorage());
