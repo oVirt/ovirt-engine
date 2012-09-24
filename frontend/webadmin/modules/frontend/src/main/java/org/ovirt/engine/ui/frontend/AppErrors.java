@@ -1246,7 +1246,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Network address must be specified when using static ip")
     String NETWORK_ADDR_MANDATORY_IN_STATIC_IP();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Related operation is currently on progress. Please try again later.")
+    @DefaultStringValue("Cannot ${action} ${type}. Related operation is currently in progress. Please try again later.")
     String ACTION_TYPE_FAILED_OBJECT_LOCKED();
 
     @DefaultStringValue("Bond attached to vlan, remove bonds vlan first")
