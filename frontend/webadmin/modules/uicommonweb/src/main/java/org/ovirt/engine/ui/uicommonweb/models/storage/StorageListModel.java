@@ -1621,25 +1621,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         if (isNew)
         {
-            AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
-                @Override
-                public void OnSuccess(Object target, Object returnValue) {
-
-                    StorageListModel storageListModel = (StorageListModel) target;
-                    ArrayList<storage_domains> storages = (ArrayList<storage_domains>) returnValue;
-
-                    if (storages != null && storages.size() > 0) {
-                        String storageName = storages.get(0).getstorage_name();
-
-                        OnFinish(storageListModel.context,
-                            false,
-                            storageListModel.storageModel,
-                            ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
-                    } else {
-                        storageListModel.SaveNewSanStorage();
-                    }
-                }
-            }), null, path);
+            SaveNewSanStorage();
         }
         else
         {
