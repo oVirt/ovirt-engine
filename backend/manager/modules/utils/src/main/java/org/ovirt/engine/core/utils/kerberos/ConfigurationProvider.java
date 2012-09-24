@@ -94,18 +94,21 @@ public class ConfigurationProvider {
         File passFile = null;
 
         try {
-            passFile = createPassFile(entry.getDomainsConfigurationEntry());
-            String executeCmd = engineConfigExecutable + " -s "
-                    + enumValue.name() + ((passedAsValue) ? "=" + entry.getDomainsConfigurationEntry() :
-                        " --admin-pass-file " + passFile.getAbsolutePath())
-                        + " -p " + engineConfigProperties;
-
-            Process engineConfigProcess = Runtime.getRuntime().exec(executeCmd);
+            StringBuilder executeCmd = new StringBuilder(engineConfigExecutable);
+            executeCmd.append(" -s ").append(enumValue.name());
+            if (passedAsValue) {
+                executeCmd.append("=" + entry.getDomainsConfigurationEntry());
+            } else {
+                passFile = createPassFile(entry.getDomainsConfigurationEntry());
+                executeCmd.append(" --admin-pass-file " + passFile.getAbsolutePath());
+            }
+            executeCmd.append(" -p " + engineConfigProperties);
+            Process engineConfigProcess = Runtime.getRuntime().exec(executeCmd.toString());
 
             int retVal = engineConfigProcess.waitFor();
             if (retVal != 0) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION,
-                        enumValue.name() + " - execute command: " + executeCmd);
+                        enumValue.name() + " - execute command: " + executeCmd.toString());
             }
         } catch (Throwable e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS,

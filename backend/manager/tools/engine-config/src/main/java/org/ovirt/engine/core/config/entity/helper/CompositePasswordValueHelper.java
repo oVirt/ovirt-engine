@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config.entity.helper;
 
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
@@ -27,11 +28,11 @@ public class CompositePasswordValueHelper implements ValueHelper {
 
     @Override
     public String setValue(String value) throws Exception {
-        // Happens only when deleting password value
-        if (value.isEmpty()){
-            return "";
-        }
         value = pwdValueHelper.extractPasswordValue(value);
+        // Happens only when deleting password value
+        if (StringUtils.isBlank(value)) {
+            return StringUtils.EMPTY;
+        }
         return reformatKeyVal(value, ReformatType.ENCRYPT);
     }
 

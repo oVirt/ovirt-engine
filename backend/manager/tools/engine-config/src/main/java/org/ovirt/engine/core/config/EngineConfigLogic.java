@@ -145,6 +145,11 @@ public class EngineConfigLogic {
     }
 
     public static String getPassFromFile(String passFile) throws IOException {
+        File f = new File(passFile);
+        if (!f.exists())
+        {
+            return StringUtils.EMPTY;
+        }
         FileReader input = new FileReader(passFile);
         BufferedReader br = new BufferedReader(input);
         String pass = br.readLine();
@@ -153,6 +158,9 @@ public class EngineConfigLogic {
             br.close();
         } catch (Exception e) {
             // Ignore
+        }
+        if (pass == null) {
+            return StringUtils.EMPTY;
         }
         return pass;
     }
@@ -315,7 +323,6 @@ public class EngineConfigLogic {
         if (version == null) {
             version = startVersionDialog(key);
         }
-
         boolean sucessUpdate = persist(key, value, version);
         if (!sucessUpdate) {
             log.debug("setValue: error setting " + key + "'s value. No such entry"
