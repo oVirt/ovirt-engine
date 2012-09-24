@@ -290,7 +290,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             return null;
         }
 
-        table.setRowData(items == null ? new ArrayList<SanTargetModel>() : items);
+        table.setRowData(items);
         table.edit(leafModel);
         table.setWidth("100%", true); //$NON-NLS-1$
 
