@@ -240,7 +240,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         }, constants.serialSanStorage(), "120px"); //$NON-NLS-1$
 
-        table.setRowData(items == null ? new ArrayList<LunModel>() : items);
+        table.setRowData(items);
         table.edit(leafModel);
         table.setWidth("100%", true); //$NON-NLS-1$
 
