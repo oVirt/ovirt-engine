@@ -15,10 +15,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -361,7 +361,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 VmHandler.updateDisksFromDb(getVm());
             } else {
                 if (vdcReturnValue.getCanDoActionMessages().contains(
-                        VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.name())) {
+                        VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED.name())) {
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 }
                 getReturnValue().setFault(vdcReturnValue.getFault());

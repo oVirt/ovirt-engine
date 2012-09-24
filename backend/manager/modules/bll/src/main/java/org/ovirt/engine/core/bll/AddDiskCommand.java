@@ -81,7 +81,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         VM vm = getVm();
         if (returnValue && (vm != null && vm.getstatus() == VMStatus.ImageLocked)) {
             returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED);
         } else {
             // if user sent drive check that its not in use
             returnValue = returnValue && (vm == null || isDiskCanBeAddedToVm(getParameters().getDiskInfo()));

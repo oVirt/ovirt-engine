@@ -60,8 +60,9 @@ BEGIN
     FROM all_disks
     WHERE (v_storage_pool_id IS NULL OR all_disks.storage_pool_id = v_storage_pool_id)
     AND (all_disks.number_of_vms = 0 OR all_disks.shareable)
-	AND (all_disks.imagestatus IS NULL OR all_disks.imagestatus != 4) -- ImageStatus.ILLEGAL=4 / imagestatus IS NULL -> LunDisk
-    AND (v_vm_id IS NULL OR v_vm_id NOT IN (SELECT vm_id FROM vm_device WHERE vm_device.device_id = all_disks.image_group_id))
+        -- ImageStatus.ILLEGAL=4 / imagestatus IS NULL -> LunDiski / ImageStatus.Locked=2
+        AND (all_disks.imagestatus IS NULL OR (all_disks.imagestatus != 4 AND all_disks.imagestatus != 2))
+        AND (v_vm_id IS NULL OR v_vm_id NOT IN (SELECT vm_id FROM vm_device WHERE vm_device.device_id = all_disks.image_group_id))
     AND   (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_disk_permissions_view
                                         WHERE  user_id = v_user_id AND entity_id = disk_id));

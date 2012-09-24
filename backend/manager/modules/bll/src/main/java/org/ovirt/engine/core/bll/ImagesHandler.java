@@ -473,7 +473,7 @@ public final class ImagesHandler {
                     }
                 }
                 if (lockedDisksAliases.size() > 0) {
-                    ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.toString());
+                    ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED.toString());
                     messages.add(String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
                 }
             }

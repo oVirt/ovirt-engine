@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -61,9 +61,18 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
             return false;
         }
-        retValue =
-                acquireLockInternal() && isVmExist() && isVmUpOrDown() && isDiskCanBeAddedToVm(disk)
-                        && isDiskPassPciAndIdeLimit(disk);
+
+        retValue = acquireLockInternal();
+
+        if (retValue && isImageDisk && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_LOCKED);
+            addCanDoActionMessage(String.format("$%1$s %2$s", "diskAlias", disk.getDiskAlias()));
+            return false;
+        }
+
+        retValue = retValue && isVmExist() && isVmUpOrDown() && isDiskCanBeAddedToVm(disk)
+                && isDiskPassPciAndIdeLimit(disk);
+
         if (retValue && getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
