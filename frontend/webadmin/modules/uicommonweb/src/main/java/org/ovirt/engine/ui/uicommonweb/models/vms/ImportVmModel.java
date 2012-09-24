@@ -332,7 +332,10 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         for (Object item : getItems()) {
             VM vm = (VM) item;
             if (!NGuid.Empty.equals(vm.getvmt_guid())) {
-                templateDiskMap.put(vm.getvmt_guid(), new ArrayList<Disk>(vm.getDiskMap().values()));
+                if (!templateDiskMap.containsKey(vm.getvmt_guid())) {
+                    templateDiskMap.put(vm.getvmt_guid(), new ArrayList<Disk>());
+                }
+                templateDiskMap.get(vm.getvmt_guid()).addAll(vm.getDiskMap().values());
             } else {
                 for (Disk disk : vm.getDiskMap().values()) {
                     DiskImage diskImage = (DiskImage) disk;
