@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -455,6 +456,7 @@ public class TemplateGeneralModel extends EntityModel
                 && !template.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         setHostCluster(template.getvds_group_name());
         setDefinedMemory(template.getmem_size_mb() + " MB"); //$NON-NLS-1$
+        setHasHighlyAvailable(template.getvm_type() == VmType.Server);
         setIsHighlyAvailable(template.getauto_startup());
         setPriority(PriorityToString(template.getpriority()));
         setMonitorCount(template.getnum_of_monitors());

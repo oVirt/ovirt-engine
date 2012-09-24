@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.template;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
+import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
@@ -30,16 +31,17 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     TextBoxLabel timeZone = new TextBoxLabel();
     TextBoxLabel quotaName = new TextBoxLabel();
 
+    BooleanLabel isHighlyAvailable;
+
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
-    @Ignore
-    TextBoxLabel isHighlyAvailable = new TextBoxLabel();
     @Ignore
     TextBoxLabel isStateless = new TextBoxLabel();
 
     public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 6);
         Driver.driver.initialize(this);
+        isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
 
         // Build a form using the FormBuilder
         formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -52,7 +54,12 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         formBuilder.addFormItem(new FormItem(constants.definedMemTemplateGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresTemplateGeneral(), cpuInfo, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsTemplateGeneral(), monitorCount, 2, 1));
-        formBuilder.addFormItem(new FormItem(constants.highlyAvailTemplateGeneral(), isHighlyAvailable, 3, 1));
+        formBuilder.addFormItem(new FormItem(constants.highlyAvailTemplateGeneral(), isHighlyAvailable, 3, 1){
+            @Override
+            public boolean isVisible() {
+                return getModel().getHasHighlyAvailable();
+            }
+        });
         formBuilder.addFormItem(new FormItem(constants.priorityTemplateGeneral(), priority, 4, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyTemplateGeneral(), usbPolicy, 5, 1) {
             @Override
@@ -90,7 +97,6 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
 
         // TODO required because of GWT#5864
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
-        isHighlyAvailable.setText(Boolean.toString(getModel().getIsHighlyAvailable()));
         isStateless.setText(Boolean.toString(getModel().getIsStateless()));
     }
 }
