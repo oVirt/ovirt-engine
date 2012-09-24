@@ -21,6 +21,7 @@ HTTPD_SERVICE_NAME="httpd"
 HTTP_PORT_POLICY="http_port_t"
 NFS_SERVICE_NAME="nfs-server"
 NOTIFIER_SERVICE_NAME = "engine-notifierd"
+ETL_SERVICE_NAME = "ovirt-engine-dwhd"
 FREEIPA_RPM = "freeipa-server"
 IPA_RPM = "ipa-server"
 PGPASS_FILE_HEADER_LINE = "# This section was created during %s setup.\n\

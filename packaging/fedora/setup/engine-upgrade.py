@@ -615,21 +615,21 @@ def stopDbRelatedServices(etlService, notificationService):
         try:
             etlService.stop(True)
         except:
-            logging.warn("Failed to stop ovirt-engine-etl")
+            logging.warn("Failed to stop %s", etlService.name)
             logging.warn(traceback.format_exc())
-            messages.append(MSG_ERR_FAILED_STOP_SERVICE % "ovirt-engine-etl")
+            messages.append(MSG_ERR_FAILED_STOP_SERVICE % etlService.name)
 
     # If the ovirt-engine-notifierd service is up, then try and stop it.
     if notificationService.isServiceAvailable():
         try:
             (status, rc) = notificationService.status()
             if utils.verifyStringFormat(status, ".*running.*"):
-                logging.debug("stopping ovirt-engine-notifierd service..")
+                logging.debug("stopping %s service.", notificationService.name)
                 notificationService.stop()
         except:
-            logging.warn("Failed to stop ovirt-engine-notifierd service")
+            logging.warn("Failed to stop %s service", notificationService.name)
             logging.warn(traceback.format_exc())
-            messages.append(MSG_ERR_FAILED_STOP_SERVICE % "ovirt-engine-notifierd")
+            messages.append(MSG_ERR_FAILED_STOP_SERVICE % notificationService.name)
 
 def startDbRelatedServices(etlService, notificationService):
     """
@@ -640,14 +640,14 @@ def startDbRelatedServices(etlService, notificationService):
     if etlService.isServiceAvailable():
         (output, rc) = etlService.conditionalStart()
         if rc != 0:
-            logging.warn("Failed to start ovirt-engine-etl")
-            messages.append(MSG_ERR_FAILED_START_SERVICE % "ovirt-engine-etl")
+            logging.warn("Failed to start %s", etlService.name)
+            messages.append(MSG_ERR_FAILED_START_SERVICE % etlService.name)
 
     if notificationService.isServiceAvailable():
         (output, rc) = notificationService.conditionalStart()
         if rc != 0:
-            logging.warn("Failed to start ovirt-engine-notifierd: exit code %d" % rc)
-            messages.append(MSG_ERR_FAILED_START_SERVICE % "ovirt-engine-notifierd")
+            logging.warn("Failed to start %s: exit code %d", notificationService.name, rc)
+            messages.append(MSG_ERR_FAILED_START_SERVICE % notificationService.name)
 
 def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION):
     """ Check whether there are UNSUPPORTED_VERSION
@@ -705,6 +705,9 @@ def main(options):
     upgradeFunc = [rhyum.update]
     postFunc = [runPost]
     engineService = basedefs.ENGINE_SERVICE_NAME
+    # define db connections services
+    etlService = utils.Service(basedefs.ETL_SERVICE_NAME)
+    notificationService = utils.Service(basedefs.NOTIFIER_SERVICE_NAME)
 
     if unsupportedVersionsPresent():
         print MSG_ERROR_INCOMPATIBLE_UPGRADE
@@ -751,6 +754,7 @@ def main(options):
 
         # Backup DB
         if isUpdateRelatedToDb(rhyum):
+            stopDbRelatedServices(etlService, notificationService)
             runFunc([db.backup], MSG_INFO_BACKUP_DB)
             runFunc([[db.rename, DB_NAME_TEMP]], MSG_INFO_RENAME_DB)
 
@@ -766,13 +770,8 @@ def main(options):
         # If we're here, update/upgrade went fine, so
         rhyum.updated = True
 
-        # define db connections services
-        etlService = utils.Service("ovirt-engine-etl")
-        notificationService = utils.Service("ovirt-engine-notifierd")
-
         # check if update is relevant to db update
         if isUpdateRelatedToDb(rhyum):
-            stopDbRelatedServices(etlService, notificationService)
 
             # Update the db and restore its name back
             runFunc([db.update], MSG_INFO_DB_UPDATE)
