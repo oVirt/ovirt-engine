@@ -308,6 +308,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 return null;
             }
         });
+        getReturnValue().setActionReturnValue(getParameters().getDiskInfo().getId());
         setSucceeded(true);
     }
 
