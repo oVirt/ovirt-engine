@@ -63,6 +63,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 p.setDestStorageDomainId(diskInfoDestinationMap.get(disk.getId()).getstorage_ids().get(0));
                 p.setVmSnapshotId(getVmSnapshotId());
                 p.setParentCommand(VdcActionType.AddVmFromTemplate);
+                p.setParentParameters(getParameters());
                 p.setEntityId(getParameters().getEntityId());
                 p.setQuotaId(diskInfoDestinationMap.get(disk.getId()).getQuotaId() != null ? diskInfoDestinationMap.get(disk.getId())
                         .getQuotaId()
