@@ -18,27 +18,6 @@ public abstract class IrsCreateCommand<P extends StoragePoolDomainAndGroupIdBase
         return uuidReturn;
     }
 
-    protected void BaseRollback() {
-        super.rollback();
-    }
-
-    @Override
-    public void rollback() {
-        try {
-            // todo - omer sending false for postZero, check that is correct
-            // always (and not parameter from user)
-            getIrsProxy().deleteVolume(getParameters().getStorageDomainId().toString(),
-                                       getParameters().getStoragePoolId().toString(),
-                                       getParameters().getImageGroupId().toString(),
-                                       new String[] { mCreatedImageId },
-                                       "false",
-                                       "false");
-        } catch (java.lang.Exception e) {
-        }
-
-        BaseRollback();
-    }
-
     public IrsCreateCommand(P parameters) {
         super(parameters);
     }

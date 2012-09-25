@@ -5,18 +5,9 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
-import org.ovirt.engine.core.utils.transaction.RollbackHandler;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @Logged(errorLevel = LogLevel.WARN)
-public abstract class VdcCommandBase implements RollbackHandler {
-
-    private boolean getTransactive() {
-        // Object[] attributes = new Object[] {}; //FIXED
-        // getClass().GetCustomAttributes(TransactiveAttribute.class, true);
-        TransactiveAttribute annotation = getClass().getAnnotation(TransactiveAttribute.class);
-        return annotation != null;
-    }
+public abstract class VdcCommandBase {
 
     protected String getCommandName() {
         return getClass().getSimpleName().replace("Command", "");
@@ -32,10 +23,6 @@ public abstract class VdcCommandBase implements RollbackHandler {
     public void Execute() {
         String logId = LoggedUtils.getObjectId(this);
         LoggedUtils.logEntry(log, logId, this);
-
-        if (getTransactive() && TransactionSupport.current() != null) {
-            TransactionSupport.registerRollbackHandler(this);
-        }
 
         try {
             ExecuteCommand();
@@ -59,11 +46,6 @@ public abstract class VdcCommandBase implements RollbackHandler {
     public Object ExecuteWithReturnValue() {
         Execute();
         return getReturnValue();
-    }
-
-    @Override
-    public void rollback() {
-        log.errorFormat("Command {1} Rollbacked", getCommandName());
     }
 
     protected Log log = LogFactory.getLog(getClass());

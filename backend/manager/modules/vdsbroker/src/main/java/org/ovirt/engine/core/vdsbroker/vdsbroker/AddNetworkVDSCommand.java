@@ -7,18 +7,21 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
-import org.ovirt.engine.core.dal.TransactiveAttribute;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.RollbackHandler;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@TransactiveAttribute
-public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {
+public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> implements RollbackHandler {
     public AddNetworkVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
+        if (TransactionSupport.current() != null) {
+            TransactionSupport.registerRollbackHandler(this);
+        }
         String networkName = (getParameters().getNetworkName() == null) ? "" : getParameters()
                 .getNetworkName();
         String vlanId = (getParameters().getVlanId() != null) ? getParameters().getVlanId().toString()

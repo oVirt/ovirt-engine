@@ -9,12 +9,8 @@ import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCommandParameters>
         extends VdsBrokerCommand<P> {
@@ -30,16 +26,6 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
                 getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
         ProceedProxyReturnValue();
         setReturnValue(_result.convertToStatusList());
-    }
-
-    @Override
-    public void rollback() {
-        try {
-            ResourceManager.getInstance().runVdsCommand(VDSCommandType.DisconnectStorageServer,
-                    getParameters());
-        } catch (RuntimeException ex) {
-            log.error("Exception in Rollback ExecuteVdsBrokerCommand", ex);
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -106,6 +92,4 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
     protected Object getReturnValueFromBroker() {
         return _result;
     }
-
-    private final static Log log = LogFactory.getLog(ConnectStorageServerVDSCommand.class);
 }
