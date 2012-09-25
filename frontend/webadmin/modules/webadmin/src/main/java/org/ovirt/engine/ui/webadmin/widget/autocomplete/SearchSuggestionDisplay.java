@@ -169,8 +169,8 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
         // If the suggest box has changed, free the old one first.
         if (suggestBox != null) {
             suggestionPopup.removeAutoHidePartner(suggestBox.getElement());
+            suggestionPopup.addAutoHidePartner(suggestBox.getElement());
         }
-        suggestionPopup.addAutoHidePartner(suggestBox.getElement());
 
         // Create suggestions table widget
         suggestionsTable =
