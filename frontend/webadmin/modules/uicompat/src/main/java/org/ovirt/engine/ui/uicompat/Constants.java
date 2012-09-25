@@ -1437,10 +1437,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Special Keys")
     String specialKeys();
 
-    @DefaultStringValue("Auto Negotiate (default)")
+    @DefaultStringValue("Auto Negotiate")
     String nfsVersionAutoNegotiate();
 
-    @DefaultStringValue("V3")
+    @DefaultStringValue("V3 (default)")
     String nfsVersion3();
 
     @DefaultStringValue("V4")

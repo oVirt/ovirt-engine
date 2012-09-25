@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -17,6 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.collections.DefaultValueMap;
 
 public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCommandParameters>
         extends VdsBrokerCommand<P> {
@@ -49,49 +49,33 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
         return result;
     }
 
-    private static void addOrEmpty(Map<String, String> map, String what, String name) {
-        map.put(name, StringUtils.isEmpty(what) ? "" : what);
-    }
-
-    private static void addIfNotNullOrEmpty(Map<String, String> map, String what, String name) {
-        if (!StringUtils.isEmpty(what)) {
-            map.put(name, what);
-        }
-    }
-
-    private static void addIfNotNullOrEmpty(Map<String, String> map, Short what, String name) {
-        if (what != null) {
-            map.put(name, what.toString());
-        }
-    }
-
     public static Map<String, String> CreateStructFromConnection(final storage_server_connections connection,
             final storage_pool storage_pool) {
         // for information, see _connectionDict2ConnectionInfo in vdsm/storage/hsm.py
-        Map<String, String> con = new HashMap<String, String>();
-        con.put("id", (connection.getid() != null) ? connection.getid() : Guid.Empty.toString());
-        addOrEmpty(con, connection.getconnection(), "connection");
-        addOrEmpty(con, connection.getportal(), "portal");
-        addOrEmpty(con, connection.getport(), "port");
-        addOrEmpty(con, connection.getiqn(), "iqn");
-        addOrEmpty(con, connection.getuser_name(), "user");
-        addOrEmpty(con, connection.getpassword(), "password");
+        DefaultValueMap con = new DefaultValueMap();
+        con.put("id", connection.getid(), Guid.Empty.toString());
+        con.put("connection", connection.getconnection(), "");
+        con.put("portal", connection.getportal(), "");
+        con.put("port", connection.getport(), "");
+        con.put("iqn", connection.getiqn(), "");
+        con.put("user", connection.getuser_name(), "");
+        con.put("password", connection.getpassword(), "");
 
         // storage_pool can be null when discovering iscsi send targets
         if (storage_pool == null) {
-            addIfNotNullOrEmpty(con, connection.getVfsType(), "vfs_type");
+            con.putIfNotEmpty("vfs_type", connection.getVfsType());
         }
         else if (Config.<Boolean> GetValue(ConfigValues.AdvancedNFSOptionsEnabled,
                 storage_pool.getcompatibility_version().getValue())) {
-            // For mnt_options and vfs_type - if they are null or empty
-            // we should not send a key with an empty value
-            addIfNotNullOrEmpty(con, connection.getMountOptions(), "mnt_options");
-            addIfNotNullOrEmpty(con, connection.getVfsType(), "vfs_type");
+            // For mnt_options, vfs_type, and protocol_version - if they are null
+            // or empty we should not send a key with an empty value
+            con.putIfNotEmpty("mnt_options", connection.getMountOptions());
+            con.putIfNotEmpty("vfs_type", connection.getVfsType());
             if (connection.getNfsVersion() != null) {
                 con.put("protocol_version", connection.getNfsVersion().getValue());
             }
-            addIfNotNullOrEmpty(con, connection.getNfsTimeo(), "timeout");
-            addIfNotNullOrEmpty(con, connection.getNfsRetrans(), "retrans");
+            con.putIfNotEmpty("timeout", connection.getNfsTimeo());
+            con.putIfNotEmpty("retrans", connection.getNfsRetrans());
         }
         return con;
     }
