@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -64,7 +63,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? StringHelper.EqOp(mCdImagePath, "") ? AuditLogType.USER_EJECT_VM_DISK
+        return getSucceeded() ? "".equals(mCdImagePath) ? AuditLogType.USER_EJECT_VM_DISK
                 : AuditLogType.USER_CHANGE_DISK_VM : AuditLogType.USER_FAILED_CHANGE_DISK_VM;
     }
 }
