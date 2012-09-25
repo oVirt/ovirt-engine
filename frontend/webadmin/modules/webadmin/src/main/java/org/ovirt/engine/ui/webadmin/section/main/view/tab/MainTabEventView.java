@@ -65,28 +65,40 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         boolean advancedViewEnabled = advancedViewButton.getValue();
 
         getTable().ensureColumnPresent(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(),
-                advancedViewEnabled);
+                advancedViewEnabled,
+                "60px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.userColumn, constants.userEvent(),
-                advancedViewEnabled);
+                advancedViewEnabled,
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.hostColumn, constants.hostEvent(),
-                advancedViewEnabled);
+                advancedViewEnabled,
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.virtualMachineColumn, constants.vmEvent(),
-                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.templateColumn, constants.templateEvent(),
-                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.dataCenterColumn, constants.dcEvent(),
-                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.storageColumn, constants.storageEvent(),
-                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.clusterColumn, constants.clusterEvent(),
-                advancedViewEnabled);
+                advancedViewEnabled,
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.volumeColumn, constants.volumeEvent(),
-                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly),
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.corrIdColumn, constants.eventCorrelationId(),
-                advancedViewEnabled);
+                advancedViewEnabled,
+                "100px"); //$NON-NLS-1$
     }
 
     void initTable() {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new AuditLogSeverityColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
@@ -95,7 +107,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
                 return object.getlog_time();
             }
         };
-        getTable().addColumn(logTimeColumn, constants.timeEvent(), "170px"); //$NON-NLS-1$
+        getTable().addColumn(logTimeColumn, constants.timeEvent(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
@@ -103,7 +115,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
                 return object.getmessage();
             }
         };
-        getTable().addColumn(messageColumn, constants.messageEvent());
+        getTable().addColumn(messageColumn, constants.messageEvent(), "150px"); //$NON-NLS-1$
     }
 
 }

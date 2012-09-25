@@ -34,13 +34,15 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, constants.namePool());
+        getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> domainColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -48,7 +50,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getdomain();
             }
         };
-        getTable().addColumn(domainColumn, constants.domainTemplate());
+        getTable().addColumn(domainColumn, constants.domainTemplate(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> creationDateColumn = new GeneralDateTimeColumn<VmTemplate>() {
             @Override
@@ -56,7 +58,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getcreation_date();
             }
         };
-        getTable().addColumn(creationDateColumn, constants.creationDateTemplate());
+        getTable().addColumn(creationDateColumn, constants.creationDateTemplate(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> statusColumn = new EnumColumn<VmTemplate, VmTemplateStatus>() {
             @Override
@@ -64,7 +66,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusTemplate());
+        getTable().addColumn(statusColumn, constants.statusTemplate(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> clusterColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -72,7 +74,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getvds_group_name();
             }
         };
-        getTable().addColumn(clusterColumn, constants.clusterTemplate());
+        getTable().addColumn(clusterColumn, constants.clusterTemplate(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> dcColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -80,7 +82,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getstorage_pool_name();
             }
         };
-        getTable().addColumn(dcColumn, constants.dcTemplate());
+        getTable().addColumn(dcColumn, constants.dcTemplate(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> descriptionColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -88,7 +90,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getdescription();
             }
         };
-        getTable().addColumn(descriptionColumn, constants.descriptionTemplate());
+        getTable().addColumn(descriptionColumn, constants.descriptionTemplate(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.editTemplate()) {
             @Override

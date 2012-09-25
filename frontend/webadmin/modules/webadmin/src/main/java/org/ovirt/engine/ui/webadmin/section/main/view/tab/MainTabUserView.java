@@ -30,6 +30,8 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new UserStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
@@ -37,35 +39,35 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             public String getValue(DbUser object) {
                 return object.getname();
             }
-        }, constants.firstnameUser());
+        }, constants.firstnameUser(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getsurname();
             }
-        }, constants.lastNameUser());
+        }, constants.lastNameUser(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<DbUser>(40) {
             @Override
             public String getValue(DbUser object) {
                 return object.getusername();
             }
-        }, constants.userNameUser());
+        }, constants.userNameUser(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<DbUser>(40) {
             @Override
             public String getValue(DbUser object) {
                 return object.getgroups();
             }
-        }, constants.groupUser());
+        }, constants.groupUser(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getemail();
             }
-        }, constants.emailUser());
+        }, constants.emailUser(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<DbUser>(constants.addUser()) {
             @Override

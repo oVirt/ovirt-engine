@@ -43,6 +43,8 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
     }
 
     void initTable(ApplicationResources resources, ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new DcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_pool> nameColumn = new TextColumnWithTooltip<storage_pool>() {
@@ -51,7 +53,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameDc());
+        getTable().addColumn(nameColumn, constants.nameDc(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_pool> storageTypeColumn = new EnumColumn<storage_pool, StorageType>() {
             @Override
@@ -59,7 +61,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getstorage_pool_type();
             }
         };
-        getTable().addColumn(storageTypeColumn, constants.storgeTypeDc());
+        getTable().addColumn(storageTypeColumn, constants.storgeTypeDc(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_pool> statusColumn = new EnumColumn<storage_pool, StoragePoolStatus>() {
             @Override
@@ -67,7 +69,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusDc());
+        getTable().addColumn(statusColumn, constants.statusDc(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_pool> versionColumn = new TextColumnWithTooltip<storage_pool>() {
             @Override
@@ -75,7 +77,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getcompatibility_version().getValue();
             }
         };
-        getTable().addColumn(versionColumn, constants.comptVersDc());
+        getTable().addColumn(versionColumn, constants.comptVersDc(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_pool> descColumn = new TextColumnWithTooltip<storage_pool>() {
             @Override
@@ -83,7 +85,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getdescription();
             }
         };
-        getTable().addColumn(descColumn, constants.descriptionDc());
+        getTable().addColumn(descColumn, constants.descriptionDc(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>(constants.newDC()) {
             @Override

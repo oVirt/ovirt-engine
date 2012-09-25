@@ -31,13 +31,15 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<vm_pools> nameColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
             public String getValue(vm_pools object) {
                 return object.getvm_pool_name();
             }
         };
-        getTable().addColumn(nameColumn, constants.namePool());
+        getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<vm_pools> assignedColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
@@ -45,7 +47,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
                 return Integer.toString(object.getvm_assigned_count());
             }
         };
-        getTable().addColumn(assignedColumn, constants.assignVmsPool());
+        getTable().addColumn(assignedColumn, constants.assignVmsPool(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<vm_pools> runningColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
@@ -53,7 +55,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
                 return Integer.toString(object.getvm_running_count());
             }
         };
-        getTable().addColumn(runningColumn, constants.runningVmsPool());
+        getTable().addColumn(runningColumn, constants.runningVmsPool(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<vm_pools> typeColumn = new EnumColumn<vm_pools, VmPoolType>() {
             @Override
@@ -61,7 +63,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
                 return object.getvm_pool_type();
             }
         };
-        getTable().addColumn(typeColumn, constants.typePool());
+        getTable().addColumn(typeColumn, constants.typePool(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<vm_pools> descColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
@@ -69,7 +71,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
                 return object.getvm_pool_description();
             }
         };
-        getTable().addColumn(descColumn, constants.descriptionPool());
+        getTable().addColumn(descColumn, constants.descriptionPool(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>(constants.newPool()) {
             @Override

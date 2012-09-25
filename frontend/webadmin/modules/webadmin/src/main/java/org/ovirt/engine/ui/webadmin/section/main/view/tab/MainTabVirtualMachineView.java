@@ -47,6 +47,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
     }
 
     void initTable(ApplicationResources resources, ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
@@ -55,9 +57,9 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getvm_name();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$
 
-        getTable().addColumn(new VmTypeColumn(), constants.empty(), "40px"); //$NON-NLS-1$
+        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -65,7 +67,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getvds_group_name();
             }
         };
-        getTable().addColumn(clusterColumn, constants.clusterVm(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> dcColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -73,7 +75,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getstorage_pool_name();
             }
         };
-        getTable().addColumn(dcColumn, constants.dcVm(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -81,7 +83,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getrun_on_vds_name();
             }
         };
-        getTable().addColumn(hostColumn, constants.hostVm(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(hostColumn, constants.hostVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -89,7 +91,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getvm_ip();
             }
         };
-        getTable().addColumn(ipColumn, constants.ipVm(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(ipColumn, constants.ipVm(), "120px"); //$NON-NLS-1$
 
         PercentColumn<VM> memoryColumn = new PercentColumn<VM>() {
             @Override
@@ -129,7 +131,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                     return renderer.render(getRawValue(object));
             }
         };
-        getTable().addColumn(displayColumn, constants.displayVm(), "70px"); //$NON-NLS-1$
+        getTable().addColumn(displayColumn, constants.displayVm(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -137,7 +139,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusVm(), "90px"); //$NON-NLS-1$
+        getTable().addColumn(statusColumn, constants.statusVm(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
@@ -145,7 +147,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "70px"); //$NON-NLS-1$
+        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -156,7 +158,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return String.valueOf(object.getguest_cur_user_name());
             }
         };
-        getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm(), "90px"); //$NON-NLS-1$
+        getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newServerVm()) {
             @Override

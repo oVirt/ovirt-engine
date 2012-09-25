@@ -38,13 +38,15 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
     }
 
     void initTable(ApplicationResources resources, ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameCluster());
+        getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
@@ -52,7 +54,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
                 return object.getcompatibility_version().getValue();
             }
         };
-        getTable().addColumn(versionColumn, constants.comptVersCluster());
+        getTable().addColumn(versionColumn, constants.comptVersCluster(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
@@ -60,7 +62,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
                 return object.getdescription();
             }
         };
-        getTable().addColumn(descColumn, constants.descriptionCluster());
+        getTable().addColumn(descColumn, constants.descriptionCluster(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.newCluster()) {
             @Override

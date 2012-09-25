@@ -47,6 +47,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         this.constants = constants;
         this.commonModel = CommonModelManager.instance();
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        initTableColumns();
         initTableButtons();
         initTableOverhead();
         initWidget(getTable());
@@ -78,56 +79,76 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         searchByDiskViewType(disksViewRadioGroup.getDiskStorageType());
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns);
+                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns,
+                "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.idColumn, constants.idDisk(), all || images || luns);
+                DisksViewColumns.idColumn, constants.idDisk(), all || images || luns,
+                "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.bootableDiskColumn, "", all || images || luns, "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+                DisksViewColumns.bootableDiskColumn, "", all || images || luns, //$NON-NLS-1$
+                "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.shareableDiskColumn, "", all || images || luns, "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+                DisksViewColumns.shareableDiskColumn, "", all || images || luns, //$NON-NLS-1$
+                "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunDiskColumn, "", all, "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+                DisksViewColumns.lunDiskColumn, "", all, //$NON-NLS-1$
+                "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.diskContainersIconColumn, "", all || images || luns, "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+                DisksViewColumns.diskContainersIconColumn, "", all || images || luns, //$NON-NLS-1$
+                "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns, "120px"); //$NON-NLS-1$
+                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns,
+                "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.storageDomainsColumn, constants.storageDomainsDisk(), images, "120px"); //$NON-NLS-1$
+                DisksViewColumns.storageDomainsColumn, constants.storageDomainsDisk(), images,
+                "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns, "100px"); //$NON-NLS-1$
+                DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns,
+                "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.allocationColumn, constants.allocationDisk(), images, "100px"); //$NON-NLS-1$
+                DisksViewColumns.allocationColumn, constants.allocationDisk(), images,
+                "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images, "150px"); //$NON-NLS-1$
+                DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images,
+                "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.statusColumn, constants.statusDisk(), images, "80px"); //$NON-NLS-1$
+                DisksViewColumns.statusColumn, constants.statusDisk(), images,
+                "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns);
+                DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns,
+                "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunSerialColumn, constants.serialSanStorage(), luns);
+                DisksViewColumns.lunSerialColumn, constants.serialSanStorage(), luns,
+                "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunVendorIdColumn, constants.vendorIdSanStorage(), luns);
+                DisksViewColumns.lunVendorIdColumn, constants.vendorIdSanStorage(), luns,
+                "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns);
+                DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns,
+                "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns);
+                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns,
+                "100px"); //$NON-NLS-1$
+    }
 
+    void initTableColumns() {
+        getTable().enableColumnResizing();
     }
 
     void initTableOverhead() {

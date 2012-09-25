@@ -30,6 +30,8 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
@@ -37,20 +39,22 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
             public String getValue(Quota object) {
                 return object.getQuotaName() == null ? "" : object.getQuotaName(); //$NON-NLS-1$
             }
-        }, constants.nameQuota());
+        }, constants.nameQuota(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
             }
-        }, constants.descriptionQuota());
+        }, constants.descriptionQuota(), "300px"); //$NON-NLS-1$
+
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getStoragePoolName() == null ? "" : object.getStoragePoolName(); //$NON-NLS-1$
             }
-        }, constants.dcQuota());
+        }, constants.dcQuota(), "150px"); //$NON-NLS-1$
+
         //        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
         //            @Override
         //            public String getValue(Quota object) {

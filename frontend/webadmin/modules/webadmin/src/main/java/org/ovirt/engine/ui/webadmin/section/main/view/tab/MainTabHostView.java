@@ -86,6 +86,8 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     }
 
     void initTable() {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new HostStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
@@ -94,7 +96,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getvds_name();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameHost());
+        getTable().addColumn(nameColumn, constants.nameHost(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -102,7 +104,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.gethost_name();
             }
         };
-        getTable().addColumn(hostColumn, constants.ipHost());
+        getTable().addColumn(hostColumn, constants.ipHost(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> clusterColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -110,7 +112,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getvds_group_name();
             }
         };
-        getTable().addColumn(clusterColumn, constants.clusterHost());
+        getTable().addColumn(clusterColumn, constants.clusterHost(), "150px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             TextColumnWithTooltip<VDS> dcColumn = new TextColumnWithTooltip<VDS>() {
@@ -119,7 +121,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                     return object.getstorage_pool_name();
                 }
             };
-            getTable().addColumn(dcColumn, constants.dcHost());
+            getTable().addColumn(dcColumn, constants.dcHost(), "150px"); //$NON-NLS-1$
         }
 
         TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
@@ -128,7 +130,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusHost());
+        getTable().addColumn(statusColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             ProgressBarColumn<VDS> loadColumn = new ProgressBarColumn<VDS>() {
@@ -143,7 +145,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                     return object.getvm_active() != null ? Math.min(object.getvm_active(), 100) : 0;
                 }
             };
-            getTable().addColumn(loadColumn, constants.loadHost(), "100px"); //$NON-NLS-1$
+            getTable().addColumn(loadColumn, constants.loadHost(), "80px"); //$NON-NLS-1$
         }
 
         PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
@@ -171,11 +173,9 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().addColumn(netColumn, constants.networkHost(), "60px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-
             TextColumnWithTooltip<VDS> spmColumn = new TextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
-
                     int value = object.getVdsSpmPriority();
                     int lowValue = defaultSpmPriority / 2;
                     int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
@@ -197,7 +197,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                     return constants.spmCustomText();
                 }
             };
-            getTable().addColumn(spmColumn, constants.spmPriorityHost(), "80px"); //$NON-NLS-1$
+            getTable().addColumn(spmColumn, constants.spmPriorityHost(), "100px"); //$NON-NLS-1$
         }
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {

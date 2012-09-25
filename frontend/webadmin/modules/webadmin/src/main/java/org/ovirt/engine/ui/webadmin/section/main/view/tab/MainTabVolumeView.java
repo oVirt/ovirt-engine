@@ -40,14 +40,17 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new VolumeStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<GlusterVolumeEntity> nameColumn = new TextColumnWithTooltip<GlusterVolumeEntity>() {
             @Override
             public String getValue(GlusterVolumeEntity object) {
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.NameVolume());
+        getTable().addColumn(nameColumn, constants.NameVolume(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterVolumeEntity> volumeTypeColumn =
                 new EnumColumn<GlusterVolumeEntity, GlusterVolumeType>() {
@@ -57,7 +60,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                         return object.getVolumeType();
                     }
                 };
-        getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume());
+        getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterVolumeEntity> numOfBricksColumn =
                 new TextColumnWithTooltip<GlusterVolumeEntity>() {
@@ -66,7 +69,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                         return Integer.toString(object.getBricks().size());
                     }
                 };
-        getTable().addColumn(numOfBricksColumn, constants.numberOfBricksVolume());
+        getTable().addColumn(numOfBricksColumn, constants.numberOfBricksVolume(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterVolumeEntity> transportColumn =
                 new TextColumnWithTooltip<GlusterVolumeEntity>() {
@@ -95,7 +98,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                     }
 
                 };
-        getTable().addColumn(transportColumn, constants.transportTypesVolume());
+        getTable().addColumn(transportColumn, constants.transportTypesVolume(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterVolumeEntity> statusColumn =
                 new EnumColumn<GlusterVolumeEntity, GlusterStatus>() {
@@ -104,7 +107,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                         return object.getStatus();
                     }
                 };
-        getTable().addColumn(statusColumn, constants.statusVolume());
+        getTable().addColumn(statusColumn, constants.statusVolume(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.createVolumeVolume()) {
             @Override
