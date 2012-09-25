@@ -10,25 +10,35 @@
   <packaging>pom</packaging>
   <name>oVirt DB Scripts</name>
   <description>parent POM for all oVirt Database scripts</description>
-<build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2</version>
-        <executions>
-          <execution>
-            <id>Check For Duplicate Upgrade Scripts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <executable>${project.basedir}/check_for_duplicate_upgrade_scripts.sh</executable>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <profiles>
+    <profile>
+      <id>unix</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+         <build>
+           <plugins>
+             <plugin>
+               <groupId>org.codehaus.mojo</groupId>
+               <artifactId>exec-maven-plugin</artifactId>
+               <version>1.2</version>
+               <executions>
+                 <execution>
+                   <id>Check For Duplicate Upgrade Scripts</id>
+                   <phase>package</phase>
+                   <goals>
+                     <goal>exec</goal>
+                   </goals>
+                 </execution>
+               </executions>
+               <configuration>
+                 <executable>${project.basedir}/check_for_duplicate_upgrade_scripts.sh</executable>
+               </configuration>
+             </plugin>
+           </plugins>
+         </build>
+    </profile>
+  </profiles>
 </project>
