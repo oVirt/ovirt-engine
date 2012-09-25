@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.view.client.NoSelectionModel;
 
@@ -69,20 +69,10 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         initAppsTable();
 
         // Add Tabs
-        add(new SimplePanel(generalForm), constants.generalLabel());
-        add(new SimplePanel(disksTable), constants.disksLabel());
-        add(new SimplePanel(nicsTable), constants.nicsLabel());
-        add(new SimplePanel(appsTable), constants.applicationsLabel());
-
-        // Add selection listener
-        vmSnapshotListModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                Snapshot snapshot = (Snapshot) vmSnapshotListModel.getSelectedItem();
-                updatePanel(snapshot);
-            }
-        });
+        add(new ScrollPanel(generalForm), constants.generalLabel());
+        add(new ScrollPanel(disksTable), constants.disksLabel());
+        add(new ScrollPanel(nicsTable), constants.nicsLabel());
+        add(new ScrollPanel(appsTable), constants.applicationsLabel());
     }
 
     public void updatePanel(Snapshot snapshot) {

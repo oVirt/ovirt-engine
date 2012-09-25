@@ -207,6 +207,8 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
+    private boolean isEntityChanged;
+
     public VmSnapshotListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
@@ -280,6 +282,11 @@ public class VmSnapshotListModel extends SearchableListModel
 
         super.setItems(sortedSnapshots);
 
+        if (isEntityChanged && sortedSnapshots.size() > 1) {
+            setSelectedItem(sortedSnapshots.get(1));
+        }
+        isEntityChanged = false;
+
         UpdateActionAvailability();
     }
 
@@ -298,6 +305,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
+            isEntityChanged = true;
             getSearchCommand().Execute();
         }
     }

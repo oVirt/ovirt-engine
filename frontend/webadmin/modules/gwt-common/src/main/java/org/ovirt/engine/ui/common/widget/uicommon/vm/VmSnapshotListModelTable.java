@@ -5,6 +5,9 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -50,6 +53,8 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     CommonApplicationConstants constants;
     CommonApplicationTemplates templates;
 
+    VmSnapshotInfoPanel vmSnapshotInfoPanel;
+
     public VmSnapshotListModelTable(DataBoundTabModelProvider<Snapshot, L> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             CommonApplicationConstants constants, CommonApplicationTemplates templates) {
@@ -63,8 +68,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
         snapshotsTableContainer.add(table);
 
         // Create Snapshot information tab panel
-        VmSnapshotInfoPanel vmSnapshotInfoPanel =
-                new VmSnapshotInfoPanel((VmSnapshotListModel) getModel(), constants, templates);
+        vmSnapshotInfoPanel = new VmSnapshotInfoPanel((VmSnapshotListModel) getModel(), constants, templates);
         snapshotInfoContainer.add(vmSnapshotInfoPanel);
     }
 
@@ -123,6 +127,18 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
 
         initActionButtons(constants);
         disableActiveSnapshotRow();
+
+        // Add selection listener
+        getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                Snapshot snapshot = (Snapshot) getModel().getSelectedItem();
+                if (snapshot != null && !getTable().getSelectionModel().isSelected(snapshot)) {
+                    getTable().getSelectionModel().setSelected(snapshot, true);
+                }
+                vmSnapshotInfoPanel.updatePanel(snapshot);
+            }
+        });
     }
 
     private void initActionButtons(final CommonApplicationConstants constants) {
