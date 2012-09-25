@@ -876,9 +876,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         public void RequestSearch()
         {
             searchRequested = true;
-            model.setItems(new ArrayList());
-            model.getSelectedItemChangedEvent().raise(this, new EventArgs());
-            model.getSelectedItemsChangedEvent().raise(this, new EventArgs());
         }
 
         private void ApplySearchPageSize(int value)
@@ -886,7 +883,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             model.setSearchPageSize(value);
 
             // If there search was requested before max result limit was retrieved, do it now.
-            if (searchRequested && !model.getTimer().isActive())
+            if (searchRequested && model.getIsTimerDisabled())
             {
                 model.getSearchCommand().Execute();
             }

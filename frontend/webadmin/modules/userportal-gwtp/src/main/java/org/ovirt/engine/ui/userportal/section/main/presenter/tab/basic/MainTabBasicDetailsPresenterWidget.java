@@ -37,10 +37,6 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         void setEditConsoleEnabled(boolean enabled);
 
         HasClickHandlers getEditButton();
-
-        void clear();
-
-        void displayVmOsImages(boolean dispaly);
     }
 
     private final ConsoleUtils consoleUtils;
@@ -95,7 +91,9 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
                 if (modelProvider.getModel().getSelectedItem() == null) {
                     return;
                 }
-                setupDisks(modelProvider);
+                @SuppressWarnings("unchecked")
+                Iterable<DiskImage> diskImages = modelProvider.getModel().getvmBasicDiskListModel().getItems();
+                getView().editDistItems(diskImages);
             }
         });
     }
@@ -106,12 +104,9 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (modelProvider.getModel().getSelectedItem() == null) {
-                    getView().clear();
                     return;
                 }
                 getView().edit(modelProvider.getModel());
-                getView().displayVmOsImages(true);
-                setupDisks(modelProvider);
                 setupConsole(modelProvider);
             }
 
@@ -129,14 +124,6 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
                 modelProvider.getModel().getEditConsoleCommand().Execute();
             }
         }));
-    }
-
-    private void setupDisks(final UserPortalBasicListProvider modelProvider) {
-        @SuppressWarnings("unchecked")
-        Iterable<DiskImage> diskImages = modelProvider.getModel().getvmBasicDiskListModel().getItems();
-        if (diskImages != null) {
-            getView().editDistItems(diskImages);
-        }
     }
 
     private void setupConsole(final UserPortalBasicListProvider modelProvider) {
