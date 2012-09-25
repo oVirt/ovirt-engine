@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -51,8 +50,8 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
             returnValue = false;
         }
-        _storageDomainNameChanged = !StringHelper.EqOp(oldDomain.getstorage_name(), getStorageDomain()
-                .getstorage_name());
+        _storageDomainNameChanged =
+                !StringUtils.equals(oldDomain.getstorage_name(), getStorageDomain().getstorage_name());
         // if domain is part of pool, and name changed, check that pool is up in
         // order to change description in spm
         if (returnValue
