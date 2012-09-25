@@ -403,12 +403,12 @@ public class VmDiskListModel extends VmDiskListModelBase
         model.setDisk(disk);
         model.setIsNew(false);
         setWindow(model);
-        model.getIsInVm().setEntity(true);
-        model.getIsInternal().setEntity(disk.getDiskStorageType() == DiskStorageType.IMAGE);
         model.setTitle(ConstantsManager.getInstance().getConstants().editVirtualDiskTitle());
         model.setHashName("edit_virtual_disk"); //$NON-NLS-1$
+        model.getAttachDisk().setIsAvailable(false);
+        model.getIsInVm().setEntity(true);
+        model.getIsInternal().setEntity(disk.getDiskStorageType() == DiskStorageType.IMAGE);
         model.getStorageDomain().setIsChangable(false);
-        model.getAttachDisk().setIsChangable(false);
         model.getHost().setIsChangable(false);
         model.getStorageType().setIsChangable(false);
         model.getDataCenter().setIsChangable(false);

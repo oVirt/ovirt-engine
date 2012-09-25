@@ -521,7 +521,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean isInVm = (Boolean) ((EntityModel) sender).getEntity();
-                topPanel.setVisible(isInVm);
+                topPanel.setVisible(isInVm && disk.getAttachDisk().getIsAvailable());
                 aliasEditor.setFocus(!isInVm);
             }
         });
