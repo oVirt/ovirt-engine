@@ -947,8 +947,7 @@ public class ClusterModel extends Model
                 }
             }
         };
-        AsyncDataProvider.GetDataCenterVersions(_asyncQuery, selectedDataCenter == null ? null
-                : (NGuid) (selectedDataCenter.getId()));
+        AsyncDataProvider.GetDataCenterVersions(_asyncQuery, selectedDataCenter.getId());
     }
 
     public boolean Validate(boolean validateCpu)
