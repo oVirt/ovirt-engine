@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -354,7 +353,7 @@ public final class ImagesHandler {
     }
 
     public static String cdPathWindowsToLinux(String windowsPath, String isoPrefix) {
-        if (StringHelper.isNullOrEmpty(windowsPath)) {
+        if (StringUtils.isEmpty(windowsPath)) {
             return windowsPath; // empty string is used for 'eject'.
         }
         String fileName = Path.GetFileName(windowsPath);
