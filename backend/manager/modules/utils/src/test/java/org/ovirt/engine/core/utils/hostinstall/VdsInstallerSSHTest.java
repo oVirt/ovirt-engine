@@ -1,20 +1,26 @@
 package org.ovirt.engine.core.utils.hostinstall;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeNotNull;
+import static org.junit.Assume.assumeTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyStore;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assume;
-import static org.junit.Assert.*;
-
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
@@ -96,6 +102,7 @@ public class VdsInstallerSSHTest {
 
     @Before
     public void setup() throws IOException {
+        assumeTrue(SystemUtils.IS_OS_UNIX);
         IConfigUtilsInterface confInstance = new DefaultValuesConfigUtil();
         Config.setConfigUtils(confInstance);
 
@@ -512,7 +519,7 @@ public class VdsInstallerSSHTest {
 
     @Test
     public void testFingerprint() throws Exception {
-        Assume.assumeNotNull(sshd);
+        assumeNotNull(sshd);
         VdsInstallerSSH vdsi = new VdsInstallerSSH();
         vdsi.setPort(port);
         try {
