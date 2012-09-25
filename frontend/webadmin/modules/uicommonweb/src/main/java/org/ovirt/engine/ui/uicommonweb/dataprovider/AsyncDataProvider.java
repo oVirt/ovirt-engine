@@ -1043,7 +1043,10 @@ public final class AsyncDataProvider {
                 {
                     ArrayList<GlusterVolumeOptionInfo> list =
                             new ArrayList<GlusterVolumeOptionInfo>((Set<GlusterVolumeOptionInfo>) source);
-
+                    // user.cifs option will be present in the list by default, so adding it now
+                    GlusterVolumeOptionInfo cifsOption = new GlusterVolumeOptionInfo();
+                    cifsOption.setKey("user.cifs"); //$NON-NLS-1$
+                    list.add(cifsOption);
                     return list;
                 }
 

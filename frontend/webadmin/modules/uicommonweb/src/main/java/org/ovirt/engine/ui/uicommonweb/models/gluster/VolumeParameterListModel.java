@@ -109,6 +109,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
         volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().addOptionVolume());
         setWindow(volumeParameterModel);
+        volumeParameterModel.StartProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -121,6 +122,8 @@ public class VolumeParameterListModel extends SearchableListModel {
 
                 ArrayList<GlusterVolumeOptionInfo> optionInfoList = (ArrayList<GlusterVolumeOptionInfo>) result;
                 innerParameterModel.getKeyList().setItems(optionInfoList);
+
+                innerParameterModel.StopProgress();
 
                 UICommand command = new UICommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
                 command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -151,7 +154,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
         option.setVolumeId(volume.getId());
-        option.setKey(((GlusterVolumeOptionInfo) model.getKeyList().getSelectedItem()).getKey());
+        option.setKey((String) model.getSelectedKey().getEntity());
         option.setValue((String) model.getValue().getEntity());
 
         model.StartProgress(null);
@@ -197,9 +200,12 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
         volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().editOptionVolume());
+        volumeParameterModel.setIsNew(false);
         setWindow(volumeParameterModel);
 
         volumeParameterModel.getKeyList().setIsChangable(false);
+        volumeParameterModel.getSelectedKey().setIsChangable(false);
+        volumeParameterModel.StartProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -214,16 +220,11 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getKeyList().setItems(optionInfoList);
 
                 GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
-
-                for (GlusterVolumeOptionInfo option : optionInfoList) {
-                    if (option.getKey().equals(selectedOption.getKey()))
-                    {
-                        innerParameterModel.getKeyList().setSelectedItem(option);
-                        break;
-                    }
-                }
-
+                innerParameterModel.getDescription().setEntity(""); //$NON-NLS-1$
+                innerParameterModel.getSelectedKey().setEntity(selectedOption.getKey());
                 innerParameterModel.getValue().setEntity(selectedOption.getValue());
+
+                innerParameterModel.StopProgress();
 
                 UICommand command = new UICommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
                 command.setTitle(ConstantsManager.getInstance().getConstants().ok());

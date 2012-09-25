@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.ComboBox;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -34,9 +36,23 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    /*
+     * @UiField(provided = true)
+     *
+     * @Path(value = "keyList.selectedItem") ListModelListBoxEditor<Object> keyListEditor;
+     */
+
     @UiField(provided = true)
+    @WithElementId("keyComboBox")
+    ComboBox keyComboBox;
+
     @Path(value = "keyList.selectedItem")
-    ListModelListBoxEditor<Object> keyListEditor;
+    @WithElementId("keyListBox")
+    ListModelListBoxEditor<Object> keyListBoxEditor;
+
+    @Path(value = "selectedKey.entity")
+    @WithElementId("keyTextBox")
+    EntityModelTextBoxEditor keyTextBoxEditor;
 
     @UiField
     @Path(value = "description.entity")
@@ -49,15 +65,21 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
     @Inject
     public VolumeParameterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        initKeyEditor();
+        initComboBox();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         Driver.driver.initialize(this);
     }
 
-    private void initKeyEditor() {
-        keyListEditor = new ListModelListBoxEditor<Object>(new StringRenderer<Object>() {
+    private void localize(ApplicationConstants constants) {
+        keyListBoxEditor.setLabel(constants.optionKeyVolumeParameter());
+        descriptionEditor.setLabel(constants.descriptionVolumeParameter());
+        valueEditor.setLabel(constants.optionValueVolumeParameter());
+    }
+
+    void initComboBox() {
+        keyListBoxEditor = new ListModelListBoxEditor<Object>(new StringRenderer<Object>() {
             @Override
             public String render(Object object) {
                 GlusterVolumeOptionInfo optionInfo = (GlusterVolumeOptionInfo) object;
@@ -68,12 +90,9 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
                 return null;
             }
         });
-    }
+        keyTextBoxEditor = new EntityModelTextBoxEditor();
 
-    private void localize(ApplicationConstants constants) {
-        keyListEditor.setLabel(constants.optionKeyVolumeParameter());
-        descriptionEditor.setLabel(constants.descriptionVolumeParameter());
-        valueEditor.setLabel(constants.optionValueVolumeParameter());
+        keyComboBox = new ComboBox(keyListBoxEditor, keyTextBoxEditor);
     }
 
     @Override
