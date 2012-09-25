@@ -8,10 +8,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateTime extends Date {
-
-    // public static Date Now = new DateTime();
-    // public static DateTime Now2 = new DateTime();
-
     private static final String dayNames[] = new DateFormatSymbols().getWeekdays();
 
     public DateTime(int year, int month, int date) {
@@ -54,10 +50,6 @@ public class DateTime extends Date {
 
     public long getTotalMilliseconds() {
         return this.getTime();
-    }
-
-    public DateTime(int i) {
-        super(i);
     }
 
     public String toString(String formatString) {
@@ -161,11 +153,6 @@ public class DateTime extends Date {
 
     public static boolean TryParseExact(String value, String string, Object dateTimeFormat, DateTimeStyles none,
             RefObject<Date> tempRefObject) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException(); // juicommon
-    }
-
-    public static Date ParseExact(String entity, String string, CultureInfo currentCulture) {
         // TODO Auto-generated method stub
         throw new NotImplementedException(); // juicommon
     }
