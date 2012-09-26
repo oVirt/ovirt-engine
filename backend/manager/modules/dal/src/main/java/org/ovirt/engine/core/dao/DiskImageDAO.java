@@ -77,6 +77,4 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid> {
 
     // TODO mapping methods moved out of DbFacade that will be removed when we have Hibernate
     List<DiskImage> getAllForQuotaId(Guid quotaId);
-
-    List<DiskImage> getImagesByStorageIdAndTemplateId(Guid storageId, Guid templateId);
 }
