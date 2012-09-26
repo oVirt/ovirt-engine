@@ -75,6 +75,15 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid> {
      */
     List<DiskImage> getImagesWithNoDisk(Guid vmId);
 
+    /**
+     * Retrieves all images for the specified Storage Domain id.
+     *
+     * @param id
+     *            the Storage Domain id
+     * @return the list of images
+     */
+    List<DiskImage> getImagesByStorageId(Guid storageId);
+
     // TODO mapping methods moved out of DbFacade that will be removed when we have Hibernate
     List<DiskImage> getAllForQuotaId(Guid quotaId);
 }

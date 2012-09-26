@@ -72,7 +72,14 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     }
 
     @Override
+    public List<DiskImage> getImagesByStorageId(Guid storageId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public List<DiskImage> getImagesWithNoDisk(Guid vmId) {
         throw new NotImplementedException();
     }
+
 }

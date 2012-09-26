@@ -20,6 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskImageDAO> {
     private static final Guid ANCESTOR_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
+    private static final Guid STORAGE_DOMAIN_ID = FixturesTool.STORAGE_DOAMIN_SCALE_SD5;
 
     private DiskImage existingTemplate;
 
@@ -122,5 +123,13 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetImagesByStorageId() {
+        List<DiskImage> result = dao.getImagesByStorageId(STORAGE_DOMAIN_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
     }
 }
