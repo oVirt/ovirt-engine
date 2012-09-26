@@ -139,3 +139,9 @@ ENGINE_DB_URL=jdbc:postgresql://localhost/engine
 ENGINE_DB_SSL=false
 ENGINE_DB_USER=engine
 ENGINE_DB_PASSWORD=
+
+#
+# Size of the database connection pool:
+#
+ENGINE_DB_MIN_CONNECTIONS=1
+ENGINE_DB_MAX_CONNECTIONS=100

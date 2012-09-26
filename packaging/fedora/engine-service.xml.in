@@ -91,8 +91,8 @@
           <driver>postgresql</driver>
           <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
           <pool>
-            <min-pool-size>1</min-pool-size>
-            <max-pool-size>100</max-pool-size>
+            <min-pool-size>$getInteger('ENGINE_DB_MIN_CONNECTIONS')</min-pool-size>
+            <max-pool-size>$getInteger('ENGINE_DB_MAX_CONNECTIONS')</max-pool-size>
             <prefill>true</prefill>
           </pool>
           <security>
