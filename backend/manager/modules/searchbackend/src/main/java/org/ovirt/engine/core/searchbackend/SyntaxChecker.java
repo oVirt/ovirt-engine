@@ -150,7 +150,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 container.setErr(SyntaxError.CANT_GET_CONDITION_FIELD_AC, startPos.argvalue, idx);
                 return ValueParseResult.Err;
             }
-            if ((!StringHelper.EqOp(curConditionField, ""))
+            if ((!"".equals(curConditionField))
                     && (!curConditionFieldAC.validateFieldValue(curConditionField, strRealObj))) {
                 container.setErr(SyntaxError.INVALID_CONDITION_VALUE, startPos.argvalue, idx);
                 return ValueParseResult.Err;
@@ -257,7 +257,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 if (mDotAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.DOT, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                } else if ((!StringHelper.EqOp(tryNextObj, "")) && (curConditionRelationAC.validate(tryNextObj))) {
+                } else if ((!"".equals(tryNextObj)) && (curConditionRelationAC.validate(tryNextObj))) {
                     break; // i.e. the relation object has another charecter
                 } else if (curConditionRelationAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION, nextObject, curStartPos, idx + 1);
@@ -844,7 +844,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             }
 
             // adding the sorting part if required
-            if (StringHelper.EqOp(sortByPhrase, "")) {
+            if ("".equals(sortByPhrase)) {
                 sortByPhrase = StringFormat.format(" ORDER BY %1$s", mSearchObjectAC.getDefaultSort(searchObjStr));
             }
             // adding the paging phrase
