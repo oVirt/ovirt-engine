@@ -729,13 +729,13 @@ public class LinkHelper {
      * @return the combined head and params
      */
     public static String combine(String head, ParametersSet params) {
-        String combined_params = "";
+        final StringBuilder combinedParams = new StringBuilder(head);
         if (params != null) {
            for (Parameter entry : params.getParameters()) {
-                combined_params += String.format(MATRIX_PARAMETER_TEMPLATE, entry.getName(), entry.getValue());
+                combinedParams.append(String.format(MATRIX_PARAMETER_TEMPLATE, entry.getName(), entry.getValue()));
            }
         }
-        return head + combined_params;
+        return combinedParams.toString();
     }
 
     /**
