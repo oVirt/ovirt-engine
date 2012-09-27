@@ -3,11 +3,12 @@ package org.ovirt.engine.core.searchbackend;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+
+import junit.framework.TestCase;
 
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.RefObject;
-
-import junit.framework.TestCase;
 
 public class AuditLogConditionFieldAutoCompleterTest extends TestCase {
 
@@ -25,6 +26,7 @@ public class AuditLogConditionFieldAutoCompleterTest extends TestCase {
     }
 
     public void testformatValueWithTime() {
+        Locale.setDefault(Locale.US);
         RefObject<String> rels = new RefObject<String>();
         RefObject<String> value = new RefObject<String>();
         IConditionFieldAutoCompleter comp = new AuditLogConditionFieldAutoCompleter();
