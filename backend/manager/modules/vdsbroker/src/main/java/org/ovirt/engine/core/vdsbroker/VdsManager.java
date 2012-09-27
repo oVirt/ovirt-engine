@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -35,8 +34,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CollectVdsNetworkDataVDSCommand;
@@ -214,67 +211,51 @@ public class VdsManager {
             ArrayList<VDSDomainsData> domainsList = null;
 
             synchronized (getLockObj()) {
-                TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        {
-                            _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
-                            if (_vds == null) {
-                                log.errorFormat("ResourceManager::refreshVdsRunTimeInfo - OnTimer is NULL for {0}",
-                                        getVdsId());
-                                return null;
-                            }
+                _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+                if (_vds == null) {
+                    log.errorFormat("VdsManager::refreshVdsRunTimeInfo - OnTimer is NULL for {0}",
+                            getVdsId());
+                    return;
+                }
 
-                            try {
-                                if (_refreshIteration == _numberRefreshesBeforeSave) {
-                                    _refreshIteration = 1;
-                                } else {
-                                    _refreshIteration++;
-                                }
-                                if (isMonitoringNeeded()) {
-                                    setStartTime();
-                                    _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds);
-                                    _vdsUpdater.Refresh();
-                                    mUnrespondedAttempts.set(0);
-                                    setLastUpdate();
-                                }
-                                if (!getInitialized() && getVds().getstatus() != VDSStatus.NonResponsive
-                                        && getVds().getstatus() != VDSStatus.PendingApproval) {
-                                    log.info("Initializing Host: " + getVds().getvds_name());
-                                    ResourceManager.getInstance().HandleVdsFinishedInit(_vds.getId());
-                                    setInitialized(true);
-                                }
-                            } catch (VDSNetworkException e) {
-                                logNetworkException(e);
-                            } catch (VDSRecoveringException ex) {
-                                HandleVdsRecoveringException(ex);
-                            } catch (IRSErrorException ex) {
-                                logFailureMessage(ex);
-                                if (log.isDebugEnabled()) {
-                                    logException(ex);
-                                }
-                            } catch (RuntimeException ex) {
-                                logFailureMessage(ex);
-                                logException(ex);
-                            }
-
-                        }
-                        return null;
+                try {
+                    if (_refreshIteration == _numberRefreshesBeforeSave) {
+                        _refreshIteration = 1;
+                    } else {
+                        _refreshIteration++;
                     }
-
-                    private void logFailureMessage(RuntimeException ex) {
-                        log.warnFormat(
-                                "ResourceManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, error = '{2}', continuing.",
-                                _vds.getId(),
-                                _vds.getvds_name(),
-                                ExceptionUtils.getMessage(ex));
+                    if (isMonitoringNeeded()) {
+                        setStartTime();
+                        _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds);
+                        _vdsUpdater.Refresh();
+                        mUnrespondedAttempts.set(0);
+                        setLastUpdate();
                     }
-                });
+                    if (!getInitialized() && getVds().getstatus() != VDSStatus.NonResponsive
+                            && getVds().getstatus() != VDSStatus.PendingApproval) {
+                        log.info("Initializing Host: " + getVds().getvds_name());
+                        ResourceManager.getInstance().HandleVdsFinishedInit(_vds.getId());
+                        setInitialized(true);
+                    }
+                } catch (VDSNetworkException e) {
+                    logNetworkException(e);
+                } catch (VDSRecoveringException ex) {
+                    HandleVdsRecoveringException(ex);
+                } catch (IRSErrorException ex) {
+                    logFailureMessage(ex);
+                    if (log.isDebugEnabled()) {
+                        logException(ex);
+                    }
+                } catch (RuntimeException ex) {
+                    logFailureMessage(ex);
+                    logException(ex);
+                }
                 try {
                     if (_vdsUpdater != null) {
                         _vdsUpdater.AfterRefreshTreatment();
 
-                        // Get vds data for updating domains list, ignoring vds which is down, since it's not connected to
+                        // Get vds data for updating domains list, ignoring vds which is down, since it's not connected
+                        // to
                         // the storage anymore (so there is no sense in updating the domains list in that case).
                         if (_vds != null && _vds.getstatus() != VDSStatus.Maintenance) {
                             vdsId = _vds.getId();
@@ -287,12 +268,12 @@ public class VdsManager {
                     _vds = null;
                     _vdsUpdater = null;
                 } catch (IRSErrorException ex) {
-                    logFailureMessage(ex);
+                    logAfterRefreshFailureMessage(ex);
                     if (log.isDebugEnabled()) {
                         logException(ex);
                     }
                 } catch (RuntimeException ex) {
-                    logFailureMessage(ex);
+                    logAfterRefreshFailureMessage(ex);
                     logException(ex);
                 }
 
@@ -308,24 +289,31 @@ public class VdsManager {
         }
     }
 
-    public boolean isMonitoringNeeded() {
-        return ( monitoringStrategy.isMonitoringNeeded(_vds) &&
-                 _vds.getstatus() != VDSStatus.Installing &&
-                 _vds.getstatus() != VDSStatus.InstallFailed &&
-                 _vds.getstatus() != VDSStatus.Reboot &&
-                 _vds.getstatus() != VDSStatus.Maintenance &&
-                 _vds.getstatus() != VDSStatus.PendingApproval &&
-                 _vds.getstatus() != VDSStatus.Down );
+    private void logFailureMessage(RuntimeException ex) {
+        log.warnFormat(
+                "VdsManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, error = '{2}', continuing.",
+                _vds.getId(),
+                _vds.getvds_name(),
+                ExceptionUtils.getMessage(ex));
     }
 
     private static void logException(final RuntimeException ex) {
         log.error("ResourceManager::refreshVdsRunTimeInfo", ex);
     }
 
-    private void logFailureMessage(RuntimeException ex) {
+    private void logAfterRefreshFailureMessage(RuntimeException ex) {
         log.warnFormat(
                 "ResourceManager::refreshVdsRunTimeInfo::Failed to AfterRefreshTreatment VDS  error = '{0}', continuing.",
                 ExceptionUtils.getMessage(ex));
+    }
+
+    public boolean isMonitoringNeeded() {
+        return (monitoringStrategy.isMonitoringNeeded(_vds) &&
+                _vds.getstatus() != VDSStatus.Installing &&
+                _vds.getstatus() != VDSStatus.InstallFailed &&
+                _vds.getstatus() != VDSStatus.Reboot &&
+                _vds.getstatus() != VDSStatus.Maintenance &&
+                _vds.getstatus() != VDSStatus.PendingApproval && _vds.getstatus() != VDSStatus.Down);
     }
 
     private void HandleVdsRecoveringException(VDSRecoveringException ex) {
