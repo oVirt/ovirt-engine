@@ -254,14 +254,7 @@ public class VdsUpdateRunTimeInfo {
         _vds = vds;
         _firstStatus = _vds.getstatus();
         monitoringStrategy = getMonitoringStrategyForVds(vds);
-        _vmDict =
-                TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
-                        new TransactionMethod<Map<Guid, VM>>() {
-                            @Override
-                            public Map<Guid, VM> runInTransaction() {
-                                return getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
-                            }
-                        });
+        _vmDict = getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
 
         for (VM vm : _vmDict.values()) {
             if (vm.isStatusUp() && vm.getstatus() != VMStatus.Up) {
