@@ -2547,7 +2547,13 @@
 	      <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
 	      <xs:element ref="parameters_set" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
-        <xs:attribute name="required" type="xs:boolean"/>
+        <xs:attribute name="required" type="xs:boolean">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property generateIsSetMethod="false"/>
+            </xs:appinfo>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="type" type="xs:string"/>
         <xs:attribute name="context" type="xs:string"/>
       </xs:extension>
