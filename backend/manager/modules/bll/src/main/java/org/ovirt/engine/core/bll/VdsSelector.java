@@ -368,7 +368,7 @@ public class VdsSelector {
     }
 
     private NetworkDAO getNetworkDAO() {
-        return DbFacade.getInstance().getNetworkDAO();
+        return DbFacade.getInstance().getNetworkDao();
     }
 
     private boolean networkRequiredOnVds(VmNetworkInterface vmIface,
