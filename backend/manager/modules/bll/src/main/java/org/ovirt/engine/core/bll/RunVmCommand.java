@@ -863,6 +863,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public boolean validateAndSetQuota() {
+        if (isInternalExecution()) {
+            return true;
+        }
         boolean canDoAction = getQuotaManager().validateAndSetClusterQuota(getStoragePool(),
                 getVm().getvds_group_id(),
                 getQuotaId(),
