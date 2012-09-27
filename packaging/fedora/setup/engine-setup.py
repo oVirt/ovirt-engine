@@ -26,6 +26,7 @@ import tempfile
 from optparse import OptionParser, OptionGroup
 from setup_controller import Controller
 from Cheetah.Template import Template
+from miniyum import MiniYum
 
 # Globals
 controller = Controller()
@@ -1730,20 +1731,6 @@ def _stopEngine(configFile):
 
     return True
 
-def _lockRpmVersion():
-    """
-    Enters rpm versions into yum version-lock
-    """
-    logging.debug("Locking rpms in yum-version-lock")
-    cmd = [
-        basedefs.EXEC_RPM, "-q",
-    ] + basedefs.RPM_LOCK_LIST.split()
-    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_YUM_LOCK)
-
-    with open(basedefs.FILE_YUM_VERSION_LOCK, "a") as f:
-        for rpm in output.splitlines():
-            f.write(rpm + "\n")
-
 def editPostgresConf():
     """
     edit /var/lib/pgsql/data/postgresql.conf and change max_connections to 150
@@ -1920,6 +1907,15 @@ def runSequences():
     controller.runAllSequences()
 
 def main(configFile=None):
+
+    # BEGIN: PROCESS-INITIALIZATION
+    miniyumsink = utils.MiniYumSink()
+    MiniYum.setup_log_hook(sink=miniyumsink)
+    extraLog = open(logFile, "a")
+    miniyum = MiniYum(sink=miniyumsink, extraLog=extraLog)
+    miniyum.selinux_role()
+    # END: PROCESS-INITIALIZATION
+
     try:
         logging.debug("Entered main(configFile='%s')"%(configFile))
         print output_messages.INFO_HEADER
@@ -1977,7 +1973,7 @@ def main(configFile=None):
         runSequences()
 
         # Lock rhevm version
-        _lockRpmVersion()
+        utils.lockRpmVersion(miniyum, basedefs.RPM_LOCK_LIST.split())
 
         # Print info
         _addFinalInfoMsg()

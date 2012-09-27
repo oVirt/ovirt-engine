@@ -186,6 +186,12 @@ INFO_STRING_LEN_LESS_THAN_MIN="String length is less than the minimum allowed: %
 INFO_STRING_EXCEEDS_MAX_LENGTH="String length exceeds the maximum length allowed: %s"
 INFO_STRING_CONTAINS_ILLEGAL_CHARS="String contains illegal characters"
 
+# Yum
+WARN_INSTALL_GPG_KEY = (
+    "\nA package is being installed. The package requires installation of a new GPG key.\n"
+    "GPG key details: userid=%s hexkeyid=%s\n"
+)
+
 #####################
 #####ERR MESSAGES####
 #####################

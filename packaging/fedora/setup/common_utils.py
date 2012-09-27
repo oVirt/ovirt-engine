@@ -10,6 +10,7 @@ from StringIO import StringIO
 import output_messages
 import traceback
 import os
+import sys
 import basedefs
 import datetime
 import libxml2
@@ -18,6 +19,7 @@ import shutil
 import time
 import tempfile
 import csv
+from miniyum import MiniYum
 
 """
 ENUM implementation for python (from the vdsm team)
@@ -252,6 +254,63 @@ class XMLConfigFileHandler(ConfigFileHandler):
         # Call xpathEval to strip the metadata string from the top of the new xml node
         parentNode.addChild(newNode.xpathEval('/*')[0])
 
+
+class MiniYumSink(object):
+    """miniyum user interaction sink.
+
+    We want logging to go into our own internal log.
+
+    But we do want user to approve new gnupg keys.
+
+    """
+
+    def _currentfds(self):
+        fds = []
+        try:
+            fds.append(os.dup(sys.stdin.fileno()))
+            fds.append(os.dup(sys.stdout.fileno()))
+            fds.append(os.dup(sys.stderr.fileno()))
+
+            return fds
+        except:
+            for fd in fds:
+                os.close(fd)
+            raise
+
+    def __init__(self):
+        self._fds = None
+        self._fds = self._currentfds()
+
+    def __del__(self):
+        if self._fds != None:
+            for fd in self._fds:
+                os.close(fd)
+
+    def verbose(self, msg):
+        logging.debug("YUM: VERB: %s" % msg)
+
+    def info(self, msg):
+        logging.info("YUM: OK:   %s" % msg)
+
+    def error(self, msg):
+        logging.error("YUM: FAIL: %s" % msg)
+
+    def keepAlive(self, msg):
+        pass
+
+    def askForGPGKeyImport(self, userid, hexkeyid):
+        logging.warning("YUM: APPROVE-GPG: userid=%s, hexkeyid=%s" % (
+            userid,
+            hexkeyid
+        ))
+        save = self._currentfds()
+        for i in range(3):
+            os.dup2(self._fds[i], i)
+        print output_messages.WARN_INSTALL_GPG_KEY % (userid, hexkeyid)
+        ret = askYesNo(INFO_Q_PROCEED)
+        for i in range(3):
+            os.dup2(save[i], i)
+        return ret
 
 def getXmlNode(xml, xpath):
     nodes = xml.xpathEval(xpath)
@@ -825,27 +884,6 @@ def _maskString(string, maskList=[]):
 
     return maskedStr
 
-def getRpmVersion(rpmName=basedefs.ENGINE_RPM_NAME):
-    """
-    extracts rpm version
-    from a given rpm package name
-    default rpm is 'rhevm'
-
-    returns version (string)
-    """
-    # Update build number on welcome page
-    logging.debug("retrieving build number for %s rpm"%(rpmName))
-    cmd = [
-        basedefs.EXEC_RPM,
-        "-q",
-        "--queryformat", "'%{VERSION}-%{RELEASE}'",
-        rpmName,
-    ]
-    rpmVersion, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_READ_RPM_VER % rpmName)
-
-    # Return rpm version
-    return rpmVersion
-
 def askYesNo(question=None):
     message = StringIO()
     askString = "%s? (yes|no): "%(question)
@@ -1145,14 +1183,56 @@ def chownToEngine(target):
     gid = getGroupId(basedefs.ENGINE_GROUP_NAME)
     chown(target, uid, gid)
 
-def installed(rpm):
-    cmd = [
-        basedefs.EXEC_RPM,
-        "-q",
-        rpm,
+def getRpmVersion(rpmName=basedefs.ENGINE_RPM_NAME):
+    """
+    extracts rpm version
+    from a given rpm package name
+    default rpm is 'rhevm'
+
+    returns version (string)
+    """
+    # Update build number on welcome page
+    logging.debug("retrieving version for %s rpm" % rpmName)
+
+    # TODO
+    # Do not create miniyum here, pass it via argument
+    miniyum = MiniYum(sink=MiniYumSink())
+
+    res = [
+        p for p in miniyum.queryPackages(patterns=[rpmName])
+        if p['operation'] == 'installed'
     ]
-    output, rc = execCmd(cmd)
-    return rc == 0
+
+    if len(res) != 1:
+        raise Exception(output_messages.ERR_READ_RPM_VER % rpmName)
+
+    return "%s-%s" % (res[0]['version'], res[0]['release'])
+
+def installed(rpm):
+    try:
+        getRpmVersion(rpmName=rpm)
+        return True
+    except:
+        logging.debug("getRpmVersion failed", exc_info=True)
+        return False
+
+def lockRpmVersion(miniyum, patterns):
+    """
+    Enters rpm versions into yum version-lock
+    """
+    logging.debug("Locking rpms in yum-version-lock")
+
+    pkgs = [
+        p['display_name'] for p in
+        miniyum.queryPackages(
+            patterns=patterns
+        )
+        if p['operation'] == 'installed'
+    ]
+
+    # Create RPM lock list
+    with open(basedefs.FILE_YUM_VERSION_LOCK, 'a') as yumlock:
+        yumlock.write("\n".join(pkgs))
 
 def setHttpPortsToNonProxyDefault(controller):
     logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default non-proxy values (8700 & 8701)")

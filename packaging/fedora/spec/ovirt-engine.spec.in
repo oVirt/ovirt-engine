@@ -273,6 +273,7 @@ The generic API for %{product_name_short}
 Summary: Setup and upgrade scripts for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name}
+Requires: yum
 Requires: lsof
 Requires: nfs-utils
 Requires: python-cheetah
@@ -745,6 +746,7 @@ fi
 %{engine_data}/scripts/setup_sequences.py*
 %{engine_data}/scripts/setup_controller.py*
 %{engine_data}/scripts/common_utils.py*
+%{engine_data}/scripts/miniyum.py*
 %{engine_data}/scripts/output_messages.py*
 %{engine_data}/scripts/nfsutils.py*
 %{engine_data}/scripts/engine-setup.py*

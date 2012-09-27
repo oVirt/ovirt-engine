@@ -258,6 +258,7 @@ install_setup:
 	install -m 644 packaging/fedora/setup/setup_sequences.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/setup_controller.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/common_utils.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/miniyum.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/output_messages.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/post_upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
 

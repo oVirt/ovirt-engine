@@ -10,9 +10,9 @@ import traceback
 import types
 import pwd
 from optparse import OptionParser
-import yum
 import common_utils as utils
 import basedefs
+from miniyum import MiniYum
 
 # Consts
 #TODO: Work with a real list here
@@ -74,12 +74,7 @@ MSG_ERROR_RESTORE_DB = "Error: Database restore failed"
 MSG_ERROR_DROP_DB = "Error: Database drop failed"
 MSG_ERROR_UPDATE_DB = "Error: Database update failed"
 MSG_ERROR_RENAME_DB = "Error: Database rename failed. Check that there are no active connections to the DB and try again."
-MSG_ERROR_YUM_HISTORY_LIST = "Error: Can't get history from yum"
-MSG_ERROR_YUM_HISTORY_GETLAST = "Error: Can't find last install transaction in yum"
-MSG_ERROR_YUM_HISTORY_UNDO = "Error: Can't rollback yum"
-MSG_ERROR_YUM_LOCK = "Error: Can't edit yum lock file"
 MSG_ERROR_RPM_QUERY = "Error: Unable to retrieve rpm versions"
-MSG_ERROR_YUM_UPDATE = "Error: Yum update failed"
 MSG_ERROR_CHECK_LOG = "Error: Upgrade failed.\nplease check log at %s"
 MSG_ERROR_CONNECT_DB = "Error: Failed to connect to database"
 MSG_ERR_FAILED_START_ENGINE_SERVICE = "Error: Can't start ovirt-engine"
@@ -91,7 +86,6 @@ MSG_ERR_FAILED_STOP_SERVICE = "Error: Can't stop the %s service"
 MSG_ERR_SQL_CODE = "Failed running sql query"
 MSG_ERR_EXP_UPD_DC_TYPE="Failed updating default Data Center Storage Type in %s db"
 MSG_ERROR_ENGINE_PID = "Error: ovirt-engine service is dead, but pid file exists"
-MSG_ERROR_YUM_TID = "Error: Yum transaction mismatch"
 MSG_ERROR_PGPASS = "Error: DB password file was not found on this system. Verify \
 that this system was previously installed and that there's a password file at %s or %s" % \
 (basedefs.DB_PASS_FILE, basedefs.ORIG_PASS_FILE)
@@ -123,8 +117,7 @@ MSG_INFO_DB_UPDATE = "Updating Database"
 MSG_INFO_RUN_POST = "Running post install configuration"
 MSG_ERROR_UPGRADE = "\n **Error: Upgrade failed, rolling back**"
 MSG_INFO_DB_RESTORE = "Restoring Database"
-MSG_INFO_YUM_ROLLBACK = "Rolling back rpms"
-MSG_INFO_NO_YUM_ROLLBACK = "Skipping yum rollback"
+MSG_INFO_YUM_ROLLBACK = "Rolling back rpms..."
 MSG_INFO_START_ENGINE = "Starting ovirt-engine"
 MSG_INFO_DB_BACKUP_FILE = "DB Backup available at "
 MSG_INFO_LOG_FILE = "Upgrade log available at"
@@ -249,44 +242,28 @@ def _verifyUserPermissions():
         sys.exit(1)
 
 class MYum():
-    def __init__(self):
-        self.updated = False
-        self.yumbase = None
-        self.upackages = []
-        self.ipackages = []
-        self.__initbase()
-        self.tid = None
 
-    def __initbase(self):
-        self.yumbase = yum.YumBase()
-        self.yumbase.preconf.disabled_plugins = ['versionlock']
-        self.yumbase.conf.cache = False # Do not relay on existing cache
-        self.yumbase.cleanMetadata()
-        self.yumbase.cleanSqlite()
+    class _transaction(object):
+        def __init__(self, parent, transaction):
+            self._parent = parent
+            self._transaction = transaction
 
-    def _validateRpmLockList(self):
-        rpmLockList = []
-        for rpmName in basedefs.RPM_LOCK_LIST.split():
-            cmd = [
-                basedefs.EXEC_RPM, "-q", rpmName,
-            ]
-            output, rc = utils.execCmd(cmdList=cmd)
-            if rc == 0:
-                rpmLockList.append(rpmName)
+        def __enter__(self):
+            self._parent._unlock()
+            self._transaction.__enter__()
 
-        return rpmLockList
+        def __exit__(self, exc_type, exc_value, traceback):
+            if exc_type is not None and self._parent._rpmChange:
+                print MSG_INFO_YUM_ROLLBACK
+            self._transaction.__exit__(exc_type, exc_value, traceback)
+            self._parent._lock()
+
+    def __init__(self, miniyum):
+        self._rpmChange = False
+        self._miniyum = miniyum
 
     def _lock(self):
-        logging.debug("Yum lock started")
-
-        # Create RPM lock list
-        cmd = [
-            basedefs.EXEC_RPM, "-q",
-        ] + self._validateRpmLockList()
-        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_LOCK)
-        with open(basedefs.FILE_YUM_VERSION_LOCK, 'a') as yumlock:
-            yumlock.write(output)
-        logging.debug("Yum lock completed successfully")
+        utils.lockRpmVersion(self._miniyum, basedefs.RPM_LOCK_LIST.split())
 
     def _unlock(self):
         logging.debug("Yum unlock started")
@@ -303,163 +280,50 @@ class MYum():
         fd.close()
         logging.debug("Yum unlock completed successfully")
 
+    def clean(self):
+        with self._miniyum.transaction():
+            self._miniyum.clean(['expire-cache'])
+
+    def transaction(self):
+        return MYum._transaction(self, self._miniyum.transaction())
+
+    def begin(self):
+        self._miniyum.update([basedefs.ENGINE_RPM_NAME])
+        self.emptyTransaction = not self._miniyum.buildTransaction()
+
     def update(self):
-        self.tid = self.getLatestTid(False)
-        self._unlock()
-        try:
-            # yum update ovirt-engine
-            # TODO: Run test transaction
-            logging.debug("Yum update started")
-            cmd = [
-                basedefs.EXEC_YUM, "update", "-q", "-y",
-            ] + RPM_LIST.split()
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_UPDATE)
-            logging.debug("Yum update completed successfully")
-        finally:
-            self._lock()
+        self._rpmChange = True
+        self._miniyum.processTransaction()
 
-    def updateAvailable(self):
-        logging.debug("Yum list updates started")
+    def getPackages(self):
+        return self._miniyum.queryTransaction()
 
-        # Get packages info from yum
-        rpms = RPM_LIST.split()
-        logging.debug("Getting list of packages to upgrade")
-        pkgs = self.yumbase.doPackageLists(patterns=rpms)
-        upkgs = self.yumbase.doPackageLists(pkgnarrow="updates", patterns=rpms)
-
-        # Save update candidates
-        if upkgs.updates:
-            self.upackages = [str(i) for i in sorted(upkgs.updates)] # list of rpm names to update
-            logging.debug("%s Packages marked for update:"%(len(self.upackages)))
-            logging.debug(self.upackages)
-        else:
-            logging.debug("No packages marked for update")
-
-        # Save installed packages
-        self.ipackages = [str(i) for i in sorted(pkgs.installed)] # list of rpm names already installed
-        logging.debug("Installed packages:")
-        logging.debug(self.ipackages)
-
-        logging.debug("Yum list updated completed successfully")
-
-
-        # Return
-        if upkgs.updates:
-            return True
-        else:
-            return False
-
-    def packageAvailable(self, pkg):
-        pkglist = self.yumbase.doPackageLists(patterns=[pkg]).available
-        return len(pkglist) > 0
-
-    def packageInstalled(self, pkg):
-        pkglist = self.yumbase.doPackageLists(patterns=[pkg]).installed
-        return len(pkglist) > 0
-
-    def depListForRemoval(self, pkgs):
-
-        deplist = []
-
-        # Create list of all packages to remove
-        pkgs = self.yumbase.doPackageLists(patterns=pkgs).installed
-        for pkg in pkgs:
-            self.yumbase.remove(name=pkg.name)
-
-        # Resolve dependencies for removing packages
-        self.yumbase.resolveDeps()
-
-        # Create a list of deps packages
-        for pkg in self.yumbase.tsInfo.getMembers():
-            if pkg.isDep:
-                deplist.append(pkg.name)
-
-        # Clear transactions from the 'self' object
-        self.yumbase.closeRpmDB()
-
-        # Return the list of dependencies
-        return deplist
-
-    def rollbackAvailable(self):
+    def rollbackAvailable(self, packages):
         logging.debug("Yum rollback-avail started")
 
         # Get All available packages in yum
         rpms = RPM_LIST.split()
-        pkgs = self.yumbase.pkgSack.returnPackages(patterns=rpms)
-        available = [str(i) for i in sorted(pkgs)] # list of available rpm names
-        logging.debug("%s Packages available in yum:"%(len(available)))
-        logging.debug(available)
+        pkgs = [
+            x['display_name'] for x in
+            self._miniyum.queryLocalCachePackages(patterns=rpms)
+        ]
+        logging.debug("%s Packages available in yum:"%(len(pkgs)))
+        logging.debug(pkgs)
 
         # Verify all installed packages available in yum
         # self.ipackages is populated in updateAvailable
-        for installed in self.ipackages:
-            if installed not in available:
+        name_packages = [p['name'] for p in packages]
+        for installed in [
+            x['display_name'] for x in
+            self._miniyum.queryPackages(patterns=rpms)
+            if x['operation'] == 'installed'
+        ]:
+            if installed in name_packages and not installed not in pkgs:
                 logging.debug("%s not available in yum"%(installed))
                 return False
 
         logging.debug("Yum rollback-avail completed successfully")
         return True
-
-    def rollback(self):
-        upgradeTid = self.getLatestTid(True)
-        if int(upgradeTid) <= int(self.tid):
-            logging.error("Mismatch in yum TID, target TID (%s) is not higher than %s" %(upgradeTid, self.tid))
-            raise Exception(MSG_ERROR_YUM_TID)
-
-        if self.updated:
-            self._unlock()
-            try:
-                # yum history undo 17
-                # Do rollback only if update went well
-                logging.debug("Yum rollback started")
-                cmd = [
-                    basedefs.EXEC_YUM, "history", "-y", "undo", upgradeTid,
-                ]
-                output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_HISTORY_UNDO)
-                logging.debug("Yum rollback completed successfully")
-            finally:
-                self._lock()
-        else:
-            logging.debug("No rollback needed")
-
-    def getLatestTid(self, updateOnly=False):
-        logging.debug("Yum getLatestTid started")
-        tid = None
-
-        # Get the list
-        cmd = [
-            basedefs.EXEC_YUM, "history", "list", basedefs.ENGINE_RPM_NAME,
-        ]
-        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_HISTORY_LIST)
-
-        # Parse last tid
-        for line in output.splitlines():
-            lsplit = line.split("|")
-            if len(lsplit) > 3:
-                if updateOnly:
-                    if 'Update' in lsplit[3].split() or "U" in lsplit[3].split():
-                        tid = lsplit[0].strip()
-                        break
-                else:
-                    if "Action" not in lsplit[3]: # Don't get header of output
-                        tid = lsplit[0].strip()
-                        break
-        if tid is None:
-            raise ValueError(MSG_ERROR_YUM_HISTORY_GETLAST)
-
-        logging.debug("Found TID: %s" %(tid))
-        logging.debug("Yum getLatestTid completed successfully")
-        return tid
-
-    def isCandidateForUpdate(self, rpm):
-        candidate = False
-        for package in self.upackages:
-            if rpm in package:
-                candidate = True
-        return candidate
-
-    def getUpdateCandidates(self):
-        return self.upackages
 
 class DB():
     def __init__(self):
@@ -719,24 +583,6 @@ def runFunc(funcList, dispString):
         print ("[ " + utils.getColoredText(MSG_INFO_ERROR, basedefs.RED) + " ]").rjust(spaceLen+3)
         raise
 
-def isUpdateRelatedToDb(yumo):
-    """
-    Verifies current update needs DB manipulation (backup/update/rollback)
-    """
-
-    logging.debug("Verifing update is related to db")
-
-    related = False
-    for rpm in RPM_BACKEND, RPM_DBSCRIPTS:
-        if yumo.isCandidateForUpdate(rpm):
-            related = True
-
-    if hostids:
-        related = True
-
-    logging.debug("isUpdateRelatedToDb value is %s"%(str(related)))
-    return related
-
 def printMessages():
     for msg in messages:
         logging.info(msg)
@@ -897,11 +743,18 @@ def modifyUUIDs():
         )
 
 def main(options):
+    # BEGIN: PROCESS-INITIALIZATION
+    miniyumsink = utils.MiniYumSink()
+    MiniYum.setup_log_hook(sink=miniyumsink)
+    extraLog = open(logFile, "a")
+    miniyum = MiniYum(sink=miniyumsink, extraLog=extraLog)
+    miniyum.selinux_role()
+    # END: PROCESS-INITIALIZATION
 
     # we do not wish to be interrupted
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-    rhyum = MYum()
+    rhyum = MYum(miniyum)
     db = DB()
     ca = CA()
     DB_NAME_TEMP = "%s_%s" % (basedefs.DB_NAME, utils.getCurrentDateTime())
@@ -940,126 +793,124 @@ def main(options):
         print MSG_ERROR_INCOMPATIBLE_UPGRADE
         raise Exception(MSG_ERROR_INCOMPATIBLE_UPGRADE)
 
-    # Check for upgrade, else exit
-    print MSG_INFO_CHECK_UPDATE
-    if not rhyum.updateAvailable():
-        logging.debug(MSG_INFO_NO_UPGRADE_AVAIL)
-        print MSG_INFO_NO_UPGRADE_AVAIL
-        sys.exit(0)
-    else:
-        updates = rhyum.getUpdateCandidates()
-        print MSG_INFO_UPGRADE_AVAIL % (len(updates))
-        for package in updates:
-            print " * %s" % package
+    rhyum.clean()
+
+    with rhyum.transaction():
+        # Check for upgrade, else exit
+        runFunc([rhyum.begin], MSG_INFO_CHECK_UPDATE)
+        if rhyum.emptyTransaction:
+            logging.debug(MSG_INFO_NO_UPGRADE_AVAIL)
+            print MSG_INFO_NO_UPGRADE_AVAIL
+            sys.exit(0)
+
+        packages = rhyum.getPackages()
+        name_packages = [p['name'] for p in packages]
+
+        print MSG_INFO_UPGRADE_AVAIL % (len(packages))
+        for p in packages:
+            print " * %s" % p['display_name']
         if options.check_update:
             sys.exit(100)
 
-    # Check for setup package
-    if rhyum.isCandidateForUpdate(RPM_SETUP) and not options.force_current_setup_rpm:
-        logging.debug(MSG_ERROR_NEW_SETUP_AVAIL)
-        print MSG_ERROR_NEW_SETUP_AVAIL
-        sys.exit(3)
+        if RPM_SETUP in name_packages and not options.force_current_setup_rpm:
+            logging.debug(MSG_ERROR_NEW_SETUP_AVAIL)
+            print MSG_ERROR_NEW_SETUP_AVAIL
+            sys.exit(3)
 
-    # Make sure we will be able to rollback
-    if not rhyum.rollbackAvailable() and options.yum_rollback:
-        logging.debug(MSG_ERROR_NO_ROLLBACK_AVAIL)
-        print MSG_ERROR_NO_ROLLBACK_AVAIL
-        print MSG_ERROR_CHECK_LOG % logFile
-        sys.exit(2)
+        # Make sure we will be able to rollback
+        if not rhyum.rollbackAvailable(packages) and options.yum_rollback:
+            logging.debug(MSG_ERROR_NO_ROLLBACK_AVAIL)
+            print MSG_ERROR_NO_ROLLBACK_AVAIL
+            print MSG_ERROR_CHECK_LOG % logFile
+            sys.exit(2)
 
-    # Update is related to database if database related package is
-    # updated or CA upgrade is going to alter parameters within database
-    updateRelatedToDB = isUpdateRelatedToDb(rhyum) or ca.mayUpdateDB()
+        # Update is related to database if:
+        # 1. database related package is updated
+        # 2. CA upgrade is going to alter parameters within database
+        # 3. UUID update will take place
+        updateRelatedToDB = False
+        for package in RPM_BACKEND, RPM_DBSCRIPTS:
+            if package in name_packages:
+                updateRelatedToDB = True
+                logging.debug("related to database package %s" % package)
+        updateRelatedToDB = updateRelatedToDB or ca.mayUpdateDB()
+        updateRelatedToDB = updateRelatedToDB or hostids
 
-    # No rollback in this case
-    try:
-        # We ask the user before stoping ovirt-engine or take command line option
-        if options.unattended_upgrade or checkEngine(engineService):
-            # Stopping engine
-            runFunc(stopEngineService, MSG_INFO_STOP_ENGINE)
+        # No rollback in this case
+        try:
+            # We ask the user before stoping ovirt-engine or take command line option
+            if options.unattended_upgrade or checkEngine(engineService):
+                # Stopping engine
+                runFunc(stopEngineService, MSG_INFO_STOP_ENGINE)
+                if updateRelatedToDB:
+                    runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
+            else:
+                # This means that user chose not to stop ovirt-engine
+                logging.debug("exiting gracefully")
+                print MSG_INFO_STOP_INSTALL_EXIT
+                sys.exit(0)
+
+            # Preupgrade checks
+            runFunc(preupgradeFunc, MSG_INFO_PREUPGRADE)
+
+            # Backup DB
             if updateRelatedToDB:
-                runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
-        else:
-            # This means that user chose not to stop ovirt-engine
-            logging.debug("exiting gracefully")
-            print MSG_INFO_STOP_INSTALL_EXIT
-            sys.exit(0)
+                runFunc([db.backup], MSG_INFO_BACKUP_DB)
+                runFunc([[db.rename, DB_NAME_TEMP]], MSG_INFO_RENAME_DB)
 
-        # Preupgrade checks
-        runFunc(preupgradeFunc, MSG_INFO_PREUPGRADE)
+        except Exception as e:
+            print e
+            raise
 
-        # Backup DB
-        if updateRelatedToDB:
-            runFunc([db.backup], MSG_INFO_BACKUP_DB)
-            runFunc([[db.rename, DB_NAME_TEMP]], MSG_INFO_RENAME_DB)
+        # In case of failure, do rollback
+        try:
+            # yum update
+            runFunc(upgradeFunc, MSG_INFO_YUM_UPDATE)
 
-    except Exception as e:
-        print e
-        raise
+            # check if update is relevant to db update
+            if updateRelatedToDB:
 
-    # In case of failure, do rollback
-    try:
-        # yum update
-        runFunc(upgradeFunc, MSG_INFO_YUM_UPDATE)
+                # Update the db and restore its name back
+                runFunc([db.update], MSG_INFO_DB_UPDATE)
+                runFunc([[db.rename, basedefs.DB_NAME]], MSG_INFO_RESTORE_DB)
 
-        # If we're here, update/upgrade went fine, so
-        rhyum.updated = True
+                # Bring up any services we shut down before db upgrade
+                startDbRelatedServices(etlService, notificationService)
 
-        # check if update is relevant to db update
-        if updateRelatedToDB:
+            # CA restore
+            runFunc([ca.prepare], MSG_INFO_PKI_PREPARE)
 
-            # Update the db and restore its name back
-            runFunc([db.update], MSG_INFO_DB_UPDATE)
-            runFunc([[db.rename, basedefs.DB_NAME]], MSG_INFO_RESTORE_DB)
+            # post install conf
+            runFunc(postFunc, MSG_INFO_RUN_POST)
 
-            # Bring up any services we shut down before db upgrade
-            startDbRelatedServices(etlService, notificationService)
+        except:
+            logging.error(traceback.format_exc())
+            logging.error("Rolling back update")
 
-        # CA restore
-        runFunc([ca.prepare], MSG_INFO_PKI_PREPARE)
+            print MSG_ERROR_UPGRADE
+            print MSG_INFO_REASON%(sys.exc_info()[1])
 
-        # post install conf
-        runFunc(postFunc, MSG_INFO_RUN_POST)
+            # CA restore
+            runFunc([ca.rollback], MSG_INFO_PKI_ROLLBACK)
 
-    except:
-        logging.error(traceback.format_exc())
-        logging.error("Rolling back update")
+            # allow db restore
+            if updateRelatedToDB:
+                try:
+                    runFunc([db.restore], MSG_INFO_DB_RESTORE)
+                except:
+                    # This Exception have already been logged, so just pass along
+                    pass
 
-        print MSG_ERROR_UPGRADE
-        print MSG_INFO_REASON%(sys.exc_info()[1])
+            raise
 
-        # CA restore
-        runFunc([ca.rollback], MSG_INFO_PKI_ROLLBACK)
+        finally:
+            # start engine
+            runFunc([startEngine], MSG_INFO_START_ENGINE)
 
-        # allow db restore
-        if updateRelatedToDB:
-            try:
-                runFunc([db.restore], MSG_INFO_DB_RESTORE)
-            except:
-                # This Exception have already been logged, so just pass along
-                pass
-
-        # allow yum rollback even if db restore failed
-        if options.yum_rollback:
-            try:
-                runFunc([rhyum.rollback], MSG_INFO_YUM_ROLLBACK)
-            except:
-                # This Exception have already been logged, so just pass along
-                pass
-        else:
-            print MSG_INFO_NO_YUM_ROLLBACK
-            logging.debug("Skipping yum rollback")
-
-        raise
-
-    finally:
-        # start engine
-        runFunc([startEngine], MSG_INFO_START_ENGINE)
-
-    # Print log location on success
-    addAdditionalMessages(etlService.isServiceAvailable())
-    print "\n%s\n" % MSG_INFO_UPGRADE_OK
-    printMessages()
+        # Print log location on success
+        addAdditionalMessages(etlService.isServiceAvailable())
+        print "\n%s\n" % MSG_INFO_UPGRADE_OK
+        printMessages()
 
 if __name__ == '__main__':
     try:
