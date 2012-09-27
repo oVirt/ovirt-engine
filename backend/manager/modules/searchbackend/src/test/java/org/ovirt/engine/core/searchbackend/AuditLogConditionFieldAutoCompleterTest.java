@@ -1,23 +1,34 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.RefObject;
 
-public class AuditLogConditionFieldAutoCompleterTest extends TestCase {
+public class AuditLogConditionFieldAutoCompleterTest {
 
+    @Before
+    public void setUp() {
+        Locale.setDefault(Locale.US);
+    }
+
+    @Test
     public void testValidateFieldValueWithEnum() {
         IConditionFieldAutoCompleter comp = new AuditLogConditionFieldAutoCompleter();
         assertTrue("VDC_START", comp.validateFieldValue("TYPE", "1"));
         assertFalse("SOME_RANDOM_TEXT", comp.validateFieldValue("TYPE", "SOME_RANDOM_TEXT"));
     }
 
+    @Test
     public void testValidateFieldValueWithTime() {
         IConditionFieldAutoCompleter comp = new AuditLogConditionFieldAutoCompleter();
         String dateString = "01/12/1972";
@@ -25,8 +36,8 @@ public class AuditLogConditionFieldAutoCompleterTest extends TestCase {
         assertFalse("SOME_RANDOM_TEXT", comp.validateFieldValue("TIME", "SOME_RANDOM_TEXT"));
     }
 
+    @Test
     public void testformatValueWithTime() {
-        Locale.setDefault(Locale.US);
         RefObject<String> rels = new RefObject<String>();
         RefObject<String> value = new RefObject<String>();
         IConditionFieldAutoCompleter comp = new AuditLogConditionFieldAutoCompleter();
