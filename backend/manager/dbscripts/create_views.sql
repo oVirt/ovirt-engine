@@ -284,6 +284,31 @@ storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id;
 
 
+CREATE OR REPLACE VIEW storage_domains_for_search
+AS
+SELECT
+                storage_domain_static.id as id, storage_domain_static.storage as storage, storage_domain_static.storage_name as storage_name,
+                storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
+                storage_domain_static.storage_domain_format_type as storage_domain_format_type,
+                storage_domain_static.last_time_used_as_master as last_time_used_as_master,
+                CASE WHEN status_table.is_multi_domain THEN NULL ELSE status_table.status END as status,
+                null as owner, null as storage_pool_id, null as storage_pool_name,
+                storage_domain_dynamic.available_disk_size as available_disk_size,
+                storage_domain_dynamic.used_disk_size as used_disk_size,
+                fn_get_disk_commited_value_by_storage(storage_domain_static.id) as commited_disk_size,
+                fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status,
+                storage_domain_static.recoverable as recoverable
+FROM
+                storage_domain_static
+INNER JOIN
+                storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
+INNER JOIN
+                (SELECT storage_id, count(storage_id) > 1 as is_multi_domain, max(status) AS status
+                 FROM storage_pool_iso_map
+                 GROUP BY storage_id) AS status_table ON storage_domain_static.id=status_table.storage_id;
+
+
+
 CREATE OR REPLACE VIEW luns_view
 AS
 SELECT

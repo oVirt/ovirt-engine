@@ -186,7 +186,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                     put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
                             new EntitySearchInfo(new StorageDomainCrossRefAutoCompleter(),
                                     new StorageDomainFieldAutoCompleter(),
-                                    "storage_domains_without_storage_pools",
+                                    "storage_domains_for_search",
                                     "storage_domains_with_hosts_view",
                                     "id",
                                     "storage_name ASC "));

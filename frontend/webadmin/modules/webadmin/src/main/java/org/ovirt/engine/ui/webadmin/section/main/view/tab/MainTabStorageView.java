@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -18,6 +17,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -79,10 +79,14 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         getTable().addColumn(formatColumn, constants.formatStorage());
 
         TextColumnWithTooltip<storage_domains> crossDataCenterStatusColumn =
-                new EnumColumn<storage_domains, StorageDomainSharedStatus>() {
+                new TextColumnWithTooltip<storage_domains>() {
                     @Override
-                    protected StorageDomainSharedStatus getRawValue(storage_domains object) {
-                        return object.getstorage_domain_shared_status();
+                    public String getValue(storage_domains object) {
+                        if (object.getstorage_domain_type() == StorageDomainType.ISO) {
+                            return EnumTranslator.createAndTranslate(object.getstorage_domain_shared_status());
+                        } else {
+                            return EnumTranslator.createAndTranslate(object.getstatus());
+                        }
                     }
                 };
         getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage());
