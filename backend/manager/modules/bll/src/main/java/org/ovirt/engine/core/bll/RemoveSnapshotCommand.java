@@ -108,6 +108,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     getVmId());
             tempVar.setDestinationImageId(dest.getImageId());
             tempVar.setEntityId(getParameters().getEntityId());
+            tempVar.setParentParameters(getParameters());
+            tempVar.setParentCommand(getActionType());
             ImagesContainterParametersBase p = tempVar;
             VdcReturnValueBase vdcReturnValue = getBackend().runInternalAction(
                     VdcActionType.RemoveSnapshotSingleDisk,
