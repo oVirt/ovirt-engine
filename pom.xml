@@ -268,15 +268,6 @@
       </snapshots>
     </repository>
     <repository>
-      <id>maven.search.repo</id>
-      <name>maven search repo</name>
-      <layout>default</layout>
-      <url>http://mvnsearch.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Maven Repository Group</name>
       <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
