@@ -589,7 +589,8 @@ public class VdsManager {
     public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
         if (vds.getstatus() != VDSStatus.Down) {
             if (mUnrespondedAttempts.get() < Config.<Integer> GetValue(ConfigValues.VDSAttemptsToResetCount)
-                    || lastUpdate + (Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds) * 1000) > System.currentTimeMillis()) {
+                    || lastUpdate
+                            + (TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds))) > System.currentTimeMillis()) {
                 boolean result = false;
                 if (vds.getstatus() != VDSStatus.Connecting && vds.getstatus() != VDSStatus.PreparingForMaintenance
                         && vds.getstatus() != VDSStatus.NonResponsive) {
