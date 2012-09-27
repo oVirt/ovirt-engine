@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -7,11 +9,11 @@ import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.ISingleAsyncOperationFactory;
 
 public abstract class ActivateDeactivateSingleAsyncOperationFactory implements ISingleAsyncOperationFactory {
-    private java.util.ArrayList<VDS> _vdss;
+    private ArrayList<VDS> _vdss;
     private storage_domains _storageDomain;
     private storage_pool _storagePool;
 
-    protected java.util.ArrayList<VDS> getVdss() {
+    protected ArrayList<VDS> getVdss() {
         return _vdss;
     }
 
@@ -23,15 +25,15 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
         return _storagePool;
     }
 
-    public void Initialize(java.util.ArrayList parameters) {
-        if (!(parameters.get(0) instanceof java.util.ArrayList)) {
+    public void Initialize(ArrayList parameters) {
+        if (!(parameters.get(0) instanceof ArrayList)) {
             throw new InvalidOperationException();
         }
-        java.util.ArrayList l = (java.util.ArrayList) parameters.get(0);
+        ArrayList l = (ArrayList) parameters.get(0);
         if (!l.isEmpty() && !(l.get(0) instanceof VDS)) {
             throw new InvalidOperationException();
         }
-        _vdss = (java.util.ArrayList<VDS>) parameters.get(0);
+        _vdss = (ArrayList<VDS>) parameters.get(0);
         if (parameters.get(1) != null && !(parameters.get(1) instanceof storage_domains)) {
             throw new InvalidOperationException();
         }
