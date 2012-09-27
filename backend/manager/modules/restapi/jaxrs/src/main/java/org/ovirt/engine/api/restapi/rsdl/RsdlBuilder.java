@@ -223,7 +223,8 @@ public class RsdlBuilder {
         List<Class<?>> classes = ReflectionHelper.getClasses(RESOURCES_PACKAGE);
         for (String path : apiResource.getRels()) {
             Class<?> resource = findResource(path, classes);
-            results.addAll(describe(resource, entryPoint + "/" +  path, new HashMap<String, Type>()));
+            String prefix = entryPoint.endsWith("/") ? entryPoint + path : entryPoint + "/" + path;
+            results.addAll(describe(resource, prefix, new HashMap<String, Type>()));
         }
         return results;
     }
