@@ -90,8 +90,9 @@ public class TransactionSupport {
     public static <T> T executeInScope(TransactionScopeOption scope, TransactionMethod<T> code) {
         // check if we are already in rollback
 
+        TransactionManager tm = null;
         try {
-            TransactionManager tm = findTransactionManager();
+            tm = findTransactionManager();
             if (needToRollback(tm.getStatus())) {
                 throw new TransactionRolledbackLocalException(
                         "Current transaction is marked for rollback, no further operations are possible or desired");
@@ -104,9 +105,9 @@ public class TransactionSupport {
         case RequiresNew:
             return executeInNewTransaction(code);
         case Suppress:
-            return executeInSuppressed(code);
+            return executeInSuppressed(tm, code);
         case Required:
-            return executeInRequired(code);
+            return executeInRequired(tm, code);
         default:
             throw new RuntimeException("Undefined Scope: " + scope);
         }
@@ -125,10 +126,8 @@ public class TransactionSupport {
      * start with transaction from JBoss That assumption should always hold - if not we need to look at specific case
      * where it fails
      */
-    private static <T> T executeInRequired(TransactionMethod<T> code) {
+    private static <T> T executeInRequired(TransactionManager tm, TransactionMethod<T> code) {
         try {
-            TransactionManager tm = findTransactionManager();
-
             // verify we are not in a bad state
             int status = tm.getStatus();
             if (statusOneOf(status, Status.STATUS_COMMITTED, Status.STATUS_COMMITTING, Status.STATUS_MARKED_ROLLBACK,
@@ -153,12 +152,11 @@ public class TransactionSupport {
     /**
      * Forces "SUPRESS" and executes the code in that scope
      */
-    private static <T> T executeInSuppressed(TransactionMethod<T> code) {
+    private static <T> T executeInSuppressed(TransactionManager tm, TransactionMethod<T> code) {
         T result = null;
 
         try {
 
-            TransactionManager tm = findTransactionManager();
             Transaction transaction = tm.getTransaction();
 
             if (transaction != null)
