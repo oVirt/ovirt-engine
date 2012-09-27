@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
@@ -91,12 +92,12 @@ public class DisksViewColumns {
         }
     };
 
-    public static final DiskSizeColumn<Disk> actualSizeColumn = new DiskSizeColumn<Disk>() {
+    public static final DiskSizeColumn<Disk> actualSizeColumn = new DiskSizeColumn<Disk>(DiskSizeUnit.GIGABYTE) {
         @Override
         protected Long getRawValue(Disk object) {
             return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getactual_size()
-                    : (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
+                    Math.round(((DiskImage) object).getActualDiskWithSnapshotsSize())
+                    : (long) (((LunDisk) object).getLun().getDeviceSize());
         }
     };
 

@@ -105,9 +105,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), images, "100px"); //$NON-NLS-1$
-
-        getTable().ensureColumnPresent(
                 DisksViewColumns.allocationColumn, constants.allocationDisk(), images, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
