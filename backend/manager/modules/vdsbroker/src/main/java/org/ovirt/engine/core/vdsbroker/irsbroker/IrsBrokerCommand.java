@@ -110,18 +110,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     }
 
     public static void Init() {
-
-        TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Object>() {
-            @Override
-            public Object runInTransaction() {
-                for (storage_pool sp : DbFacade.getInstance().getStoragePoolDao().getAll()) {
-                    if (!_irsProxyData.containsKey(sp.getId())) {
-                        _irsProxyData.put(sp.getId(), new IrsProxyData(sp.getId()));
-                    }
-                }
-                return null;
+        for (storage_pool sp : DbFacade.getInstance().getStoragePoolDao().getAll()) {
+            if (!_irsProxyData.containsKey(sp.getId())) {
+                _irsProxyData.put(sp.getId(), new IrsProxyData(sp.getId()));
             }
-        });
+        }
     }
 
     public void RemoveIrsProxy() {
@@ -197,29 +190,21 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         @OnTimerMethodAnnotation("_updatingTimer_Elapsed")
         public void _updatingTimer_Elapsed() {
             try {
-
                 synchronized (syncObj) {
                     if (!_disposed) {
-                        TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
-                                new TransactionMethod<Object>() {
-                                    @Override
-                                    public Object runInTransaction() {
-                                        storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao()
-                                                .get(_storagePoolId);
-                                        if (storagePool != null
-                                                && (storagePool.getstatus() == StoragePoolStatus.Up
-                                                        || storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool
-                                                        .getstatus() == StoragePoolStatus.Contend)) {
-                                            ProceedStoragePoolStats();
-                                        }
-                                        return null;
-                                    }
-                                });
+                        storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao()
+                                .get(_storagePoolId);
+                        if (storagePool != null
+                                && (storagePool.getstatus() == StoragePoolStatus.Up
+                                        || storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool
+                                        .getstatus() == StoragePoolStatus.Contend)) {
+                            ProceedStoragePoolStats();
+                        }
+
                     }
                 }
             } catch (java.lang.Exception ex) {
             }
-
         }
 
         private int _errorAttempts;
