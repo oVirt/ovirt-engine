@@ -8,6 +8,7 @@
 import common_utils as utils
 import logging
 import traceback
+import basedefs
 
 MSG_ERR_UPDATE_PRODUCT_VERSION="Error updating product version"
 
@@ -18,7 +19,7 @@ def updateProductVersion():
     """
     try:
         # Get rpm version
-        rpmVersion = utils.getRpmVersion('ovirt-engine')
+        rpmVersion = utils.getRpmVersion(basedefs.ENGINE_RPM_NAME)
 
         # Update new version in vdc_option
         utils.updateVDCOption("ProductRPMVersion", rpmVersion)
