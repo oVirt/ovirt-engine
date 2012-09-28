@@ -90,7 +90,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Override
     protected List<tags> getTagsAttachedToObject() {
-        return getTagDAO().getAllForVm((getParameters()).getVmId().toString());
+        return getTagDao().getAllForVm((getParameters()).getVmId().toString());
     }
 
     // 26 PCI slots: 31 total minus 5 saved for qemu (Host Bridge, ISA Bridge,
@@ -220,7 +220,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmDynamic() {
-        getVmDynamicDAO().remove(getVmId());
+        getVmDynamicDao().remove(getVmId());
     }
 
     protected void removeVmStatistics() {
@@ -228,9 +228,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmUsers() {
-        List<tags_vm_map> all = getTagDAO().getTagVmMapByVmIdAndDefaultTag(getVmId());
+        List<tags_vm_map> all = getTagDao().getTagVmMapByVmIdAndDefaultTag(getVmId());
         for (tags_vm_map tagVm : all) {
-            getTagDAO().detachVmFromTag(tagVm.gettag_id(), getVmId());
+            getTagDao().detachVmFromTag(tagVm.gettag_id(), getVmId());
         }
     }
 
@@ -363,7 +363,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return permissionList;
     }
 
-    protected int getBlockSparseInitSizeInGB() {
+    protected int getBlockSparseInitSizeInGb() {
         return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
     }
 
@@ -439,7 +439,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected boolean canPerformHotPlug() {
-        return isHotPlugSupported() && isOSSupportingHotPlug();
+        return isHotPlugSupported() && isOsSupportingHotPlug();
     }
 
     /**
@@ -459,7 +459,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * The following method should check if os of guest is supported for hot plug/unplug operation
      * @return
      */
-    protected boolean isOSSupportingHotPlug() {
+    protected boolean isOsSupportingHotPlug() {
         String vmOs = getVm().getos().name();
         String[] unsupportedOSs = Config.<String> GetValue(ConfigValues.HotPlugUnsupportedOsList).split(",");
         for (String os : unsupportedOSs) {
@@ -481,11 +481,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return super.getVmNetworkInterfaceDAO();
     }
 
-    protected VmDynamicDAO getVmDynamicDAO() {
+    protected VmDynamicDAO getVmDynamicDao() {
         return getDbFacade().getVmDynamicDao();
     }
 
-    protected TagDAO getTagDAO() {
+    protected TagDAO getTagDao() {
         return getDbFacade().getTagDao();
     }
 

@@ -515,7 +515,7 @@ public class AddVmCommandTest {
 
             @Override
             protected int getNeededDiskSize(Guid domainId) {
-                return getBlockSparseInitSizeInGB() * getVmTemplate().getDiskMap().size();
+                return getBlockSparseInitSizeInGb() * getVmTemplate().getDiskMap().size();
             }
         };
         cmd = spy(cmd);

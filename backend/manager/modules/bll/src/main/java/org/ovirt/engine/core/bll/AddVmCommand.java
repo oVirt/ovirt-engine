@@ -200,7 +200,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected int getNeededDiskSize(Guid domainId) {
-        return getBlockSparseInitSizeInGB() * storageToDisksMap.get(domainId).size();
+        return getBlockSparseInitSizeInGb() * storageToDisksMap.get(domainId).size();
     }
 
     protected boolean canDoAddVmCommand() {

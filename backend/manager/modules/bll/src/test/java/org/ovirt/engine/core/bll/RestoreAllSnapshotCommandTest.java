@@ -170,7 +170,7 @@ public class RestoreAllSnapshotCommandTest {
 
     private void mockDynamicVmDao() {
         mockDynamicVm = getVmDynamic();
-        doReturn(vmDynamicDAO).when(spyCommand).getVmDynamicDAO();
+        doReturn(vmDynamicDAO).when(spyCommand).getVmDynamicDao();
         when(vmDynamicDAO.get(vmId)).thenReturn(mockDynamicVm);
     }
 
