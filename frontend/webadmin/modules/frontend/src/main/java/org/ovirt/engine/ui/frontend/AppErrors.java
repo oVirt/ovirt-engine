@@ -703,6 +703,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action rebalance")
     String VAR__ACTION__REBALANCE_START();
 
+    @DefaultStringValue("$action start profiling")
+    String VAR__ACTION__START_PROFILE();
+
     @DefaultStringValue("$action assign")
     String VAR__ACTION__ASSIGN();
 

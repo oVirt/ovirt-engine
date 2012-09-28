@@ -236,6 +236,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String AuditLogType___GLUSTER_HOST_REMOVE_FAILED();
 
+	String AuditLogType___GLUSTER_VOLUME_PROFILE_START();
+
+	String AuditLogType___GLUSTER_VOLUME_PROFILE_START_FAILED();
+
 	String VdcActionType___ActivateVds();
 
 	String VdcActionType___RecoveryStoragePool();
@@ -530,6 +534,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 	String VdcActionType___ReplaceGlusterVolumeBrick();
 
 	String VdcActionType___GlusterHostAdd();
+
+	String vdcActionType___StartGlusterVolumeProfile();
 
 	String VdcActionType___ConnectStorageToVds();
 

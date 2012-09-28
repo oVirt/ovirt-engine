@@ -259,6 +259,7 @@ public enum VdcActionType {
     StartRebalanceGlusterVolume(1407, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
     ReplaceGlusterVolumeBrick(1408, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
     AddBricksToGlusterVolume(1409, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
+    StartGlusterVolumeProfile(1410, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
 
     ;
 

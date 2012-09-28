@@ -691,6 +691,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Host Remove Failed.")
     String GlusterHostRemoveFailed();
 
+    @DefaultStringValue("Gluster Volume Profile Start Failed.")
+    String GlusterVolumeProfileStartFailed();
+
     String ACTIVATE_NIC_FAILED();
 
     String DEACTIVATE_NIC_FAILED();

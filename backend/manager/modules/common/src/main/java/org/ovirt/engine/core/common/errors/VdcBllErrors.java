@@ -338,6 +338,7 @@ public enum VdcBllErrors {
     AddBricksToGlusterVolumeFailed(4128),
     GlusterVolumeRebalanceStartFailed(4135),
     GlusterVolumeReplaceBrickStartFailed(4142),
+    GlusterVolumeProfileStartFailed(4158),
     GlusterHostRemoveFailed(4406),
     GlusterAddHostFailed(4404),
     GlusterPeerListFailed(4407),
