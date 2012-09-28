@@ -689,9 +689,9 @@ def _configureHttpdSslKeys():
         # Use the engine_id_rsa key in mod_ssl directives
         handler = utils.TextConfigFileHandler(basedefs.FILE_HTTPD_SSL_CONFIG, " ")
         handler.open()
-        handler.editParam("SSLCertificateFile", basedefs.FILE_ENGINE_CERT)
-        handler.editParam("SSLCertificateKeyFile", basedefs.FILE_PRIVATE_SSH_KEY)
-        handler.editParam("SSLCertificateChainFile", basedefs.FILE_CA_CRT_SRC)
+        handler.editParam("SSLCertificateFile", basedefs.FILE_ENGINE_CERT, uncomment=True)
+        handler.editParam("SSLCertificateKeyFile", basedefs.FILE_PRIVATE_SSH_KEY, uncomment=True)
+        handler.editParam("SSLCertificateChainFile", basedefs.FILE_CA_CRT_SRC, uncomment=True)
         handler.close()
     except:
         logging.error(traceback.format_exc())

@@ -82,10 +82,11 @@ class ConfigFileHandler:
         pass
 
 class TextConfigFileHandler(ConfigFileHandler):
-    def __init__(self, filepath, sep="="):
+    def __init__(self, filepath, sep="=", comment="#"):
         ConfigFileHandler.__init__(self, filepath)
         self.data = []
         self.sep = sep
+        self.comment = comment
 
     def open(self):
         fd = file(self.filepath)
@@ -101,22 +102,50 @@ class TextConfigFileHandler(ConfigFileHandler):
     def getParam(self, param):
         value = None
         for line in self.data:
-            if not re.match("\s*#", line):
-                found = re.match("\s*%s\s*\%s\s*(.+)$" % (param, self.sep), line)
-                if found:
-                    value = found.group(1)
+            found = re.match("\s*%s\s*\%s\s*(.+)$" % (param, self.sep), line)
+            if found:
+                value = found.group(1)
         return value
 
-    def editParam(self, param, value):
-        changed = False
+    def editParam(self, param, value, uncomment=False):
+        change_index = -1
+
+        # Find the index of the line containing the parameter that
+        # we want to modify:
         for i, line in enumerate(self.data[:]):
-            if not re.match("\s*#", line):
-                if re.match("\s*%s"%(param), line):
-                    self.data[i] = "%s%s%s\n"%(param, self.sep, value)
-                    changed = True
+            if re.match(
+                "\s*%s\s*%s" % (
+                    param,
+                    self.sep
+                ),
+                line
+            ):
+                change_index = i
+                break
+
+        # If we can't find a line containing the parameter then try to find
+        # a commented line containing it (we will later replace the commented
+        # line with the new value):
+        if change_index == -1 and uncomment:
+            for i, line in enumerate(self.data[:]):
+                if re.match(
+                    "\s*%s\s*%s\s*%s" % (
+                        self.comment,
+                        param,
+                        self.sep
+                    ),
+                    line
+                ):
+                    change_index = i
                     break
-        if not changed:
-            self.data.append("%s%s%s\n"%(param, self.sep, value))
+
+        # If the old parameter was found replace it with the new
+        # value, otherwise append a new line with the new value:
+        new = "%s%s%s\n" % (param, self.sep, value)
+        if change_index == -1:
+            self.data.append(new)
+        else:
+            self.data[i] = new
 
     def editLine(self, regexp, newLine, failOnError=False, errMsg=output_messages.ERR_FAILURE):
         changed = False
