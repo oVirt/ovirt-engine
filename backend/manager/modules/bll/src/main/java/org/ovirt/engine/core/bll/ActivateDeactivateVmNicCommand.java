@@ -127,7 +127,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private boolean networkAttachedToVds(String networkName, Guid vdsId) {
         if (networkName != null) {
-            List<VdsNetworkInterface> listOfInterfaces = getInterfaceDAO().getAllInterfacesForVds(vdsId);
+            List<VdsNetworkInterface> listOfInterfaces = getInterfaceDao().getAllInterfacesForVds(vdsId);
             for (VdsNetworkInterface vdsNetworkInterface : listOfInterfaces) {
                 if (networkName.equals(vdsNetworkInterface.getNetworkName())) {
                     return true;
@@ -137,7 +137,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         return false;
     }
 
-    protected InterfaceDAO getInterfaceDAO() {
+    protected InterfaceDAO getInterfaceDao() {
         return getDbFacade().getInterfaceDao();
     }
 
