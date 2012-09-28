@@ -4,6 +4,7 @@
 import sys
 import os
 import stat
+import signal
 import shutil
 import logging
 import traceback
@@ -787,6 +788,10 @@ def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION):
     return False
 
 def main(options):
+
+    # we do not wish to be interrupted
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
     rhyum = MYum()
     db = DB()
     ca = CA()

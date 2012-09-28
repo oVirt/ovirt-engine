@@ -4,6 +4,7 @@ import sys
 import logging
 import os
 import re
+import signal
 import traceback
 import types
 import socket
@@ -1941,6 +1942,9 @@ def main(configFile=None):
 
         # Get parameters
         _handleParams(configFile)
+
+        # we do not wish to be interrupted from this point on
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
 
         # Update masked_value_list with user input values
         _updateMaskedValueSet()
