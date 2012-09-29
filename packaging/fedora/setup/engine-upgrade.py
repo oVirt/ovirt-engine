@@ -49,7 +49,6 @@ SERVER_ADMIN = basedefs.DB_ADMIN
 BACKUP_DIR = "/var/lib/ovirt-engine/backups"
 BACKUP_FILE = "ovirt-engine_db_backup"
 LOG_PATH = "/var/log/ovirt-engine"
-LOG_FILE = "ovirt-engine-upgrade.log"
 
 ETL_SERVICE="/etc/init.d/ovirt-engine-etl"
 
@@ -133,6 +132,8 @@ or the reporting package:\n\
 2. Execute: ovirt-engine-dwh-setup\n\
 3. Execute: ovirt-engine-reports-setup"
 
+# GLOBAL
+logFile = "ovirt-engine-upgrade.log"
 messages = []
 
 # Code
@@ -196,14 +197,14 @@ def checkEngine(service=basedefs.ENGINE_SERVICE_NAME):
         raise Exception(MSG_ERR_FAILED_STATUS_ENGINE_SERVICE)
 
 def initLogging():
-    global LOG_FILE
+    global logFile
     try:
         if not os.path.isdir(LOG_PATH):
             os.makedirs(LOG_PATH)
-        LOG_FILE = "%s/ovirt-engine-upgrade_%s.log"%(LOG_PATH, utils.getCurrentDateTime())
+        logFile = "%s/ovirt-engine-upgrade_%s.log"%(LOG_PATH, utils.getCurrentDateTime())
         level = logging.DEBUG
         # TODO: Move to mode="a"?
-        hdlr = logging.FileHandler(filename = LOG_FILE, mode='w')
+        hdlr = logging.FileHandler(filename=logFile, mode='w')
         fmts='%(asctime)s::%(levelname)s::%(module)s::%(lineno)d::%(name)s:: %(message)s'
         dfmt='%Y-%m-%d %H:%M:%S'
         fmt = logging.Formatter(fmts, dfmt)
@@ -704,7 +705,7 @@ def printMessages():
 
 def addAdditionalMessages(addReports=False):
     global messages
-    messages.append(MSG_INFO_LOG_FILE + " " + LOG_FILE)
+    messages.append(MSG_INFO_LOG_FILE + " " + logFile)
 
     if addReports:
         messages.append(MSG_INFO_REPORTS)
@@ -843,7 +844,7 @@ def main(options):
     if not rhyum.rollbackAvailable() and options.yum_rollback:
         logging.debug(MSG_ERROR_NO_ROLLBACK_AVAIL)
         print MSG_ERROR_NO_ROLLBACK_AVAIL
-        print MSG_ERROR_CHECK_LOG%(LOG_FILE)
+        print MSG_ERROR_CHECK_LOG % logFile
         sys.exit(2)
 
     # No rollback in this case
@@ -954,6 +955,6 @@ if __name__ == '__main__':
         raise
 
     except:
-        print MSG_ERROR_CHECK_LOG%(LOG_FILE)
+        print MSG_ERROR_CHECK_LOG % logFile
         logging.error(traceback.format_exc())
         sys.exit(1)
