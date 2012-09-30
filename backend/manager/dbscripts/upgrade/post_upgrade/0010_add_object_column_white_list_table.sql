@@ -3,9 +3,10 @@ CREATE OR REPLACE FUNCTION __temp_add_object_column_white_list_table()
 RETURNS void
 AS $function$
 BEGIN
-
    -- This table holds the column white list per object
-   IF NOT EXISTS (SELECT * FROM pg_tables WHERE tablename ILIKE 'object_column_white_list') THEN
+   IF EXISTS (SELECT * FROM pg_tables WHERE tablename ILIKE 'object_column_white_list') THEN
+       truncate table object_column_white_list;
+   ELSE
       CREATE TABLE object_column_white_list
       (
          object_name varchar(128) NOT NULL,
@@ -32,7 +33,6 @@ BEGIN
    --            vds view
    -----------------------------------
    --  A new added column will not be displayed for the user unless added specifically.
-   if not exists (select 1 from object_column_white_list where object_name = 'vds') then
       insert into object_column_white_list(object_name,column_name)
       (select 'vds', column_name
        from information_schema.columns
@@ -56,7 +56,6 @@ BEGIN
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
           'non_operational_reason', 'recoverable', 'sshKeyFingerprint'));
 -- pm_options are missing
-   end if;
 END; $function$
 LANGUAGE plpgsql;
 SELECT * FROM __temp_add_object_column_white_list_table();
