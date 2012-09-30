@@ -102,7 +102,8 @@ MSG_ERROR_SSH_KEY_SYMLINK = "Error: SSH key should not be symlink"
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
 MSG_INFO_REASON = " **Reason: %s**\n"
-MSG_INFO_STOP_ENGINE = "Stopping ovirt-engine Service"
+MSG_INFO_STOP_ENGINE = "Stopping ovirt-engine service"
+MSG_INFO_STOP_DB = "Stopping DB related services"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_RENAME_DB = "Rename Database"
 MSG_INFO_RESTORE_DB = "Restore Database name"
@@ -871,6 +872,8 @@ def main(options):
         if options.unattended_upgrade or checkEngine(engineService):
             # Stopping engine
             runFunc(stopEngineService, MSG_INFO_STOP_ENGINE)
+            if updateRelatedToDB:
+                runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
         else:
             # This means that user chose not to stop ovirt-engine
             logging.debug("exiting gracefully")
@@ -879,7 +882,6 @@ def main(options):
 
         # Backup DB
         if updateRelatedToDB:
-            stopDbRelatedServices(etlService, notificationService)
             runFunc([db.backup], MSG_INFO_BACKUP_DB)
             runFunc([[db.rename, DB_NAME_TEMP]], MSG_INFO_RENAME_DB)
 
