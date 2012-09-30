@@ -113,13 +113,13 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
         disksTable.addColumn(new DiskImageStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> aliasColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskAlias();
             }
         };
-        disksTable.addColumn(nameColumn, constants.nameDisk());
+        disksTable.addColumn(aliasColumn, constants.aliasDisk());
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -143,7 +143,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return VolumeType.forValue(object.getvolume_type().getValue());
             }
         };
-        disksTable.addColumn(allocationColumn, constants.allocationDisk(), "80px"); //$NON-NLS-1$
+        disksTable.addColumn(allocationColumn, constants.allocationDisk(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -167,7 +167,15 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getcreation_date();
             }
         };
-        disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "140px"); //$NON-NLS-1$
+        disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "80px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<DiskImage> descriptionColumn = new TextColumnWithTooltip<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return object.getDiskDescription();
+            }
+        };
+        disksTable.addColumn(descriptionColumn, constants.descriptionDisk());
 
         disksTable.setRowData(new ArrayList<EntityModel>());
         disksTable.setWidth("100%", true); //$NON-NLS-1$
