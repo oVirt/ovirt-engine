@@ -37,8 +37,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     protected boolean canDoAction() {
         // check if vds already has vds spm id and storage pool exists
-        if (Guid.Empty.equals(getVds().getstorage_pool_id())
-                || DbFacade.getInstance().getVdsSpmIdMapDao().get(getVdsId()) != null) {
+        if (Guid.Empty.equals(getVds().getstorage_pool_id())) {
             return false;
         }
         vds_spm_id_mapList = DbFacade.getInstance().getVdsSpmIdMapDao().getAll(
