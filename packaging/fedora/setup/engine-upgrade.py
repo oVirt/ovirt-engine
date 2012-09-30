@@ -554,6 +554,15 @@ class CA():
     JKSKEYSTORE = "/etc/pki/ovirt-engine/.keystore"
     TMPAPACHECONF = basedefs.FILE_HTTPD_SSL_CONFIG + ".tmp"
 
+    def mayUpdateDB(self):
+        """Returns True if we may update database.
+
+        It can be false positive but will trigger database transaction,
+        so database will be rolled back upon failure
+
+        """
+        return os.path.exists(self.JKSKEYSTORE)
+
     def prepare(self):
         if os.path.exists(self.JKSKEYSTORE):
             logging.debug("PKI: convert JKS to PKCS#12")
@@ -852,6 +861,10 @@ def main(options):
         print MSG_ERROR_CHECK_LOG % logFile
         sys.exit(2)
 
+    # Update is related to database if database related package is
+    # updated or CA upgrade is going to alter parameters within database
+    updateRelatedToDB = isUpdateRelatedToDb(rhyum) or ca.mayUpdateDB()
+
     # No rollback in this case
     try:
         # We ask the user before stoping ovirt-engine or take command line option
@@ -865,7 +878,7 @@ def main(options):
             sys.exit(0)
 
         # Backup DB
-        if isUpdateRelatedToDb(rhyum):
+        if updateRelatedToDB:
             stopDbRelatedServices(etlService, notificationService)
             runFunc([db.backup], MSG_INFO_BACKUP_DB)
             runFunc([[db.rename, DB_NAME_TEMP]], MSG_INFO_RENAME_DB)
@@ -883,7 +896,7 @@ def main(options):
         rhyum.updated = True
 
         # check if update is relevant to db update
-        if isUpdateRelatedToDb(rhyum):
+        if updateRelatedToDB:
 
             # Update the db and restore its name back
             runFunc([db.update], MSG_INFO_DB_UPDATE)
@@ -909,7 +922,7 @@ def main(options):
         runFunc([ca.rollback], MSG_INFO_PKI_ROLLBACK)
 
         # allow db restore
-        if isUpdateRelatedToDb(rhyum):
+        if updateRelatedToDB:
             try:
                 runFunc([db.restore], MSG_INFO_DB_RESTORE)
             except:
