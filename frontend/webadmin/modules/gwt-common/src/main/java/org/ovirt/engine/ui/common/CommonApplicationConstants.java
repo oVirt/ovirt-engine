@@ -19,6 +19,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("<br/>")
     String lineBreak();
 
+    @DefaultStringValue("&nbsp;")
+    String htmlNonBreakingSpace();
+
     @DefaultStringValue(", ")
     String commaBreak();
 

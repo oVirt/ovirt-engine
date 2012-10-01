@@ -6,9 +6,11 @@ import java.util.List;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
+import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 import com.google.gwt.cell.client.CheckboxCell;
@@ -29,6 +31,8 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
 
+    private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+
     private M listModel;
 
     public IVdcQueryableCellTable() {
@@ -46,6 +50,10 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
     }
 
     public IVdcQueryableCellTable(boolean multiSelection) {
+        this(multiSelection, false);
+    }
+
+    public IVdcQueryableCellTable(boolean multiSelection, boolean showSelectAllCheckbox) {
         this();
 
         if (!multiSelection) {
@@ -92,6 +100,30 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
                     return getSelectionModel().isSelected(object);
                 }
             };
+            if (showSelectAllCheckbox) {
+                final SelectAllCheckBoxHeader<IVdcQueryable> selectAllHeader = new SelectAllCheckBoxHeader<IVdcQueryable>() {
+
+                    @Override
+                    protected void selectionChanged(Boolean value) {
+                        if (listModel == null || listModel.getItems() == null) {
+                            return;
+                        }
+                        handleSelection(value, listModel, getSelectionModel());
+                    }
+
+                    @Override
+                    public Boolean getValue() {
+                        if (listModel == null || listModel.getItems() == null) {
+                            return false;
+                        }
+                        return getCheckValue(listModel.getItems(), getSelectionModel());
+                    }
+                };
+                addColumn(checkColumn, selectAllHeader);
+            }
+            else {
+                addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant(constants.htmlNonBreakingSpace()));
+            }
         } else {
             checkColumn = new Column<IVdcQueryable, Boolean>(
                     new RadioboxCell(true, false)) {
@@ -100,8 +132,8 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
                     return getSelectionModel().isSelected(object);
                 }
             };
+            addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant(constants.htmlNonBreakingSpace()));
         }
-        addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$
         setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
     }
 

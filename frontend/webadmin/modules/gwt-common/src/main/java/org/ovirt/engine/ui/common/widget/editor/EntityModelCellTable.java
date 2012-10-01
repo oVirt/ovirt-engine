@@ -6,10 +6,12 @@ import java.util.List;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
+import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
@@ -45,6 +47,8 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
+
+    private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
     /**
      * Create a new {@link EntityModelCellTable} with single selection mode.
@@ -92,7 +96,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to hide selection column or not.
      */
     public EntityModelCellTable(SelectionMode selectionMode, boolean hideCheckbox) {
-        this(selectionMode, (Resources) GWT.create(PopupTableResources.class), hideCheckbox);
+        this(selectionMode, (Resources) GWT.create(PopupTableResources.class), hideCheckbox, false);
     }
 
     /**
@@ -110,13 +114,27 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     /**
      * Create a new {@link EntityModelCellTable}.
      *
+     * @param isMultiple
+     *            Whether to allow multiple ({@code true}) or single ({@code false}) selection mode.
+     * @param hideCheckbox
+     *            Whether to hide selection column or not.
+     * @param showSelectAllCheckbox
+     *            Whether to show the SelectAll Checkbox in the header or not.
+     */
+    public EntityModelCellTable(boolean isMultiple, boolean hideCheckbox, boolean showSelectAllCheckbox) {
+        this(isMultiple, (Resources) GWT.create(PopupTableResources.class), hideCheckbox, showSelectAllCheckbox);
+    }
+
+    /**
+     * Create a new {@link EntityModelCellTable}.
+     *
      * @param selectionMode
      *            Table selection mode.
      * @param resources
      *            Table resources.
      */
     public EntityModelCellTable(SelectionMode selectionMode, Resources resources) {
-        this(selectionMode, resources, false);
+        this(selectionMode, resources, false, false);
     }
 
     /**
@@ -128,14 +146,24 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Table resources.
      */
     public EntityModelCellTable(boolean isMultiple, Resources resources) {
-        this(isMultiple, resources, false);
+        this(isMultiple, resources, false, false);
     }
 
     public EntityModelCellTable(boolean isMultiple, Resources resources, boolean hideCheckbox) {
-        this(isMultiple ? SelectionMode.MULTIPLE : SelectionMode.SINGLE, resources, hideCheckbox);
+        this(isMultiple ? SelectionMode.MULTIPLE : SelectionMode.SINGLE, resources, hideCheckbox, false);
     }
 
-    public EntityModelCellTable(SelectionMode selectionMode, Resources resources, boolean hideCheckbox) {
+    public EntityModelCellTable(boolean isMultiple,
+            Resources resources,
+            boolean hideCheckbox,
+            boolean showSelectAllCheckbox) {
+        this(isMultiple ? SelectionMode.MULTIPLE : SelectionMode.SINGLE, resources, hideCheckbox, showSelectAllCheckbox);
+    }
+
+    public EntityModelCellTable(SelectionMode selectionMode,
+            Resources resources,
+            boolean hideCheckbox,
+            boolean showSelectAllCheckbox) {
         super(DEFAULT_PAGESIZE, resources);
 
         // Configure table selection model
@@ -200,6 +228,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         return getSelectionModel().isSelected(object);
                     }
                 };
+                addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant(constants.htmlNonBreakingSpace()));
             } else if (getSelectionModel() instanceof MultiSelectionModel) {
                 checkColumn = new Column<EntityModel, Boolean>(
                         new CheckboxCell(true, false)) {
@@ -208,10 +237,33 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         return getSelectionModel().isSelected(object);
                     }
                 };
+                if (showSelectAllCheckbox) {
+                    final SelectAllCheckBoxHeader<EntityModel> selectAllHeader = new SelectAllCheckBoxHeader<EntityModel>() {
+
+                        @Override
+                        protected void selectionChanged(Boolean value) {
+                            if (listModel == null || listModel.getItems() == null) {
+                                return;
+                            }
+                            handleSelection(value, listModel, getSelectionModel());
+                        }
+
+                        @Override
+                        public Boolean getValue() {
+                            if (listModel == null || listModel.getItems() == null) {
+                                return false;
+                            }
+                            return getCheckValue(listModel.getItems(), getSelectionModel());
+                        }
+                    };
+                    addColumn(checkColumn, selectAllHeader);
+                }
+                else {
+                    addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant(constants.htmlNonBreakingSpace()));
+                }
             }
 
             if (checkColumn != null) {
-                addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$
                 setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
             }
 
