@@ -260,7 +260,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                     .getObject("net_config_dirty"));
             entity.setpm_type(rs.getString("pm_type"));
             entity.setpm_user(rs.getString("pm_user"));
-            entity.setpm_password(VdsStaticDAODbFacadeImpl.decryptPassword(rs.getString("pm_password")));
+            entity.setpm_password(DbFacadeUtils.decryptPassword(rs.getString("pm_password")));
             entity.setpm_port((Integer) rs.getObject("pm_port"));
             entity.setpm_options(rs.getString("pm_options"));
             entity.setpm_enabled(rs.getBoolean("pm_enabled"));

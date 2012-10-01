@@ -6,16 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -93,7 +87,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("vds_strength", vds.getvds_strength())
                 .addValue("pm_type", vds.getpm_type())
                 .addValue("pm_user", vds.getpm_user())
-                .addValue("pm_password", encryptPassword(vds.getpm_password()))
+                .addValue("pm_password", DbFacadeUtils.encryptPassword(vds.getpm_password()))
                 .addValue("pm_port", vds.getpm_port())
                 .addValue("pm_options", vds.getpm_options())
                 .addValue("pm_enabled", vds.getpm_enabled())
@@ -115,37 +109,6 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         throw new NotImplementedException();
     }
 
-    public static String encryptPassword(String password) {
-        if (StringUtils.isEmpty(password)) {
-            return password;
-        }
-        String keyFile = Config.resolveKeyStorePath();
-        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
-        String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
-        try {
-            return EncryptionUtils.encrypt(password, keyFile, passwd, alias);
-        } catch (Exception e) {
-            throw new SecurityException(e);
-        }
-    }
-
-    public static String decryptPassword(String password) {
-        if (StringUtils.isEmpty(password)) {
-            return password;
-        }
-        String keyFile = Config.resolveKeyStorePath();
-        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
-        String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
-        try {
-            return EncryptionUtils.decrypt(password, keyFile, passwd, alias);
-        } catch (Exception e) {
-            log.debugFormat("Failed to decrypt password, error message: {0}", e.getMessage());
-            return password;
-        }
-    }
-
-    private static Log log = LogFactory.getLog(VdsStaticDAODbFacadeImpl.class);
-
     private final static class VdsStaticRowMapper implements ParameterizedRowMapper<VdsStatic> {
         @Override
         public VdsStatic mapRow(ResultSet rs, int rowNum)
@@ -166,7 +129,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setvds_strength(rs.getInt("vds_strength"));
             entity.setpm_type(rs.getString("pm_type"));
             entity.setpm_user(rs.getString("pm_user"));
-            entity.setpm_password(decryptPassword(rs.getString("pm_password")));
+            entity.setpm_password(DbFacadeUtils.decryptPassword(rs.getString("pm_password")));
             entity.setpm_port((Integer) rs.getObject("pm_port"));
             entity.setpm_options(rs.getString("pm_options"));
             entity.setpm_enabled(rs.getBoolean("pm_enabled"));

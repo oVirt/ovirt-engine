@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 
 /**
  * <code>StorageServerConnectionDAODbFacadeImpl</code> provides an implementation of {@link StorageServerConnectionDAO}
@@ -78,7 +79,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                         .addValue("port", connection.getport())
                         .addValue("portal", connection.getportal())
                         .addValue("username", connection.getuser_name())
-                        .addValue("password", connection.getpassword()));
+                        .addValue("password", DbFacadeUtils.encryptPassword(connection.getpassword())));
     }
 
     @Override
@@ -107,7 +108,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                 .addValue("iqn", connection.getiqn())
                 .addValue("port", connection.getport())
                 .addValue("portal", connection.getportal())
-                .addValue("password", connection.getpassword())
+                .addValue("password", DbFacadeUtils.encryptPassword(connection.getpassword()))
                 .addValue("storage_type", connection.getstorage_type())
                 .addValue("user_name", connection.getuser_name())
                 .addValue("mount_options", connection.getMountOptions())
@@ -128,7 +129,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                     entity.setiqn(rs.getString("iqn"));
                     entity.setport(rs.getString("port"));
                     entity.setportal(rs.getString("portal"));
-                    entity.setpassword(rs.getString("password"));
+                    entity.setpassword(DbFacadeUtils.decryptPassword(rs.getString("password")));
                     entity.setstorage_type(StorageType.forValue(rs
                             .getInt("storage_type")));
                     entity.setuser_name(rs.getString("user_name"));
