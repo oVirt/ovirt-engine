@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -155,11 +154,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
 
         if (!StringHelper.isNullOrEmpty(template.gettime_zone()))
         {
-            // Patch! Create key-value pair with a right key.
-            getModel().getTimeZone()
-                    .setSelectedItem(new KeyValuePairCompat<String, String>(template.gettime_zone(), "")); //$NON-NLS-1$
-
-            UpdateTimeZone();
+            updateTimeZone(template.gettime_zone());
         }
         else
         {

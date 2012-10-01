@@ -1076,7 +1076,7 @@ public class UnitVmModel extends Model {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getBehavior().UpdateTimeZone();
+                getBehavior().updateTimeZone();
             }
         });
 
@@ -1473,7 +1473,7 @@ public class UnitVmModel extends Model {
         getKernel_parameters().setIsAvailable(getIsLinux_Unassign_UnknownOS());
 
         getDomain().setIsChangable(getIsWindowsOS());
-        getBehavior().UpdateTimeZone();
+        getBehavior().updateTimeZone();
 
     }
 

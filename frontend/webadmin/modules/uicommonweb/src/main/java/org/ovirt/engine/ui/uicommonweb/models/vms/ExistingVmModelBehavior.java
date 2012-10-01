@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -150,8 +149,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                     .add("Time Zone cannot be change since the Virtual Machine was booted at the first time."); //$NON-NLS-1$
         }
 
-        getModel().getTimeZone().setSelectedItem(new KeyValuePairCompat<String, String>(vm.gettime_zone(), "")); //$NON-NLS-1$
-        UpdateTimeZone();
+        updateTimeZone(vm.gettime_zone());
 
         // Update domain list
         UpdateDomain();

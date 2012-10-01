@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -202,9 +201,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
         if (!StringHelper.isNullOrEmpty(this.vm.gettime_zone()))
         {
-            getModel().getTimeZone()
-                    .setSelectedItem(new KeyValuePairCompat<String, String>(this.vm.gettime_zone(), "")); //$NON-NLS-1$
-            UpdateTimeZone();
+            updateTimeZone(this.vm.gettime_zone());
         }
         else
         {

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -129,11 +128,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             if (!StringHelper.isNullOrEmpty(vmBase.gettime_zone()))
             {
-                // Patch! Create key-value pair with a right key.
-                getModel().getTimeZone()
-                        .setSelectedItem(new KeyValuePairCompat<String, String>(vmBase.gettime_zone(), "")); //$NON-NLS-1$
-
-                UpdateTimeZone();
+                updateTimeZone(vmBase.gettime_zone());
             }
             else
             {
