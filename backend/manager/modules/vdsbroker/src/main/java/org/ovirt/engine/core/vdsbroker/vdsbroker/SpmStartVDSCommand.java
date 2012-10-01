@@ -67,7 +67,11 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
                 .runVdsCommand(VDSCommandType.SpmStatus,
                         new SpmStatusVDSCommandParameters(getVds().getId(), getParameters().getStoragePoolId()))
                 .getReturnValue();
-        log.infoFormat("spmStart polling ended. spm status: {0}", spmStatus.getSpmStatus().toString());
+        if (spmStatus != null) {
+            log.infoFormat("spmStart polling ended, spm status: {0}", spmStatus.getSpmStatus().toString());
+        } else {
+            log.errorFormat("spmStart polling ended, failed to get the spm status");
+        }
         try {
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.HSMClearTask,
                     new HSMTaskGuidBaseVDSCommandParameters(getVds().getId(), taskId));
