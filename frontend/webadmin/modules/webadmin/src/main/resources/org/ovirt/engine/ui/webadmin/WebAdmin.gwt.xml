@@ -19,10 +19,8 @@
 	<set-property name="user.agent" value="${gwt.userAgent}" />
 
 	<!-- Tell GWTP proxy generator the location of our Ginjector -->
-	<define-configuration-property name="gin.ginjector"
-		is-multi-valued="false" />
-	<set-configuration-property name="gin.ginjector"
-		value="org.ovirt.engine.ui.webadmin.gin.ClientGinjector" />
+	<define-configuration-property name="gin.ginjector" is-multi-valued="false" />
+	<set-configuration-property name="gin.ginjector" value="org.ovirt.engine.ui.webadmin.gin.ClientGinjector" />
 
 	<!-- All source code within this module is translatable -->
 	<source path="">
@@ -36,7 +34,11 @@
 	<!-- Specify the application specific style sheet -->
 	<stylesheet src="WebAdmin.css" />
 
-	 <!-- Internationalization support. -->
-	 <set-configuration-property name="locale.useragent" value="Y"/>
+	<!-- Allow user agent locale information to determine the locale -->
+	<set-configuration-property name="locale.useragent" value="Y" />
+
+	<!-- Supported locales (defined via maven property) -->
+	<extend-property name="locale" values="ja" />
+	<set-property name="locale" value="${gwt.locale}" />
 
 </module>

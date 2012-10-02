@@ -23,6 +23,7 @@
     <!-- Set gwt.userAgent property via the resource plugin during the resource phase,
 			By default, all browsers are supported, see [gwt-user.jar:com/google/gwt/user/UserAgent.gwt.xml] for a complete list -->
     <gwt.userAgent>ie6,ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
+    <gwt.locale>default</gwt.locale>
   </properties>
   <!-- TODO: Define SCM -->
   <dependencies>
@@ -329,6 +330,12 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>all-langs</id>
+      <properties>
+        <gwt.locale>default,ja</gwt.locale>
+      </properties>
     </profile>
   </profiles>
 </project>

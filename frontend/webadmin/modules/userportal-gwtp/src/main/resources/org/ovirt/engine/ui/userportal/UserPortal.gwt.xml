@@ -34,7 +34,11 @@
 	<!-- Specify the application specific style sheet -->
 	<stylesheet src="UserPortal.css" />
 
-	<!-- Internationalization support. -->
-	<set-configuration-property name="locale.useragent" value="Y"/>
+	<!-- Allow user agent locale information to determine the locale -->
+	<set-configuration-property name="locale.useragent" value="Y" />
+
+	<!-- Supported locales (defined via maven property) -->
+	<extend-property name="locale" values="ja" />
+	<set-property name="locale" value="${gwt.locale}" />
 
 </module>
