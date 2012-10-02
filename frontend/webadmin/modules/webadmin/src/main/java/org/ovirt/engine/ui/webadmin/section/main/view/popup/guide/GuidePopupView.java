@@ -1,22 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.guide;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.common.widget.UiCommandButton;
-import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
-import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGuideModel;
-import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterGuideModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuideModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -29,6 +12,24 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGuideModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterGuideModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuideModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 
 public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> implements GuidePopupPresenterWidget.ViewDef {
 
@@ -78,6 +79,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
     Style style;
 
     private final ApplicationResources resources;
+    private final ApplicationConstants constants;
 
     @Inject
     public GuidePopupView(EventBus eventBus,
@@ -85,6 +87,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
             ApplicationConstants constants) {
         super(eventBus, resources);
         this.resources = resources;
+        this.constants = constants;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
@@ -113,18 +116,43 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
 
                 if ("Progress".equals(propertyName)) { //$NON-NLS-1$
                     if (guideModel.getProgress() == null) {
-                        if (guideModel.getCompulsoryActions().isEmpty()) {
+
+                        // Check whether there any available actions.
+                        boolean hasAllowedActions = false;
+                        for (Object item : Linq.Concat(guideModel.getCompulsoryActions(), guideModel.getOptionalActions())) {
+                            UICommand command = (UICommand) item;
+                            if (command.getIsExecutionAllowed()) {
+                                hasAllowedActions = true;
+                                break;
+                            }
+                        }
+
+                        // Choose an appropriate message matching the entity type (DC, Cluster or VM).
+                        String message = null;
+                        if (guideModel instanceof DataCenterGuideModel) {
+                            message = constants.guidePopupConfiguredDataCenterLabel();
+                        } else if (guideModel instanceof ClusterGuideModel) {
+                            message = constants.guidePopupConfiguredClusterLabel();
+                        } else if (guideModel instanceof VmGuideModel) {
+                            message = constants.guidePopupConfiguredVmLabel();
+                        }
+
+                        if (!hasAllowedActions) {
+                            infoLabel.setText(message);
+                            compulsorySection.setVisible(false);
+                            optionalSection.setVisible(false);
+                            // Rename dialog button.
+                            guideModel.getCommands().get(0).setTitle(ConstantsManager.getInstance().getConstants().ok());
+                        } else if (guideModel.getCompulsoryActions().isEmpty()) {
                             infoLabel.setText(configurationCompleted);
                             optionalSection.setVisible(true);
                             compulsorySection.setVisible(false);
-                        }
-                        else if (guideModel.getOptionalActions().isEmpty()) {
+                        } else if (guideModel.getOptionalActions().isEmpty()) {
                             updateCreatedLabel(guideModel);
                             optionalSection.setVisible(false);
                             compulsorySection.setVisible(true);
                             compulsoryActionsLabel.setVisible(true);
-                        }
-                        else {
+                        } else {
                             infoLabel.setText(unconfigured);
                             optionalSection.setVisible(true);
                             compulsorySection.setVisible(true);
@@ -133,8 +161,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
                     }
 
                     updateActionsPanels(guideModel);
-                }
-                else if ("Window".equals(propertyName)) { //$NON-NLS-1$
+                } else if ("Window".equals(propertyName)) { //$NON-NLS-1$
                     if (guideModel.getLastExecutedCommand().getName().equals("Cancel")) { //$NON-NLS-1$
                         redrawActionsPanels();
                     }

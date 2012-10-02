@@ -54,6 +54,7 @@ public abstract class AbstractUiCommandButton extends Composite implements HasUi
     void updateButton() {
         getButtonWidget().setVisible(command.getIsAvailable() && command.getIsVisible());
         getButtonWidget().setEnabled(command.getIsExecutionAllowed());
+        getButtonWidget().setText(command.getTitle());
         getButtonWidget().setTitle(command.getTitle());
     }
 
