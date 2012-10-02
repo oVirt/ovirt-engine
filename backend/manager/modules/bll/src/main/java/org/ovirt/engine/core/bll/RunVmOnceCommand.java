@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
+import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -32,6 +33,23 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         return returnValue;
+    }
+
+    /**
+     * Refresh the associated values of the VM boot parameters with the values from the command parameters. The method
+     * is used when VM is reloaded from the DB while its parameters hasn't been persisted (e.g. when running 'as once')
+     */
+    @Override
+    protected void refreshBootParameters(RunVmParams runVmParameters) {
+        if (runVmParameters == null) {
+            return;
+        }
+
+        getVm().setinitrd_url(runVmParameters.getinitrd_url());
+        getVm().setkernel_url(runVmParameters.getkernel_url());
+        getVm().setkernel_params(runVmParameters.getkernel_params());
+        getVm().setCustomProperties(runVmParameters.getCustomProperties());
+        getVm().setboot_sequence(runVmParameters.getBootSequence());
     }
 
     @Override
@@ -65,7 +83,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         if (!quotaAcc) {
             return false;
         }
-        //Only if this is run-stateless mode we calculate storage quota.
+        // Only if this is run-stateless mode we calculate storage quota.
         if (!Boolean.TRUE.equals(getParameters().getRunAsStateless())) {
             return quotaAcc;
         }

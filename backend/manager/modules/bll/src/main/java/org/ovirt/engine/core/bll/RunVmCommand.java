@@ -122,44 +122,23 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             setVdsSelector(new VdsSelector(getVm(), destVdsId, true, new VdsFreeMemoryChecker(this)));
 
             refreshBootParameters(runVmParameters);
+            getVm().setLastStartTime(new Date());
+
             // set vm disks
             VmHandler.updateDisksForVm(getVm(), getDiskDao().getAllForVm(getVm().getId()));
         }
     }
 
     /**
-     * Refresh the associated values of the VM boot parameters with the values from the command parameters. The method
-     * is used when VM is reloaded from the DB while its parameters hasn't been persisted (e.g. when running 'as once')
-     * @param runVmParameters
+     * Sets up the command specific boot parameters. This method is not expected to be
+     * extended, however it can be overridden (e.g. the children will not call the super)
      */
-    private void refreshBootParameters(RunVmParams runVmParameters) {
-        // if not run once then use default boot sequence
-        refreshBootSequenceParameter(runVmParameters);
-
-        if (!StringUtils.isEmpty(runVmParameters.getinitrd_url())) {
-            getVm().setinitrd_url(runVmParameters.getinitrd_url());
+    protected void refreshBootParameters(RunVmParams runVmParameters) {
+        if (runVmParameters == null) {
+            return;
         }
 
-        if (!StringUtils.isEmpty(runVmParameters.getkernel_url())) {
-            getVm().setkernel_url(runVmParameters.getkernel_url());
-        }
-
-        if (!StringUtils.isEmpty(runVmParameters.getkernel_params())) {
-            getVm().setkernel_params(runVmParameters.getkernel_params());
-        }
-
-        if (!StringUtils.isEmpty(runVmParameters.getCustomProperties())) {
-            getVm().setCustomProperties(runVmParameters.getCustomProperties());
-        }
-
-        getVm().setLastStartTime(new Date());
-    }
-
-    private void refreshBootSequenceParameter(RunVmParams runVmParameters) {
-        if (runVmParameters != null) {
-            getVm().setboot_sequence(((runVmParameters.getBootSequence()) != null) ? runVmParameters.getBootSequence()
-                    : getVm().getdefault_boot_sequence());
-        }
+        getVm().setboot_sequence(getVm().getdefault_boot_sequence());
     }
 
     /**
@@ -300,7 +279,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (StringUtils.isEmpty(getVm().getCdPath())) {
                 getVm().setCdPath(getVm().getiso_path());
                 guestToolsVersionTreatment();
-                refreshBootSequenceParameter(getParameters());
                 if (getVm().getboot_sequence() != null && getVm().getboot_sequence().containsSubsequence(BootSequence.D)) {
                     getVm().setCdPath(getVm().getiso_path());
                 }
@@ -414,6 +392,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         // reevaluate boot parameters if VM was executed with 'run once'
         refreshBootParameters(getParameters());
+
+        getVm().setLastStartTime(new Date());
 
         // Set path for initrd and kernel image.
         if (!StringUtils.isEmpty(getVm().getinitrd_url())) {
