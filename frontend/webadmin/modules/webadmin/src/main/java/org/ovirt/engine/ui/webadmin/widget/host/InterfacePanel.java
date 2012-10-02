@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SumUpRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.widget.label.LabelWithToolTip;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -79,7 +80,8 @@ class InterfaceElementPanel extends TogglePanel {
         row.setWidget(0, 2, new Label(hostInterface.getAddress()));
 
         // MAC
-        row.setWidget(0, 3, new Label(hostInterface.getMAC()));
+        LabelWithToolTip macLabel = new LabelWithToolTip(hostInterface.getMAC(), 17);
+        row.setWidget(0, 3, macLabel);
 
         // Speed
         row.setWidget(0, 4, new Label() {
