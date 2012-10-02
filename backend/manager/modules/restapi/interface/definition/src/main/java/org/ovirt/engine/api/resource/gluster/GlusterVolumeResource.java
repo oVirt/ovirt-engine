@@ -52,21 +52,21 @@ public interface GlusterVolumeResource {
     @Formatted
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
     @Actionable
-    @Path("setOption")
+    @Path("setoption")
     public Response setOption(Action action);
 
     @POST
     @Formatted
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
     @Actionable
-    @Path("resetOption")
+    @Path("resetoption")
     public Response resetOption(Action action);
 
     @POST
     @Formatted
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
     @Actionable
-    @Path("resetAllOptions")
+    @Path("resetalloptions")
     public Response resetAllOptions(Action action);
 
     /**

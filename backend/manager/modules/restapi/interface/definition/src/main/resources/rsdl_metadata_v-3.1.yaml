@@ -2516,7 +2516,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setOption|rel=setOption
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setoption|rel=setoption
   request:
     body:
       parameterType: Action
@@ -2527,7 +2527,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetOption|rel=resetOption
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetoption|rel=resetoption
   request:
     body:
       parameterType: Action
@@ -2538,7 +2538,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetAllOptions|rel=resetAllOptions
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetalloptions|rel=resetalloptions
   request:
     body:
       parameterType: Action
