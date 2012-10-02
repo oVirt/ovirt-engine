@@ -41,7 +41,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     protected boolean canDoAction() {
         disk = getDiskDao().get(getParameters().getDiskId());
         return isVmExist() && isVmUpOrDown() && isDiskExist(disk) && checkCanPerformPlugUnPlugDisk()
-                && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+                && validate(getSnapshotsValidator().vmNotDuringSnapshot(getVmId()));
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {
@@ -111,5 +111,9 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     public String getDiskAlias() {
         return disk.getDiskAlias();
+    }
+
+    protected SnapshotsValidator getSnapshotsValidator() {
+        return new SnapshotsValidator();
     }
 }

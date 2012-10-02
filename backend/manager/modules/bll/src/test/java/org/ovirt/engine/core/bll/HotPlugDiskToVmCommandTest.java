@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -134,6 +135,9 @@ public class HotPlugDiskToVmCommandTest {
         mockVds();
         when(command.getActionType()).thenReturn(getCommandActionType());
         doReturn(mock(VmNetworkInterfaceDAO.class)).when(command).getVmNetworkInterfaceDAO();
+        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
+        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
     }
 
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> createCommand() {
