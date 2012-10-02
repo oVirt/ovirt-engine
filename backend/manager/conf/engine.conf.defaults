@@ -20,6 +20,7 @@ JBOSS_HOME=/usr/share/jboss-as
 # Important directories used by the engine:
 #
 ENGINE_ETC=/etc/ovirt-engine
+ENGINE_PKI=/etc/pki/ovirt-engine
 ENGINE_LOG=/var/log/ovirt-engine
 ENGINE_TMP=/var/tmp/ovirt-engine
 ENGINE_USR=/usr/share/ovirt-engine

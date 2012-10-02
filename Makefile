@@ -385,7 +385,7 @@ install_service:
 	install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/sysconfig
 	install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/sysconfig/ovirt-engine.d
 	install -m 644 packaging/fedora/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/service
-	install -m 644 packaging/fedora/engine-service-logging.properties $(DESTDIR)$(DATA_DIR)/service
+	install -m 644 packaging/fedora/engine-service-logging.properties.in $(DESTDIR)$(DATA_DIR)/service
 	install -m 755 packaging/fedora/engine-service.py $(DESTDIR)$(DATA_DIR)/service
 	install -m 644 packaging/fedora/engine-service.sysconfig $(DESTDIR)$(SYSCONF_DIR)/sysconfig/ovirt-engine
 	install -m 644 packaging/fedora/engine-service.limits $(DESTDIR)$(SYSCONF_DIR)/security/limits.d/10-$(ENGINE_NAME).conf

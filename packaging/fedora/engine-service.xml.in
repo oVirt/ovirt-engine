@@ -27,7 +27,7 @@
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
-        <file path="/var/log/ovirt-engine/server.log"/>
+        <file path="$getString('ENGINE_LOG')/server.log"/>
         <rotate-size value="10M"/>
         <max-backup-index value="30"/>
         <append value="true"/>
@@ -39,7 +39,7 @@
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
-        <file path="/var/log/ovirt-engine/engine.log"/>
+        <file path="$getString('ENGINE_LOG')/engine.log"/>
         <rotate-size value="10M"/>
         <max-backup-index value="30"/>
         <append value="true"/>
@@ -117,7 +117,7 @@
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:deployment-scanner:1.1">
-      <deployment-scanner scan-interval="5000" path="/var/lib/ovirt-engine/deployments"/>
+      <deployment-scanner scan-interval="5000" path="$getString('ENGINE_VAR')/deployments"/>
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:ee:1.0"/>
@@ -145,7 +145,7 @@
       </caches>
       <async thread-pool-name="default"/>
       <timer-service thread-pool-name="default">
-        <data-store path="/var/lib/ovirt-engine/timer-service-data"/>
+        <data-store path="$getString('ENGINE_VAR')/timer-service-data"/>
       </timer-service>
       <remote connector-ref="remoting-connector" thread-pool-name="default"/>
       <thread-pools>
@@ -246,7 +246,7 @@
       #end if
       #if $getBoolean('ENGINE_HTTPS_ENABLED')
         <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
-          <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/keys/apache.p12" keystore-type="PKCS12" key-alias="1" protocol="TLSv1" verify-client="false"/>
+          <ssl name="ssl" password="mypass" certificate-key-file="$getString('ENGINE_PKI')/keys/apache.p12" keystore-type="PKCS12" key-alias="1" protocol="TLSv1" verify-client="false"/>
         </connector>
       #end if
       #if $getBoolean('ENGINE_AJP_ENABLED')

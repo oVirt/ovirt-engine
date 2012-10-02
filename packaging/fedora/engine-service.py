@@ -63,6 +63,8 @@ jbossHomeDir = None
 
 # JBoss files:
 jbossModulesJar = None
+jbossBootLoggingTemplateFile = None
+jbossBootLoggingFile = None
 
 # Engine directories:
 engineEtcDir = None
@@ -76,11 +78,9 @@ engineDeploymentsDir = None
 
 # Engine files:
 enginePidFile = None
-engineLoggingFile = None
 engineConfigTemplateFile = None
 engineConfigFile = None
 engineLogFile = None
-engineBootLogFile = None
 engineConsoleLogFile = None
 engineServerLogFile = None
 
@@ -175,14 +175,6 @@ def loadConfig():
     global javaLauncher
     javaLauncher = os.path.join(javaHomeDir, "bin/java")
 
-    # JBoss directories:
-    global jbossHomeDir
-    jbossHomeDir = engineConfig.getString("JBOSS_HOME")
-
-    # JBoss files:
-    global jbossModulesJar
-    jbossModulesJar = os.path.join(jbossHomeDir, "jboss-modules.jar")
-
     # Engine directories:
     global engineEtcDir
     global engineLogDir
@@ -207,21 +199,29 @@ def loadConfig():
 
     # Engine files:
     global enginePidFile
-    global engineLoggingFile
     global engineLogFile
-    global jbossConfigTemplateFile
-    global jbossConfigFile
-    global engineBootLogFile
     global engineConsoleLogFile
     global engineServerLogFile
     enginePidFile = engineConfig.getString("ENGINE_PID")
-    engineLoggingFile = os.path.join(engineServiceDir, "engine-service-logging.properties")
     engineLogFile = os.path.join(engineLogDir, "engine.log")
-    jbossConfigTemplateFile = os.path.join(engineServiceDir, "engine-service.xml.in")
-    jbossConfigFile = os.path.join(engineTmpDir, "engine-service.xml")
-    engineBootLogFile = os.path.join(engineLogDir, "boot.log")
     engineConsoleLogFile = os.path.join(engineLogDir, "console.log")
     engineServerLogFile = os.path.join(engineLogDir, "server.log")
+
+    # JBoss directories:
+    global jbossHomeDir
+    jbossHomeDir = engineConfig.getString("JBOSS_HOME")
+
+    # JBoss files:
+    global jbossModulesJar
+    global jbossBootLoggingTemplateFile
+    global jbossBootLoggingFile
+    global jbossConfigTemplateFile
+    global jbossConfigFile
+    jbossModulesJar = os.path.join(jbossHomeDir, "jboss-modules.jar")
+    jbossBootLoggingTemplateFile = os.path.join(engineServiceDir, "engine-service-logging.properties.in")
+    jbossBootLoggingFile = os.path.join(engineTmpDir, "engine-service-logging.properties")
+    jbossConfigTemplateFile = os.path.join(engineServiceDir, "engine-service.xml.in")
+    jbossConfigFile = os.path.join(engineTmpDir, "engine-service.xml")
 
 
 def checkIdentity():
@@ -289,12 +289,11 @@ def checkInstallation():
     checkDirectory(engineServiceDir, uid=0, gid=0)
     checkDirectory(engineContentDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineDeploymentsDir, uid=engineUid, gid=engineGid)
-    checkFile(engineLoggingFile)
+    checkFile(jbossBootLoggingTemplateFile)
     checkFile(jbossConfigTemplateFile)
 
     # Check that log files are owned by the engine user, if they exist:
     checkLog(engineLogFile)
-    checkLog(engineBootLogFile)
     checkLog(engineConsoleLogFile)
     checkLog(engineServerLogFile)
 
@@ -393,9 +392,16 @@ def startEngine():
         os.mkdir(engineCacheDir)
     os.chown(engineCacheDir, engineUid, engineGid)
 
+    # Create the boot logging file from the template:
+    jbossBootLoggingTemplate = Template(file=jbossBootLoggingTemplateFile, searchList=[engineConfig])
+    jbossBootLoggingText = str(jbossBootLoggingTemplate)
+    with open(jbossBootLoggingFile, "w") as jbossBootLoggingFd:
+        jbossBootLoggingFd.write(jbossBootLoggingText)
+    os.chown(jbossBootLoggingFile, engineUid, engineGid)
+
     # Generate the main configuration from the template and copy it to the
-    # configuration directory making sure that the application server will be
-    # able to write to it:
+    # configuration temporary directory making sure that the application server
+    # will be able to write to it:
     jbossConfigTemplate = Template(file=jbossConfigTemplateFile, searchList=[engineConfig])
     jbossConfigText = str(jbossConfigTemplate)
     with open(jbossConfigFile, "w") as jbossConfigFd:
@@ -461,7 +467,7 @@ def startEngine():
     # Add arguments for JBoss:
     engineArgs.extend([
         "-Djava.util.logging.manager=org.jboss.logmanager",
-        "-Dlogging.configuration=file://%s" % engineLoggingFile,
+        "-Dlogging.configuration=file://%s" % jbossBootLoggingFile,
         "-Dorg.jboss.resolver.warning=true",
         "-Djboss.modules.system.pkgs=org.jboss.byteman",
         "-Djboss.server.default.config=engine-service",
