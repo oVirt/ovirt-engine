@@ -32,10 +32,10 @@ public interface StorageDomainResource extends UpdatableResource<StorageDomain> 
     public AssignedPermissionsResource getPermissionsResource();
 
     @Path("vms")
-    public StorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource();
+    public RemovableStorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource();
 
     @Path("templates")
-    public StorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource();
+    public RemovableStorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource();
 
     @Path("files")
     public FilesResource getFilesResource();

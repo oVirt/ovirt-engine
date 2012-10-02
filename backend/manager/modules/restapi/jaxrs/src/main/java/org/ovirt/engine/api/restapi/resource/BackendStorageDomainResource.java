@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
-import org.ovirt.engine.api.resource.StorageDomainContentsResource;
+import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -246,12 +246,12 @@ public class BackendStorageDomainResource extends
     }
 
     @Override
-    public StorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource() {
+    public RemovableStorageDomainContentsResource<Templates, Template> getStorageDomainTemplatesResource() {
         return inject(new BackendStorageDomainTemplatesResource(guid));
     }
 
     @Override
-    public StorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource() {
+    public RemovableStorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource() {
         return inject(new BackendStorageDomainVmsResource(guid));
     }
 }
