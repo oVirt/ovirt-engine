@@ -349,6 +349,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return true;
     }
 
+    private void updateTasksWithActionParameters() {
+        for (Guid taskID : getReturnValue().getTaskIdList()) {
+            getAsyncTaskManager().UpdateTaskWithActionParameters(taskID, getParameters());
+        }
+    }
+
     @Override
     protected AsyncTaskType getTaskType() {
         return AsyncTaskType.deleteImage;

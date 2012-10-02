@@ -936,8 +936,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     // to start polling before all tasks were created, otherwise we
                     // might change
                     // the VM/VmTemplate status to 'Down'/'OK' too soon.
-                    updateTasksWithActionParameters();
-
                     startPollingAsyncTasks();
                 }
             } finally {
@@ -1124,12 +1122,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
     protected AsyncTaskType getTaskType() {
         throw new UnsupportedOperationException();
-    }
-
-    protected void updateTasksWithActionParameters() {
-        for (Guid taskID : getReturnValue().getTaskIdList()) {
-            getAsyncTaskManager().UpdateTaskWithActionParameters(taskID, getParameters());
-        }
     }
 
     protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
