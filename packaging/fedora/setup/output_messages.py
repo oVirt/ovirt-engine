@@ -118,8 +118,8 @@ INFO_CONF_PARAMS_FQDN_USAGE="The Host's fully qualified domain name"
 INFO_CONF_PARAMS_FQDN_PROMPT="Host fully qualified domain name. Note: this name should be fully resolvable"
 INFO_CONF_PARAMS_CA_PASS_USAGE="The password for the CA private key"
 INFO_CONF_PARAMS_CA_PASS_PROMPT="Password for the CA private key"
-INFO_CONF_PARAMS_AUTH_PASS_USAGE="Password for local admin user"
-INFO_CONF_PARAMS_AUTH_PASS_PROMPT="Password for Administrator (admin@internal)"
+INFO_CONF_PARAMS_AUTH_PASS_USAGE="Password for internal admin user"
+INFO_CONF_PARAMS_AUTH_PASS_PROMPT="Enter a password for an internal %s administrator user (admin@internal)" % basedefs.APP_NAME
 INFO_CONF_PARAMS_ORG_NAME_USAGE="Organization Name for the Certificate"
 INFO_CONF_PARAMS_ORG_NAME_PROMPT="Organization Name for the Certificate"
 INFO_CONF_PARAMS_DC_TYPE_USAGE="Default Data Center Storage Type"
@@ -133,22 +133,23 @@ INFO_CONF_PARAMS_NFS_DESC_PROMPT="Display name for the ISO Domain"
 INFO_CONF_PARAMS_MAC_RANGE_USAGE="MAC range for the virtual machines, e.g. 00:11:22:33:44:00-00:11:22:33:44:FF"
 INFO_CONF_PARAMS_MAC_RANG_PROMPT="MAC range for the virtual machines"
 INFO_CONF_PARAMS_DB_PASSWD_USAGE="Password for the local database administrator"
-INFO_CONF_PARAMS_DB_PASSWD_PROMPT="Local database password"
+INFO_CONF_PARAMS_DB_PASSWD_PROMPT="Enter a password for a local %s DB admin user (%s)" % (basedefs.APP_NAME, basedefs.DB_USER)
 INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT="Confirm password"
 
 #Remote DB interaction
 INFO_CONF_PARAMS_REMOTE_DB_USAGE="Select local or remote DB server"
 INFO_CONF_PARAMS_REMOTE_DB_PROMPT="Enter DB type for installation"
 INFO_CONF_PARAMS_USE_DB_HOST_USAGE="Hostname or IP address of the DB server."
-INFO_CONF_PARAMS_USE_DB_HOST_PROMPT="Enter the host IP or host name where DB is running"
+INFO_CONF_PARAMS_USE_DB_HOST_PROMPT="\nEntering a remote %s DB configuration section. All the configuration parameters should be provided by the remote DB administrator.\
+\n\nEnter the host IP or host name where %s DB is running" % (basedefs.APP_NAME, basedefs.APP_NAME)
 INFO_CONF_PARAMS_USE_DB_PORT_USAGE="Connection port for the remote DB"
-INFO_CONF_PARAMS_USE_DB_PORT_PROMPT="Enter DB port number"
+INFO_CONF_PARAMS_USE_DB_PORT_PROMPT="Enter the DB port number"
 INFO_CONF_PARAMS_DB_ADMIN_USAGE="Remote DB admin user"
-INFO_CONF_PARAMS_DB_ADMIN_PROMPT="Enter DB admin user name"
-INFO_CONF_PARAMS_REMOTE_DB_PASSWD_USAGE="Password for the remote database administrator"
-INFO_CONF_PARAMS_REMOTE_DB_PASSWD_PROMPT="Remote database password"
-INFO_CONF_PARAMS_DB_SECURE_CONNECTION_USAGE="Should the connection to the DB be secure? (The support must be configured on remote DB server)"
-INFO_CONF_PARAMS_DB_SECURE_CONNECTION_PROMPT="Configure secure connection? (make sure SSL is configured on remote database)"
+INFO_CONF_PARAMS_DB_ADMIN_PROMPT="Enter the remote DB user name"
+INFO_CONF_PARAMS_REMOTE_DB_PASSWD_USAGE="Password for the remote database user"
+INFO_CONF_PARAMS_REMOTE_DB_PASSWD_PROMPT="Enter the password for the remote DB user"
+INFO_CONF_PARAMS_DB_SECURE_CONNECTION_USAGE="Should the connection to the DB be secure? (The support must be configured on the remote DB server)"
+INFO_CONF_PARAMS_DB_SECURE_CONNECTION_PROMPT="Configure a secure connection? (make sure SSL is configured on the remote DB server)"
 
 
 #Auth domain
