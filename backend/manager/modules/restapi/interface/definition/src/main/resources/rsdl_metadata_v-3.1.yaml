@@ -2399,7 +2399,7 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
-          vmpool.name: 'xs:string'}
+          vmpool.name: 'xs:string', vmpool.size: 'xs:int'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2411,7 +2411,7 @@ actions:
       signatures:
       - mandatoryArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
           vmpool.name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {vmpool.size: 'xs:int'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
