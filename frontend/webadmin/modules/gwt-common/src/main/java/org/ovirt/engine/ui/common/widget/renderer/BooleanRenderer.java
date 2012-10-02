@@ -17,12 +17,16 @@ public class BooleanRenderer extends AbstractRenderer<Boolean> {
     }
 
     @Override
-    public String render(Boolean bool) {
-        if (trueText == null || falseText == null) {
-            return bool.toString();
+    public String render(Boolean valueToRender) {
+        if (valueToRender == null) {
+            return "";
         }
 
-        return bool != null && bool.booleanValue() ? trueText : falseText;
+        if (trueText == null || falseText == null) {
+            return valueToRender.toString();
+        }
+
+        return valueToRender.booleanValue() ? trueText : falseText;
     }
 
 }
