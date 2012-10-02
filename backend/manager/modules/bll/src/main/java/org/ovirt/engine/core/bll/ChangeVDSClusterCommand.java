@@ -111,19 +111,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             setSucceeded(true);
             return;
         }
-
-        if (targetStoragePool != null) {
-            VdcReturnValueBase addVdsSpmIdReturn =
-                    Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
-                            getParameters(),
-                            new CommandContext(getCompensationContext()));
-            if (!addVdsSpmIdReturn.getSucceeded()) {
-                setSucceeded(false);
-                getReturnValue().setFault(addVdsSpmIdReturn.getFault());
-                return;
-            }
-        }
-
         // save the new cluster id
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
@@ -165,6 +152,17 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
+        if (targetStoragePool != null) {
+            VdcReturnValueBase addVdsSpmIdReturn =
+                    Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
+                            getParameters(),
+                            new CommandContext(getCompensationContext()));
+            if (!addVdsSpmIdReturn.getSucceeded()) {
+                setSucceeded(false);
+                getReturnValue().setFault(addVdsSpmIdReturn.getFault());
+                return;
+            }
+        }
         setSucceeded(true);
     }
 

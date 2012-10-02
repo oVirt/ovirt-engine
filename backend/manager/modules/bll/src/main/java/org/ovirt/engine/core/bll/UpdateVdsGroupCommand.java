@@ -60,15 +60,6 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 && getVdsGroup().getstorage_pool_id() != null) {
             for (VdsStatic vds : getVdsStaticDAO().getAllForVdsGroup(oldGroup.getId())) {
                 VdsActionParameters parameters = new VdsActionParameters(vds.getId());
-                if (getVdsGroup().getstorage_pool_id() != null) {
-                    VdcReturnValueBase addVdsSpmIdReturn =
-                            getBackend().runInternalAction(VdcActionType.AddVdsSpmId, parameters);
-                    if (!addVdsSpmIdReturn.getSucceeded()) {
-                        setSucceeded(false);
-                        getReturnValue().setFault(addVdsSpmIdReturn.getFault());
-                        return;
-                    }
-                }
                 if (oldGroup.getstorage_pool_id() != null) {
                     VdcReturnValueBase removeVdsSpmIdReturn =
                             getBackend().runInternalAction(VdcActionType.RemoveVdsSpmId,
@@ -76,6 +67,15 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                     if (!removeVdsSpmIdReturn.getSucceeded()) {
                         setSucceeded(false);
                         getReturnValue().setFault(removeVdsSpmIdReturn.getFault());
+                        return;
+                    }
+                }
+                if (getVdsGroup().getstorage_pool_id() != null) {
+                    VdcReturnValueBase addVdsSpmIdReturn =
+                            getBackend().runInternalAction(VdcActionType.AddVdsSpmId, parameters);
+                    if (!addVdsSpmIdReturn.getSucceeded()) {
+                        setSucceeded(false);
+                        getReturnValue().setFault(addVdsSpmIdReturn.getFault());
                         return;
                     }
                 }
