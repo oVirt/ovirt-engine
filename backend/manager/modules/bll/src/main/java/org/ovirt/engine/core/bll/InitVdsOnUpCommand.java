@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
@@ -76,7 +78,8 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             processFencing();
             processStoragePoolStatus();
         } else {
-            setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE);
+            Map<String, String> customLogValues = Collections.singletonMap("StoragePoolName", getStoragePoolName());
+            setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE, customLogValues);
         }
     }
 
@@ -103,8 +106,9 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         }
     }
 
-    private void setNonOperational(NonOperationalReason reason) {
-        SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVds().getId(), reason);
+    private void setNonOperational(NonOperationalReason reason, Map<String, String> customLogValues) {
+        SetNonOperationalVdsParameters tempVar =
+                new SetNonOperationalVdsParameters(getVds().getId(), reason, customLogValues);
         tempVar.setSaveToDb(true);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
     }
@@ -243,10 +247,10 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             if (upServer != null) {
                 List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer.getId());
                 if (glusterServers.size() == 0) {
-                    setNonOperational(NonOperationalReason.GLUSTER_PEER_LIST_FAILED);
+                    setNonOperational(NonOperationalReason.GLUSTER_PEER_LIST_FAILED, null);
                 } else if (!hostExists(glusterServers, getVds())) {
                     if (!glusterPeerProbe(upServer.getId(), getVds().gethost_name())) {
-                        setNonOperational(NonOperationalReason.GLUSTER_PEER_PROBE_FAILED);
+                        setNonOperational(NonOperationalReason.GLUSTER_PEER_PROBE_FAILED, null);
                     }
                 }
             }
