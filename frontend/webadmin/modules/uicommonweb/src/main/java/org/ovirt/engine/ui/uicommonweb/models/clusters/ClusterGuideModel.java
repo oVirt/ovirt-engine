@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -16,11 +17,9 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -156,13 +155,12 @@ public class ClusterGuideModel extends GuideModel
             return;
         }
 
-        Version minimalClusterVersion = Linq.GetMinVersionByClusters(clusters);
         ArrayList<VDS> availableHosts = new ArrayList<VDS>();
         for (VDS vds : allHosts)
         {
             if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
                 && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                && (vds.getVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()).compareTo(minimalClusterVersion) >= 0))
+                && (vds.getVersion() == null || isHostSupported(clusters, vds)))
             {
                 availableHosts.add(vds);
             }
@@ -185,6 +183,15 @@ public class ClusterGuideModel extends GuideModel
         }
 
         StopProgress();
+    }
+
+    private boolean isHostSupported(List<VDSGroup> clusterList, VDS host){
+        for (VDSGroup cluster : clusterList){
+            if (!host.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version())){
+                return false;
+            }
+        }
+        return true;
     }
 
     private void UpdateOptionsLocalFS() {
@@ -252,31 +259,40 @@ public class ClusterGuideModel extends GuideModel
 
     public void SelectHost()
     {
-        ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
+        final ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(getEntity());
 
-        MoveHost model = new MoveHost();
+        final MoveHost model = new MoveHost();
         model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
         model.setHashName("select_host"); //$NON-NLS-1$
 
         // In case of local storage, only one host is allowed in the cluster so we should disable multi selection
-        boolean isMultiHostDC = dataCenter.getstorage_pool_type() == StorageType.LOCALFS;
-        if (isMultiHostDC)
-            model.setMultiSelection(false);
+        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        dataCenter = (storage_pool) returnValue;
 
-        setWindow(model);
-        model.getCluster().setItems(clusters);
-        model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
-        model.getCluster().setIsAvailable(false);
+                        boolean isMultiHostDC = dataCenter.getstorage_pool_type() == StorageType.LOCALFS;
+                        if (isMultiHostDC)
+                            model.setMultiSelection(false);
 
-        UICommand tempVar = new UICommand("OnSelectHost", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+                        setWindow(model);
+                        model.getCluster().setItems(clusters);
+                        model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                        model.getCluster().setIsAvailable(false);
+
+                        UICommand tempVar = new UICommand("OnSelectHost", ClusterGuideModel.this); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                        tempVar.setIsDefault(true);
+                        model.getCommands().add(tempVar);
+                        UICommand tempVar2 = new UICommand("Cancel", ClusterGuideModel.this); //$NON-NLS-1$
+                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                        tempVar2.setIsCancel(true);
+                        model.getCommands().add(tempVar2);
+
+                    }
+                }), getEntity().getstorage_pool_id().getValue());
     }
 
     public void OnSelectHost()

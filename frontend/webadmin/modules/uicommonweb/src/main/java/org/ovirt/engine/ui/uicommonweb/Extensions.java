@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb;
 
-import org.ovirt.engine.core.compat.Version;
-
 import java.util.ArrayList;
 
 /**
@@ -70,47 +68,6 @@ public final class Extensions
     // }
     // }
 
-    /**
-     * Returns a friendly version, for example 4.4.x.x returned as 2.1.x.x.
-     */
-    public static Version GetFriendlyVersion(Version source)
-    {
-        if (source != null)
-        {
-            int major = source.getMajor();
-            int minor = source.getMinor();
-
-            if (major == 4 && minor == 4)
-            {
-                major = 2;
-                minor = 1;
-            }
-            else if (major == 4 && minor == 5)
-            {
-                major = 2;
-                minor = 2;
-            }
-            else if (major == 4 && minor == 9)
-            {
-                major = 3;
-                minor = 0;
-            }
-            else if (major == 4 && minor == 10) {
-                major = 3;
-                minor = 1;
-            }
-            if (source.getBuild() == -1)
-            {
-                return new Version(major, minor);
-            }
-            if (source.getRevision() == -1)
-            {
-                return new Version(major, minor, source.getBuild());
-            }
-            return new Version(major, minor, source.getBuild(), source.getRevision());
-        }
-        return new Version();
-    }
 
     /**
      * Sort by comparer created at runtime

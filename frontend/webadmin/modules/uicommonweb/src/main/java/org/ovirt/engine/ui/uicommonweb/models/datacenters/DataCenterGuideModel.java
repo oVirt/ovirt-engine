@@ -40,7 +40,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -270,12 +269,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             getOptionalActions().add(addClusterAction);
         }
 
-        Version minimalClusterVersion = Linq.GetMinVersionByClusters(clusters);
-
-        if (minimalClusterVersion == null)
-        {
-            minimalClusterVersion = new Version();
-        }
 
         ArrayList<VDS> hosts = new ArrayList<VDS>();
         ArrayList<VDS> availableHosts = new ArrayList<VDS>();
@@ -283,14 +276,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         for (VDS vds : allHosts)
         {
             if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id())
-                && (vds.getVersion() == null || vds.getVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()).compareTo(minimalClusterVersion) >= 0))
+                && (vds.getVersion() == null || isHostSupported(clusters, vds)))
             {
                 hosts.add(vds);
             }
 
             if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
                 && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                && (vds.getVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()).compareTo(minimalClusterVersion) >= 0))
+                && (vds.getVersion() == null || isHostSupported(clusters, vds)))
             {
                 availableHosts.add(vds);
             }
@@ -454,6 +447,15 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
         StopProgress();
+    }
+
+    private boolean isHostSupported(List<VDSGroup> clusterList, VDS host){
+        for (VDSGroup cluster : clusterList){
+            if (!host.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version())){
+                return false;
+            }
+        }
+        return true;
     }
 
     private void UpdateOptionsLocalFS() {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -8,15 +10,12 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class MoveHost extends ListModel
@@ -87,7 +86,7 @@ public class MoveHost extends ListModel
         {
             if (Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vds.getvds_group_id())) == null
                 && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                && (vds.getVersion() == null || Extensions.GetFriendlyVersion(vds.getVersion()).compareTo(cluster.getcompatibility_version()) >= 0))
+                && (vds.getVersion() == null || vds.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version())))
             {
                 EntityModel entity = new EntityModel();
                 entity.setEntity(vds);

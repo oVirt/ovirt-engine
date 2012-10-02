@@ -1,20 +1,19 @@
 package org.ovirt.engine.ui.uicommonweb.models.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Clipboard;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class AboutModel extends Model
@@ -227,7 +226,7 @@ public class AboutModel extends Model
 
                         if (a.getVersion() != null) {
                             item.setVDSMVersion(ConstantsManager.getInstance().getConstants().VDSMVersionAbout() + " " //$NON-NLS-1$
-                                + Extensions.GetFriendlyVersion(a.getVersion()) + " " //$NON-NLS-1$
+                                + a.getVersion().getRpmName() + " " //$NON-NLS-1$
                                 + a.getVersion());
                         }
 

@@ -179,14 +179,14 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
-    private Version vdsmVersion;
+    private RpmVersion vdsmVersion;
 
-    public Version getVdsmVersion()
+    public RpmVersion getVdsmVersion()
     {
         return vdsmVersion;
     }
 
-    public void setVdsmVersion(Version value)
+    public void setVdsmVersion(RpmVersion value)
     {
         if (Version.OpInequality(vdsmVersion, value))
         {
