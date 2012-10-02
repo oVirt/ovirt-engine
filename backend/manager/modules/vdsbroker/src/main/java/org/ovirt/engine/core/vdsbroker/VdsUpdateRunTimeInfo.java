@@ -158,9 +158,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void saveVmDevicesToDb() {
-        List<VmDevice> list = new ArrayList<VmDevice>(vmDeviceToSave.values());
-        Collections.sort(list);
-        updateAllInTransaction("UpdateVmDeviceRuntimeInfo", list, getDbFacade().getVmDeviceDao());
+        updateAllInTransaction("UpdateVmDeviceRuntimeInfo", vmDeviceToSave.values(), getDbFacade().getVmDeviceDao());
 
         if (!removedDeviceIds.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
@@ -197,8 +195,7 @@ public class VdsUpdateRunTimeInfo {
      * @param dao
      *            The DAO used for updating.
      */
-    private static <T extends BusinessEntity<?>, ID extends Serializable> void updateAllInTransaction
-            (final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
+    private static <T extends BusinessEntity<ID> & Comparable<T>, ID extends Serializable & Comparable<? super ID>> void updateAllInTransaction(final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
         updateAllInTransaction(null, entities,dao);
     }
 
@@ -216,15 +213,17 @@ public class VdsUpdateRunTimeInfo {
      *            The DAO used for updating.
      */
 
-    private static <T extends BusinessEntity<?>, ID extends Serializable> void updateAllInTransaction
+    private static <T extends BusinessEntity<ID> & Comparable<T>, ID extends Serializable & Comparable<? super ID>> void updateAllInTransaction
         (final String procedureName, final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
+    final List<T> sortedList = new ArrayList<T>(entities);
+    Collections.sort(sortedList);
     if (!entities.isEmpty()) {
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
             new TransactionMethod<Void>() {
 
                 @Override
                 public Void runInTransaction() {
-                            dao.updateAll(procedureName, entities);
+                            dao.updateAll(procedureName, sortedList);
                     return null;
                 }
             });

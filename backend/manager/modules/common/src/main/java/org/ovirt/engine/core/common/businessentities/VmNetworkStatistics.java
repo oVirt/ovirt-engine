@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.NGuid;
  * {@link VmNetworkInterface}.
  *
  */
-public class VmNetworkStatistics extends NetworkStatistics {
+public class VmNetworkStatistics extends NetworkStatistics implements Comparable<VmNetworkStatistics> {
     private static final long serialVersionUID = -423834938475712247L;
 
     private NGuid vmId;
@@ -29,5 +29,10 @@ public class VmNetworkStatistics extends NetworkStatistics {
      */
     public NGuid getVmId() {
         return vmId;
+    }
+
+    @Override
+    public int compareTo(VmNetworkStatistics o) {
+        return BusinessEntityGuidComparator.<VmNetworkStatistics>newInstance().compare(this,o);
     }
 }

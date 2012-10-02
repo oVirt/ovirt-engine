@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.NGuid;
 @Entity
 @Table(name = "vm_dynamic")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class VmDynamic implements BusinessEntity<Guid> {
+public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private static final long serialVersionUID = 521748509912037953L;
 
     @Id
@@ -721,5 +721,10 @@ public class VmDynamic implements BusinessEntity<Guid> {
 
     public VmPauseStatus getPauseStatus() {
         return this.pauseStatus;
+    }
+
+    @Override
+    public int compareTo(VmDynamic o) {
+        return BusinessEntityGuidComparator.<VmDynamic>newInstance().compare(this,o);
     }
 }

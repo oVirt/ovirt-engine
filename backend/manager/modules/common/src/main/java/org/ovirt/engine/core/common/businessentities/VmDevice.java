@@ -304,6 +304,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
 
     @Override
     public int compareTo(VmDevice other) {
-        return getId().compareTo(other.getId());
+        return BusinessEntityComparator.<VmDevice,VmDeviceId>newInstance().compare(this, other);
     }
 }

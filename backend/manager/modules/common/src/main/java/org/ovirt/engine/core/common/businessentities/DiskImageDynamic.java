@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 @Entity
 @Table(name = "disk_image_dynamic")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<Guid> {
+public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<Guid>,Comparable<DiskImageDynamic> {
     private static final long serialVersionUID = 6357763045419255853L;
     private Guid id;
 
@@ -166,5 +166,10 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
     @Override
     public void setId(Guid id) {
         this.id = id;
+    }
+
+    @Override
+    public int compareTo(DiskImageDynamic o) {
+        return BusinessEntityGuidComparator.<DiskImageDynamic>newInstance().compare(this,o);
     }
 }

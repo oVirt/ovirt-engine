@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmStatistics implements BusinessEntity<Guid> {
+public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatistics> {
     private static final long serialVersionUID = -7480866662740734452L;
 
     public VmStatistics() {
@@ -250,6 +250,11 @@ public class VmStatistics implements BusinessEntity<Guid> {
     @Override
     public void setId(Guid id) {
         this.vm_guidField = id;
+    }
+
+    @Override
+    public int compareTo(VmStatistics o) {
+        return BusinessEntityGuidComparator.<VmStatistics>newInstance().compare(this,o);
     }
 
 }
