@@ -481,6 +481,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The target Data Center does not contain the ${type}.")
     String ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The target Data Center does not contain the Virtual Machines.")
+    String ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Storage Domain already contains the target disk(s).")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK();
 

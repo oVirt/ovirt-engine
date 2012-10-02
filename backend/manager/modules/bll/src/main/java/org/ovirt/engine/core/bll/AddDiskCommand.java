@@ -111,7 +111,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (returnValue && vm != null && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
             returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
         }
         returnValue = returnValue
                 && checkImageConfiguration()
