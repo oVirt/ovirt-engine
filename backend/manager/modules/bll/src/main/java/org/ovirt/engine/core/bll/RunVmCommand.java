@@ -288,7 +288,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     /**
      * Handles the cd attachment. Set the VM CDPath to the ISO Path stored in the database (default) Call
-     * GuestToolsVersionTreatment to override CDPath by guest tools if needed. If the CD symbol ('C') is contained in
+     * GuestToolsVersionTreatment to override CDPath by guest tools if needed. If the CD symbol ('D') is contained in
      * the Boot Sequence (at any place) set again the CDPath to the ISO Path that was stored in the database, and we
      * assume that this CD is bootable. So , priorities are (from low to high) : 1)Default 2)Tools 3)Boot Sequence
      */
@@ -301,7 +301,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().setCdPath(getVm().getiso_path());
                 guestToolsVersionTreatment();
                 refreshBootSequenceParameter(getParameters());
-                if (getVm().getboot_sequence() == BootSequence.CD) {
+                if (getVm().getboot_sequence() != null && getVm().getboot_sequence().containsSubsequence(BootSequence.D)) {
                     getVm().setCdPath(getVm().getiso_path());
                 }
                 getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(getVm().getCdPath(), getVm().getstorage_pool_id()));
