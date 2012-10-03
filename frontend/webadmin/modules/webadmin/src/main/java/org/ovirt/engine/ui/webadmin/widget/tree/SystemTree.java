@@ -31,6 +31,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     private final SystemTreeModelProvider modelProvider;
 
     private CellTree display;
+    private boolean initialized;
 
     public SystemTree(SystemTreeModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
@@ -81,6 +82,15 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 // Collapse tree on refresh
                 expandTree(display.getRootTreeNode(), false);
+
+                // Workaround for bug 856233. Force a root tree node to be opened.
+                // This won't cause visual changes, i.e. after refresh the tree
+                // will collapse as it should do.
+                if (initialized) {
+                    display.getRootTreeNode().setChildOpen(0, true);
+                }
+
+                initialized = true;
             }
         });
     }
