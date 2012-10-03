@@ -276,14 +276,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         for (VDS vds : allHosts)
         {
             if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id())
-                && (vds.getVersion() == null || isHostSupported(clusters, vds)))
+                && doesHostSupportAnyCluster(clusters, vds))
             {
                 hosts.add(vds);
             }
 
             if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
                 && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                && (vds.getVersion() == null || isHostSupported(clusters, vds)))
+                && doesHostSupportAnyCluster(clusters, vds))
             {
                 availableHosts.add(vds);
             }
@@ -449,13 +449,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         StopProgress();
     }
 
-    private boolean isHostSupported(List<VDSGroup> clusterList, VDS host){
+    private boolean doesHostSupportAnyCluster(List<VDSGroup> clusterList, VDS host){
         for (VDSGroup cluster : clusterList){
-            if (!host.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version())){
-                return false;
+            if (host.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version())){
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     private void UpdateOptionsLocalFS() {

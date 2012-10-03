@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -67,7 +66,6 @@ public class ClusterGuideModel extends GuideModel
 
     private ArrayList<VDS> hosts;
     private ArrayList<VDS> allHosts;
-    private ArrayList<VDSGroup> clusters;
     private VDS localStorageHost;
     private storage_pool dataCenter;
 
@@ -83,18 +81,6 @@ public class ClusterGuideModel extends GuideModel
                         clusterGuideModel.UpdateOptionsNonLocalFS();
                     }
                 }), getEntity().getname());
-
-        AsyncDataProvider.GetClusterList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        ;
-                        clusterGuideModel.clusters = clusters;
-                        clusterGuideModel.UpdateOptionsNonLocalFS();
-                    }
-                }), getEntity().getstorage_pool_id().getValue());
 
         AsyncDataProvider.GetHostList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -124,7 +110,7 @@ public class ClusterGuideModel extends GuideModel
     }
 
     private void UpdateOptionsNonLocalFS() {
-        if (clusters == null || hosts == null || allHosts == null) {
+        if (hosts == null || allHosts == null) {
             return;
         }
 
@@ -158,9 +144,9 @@ public class ClusterGuideModel extends GuideModel
         ArrayList<VDS> availableHosts = new ArrayList<VDS>();
         for (VDS vds : allHosts)
         {
-            if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
+            if (!getEntity().getId().equals(vds.getvds_group_id())
                 && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                && (vds.getVersion() == null || isHostSupported(clusters, vds)))
+                && vds.getSupportedClusterVersionsSet().contains(getEntity().getcompatibility_version()))
             {
                 availableHosts.add(vds);
             }
@@ -168,7 +154,7 @@ public class ClusterGuideModel extends GuideModel
         // Select host action.
         UICommand selectHostAction = new UICommand("SelectHost", this); //$NON-NLS-1$
 
-        if (availableHosts.size() > 0 && clusters.size() > 0)
+        if (availableHosts.size() > 0)
         {
             if (hosts.isEmpty())
             {
@@ -183,15 +169,6 @@ public class ClusterGuideModel extends GuideModel
         }
 
         StopProgress();
-    }
-
-    private boolean isHostSupported(List<VDSGroup> clusterList, VDS host){
-        for (VDSGroup cluster : clusterList){
-            if (!host.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version())){
-                return false;
-            }
-        }
-        return true;
     }
 
     private void UpdateOptionsLocalFS() {
@@ -252,7 +229,6 @@ public class ClusterGuideModel extends GuideModel
     private void ResetData() {
         hosts = null;
         allHosts = null;
-        clusters = null;
         localStorageHost = null;
         dataCenter = null;
     }
