@@ -10,7 +10,6 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -84,9 +83,9 @@ public class MoveHost extends ListModel
 
         for (VDS vds : hosts)
         {
-            if (Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vds.getvds_group_id())) == null
-                && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
-                && (vds.getVersion() == null || vds.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version())))
+            if (!cluster.getId().equals(vds.getvds_group_id()) &&
+                    (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+                    && vds.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version()))
             {
                 EntityModel entity = new EntityModel();
                 entity.setEntity(vds);

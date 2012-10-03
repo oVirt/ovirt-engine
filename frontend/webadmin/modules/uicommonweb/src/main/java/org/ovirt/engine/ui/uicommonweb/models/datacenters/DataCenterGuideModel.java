@@ -275,14 +275,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<VDS> upHosts = new ArrayList<VDS>();
         for (VDS vds : allHosts)
         {
-            if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id())
-                && doesHostSupportAnyCluster(clusters, vds))
+            if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id()))
             {
                 hosts.add(vds);
             }
 
-            if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
-                && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+            if ((vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
                 && doesHostSupportAnyCluster(clusters, vds))
             {
                 availableHosts.add(vds);
