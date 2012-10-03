@@ -52,8 +52,11 @@ public class BackendVmDisksResource
     @Override
     public Response add(Disk disk) {
         validateEnums(Disk.class, disk);
+
         if (disk.isSetId()) {
-            return attachDiskToVm(disk);
+            return Response.fromResponse(attachDiskToVm(disk))
+                           .entity(lookupEntity(asGuid(disk.getId())))
+                           .build();
         }else {
             validateParameters(disk, "format", "interface");
             if (!disk.isSetLunStorage() || disk.getLunStorage().getLogicalUnits().isEmpty()) { // lun-disk does not

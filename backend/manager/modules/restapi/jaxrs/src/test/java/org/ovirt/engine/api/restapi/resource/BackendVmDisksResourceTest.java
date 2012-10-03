@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -121,6 +123,11 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAttachDisk() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
+                GetAllDisksByVmIdParameters.class,
+                new String[] { "VmId" },
+                new Object[] { PARENT_ID },
+                getEntityList());
         setUpActionExpectations (VdcActionType.AttachDiskToVm,
                 AttachDettachVmDiskParameters.class,
                 new String[] { "VmId", "EntityId" },
