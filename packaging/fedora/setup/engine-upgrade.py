@@ -814,6 +814,11 @@ def main(options):
             sys.exit(1)
         else:
             logging.info("Info: Found .pgpass file at old location. Moving it to a new location.")
+
+            # Create directory if needed
+            dbPassFileDirectory = os.path.dirname(basedefs.DB_PASS_FILE)
+            if not os.path.exists(dbPassFileDirectory):
+                os.makedirs(dbPassFileDirectory)
             shutil.copy(basedefs.ORIG_PASS_FILE, basedefs.DB_PASS_FILE)
 
             # File is copied/created by root, so no need to verify the owner.
