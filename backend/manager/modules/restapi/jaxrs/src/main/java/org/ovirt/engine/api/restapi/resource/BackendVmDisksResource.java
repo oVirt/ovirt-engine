@@ -55,7 +55,15 @@ public class BackendVmDisksResource
         if (disk.isSetId()) {
             return attachDiskToVm(disk);
         }else {
-            return super.add(disk);
+            validateParameters(disk, "format", "interface");
+            if (!disk.isSetLunStorage() || disk.getLunStorage().getLogicalUnits().isEmpty()) { // lun-disk does not
+                                                                                               // require
+                                                                                               // size
+                validateParameters(disk, "provisionedSize|size");
+            }
+            return performCreation(addAction,
+                    getAddParameters(map(disk), disk),
+                    getEntityIdResolver(disk.getName()));
         }
     }
 

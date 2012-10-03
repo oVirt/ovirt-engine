@@ -11,6 +11,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.VmDiskResource;
@@ -176,6 +178,10 @@ public class BackendVmDisksResourceTest
 
     @Test
     public void testAddDisk() throws Exception {
+        testAddDiskImpl(getModel(0));
+    }
+
+    private void testAddDiskImpl(Disk model) {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
@@ -196,8 +202,7 @@ public class BackendVmDisksResourceTest
                                   GetAllDisksByVmIdParameters.class,
                                   new String[] { "VmId" },
                                   new Object[] { PARENT_ID },
-                                  asList(getEntity(0)));
-        Disk model = getModel(0);
+                asList(getEntity(0)));
         model.setSize(1024 * 1024L);
 
         Response response = collection.add(model);
@@ -331,8 +336,41 @@ public class BackendVmDisksResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Disk", "add", "provisionedSize|size", "format", "interface");
+            verifyIncompleteException(wae, "Disk", "add", "format", "interface");
         }
+    }
+
+    @Test
+    public void testAddIncompleteParameters_2() throws Exception {
+        Disk model = getModel(0);
+        model.setName(NAMES[0]);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "Disk", "add", "provisionedSize|size");
+        }
+    }
+
+    @Test
+    /**
+     * This test checks that addition of LUN-Disk is successful. There is no real difference in the
+     * implementation of adding regular disk and adding a lun-disk; in both cases the disk entity
+     * is mapped and passed to the Backend, and Backend infers the type of disk from the entity and creates it.
+     *
+     * So what this test actually checks is that it's OK for the user not to specify size|provisionedSize
+     * when creating a LUN-Disk
+     */
+    public void testAddLunDisk() {
+        Disk model = getModel(0);
+        model.setName(NAMES[0]);
+        model.setLunStorage(new Storage());
+        model.getLunStorage().getLogicalUnits().add(new LogicalUnit());
+        model.setSize(null);
+        model.setProvisionedSize(null);
+        testAddDiskImpl(model);
     }
 
     @Test

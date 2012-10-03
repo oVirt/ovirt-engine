@@ -28,7 +28,11 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
 
     @Override
     public Response add(Disk disk) {
-        validateParameters(disk, "provisionedSize|size", "format", "interface");
+        validateParameters(disk, "format", "interface");
+        if (!disk.isSetLunStorage() || disk.getLunStorage().getLogicalUnits().isEmpty()) { // lun-disk does not require
+                                                                                           // size
+            validateParameters(disk, "provisionedSize|size");
+        }
         validateEnums(Disk.class, disk);
         AddDiskParameters params = new AddDiskParameters();
         params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, null));
