@@ -706,6 +706,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();
 
+    @DefaultStringValue("$action stop profiling")
+    String VAR__ACTION__STOP_PROFILE();
+
     @DefaultStringValue("$action assign")
     String VAR__ACTION__ASSIGN();
 

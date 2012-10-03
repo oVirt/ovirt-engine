@@ -339,10 +339,10 @@ public enum VdcBllErrors {
     GlusterVolumeRebalanceStartFailed(4135),
     GlusterVolumeReplaceBrickStartFailed(4142),
     GlusterVolumeProfileStartFailed(4158),
+    GlusterVolumeProfileStopFailed(4159),
     GlusterHostRemoveFailed(4406),
     GlusterAddHostFailed(4404),
     GlusterPeerListFailed(4407),
-
 
     UnicodeArgumentException(4900),
 

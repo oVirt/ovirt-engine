@@ -143,6 +143,7 @@ public enum VDSCommandType {
     GlusterHostAdd("org.ovirt.engine.core.vdsbroker.gluster"),
     GlusterServersList("org.ovirt.engine.core.vdsbroker.gluster"),
     StartGlusterVolumeProfile("org.ovirt.engine.core.vdsbroker.gluster"),
+    StopGlusterVolumeProfile("org.ovirt.engine.core.vdsbroker.gluster"),
     ;
 
     String packageName;

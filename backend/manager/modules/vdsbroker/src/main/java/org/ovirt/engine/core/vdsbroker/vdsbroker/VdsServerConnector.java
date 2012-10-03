@@ -236,4 +236,6 @@ public interface VdsServerConnector {
     public Map<String, Object> diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk);
 
     public Map<String, Object> glusterVolumeProfileStart(String volumeName);
+
+    public Map<String, Object> glusterVolumeProfileStop(String volumeName);
 }

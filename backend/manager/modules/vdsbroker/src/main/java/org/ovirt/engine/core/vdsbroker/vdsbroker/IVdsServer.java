@@ -241,4 +241,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, XmlRpcStruct srcDisk, XmlRpcStruct dstDisk);
 
     StatusOnlyReturnForXmlRpc glusterVolumeProfileStart(String volumeName);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeProfileStop(String volumeName);
 }

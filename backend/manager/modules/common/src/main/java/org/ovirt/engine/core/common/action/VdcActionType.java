@@ -260,7 +260,7 @@ public enum VdcActionType {
     ReplaceGlusterVolumeBrick(1408, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
     AddBricksToGlusterVolume(1409, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
     StartGlusterVolumeProfile(1410, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-
+    StopGlusterVolumeProfile(1411, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
     ;
 
     private int intValue;

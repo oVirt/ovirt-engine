@@ -1181,4 +1181,13 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeProfileStop(String volumeName) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeProfileStop(volumeName));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

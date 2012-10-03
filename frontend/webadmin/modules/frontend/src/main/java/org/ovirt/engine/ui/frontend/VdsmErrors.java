@@ -694,6 +694,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Volume Profile Start Failed.")
     String GlusterVolumeProfileStartFailed();
 
+    @DefaultStringValue("Gluster Volume Profile Stop Failed.")
+    String GlusterVolumeProfileStopFailed();
+
     String ACTIVATE_NIC_FAILED();
 
     String DEACTIVATE_NIC_FAILED();
