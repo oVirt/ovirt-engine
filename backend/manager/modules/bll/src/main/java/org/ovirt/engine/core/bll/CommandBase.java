@@ -798,15 +798,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             VdcActionParametersBase parameters) {
         // If there is no parent command, the command that its type
         // will be stored in the DB for thr task is the one creating the command
-        if (parentCommandType == VdcActionType.Unknown) {
+        VdcActionParametersBase parentParameters = parameters.getParentParameters();
+        if (parentCommandType == VdcActionType.Unknown || parentParameters == null) {
             return parameters;
         }
-        VdcActionParametersBase parentParameters = parameters.getParentParameters();
-        if (parentParameters == null) {
-            String msg = "No parameters exist for " + parentCommandType;
-            log.error(msg);
-            throw new VdcBLLException(VdcBllErrors.NO_PARAMETERS_FOR_TASK, msg);
-        }
+
         // The parent parameters are the ones that are kept for the task.
         // In order to make sure that in case of rollback-by-command, the ROLLBACK
         // flow will be called, the execution reason of the child command is set
