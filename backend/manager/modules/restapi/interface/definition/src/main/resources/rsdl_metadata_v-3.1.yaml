@@ -93,18 +93,19 @@ actions:
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
           vm.memory: xs:long
-          vm.high_availability.priority: 'xs:int'
-          vm.high_availability.enabled: 'xs:boolean'
+          vm.high_availability.priority: xs:int
+          vm.high_availability.enabled: xs:boolean
           vm.domain.name: xs:string
           vm.description: xs:string
-          vm.stateless: 'xs:boolean'
+          vm.stateless: xs:boolean
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
           vm.placement_policy.host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
-          vm.disks.clone: 'xs:boolean'
+          vm.disks.clone: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
+          vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2044,6 +2045,7 @@ actions:
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
+          template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
