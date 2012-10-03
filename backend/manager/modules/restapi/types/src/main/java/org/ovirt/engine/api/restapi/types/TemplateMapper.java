@@ -105,8 +105,8 @@ public class TemplateMapper {
             if (model.getDisplay().isSetMonitors()) {
                 entity.setnum_of_monitors(model.getDisplay().getMonitors());
             }
-            if (model.getDisplay().isSetAllowReconnect()) {
-                entity.setAllowConsoleReconnect(model.getDisplay().isAllowReconnect());
+            if (model.getDisplay().isSetAllowOverride()) {
+                entity.setAllowConsoleReconnect(model.getDisplay().isAllowOverride());
             }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
@@ -197,8 +197,8 @@ public class TemplateMapper {
             if (model.getDisplay().isSetMonitors()) {
                 staticVm.setnum_of_monitors(model.getDisplay().getMonitors());
             }
-            if (model.getDisplay().isSetAllowReconnect()) {
-                staticVm.setAllowConsoleReconnect(model.getDisplay().isAllowReconnect());
+            if (model.getDisplay().isSetAllowOverride()) {
+                staticVm.setAllowConsoleReconnect(model.getDisplay().isAllowOverride());
             }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
@@ -266,7 +266,7 @@ public class TemplateMapper {
             model.setDisplay(new Display());
             model.getDisplay().setType(VmMapper.map(entity.getdefault_display_type(), null));
             model.getDisplay().setMonitors(entity.getnum_of_monitors());
-            model.getDisplay().setAllowReconnect(entity.getAllowConsoleReconnect());
+            model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
         }
         if (entity.getcreation_date() != null) {
             model.setCreationTime(DateMapper.map(entity.getcreation_date(), null));

@@ -184,8 +184,8 @@ public class VmMapper {
             if (vm.getDisplay().isSetMonitors()) {
                 staticVm.setnum_of_monitors(vm.getDisplay().getMonitors());
             }
-            if (vm.getDisplay().isSetAllowReconnect()) {
-                staticVm.setAllowConsoleReconnect(vm.getDisplay().isAllowReconnect());
+            if (vm.getDisplay().isSetAllowOverride()) {
+                staticVm.setAllowConsoleReconnect(vm.getDisplay().isAllowOverride());
             }
         }
         if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetAffinity()) {
@@ -322,7 +322,7 @@ public class VmMapper {
             Integer displaySecurePort = entity.getdisplay_secure_port();
             model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort==-1 ? null : displaySecurePort);
             model.getDisplay().setMonitors(entity.getnum_of_monitors());
-            model.getDisplay().setAllowReconnect(entity.getAllowConsoleReconnect());
+            model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
         }
         model.setType(map(entity.getvm_type(), null));
         model.setStateless(entity.getis_stateless());
