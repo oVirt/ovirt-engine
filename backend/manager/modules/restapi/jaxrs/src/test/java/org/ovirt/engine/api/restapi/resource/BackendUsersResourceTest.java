@@ -110,16 +110,6 @@ public class BackendUsersResourceTest
     }
 
     @Test
-    public void testAddUser_1() throws Exception {
-        setUpAddUserExpectations("ADUSER@" + DOMAIN + ": allnames=" + NAMES[0]);
-        User model = new User();
-        model.setUserName(NAMES[0]);
-
-        Response response = collection.add(model);
-        verifyAddUser(response);
-    }
-
-    @Test
     public void testAddUser_2() throws Exception {
         setUpAddUserExpectations("ADUSER@" + DOMAIN + ": allnames=" + NAMES[0]);
         User model = new User();

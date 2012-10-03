@@ -39,6 +39,9 @@ public class BackendUsersResource extends BackendUsersResourceBase implements Us
     @Override
     public Response add(User user) {
         validateParameters(user, "userName");
+        if (!isNameConatinsDomain(user)) {// user-name may contain the domain (e.g: oliel@xxx.yyy)
+            validateParameters(user, "domain.id|name");
+        }
         String domain = getDomain(user);
         AdUser adUser = getEntity(AdUser.class,
                                   SearchType.AdUser,
@@ -51,6 +54,10 @@ public class BackendUsersResource extends BackendUsersResourceBase implements Us
         AddUserParameters newUser = new AddUserParameters();
         newUser.setVdcUser(map(adUser));
         return performCreation(VdcActionType.AddUser, newUser, new UserIdResolver(adUser.getUserId()), BaseResource.class);
+    }
+
+    private boolean isNameConatinsDomain(User user) {
+        return ((user.getUserName().contains("@")) && (user.getUserName().indexOf('@') != user.getUserName().length() - 1));
     }
 
 }

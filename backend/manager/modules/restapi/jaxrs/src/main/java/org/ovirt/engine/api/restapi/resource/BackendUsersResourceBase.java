@@ -77,7 +77,7 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
         else if (user.isSetUserName() && user.getUserName().contains("@")) {
             return user.getUserName().substring(user.getUserName().indexOf("@")+1);
         }
-        return getCurrentDomain();
+        return null;
     }
 
     protected String getCurrentDomain() {
