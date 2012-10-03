@@ -3,7 +3,6 @@
 # Imports
 import sys
 import os
-import stat
 import signal
 import shutil
 import logging
