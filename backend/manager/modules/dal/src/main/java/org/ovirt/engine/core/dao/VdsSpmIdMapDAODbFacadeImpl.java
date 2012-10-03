@@ -69,6 +69,14 @@ public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSp
     }
 
     @Override
+    public void removeByVdsAndStoragePool(Guid vdsId, Guid storagePoolId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vds_id", vdsId).addValue("storage_pool_id",
+                storagePoolId);
+
+        getCallsHandler().executeModification("DeleteByPoolvds_spm_id_map", parameterSource);
+    }
+
+    @Override
     public vds_spm_id_map get(Guid storagePoolId, int spmId ) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
                 storagePoolId).addValue("vds_spm_id", spmId);

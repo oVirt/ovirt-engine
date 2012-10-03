@@ -306,6 +306,7 @@ public enum VdcBllErrors {
     ImportInfoError(801),
     ImportUnknownType(802),
     ExportError(803),
+    ReachedMaxNumberOfHostsInDC(804),
     ResourceNamespaceNotEmpty(850),
     ResourceTimeout(851),
     ResourceDoesNotExist(852),

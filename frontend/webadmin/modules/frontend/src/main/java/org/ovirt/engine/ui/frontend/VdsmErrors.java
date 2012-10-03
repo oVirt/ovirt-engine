@@ -481,6 +481,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String InvalidJob();
 
+    String ReachedMaxNumberOfHostsInDC();
+
     String InvalidPhysDev();
 
     String PartitionedPhysDev();

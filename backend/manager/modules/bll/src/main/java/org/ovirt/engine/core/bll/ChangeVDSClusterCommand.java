@@ -111,6 +111,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             setSucceeded(true);
             return;
         }
+
         // save the new cluster id
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
@@ -123,6 +124,23 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 return null;
             }
         });
+
+        getParameters().setCompensationEnabled(true);
+        getParameters().setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+
+        if (targetStoragePool != null
+                && (getSourceCluster().getstorage_pool_id()== null || !targetStoragePool.getId().equals(getSourceCluster().getstorage_pool_id().getValue()))) {
+            VdcReturnValueBase addVdsSpmIdReturn =
+                    Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
+                            getParameters(),
+                            new CommandContext(getCompensationContext()));
+            if (!addVdsSpmIdReturn.getSucceeded()) {
+                setSucceeded(false);
+                getReturnValue().setFault(addVdsSpmIdReturn.getFault());
+                return;
+            }
+        }
+
 
         if (getSourceCluster().supportsGlusterService() && getClusterUtils().hasServers(getSourceCluster().getId())) {
             if (!glusterHostRemove(getSourceCluster().getId())) {
@@ -137,32 +155,11 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
-        // handle spm
-        getParameters().setCompensationEnabled(true);
-        getParameters().setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-        if (getSourceCluster().getstorage_pool_id() != null) {
-            VdcReturnValueBase removeVdsSpmIdReturn =
-                    Backend.getInstance().runInternalAction(VdcActionType.RemoveVdsSpmId,
-                            getParameters(),
-                            new CommandContext(getCompensationContext()));
-            if (!removeVdsSpmIdReturn.getSucceeded()) {
-                setSucceeded(false);
-                getReturnValue().setFault(removeVdsSpmIdReturn.getFault());
-                return;
-            }
+        if (getSourceCluster().getstorage_pool_id() != null
+                && (targetStoragePool== null || !getSourceCluster().getstorage_pool_id().getValue().equals(targetStoragePool.getId()))) {
+            getVdsSpmIdMapDAO().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getstorage_pool_id().getValue());
         }
 
-        if (targetStoragePool != null) {
-            VdcReturnValueBase addVdsSpmIdReturn =
-                    Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
-                            getParameters(),
-                            new CommandContext(getCompensationContext()));
-            if (!addVdsSpmIdReturn.getSucceeded()) {
-                setSucceeded(false);
-                getReturnValue().setFault(addVdsSpmIdReturn.getFault());
-                return;
-            }
-        }
         setSucceeded(true);
     }
 

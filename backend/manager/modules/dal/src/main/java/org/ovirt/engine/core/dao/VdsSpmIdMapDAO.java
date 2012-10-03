@@ -25,4 +25,12 @@ public interface VdsSpmIdMapDAO extends GenericDao<vds_spm_id_map, Guid> {
      * @return list of vds_spm_id_map
      */
     List<vds_spm_id_map> getAll(Guid storagePoolId);
+
+    /**
+     * Removes entry for the specified vds on the specified pool
+     *
+     * @param vdsId vds id.
+     * @param storagePoolId storage pool id.
+     */
+    void removeByVdsAndStoragePool(Guid vdsId, Guid storagePoolId);
 }

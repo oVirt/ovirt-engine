@@ -72,7 +72,6 @@ public enum VdcActionType {
     InitVdsOnUp(115),
     SetNonOperationalVds(117),
     AddVdsSpmId(119),
-    RemoveVdsSpmId(120),
     // Fencing (including RestartVds above)
     StartVds(121, ActionGroup.MANIPUTLATE_HOST),
     StopVds(122, ActionGroup.MANIPUTLATE_HOST),

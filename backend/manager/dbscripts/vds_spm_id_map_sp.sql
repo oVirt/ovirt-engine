@@ -38,6 +38,21 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION DeleteByPoolvds_spm_id_map(v_vds_id UUID, v_storage_pool_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   DELETE FROM vds_spm_id_map
+   WHERE vds_id = v_vds_id AND storage_pool_id = v_storage_pool_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
 Create or replace FUNCTION GetAllFromvds_spm_id_map() RETURNS SETOF vds_spm_id_map
    AS $procedure$
 BEGIN
