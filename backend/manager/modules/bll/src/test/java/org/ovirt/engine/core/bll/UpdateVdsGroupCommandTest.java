@@ -27,9 +27,9 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -42,8 +42,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -61,7 +61,7 @@ public class UpdateVdsGroupCommandTest {
     @Mock
     private VdsGroupDAO vdsGroupDAO;
     @Mock
-    private VdsStaticDAO vdsStaticDAO;
+    private VdsDAO vdsDAO;
     @Mock
     private BackendInternal backendInternal;
     @Mock
@@ -87,13 +87,13 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void invalidCpuSelection() {
-        createSimpleCommand();
+        createCommandWithDefaultVdsGroup();
         canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
     }
 
     @Test
     public void illegalCpuChange() {
-        createSimpleCommand();
+        createCommandWithDefaultVdsGroup();
         cpuExists();
         cpuManufacturersDontMatch();
         vdsGroupHasVds();
@@ -118,7 +118,7 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void updateWithLowerVersionThanHosts() {
-        createSimpleCommand();
+        createCommandWithDefaultVdsGroup();
         cpuExists();
         cpuManufacturersMatch();
         VdsExistWithHigherVersion();
@@ -127,7 +127,7 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void updateWithCpuLowerThanHost() {
-        createSimpleCommand();
+        createCommandWithDefaultVdsGroup();
         cpuExists();
         cpuManufacturersMatch();
         clusterHasVds();
@@ -291,7 +291,7 @@ public class UpdateVdsGroupCommandTest {
         doReturn(backendInternal).when(cmd).getBackend();
 
         doReturn(vdsGroupDAO).when(cmd).getVdsGroupDAO();
-        doReturn(vdsStaticDAO).when(cmd).getVdsStaticDAO();
+        doReturn(vdsDAO).when(cmd).getVdsDAO();
         doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
         doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
 
@@ -396,19 +396,10 @@ public class UpdateVdsGroupCommandTest {
 
     private void VdsExistWithHigherVersion() {
         VDS vds = new VDS();
+        vds.setstatus(VDSStatus.Up);
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
-        VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
-        when(backendInternal.runInternalQuery(any(VdcQueryType.class), argThat(
-                new ArgumentMatcher<VdcQueryParametersBase>() {
-                    @Override
-                    public boolean matches(final Object o) {
-                        SearchParameters param = (SearchParameters) o;
-                        return param.getSearchTypeValue().equals(SearchType.VDS);
-                    }
-                })))
-                .thenReturn(returnValue);
-        when(returnValue.getReturnValue()).thenReturn(vdsList);
+        when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
     private void allQueriesEmpty() {
@@ -419,31 +410,18 @@ public class UpdateVdsGroupCommandTest {
     }
 
     private void vdsGroupHasVds() {
-        List<VdsStatic> vdsList = new ArrayList<VdsStatic>();
-        vdsList.add(new VdsStatic());
-        when(vdsStaticDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
+        List<VDS> vdsList = new ArrayList<VDS>();
+        vdsList.add(new VDS());
+        when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
     private void clusterHasVds() {
         VDS vds = new VDS();
+        vds.setstatus(VDSStatus.Up);
         vds.setsupported_cluster_levels(VERSION_1_1.toString());
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
-
-        VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
-        when(backendInternal.runInternalQuery(any(VdcQueryType.class), argThat(
-                new ArgumentMatcher<VdcQueryParametersBase>() {
-                    @Override
-                    public boolean matches(final Object o) {
-                        if (o == null) {
-                            return false;
-                        }
-                        SearchParameters param = (SearchParameters) o;
-                        return param.getSearchTypeValue().equals(SearchType.VDS);
-                    }
-                })))
-                .thenReturn(returnValue);
-        when(returnValue.getReturnValue()).thenReturn(vdsList);
+        when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
     private void clusterHasGlusterVolumes() {

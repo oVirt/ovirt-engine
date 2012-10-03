@@ -874,6 +874,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot change Cluster Compatibility Version to higher version when there are active Hosts with lower version.\n-Please move Hosts with lower version to maintenance first.")
     String VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS();
 
+    @DefaultStringValue("Cannot change Cluster.Trying to connect Cluster to Data Center with Hosts that are up.")
+    String VDS_GROUP_CANNOT_UPDATE_VDS_UP();
+
     @DefaultStringValue("Cannot add Cluster with Compatibility Version that is lower than the Data Center Compatibility Version.\n-Please upgrade your Cluster to a later Compatibility version first.")
     String VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL();
 
