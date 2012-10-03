@@ -32,8 +32,12 @@ public class DiskMapper {
                 engineDisk = new DiskImage();
             }
         }
+        // name is depreciated, use alias instead.
         if (disk.isSetName()) {
             engineDisk.setDiskAlias(disk.getName());
+        }
+        if (disk.isSetAlias()) {
+            engineDisk.setDiskAlias(disk.getAlias());
         }
         if (disk.isSetId()) {
             engineDisk.setId(new Guid(disk.getId()));
@@ -116,7 +120,9 @@ public class DiskMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.Disk.class, to = Disk.class)
     public static Disk map(org.ovirt.engine.core.common.businessentities.Disk entity, Disk template) {
         Disk model = template != null ? template : new Disk();
+        // name is depreciated, use alias instead.
         model.setName(entity.getDiskAlias());
+        model.setAlias(entity.getDiskAlias());
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());
         }

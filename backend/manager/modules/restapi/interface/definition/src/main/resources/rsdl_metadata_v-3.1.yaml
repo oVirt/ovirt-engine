@@ -310,7 +310,7 @@ actions:
       signatures:
       - mandatoryArguments: {provisioned_size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
         optionalArguments:
-          disk.name: xs:string
+          disk.alias: xs:string
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
@@ -635,7 +635,7 @@ actions:
       signatures:
       - mandatoryArguments: {provisioned_size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
         optionalArguments:
-          disk.name: xs:string
+          disk.alias: xs:string
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
