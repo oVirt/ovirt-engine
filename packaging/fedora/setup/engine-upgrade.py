@@ -641,7 +641,7 @@ class CA():
             logging.debug("PKI: removing JKS keystore")
             try:
                 os.remove(self.JKSKEYSTORE)
-            except OsError:
+            except OSError:
                 logging.error("PKI: cannot remove JKS keystore '%s'" % self.JKSKEYSTORE)
 
     def rollback(self):
