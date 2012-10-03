@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {
@@ -14,11 +15,14 @@ public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfac
 
     @Override
     protected void executeCommand() {
-        AddCustomValue("InterfaceName", ((getParameters().getInterface().getName())));
-        AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
+        VmNetworkInterface iface = getVmNetworkInterfaceDAO().get(getParameters().getInterfaceId());
+        if (iface != null) {
+            AddCustomValue("InterfaceName", iface.getName());
+            AddCustomValue("InterfaceType", VmInterfaceType.forValue(iface.getType()).getInterfaceTranslation());
+        }
         DbFacade.getInstance().getVmDeviceDao().remove(
-                new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()));
-        DbFacade.getInstance().getVmNetworkInterfaceDao().remove(getParameters().getInterface().getId());
+                new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmTemplateId()));
+        getVmNetworkInterfaceDAO().remove(getParameters().getInterfaceId());
         setSucceeded(true);
     }
 

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -13,8 +11,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @CustomLogFields({ @CustomLogField("InterfaceName") })
 public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> extends VmCommand<T> {
@@ -32,24 +28,17 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
     @Override
     protected void executeVmCommand() {
-        this.setVmName(DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId()).getvm_name());
+        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
 
         // return mac to pool
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                .getAllForVm(getParameters().getVmId());
+        VmNetworkInterface iface = getVmNetworkInterfaceDAO().get(getParameters().getInterfaceId());
 
-        VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
-            @Override
-            public boolean eval(VmNetworkInterface i) {
-                return i.getId().equals(getParameters().getInterfaceId());
-            }
-        });
         if (iface != null) {
             MacPoolManager.getInstance().freeMac(iface.getMacAddress());
             _interfaceName = iface.getName();
 
             // Get Interface type.
-            String interType = VmInterfaceType.forValue(iface.getType()).getInterfaceTranslation().toString();
+            String interType = VmInterfaceType.forValue(iface.getType()).getInterfaceTranslation();
             if (interType != null) {
                 AddCustomValue("InterfaceType", interType);
             }

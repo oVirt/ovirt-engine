@@ -1,18 +1,14 @@
 package org.ovirt.engine.core.common.action;
 
-import javax.validation.Valid;
-
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveVmTemplateInterfaceParameters extends VmTemplateParametersBase {
 
     private static final long serialVersionUID = 3492037768582415400L;
-    @Valid
-    private VmNetworkInterface _interface;
+    private Guid interfaceId;
 
-    public VmNetworkInterface getInterface() {
-        return _interface;
+    public Guid getInterfaceId() {
+        return interfaceId;
     }
 
     public RemoveVmTemplateInterfaceParameters() {
@@ -21,7 +17,6 @@ public class RemoveVmTemplateInterfaceParameters extends VmTemplateParametersBas
 
     public RemoveVmTemplateInterfaceParameters(Guid vmtId, Guid ifaceId) {
         super(vmtId);
-        _interface = new VmNetworkInterface();
-        _interface.setId(ifaceId);
+        interfaceId = ifaceId;
     }
 }
