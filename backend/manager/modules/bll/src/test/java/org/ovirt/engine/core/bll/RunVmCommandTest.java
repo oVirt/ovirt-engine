@@ -289,9 +289,8 @@ public class RunVmCommandTest {
         mockVm(command);
 
         // Set parameter
-        RunVmParams runVmParams = command.getParameters();
-        runVmParams.setinitrd_url(initrd);
-        runVmParams.setkernel_url(kernel);
+        command.getVm().setinitrd_url(initrd);
+        command.getVm().setkernel_url(kernel);
         command.createVm();
 
         // Check Vm
