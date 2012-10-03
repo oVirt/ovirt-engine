@@ -32,6 +32,7 @@ ENGINE_STATE=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
 BIN_DIR=$(PREFIX)/bin
 SYSCONF_DIR=$(PREFIX)/etc
 DATAROOT_DIR=$(PREFIX)/share
+MAN_DIR=$(DATAROOT_DIR)/man
 DATA_DIR=$(DATAROOT_DIR)/$(ENGINE_NAME)
 MAVENPOM_DIR=$(DATAROOT_DIR)/maven-poms
 JAVA_DIR=$(DATAROOT_DIR)/java
@@ -261,6 +262,11 @@ install_setup:
 	install -m 644 packaging/fedora/setup/miniyum.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/output_messages.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/post_upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
+
+	# Install man pages
+	install -dm 755 $(DESTDIR)$(MAN_DIR)/man8
+	install -m 644 packaging/engine-setup.8 $(DESTDIR)$(MAN_DIR)/man8/
+	install -m 644 packaging/engine-upgrade.8 $(DESTDIR)$(MAN_DIR)/man8/
 
 	# Example Plugin:
 	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py $(DESTDIR)$(DATA_DIR)/scripts/plugins

@@ -66,6 +66,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	SYSCONF_DIR=%{_sysconfdir} \\\
 	BIN_DIR=%{_bindir} \\\
 	DATAROOT_DIR=%{_datadir} \\\
+	MAN_DIR=%{_mandir} \\\
 	PYTHON=%{__python} \\\
 	PYTHON_DIR=%{python_sitelib} \\\
 	JAVA_DIR=%{_javadir} \\\
@@ -753,6 +754,10 @@ fi
 %{engine_data}/scripts/engine-cleanup.py*
 %{engine_data}/scripts/engine-upgrade.py*
 %{engine_data}/scripts/post_upgrade.py*
+
+# Man pages
+%{_mandir}/man8/engine-setup.*
+%{_mandir}/man8/engine-upgrade.*
 
 # Plugins directory:
 %dir %{engine_data}/scripts/plugins
