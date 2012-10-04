@@ -49,7 +49,10 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         getVm().setkernel_url(runVmParameters.getkernel_url());
         getVm().setkernel_params(runVmParameters.getkernel_params());
         getVm().setCustomProperties(runVmParameters.getCustomProperties());
-        getVm().setboot_sequence(runVmParameters.getBootSequence());
+
+        getVm().setboot_sequence(((runVmParameters.getBootSequence()) != null) ?
+                runVmParameters.getBootSequence() :
+                getVm().getdefault_boot_sequence());
     }
 
     @Override
