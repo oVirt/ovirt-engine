@@ -159,6 +159,9 @@
                             100
                         </prepared-statement-cache-size>
                     </statement>
+                    <validation>
+                        <check-valid-connection-sql>select 1</check-valid-connection-sql>
+                    </validation>
                 </datasource>
                 <drivers>
                     <driver name="postgresql" module="org.postgresql">
