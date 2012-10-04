@@ -248,8 +248,14 @@ public class VmDeviceCommonUtils {
         return ret;
     }
 
+    /**
+     * "old" level is considered anything lower than 3.1 at the moment
+     *
+     * @param version
+     * @return
+     */
     public static boolean isOldClusterVersion(Version version) {
-        return (!(version.getMajor() >= 3 && version.getMinor() >= 1));
+        return (version.compareTo(Version.v3_1) < 0);
     }
 
     public static boolean isInWhiteList(String type, String device) {
