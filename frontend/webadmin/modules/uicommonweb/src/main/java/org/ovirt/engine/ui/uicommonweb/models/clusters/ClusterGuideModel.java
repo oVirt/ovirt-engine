@@ -172,11 +172,12 @@ public class ClusterGuideModel extends GuideModel
     }
 
     private void UpdateOptionsLocalFS() {
-
-        UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
-        addHostAction.setTitle(ClusterAddAnotherHostAction);
-        UICommand selectHost = new UICommand("SelectHost", this); //$NON-NLS-1$
-        selectHost.setTitle(SelectHostsAction);
+        UICommand tempVar = new UICommand("AddHost", this); //$NON-NLS-1$
+        tempVar.setTitle(ClusterAddAnotherHostAction);
+        UICommand addHostAction = tempVar;
+        UICommand tempVar2 = new UICommand("SelectHost", this); //$NON-NLS-1$
+        tempVar2.setTitle(SelectHostsAction);
+        UICommand selectHost = tempVar2;
 
         if (localStorageHost != null)
         {

@@ -752,20 +752,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center created.")
     String guidePopupDataCenterCreatedLabel();
 
-    @DefaultStringValue("The Data Center is fully configured and ready for use.")
-    String guidePopupConfiguredDataCenterLabel();
-
     @DefaultStringValue("Cluster created.")
     String guidePopupClusterCreatedLabel();
 
-    @DefaultStringValue("The Cluster is fully configured and ready for use.")
-    String guidePopupConfiguredClusterLabel();
-
     @DefaultStringValue("Virtual Machine created.")
     String guidePopupVMCreatedLabel();
-
-    @DefaultStringValue("The Virtual Machine is fully configured and ready for use.")
-    String guidePopupConfiguredVmLabel();
 
     @DefaultStringValue("Cluster:")
     String moveHostPopupClusterLabel();
