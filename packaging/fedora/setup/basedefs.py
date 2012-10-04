@@ -155,6 +155,7 @@ CONST_VDSM_UID = 36
 CONST_KVM_GID  = 36
 CONST_MAX_PSQL_CONNS= 150
 CONST_SHMMAX=35554432
+CONST_CONFIG_EXTRA_IPTABLES_RULES="EXTRA_IPTABLES_RULES"
 
 # This is needed for avoiding error in create_ca when supporting max cn length of 64.
 # please DONT increase this size, any value over 55 will fail the setup.

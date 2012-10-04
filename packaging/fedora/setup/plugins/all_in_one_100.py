@@ -146,6 +146,16 @@ def initSequences(controller):
                                             [controller.CONF["CONFIG_ALLINONE"]],
                                             ["yes"],
                                             cpuSteps)
+    controller.insertSequenceBeforeSequence(
+        "Initial Steps",
+        "Add firewall rules",
+        [controller.CONF["CONFIG_ALLINONE"]],
+        ["yes"],
+        [{
+                'title' : "%s: Adding firewall rules" % PLUGIN_NAME_COLORED,
+                'functions' : [addFirewallRules]
+        }]
+    )
 
 
     # Main AIO sequences
@@ -182,6 +192,19 @@ def startLibvirt():
         time.sleep(PAUSE)
 
     raise Exception(ERROR_LIBVIRT_START)
+
+def addFirewallRules():
+    global controller
+
+    if basedefs.CONST_CONFIG_EXTRA_IPTABLES_RULES not in controller.CONF:
+        controller.CONF[basedefs.CONST_CONFIG_EXTRA_IPTABLES_RULES] = []
+
+    controller.CONF[basedefs.CONST_CONFIG_EXTRA_IPTABLES_RULES] += [
+        '#guest consoles',
+        '-A INPUT -p tcp -m state --state NEW -m multiport --dports 5634:6166  -j ACCEPT',
+        '#migration',
+        '-A INPUT -p tcp -m state --state NEW -m multiport --dports 49152:49216 -j ACCEPT'
+    ]
 
 def returnYes(controller):
     return "yes"

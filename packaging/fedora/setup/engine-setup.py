@@ -910,6 +910,9 @@ def _configIptables():
                     )
                 )
 
+        if basedefs.CONST_CONFIG_EXTRA_IPTABLES_RULES in controller.CONF:
+            lines += controller.CONF[basedefs.CONST_CONFIG_EXTRA_IPTABLES_RULES]
+
         outputText = fileContent.replace('@CUSTOM_RULES@', "\n".join(lines))
         logging.debug(outputText)
 
