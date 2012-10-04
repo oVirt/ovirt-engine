@@ -885,44 +885,35 @@ def _updateCaCrtTemplate():
 def _configIptables():
     logging.debug("configuring iptables")
     try:
-        file = open(basedefs.FILE_IPTABLES_DEFAULT, "r")
-        fileContent = file.read()
-        file.close()
-        outputText = fileContent
+        with open(basedefs.FILE_IPTABLES_DEFAULT, "r") as f:
+            fileContent = f.read()
 
-        PORTS_LIST=[]
-        #get the location of the drop all rule comment
-        list = outputText.split("\n")
-        location = None
-        counter = 0
-        for line in list:
-            if line == "#drop all rule":
-                location = counter
-            counter += 1
-        if not location:
-            logging.error(output_messages.ERR_EXP_FAILED_IPTABLES_RULES)
-            raise Exception(output_messages.ERR_EXP_FAILED_IPTABLES_RULES)
-
-        insertLocation = location - len(list)
+        ports = []
+        lines = []
 
         for port in [controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]]:
-            lineToAdd = "-A RH-Firewall-1-INPUT -m state --state NEW -p tcp --dport %s -j ACCEPT" % port
-            list.insert(insertLocation, lineToAdd)
+            ports.append({
+                'port': port,
+                'protocol': ['tcp']
+            })
 
         if utils.compareStrIgnoreCase(controller.CONF["CONFIG_NFS"], "yes"):
-            PORTS_LIST = PORTS_LIST + NFS_IPTABLES_PORTS
+            ports += NFS_IPTABLES_PORTS
 
-        for portCfg in PORTS_LIST:
-            portNumber = portCfg["port"]
+        for portCfg in ports:
             for protocol in portCfg["protocol"]:
-                lineToAdd = "-A RH-Firewall-1-INPUT -m state --state NEW -p %s --dport %s -j ACCEPT"%(protocol, portNumber)
-                list.insert(insertLocation, lineToAdd)
+                lines.append(
+                    "-A RH-Firewall-1-INPUT -m state --state NEW -p %s --dport %s -j ACCEPT" % (
+                        protocol,
+                        portCfg["port"]
+                    )
+                )
 
-        outputText = "\n".join(list)
+        outputText = fileContent.replace('@CUSTOM_RULES@', "\n".join(lines))
         logging.debug(outputText)
-        exampleFile = open(basedefs.FILE_IPTABLES_EXAMPLE, "w")
-        exampleFile.write(outputText)
-        exampleFile.close()
+
+        with open(basedefs.FILE_IPTABLES_EXAMPLE, "w") as f:
+            f.write(outputText)
 
         if controller.CONF["OVERRIDE_IPTABLES"] == "yes":
             if os.path.isfile("%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG)):
