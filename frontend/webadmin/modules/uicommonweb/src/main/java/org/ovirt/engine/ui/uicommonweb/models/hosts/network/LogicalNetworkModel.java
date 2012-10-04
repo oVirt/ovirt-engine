@@ -173,11 +173,11 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     public int getVlanId() {
         Integer vlanId = getEntity().getvlan_id();
-        return vlanId == null ? 0 : vlanId;
+        return vlanId == null ? -1 : vlanId;
     }
 
     public boolean hasVlan() {
-        return getVlanId() > 0;
+        return getVlanId() >= 0;
     }
 
     public boolean isAttached() {
