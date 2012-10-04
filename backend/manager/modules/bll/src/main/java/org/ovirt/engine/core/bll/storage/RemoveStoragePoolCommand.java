@@ -33,15 +33,11 @@ import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
-
-    private static Log log = LogFactory.getLog(RemoveStoragePoolCommand.class);
 
     public RemoveStoragePoolCommand(T parameters) {
         super(parameters);
@@ -77,16 +73,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 return;
             }
         }
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>()  {
-
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(getStoragePool());
-                DbFacade.getInstance().getStoragePoolDao().remove(getStoragePool().getId());
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
+        getStoragePoolDAO().remove(getStoragePool().getId());
         setSucceeded(true);
     }
 
@@ -188,22 +175,20 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         });
 
         setSucceeded(true);
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
-                DbFacade.getInstance()
-                        .getStoragePoolIsoMapDao()
-                        .remove(masterDomain.getStoragePoolIsoMapData().getId());
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
         if (getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
             for (VDS vds : vdss) {
                 StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
                         .DisconnectStorageFromDomainByVdsId(masterDomain, vds.getId());
             }
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    DbFacade.getInstance()
+                            .getStoragePoolIsoMapDao()
+                            .remove(masterDomain.getStoragePoolIsoMapData().getId());
+                    return null;
+                }
+            });
         } else {
             try {
                 Backend
