@@ -747,22 +747,9 @@ def _createCA():
         if not os.path.exists(basedefs.FILE_CA_CRT_SRC):
             _updateCaCrtTemplate()
 
-            # time.timezone is in seconds
-            tzOffset = time.timezone / 3600
-            logging.debug("current timezone offset is %i", tzOffset)
-            if abs(tzOffset) > 12:
-                logging.debug("Timezone offset is bigger then 12, resizing to 12")
-                tzOffset = 12
-
-            # Add "+" infront of the string
-            if tzOffset >= 0:
-                tzOffsetStr = "+%.2i00" % tzOffset
-            else:
-                tzOffsetStr = "%.2i00" % tzOffset
-
             # We create the CA with yesterday's starting date
-            yesterday = datetime.datetime.now() + datetime.timedelta(-1)
-            date = "%s%s" % (yesterday.strftime("%y%m%d%H%M%S"), tzOffsetStr)
+            yesterday = datetime.datetime.utcnow() - datetime.timedelta(1)
+            date = yesterday.strftime("%y%m%d%H%M%S+0000")
             logging.debug("Date string is %s", date)
 
             # Add random string to certificate CN field

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -132,12 +133,12 @@ public class OpenSslCAWrapper {
         String baseDirectoryPath = Config.resolveCABasePath();
         String keystorePass = Config.<String> GetValue(ConfigValues.keystorePass);
         String lockfileName = Config.<String> GetValue(ConfigValues.SignLockFile);
-        Calendar today = Calendar.getInstance();
-        today.add(Calendar.DATE, -1);
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DATE, -1);
         SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
-        String yesterday = format.format(today.getTime());
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
         String[] command_array = { signRequestBatch, requestFileName, signedCertificateFileName, "" + days,
-                baseDirectoryPath, yesterday, keystorePass, lockfileName, "" + (signatureTimeout / 2) };
+                baseDirectoryPath, format.format(yesterday.getTime()), keystorePass, lockfileName, "" + (signatureTimeout / 2) };
         log.debug("Finished building command array for Sign Certificate request script");
         return command_array;
     }

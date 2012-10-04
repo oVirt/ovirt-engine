@@ -12,7 +12,7 @@ die () {
 }
 
 usage () {
-    DATE=`date --date "now -1 days" +"%y%m%d%H%M%S%z"`
+    DATE=`date --utc --date "now -1 days" +"%y%m%d%H%M%S%z"`
     echo "Usage:"
     echo "  $0 [Subject] [Country] [Organization] [Alias] [Password] [ANSI Start Date] [Working Directory] [CA Subject]"
     echo "e.g.:"

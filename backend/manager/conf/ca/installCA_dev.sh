@@ -20,7 +20,7 @@ usage () {
 # Developer mode
 PASS=NoSoup4U
 ALIAS=engine
-DATE=`date --date "now -1 days" +"%y%m%d%H%M%S%z"`
+DATE=`date --utc --date "now -1 days" +"%y%m%d%H%M%S%z"`
 SUBJECT=`hostname`
 export START_DIR=`pwd`
 COUNTRY=US
