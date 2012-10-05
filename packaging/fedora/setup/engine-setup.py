@@ -903,7 +903,8 @@ def _configIptables():
         for portCfg in ports:
             for protocol in portCfg["protocol"]:
                 lines.append(
-                    "-A RH-Firewall-1-INPUT -m state --state NEW -p %s --dport %s -j ACCEPT" % (
+                    "-A INPUT -p %s -m state --state NEW -m %s --dport %s -j ACCEPT" % (
+                        protocol,
                         protocol,
                         portCfg["port"]
                     )
