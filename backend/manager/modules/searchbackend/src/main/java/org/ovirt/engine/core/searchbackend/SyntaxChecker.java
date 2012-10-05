@@ -748,7 +748,15 @@ public class SyntaxChecker implements ISyntaxChecker {
                         refObjList.remove(SearchObjects.VM_OBJ_NAME);
                     }
                 }
-
+            }
+            else if (SearchObjects.DISK_OBJ_NAME.equals(searchObjStr)) {
+                if (refObjList.contains(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
+                    innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.DISK_OBJ_NAME,
+                            SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME));
+                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
+                            SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME));
+                    refObjList.remove(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
+                }
             }
         }
         for (String cro : refObjList) {

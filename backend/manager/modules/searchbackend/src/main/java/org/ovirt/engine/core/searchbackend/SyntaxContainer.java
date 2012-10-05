@@ -206,9 +206,9 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = SearchObjects.VDC_CLUSTER_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
-            retval = obj;
+        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME)) {
+            retval = SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME;
         }
         else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {

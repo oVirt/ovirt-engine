@@ -25,6 +25,7 @@ public final class SearchObjects {
     public static final String VDC_STORAGE_POOL_OBJ_NAME = "DATACENTER";
     public static final String VDC_STORAGE_DOMAIN_OBJ_NAME = "STORAGE";
     public static final String VDC_STORAGE_DOMAIN_PLU_OBJ_NAME = "STORAGES";
+    public static final String VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME = "VMIMAGE";
     public static final String DISK_OBJ_NAME = "DISK";
     public static final String DISK_PLU_OBJ_NAME = "DISKS";
     public static final String GLUSTER_VOLUME_OBJ_NAME = "VOLUME";
@@ -60,6 +61,7 @@ public final class SearchObjects {
         SAFE_SEARCH_EXPR.add(VDC_STORAGE_POOL_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(VDC_STORAGE_DOMAIN_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(VDC_STORAGE_DOMAIN_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+        SAFE_SEARCH_EXPR.add(VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(DISK_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(DISK_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(GLUSTER_VOLUME_OBJ_NAME.toLowerCase() + SEPERATOR);

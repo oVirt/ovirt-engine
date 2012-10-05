@@ -65,8 +65,11 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         // cluster - storage domain
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
-        // disk - storage domain
-        addJoin(SearchObjects.DISK_OBJ_NAME, "image_guid", SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME, "image_guid");
+        // disk - storage domain images
+        addJoin(SearchObjects.DISK_OBJ_NAME, "image_guid", SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME, "image_guid");
+
+        // storage domain images - storage domain
+        addJoin(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME, "id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
         // vds - audit
         addJoin(SearchObjects.VDS_OBJ_NAME, "vds_id", SearchObjects.AUDIT_OBJ_NAME, "vds_id");
@@ -190,6 +193,13 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                                     "storage_domains_with_hosts_view",
                                     "id",
                                     "storage_name ASC "));
+                    put(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
+                            new EntitySearchInfo(null,
+                                    null,
+                                    null,
+                                    "vm_images_storage_domains_view",
+                                    "image_guid",
+                                    "disk_alias ASC "));
                     put(SearchObjects.GLUSTER_VOLUME_OBJ_NAME,
                             new EntitySearchInfo(GlusterVolumeCrossRefAutoCompleter.INSTANCE,
                                     GlusterVolumeConditionFieldAutoCompleter.INSTANCE,
