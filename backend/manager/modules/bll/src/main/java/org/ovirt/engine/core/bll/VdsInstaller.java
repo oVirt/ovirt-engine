@@ -23,6 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.VdcException;
 import org.ovirt.engine.core.utils.hostinstall.CachedTar;
 import org.ovirt.engine.core.utils.hostinstall.IVdsInstallerCallback;
@@ -182,6 +183,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
         initialCommand = initialCommand.replace("{SSHKey}", _remoteSSHKey);
         initialCommand = initialCommand.replace("{OverrideFirewall}", isOverrideFirewallAllowed() ?
                 "-f " + remoteFwRulesFilePath : "");
+        initialCommand = initialCommand.replace("{BridgeName}", NetworkUtils.getEngineNetwork());
         return initialCommand;
     }
 

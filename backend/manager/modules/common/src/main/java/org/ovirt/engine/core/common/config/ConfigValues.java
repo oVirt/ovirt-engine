@@ -1435,6 +1435,7 @@ public enum ConfigValues {
                 "-c 'ssl={server_SSL_enabled};management_port={management_port}' " +
                 "-O '{OrganizationName}' -t {utc_time} {OverrideFirewall} " +
                 "-S {SSHKey} {EnginePort} -b {virt-placeholder} " +
+                "-B {BridgeName} " +
                 "{gluster-placeholder} {URL1} {URL1} {vds-server} " +
                 "{GUID} {RunFlag}"
     )
