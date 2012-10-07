@@ -2,11 +2,14 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
  * Column for rendering {@link ImageResource} instances using {@link StyledImageResourceCell}.
@@ -18,6 +21,7 @@ public abstract class ImageResourceColumn<T> extends Column<T, ImageResource> {
 
     private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
     private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
+    private static final CommonApplicationTemplates TEMPLATES = GWT.create(CommonApplicationTemplates.class);
 
     public ImageResourceColumn() {
         super(new StyledImageResourceCell());
@@ -34,6 +38,23 @@ public abstract class ImageResourceColumn<T> extends Column<T, ImageResource> {
 
     public void setEnumTitle(Enum<?> enumObj) {
         setTitle(EnumTranslator.createAndTranslate(enumObj));
+    }
+
+    public String getDefaultTitle() {
+        return CONSTANTS.empty();
+    }
+
+    public ImageResource getDefaultImage() {
+        return null;
+    }
+
+    public String getHeaderHtml() {
+        if (getDefaultImage() == null) {
+            return CONSTANTS.empty();
+        }
+
+        return TEMPLATES.imageWithTitle(SafeHtmlUtils.fromTrustedString(
+                AbstractImagePrototype.create(getDefaultImage()).getHTML()), getDefaultTitle()).asString();
     }
 
     protected CommonApplicationResources getCommonResources() {

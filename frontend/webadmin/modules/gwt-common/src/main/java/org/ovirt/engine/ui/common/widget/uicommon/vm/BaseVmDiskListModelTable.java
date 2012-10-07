@@ -73,10 +73,22 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
         getModel().Search();
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.diskStatusColumn, constants.empty(), all || images || luns, "70px"); //$NON-NLS-1$
+                DisksViewColumns.diskStatusColumn, constants.empty(), all || images || luns, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns);
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.bootableDiskColumn,
+                DisksViewColumns.bootableDiskColumn.getHeaderHtml(), all || images || luns, "30px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.shareableDiskColumn,
+                DisksViewColumns.shareableDiskColumn.getHeaderHtml(), all || images || luns, "30px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                DisksViewColumns.lunDiskColumn,
+                DisksViewColumns.lunDiskColumn.getHeaderHtml(), all, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns, "100px"); //$NON-NLS-1$

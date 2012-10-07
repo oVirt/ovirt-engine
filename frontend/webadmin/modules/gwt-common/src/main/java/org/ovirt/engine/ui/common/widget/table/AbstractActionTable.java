@@ -525,9 +525,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
 
             if (width == null) {
-                addColumn(column, headerText);
+                addColumnWithHtmlHeader(column, headerText);
             } else {
-                addColumn(column, headerText, width);
+                addColumnWithHtmlHeader(column, headerText, width);
             }
         } else if (!present && table.getColumnIndex(column) != -1) {
             removeColumn(column);

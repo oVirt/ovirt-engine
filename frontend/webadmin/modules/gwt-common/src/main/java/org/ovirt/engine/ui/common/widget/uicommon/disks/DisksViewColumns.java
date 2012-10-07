@@ -46,25 +46,54 @@ public class DisksViewColumns {
     public static final ImageResourceColumn<Disk> bootableDiskColumn = new ImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
-            setTitle(object.isBoot() ? constants.bootableDisk() : null);
-            return object.isBoot() ? resources.bootableDiskIcon() : null;
+            setTitle(object.isBoot() ? getDefaultTitle() : null);
+            return object.isBoot() ? getDefaultImage() : null;
+        }
+
+        @Override
+        public String getDefaultTitle() {
+            return constants.bootableDisk();
+        }
+
+        @Override
+        public ImageResource getDefaultImage() {
+            return resources.bootableDiskIcon();
         }
     };
 
     public static final ImageResourceColumn<Disk> shareableDiskColumn = new ImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
-            setTitle(object.isShareable() ? constants.shareable() : null);
-            return object.isShareable() ? resources.shareableDiskIcon() : null;
+            setTitle(object.isShareable() ? getDefaultTitle() : null);
+            return object.isShareable() ? getDefaultImage() : null;
+        }
+
+        @Override
+        public String getDefaultTitle() {
+            return constants.shareable();
+        }
+
+        @Override
+        public ImageResource getDefaultImage() {
+            return resources.shareableDiskIcon();
         }
     };
 
     public static final ImageResourceColumn<Disk> lunDiskColumn = new ImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
-            setEnumTitle(object.getDiskStorageType());
             return object.getDiskStorageType() == DiskStorageType.LUN ?
                     resources.externalDiskIcon() : null;
+        }
+
+        @Override
+        public String getDefaultTitle() {
+            return constants.lunDisksLabel();
+        }
+
+        @Override
+        public ImageResource getDefaultImage() {
+            return resources.externalDiskIcon();
         }
     };
 

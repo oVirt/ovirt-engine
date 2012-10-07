@@ -577,8 +577,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Active")
     String activeDisk();
 
-    @DefaultStringValue("Unactive")
-    String unactiveDisk();
+    @DefaultStringValue("Inactive")
+    String inactiveDisk();
 
     @DefaultStringValue("Move")
     String moveDisk();
