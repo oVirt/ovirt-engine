@@ -25,7 +25,7 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
         return _storagePool;
     }
 
-    public void Initialize(ArrayList parameters) {
+    public void initialize(ArrayList parameters) {
         if (!(parameters.get(0) instanceof ArrayList)) {
             throw new InvalidOperationException();
         }

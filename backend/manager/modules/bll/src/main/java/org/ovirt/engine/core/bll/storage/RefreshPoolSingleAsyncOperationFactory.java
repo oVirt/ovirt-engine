@@ -9,8 +9,8 @@ public class RefreshPoolSingleAsyncOperationFactory extends ActivateDeactivateSi
     private java.util.ArrayList<Guid> _vdsIdsToSetNonOperational;
 
     @Override
-    public void Initialize(ArrayList parameters) {
-        super.Initialize(parameters);
+    public void initialize(ArrayList parameters) {
+        super.initialize(parameters);
         if (!(parameters.get(3) instanceof java.util.ArrayList)) {
             throw new InvalidOperationException();
         }

@@ -376,7 +376,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     }
 
                     @Override
-                    public void Initialize(ArrayList parameters) {
+                    public void initialize(ArrayList parameters) {
                         // no need to initilalize params
                     }
                 });

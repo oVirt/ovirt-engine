@@ -11,7 +11,7 @@ public final class SyncronizeNumberOfAsyncOperations {
             ISingleAsyncOperationFactory factory) {
         _numberOfOperations = numberOfOperations;
         _factory = factory;
-        _factory.Initialize(parameters);
+        _factory.initialize(parameters);
     }
 
     private class AsyncOpThread implements Runnable {

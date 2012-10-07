@@ -14,8 +14,8 @@ public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactiva
     }
 
     @Override
-    public void Initialize(java.util.ArrayList parameters) {
-        super.Initialize(parameters);
+    public void initialize(java.util.ArrayList parameters) {
+        super.initialize(parameters);
         if (!(parameters.get(3) instanceof Boolean)) {
             throw new InvalidOperationException();
         }
