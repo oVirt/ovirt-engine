@@ -39,6 +39,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameters> extends
         DeactivateStorageDomainCommand<T> {
 
+    protected boolean reconstructOpSucceeded;
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -121,6 +122,10 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         List<storage_pool_iso_map> domains = getStoragePoolIsoMapDAO()
                 .getAllForStoragePool(getStoragePool().getId());
 
+        // set to true here in case of failure in executing/getting answer from the reconstruct vds command,
+        // unless we know that the command failed we assume that it succeeded (use by RecoveryStoragePool command in
+        // order to avoid detaching domain that is already part of the pool in vdsm).
+        reconstructOpSucceeded = true;
         return runVdsCommand(VDSCommandType.ReconstructMaster,
                 new ReconstructMasterVDSCommandParameters(getVds().getId(),
                         getVds().getvds_spm_id(), getStoragePool().getId(),
@@ -132,10 +137,10 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     @Override
     protected void executeCommand() {
         try {
-            boolean commandSucceeded = reconstructMaster();
-            connectAndRefreshAllUpHosts(commandSucceeded);
+            reconstructOpSucceeded = reconstructMaster();
+            connectAndRefreshAllUpHosts(reconstructOpSucceeded);
 
-            if (!_isLastMaster && commandSucceeded) {
+            if (!_isLastMaster && reconstructOpSucceeded) {
                 SearchParameters p = new SearchParameters(
                     MessageFormat.format(DesktopsInStoragePoolQuery,
                         getStoragePool().getname()), SearchType.VM);
@@ -149,7 +154,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 VmCommand.updateVmInSpm(getStoragePool().getId(), vmsInPool);
             }
 
-            setSucceeded(commandSucceeded);
+            setSucceeded(reconstructOpSucceeded);
         } finally {
             // reset cache and mark reconstruct for pool as finished
             Backend.getInstance()

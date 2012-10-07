@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
@@ -82,29 +83,35 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
 
     @Override
     protected void executeCommand() {
+        storage_pool_iso_map domainPoolMap =
         TransactionSupport.executeInNewTransaction(
-                new TransactionMethod<Object>() {
+                new TransactionMethod<storage_pool_iso_map>() {
                     @Override
-                    public Object runInTransaction() {
+                    public storage_pool_iso_map runInTransaction() {
                         storage_pool_iso_map domainPoolMap =
                                 new storage_pool_iso_map(getRecoveryStoragePoolParametersData()
                                         .getNewMasterDomainId(),
                                         getRecoveryStoragePoolParametersData().getStoragePoolId(),
                                         StorageDomainStatus.Active);
                         DbFacade.getInstance().getStoragePoolIsoMapDao().save(domainPoolMap);
-                        getCompensationContext().snapshotNewEntity(domainPoolMap);
-                        getCompensationContext().stateChanged();
-                        return null;
+                        return domainPoolMap;
                     }
                 });
         getStoragePool().setstatus(StoragePoolStatus.Problematic);
-        if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                .ConnectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
-            super.executeCommand();
-        } else {
-            getReturnValue().setFault(new VdcFault(new VdcBLLException(VdcBllErrors.StorageServerConnectionError,
-                    "Failed to connect storage"),
-                    VdcBllErrors.StorageServerConnectionError));
+        try {
+            if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
+                    .ConnectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
+                super.executeCommand();
+            } else {
+                getReturnValue().setFault(new VdcFault(new VdcBLLException(VdcBllErrors.StorageServerConnectionError,
+                        "Failed to connect storage"),
+                        VdcBllErrors.StorageServerConnectionError));
+            }
+        } finally {
+            if (!reconstructOpSucceeded) {
+                getStoragePoolIsoMapDAO().remove(new StoragePoolIsoMapId(getRecoveryStoragePoolParametersData()
+                        .getNewMasterDomainId(), getRecoveryStoragePoolParametersData().getStoragePoolId()));
+            }
         }
     }
 }
