@@ -24,7 +24,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         super(parameters);
     }
 
-    protected void AddStoragePoolToDb() {
+    protected void addStoragePoolToDb() {
         getStoragePool().setId(Guid.NewGuid());
         getStoragePool().setstatus(StoragePoolStatus.Uninitialized);
         getStoragePoolDAO().save(getStoragePool());
@@ -32,7 +32,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     @Override
     protected void executeCommand() {
-        AddStoragePoolToDb();
+        addStoragePoolToDb();
         getReturnValue().setActionReturnValue(getStoragePool().getId());
         addDefaultNetworks();
         setSucceeded(true);
