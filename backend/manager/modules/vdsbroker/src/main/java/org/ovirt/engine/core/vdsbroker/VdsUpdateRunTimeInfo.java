@@ -1430,7 +1430,7 @@ public class VdsUpdateRunTimeInfo {
              * inMigration
              */
             log.infoFormat(
-                    "vds::refreshVmList vm id '{0}' is migrating to vds '{1}' ignoring it in the refresh till migration is done",
+                    "vds::refreshVmList vm id '{0}' is migrating to vds '{1}' ignoring it in the refresh until migration is done",
                     runningVm.getId(),
                     _vds.getvds_name());
             returnValue = true;
@@ -1440,7 +1440,7 @@ public class VdsUpdateRunTimeInfo {
             if (vmDynamic != null && vmDynamic.getrun_on_vds() != null
                     && !vmDynamic.getrun_on_vds().equals(_vds.getId()) && runningVm.getstatus() != VMStatus.Up) {
                 log.infoFormat(
-                        "vds::refreshVmList vm id '{0}' status = {1} on vds {2} ignoring it in the refresh till migration is done",
+                        "vds::refreshVmList vm id '{0}' status = {1} on vds {2} ignoring it in the refresh until migration is done",
                         runningVm.getId(),
                         runningVm.getstatus(),
                         _vds.getvds_name());

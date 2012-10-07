@@ -12,7 +12,7 @@ usage () {
         printf "Where:\n"
         printf "\tRequest Filename            = Filename of request file. must reside under requests directory.\n"
         printf "\tOutput certificate filename = Filename of output file. will reside under certs directory.\n"
-        printf "\tdays to expire              = Amount of days till certificate expires.\n"
+        printf "\tdays to expire              = Amount of days until certificate expires.\n"
         printf "\tCA Directory                = Full path to CA directory\n"
         printf "\tstartdate                   = in YYMMDDHHMMSSZ ANS1 format\n"
         printf "\tPass                        = Certificate password\n"

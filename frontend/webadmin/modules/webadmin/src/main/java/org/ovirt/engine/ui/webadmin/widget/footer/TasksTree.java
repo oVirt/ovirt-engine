@@ -39,7 +39,7 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
         addItemToPanel(panel, new Image(getStatusImage(task.getStatus())), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), task.getDescription(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getStartTime(), "150px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), task.getEndTime() == null ? "" : "till", "40px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addTextBoxToPanel(panel, new TextBoxLabel(), task.getEndTime() == null ? "" : "until", "40px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getEndTime(), "150px"); //$NON-NLS-1$
         TextBoxLabel corrIdTextBoxLabel = new TextBoxLabel();
         corrIdTextBoxLabel.setTooltipCaption(constants.correltaionIdEvent());

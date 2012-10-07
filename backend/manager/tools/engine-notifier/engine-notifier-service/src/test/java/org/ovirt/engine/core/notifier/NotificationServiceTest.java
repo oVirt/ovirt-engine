@@ -11,7 +11,7 @@ import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 public class NotificationServiceTest {
 
     /**
-     * The test executes a notifications for events which haven't been processed till the start of the test.<br>
+     * The test executes a notifications for events which haven't been processed until the start of the test.<br>
      * Once those events are notified to the subscribers, they will be marked as processed and won't be send again<br>
      * The test covers the the entire functional of the event notification service:<br>
      * <li>Retrieval of events to be processed
