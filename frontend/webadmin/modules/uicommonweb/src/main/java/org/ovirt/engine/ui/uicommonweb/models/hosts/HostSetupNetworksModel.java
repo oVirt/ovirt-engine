@@ -289,7 +289,7 @@ public class HostSetupNetworksModel extends EntityModel {
             };
         } else if (item instanceof LogicalNetworkModel){
             final LogicalNetworkModel logicalNetwork = (LogicalNetworkModel)item;
-            final VdsNetworkInterface entity = logicalNetwork.hasVlan() ? logicalNetwork.getBridge().getEntity() : logicalNetwork.getAttachedToNic().getEntity();
+            final VdsNetworkInterface entity = logicalNetwork.hasVlan() ? logicalNetwork.getVlanNic().getEntity() : logicalNetwork.getAttachedToNic().getEntity();
 
             if (logicalNetwork.isManagement()) {
                 /*****************
@@ -530,7 +530,6 @@ public class HostSetupNetworksModel extends EntityModel {
     private void initNetworkModels() {
         Map<String, LogicalNetworkModel> networkModels = new HashMap<String, LogicalNetworkModel>();
         for (Network network : allNetworks) {
-            netTodcParams.put(network.getname(), new DcNetworkParams(network));
             networkModels.put(network.getname(), new LogicalNetworkModel(network, this));
         }
         setNetworks(networkModels);
@@ -605,7 +604,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 Collection<LogicalNetworkModel> nicNetworks = new ArrayList<LogicalNetworkModel>();
                 nicNetworks.add(networkModel);
                 // set iface bridge to network
-                NetworkInterfaceModel existingEridge = networkModel.getBridge();
+                NetworkInterfaceModel existingEridge = networkModel.getVlanNic();
                 assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
                 networkModel.setBridge(new NetworkInterfaceModel(nic, nicNetworks, this));
 
@@ -711,6 +710,8 @@ public class HostSetupNetworksModel extends EntityModel {
                 List<Network> networks = (List<Network>) returnValue;
                 allNetworks = networks;
                 initNetworkModels();
+                initDcNetworkParams();
+
                 // chain the nic query
                 queryInterfaces();
             }
@@ -720,6 +721,11 @@ public class HostSetupNetworksModel extends EntityModel {
         AsyncDataProvider.GetClusterNetworkList(asyncQuery, vds.getvds_group_id());
     }
 
+    private void initDcNetworkParams(){
+        for (Network network : allNetworks){
+            netTodcParams.put(network.getname(), new DcNetworkParams(network));
+        }
+    }
     private void setBondOptions(VdsNetworkInterface entity, HostBondInterfaceModel bondDialogModel) {
         KeyValuePairCompat<String, EntityModel> BondPair =
                 (KeyValuePairCompat<String, EntityModel>) bondDialogModel.getBondingOptions()

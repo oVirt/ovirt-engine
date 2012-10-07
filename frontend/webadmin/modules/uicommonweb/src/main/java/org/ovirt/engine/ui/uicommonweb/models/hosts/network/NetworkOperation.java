@@ -400,7 +400,7 @@ public enum NetworkOperation {
     private static void detachNetwork(List<VdsNetworkInterface> allNics,
             LogicalNetworkModel networkToDetach) {
         // get the bridge and remove it
-        NetworkInterfaceModel bridge = networkToDetach.getBridge();
+        NetworkInterfaceModel bridge = networkToDetach.getVlanNic();
         if (bridge.getName().indexOf('.') > 0) {
             allNics.remove(bridge.getEntity());
         }
