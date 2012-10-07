@@ -27,7 +27,7 @@ public final class SyncronizeNumberOfAsyncOperations {
         public void run() {
             try {
                 ISingleAsyncOperation operation = _factory.CreateSingleAsyncOperation();
-                operation.Execute(currentEventId);
+                operation.execute(currentEventId);
             } finally {
                 latch.countDown();
             }

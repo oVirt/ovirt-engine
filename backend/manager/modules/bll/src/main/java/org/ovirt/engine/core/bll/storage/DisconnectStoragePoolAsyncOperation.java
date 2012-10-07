@@ -15,7 +15,7 @@ public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingl
     }
 
     @Override
-    public void Execute(int iterationId) {
+    public void execute(int iterationId) {
         try {
             if (getVdss().get(iterationId).getspm_status() == VdsSpmStatus.None) {
                 log.infoFormat("Disconnect storage pool treatment vds: {0},pool {1}", getVdss().get(iterationId)

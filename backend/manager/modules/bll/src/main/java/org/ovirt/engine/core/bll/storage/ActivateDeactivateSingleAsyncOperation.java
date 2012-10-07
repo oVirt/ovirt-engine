@@ -15,7 +15,7 @@ public abstract class ActivateDeactivateSingleAsyncOperation implements ISingleA
         _pool = storagePool;
     }
 
-    public abstract void Execute(int iterationId);
+    public abstract void execute(int iterationId);
 
     protected storage_domains getStorageDomain() {
         return _domain;

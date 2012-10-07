@@ -18,7 +18,7 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
     }
 
     @Override
-    public void Execute(int iterationId) {
+    public void execute(int iterationId) {
         try {
             Guid masterDomainIdFromDb =
                     DbFacade.getInstance()

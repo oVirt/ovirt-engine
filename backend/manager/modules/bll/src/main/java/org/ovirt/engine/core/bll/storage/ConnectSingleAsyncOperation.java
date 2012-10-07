@@ -13,7 +13,7 @@ public class ConnectSingleAsyncOperation extends ActivateDeactivateSingleAsyncOp
     }
 
     @Override
-    public void Execute(int iterationId) {
+    public void execute(int iterationId) {
         try {
             StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
                     .ConnectStorageToDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());

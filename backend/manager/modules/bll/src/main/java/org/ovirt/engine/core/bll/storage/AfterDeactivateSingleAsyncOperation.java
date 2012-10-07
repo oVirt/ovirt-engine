@@ -24,7 +24,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
     }
 
     @Override
-    public void Execute(int iterationId) {
+    public void execute(int iterationId) {
         try {
             log.infoFormat("After deactivate treatment vds: {0},pool {1}", getVdss().get(iterationId).getvds_name(),
                     getStoragePool().getname());
