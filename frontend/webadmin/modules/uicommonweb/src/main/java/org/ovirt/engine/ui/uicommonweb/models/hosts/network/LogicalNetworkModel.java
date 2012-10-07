@@ -91,9 +91,10 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     }
 
     public void detach() {
+        boolean syncNetworkValues = false;
         if (!isInSync() && isManaged()){
             getSetupModel().getNetworksToSync().add(getName());
-            setNetworkToDcValues();
+            syncNetworkValues = true;
         }
 
         assert attachedToNic != null;
@@ -135,9 +136,13 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nicEntity.setType(0);
         }
 
+        if (syncNetworkValues){
+            syncNetworkValues();
+        }
+
     }
 
-    private void setNetworkToDcValues() {
+    private void syncNetworkValues() {
         DcNetworkParams dcNetParams = getSetupModel().getNetDcParams(getName());
 
         if (dcNetParams != null){
