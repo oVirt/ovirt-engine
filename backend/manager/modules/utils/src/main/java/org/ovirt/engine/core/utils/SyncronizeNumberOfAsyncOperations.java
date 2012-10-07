@@ -26,7 +26,7 @@ public final class SyncronizeNumberOfAsyncOperations {
         @Override
         public void run() {
             try {
-                ISingleAsyncOperation operation = _factory.CreateSingleAsyncOperation();
+                ISingleAsyncOperation operation = _factory.createSingleAsyncOperation();
                 operation.execute(currentEventId);
             } finally {
                 latch.countDown();

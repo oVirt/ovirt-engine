@@ -22,7 +22,7 @@ public class RefreshPoolSingleAsyncOperationFactory extends ActivateDeactivateSi
     }
 
     @Override
-    public ISingleAsyncOperation CreateSingleAsyncOperation() {
+    public ISingleAsyncOperation createSingleAsyncOperation() {
         ISingleAsyncOperation tempVar = new RefreshPoolSingleAsyncOperation(getVdss(), getStorageDomain(),
                 getStoragePool(), _vdsIdsToSetNonOperational);
         return tempVar;

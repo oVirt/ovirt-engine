@@ -370,7 +370,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 null, new ActivateDeactivateSingleAsyncOperationFactory() {
 
                     @Override
-                    public ISingleAsyncOperation CreateSingleAsyncOperation() {
+                    public ISingleAsyncOperation createSingleAsyncOperation() {
 
                         return new ConntectVDSToPoolAndDomains((ArrayList<VDS>) vdsList, masterDomain, storagePool);
                     }

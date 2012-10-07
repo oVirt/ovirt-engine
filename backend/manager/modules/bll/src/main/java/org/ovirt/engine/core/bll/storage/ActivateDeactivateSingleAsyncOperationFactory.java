@@ -44,5 +44,5 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
         _storagePool = (storage_pool) parameters.get(2);
     }
 
-    public abstract ISingleAsyncOperation CreateSingleAsyncOperation();
+    public abstract ISingleAsyncOperation createSingleAsyncOperation();
 }

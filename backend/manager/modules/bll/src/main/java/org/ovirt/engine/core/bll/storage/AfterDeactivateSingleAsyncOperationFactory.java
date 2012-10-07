@@ -8,7 +8,7 @@ public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactiva
     private Guid _newMasterStorageDomainId = new Guid();
 
     @Override
-    public ISingleAsyncOperation CreateSingleAsyncOperation() {
+    public ISingleAsyncOperation createSingleAsyncOperation() {
         return new AfterDeactivateSingleAsyncOperation(getVdss(), getStorageDomain(), getStoragePool(), _isLastMaster,
                 _newMasterStorageDomainId);
     }

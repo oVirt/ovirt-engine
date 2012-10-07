@@ -5,7 +5,7 @@ import org.ovirt.engine.core.utils.*;
 public class RefreshStoragePoolAndDisconnectAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
 
     @Override
-    public ISingleAsyncOperation CreateSingleAsyncOperation() {
+    public ISingleAsyncOperation createSingleAsyncOperation() {
         return new RefreshStoragePoolAndDisconnectAsyncOperation(getVdss(), getStorageDomain(), getStoragePool());
     }
 }
