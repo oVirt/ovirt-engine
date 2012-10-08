@@ -482,5 +482,5 @@ public class VdsSelector {
         return vmNICs;
     }
 
-    private static Log log = LogFactory.getLog(VdsSelector.class);
+    private static final Log log = LogFactory.getLog(VdsSelector.class);
 }
