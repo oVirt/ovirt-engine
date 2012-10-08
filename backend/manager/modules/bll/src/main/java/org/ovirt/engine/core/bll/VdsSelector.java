@@ -76,31 +76,31 @@ public class VdsSelector {
         this.memoryChecker = memoryChecker;
     }
 
-    public Guid GetVdsToRunOn() {
+    public Guid getVdsToRunOn() {
         Guid result = Guid.Empty;
         if (getDestinationVdsId() != null) {
             if (getCheckDestinationFirst()) {
-                result = GetVdsRunOnDestination();
+                result = getVdsRunOnDestination();
                 if (result.equals(Guid.Empty) && privateVm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-                    result = GetAnyVdsToRunOn();
+                    result = getAnyVdsToRunOn();
                 }
             } else {
-                result = GetAnyVdsToRunOn();
+                result = getAnyVdsToRunOn();
                 if (result.equals(Guid.Empty)) {
-                    result = GetVdsRunOnDestination();
+                    result = getVdsRunOnDestination();
                 }
             }
         } else {
-            result = GetAnyVdsToRunOn();
+            result = getAnyVdsToRunOn();
         }
 
         return result;
     }
 
-    public boolean CanFindVdsToRunOn(List<String> messages, boolean isMigrate) {
+    public boolean canFindVdsToRunOn(List<String> messages, boolean isMigrate) {
         boolean returnValue = false;
         if (getDestinationVdsId() != null) {
-            returnValue = CanRunOnDestinationVds(messages, isMigrate);
+            returnValue = canRunOnDestinationVds(messages, isMigrate);
         }
 
         if (!returnValue) {
@@ -115,7 +115,7 @@ public class VdsSelector {
                 }
                 return false;
             }
-            returnValue = CanFindAnyVds(messages, isMigrate);
+            returnValue = canFindAnyVds(messages, isMigrate);
         }
 
         return returnValue;
@@ -126,7 +126,7 @@ public class VdsSelector {
      * getDestinationVdsId() must not be null.
      * @return
      */
-    private Guid GetVdsRunOnDestination() {
+    private Guid getVdsRunOnDestination() {
         Guid result = Guid.Empty;
         if (getDestinationVdsId() != null) {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
@@ -146,26 +146,26 @@ public class VdsSelector {
         return result;
     }
 
-    private Guid GetAnyVdsToRunOn() {
+    private Guid getAnyVdsToRunOn() {
         return getVdsToRunOn(DbFacade.getInstance()
                 .getVdsDao()
                 .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
 
-    private boolean CanRunOnDestinationVds(List<String> messages, boolean isMigrate) {
+    private boolean canRunOnDestinationVds(List<String> messages, boolean isMigrate) {
         boolean returnValue = false;
         if (getDestinationVdsId() != null) {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
-            returnValue = CanFindVdsToRun(messages, isMigrate,
+            returnValue = canFindVdsToRun(messages, isMigrate,
                     new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { target_vds })));
         }
         return returnValue;
     }
 
-    private boolean CanFindAnyVds(List<String> messages, boolean isMigrate) {
-        return CanFindVdsToRun(messages, isMigrate,
+    private boolean canFindAnyVds(List<String> messages, boolean isMigrate) {
+        return canFindVdsToRun(messages, isMigrate,
                 DbFacade.getInstance().getVdsDao().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
 
@@ -177,7 +177,7 @@ public class VdsSelector {
      * any vds, avalable too run vm - returning reason with highest value.
      * Reasons sorted in VdcBllMessages by their priorities
      */
-    private boolean CanFindVdsToRun(List<String> messages, boolean isMigrate, Iterable<VDS> vdss) {
+    private boolean canFindVdsToRun(List<String> messages, boolean isMigrate, Iterable<VDS> vdss) {
         VdcBllMessages messageToReturn = VdcBllMessages.Unassigned;
 
         /**
@@ -316,7 +316,7 @@ public class VdsSelector {
                 @Override
                 public VdcBllMessages validate(VDS vds, StringBuilder sb) {
                     // if vm has more vCpus then vds physical cpus - dont allow to run
-                    if (!IsVMSwapValueLegal(vds)) {
+                    if (!isVMSwapValueLegal(vds)) {
                         sb.append("swap value is illegal");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP;
                     }
@@ -360,7 +360,7 @@ public class VdsSelector {
      * @return <c>true</c> if [is VM swap value legal] [the specified VDS];
      *         otherwise, <c>false</c>.
      */
-    private static boolean IsVMSwapValueLegal(VDS vds) {
+    private static boolean isVMSwapValueLegal(VDS vds) {
         if (!Config.<Boolean> GetValue(ConfigValues.EnableSwapCheck)) {
             return true;
         }

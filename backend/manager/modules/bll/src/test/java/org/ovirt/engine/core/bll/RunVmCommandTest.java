@@ -390,7 +390,7 @@ public class RunVmCommandTest {
         final VmDevice vmDevice = createDiskVmDevice(diskImage);
 
         final VdsSelector vdsSelector = mock(VdsSelector.class);
-        when(vdsSelector.CanFindVdsToRunOn(anyListOf(String.class), anyBoolean())).thenReturn(true);
+        when(vdsSelector.canFindVdsToRunOn(anyListOf(String.class), anyBoolean())).thenReturn(true);
         doReturn(vdsSelector).when(command).getVdsSelector();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();

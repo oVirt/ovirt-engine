@@ -98,7 +98,7 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
                 && Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect)) {
             // check if we can run (migrate) the vm to the power client.
 
-            Guid checkVds_id = getVdsSelector().GetVdsToRunOn();
+            Guid checkVds_id = getVdsSelector().getVdsToRunOn();
             if (!(checkVds_id).equals(getPowerClient().getId())) {
                 log.infoFormat("VdcBll.PowerClientMigrateOnConnectCheck - Can't migrate to power client, since getVdsToRunOn rejected the run");
                 // return; // no return, so we can continue and migrate from a

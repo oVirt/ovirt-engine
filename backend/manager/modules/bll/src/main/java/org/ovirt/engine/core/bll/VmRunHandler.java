@@ -162,7 +162,7 @@ public class VmRunHandler {
                                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.name());
                             }
 
-                            retValue = retValue == false ? retValue : vdsSelector.CanFindVdsToRunOn(message, false);
+                            retValue = retValue == false ? retValue : vdsSelector.canFindVdsToRunOn(message, false);
 
                             /**
                              * only if can do action ok then check with actions matrix that status is valid for this

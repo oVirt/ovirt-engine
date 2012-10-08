@@ -80,7 +80,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     protected void initVdss() {
         setVdsIdRef(new Guid(getVm().getrun_on_vds().toString()));
-        setVdsDestinationId(getVdsSelector().GetVdsToRunOn());
+        setVdsDestinationId(getVdsSelector().getVdsToRunOn());
         // make _destinationVds null in order to refresh it from db in case it
         // changed.
         _destinationVds = null;
@@ -198,7 +198,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             }
 
             retValue = retValue && validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
-                    && getVdsSelector().CanFindVdsToRunOn(reasons, true);
+                    && getVdsSelector().canFindVdsToRunOn(reasons, true);
         }
 
         if (!retValue) {
