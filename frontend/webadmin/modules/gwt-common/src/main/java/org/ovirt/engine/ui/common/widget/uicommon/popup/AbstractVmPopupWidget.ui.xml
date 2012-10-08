@@ -306,6 +306,7 @@
 						<e:ListModelListBoxEditor ui:field="displayProtocolEditor" />
 						<e:ListModelListBoxEditor ui:field="usbSupportEditor" />
 						<e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" />
+						<e:EntityModelCheckBoxEditor ui:field="isSmartcardEnabledEditor" addStyleNames="{style.checkbox}" />
 						<g:Label ui:field="nativeUsbWarningMessage" text="{constants.nativeUsbSupportWarning}" addStyleNames="{style.warningMessageLabel}" />
 						<d:AdvancedParametersExpander ui:field="expander"/>
 						<g:FlowPanel ui:field="expanderContent" addStyleNames="{style.expanderContent}">

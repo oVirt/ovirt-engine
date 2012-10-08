@@ -287,7 +287,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         .getnice_level(), getParameters().getMasterVm().getfail_back(),
                 getParameters().getMasterVm().getdefault_boot_sequence(), getParameters()
                         .getMasterVm().getvm_type(), getParameters().getMasterVm().gethypervisor_type(),
-                getParameters().getMasterVm().getoperation_mode()));
+                getParameters().getMasterVm().getoperation_mode(),getParameters().getMasterVm().isSmartcardEnabled()));
         getVmTemplate().setauto_startup(getParameters().getMasterVm().getauto_startup());
         getVmTemplate().setpriority(getParameters().getMasterVm().getpriority());
         getVmTemplate().setdefault_display_type(getParameters().getMasterVm().getdefault_display_type());

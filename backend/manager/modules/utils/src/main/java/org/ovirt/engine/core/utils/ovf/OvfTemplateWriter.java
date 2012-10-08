@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -10,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 
 public class OvfTemplateWriter extends OvfWriter {
@@ -22,59 +20,20 @@ public class OvfTemplateWriter extends OvfWriter {
     }
 
     @Override
-    protected void WriteGeneralData() {
+    protected void writeGeneralData() {
+        super.writeGeneralData();
         _writer.WriteStartElement("Name");
         _writer.WriteRaw(_vmTemplate.getname());
         _writer.WriteEndElement();
         _writer.WriteStartElement("TemplateId");
         _writer.WriteRaw(_vmTemplate.getId().toString());
         _writer.WriteEndElement();
-        _writer.WriteStartElement("Description");
-        _writer.WriteRaw(_vmTemplate.getdescription());
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("Domain");
-        _writer.WriteRaw(_vmTemplate.getdomain());
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("CreationDate");
-        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(_vmTemplate.getcreation_date()));
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("ExportDate");
-        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new Date()));
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("IsAutoSuspend");
-        _writer.WriteRaw(String.valueOf(_vmTemplate.getis_auto_suspend()));
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("TimeZone");
-        _writer.WriteRaw(_vmTemplate.gettime_zone());
-        _writer.WriteEndElement();
         _writer.WriteStartElement("Origin");
         _writer.WriteRaw(_vmTemplate.getorigin() == null ? "" : String.valueOf(_vmTemplate.getorigin().getValue()));
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("VmType");
-        _writer.WriteRaw(String.valueOf(_vmTemplate.getvm_type().getValue()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("default_display_type");
         _writer.WriteRaw(String.valueOf(_vmTemplate.getdefault_display_type().getValue()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("default_boot_sequence");
-        _writer.WriteRaw(String.valueOf(_vmTemplate.getdefault_boot_sequence().getValue()));
-        _writer.WriteEndElement();
-
-        if (!StringHelper.isNullOrEmpty(_vmTemplate.getinitrd_url())) {
-            _writer.WriteStartElement("initrd_url");
-            _writer.WriteRaw(_vmTemplate.getinitrd_url());
-            _writer.WriteEndElement();
-        }
-        if (!StringHelper.isNullOrEmpty(_vmTemplate.getkernel_url())) {
-            _writer.WriteStartElement("kernel_url");
-            _writer.WriteRaw(_vmTemplate.getkernel_url());
-            _writer.WriteEndElement();
-        }
-        if (!StringHelper.isNullOrEmpty(_vmTemplate.getkernel_params())) {
-            _writer.WriteStartElement("kernel_params");
-            _writer.WriteRaw(_vmTemplate.getkernel_params());
-            _writer.WriteEndElement();
-        }
     }
 
     @Override

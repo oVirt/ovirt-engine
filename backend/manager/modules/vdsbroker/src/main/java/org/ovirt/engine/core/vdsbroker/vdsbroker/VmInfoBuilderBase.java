@@ -42,6 +42,7 @@ public abstract class VmInfoBuilderBase {
         createInfo.add(VdsProperties.vm_guid, vm.getId().toString());
         createInfo.add(VdsProperties.vm_name, vm.getvm_name());
         createInfo.add(VdsProperties.mem_size_mb, vm.getvm_mem_size_mb());
+        createInfo.add(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
         createInfo.add(VdsProperties.num_of_cpus,
                 (new Integer(vm.getnum_of_cpus())).toString());
         if (Config.<Boolean> GetValue(ConfigValues.SendSMPOnRunVm)) {

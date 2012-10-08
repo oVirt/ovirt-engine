@@ -511,6 +511,18 @@ public class UnitVmModel extends Model {
         privateDefaultHost = value;
     }
 
+    private EntityModel privateisSmartcardEnabled;
+
+    public EntityModel getIsSmartcardEnabled()
+    {
+        return privateisSmartcardEnabled;
+    }
+
+    private void setIsSmartcardEnabled(EntityModel value)
+    {
+        privateisSmartcardEnabled = value;
+    }
+
     private EntityModel privateIsStateless;
 
     public EntityModel getIsStateless()
@@ -956,6 +968,7 @@ public class UnitVmModel extends Model {
         setMinAllocatedMemory(new EntityModel());
         setUsbPolicy(new ListModel());
         setIsStateless(new EntityModel());
+        setIsSmartcardEnabled(new EntityModel());
 
         setCdImage(new ListModel());
         getCdImage().setIsChangable(false);
@@ -1091,6 +1104,7 @@ public class UnitVmModel extends Model {
         getMemSize().setEntity(256);
         getMinAllocatedMemory().setEntity(256);
         getIsStateless().setEntity(false);
+        getIsSmartcardEnabled().setEntity(false);
         getIsHighlyAvailable().setEntity(false);
         getDontMigrateVM().setEntity(false);
         getIsAutoAssign().setEntity(true);
@@ -1519,9 +1533,11 @@ public class UnitVmModel extends Model {
         if (type == DisplayType.vnc)
         {
             getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
+            getIsSmartcardEnabled().setEntity(false);
         }
 
         getUsbPolicy().setIsChangable(type == DisplayType.qxl);
+        getIsSmartcardEnabled().setIsChangable(type == DisplayType.qxl);
 
         UpdateNumOfMonitors();
     }

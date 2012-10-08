@@ -202,6 +202,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getTotalCPUCores().setEntity(Integer.toString(this.vm.getnum_of_cpus()));
         getModel().getNumOfSockets().setSelectedItem(this.vm.getnum_of_sockets());
         getModel().getIsStateless().setEntity(this.vm.getis_stateless());
+        getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
 
         if (!StringHelper.isNullOrEmpty(this.vm.gettime_zone()))
         {

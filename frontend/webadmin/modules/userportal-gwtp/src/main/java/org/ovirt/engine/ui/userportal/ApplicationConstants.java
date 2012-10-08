@@ -121,6 +121,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable WAN Options")
     String enableWanOptions();
 
+    @DefaultStringValue("Disable smartcard")
+    String disableSmartcard();
+
     @DefaultStringValue("RDP Options")
     String rdpOptions();
 

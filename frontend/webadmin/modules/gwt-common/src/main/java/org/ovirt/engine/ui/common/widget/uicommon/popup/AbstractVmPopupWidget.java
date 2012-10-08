@@ -265,6 +265,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     public EntityModelCheckBoxEditor isStatelessEditor;
 
     @UiField(provided = true)
+    @Path(value = "isSmartcardEnabled.entity")
+    @WithElementId("isSmartcardEnabled")
+    public EntityModelCheckBoxEditor isSmartcardEnabledEditor;
+
+    @UiField(provided = true)
     @Path(value = "allowConsoleReconnect.entity")
     @WithElementId("allowConsoleReconnect")
     public EntityModelCheckBoxEditor allowConsoleReconnectEditor;
@@ -451,6 +456,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         dontMigrateVMEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT);
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
@@ -664,6 +670,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         oSTypeEditor.setLabel(constants.osVmPopup());
         isStatelessEditor.setLabel(constants.statelessVmPopup());
+        isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
 
         // Pools Tab
         poolTab.setLabel(constants.poolVmPopup());

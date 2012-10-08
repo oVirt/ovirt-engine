@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Encoding;
 import org.ovirt.engine.core.compat.Formatting;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlTextWriter;
@@ -172,7 +174,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteAttributeString(XSI_URI, "type", OVF_PREFIX + ":VirtualSystem_Type");
 
         // General Data
-        WriteGeneralData();
+        writeGeneralData();
 
         // Application List
         WriteAppList();
@@ -183,7 +185,59 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteEndElement(); // End Content tag
     }
 
-    protected abstract void WriteGeneralData();
+    protected void writeGeneralData() {
+        _writer.WriteStartElement("Description");
+        _writer.WriteRaw(vmBase.getdescription());
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement("Domain");
+        _writer.WriteRaw(vmBase.getdomain());
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement("CreationDate");
+        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getcreation_date()));
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement("ExportDate");
+        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new Date()));
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement("IsAutoSuspend");
+        _writer.WriteRaw(String.valueOf(vmBase.getis_auto_suspend()));
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement("IsSmartcardEnabled");
+        _writer.WriteRaw(String.valueOf(vmBase.isSmartcardEnabled()));
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement("TimeZone");
+        _writer.WriteRaw(vmBase.gettime_zone());
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement("default_boot_sequence");
+        _writer.WriteRaw(String.valueOf(vmBase.getdefault_boot_sequence().getValue()));
+        _writer.WriteEndElement();
+
+        if (!StringHelper.isNullOrEmpty(vmBase.getinitrd_url())) {
+            _writer.WriteStartElement("initrd_url");
+            _writer.WriteRaw(vmBase.getinitrd_url());
+            _writer.WriteEndElement();
+        }
+        if (!StringHelper.isNullOrEmpty(vmBase.getkernel_url())) {
+            _writer.WriteStartElement("kernel_url");
+            _writer.WriteRaw(vmBase.getkernel_url());
+            _writer.WriteEndElement();
+        }
+        if (!StringHelper.isNullOrEmpty(vmBase.getkernel_params())) {
+            _writer.WriteStartElement("kernel_params");
+            _writer.WriteRaw(vmBase.getkernel_params());
+            _writer.WriteEndElement();
+        }
+
+        _writer.WriteStartElement("VmType");
+        _writer.WriteRaw(String.valueOf(vmBase.getvm_type().getValue()));
+        _writer.WriteEndElement();
+    }
 
     protected abstract void WriteAppList();
 

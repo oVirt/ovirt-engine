@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +28,8 @@ public class OvfVmWriter extends OvfWriter {
     }
 
     @Override
-    protected void WriteGeneralData() {
+    protected void writeGeneralData() {
+        super.writeGeneralData();
         _writer.WriteStartElement("Name");
         _writer.WriteRaw(_vm.getStaticData().getvm_name());
         _writer.WriteEndElement();
@@ -39,26 +39,8 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("TemplateName");
         _writer.WriteRaw(_vm.getvmt_name());
         _writer.WriteEndElement();
-        _writer.WriteStartElement("Description");
-        _writer.WriteRaw(vmBase.getdescription());
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("Domain");
-        _writer.WriteRaw(vmBase.getdomain());
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("CreationDate");
-        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getcreation_date()));
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("ExportDate");
-        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new Date()));
-        _writer.WriteEndElement();
         _writer.WriteStartElement("IsInitilized");
         _writer.WriteRaw(String.valueOf(_vm.getStaticData().getis_initialized()));
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("IsAutoSuspend");
-        _writer.WriteRaw(String.valueOf(vmBase.getis_auto_suspend()));
-        _writer.WriteEndElement();
-        _writer.WriteStartElement("TimeZone");
-        _writer.WriteRaw(vmBase.gettime_zone());
         _writer.WriteEndElement();
         _writer.WriteStartElement("IsStateless");
         _writer.WriteRaw(String.valueOf(vmBase.getis_stateless()));
@@ -66,25 +48,6 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("Origin");
         _writer.WriteRaw(String.valueOf(_vm.getorigin().getValue()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("default_boot_sequence");
-        _writer.WriteRaw(String.valueOf(_vm.getdefault_boot_sequence().getValue()));
-        _writer.WriteEndElement();
-
-        if (!StringHelper.isNullOrEmpty(_vm.getinitrd_url())) {
-            _writer.WriteStartElement("initrd_url");
-            _writer.WriteRaw(_vm.getinitrd_url());
-            _writer.WriteEndElement();
-        }
-        if (!StringHelper.isNullOrEmpty(_vm.getkernel_url())) {
-            _writer.WriteStartElement("kernel_url");
-            _writer.WriteRaw(_vm.getkernel_url());
-            _writer.WriteEndElement();
-        }
-        if (!StringHelper.isNullOrEmpty(_vm.getkernel_params())) {
-            _writer.WriteStartElement("kernel_params");
-            _writer.WriteRaw(_vm.getkernel_params());
-            _writer.WriteEndElement();
-        }
         if (!StringHelper.isNullOrEmpty(_vm.getapp_list())) {
             _writer.WriteStartElement("app_list");
             _writer.WriteRaw(_vm.getapp_list());
@@ -95,27 +58,19 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteRaw(_vm.getQuotaId().toString());
             _writer.WriteEndElement();
         }
-        _writer.WriteStartElement("VmType");
-        _writer.WriteRaw(String.valueOf(_vm.getvm_type().getValue()));
-        _writer.WriteEndElement();
         _writer.WriteStartElement("DefaultDisplayType");
         _writer.WriteRaw(String.valueOf(_vm.getdefault_display_type().getValue()));
         _writer.WriteEndElement();
-
         _writer.WriteStartElement("MinAllocatedMem");
         _writer.WriteRaw(String.valueOf(_vm.getMinAllocatedMem()));
         _writer.WriteEndElement();
-
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
-
         // Gets a map that its keys are aliases to fields that should be OVF
         // logged.
-
         Map<String, String> aliasesValuesMap = handler.getAliasesValuesMap();
         for (Map.Entry<String, String> entry : aliasesValuesMap.entrySet()) {
             writeLogEvent(entry.getKey(), entry.getValue());
         }
-
     }
 
     private void writeLogEvent(String name, String value) {

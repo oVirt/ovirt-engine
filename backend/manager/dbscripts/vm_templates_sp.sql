@@ -34,6 +34,7 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_priority INTEGER,
  v_auto_startup BOOLEAN,
  v_is_stateless BOOLEAN,
+ v_is_smartcard_enabled BOOLEAN,
  v_iso_path VARCHAR(4000) ,
  v_origin INTEGER ,
  v_initrd_url    VARCHAR(4000) ,
@@ -84,7 +85,8 @@ INTO vm_static(
     entity_type,
     quota_id,
     migration_support,
-    dedicated_vm_for_vds)
+    dedicated_vm_for_vds,
+    is_smartcard_enabled)
 VALUES(
     -- This field is meaningless for templates for the time being, however we want to keep it not null for VMs.
     -- Thus, since templates are top level elements they "point" to the 'Blank' template.
@@ -124,7 +126,8 @@ VALUES(
     'TEMPLATE',
     v_quota_id,
     v_migration_support,
-    v_dedicated_vm_for_vds);
+    v_dedicated_vm_for_vds,
+    v_is_smartcard_enabled);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -159,6 +162,7 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_priority INTEGER,
  v_auto_startup BOOLEAN,
  v_is_stateless BOOLEAN,
+ v_is_smartcard_enabled BOOLEAN,
  v_iso_path VARCHAR(4000) ,
  v_origin INTEGER ,
  v_initrd_url VARCHAR(4000) ,
@@ -186,7 +190,7 @@ BEGIN
       priority = v_priority,auto_startup = v_auto_startup,is_stateless = v_is_stateless,
       iso_path = v_iso_path,origin = v_origin,initrd_url = v_initrd_url,
       kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP, quota_id = v_quota_id,
-      migration_support = v_migration_support, dedicated_vm_for_vds = v_dedicated_vm_for_vds
+      migration_support = v_migration_support, dedicated_vm_for_vds = v_dedicated_vm_for_vds, is_smartcard_enabled = v_is_smartcard_enabled
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = 'TEMPLATE';
 END; $procedure$

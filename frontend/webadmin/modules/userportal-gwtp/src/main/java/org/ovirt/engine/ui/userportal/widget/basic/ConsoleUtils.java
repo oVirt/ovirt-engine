@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
@@ -169,6 +170,30 @@ public class ConsoleUtils {
         }
 
         return -1;
+    }
+
+    /**
+     * Returns true if the smartcard is enabled for the specific VM entity (edit VM popup)
+     */
+    public boolean isSmartcardGloballyEnabled(UserPortalItemModel item) {
+        ConsoleModel consoleModel = item.getDefaultConsole();
+        if (consoleModel instanceof SpiceConsoleModel) {
+            return consoleModel.getEntity() == null ? false : consoleModel.getEntity().isSmartcardEnabled();
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true if the smartcard is locally disabled from the edit console options popup
+     */
+    public boolean isSmartcardEnabledOverriden(UserPortalItemModel item) {
+        ConsoleModel consoleModel = item.getDefaultConsole();
+        if (consoleModel instanceof SpiceConsoleModel) {
+            return ((SpiceConsoleModel) consoleModel).getspice().isSmartcardEnabledOverridden();
+        }
+
+        return false;
     }
 
     public native String getUserAgentString() /*-{

@@ -651,6 +651,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         tempVar.setis_auto_suspend(false);
         tempVar.setis_stateless((Boolean) model.getIsStateless().getEntity());
+        tempVar.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         tempVar.setdefault_boot_sequence(model.getBootSequence());
         tempVar.setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
         tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
@@ -1293,6 +1294,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         gettempVm().setis_auto_suspend(false);
         gettempVm().setis_stateless((Boolean) model.getIsStateless().getEntity());
+        gettempVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         gettempVm().setdefault_boot_sequence(model.getBootSequence());
         gettempVm().setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
                 .getSelectedItem() : ""); //$NON-NLS-1$

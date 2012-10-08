@@ -362,6 +362,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         }
 
         getspice().setHost(getEntity().getdisplay_ip());
+        getspice().setSmartcardEnabled(getEntity().isSmartcardEnabled());
         getspice().setPort((getEntity().getdisplay() == null ? 0 : getEntity().getdisplay()));
         getspice().setPassword(ticket);
         getspice().setNumberOfMonitors(getEntity().getnum_of_monitors());

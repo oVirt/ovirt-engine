@@ -59,6 +59,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("time_zone", vm.gettime_zone())
                 .addValue("auto_startup", vm.getauto_startup())
                 .addValue("is_stateless", vm.getis_stateless())
+                .addValue("is_smartcard_enabled", vm.isSmartcardEnabled())
                 .addValue("dedicated_vm_for_vds", vm.getdedicated_vm_for_vds())
                 .addValue("fail_back", vm.getfail_back())
                 .addValue("vm_type", vm.getvm_type())

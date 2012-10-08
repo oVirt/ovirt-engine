@@ -6,11 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -19,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -37,7 +33,7 @@ public class OvfVmReader extends OvfReader {
             VM vm,
             ArrayList<DiskImage> images,
             ArrayList<VmNetworkInterface> interfaces) {
-        super(document, images, interfaces);
+        super(document, images, interfaces, vm.getStaticData());
         _vm = vm;
         _vm.setInterfaces(interfaces);
     }
@@ -143,10 +139,8 @@ public class OvfVmReader extends OvfReader {
     }
 
     @Override
-    protected void ReadGeneralData() {
+    protected void readGeneralData(XmlNode content) {
         // General Vm
-        XmlNode content = _document.SelectSingleNode("//*/Content");
-
         XmlNode node = content.SelectSingleNode("Name");
         if (node != null) {
             _vm.getStaticData().setvm_name(node.InnerText);
@@ -164,35 +158,9 @@ public class OvfVmReader extends OvfReader {
                 _vm.setvmt_name(node.InnerText);
             }
         }
-        node = content.SelectSingleNode("Description");
-        if (node != null) {
-            _vm.getStaticData().setdescription(node.InnerText);
-        }
-        node = content.SelectSingleNode("Domain");
-        if (node != null) {
-            _vm.getStaticData().setdomain(node.InnerText);
-        }
-        node = content.SelectSingleNode("CreationDate");
-        if (node != null) {
-            final Date creationDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
-            if (creationDate != null) {
-                _vm.getStaticData().setcreation_date(creationDate);
-            }
-        }
-        node = content.SelectSingleNode("ExportDate");
-        if (node != null) {
-            final Date exportDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
-            if (exportDate != null) {
-                _vm.getStaticData().setExportDate(exportDate);
-            }
-        }
         node = content.SelectSingleNode("IsInitilized");
         if (node != null) {
             _vm.getStaticData().setis_initialized(Boolean.parseBoolean(node.InnerText));
-        }
-        node = content.SelectSingleNode("IsAutoSuspend");
-        if (node != null) {
-            _vm.getStaticData().setis_auto_suspend(Boolean.parseBoolean(node.InnerText));
         }
         node = content.SelectSingleNode("TimeZone");
         if (node != null) {
@@ -206,63 +174,13 @@ public class OvfVmReader extends OvfReader {
         if (node != null) {
             _vm.getStaticData().setQuotaId(new Guid(node.InnerText));
         }
-
-        XmlNodeList list = content.SelectNodes("Section");
-        for (XmlNode section : list) {
-            String value = section.Attributes.get("xsi:type").getValue();
-
-            if (StringHelper.EqOp(value, "ovf:OperatingSystemSection_Type")) {
-                ReadOsSection(section);
-
-            }
-            else if (StringHelper.EqOp(value, "ovf:VirtualHardwareSection_Type")) {
-                ReadHardwareSection(section);
-            } else if (StringUtils.equals(value, "ovf:SnapshotsSection_Type")) {
-                readSnapshotsSection(section);
-            }
-        }
-
-        node = content.SelectSingleNode("Origin");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setorigin(OriginType.forValue(Integer.parseInt(node.InnerText)));
-            }
-        }
-        node = content.SelectSingleNode("initrd_url");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setinitrd_url((node.InnerText));
-            }
-        }
-        node = content.SelectSingleNode("default_boot_sequence");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setdefault_boot_sequence(BootSequence.forValue(Integer.parseInt(node.InnerText)));
-            }
-        }
-
-        node = content.SelectSingleNode("kernel_url");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setkernel_url((node.InnerText));
-            }
-        }
-        node = content.SelectSingleNode("kernel_params");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setkernel_params((node.InnerText));
-            }
-        }
-
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
 
         // Gets a list of all the aliases of the fields that should be logged in
         // ovd For each one of these fields, the proper value will be read from
         // the ovf and field in vm static
         List<String> aliases = handler.getAliases();
-
         for (String alias : aliases) {
-
             String value = readEventLogValue(content, alias);
             if (!StringHelper.isNullOrEmpty(value)) {
                 handler.addValueForAlias(alias, value);
@@ -290,12 +208,7 @@ public class OvfVmReader extends OvfReader {
                 _vm.setapp_list(_images.get(0).getappList());
             }
         }
-        node = content.SelectSingleNode("VmType");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setvm_type(VmType.forValue(Integer.parseInt(node.InnerText)));
-            }
-        }
+
         node = content.SelectSingleNode("DefaultDisplayType");
         if (node != null) {
             if (!StringHelper.isNullOrEmpty(node.InnerText)) {
@@ -342,7 +255,7 @@ public class OvfVmReader extends OvfReader {
         return null;
     }
 
-    private void readSnapshotsSection(XmlNode section) {
+    protected void readSnapshotsSection(XmlNode section) {
         XmlNodeList list = section.SelectNodes("Snapshot");
         ArrayList<Snapshot> snapshots = new ArrayList<Snapshot>();
         _vm.setSnapshots(snapshots);

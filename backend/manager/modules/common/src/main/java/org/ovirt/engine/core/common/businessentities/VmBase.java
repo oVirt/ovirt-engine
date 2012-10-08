@@ -117,6 +117,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "is_stateless")
     private boolean stateless;
 
+    @Column(name = "is_smartcard_enabled")
+    private boolean smartcardEnabled;
+
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "iso_path", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath = "";
@@ -197,7 +200,8 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             String kernelUrl,
             String kernelParams,
             String initrdUrl,
-            Guid quotaId) {
+            Guid quotaId,
+            boolean smartcardEnabled) {
         super();
         this.id = id;
         this.vds_group_id = vds_group_id;
@@ -226,6 +230,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.kernelUrl = kernelUrl;
         this.kernelParams = kernelParams;
         this.initrdUrl = initrdUrl;
+        this.smartcardEnabled = smartcardEnabled;
         setQuotaId(quotaId);
     }
 
@@ -513,6 +518,14 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         return exportDate;
     }
 
+    public boolean isSmartcardEnabled() {
+        return smartcardEnabled;
+    }
+
+    public void setSmartcardEnabled(boolean smartcardEnabled) {
+        this.smartcardEnabled = smartcardEnabled;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -540,6 +553,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         result = prime * result + ((origin == null) ? 0 : origin.hashCode());
         result = prime * result + priority;
         result = prime * result + (stateless ? 1231 : 1237);
+        result = prime * result + (smartcardEnabled ? 1231 : 1237);
         result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
         result = prime * result + ((usbPolicy == null) ? 0 : usbPolicy.hashCode());
         result = prime * result + ((vds_group_id == null) ? 0 : vds_group_id.hashCode());
@@ -663,6 +677,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             return false;
         }
         if (stateless != other.stateless) {
+            return false;
+        }
+        if (smartcardEnabled != other.smartcardEnabled) {
             return false;
         }
         if (timezone == null) {

@@ -97,6 +97,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             updateHostPinning(template.getMigrationSupport());
             doChangeDefautlHost(template.getdedicated_vm_for_vds());
 
+            getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
+
             if (getModel().getVmType() == VmType.Desktop) {
                 getModel().getIsStateless().setEntity(template.getis_stateless());
                 getModel().getAllowConsoleReconnect().setEntity(template.getAllowConsoleReconnect());

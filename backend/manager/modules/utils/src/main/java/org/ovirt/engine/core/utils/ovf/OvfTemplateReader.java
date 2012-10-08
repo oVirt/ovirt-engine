@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
@@ -29,7 +26,7 @@ public class OvfTemplateReader extends OvfReader {
             VmTemplate vmTemplate,
             ArrayList<DiskImage> images,
             ArrayList<VmNetworkInterface> interfaces) {
-        super(document, images, interfaces);
+        super(document, images, interfaces, vmTemplate);
         _vmTemplate = vmTemplate;
     }
 
@@ -143,10 +140,8 @@ public class OvfTemplateReader extends OvfReader {
     }
 
     @Override
-    protected void ReadGeneralData() {
+    protected void readGeneralData(XmlNode content) {
         // General Vm
-        XmlNode content = _document.SelectSingleNode("//*/Content");
-
         XmlNode node = content.SelectSingleNode("Name");
         if (node != null) {
             _vmTemplate.setname(node.InnerText);
@@ -156,87 +151,6 @@ public class OvfTemplateReader extends OvfReader {
         if (node != null) {
             if (!StringHelper.isNullOrEmpty(node.InnerText)) {
                 _vmTemplate.setId(new Guid(node.InnerText));
-            }
-        }
-        node = content.SelectSingleNode("Description");
-        if (node != null) {
-            _vmTemplate.setdescription(node.InnerText);
-        }
-        node = content.SelectSingleNode("Domain");
-        if (node != null) {
-            _vmTemplate.setdomain(node.InnerText);
-        }
-        node = content.SelectSingleNode("CreationDate");
-
-        if (node != null) {
-            Date creationDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
-            if (creationDate != null) {
-                _vmTemplate.setcreation_date(creationDate);
-            }
-        }
-        node = content.SelectSingleNode("ExportDate");
-        if (node != null) {
-            Date exportDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
-            if (exportDate != null) {
-                _vmTemplate.setExportDate(exportDate);
-            }
-        }
-        node = content.SelectSingleNode("IsAutoSuspend");
-        if (node != null) {
-            _vmTemplate.setis_auto_suspend(Boolean.parseBoolean(node.InnerText));
-        }
-        node = content.SelectSingleNode("TimeZone");
-        if (node != null) {
-            _vmTemplate.settime_zone(node.InnerText);
-        }
-        node = content.SelectSingleNode("VmType");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vmTemplate.setvm_type(VmType.forValue(Integer.parseInt(node.InnerText)));
-            }
-        }
-        node = content.SelectSingleNode("default_boot_sequence");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vmTemplate.setdefault_boot_sequence(BootSequence.forValue(Integer.parseInt(node.InnerText)));
-            }
-        }
-        node = content.SelectSingleNode("initrd_url");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vmTemplate.setinitrd_url((node.InnerText));
-            }
-        }
-        node = content.SelectSingleNode("kernel_url");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vmTemplate.setkernel_url((node.InnerText));
-            }
-        }
-        node = content.SelectSingleNode("kernel_params");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vmTemplate.setkernel_params((node.InnerText));
-            }
-        }
-
-        node = content.SelectSingleNode("Origin");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vmTemplate.setorigin(OriginType.forValue(Integer.parseInt(node.InnerText)));
-            }
-        }
-
-        XmlNodeList list = content.SelectNodes("Section");
-        for (XmlNode section : list) {
-            String value = section.Attributes.get("xsi:type").getValue();
-
-            if (StringHelper.EqOp(value, "ovf:OperatingSystemSection_Type")) {
-                ReadOsSection(section);
-
-            }
-            else if (StringHelper.EqOp(value, "ovf:VirtualHardwareSection_Type")) {
-                ReadHardwareSection(section);
             }
         }
         node = content.SelectSingleNode("default_display_type");

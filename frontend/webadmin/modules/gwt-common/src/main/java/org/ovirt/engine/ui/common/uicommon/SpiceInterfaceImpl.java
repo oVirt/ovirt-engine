@@ -25,10 +25,10 @@ public class SpiceInterfaceImpl implements ISpice {
     private Event usbAutoShareChangedEvent = new Event(
             SpiceConsoleModel.UsbAutoShareChangedEventDefinition);
 
-    private Event wanColorDepthChangedEvent = new Event(
+    private final Event wanColorDepthChangedEvent = new Event(
             SpiceConsoleModel.wanColorDepthChangedEventDefinition);
 
-    private Event wanDisableEffectsChangeEvent = new Event(
+    private final Event wanDisableEffectsChangeEvent = new Event(
             SpiceConsoleModel.wanDisableEffectsChangeEventDefinition);
 
     private Version currentVersion = new Version(4, 4);
@@ -60,6 +60,10 @@ public class SpiceInterfaceImpl implements ISpice {
     private boolean wanOptionsEnabled;
     ClientAgentType cat = new ClientAgentType();
     private String spiceBaseURL;
+    private boolean smartcardEnabled = false;
+
+    // the user can choose to disable the smartcard even when it is enabled, but can not choose to enable it, when it is disabled
+    private boolean smartcardEnabledOverridden = false;
 
     public SpiceInterfaceImpl() {
         logger.fine("Instantiating GWT Spice Implementation"); //$NON-NLS-1$
@@ -145,6 +149,7 @@ public class SpiceInterfaceImpl implements ISpice {
         return currentVersion;
     }
 
+    @Override
     public void setCurrentVersion(Version currentVersion) {
         this.currentVersion = currentVersion;
     }
@@ -397,8 +402,23 @@ public class SpiceInterfaceImpl implements ISpice {
         return spiceBaseURL;
     }
 
+    @Override
     public void setSpiceBaseURL(String spiceBaseURL) {
         this.spiceBaseURL = spiceBaseURL;
+    }
+
+    public boolean passSmartcardOption() {
+        return isSmartcardEnabled() && !isSmartcardEnabledOverridden();
+    }
+
+    @Override
+    public boolean isSmartcardEnabled() {
+        return smartcardEnabled;
+    }
+
+    @Override
+    public void setSmartcardEnabled(boolean smartcardEnabled) {
+        this.smartcardEnabled = smartcardEnabled;
     }
 
     private int colorDepthAsInt() {
@@ -524,11 +544,13 @@ public class SpiceInterfaceImpl implements ISpice {
                                                var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
                                                var connectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
                                                var wanOptionsEnabled = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getIsWanOptionsEnabled()();
+                                               // the !! is there to convert the value to boolean because it is returned as int
+                                               var smartcardEnabled =  !!this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::passSmartcardOption()();
                                                var colorDepth = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::colorDepthAsInt()();
                                                var disableEffects = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::disbaleEffectsAsString()();
                                                var model = this;
 
-                                               //alert("disableEffects ["+disableEffects+"], wanOptionsEnabled ["+wanOptionsEnabled+"], colorDepth ["+colorDepth+"], Host IP ["+hostIp+"], port ["+port+"], fullScreen ["+fullScreen+"], password ["+password+"], numberOfMonitors ["+numberOfMonitors+"], Usb Listen Port ["+usbListenPort+"], Admin Console ["+adminConsole+"], Guest HostName ["+guestHostName+"], Secure Port ["+securePort+"], Ssl Chanels ["+sslChanels+"], cipherSuite ["+cipherSuite+"], Host Subject ["+hostSubject+"], Title [" + title+"], Hot Key ["+hotKey+"], Menu ["+menu+"], GuestID [" + guestID+"], version ["+version+"]");
+                                               //alert("Smartcard ["+smartcardEnabled+"] disableEffects ["+disableEffects+"], wanOptionsEnabled ["+wanOptionsEnabled+"], colorDepth ["+colorDepth+"], Host IP ["+hostIp+"], port ["+port+"], fullScreen ["+fullScreen+"], password ["+password+"], numberOfMonitors ["+numberOfMonitors+"], Usb Listen Port ["+usbListenPort+"], Admin Console ["+adminConsole+"], Guest HostName ["+guestHostName+"], Secure Port ["+securePort+"], Ssl Chanels ["+sslChanels+"], cipherSuite ["+cipherSuite+"], Host Subject ["+hostSubject+"], Title [" + title+"], Hot Key ["+hotKey+"], Menu ["+menu+"], GuestID [" + guestID+"], version ["+version+"]");
                                                this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::loadXpi(Ljava/lang/String;)(id);
                                                var client = document.getElementById(id);
                                                client.hostIP = hostIp;
@@ -555,6 +577,7 @@ public class SpiceInterfaceImpl implements ISpice {
                                                client.SendCtrlAltDelete = sendCtrlAltDelete;
                                                client.UsbAutoShare = usbAutoShare;
                                                client.SetUsbFilter(usbFilter);
+                                               client.Smartcard = smartcardEnabled;
                                                if (wanOptionsEnabled) {
                                                   client.DisableEffects = disableEffects;
                                                   client.ColorDepth = colorDepth;
@@ -770,6 +793,19 @@ public class SpiceInterfaceImpl implements ISpice {
     @Override
     public void setIsWanOptionsEnabled(boolean enabled) {
         this.wanOptionsEnabled = enabled;
+    }
+
+    @Override
+    public void setOverrideEnabledSmartcard(boolean enabled) {
+        this.smartcardEnabledOverridden = enabled;
+    }
+
+    /**
+     * Returns true if the user has choosen to disable the smartcard even it is by default enabled
+     */
+    @Override
+    public boolean isSmartcardEnabledOverridden() {
+        return this.smartcardEnabledOverridden;
     }
 
 }

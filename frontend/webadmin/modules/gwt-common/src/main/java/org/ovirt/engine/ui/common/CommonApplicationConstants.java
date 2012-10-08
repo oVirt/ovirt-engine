@@ -329,6 +329,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Stateless")
     String statelessVmPopup();
 
+    @DefaultStringValue("Smartcard enabled")
+    String smartcardVmPopup();
+
     @DefaultStringValue("Pool")
     String poolVmPopup();
 

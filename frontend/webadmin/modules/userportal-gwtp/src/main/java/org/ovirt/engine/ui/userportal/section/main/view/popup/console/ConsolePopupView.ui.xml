@@ -55,6 +55,10 @@ xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget.popup.console">
 				<g:FlowPanel ui:field="wanOptionsPanel" addStyleNames="{style.fullWidth}">
 					<w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" />
 				</g:FlowPanel>
+
+				<g:FlowPanel ui:field="disableSmartcardPanel" addStyleNames="{style.fullWidth}">
+					<w:EntityModelValueCheckBoxEditor ui:field="disableSmartcard" />
+				</g:FlowPanel>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

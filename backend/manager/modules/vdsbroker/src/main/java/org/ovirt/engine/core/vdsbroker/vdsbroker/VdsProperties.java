@@ -151,6 +151,7 @@ public final class VdsProperties {
     public static final String cpuPinning = "cpuPinning";
     public static final String vm_name = "vmName";
     public static final String vm_guid = "vmId";
+    public static final String smartcardEnabled = "smartcardEnable";
     // vm configuration (i.e. VmDynamic)
     public static final String guest_cur_user_name = "username";
     public static final String vm_ip = "guestIPs";

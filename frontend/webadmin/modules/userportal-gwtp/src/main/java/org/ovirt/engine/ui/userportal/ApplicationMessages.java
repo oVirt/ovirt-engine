@@ -9,4 +9,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("Error Connecting to {0}. This browser does not support {1} protocol")
     String errorConnectingToConsole(String name, String protocol);
+
+    @DefaultMessage("{0} with Smartcard")
+    String consoleWithSmartcard(String console);
 }

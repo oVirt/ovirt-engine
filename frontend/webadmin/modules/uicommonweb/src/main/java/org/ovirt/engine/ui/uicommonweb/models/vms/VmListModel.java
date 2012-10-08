@@ -1621,6 +1621,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 / (Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setis_auto_suspend(false);
         tempVar.setis_stateless((Boolean) model.getIsStateless().getEntity());
+        tempVar.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         tempVar.setdefault_boot_sequence(model.getBootSequence());
         tempVar.setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
         tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
@@ -2181,6 +2182,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         getcurrentVm().setis_auto_suspend(false);
         getcurrentVm().setis_stateless((Boolean) model.getIsStateless().getEntity());
+        getcurrentVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         getcurrentVm().setdefault_boot_sequence(model.getBootSequence());
         getcurrentVm().setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem()
                 : ""); //$NON-NLS-1$

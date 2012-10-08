@@ -75,6 +75,13 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> useLocalDrives;
 
+    @UiField(provided = true)
+    @WithElementId
+    EntityModelValueCheckBoxEditor<ConsoleModel> disableSmartcard;
+
+    @UiField
+    FlowPanel disableSmartcardPanel;
+
     @UiField
     FlowPanel spicePanel;
 
@@ -100,6 +107,21 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
 
         spiceRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         spiceRadioButton.setLabel(constants.spice());
+
+        disableSmartcard = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+
+            @Override
+            protected void updateModel(ISpice spice, boolean value) {
+                spice.setOverrideEnabledSmartcard(value);
+            }
+
+            @Override
+            protected boolean extractBoolean(ISpice spice) {
+                return spice.isSmartcardEnabledOverridden();
+            }
+
+        });
+        disableSmartcard.setLabel(constants.disableSmartcard());
 
         wanEnabled = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
 
@@ -205,7 +227,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
                 enableUsbAutoshare,
                 openInFullScreen,
                 useLocalDrives,
-                wanEnabled);
+                wanEnabled,
+                disableSmartcard);
     }
 
     @Override
@@ -223,7 +246,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
                 enableUsbAutoshare,
                 openInFullScreen,
                 useLocalDrives,
-                wanEnabled);
+                wanEnabled,
+                disableSmartcard);
 
     }
 
@@ -342,6 +366,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
         if (!enabled) {
             ctrlAltDel.setTitle(reason);
         }
+    }
+
+    @Override
+    public void setDisableSmartcardVisible(boolean visible) {
+        disableSmartcardPanel.setVisible(visible);
     }
 
 }

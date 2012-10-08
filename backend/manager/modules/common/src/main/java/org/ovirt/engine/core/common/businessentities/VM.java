@@ -411,6 +411,15 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return mVmStatic.getis_stateless();
     }
 
+    public boolean isSmartcardEnabled() {
+        return mVmStatic.isSmartcardEnabled();
+    }
+
+    public void setSmartcardEnabled(boolean isSmartcardEnabled) {
+        mVmStatic.setSmartcardEnabled(isSmartcardEnabled);
+        OnPropertyChanged(new PropertyChangedEventArgs("smartcardEnabled"));
+    }
+
     public void setis_stateless(boolean value) {
         mVmStatic.setis_stateless(value);
         OnPropertyChanged(new PropertyChangedEventArgs("is_stateless"));
@@ -1476,7 +1485,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
                     "num_of_sockets", "cpu_per_socket", "vds_group_compatibility_version",
                     "usb_policy", "vmt_guid", "vmt_name", "initrd_url", "kernel_url",
                     "kernel_params", "VmPauseStatus", "CustomProperties", "MigrationSupport", "num_of_cpus",
-                    "MinAllocatedMem" }));
+                    "MinAllocatedMem", "smartcardEnabled" }));
 
     @Override
     public ArrayList<String> getChangeablePropertiesList() {

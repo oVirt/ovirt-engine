@@ -8,6 +8,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
@@ -44,14 +45,17 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private final ConsoleUtils consoleUtils;
+    private final ApplicationMessages messages;
 
     @Inject
     public MainTabBasicDetailsPresenterWidget(EventBus eventBus,
             ViewDef view,
             final UserPortalBasicListProvider modelProvider,
-            final ConsoleUtils consoleUtils) {
+            final ConsoleUtils consoleUtils,
+            final ApplicationMessages messages) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
+        this.messages = messages;
 
         listenOnSelectedItemEvent(modelProvider);
 
@@ -149,11 +153,19 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             if (protocol == null) {
                 getView().setConsoleWarningMessage(consoleUtils.determineProtocolMessage(item));
             } else {
-                getView().setConsoleProtocol(protocol == null ? "" : protocol.displayName); //$NON-NLS-1$
+                getView().setConsoleProtocol(protocol == null ? "" : determineProtocolMessage(protocol, item)); //$NON-NLS-1$
             }
         } else {
             getView().setConsoleProtocol(""); //$NON-NLS-1$
         }
+    }
+
+    private String determineProtocolMessage(ConsoleProtocol protocol, UserPortalItemModel item) {
+        if (consoleUtils.isSmartcardGloballyEnabled(item) && !consoleUtils.isSmartcardEnabledOverriden(item)) {
+            return messages.consoleWithSmartcard(protocol.displayName);
+        }
+
+        return protocol.displayName;
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
@@ -167,3 +179,4 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
 }
+

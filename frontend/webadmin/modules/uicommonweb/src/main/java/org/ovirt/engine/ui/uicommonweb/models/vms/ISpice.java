@@ -143,4 +143,11 @@ public interface ISpice
 
     void setIsWanOptionsEnabled(boolean enabled);
 
+    public void setSmartcardEnabled(boolean enabled);
+
+    public boolean isSmartcardEnabled();
+
+    public void setOverrideEnabledSmartcard(boolean enabled);
+
+    public boolean isSmartcardEnabledOverridden();
 }

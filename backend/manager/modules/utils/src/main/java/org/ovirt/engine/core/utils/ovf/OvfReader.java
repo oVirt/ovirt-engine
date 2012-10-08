@@ -2,18 +2,22 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -37,11 +41,13 @@ public abstract class OvfReader implements IOvfBuilder {
     public static final String EmptyName = "[Empty Name]";
     protected String name = EmptyName;
     private String version;
+    private final VmBase vmBase;
 
-    public OvfReader(XmlDocument document, ArrayList<DiskImage> images, ArrayList<VmNetworkInterface> interfaces) {
+    public OvfReader(XmlDocument document, ArrayList<DiskImage> images, ArrayList<VmNetworkInterface> interfaces, VmBase vmBase) {
         _images = images;
         this.interfaces = interfaces;
         _document = document;
+        this.vmBase = vmBase;
 
         _xmlNS = new XmlNamespaceManager(_document.NameTable);
         _xmlNS.AddNamespace("ovf", OVF_URI);
@@ -164,7 +170,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
     @Override
     public void BuildVirtualSystem() {
-        ReadGeneralData();
+        readGeneralData();
     }
 
     /**
@@ -269,7 +275,118 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected abstract void ReadHardwareSection(XmlNode section);
 
-    protected abstract void ReadGeneralData();
+    protected void readGeneralData() {
+        XmlNode content = _document.SelectSingleNode("//*/Content");
+        XmlNode node;
+
+        node = content.SelectSingleNode("Description");
+        if (node != null) {
+            vmBase.setdescription(node.InnerText);
+        }
+
+        node = content.SelectSingleNode("Domain");
+        if (node != null) {
+            vmBase.setdomain(node.InnerText);
+        }
+
+        node = content.SelectSingleNode("CreationDate");
+        if (node != null) {
+            Date creationDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
+            if (creationDate != null) {
+                vmBase.setcreation_date(creationDate);
+            }
+        }
+
+        node = content.SelectSingleNode("ExportDate");
+        if (node != null) {
+            Date exportDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
+            if (exportDate != null) {
+                vmBase.setExportDate(exportDate);
+            }
+        }
+
+        node = content.SelectSingleNode("IsAutoSuspend");
+        if (node != null) {
+            vmBase.setis_auto_suspend(Boolean.parseBoolean(node.InnerText));
+        }
+
+        node = content.SelectSingleNode("TimeZone");
+        if (node != null) {
+            vmBase.settime_zone(node.InnerText);
+        }
+
+        node = content.SelectSingleNode("default_boot_sequence");
+        if (node != null) {
+            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+                vmBase.setdefault_boot_sequence(BootSequence.forValue(Integer.parseInt(node.InnerText)));
+            }
+        }
+
+        node = content.SelectSingleNode("initrd_url");
+        if (node != null) {
+            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+                vmBase.setinitrd_url((node.InnerText));
+            }
+        }
+
+        node = content.SelectSingleNode("kernel_url");
+        if (node != null) {
+            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+                vmBase.setkernel_url((node.InnerText));
+            }
+        }
+
+        node = content.SelectSingleNode("kernel_params");
+        if (node != null) {
+            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+                vmBase.setkernel_params((node.InnerText));
+            }
+        }
+
+        XmlNodeList list = content.SelectNodes("Section");
+        for (XmlNode section : list) {
+            String value = section.Attributes.get("xsi:type").getValue();
+
+            if (StringHelper.EqOp(value, "ovf:OperatingSystemSection_Type")) {
+                ReadOsSection(section);
+
+            }
+            else if (StringHelper.EqOp(value, "ovf:VirtualHardwareSection_Type")) {
+                ReadHardwareSection(section);
+            } else if (StringUtils.equals(value, "ovf:SnapshotsSection_Type")) {
+                readSnapshotsSection(section);
+            }
+        }
+
+        node = content.SelectSingleNode("Origin");
+        if (node != null) {
+            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+                vmBase.setorigin(OriginType.forValue(Integer.parseInt(node.InnerText)));
+            }
+        }
+
+        node = content.SelectSingleNode("VmType");
+        if (node != null) {
+            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+                vmBase.setvm_type(VmType.forValue(Integer.parseInt(node.InnerText)));
+            }
+        }
+
+        node = content.SelectSingleNode("IsSmartcardEnabled");
+        if (node != null) {
+            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+                vmBase.setSmartcardEnabled(Boolean.parseBoolean(node.InnerText));
+            }
+        }
+
+        readGeneralData(content);
+    }
+
+    protected void readSnapshotsSection(XmlNode section) {
+
+    }
+
+    protected abstract void readGeneralData(XmlNode content);
 
     protected void buildNicReference() {
         XmlNodeList list = _document.SelectNodes("//*/Nic", _xmlNS);

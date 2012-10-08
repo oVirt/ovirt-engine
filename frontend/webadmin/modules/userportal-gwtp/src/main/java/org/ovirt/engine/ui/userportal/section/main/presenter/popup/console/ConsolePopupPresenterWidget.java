@@ -53,6 +53,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setWanOptionsVisible(boolean visible);
 
+        void setDisableSmartcardVisible(boolean visible);
+
         void setCtrlAltDelEnabled(boolean enabled, String reason);
 
         void setVmName(String name);
@@ -147,6 +149,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             getView().spiceSelected(spiceAvailable);
         }
 
+        getView().setDisableSmartcardVisible(consoleUtils.isSmartcardGloballyEnabled(currentItem));
+
         ISpice spice = extractSpice(model);
         if (spice != null) {
             if (!spice.getIsWanOptionsEnabled()) {
@@ -169,6 +173,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         boolean ctrlAltDelEnabled = consoleUtils.isCtrlAltDelEnabled();
         getView().setCtrlAltDelEnabled(ctrlAltDelEnabled, constants.ctrlAltDeletIsNotSupportedOnWindows());
+
     }
 
     @Override
