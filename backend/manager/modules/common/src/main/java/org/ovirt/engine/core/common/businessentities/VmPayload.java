@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 
 
 public class VmPayload implements Serializable {
-    private static long serialVersionUID = -3665087594884425768L;
+    private static final long serialVersionUID = -3665087594884425768L;
     private static String SpecParamsPayload = "vmPayload";
     private static String SpecParamsFileType = "file";
 
