@@ -58,7 +58,7 @@ public class VdsSelector {
     }
 
     private VM privateVm;
-    private VdsFreeMemoryChecker memoryChecker;
+    private final VdsFreeMemoryChecker memoryChecker;
 
     private VM getVm() {
         return privateVm;
@@ -271,21 +271,6 @@ public class VdsSelector {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS);
         }
         return ValidationResult.VALID;
-    }
-
-    /**
-     * Determine if specific vds already failed to run vm - to prevent
-     * sequentual running of vm on problematic vds
-     *
-     * @param vdsId
-     * @return
-     */
-    private boolean isVdsFailedToRunVm(Guid vdsId) {
-        boolean retValue = false;
-        if (getRunVdssList() != null && getRunVdssList().contains(vdsId)) {
-            retValue = true;
-        }
-        return retValue;
     }
 
     /**
