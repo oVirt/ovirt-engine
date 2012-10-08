@@ -206,10 +206,8 @@ public class VdsSelector {
             }
         }
 
-        if (noVDSs) {
-            if (messages != null) {
-                messageToReturn = VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_AVAILABLE_IN_CLUSTER;
-            }
+        if (noVDSs && messages != null) {
+            messageToReturn = VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_AVAILABLE_IN_CLUSTER;
         }
 
         if (messages != null) {
