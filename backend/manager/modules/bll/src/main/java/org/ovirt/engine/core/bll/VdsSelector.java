@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -227,47 +228,127 @@ public class VdsSelector {
         return false;
     }
 
+    interface HostValidator {
+        VdcBllMessages validate(VDS vds, StringBuilder sb);
+    }
+
+    @SuppressWarnings("serial")
+    final List<HostValidator> hostValidators = Collections.unmodifiableList(new ArrayList<HostValidator>(){
+        {
+            add(new HostValidator() {
+
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    if ((!vds.getvds_group_id().equals(getVm().getvds_group_id())) || (vds.getstatus() != VDSStatus.Up)) {
+                        sb.append("is not in up status or belongs to the VM's cluster");
+                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
+                    }
+                    return null;
+                }
+            });
+            add(new HostValidator() {
+
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    // If Vm in Paused mode - no additional memory allocation needed
+                    if (getVm().getstatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
+                        // not enough memory
+                        // In case we are using this function in migration we make sure we
+                        // don't allocate the same VDS
+                        sb.append("has insufficient memory to run the VM");
+                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY;
+                    }
+                    return null;
+                }
+            });
+            add(new HostValidator() {
+
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    // If Vm in Paused mode - no additional memory allocation needed
+                    if (getVm().getstatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
+                        // not enough memory
+                        // In case we are using this function in migration we make sure we
+                        // don't allocate the same VDS
+                        sb.append("has insufficient memory to run the VM");
+                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY;
+                    }
+                    return null;
+                }
+            });
+            add(new HostValidator() {
+
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    // In case we are using this function in migration we make sure we
+                    // don't allocate the same VDS
+                    if ((getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(vds.getId()))) {
+                        sb.append("is the same host the VM is currently running on");
+                        return VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST;
+                    }
+                    return null;
+                }
+            });
+            add(new HostValidator() {
+
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    // check capacity to run power clients
+                    if (!RunVmCommandBase.hasCapacityToRunVM(vds)) {
+                        sb.append("has insuffient capacity to run power client");
+                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;
+                    }
+                    return null;
+                }
+            });
+            add(new HostValidator() {
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    if (vds.getcpu_cores() != null && getVm().getnum_of_cpus() > vds.getcpu_cores()) {
+                        sb.append("has less cores(").append(vds.getcpu_cores()).append(") than ").append(getVm().getnum_of_cpus());
+                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;
+                    }
+                    return null;
+                }
+            });
+            add(new HostValidator() {
+
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    // if vm has more vCpus then vds physical cpus - dont allow to run
+                    if (!IsVMSwapValueLegal(vds)) {
+                        sb.append("swap value is illegal");
+                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP;
+                    }
+                    return null;
+                }
+            });
+            add(new HostValidator() {
+
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    if (!areRequiredNetworksAvailable(vds)) {
+                        sb.append("is missing networks required by VM nics ").append(Entities.interfacesByNetworkName(getVmNICs())
+                                .keySet());
+                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS;
+                    }
+                    return null;
+                }
+            });
+        }
+    });
+
     private ValidationResult validateHostIsReadyToRun(final VDS vds, StringBuilder sb) {
         // buffer the mismatches as we go
         sb.append(" VDS ").append(vds.getvds_name()).append(" ").append(vds.getId()).append(" ");
 
-        if ((!vds.getvds_group_id().equals(getVm().getvds_group_id())) || (vds.getstatus() != VDSStatus.Up)) {
-            sb.append("is not in up status or belongs to the VM's cluster");
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER);
+        for(HostValidator validator : this.hostValidators) {
+            VdcBllMessages result = validator.validate(vds, sb);
+            if(result != null) {
+                return new ValidationResult(result);
+            }
         }
-        // If Vm in Paused mode - no additional memory allocation needed
-        else if (getVm().getstatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
-            // not enough memory
-            // In case we are using this function in migration we make sure we
-            // don't allocate the same VDS
-            sb.append("has insufficient memory to run the VM");
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY);
-        }
-        // In case we are using this function in migration we make sure we
-            // don't allocate the same VDS
-        else if ((getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(vds.getId()))) {
-            sb.append("is the same host the VM is currently running on");
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
-        }
-        // check capacity to run power clients
-        else if (!RunVmCommandBase.hasCapacityToRunVM(vds)) {
-            sb.append("has insuffient capacity to run power client");
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS);
-        }
-        // if vm has more vCpus then vds physical cpus - dont allow to run
-        else if (vds.getcpu_cores() != null && getVm().getnum_of_cpus() > vds.getcpu_cores()) {
-            sb.append("has less cores(").append(vds.getcpu_cores()).append(") than ").append(getVm().getnum_of_cpus());
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS);
-        }
-        else if (!IsVMSwapValueLegal(vds)) {
-            sb.append("swap value is illegal");
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_SWAP);
-        }
-        else if (!areRequiredNetworksAvailable(vds)) {
-            sb.append("is missing networks required by VM nics ").append(Entities.interfacesByNetworkName(getVmNICs())
-                    .keySet());
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS);
-        }
+
         return ValidationResult.VALID;
     }
 
