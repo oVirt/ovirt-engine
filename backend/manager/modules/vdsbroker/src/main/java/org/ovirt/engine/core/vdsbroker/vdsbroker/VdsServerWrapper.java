@@ -10,6 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterServersListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeOptionsInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -1212,7 +1213,20 @@ public class VdsServerWrapper implements IVdsServer {
     public GlusterVolumesListReturnForXmlRpc glusterVolumesList(Guid clusterId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumesList();
-            GlusterVolumesListReturnForXmlRpc wrapper = new GlusterVolumesListReturnForXmlRpc(clusterId, xmlRpcReturnValue);
+            GlusterVolumesListReturnForXmlRpc wrapper =
+                    new GlusterVolumesListReturnForXmlRpc(clusterId, xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumeProfileInfoReturnForXmlRpc glusterVolumeProfileInfo(Guid clusterId, String volumeName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeProfileInfo(volumeName);
+            GlusterVolumeProfileInfoReturnForXmlRpc wrapper =
+                    new GlusterVolumeProfileInfoReturnForXmlRpc(clusterId, xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);

@@ -343,6 +343,7 @@ public enum VdcBllErrors {
     GlusterVolumeStatusFailed(4157),
     GlusterVolumeProfileStartFailed(4158),
     GlusterVolumeProfileStopFailed(4159),
+    GlusterVolumeProfileInfoFailed(4160),
     GlusterAddHostFailed(4404),
     GlusterHostRemoveFailed(4406),
     GlusterPeerListFailed(4407),
