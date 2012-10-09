@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -20,7 +19,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.put("CREATION_DATE", "CREATION_DATE");
         mVerbs.put("BOOTABLE", "BOOTABLE");
         mVerbs.put("SHAREABLE", "SHAREABLE");
-        mVerbs.put("FORMAT", "FORMAT");
         mVerbs.put("STATUS", "STATUS");
         mVerbs.put("DISK_TYPE", "DISK_TYPE");
         mVerbs.put("NUMBER_OF_VMS", "NUMBER_OF_VMS");
@@ -39,7 +37,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put("CREATION_DATE", Date.class);
         getTypeDictionary().put("BOOTABLE", Boolean.class);
         getTypeDictionary().put("SHAREABLE", Boolean.class);
-        getTypeDictionary().put("FORMAT", VolumeFormat.class);
         getTypeDictionary().put("STATUS", ImageStatus.class);
         getTypeDictionary().put("DISK_TYPE", DiskStorageType.class);
         getTypeDictionary().put("NUMBER_OF_VMS", Integer.class);
@@ -56,7 +53,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mColumnNameDict.put("CREATION_DATE", "creation_date");
         mColumnNameDict.put("BOOTABLE", "boot");
         mColumnNameDict.put("SHAREABLE", "shareable");
-        mColumnNameDict.put("FORMAT", "volume_format");
         mColumnNameDict.put("STATUS", "imageStatus");
         mColumnNameDict.put("DISK_TYPE", "disk_storage_type");
         mColumnNameDict.put("NUMBER_OF_VMS", "number_of_vms");
@@ -83,9 +79,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-        if ("FORMAT".equals(fieldName)) {
-            return new EnumValueAutoCompleter(VolumeFormat.class);
-        } else if ("STATUS".equals(fieldName)) {
+        if ("STATUS".equals(fieldName)) {
             return new EnumValueAutoCompleter(ImageStatus.class);
         } else if ("DISK_TYPE".equals(fieldName)) {
             return new EnumValueAutoCompleter(DiskStorageType.class);
