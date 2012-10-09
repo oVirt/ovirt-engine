@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -806,7 +805,7 @@ public class VdsUpdateRunTimeInfo {
             return;
         }
         AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-        logable.AddCustomValue("VdsStatus", EnumUtils.ConvertToStringWithSpaces(_vds.getstatus().toString()));
+        logable.AddCustomValue("VdsStatus", _vds.getstatus().toString());
         auditLog(logable, AuditLogType.VDS_DETECTED);
     }
 
