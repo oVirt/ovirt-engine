@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -27,21 +27,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.CommandParametersInitializer;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCommand<T> {
 
-    static {
-        CommandParametersInitializer initializer = new CommandParametersInitializer();
-        initializer.AddParameter(VdsStatic.class, "mVds");
-    }
-
-    private static Log log = LogFactory.getLog(UpdateVdsCommand.class);
     private VDS _oldVds;
+    private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList("host_name", "ip", "vds_unique_id", "port", "vds_group_id");
 
     public UpdateVdsCommand(T parameters) {
         super(parameters);
@@ -109,8 +101,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
                 returnValue =
                     returnValue && IsPowerManagementLegal(getParameters().getVdsStaticData(), compatibilityVersion);
             } else {
-                getReturnValue().getCanDoActionMessages()
-                .add(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.toString());
+                addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.toString());
             }
         } else {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
@@ -134,9 +125,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         // if host_name changed and host is spm we need to update irsBroker cache with the new host_name
         if (!Guid.Empty.equals(_oldVds.getstorage_pool_id()) && _oldVds.getspm_status() != VdsSpmStatus.None &&
                 !StringUtils.equals(_oldVds.gethost_name(), getParameters().getVdsStaticData().gethost_name())) {
-            Backend.getInstance()
-            .getResourceManager()
-            .RunVdsCommand(VDSCommandType.UpdateSpmHostName,
+            runVdsCommand(VDSCommandType.UpdateSpmHostName,
                     new UpdateSpmHostNameVDSCommandParameters(_oldVds.getstorage_pool_id(),
                             _oldVds.gethost_name(),
                             getParameters().getVdsStaticData().gethost_name()));
@@ -149,8 +138,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
             tempVar.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             ArrayList<VdcReturnValueBase> resultList = Backend.getInstance().runInternalMultipleActions(
                     VdcActionType.InstallVds,
-                    new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays
-                            .asList(new VdcActionParametersBase[] { tempVar })));
+                    new ArrayList<VdcActionParametersBase>(Arrays
+                            .asList(tempVar)));
 
             // Since Host status is set to "Installing", failure of InstallVdsCommand will hang the Host to in that
             // status, therefore needed to fail the command to revert the status.
@@ -209,16 +198,14 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         });
 
         if (getParameters().getInstallVds()) {
-            Backend.getInstance()
-            .getResourceManager()
-            .RunVdsCommand(VDSCommandType.SetVdsStatus,
+            runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
         }
     }
 
     private boolean NeedToUpdateVdsBroker() {
         return VdsHandler.IsFieldsUpdated(getParameters().getVdsStaticData(), _oldVds.getStaticData(),
-                java.util.Arrays.asList(new String[] { "host_name", "ip", "vds_unique_id", "port", "vds_group_id" }));
+                UPDATE_FIELDS_VDS_BROKER);
     }
 
     @Override

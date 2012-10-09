@@ -45,21 +45,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.utils.CommandParametersInitializer;
 import org.ovirt.engine.core.utils.FileUtil;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
-
-    static {
-        CommandParametersInitializer initializer = new CommandParametersInitializer();
-        initializer.AddParameter(VdsStatic.class, "mVds");
-    }
 
     private VDS upServer;
 
@@ -468,8 +460,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
         return super.getValidationGroups();
     }
-
-    private static Log log = LogFactory.getLog(AddVdsCommand.class);
 
     @Override
     public Map<String, String> getJobMessageProperties() {
