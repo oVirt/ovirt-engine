@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Utility class for list-manipulation.
@@ -78,6 +81,31 @@ public class ListUtils {
         if (elem != null) {
             nullSafeAdd(list, elem);
         }
+    }
+
+    /**
+     * Compares two lists for equality of all their elements. Returns true if both lists are of same size and every
+     * element in first list has an equal in the second.
+     *
+     * @param firstList
+     * @param secondList
+     * @return
+     */
+    public static <T> boolean listsEqual(Collection<T> firstList, Collection<T> secondList) {
+        if(firstList.size() != secondList.size()) {
+            return false;
+        }
+
+        // Use set instead of the passed collection, so that complexity of contains method is o(1),
+        // reducing the overall complexity of the for loop from o(n^2) to o(n)
+        Set<T> second = secondList instanceof Set ? (Set<T>) secondList : new HashSet<T>(secondList);
+        for(T entity : firstList) {
+            if(!second.contains(entity)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

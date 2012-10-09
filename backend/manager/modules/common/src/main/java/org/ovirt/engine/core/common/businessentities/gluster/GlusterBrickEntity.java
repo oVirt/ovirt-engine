@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.AddBrick;
 import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
@@ -126,9 +126,9 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
 
         GlusterBrickEntity brick = (GlusterBrickEntity) obj;
         return (getId().equals(brick.getId())
-                && (GlusterCoreUtil.objectsEqual(volumeId, brick.getVolumeId()))
-                && (GlusterCoreUtil.objectsEqual(serverId, brick.getServerId()))
-                && (GlusterCoreUtil.objectsEqual(brickDirectory, brick.getBrickDirectory()))
+                && (ObjectUtils.objectsEqual(volumeId, brick.getVolumeId()))
+                && (ObjectUtils.objectsEqual(serverId, brick.getServerId()))
+                && (ObjectUtils.objectsEqual(brickDirectory, brick.getBrickDirectory()))
                 && status == brick.getStatus());
     }
 

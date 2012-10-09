@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -50,6 +51,16 @@ public class ListUtilsTest {
         ListUtils.nullSafeAdd(list, "foo");
         Assert.assertEquals(1, list.size());
         Assert.assertTrue(list.contains("foo"));
+    }
+
+    @Test
+    public void testListsEqual() {
+        List<String> lst1 = Arrays.asList("a", "b", "c");
+
+        Assert.assertFalse(ListUtils.listsEqual(lst1, Arrays.asList("a")));
+        Assert.assertFalse(ListUtils.listsEqual(lst1, Arrays.asList("d", "e", "f")));
+        Assert.assertFalse(ListUtils.listsEqual(lst1, Arrays.asList("b", "c", "d")));
+        Assert.assertTrue(ListUtils.listsEqual(lst1, Arrays.asList("c", "b", "a")));
     }
 
 }

@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
+import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateReplicatedVolume;
@@ -381,19 +381,19 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
             return false;
         }
 
-        if (!GlusterCoreUtil.listsEqual(getOptions(), volume.getOptions())) {
+        if (!ListUtils.listsEqual(getOptions(), volume.getOptions())) {
             return false;
         }
 
-        if (!GlusterCoreUtil.listsEqual(accessProtocols, volume.getAccessProtocols())) {
+        if (!ListUtils.listsEqual(accessProtocols, volume.getAccessProtocols())) {
             return false;
         }
 
-        if (!GlusterCoreUtil.listsEqual(transportTypes, volume.getTransportTypes())) {
+        if (!ListUtils.listsEqual(transportTypes, volume.getTransportTypes())) {
             return false;
         }
 
-        if (!GlusterCoreUtil.listsEqual(bricks, volume.getBricks())) {
+        if (!ListUtils.listsEqual(bricks, volume.getBricks())) {
             return false;
         }
 

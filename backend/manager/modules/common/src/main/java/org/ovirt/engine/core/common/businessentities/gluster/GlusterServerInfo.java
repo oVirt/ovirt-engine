@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
-import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterServerInfo {
@@ -61,9 +61,9 @@ public class GlusterServerInfo {
         }
 
         GlusterServerInfo host = (GlusterServerInfo) obj;
-        return (GlusterCoreUtil.objectsEqual(getUuid(), host.getUuid())
-                && (GlusterCoreUtil.objectsEqual(getHostnameOrIp(), host.getHostnameOrIp()))
-                && (GlusterCoreUtil.objectsEqual(getStatus(), host.getStatus())));
+        return (ObjectUtils.objectsEqual(getUuid(), host.getUuid())
+                && (ObjectUtils.objectsEqual(getHostnameOrIp(), host.getHostnameOrIp()))
+                && (ObjectUtils.objectsEqual(getStatus(), host.getStatus())));
     }
 
 }
