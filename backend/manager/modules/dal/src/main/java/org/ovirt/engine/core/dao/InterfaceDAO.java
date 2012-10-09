@@ -104,4 +104,13 @@ public interface InterfaceDAO extends DAO {
      *            the interface
      */
     void removeInterfaceFromVds(Guid id);
+
+    /**
+     * Retrieves the VdsNetworkInterfaces that the given network is attached to.
+     *
+     * @param networkId
+     *            the network
+     * @return the list of VdsNetworkInterfaces
+     */
+    List<VdsNetworkInterface> getVdsInterfacesByNetworkId(Guid networkId);
 }

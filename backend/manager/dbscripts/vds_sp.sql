@@ -845,3 +845,24 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+
+Create or replace FUNCTION GetVdsByNetworkId(v_network_id UUID) RETURNS SETOF vds
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vds
+   WHERE EXISTS (
+      SELECT 1
+      FROM vds_interface
+      INNER JOIN network
+      ON network.name = vds_interface.network_name
+      INNER JOIN network_cluster
+      ON network.id = network_cluster.network_id
+      WHERE network_id = v_network_id
+      AND vds.vds_group_id = network_cluster.cluster_id
+      AND vds_interface.vds_id = vds.vds_id);
+END; $procedure$
+LANGUAGE plpgsql;
+
+

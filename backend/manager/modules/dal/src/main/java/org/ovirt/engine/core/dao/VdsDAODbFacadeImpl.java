@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
@@ -174,6 +175,16 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> listFailedAutorecoverables() {
         return getCallsHandler().executeReadList("GetFailingVdss", VdsRowMapper.instance, null);
+    }
+
+    @Override
+    public List<VDS> getAllForNetwork(Guid networkId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("network_id", networkId);
+
+        return getCallsHandler().executeReadList("GetVdsByNetworkId",
+                VdsRowMapper.instance,
+                parameterSource);
     }
 
     static final class VdsRowMapper implements ParameterizedRowMapper<VDS> {

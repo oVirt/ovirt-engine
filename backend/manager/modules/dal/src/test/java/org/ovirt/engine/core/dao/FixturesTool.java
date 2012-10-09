@@ -200,8 +200,35 @@ public class FixturesTool {
      */
     protected static final Guid EXISTING_DOMAIN_ID_FOR_CONNECTION_ID = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");
 
-    /**
-     * ID of an existing network
+     /** Predefined Network for testing with the following properties :
+     * <ul>
+     * <li>name: engine2</li>
+     * <li>description: Management Network</li>
+     * <li>stp: 0</li>
+     * <li>storage_pool_id: rhel6.iscsi (6d849ebf-755f-4552-ad09-9a090cda105d)</li>
+     * </ul>
      */
-    protected static final Guid EXISTING_NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
+    protected static final Guid NETWORK_ENGINE_2 = new Guid("58d5c1c6-cb15-4832-b2a4-023770607189");
+
+    /**
+     * Predefined Network for testing with the following properties :
+     * <ul>
+     * <li>name: engine</li>
+     * <li>description: Management Network</li>
+     * <li>stp: 0</li>
+     * <li>storage_pool_id: rhel6.iscsi (6d849ebf-755f-4552-ad09-9a090cda105d)</li>
+     * </ul>
+     */
+    protected static final Guid NETWORK_ENGINE = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
+
+    /**
+     * Predefined Network without entries in network_cluster with the following properties :
+     * <ul>
+     * <li>name: engine3</li>
+     * <li>description: Management Network</li>
+     * <li>stp: 0</li>
+     * <li>storage_pool_id: rhel6.iscsi (6d849ebf-755f-4552-ad09-9a090cda105d)</li>
+     * </ul>
+     */
+    protected static final Guid NETWORK_NO_CLUSTERS_ATTACHED = new Guid("58d5c1c6-cb15-4832-b2a4-023770607190");
 }

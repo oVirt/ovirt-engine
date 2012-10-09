@@ -382,6 +382,37 @@ public class VdsDAOTest extends BaseDAOTestCase {
         assertIncorrectGetResult(result);
     }
 
+    /**
+     * Ensures that only the correct vds is fetched.
+     */
+    @Test
+    public void testGetAllForNetwork() {
+        List<VDS> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE_2);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(existingVds, result.get(0));
+    }
+
+    /**
+     * Ensures that no vds is fetched since the network is not assigned to any cluster
+     */
+    @Test
+    public void testGetAllForNetworkEmpty() {
+        List<VDS> result = dao.getAllForNetwork(FixturesTool.NETWORK_NO_CLUSTERS_ATTACHED);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Ensures that the vds with a network with the same name is not fetched.
+     */
+    @Test
+    public void testGetAllForNetworkSameNetworkName() {
+        List<VDS> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
+        assertNotNull(result);
+        assertFalse(result.contains(existingVds));
+    }
+
     private void assertGetAllForStoragePoolCorrectResult(List<VDS> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());

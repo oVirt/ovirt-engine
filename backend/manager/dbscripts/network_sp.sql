@@ -324,6 +324,22 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVdsInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vds_interface_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vds_interface_view.*
+   FROM vds_interface_view
+   INNER JOIN vds
+   ON vds.vds_id = vds_interface_view.vds_id
+   INNER JOIN network_cluster
+   ON network_cluster.cluster_id = vds.vds_group_id
+   INNER JOIN network
+   ON network.id = network_cluster.network_id
+   AND network.name = vds_interface_view.network_name
+   WHERE network.id = v_network_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 ----------------------------------------------------------------
 -- [vm_interface] Table

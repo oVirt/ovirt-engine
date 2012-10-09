@@ -24,9 +24,9 @@ public class NetworkViewDaoTest extends BaseDAOTestCase {
     public void testGetAllWithQuery() {
         List<NetworkView> result =
                 dao.getAllWithQuery(String.format("SELECT * FROM network_view where id = '%s'",
-                        FixturesTool.EXISTING_NETWORK_ID));
+                        FixturesTool.NETWORK_ENGINE));
 
         assertFalse(result.isEmpty());
-        assertEquals(FixturesTool.EXISTING_NETWORK_ID, result.get(0).getNetwork().getId());
+        assertEquals(FixturesTool.NETWORK_ENGINE, result.get(0).getNetwork().getId());
     }
 }
