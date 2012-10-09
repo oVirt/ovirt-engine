@@ -649,7 +649,7 @@ select fn_db_delete_config_value('UseENGINERepositoryRPMs','general');
 select fn_db_delete_config_value('HotPlugSupportedOsList','general');
 select fn_db_delete_config_value('VdsErrorsFileName','general');
 select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
-
+select fn_db_delete_config_value('LogVdsRegistration','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

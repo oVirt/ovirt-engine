@@ -594,9 +594,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientLogDetection(167),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    LogVdsRegistration(168),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
