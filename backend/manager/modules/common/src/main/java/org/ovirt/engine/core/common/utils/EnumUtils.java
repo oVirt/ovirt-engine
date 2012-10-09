@@ -2,10 +2,12 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class EnumUtils {
 
-    private static Map<Class<?>, Map> cacheEnumValuesInCapitalLetters = new HashMap<Class<?>, Map>();
+    private final static ConcurrentMap<Class<?>, Map> cacheEnumValuesInCapitalLetters = new ConcurrentHashMap<Class<?>, Map>();
 
     public static <E extends Enum<E>> E valueOf(Class<E> c, String name, boolean ignorecase) {
         // trim any leading or trailing spaces from the name
@@ -29,7 +31,7 @@ public class EnumUtils {
             for (E e : universe) {
                 map.put(e.name().toUpperCase(), e);
             }
-            cacheEnumValuesInCapitalLetters.put(c, map);
+            cacheEnumValuesInCapitalLetters.putIfAbsent(c, map);
         }
 
         E result = map.get(name.toUpperCase());
