@@ -78,62 +78,70 @@ public class BackendVmsResource extends
 
     @Override
     public Response add(VM vm) {
-        validateParameters(vm, "name", "template.id|name", "cluster.id|name");
+        validateParameters(vm, "name", "cluster.id|name");
         validateEnums(VM.class, vm);
-        Guid templateId = getTemplateId(vm);
-        VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm,
-                                                                    getMapper(VmTemplate.class, VmStatic.class).map(lookupTemplate(templateId), null));
-
-        if (namedCluster(vm)) {
-            staticVm.setvds_group_id(getClusterId(vm));
-        }
-
-        UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(vm.getUsb(), lookupCluster(staticVm.getvds_group_id()));
-        if (usbPolicy != null) {
-            staticVm.setusb_policy(usbPolicy);
-        }
-
-        if (!isFiltered()) {
-            //if the user set the host-name within placement-policy, rather than the host-id (legal) -
-            //resolve the host's ID, because it will be needed down the line
-            if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
-                    && vm.getPlacementPolicy().getHost().isSetName() && !vm.getPlacementPolicy().getHost().isSetId()) {
-                vm.getPlacementPolicy().getHost().setId(getHostId(vm.getPlacementPolicy().getHost().getName()));
-            }
-        } else {
-            vm.setPlacementPolicy(null);
-        }
-
         Response response = null;
-        Guid storageDomainId = ( vm.isSetStorageDomain() && vm.getStorageDomain().isSetId() ) ? asGuid(vm.getStorageDomain().getId()) : Guid.Empty;
-        if (vm.isSetSnapshots() && vm.getSnapshots().getSnapshots() != null
-                && !vm.getSnapshots().getSnapshots().isEmpty()) {
-            // If Vm has snapshots collection - this is a clone vm from snapshot operation
-            String snapshotId = getSnapshotId(vm.getSnapshots());
-            org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getVmConfiguration(snapshotId);
-            getMapper(VM.class, VmStatic.class).map(vm, vmConfiguration.getStaticData());
-            // If vm passed in the call has disks attached on them,
-            // merge their data with the data of the disks on the configuration
-            // The parameters to AddVmFromSnapshot hold an array list of Disks
-            // and not List of Disks, as this is a GWT serialization limitation,
-            // and this parameter class serves GWT clients as well.
-            HashMap<Guid, DiskImage> diskImagesByImageId = getDiskImagesByIdMap(vmConfiguration.getDiskMap().values());
-            if (vm.isSetDisks()) {
-                prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesByImageId);
-            }
-            response =
-                        cloneVmFromSnapshot(vmConfiguration.getStaticData(),
-                                snapshotId,
-                                diskImagesByImageId);
-        } else if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
-            response = cloneVmFromTemplate(staticVm, vm, templateId);
-        } else if (Guid.Empty.equals(templateId)) {
-            response = addVmFromScratch(staticVm, vm, storageDomainId);
+        if (isCreateFromSnapshot(vm)) {
+            response = createVmFromSnapshot(vm);
         } else {
-            response = addVm(staticVm, vm, storageDomainId, templateId);
+            validateParameters(vm, "template.id|name");
+            Guid templateId = getTemplateId(vm);
+            VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm,
+                    getMapper(VmTemplate.class, VmStatic.class).map(lookupTemplate(templateId), null));
+            if (namedCluster(vm)) {
+                staticVm.setvds_group_id(getClusterId(vm));
+            }
+            UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(vm.getUsb(), lookupCluster(staticVm.getvds_group_id()));
+            if (usbPolicy != null) {
+                staticVm.setusb_policy(usbPolicy);
+            }
+            if (!isFiltered()) {
+                // if the user set the host-name within placement-policy, rather than the host-id (legal) -
+                // resolve the host's ID, because it will be needed down the line
+                if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
+                        && vm.getPlacementPolicy().getHost().isSetName()
+                        && !vm.getPlacementPolicy().getHost().isSetId()) {
+                    vm.getPlacementPolicy().getHost().setId(getHostId(vm.getPlacementPolicy().getHost().getName()));
+                }
+            } else {
+                vm.setPlacementPolicy(null);
+            }
+            Guid storageDomainId =
+                    (vm.isSetStorageDomain() && vm.getStorageDomain().isSetId()) ? asGuid(vm.getStorageDomain().getId())
+                            : Guid.Empty;
+            if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
+                response = cloneVmFromTemplate(staticVm, vm, templateId);
+            } else if (Guid.Empty.equals(templateId)) {
+                response = addVmFromScratch(staticVm, vm, storageDomainId);
+            } else {
+                response = addVm(staticVm, vm, storageDomainId, templateId);
+            }
         }
-
         return removeRestrictedInfoFromResponse(response);
+    }
+
+    private boolean isCreateFromSnapshot(VM vm) {
+        return vm.isSetSnapshots() && vm.getSnapshots().getSnapshots() != null
+                && !vm.getSnapshots().getSnapshots().isEmpty();
+    }
+
+    private Response createVmFromSnapshot(VM vm) {
+        // If Vm has snapshots collection - this is a clone vm from snapshot operation
+        String snapshotId = getSnapshotId(vm.getSnapshots());
+        org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getVmConfiguration(snapshotId);
+        getMapper(VM.class, VmStatic.class).map(vm, vmConfiguration.getStaticData());
+        // If vm passed in the call has disks attached on them,
+        // merge their data with the data of the disks on the configuration
+        // The parameters to AddVmFromSnapshot hold an array list of Disks
+        // and not List of Disks, as this is a GWT serialization limitation,
+        // and this parameter class serves GWT clients as well.
+        HashMap<Guid, DiskImage> diskImagesByImageId = getDiskImagesByIdMap(vmConfiguration.getDiskMap().values());
+        if (vm.isSetDisks()) {
+            prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesByImageId);
+        }
+        return cloneVmFromSnapshot(vmConfiguration.getStaticData(),
+                        snapshotId,
+                        diskImagesByImageId);
     }
 
     private Response removeRestrictedInfoFromResponse(Response response) {

@@ -460,11 +460,6 @@ public class BackendVmsResourceTest
     @Test
     public void testCloneVmFromSnapshot() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
-                GetVmTemplateParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[1] },
-                getTemplateEntity(0));
 
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getEntity(0);
         Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> diskImageMap = new HashMap<Guid, org.ovirt.engine.core.common.businessentities.Disk>();
@@ -480,11 +475,6 @@ public class BackendVmsResourceTest
                 new String[] { "SnapshotId" },
                 new Object[] { GUIDS[1] },
                 vmConfiguration);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromSnapshot,
                                   AddVmFromSnapshotParameters.class,
                                   new String[] { "StorageDomainId" },
@@ -498,7 +488,9 @@ public class BackendVmsResourceTest
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
 
-        Response response = collection.add(createModel(createDisksCollection(), createSnapshotsCollection(1)));
+        VM model = createModel(createDisksCollection(), createSnapshotsCollection(1));
+        model.setTemplate(null);
+        Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof VM);
         verifyModel((VM) response.getEntity(), 2);
@@ -756,7 +748,21 @@ public class BackendVmsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "VM", "add", "template.id|name", "cluster.id|name");
+            verifyIncompleteException(wae, "VM", "add", "cluster.id|name");
+        }
+    }
+
+    @Test
+    public void testAddIncompleteParameters2() throws Exception {
+        VM model = createModel(null);
+        model.setTemplate(null);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "VM", "add", "template.id|name");
         }
     }
 
