@@ -146,7 +146,6 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-
 - name: /api/vms/{vm:id}/suspend|rel=suspend
   request:
     body:
@@ -2106,6 +2105,18 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/templates/{template:id}/disks/{disk:id}/copy|rel=copy
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string'}
+        optionalArguments: {action.async: 'xs:boolean'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+      Filter: {value: true|false, required: false}
 - name: /api/templates/{template:id}/nics|rel=get
   request:
     body:

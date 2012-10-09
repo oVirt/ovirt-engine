@@ -41,4 +41,15 @@ public interface TemplateDisksResource extends ReadOnlyDevicesResource<Disk, Dis
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
     @Path("{id}")
     public Response remove(@PathParam("id") String id, Action action);
+
+    /**
+     * Sub-resource locator method, returns individual DeviceResource on which the
+     * remainder of the URI is dispatched.
+     *
+     * @param id  the Device ID
+     * @return    matching subresource if found
+     */
+    @Path("{id}")
+    public TemplateDiskResource getDeviceSubResource(@PathParam("id") String id);
+
 }

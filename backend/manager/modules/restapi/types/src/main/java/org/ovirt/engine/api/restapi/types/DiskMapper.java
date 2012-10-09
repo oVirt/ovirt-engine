@@ -158,12 +158,14 @@ public class DiskMapper {
         }
         model.setSparse(VolumeType.Sparse == entity.getvolume_type());
         if (entity.getstorage_ids() != null && entity.getstorage_ids().size() > 0) {
-            StorageDomain storageDomain = new StorageDomain();
-            storageDomain.setId(entity.getstorage_ids().get(0).toString());
             if (!model.isSetStorageDomains()) {
                 model.setStorageDomains(new StorageDomains());
             }
-            model.getStorageDomains().getStorageDomains().add(storageDomain);
+            for (Guid id : entity.getstorage_ids()){
+                StorageDomain storageDomain = new StorageDomain();
+                storageDomain.setId(id.toString());
+                model.getStorageDomains().getStorageDomains().add(storageDomain);
+            }
         }
         if (entity.getQuotaId()!=null) {
             Quota quota = new Quota();

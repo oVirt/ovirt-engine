@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.expect;
 
 @Ignore
@@ -104,6 +105,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         expect(entity.isShareable()).andReturn(false).anyTimes();
         expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
         expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
+        expect(entity.getImageId()).andReturn(GUIDS[1]).anyTimes();
         return setUpStatisticalEntityExpectations(entity);
     }
 

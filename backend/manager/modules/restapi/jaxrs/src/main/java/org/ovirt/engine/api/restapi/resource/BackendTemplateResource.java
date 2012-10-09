@@ -23,9 +23,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
@@ -68,18 +66,6 @@ public class BackendTemplateResource
         }
 
         return doAction(VdcActionType.ExportVmTemplate, params, action);
-    }
-
-    protected Guid getStorageDomainId(Action action) {
-        if (action.getStorageDomain().isSetId()) {
-            return asGuid(action.getStorageDomain().getId());
-        } else {
-            return lookupStorageDomainIdByName(action.getStorageDomain().getName());
-        }
-    }
-
-    protected Guid lookupStorageDomainIdByName(String name) {
-        return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
     }
 
     @Override

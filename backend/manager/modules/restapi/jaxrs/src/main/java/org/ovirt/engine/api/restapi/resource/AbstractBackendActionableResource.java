@@ -20,6 +20,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -148,5 +150,17 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
 
     private String getPath(UriInfo uriInfo) {
         return LinkHelper.combine(uriInfo.getBaseUri().getPath(), uriInfo.getPath());
+    }
+
+    protected Guid getStorageDomainId(Action action) {
+        if (action.getStorageDomain().isSetId()) {
+            return asGuid(action.getStorageDomain().getId());
+        } else {
+            return lookupStorageDomainIdByName(action.getStorageDomain().getName());
+        }
+    }
+
+    protected Guid lookupStorageDomainIdByName(String name) {
+        return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
     }
 }
