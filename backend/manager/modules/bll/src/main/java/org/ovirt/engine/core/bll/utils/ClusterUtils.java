@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll.utils;
 
 import java.util.List;
 
-import javax.ejb.Singleton;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -11,15 +9,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@Singleton
 public class ClusterUtils {
 
-    private static ClusterUtils instance = null;
+    private static ClusterUtils instance = new ClusterUtils();
 
     public static ClusterUtils getInstance() {
-        if(instance == null) {
-            instance = new ClusterUtils();
-        }
         return instance;
     }
 
