@@ -38,26 +38,22 @@ public class JobWrapper implements Job {
             Map paramsMap = data.getWrappedMap();
             methodName = (String) paramsMap.get(SchedulerUtilQuartzImpl.RUN_METHOD_NAME);
             Object instance = paramsMap.get(SchedulerUtilQuartzImpl.RUNNABLE_INSTANCE);
-            // Class[] methodParamsType =
-            // (Class[])paramsMap.get(SchedulerUtilQuartzImpl.RUN_METHOD_PARAM_TYPE);
             Object[] methodParams = (Object[]) paramsMap.get(SchedulerUtilQuartzImpl.RUN_METHOD_PARAM);
             String methodKey = getMethodKey(instance.getClass().getName(), methodName);
             Method methodToRun = cachedMethods.get(methodKey);
             if (methodToRun == null) {
                 synchronized (cachedMethods) {
-                    if (cachedMethods.containsKey(methodToRun)) {
+                    if (cachedMethods.containsKey(methodKey)) {
                         methodToRun = cachedMethods.get(methodKey);
                     } else {
-                        // methodToRun =
-                        // instance.getClass().getMethod(methodName,methodParamsType);
                         methodToRun = getMethodToRun(instance, methodName);
                         if (methodToRun == null) {
                             log.error("could not find the required method " + methodName + " on instance of "
                                     + instance.getClass().getSimpleName());
                             return;
-                        } else {
-                            cachedMethods.put(methodKey, methodToRun);
                         }
+
+                        cachedMethods.put(methodKey, methodToRun);
                     }
                 }
             }
