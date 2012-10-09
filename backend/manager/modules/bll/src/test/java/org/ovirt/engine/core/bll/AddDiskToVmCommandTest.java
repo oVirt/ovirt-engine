@@ -23,6 +23,8 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -33,11 +35,13 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -73,6 +77,9 @@ public class AddDiskToVmCommandTest {
 
     @Mock
     private VmNetworkInterfaceDAO vmNetworkInterfaceDAO;
+
+    @Mock
+    private DiskLunMapDao diskLunMapDAO;
 
     @Mock
     private VmDAO vmDAO;
@@ -356,6 +363,7 @@ public class AddDiskToVmCommandTest {
         doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDao();
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDAO();
+        doReturn(diskLunMapDAO).when(command).getDiskLunMapDao();
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
@@ -502,6 +510,106 @@ public class AddDiskToVmCommandTest {
         DiskImage image = new DiskImage();
         image.setShareable(true);
         return image;
+    }
+
+    private static LunDisk createISCSILunDisk() {
+        LunDisk disk = new LunDisk();
+        LUNs lun = new LUNs();
+        lun.setLUN_id("lunid");
+        lun.setLunType(StorageType.ISCSI);
+        storage_server_connections connection = new storage_server_connections();
+        connection.setiqn("a");
+        connection.setconnection("0.0.0.0");
+        connection.setport("1234");
+        ArrayList<storage_server_connections> connections = new ArrayList<storage_server_connections>();
+        connections.add(connection);
+        lun.setLunConnections(connections);
+        disk.setLun(lun);
+        return disk;
+    }
+
+    @Test
+    public void testIscsiLunCanBeAdded() {
+        LunDisk disk = createISCSILunDisk();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        initializeCommand(Guid.NewGuid(), parameters);
+        when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun",command.checkIfLunDiskCanBeAdded());
+    }
+
+    @Test
+    public void testUnknownTypeLunCantBeAdded() {
+        LunDisk disk = createISCSILunDisk();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        initializeCommand(Guid.NewGuid(), parameters);
+        disk.getLun().setLunType(StorageType.UNKNOWN);
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for LUN with UNKNOWN type", command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE));
+    }
+
+    @Test
+    public void testIscsiLunDiskWithNoIqnCantBeAdded() {
+        LunDisk disk = createISCSILunDisk();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        initializeCommand(Guid.NewGuid(), parameters);
+        disk.getLun().getLunConnections().get(0).setiqn(null);
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null iqn", command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+
+        clearCanDoActionMessages();
+
+        disk.getLun().getLunConnections().get(0).setiqn("");
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with an empty iqn",command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+    }
+
+    @Test
+    public void testIscsiLunDiskWithNoAddressCantBeAdded() {
+        LunDisk disk = createISCSILunDisk();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        initializeCommand(Guid.NewGuid(), parameters);
+        disk.getLun().getLunConnections().get(0).setconnection(null);
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null address",command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+
+        clearCanDoActionMessages();
+
+        disk.getLun().getLunConnections().get(0).setconnection("");
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty address",command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+    }
+
+    @Test
+    public void testIscsiLunDiskWithNoPortCantBeAdded() {
+        LunDisk disk = createISCSILunDisk();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        initializeCommand(Guid.NewGuid(), parameters);
+        disk.getLun().getLunConnections().get(0).setport(null);
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null port",command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+
+        clearCanDoActionMessages();
+
+        disk.getLun().getLunConnections().get(0).setport("");
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port",command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+    }
+
+    private boolean verifyCanDoActionMessagesContainMessage(VdcBllMessages message) {
+        return command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(message.toString());
+    }
+
+    private void clearCanDoActionMessages(){
+        command.getReturnValue()
+        .getCanDoActionMessages()
+        .clear();
     }
 
     private void mockStorageDomainSpaceChecker(storage_domains domain, boolean succeeded) {
