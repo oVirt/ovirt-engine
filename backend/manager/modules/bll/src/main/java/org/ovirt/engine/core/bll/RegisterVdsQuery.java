@@ -165,7 +165,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     protected void executeQueryCommand() {
         try {
             log.info("Running Command: RegisterVds");
-            ExecuteRegisterVdsCommand();
+            executeRegisterVdsCommand();
         } catch (RuntimeException ex) {
             log.error("RegisterVdsQuery::ExecuteWithoutTransaction: An exception has been thrown.", ex);
         } finally {
@@ -173,7 +173,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         }
     }
 
-    protected void ExecuteRegisterVdsCommand() {
+    protected void executeRegisterVdsCommand() {
         synchronized (doubleRegistrationLock) {
             // force to reload vdss by unique ID used later on
             _vdssByUniqueId = null;
@@ -207,12 +207,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             } else {
                 vdsGroupId = getParameters().getVdsGroupId();
             }
-
-            log.debugFormat(
-                    "RegisterVdsQuery::ExecuteCommand - found vds {0} with existing Unique Id {1}.  Will try to update existing vds",
-                    vdsByUniqueId.getId(),
-                    vdsByUniqueId.getUniqueId());
-
             // TODO: always add in pending state, and if auto approve call
             // approve command action after registration
             RefObject<Boolean> isPending = new RefObject<Boolean>(Boolean.FALSE);
