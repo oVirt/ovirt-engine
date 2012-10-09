@@ -39,9 +39,11 @@ public class QuotaManager {
         return INSTANCE;
     }
 
-    private static QuotaDAO getQuotaDAO() {
-        return DbFacade.getInstance()
-                .getQuotaDao();
+    /**
+     * This method is protected for testing use only
+     */
+    protected QuotaDAO getQuotaDAO() {
+        return DbFacade.getInstance().getQuotaDao();
     }
 
     private AuditLogableBase getLoggableQuotaStorageParams(String quotaName,
@@ -316,9 +318,16 @@ public class QuotaManager {
             return true;
         } finally {
             lock.readLock().unlock();
-            if (logPair.getFirst() != null) {
-                AuditLogDirector.log(logPair.getSecond(), logPair.getFirst());
-            }
+            auditLog(logPair);
+        }
+    }
+
+    /**
+     * This method is protected for testing use only
+     */
+    protected void auditLog(Pair<AuditLogType, AuditLogableBase> logPair) {
+        if (logPair.getFirst() != null) {
+            AuditLogDirector.log(logPair.getSecond(), logPair.getFirst());
         }
     }
 
@@ -567,9 +576,7 @@ public class QuotaManager {
             }
             return true;
         } finally {
-            if (logPair.getFirst() != null) {
-                AuditLogDirector.log(logPair.getSecond(), logPair.getFirst());
-            }
+            auditLog(logPair);
         }
 
     }
