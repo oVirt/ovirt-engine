@@ -159,7 +159,7 @@ public class VdsSelector {
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
             returnValue = canFindVdsToRun(messages, isMigrate,
-                    new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })));
+                    new ArrayList<VDS>(Arrays.asList(target_vds)));
         }
         return returnValue;
     }
