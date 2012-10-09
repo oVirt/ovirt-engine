@@ -318,6 +318,15 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
+      - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string'} #this signature is for direct-LUN disk, which doesn't require size
+        optionalArguments:
+          disk.alias: xs:string
+          disk.sparse: xs:boolean
+          disk.bootable: xs:boolean
+          disk.shareable: xs:boolean
+          disk.propagate_errors: xs:boolean
+          disk.wipe_after_delete: xs:boolean
+          disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
       - mandatoryArguments: {disk.id: 'xs:string'}
         optionalArguments: {disk.active: 'xs:boolean'}
     urlparams: {}
@@ -638,6 +647,15 @@ actions:
           disk.alias: xs:string
           disk.name: xs:string
           disk.size: xs:int #deprecated, replaced by 'provisioned_size'
+          disk.sparse: xs:boolean
+          disk.bootable: xs:boolean
+          disk.shareable: xs:boolean
+          disk.propagate_errors: xs:boolean
+          disk.wipe_after_delete: xs:boolean
+          disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
+      - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string'} #this signature is for direct-LUN disk, which doesn't require size
+        optionalArguments:
+          disk.alias: xs:string
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
