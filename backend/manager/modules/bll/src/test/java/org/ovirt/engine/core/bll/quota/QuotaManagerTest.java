@@ -21,6 +21,7 @@ import org.ovirt.engine.core.utils.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
@@ -85,7 +86,9 @@ public class QuotaManagerTest {
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                auditLogWritten = true;
+                if (((Pair)invocation.getArguments()[0]).getFirst() != null) {
+                    auditLogWritten = true;
+                }
                 return null;
             }
         }).when(quotaManager).auditLog(any(Pair.class));
@@ -149,8 +152,75 @@ public class QuotaManagerTest {
     }
 
     @Test
-    public void testValidateAndSetStorageQuota() throws Exception {
-        //TODO
+    public void testValidateAndSetStorageQuotaGlobalNotExceeded() throws Exception {
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED, DESTINATION_GUID, 1));
+        assertTrue(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogNotWritten();
+    }
+
+    @Test
+    public void testValidateAndSetStorageQuotaGlobalOverThreshold() throws Exception {
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD, DESTINATION_GUID, 1));
+        assertTrue(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetStorageQuotaGlobalInGrace() throws Exception {
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_IN_GRACE, DESTINATION_GUID, 1));
+        assertTrue(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetStorageQuotaGlobalOverGrace() throws Exception {
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_OVER_GRACE, DESTINATION_GUID, 1));
+        assertFalse(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertNotEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetStorageQuotaSpecificNotExceeded() throws Exception {
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED, DESTINATION_GUID, 1));
+        assertTrue(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogNotWritten();
+    }
+
+    @Test
+    public void testValidateAndSetStorageQuotaSpecificOverThreshold() throws Exception {
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD, DESTINATION_GUID, 1));
+        assertTrue(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetStorageQuotaSpecificInGrace() throws Exception {
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_SPECIFIC_IN_GRACE, DESTINATION_GUID, 1));
+        assertTrue(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetStorageQuotaSpecificOverGrace() throws Exception {
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_SPECIFIC_OVER_GRACE, DESTINATION_GUID, 1));
+        assertFalse(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertNotEmptyCanDoActionMessage();
+        assertAuditLogWritten();
     }
 
     @Test
@@ -221,6 +291,8 @@ public class QuotaManagerTest {
         ArrayList<QuotaStorage> quotaStorages = new ArrayList<QuotaStorage>();
         quotaStorages.add(getQuotaStorage(UNLIMITED_STORAGE, 0));
         quotaStorages.add(getQuotaStorage(50, 5));
+        quotaStorages.get(0).setStorageId(Guid.NewGuid());
+        quotaStorages.get(1).setStorageId(Guid.NewGuid());
         quotaStorages.add(getQuotaStorage(storageSize, storageSizeUsed));
         return quotaStorages;
     }
@@ -262,6 +334,7 @@ public class QuotaManagerTest {
      */
     private Quota mockStorageQuotaGlobalOverThreshold() {
         Quota quota = mockBasicQuota();
+        quota.setId(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD);
         quota.setGlobalQuotaStorage(getQuotaStorage(100, 83));
         return quota;
     }
@@ -271,7 +344,7 @@ public class QuotaManagerTest {
      */
     private Quota mockStorageQuotaGlobalInGrace() {
         Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD);
+        quota.setId(STORAGE_QUOTA_GLOBAL_IN_GRACE);
         quota.setGlobalQuotaStorage(getQuotaStorage(100, 104));
         return quota;
     }
