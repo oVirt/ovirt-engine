@@ -598,7 +598,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Type")
     String typeDisk();
 
-    @DefaultStringValue("Allocation")
+    @DefaultStringValue("Allocation Policy")
     String allocationDisk();
 
     @DefaultStringValue("Interface")
@@ -756,9 +756,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Interface")
     String interfaceVmDiskPopup();
-
-    @DefaultStringValue("Format")
-    String formatVmDiskPopup();
 
     @DefaultStringValue("Storage Type")
     String storageTypeVmDiskPopup();

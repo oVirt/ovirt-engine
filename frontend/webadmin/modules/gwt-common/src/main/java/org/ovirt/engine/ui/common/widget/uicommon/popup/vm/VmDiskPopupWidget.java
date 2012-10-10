@@ -228,7 +228,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         hostListEditor.setLabel(constants.hostVmDiskPopup());
         quotaEditor.setLabel(constants.quotaVmDiskPopup());
         interfaceEditor.setLabel(constants.interfaceVmDiskPopup());
-        volumeTypeEditor.setLabel(constants.formatVmDiskPopup());
+        volumeTypeEditor.setLabel(constants.allocationDisk());
         storageTypeEditor.setLabel(constants.storageTypeVmDiskPopup());
         wipeAfterDeleteEditor.setLabel(constants.wipeAfterDeleteVmDiskPopup());
         isBootableEditor.setLabel(constants.isBootableVmDiskPopup());
