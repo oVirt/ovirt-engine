@@ -85,19 +85,23 @@ public class QuotaManagerTest {
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                if (((Pair)invocation.getArguments()[0]).getFirst() != null) {
+                if (((Pair) invocation.getArguments()[0]).getFirst() != null) {
                     auditLogWritten = true;
                 }
                 return null;
             }
         }).when(quotaManager).auditLog(any(Pair.class));
 
-
         setStoragePool();
     }
 
     private void mockQuotaDAO() {
-        when(quotaDAO.getById(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED)).thenReturn(mockStorageQuotaGlobalNotExceeded());
+        doAnswer(new Answer<Quota>() {
+            @Override
+            public Quota answer(InvocationOnMock invocation) throws Throwable {
+                return mockStorageQuotaGlobalNotExceeded();
+            }
+        }).when(quotaDAO).getById(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED);
         when(quotaDAO.getById(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockStorageQuotaGlobalOverThreshold());
         when(quotaDAO.getById(STORAGE_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockStorageQuotaGlobalInGrace());
         when(quotaDAO.getById(STORAGE_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockStorageQuotaGlobalOverGrace());
@@ -106,7 +110,12 @@ public class QuotaManagerTest {
         when(quotaDAO.getById(STORAGE_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockStorageQuotaSpecificInGrace());
         when(quotaDAO.getById(STORAGE_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockStorageQuotaSpecificOverGrace());
 
-        when(quotaDAO.getById(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED)).thenReturn(mockVCPUQuotaGlobalNotExceeded());
+        doAnswer(new Answer<Quota>() {
+            @Override
+            public Quota answer(InvocationOnMock invocation) throws Throwable {
+                return mockVCPUQuotaGlobalNotExceeded();
+            }
+        }).when(quotaDAO).getById(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED);
         when(quotaDAO.getById(VCPU_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockVCPUQuotaGlobalOverThreshold());
         when(quotaDAO.getById(VCPU_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockVCPUQuotaGlobalInGrace());
         when(quotaDAO.getById(VCPU_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockVCPUQuotaGlobalOverGrace());
@@ -119,7 +128,12 @@ public class QuotaManagerTest {
         when(quotaDAO.getById(MEM_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockMemQuotaGlobalOverThreshold());
         when(quotaDAO.getById(MEM_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockMemQuotaGlobalInGrace());
         when(quotaDAO.getById(MEM_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockMemQuotaGlobalOverGrace());
-        when(quotaDAO.getById(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED)).thenReturn(mockMemQuotaSpecificNotExceeded());
+        doAnswer(new Answer<Quota>() {
+            @Override
+            public Quota answer(InvocationOnMock invocation) throws Throwable {
+                return mockMemQuotaSpecificNotExceeded();
+            }
+        }).when(quotaDAO).getById(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED);
         when(quotaDAO.getById(MEM_QUOTA_SPECIFIC_OVER_THRESHOLD)).thenReturn(mockMemQuotaSpecificOverThreshold());
         when(quotaDAO.getById(MEM_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockMemQuotaSpecificInGrace());
         when(quotaDAO.getById(MEM_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockMemQuotaSpecificOverGrace());
@@ -148,6 +162,11 @@ public class QuotaManagerTest {
 
     private void assertAuditLogNotWritten() {
         assertFalse(EXPECTED_NO_AUDIT_LOG_MESSAGE, auditLogWritten);
+    }
+
+    private void assertDbWasCalled() {
+        assertTrue(dbWasCalled);
+        dbWasCalled = false;
     }
 
     @Test
@@ -227,7 +246,6 @@ public class QuotaManagerTest {
     @Test
     public void testDecreaseStorageQuota() throws Exception {
         List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
-        quotaManager.rollbackQuota(STORAGE_QUOTA_GLOBAL_IN_GRACE);
 
         // decrease the quota usage from 104 GB to 96 (our of 100 GB quota)
         parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_IN_GRACE, DESTINATION_GUID, 8));
@@ -375,18 +393,71 @@ public class QuotaManagerTest {
     }
 
     @Test
-    public void testGetQuotaListFromParameters() throws Exception {
-        // TODO
-    }
-
-    @Test
     public void testRollbackQuota() throws Exception {
-        // TODO
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+
+        // ask for a valid consumption (116 out of 120 and 113 out of 120)
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_IN_GRACE, DESTINATION_GUID, 12));
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_SPECIFIC_IN_GRACE, DESTINATION_GUID, 12));
+        quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages);
+        quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID, VCPU_QUOTA_GLOBAL_IN_GRACE,
+                6, 1, canDoActionMessages);
+        quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID, MEM_QUOTA_SPECIFIC_IN_GRACE,
+                1, 300, canDoActionMessages);
+
+        // roll back the consumption
+        List<Guid> quotaList = new ArrayList<Guid>();
+        quotaList.add(STORAGE_QUOTA_GLOBAL_IN_GRACE);
+        quotaList.add(STORAGE_QUOTA_SPECIFIC_IN_GRACE);
+        quotaList.add(VCPU_QUOTA_GLOBAL_IN_GRACE);
+        quotaList.add(MEM_QUOTA_SPECIFIC_IN_GRACE);
+        quotaManager.rollbackQuota(storage_pool, quotaList);
+
+        // reset db
+        when(quotaDAO.getById(STORAGE_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockStorageQuotaGlobalInGrace());
+        when(quotaDAO.getById(STORAGE_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockStorageQuotaSpecificInGrace());
+        when(quotaDAO.getById(VCPU_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockVCPUQuotaGlobalInGrace());
+        when(quotaDAO.getById(MEM_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockMemQuotaSpecificInGrace());
+
+        // ask again for same consumption
+        assertTrue(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID, VCPU_QUOTA_GLOBAL_IN_GRACE,
+                6, 1, canDoActionMessages));
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID, MEM_QUOTA_SPECIFIC_IN_GRACE,
+                1, 300, canDoActionMessages));
     }
 
     @Test
     public void testRemoveQuotaFromCache() throws Exception {
-        // TODO
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+
+        // add 6 quotas to the cache
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED, DESTINATION_GUID, 1));
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED, DESTINATION_GUID, 1));
+        quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages);
+        quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID, VCPU_QUOTA_GLOBAL_NOT_EXCEEDED,
+                1, 1, canDoActionMessages);
+        quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID, MEM_QUOTA_SPECIFIC_NOT_EXCEEDED,
+                1, 1, canDoActionMessages);
+
+        // reset db call flag
+        dbWasCalled = false;
+
+        // remove all 6 quotas from cache
+        quotaManager.removeQuotaFromCache(storage_pool.getId(), STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED);
+        quotaManager.removeQuotaFromCache(storage_pool.getId(), STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED);
+        quotaManager.removeQuotaFromCache(storage_pool.getId(), VCPU_QUOTA_GLOBAL_NOT_EXCEEDED);
+        quotaManager.removeQuotaFromCache(storage_pool.getId(), MEM_QUOTA_SPECIFIC_NOT_EXCEEDED);
+
+        // call same quotas again and make sure db was called for every one of them
+        quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages);
+        assertDbWasCalled();
+        quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID, VCPU_QUOTA_GLOBAL_NOT_EXCEEDED,
+                1, 1, canDoActionMessages);
+        assertDbWasCalled();
+        quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID, MEM_QUOTA_SPECIFIC_NOT_EXCEEDED,
+                1, 1, canDoActionMessages);
+        assertDbWasCalled();
     }
 
     /**
