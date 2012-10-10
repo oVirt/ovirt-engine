@@ -3,11 +3,8 @@ package org.ovirt.engine.core.vdsbroker;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
     public AddVdsVDSCommand(P parameters) {
@@ -16,23 +13,8 @@ public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsI
 
     @Override
     protected void ExecuteVdsIdCommand() {
-        VDS vds = null;
         log.infoFormat("AddVds - entered , starting logic to add VDS {0}", getVdsId());
-        do {
-            vds = TransactionSupport.executeInNewTransaction(new TransactionMethod<VDS>() {
-                @Override
-                public VDS runInTransaction() {
-                    return DbFacade.getInstance().getVdsDao().get(getVdsId());
-                }
-            });
-
-            if (vds == null) {
-                log.infoFormat(
-                        "AddVds - failed to get VDS by Id {0}, it was not yet added, going to sleep for 1.5 sec",
-                        getVdsId());
-                ThreadUtils.sleep(1500);
-            }
-        } while (vds == null);
+        VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
         log.infoFormat("AddVds - VDS {0} was added, will try to add it to the resource manager",
                 getVdsId());
         ResourceManager.getInstance().AddVds(vds, false);
