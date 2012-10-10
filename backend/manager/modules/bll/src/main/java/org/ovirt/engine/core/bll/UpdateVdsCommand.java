@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCommand<T> {
 
     private VDS _oldVds;
@@ -106,19 +107,18 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         } else {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
         }
-
-        if (!returnValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-
-        }
-
         return returnValue;
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+    }
+
+    @Override
     protected void executeCommand() {
-        UpdateVdsData();
+        updateVdsData();
         if (NeedToUpdateVdsBroker()) {
             InitializeVds();
         }
@@ -186,7 +186,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         return getSucceeded() ? AuditLogType.USER_UPDATE_VDS : AuditLogType.USER_FAILED_UPDATE_VDS;
     }
 
-    private void UpdateVdsData() {
+    private void updateVdsData() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
