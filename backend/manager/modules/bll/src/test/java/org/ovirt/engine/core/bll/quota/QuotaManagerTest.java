@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.quota;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -221,19 +222,156 @@ public class QuotaManagerTest {
         assertAuditLogWritten();
     }
 
+    // This method currently act as a rollback. and so the test will not pass.
+    @Ignore
     @Test
     public void testDecreaseStorageQuota() throws Exception {
-        // TODO
+        List<StorageQuotaValidationParameter> parameters = new ArrayList<StorageQuotaValidationParameter>();
+        quotaManager.rollbackQuota(STORAGE_QUOTA_GLOBAL_IN_GRACE);
+
+        // decrease the quota usage from 104 GB to 96 (our of 100 GB quota)
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_IN_GRACE, DESTINATION_GUID, 8));
+        quotaManager.decreaseStorageQuota(storage_pool, parameters);
+        parameters.clear();
+
+        // try to consume 1 GB from the same quota (will reach 97 GB out of 100 GB)
+        parameters.add(new StorageQuotaValidationParameter(STORAGE_QUOTA_GLOBAL_IN_GRACE, DESTINATION_GUID, 1));
+        assertTrue(quotaManager.validateAndSetStorageQuota(storage_pool, parameters, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        parameters.clear();
+        canDoActionMessages.clear();
     }
 
     @Test
-    public void testValidateQuotaForStoragePool() throws Exception {
-        // TODO
+    public void testValidateAndSetClusterQuotaForVCPUGlobalNotExceeded() throws Exception {
+        quotaManager.removeStoragePoolFromCache(storage_pool.getId());
+
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , VCPU_QUOTA_GLOBAL_NOT_EXCEEDED, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuota() throws Exception {
-        // TODO
+    public void testValidateAndSetClusterQuotaForVCPUGlobalOverThreshold() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , VCPU_QUOTA_GLOBAL_OVER_THRESHOLD, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForVCPUGlobalInGrace() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , VCPU_QUOTA_GLOBAL_IN_GRACE, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForVCPUGlobalOverGrace() throws Exception {
+        assertFalse(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , VCPU_QUOTA_GLOBAL_OVER_GRACE, 1, 1, canDoActionMessages));
+        assertNotEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForVCPUSpecificNotExceeded() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , VCPU_QUOTA_SPECIFIC_NOT_EXCEEDED, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogNotWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForVCPUSpecificOverThreshold() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , VCPU_QUOTA_SPECIFIC_OVER_THRESHOLD, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForVCPUSpecificInGrace() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , VCPU_QUOTA_SPECIFIC_IN_GRACE, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForVCPUSpecificOverGrace() throws Exception {
+        assertFalse(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , VCPU_QUOTA_SPECIFIC_OVER_GRACE, 1, 1, canDoActionMessages));
+        assertNotEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForMemGlobalNotExceeded() throws Exception {
+        quotaManager.removeStoragePoolFromCache(storage_pool.getId());
+
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , MEM_QUOTA_GLOBAL_NOT_EXCEEDED, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogNotWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForMemGlobalOverThreshold() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , MEM_QUOTA_GLOBAL_OVER_THRESHOLD, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForMemGlobalInGrace() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , MEM_QUOTA_GLOBAL_IN_GRACE, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForMemGlobalOverGrace() throws Exception {
+        assertFalse(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , MEM_QUOTA_GLOBAL_OVER_GRACE, 1, 1, canDoActionMessages));
+        assertNotEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForMemSpecificNotExceeded() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , MEM_QUOTA_SPECIFIC_NOT_EXCEEDED, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogNotWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForMemSpecificOverThreshold() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , MEM_QUOTA_SPECIFIC_OVER_THRESHOLD, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForMemSpecificInGrace() throws Exception {
+        assertTrue(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , MEM_QUOTA_SPECIFIC_IN_GRACE, 1, 1, canDoActionMessages));
+        assertEmptyCanDoActionMessage();
+        assertAuditLogWritten();
+    }
+
+    @Test
+    public void testValidateAndSetClusterQuotaForMemSpecificOverGrace() throws Exception {
+        assertFalse(quotaManager.validateAndSetClusterQuota(storage_pool, DESTINATION_GUID
+                , MEM_QUOTA_SPECIFIC_OVER_GRACE, 1, 1, canDoActionMessages));
+        assertNotEmptyCanDoActionMessage();
+        assertAuditLogWritten();
     }
 
     @Test
