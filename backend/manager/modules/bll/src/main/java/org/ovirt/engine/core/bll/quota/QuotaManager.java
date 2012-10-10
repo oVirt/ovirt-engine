@@ -276,7 +276,6 @@ public class QuotaManager {
                                         newUsedSpecificStorageSize.get(quotaId).put(storageId,
                                                 quotaStorage.getStorageSizeGBUsage()
                                                         + desiredStorageSizeQuotaMap.get(quotaId).get(storageId));
-                                        break;
                                     }
                                 }
                             }
