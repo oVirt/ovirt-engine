@@ -109,12 +109,14 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 tempVar.setQuotaId(image.getQuotaId());
                 tempVar.setVmSnapshotId(newActiveSnapshotId);
                 tempVar.setEntityId(getParameters().getEntityId());
-                tempVar.setParentCommand(getParameters().getParentCommand() != VdcActionType.Unknown ? getParameters()
-                        .getParentCommand() : VdcActionType.CreateAllSnapshotsFromVm);
+                VdcActionType parentCommand = getParameters().getParentCommand() != VdcActionType.Unknown ? getParameters()
+                        .getParentCommand() : VdcActionType.CreateAllSnapshotsFromVm;
+                tempVar.setParentCommand(parentCommand);
                 ImagesActionsParametersBase p = tempVar;
-                // ParametersCurrentUser = CurrentUser,
                 getParameters().getImagesParameters().add(p);
-                p.setParentParameters(getParameters());
+
+                p.setParentParameters(getParametersForTask(parentCommand, getParameters()));
+
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateSnapshot,
                                 p,
