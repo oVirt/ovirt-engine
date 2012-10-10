@@ -2,9 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
-import org.ovirt.engine.core.compat.Serializable;
 
-public class RunVmOnceParams extends RunVmParams implements INotifyPropertyChanged, Serializable {
+public class RunVmOnceParams extends RunVmParams implements INotifyPropertyChanged {
 
     private static final long serialVersionUID = -4968552684343593622L;
 

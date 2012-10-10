@@ -3,7 +3,7 @@ package org.ovirt.engine.core.compat;
 import java.util.UUID;
 
 // This is a wrapper for a java.util.UUID
-public class Guid extends NGuid implements Serializable {
+public class Guid extends NGuid {
     public static final Guid SYSTEM = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     public static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
 

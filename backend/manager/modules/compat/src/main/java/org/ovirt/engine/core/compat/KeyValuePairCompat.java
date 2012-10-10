@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.compat;
 
+import java.io.Serializable;
+
 public class KeyValuePairCompat<K, V> implements java.util.Map.Entry<K, V>, Serializable {
 
     private static final long serialVersionUID = 3550666497489591122L;
@@ -45,7 +47,6 @@ public class KeyValuePairCompat<K, V> implements java.util.Map.Entry<K, V>, Seri
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

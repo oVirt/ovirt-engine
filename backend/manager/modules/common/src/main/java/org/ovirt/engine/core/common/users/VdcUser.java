@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.users;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Serializable;
 
 public class VdcUser implements IVdcUser, Serializable {
     private static final long serialVersionUID = -5689096270467866486L;

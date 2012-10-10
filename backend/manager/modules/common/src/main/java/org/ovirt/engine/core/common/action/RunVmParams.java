@@ -6,9 +6,8 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.Serializable;
 
-public class RunVmParams extends VmOperationParameterBase implements INotifyPropertyChanged, Serializable {
+public class RunVmParams extends VmOperationParameterBase implements INotifyPropertyChanged {
     private static final long serialVersionUID = 3311307677963231320L;
 
     private BootSequence _bootSequence;

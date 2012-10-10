@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.compat;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 public class NGuid implements Serializable, Comparable<NGuid> {

@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.io.Serializable;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.ovirt.engine.core.compat.Serializable;
 
 @Entity
 @Table(name = "vm_template_image_map")

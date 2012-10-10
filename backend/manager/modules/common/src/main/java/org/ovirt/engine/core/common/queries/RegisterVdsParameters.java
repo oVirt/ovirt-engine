@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
