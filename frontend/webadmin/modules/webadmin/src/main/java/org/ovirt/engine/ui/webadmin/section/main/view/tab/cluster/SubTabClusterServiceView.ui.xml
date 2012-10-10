@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:style>
+	    .button {
+			margin: 5px;
+		}
+		.tablePanel {
+			border: 1px solid #CED8DF;
+		}
+	</ui:style>
+
+	<g:DockLayoutPanel height="100%">
+		<g:north size="50">
+			<g:HorizontalPanel ui:field="filterPanel">
+				<e:ListModelListBoxEditor ui:field="hostEditor" />
+				<e:ListModelListBoxEditor ui:field="serviceTypeEditor" />
+				<w:UiCommandButton ui:field="filterButton" addStyleNames="{style.button}"/>
+				<w:UiCommandButton ui:field="clearButton" addStyleNames="{style.button}"/>
+			</g:HorizontalPanel>
+		</g:north>
+		<g:center>
+			<g:ScrollPanel addStyleNames="{style.tablePanel}">
+				<e:EntityModelCellTable ui:field="servicesTable"/>
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

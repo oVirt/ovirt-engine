@@ -94,6 +94,7 @@ import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
+import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
@@ -1081,6 +1082,22 @@ public final class AsyncDataProvider {
         GlusterServersQueryParameters parameters = new GlusterServersQueryParameters(hostAddress, rootPassword);
         parameters.setFingerprint(fingerprint);
         Frontend.RunQuery(VdcQueryType.GetGlusterServers,
+                parameters,
+                aQuery);
+    }
+
+    public static void GetClusterGlusterServices(AsyncQuery aQuery, Guid clusterId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        // Passing empty values for Volume and Brick to get the services of all the volumes/hosts in the cluster
+        GlusterVolumeAdvancedDetailsParameters parameters =
+                new GlusterVolumeAdvancedDetailsParameters(clusterId, "", "", false); //$NON-NLS-1$ //$NON-NLS-2$
+        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
                 parameters,
                 aQuery);
     }

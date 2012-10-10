@@ -304,6 +304,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Logical Networks")
     String clusterNetworkSubTabLabel();
 
+    @DefaultStringValue("Services")
+    String clusterServiceSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String clusterPermissionSubTabLabel();
 
@@ -1575,6 +1578,28 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Load")
     String loadClusterHost();
+
+    // Cluster service
+    @DefaultStringValue("Host")
+    String hostService();
+
+    @DefaultStringValue("Service")
+    String nameService();
+
+    @DefaultStringValue("Status")
+    String statusService();
+
+    @DefaultStringValue("Port")
+    String portService();
+
+    @DefaultStringValue("Process Id")
+    String pidService();
+
+    @DefaultStringValue("Filter")
+    String filterService();
+
+    @DefaultStringValue("Show All")
+    String showAllService();
 
     // Interface
     @DefaultStringValue("Empty")

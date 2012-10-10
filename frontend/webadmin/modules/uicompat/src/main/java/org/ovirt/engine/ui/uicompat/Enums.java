@@ -343,4 +343,8 @@ public interface Enums extends LocalizedEnums {
     String GlusterStatus___DOWN();
     String TransportType___TCP();
     String TransportType___RDMA();
+
+    String ServiceType___NFS();
+
+    String ServiceType___SHD();
 }

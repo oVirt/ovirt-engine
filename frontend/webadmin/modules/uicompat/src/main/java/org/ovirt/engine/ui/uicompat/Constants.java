@@ -62,6 +62,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("General")
     String generalTitle();
 
+    @DefaultStringValue("Services")
+    String servicesTitle();
+
     @DefaultStringValue("Edit Policy")
     String editPolicyTitle();
 

@@ -293,6 +293,16 @@
 		<include name="common/businessentities/gluster/GlusterVolumeOptionInfo.java"/>
 		<include name="common/businessentities/gluster/AccessProtocol.java"/>
 		<include name="common/businessentities/gluster/GlusterTaskOperation.java"/>
+		<include name="common/businessentities/gluster/GlusterVolumeAdvancedDetails.java"/>
+		<include name="common/businessentities/gluster/ServiceInfo.java"/>
+		<include name="common/businessentities/gluster/BrickDetails.java"/>
+		<include name="common/businessentities/gluster/BrickProperties.java"/>
+		<include name="common/businessentities/gluster/GlusterClientInfo.java"/>
+		<include name="common/businessentities/gluster/GlusterVolumeStatusOption.java"/>
+		<include name="common/businessentities/gluster/MallInfo.java"/>
+		<include name="common/businessentities/gluster/MemoryStatus.java"/>
+		<include name="common/businessentities/gluster/Mempool.java"/>
+		<include name="common/businessentities/gluster/ServiceType.java"/>
 		<include name="common/action/gluster/*.java"/>
 		<include name="common/queries/gluster/*.java"/>
 		<include name="common/constants/gluster/GlusterConstants.java"/>

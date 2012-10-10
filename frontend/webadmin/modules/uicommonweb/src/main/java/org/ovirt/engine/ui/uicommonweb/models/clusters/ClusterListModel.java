@@ -141,6 +141,16 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         privateGuideContext = value;
     }
 
+    private ClusterServiceModel clusterServiceModel;
+
+    public ClusterServiceModel getClusterServiceModel() {
+        return clusterServiceModel;
+    }
+
+    public void setClusterServiceModel(ClusterServiceModel clusterServiceModel) {
+        this.clusterServiceModel = clusterServiceModel;
+    }
+
     public ClusterListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
@@ -196,13 +206,22 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     {
         super.InitDetailModels();
 
+        setClusterServiceModel(new ClusterServiceModel());
+
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new ClusterGeneralModel());
         list.add(new ClusterNetworkListModel());
         list.add(new ClusterHostListModel());
         list.add(new ClusterVmListModel());
+        list.add(getClusterServiceModel());
         list.add(new PermissionListModel());
         setDetailModels(list);
+    }
+
+    @Override
+    protected void UpdateDetailsAvailability() {
+        super.UpdateDetailsAvailability();
+        getClusterServiceModel().setIsAvailable(((VDSGroup) getSelectedItem()).supportsGlusterService());
     }
 
     @Override

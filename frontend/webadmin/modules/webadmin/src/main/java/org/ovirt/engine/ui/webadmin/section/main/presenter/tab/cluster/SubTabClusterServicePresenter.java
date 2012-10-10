@@ -1,12 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
@@ -23,11 +22,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabClusterPermissionPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, PermissionListModel, SubTabClusterPermissionPresenter.ViewDef, SubTabClusterPermissionPresenter.ProxyDef> {
+public class SubTabClusterServicePresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterServiceModel, SubTabClusterServicePresenter.ViewDef, SubTabClusterServicePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.clusterPermissionSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabClusterPermissionPresenter> {
+    @NameToken(ApplicationPlaces.clusterServiceSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabClusterServicePresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDSGroup> {
@@ -35,25 +34,24 @@ public class SubTabClusterPermissionPresenter extends AbstractSubTabPresenter<VD
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterPermissionSubTabLabel(), 5,
-                ginjector.getSubTabClusterPermissionModelProvider());
+        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterServiceSubTabLabel(), 4,
+                ginjector.getSubTabClusterServiceModelProvider());
     }
 
     @Inject
-    public SubTabClusterPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, ClusterListModel, PermissionListModel> modelProvider) {
+    public SubTabClusterServicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, DetailModelProvider<ClusterListModel, ClusterServiceModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, ClusterSubTabPanelPresenter.TYPE_SetTabContent, this);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
         return new PlaceRequest(ApplicationPlaces.clusterMainTabPlace);
+    }
+
+    @Override
+    protected void revealInParent() {
+        RevealContentEvent.fire(this, ClusterSubTabPanelPresenter.TYPE_SetTabContent, this);
     }
 
     @ProxyEvent
