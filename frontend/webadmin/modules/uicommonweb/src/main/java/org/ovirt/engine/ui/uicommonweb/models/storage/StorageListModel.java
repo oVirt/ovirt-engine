@@ -1212,7 +1212,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storageDomain);
         parameter.setVdsId(host.getId());
         parameters.add(parameter);
-        parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId()));
 
         IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
             @Override
@@ -1231,17 +1230,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
                 storageListModel.storageId = (NGuid) vdcReturnValueBase.getActionReturnValue();
-            }
-        };
-
-        IFrontendActionAsyncCallback callback3 = new IFrontendActionAsyncCallback() {
-            @Override
-            public void Executed(FrontendActionAsyncResult result) {
-
-                StorageListModel storageListModel = (StorageListModel) result.getState();
-                StorageModel storageModel = (StorageModel) storageListModel.getWindow();
 
                 // Attach storage to data center as necessary.
+                StorageModel storageModel = (StorageModel) storageListModel.getWindow();
                 storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                     storageListModel.AttachStorageToDataCenter((Guid) storageListModel.storageId, dataCenter.getId());
@@ -1264,7 +1255,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         Frontend.RunMultipleActions(actionTypes,
             parameters,
             new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
-                callback1, callback2, callback3})),
+                        callback1, callback2 })),
             failureCallback,
             this);
     }
