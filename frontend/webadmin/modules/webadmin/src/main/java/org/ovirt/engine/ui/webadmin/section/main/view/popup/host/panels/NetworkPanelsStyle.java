@@ -3,7 +3,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import com.google.gwt.resources.client.CssResource;
 
 public interface NetworkPanelsStyle extends CssResource {
-    String actionButton();
+    String actionButtonNetwork();
+
+    String actionButtonBond();
 
     String bondPanel();
 

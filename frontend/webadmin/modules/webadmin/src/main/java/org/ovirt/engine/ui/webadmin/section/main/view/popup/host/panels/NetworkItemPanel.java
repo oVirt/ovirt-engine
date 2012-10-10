@@ -65,7 +65,6 @@ public abstract class NetworkItemPanel extends DnDPanel {
         });
         actionButton.getDownFace().setImage(new Image(resources.editMouseDown()));
         actionButton.setPixelSize(editImage.getWidth(), editImage.getHeight());
-        actionButton.setStyleName(style.actionButton());
         actionButton.setVisible(false);
 
         this.item = item;

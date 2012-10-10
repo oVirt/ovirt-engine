@@ -17,6 +17,7 @@ public class NetworkPanel extends NetworkItemPanel {
 
     public NetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style) {
         super(item, style, true);
+        actionButton.setStyleName(style.actionButtonNetwork());
         getElement().addClassName(style.networkPanel());
         if (item.isManagement()) {
             getElement().addClassName(style.mgmtNetwork());

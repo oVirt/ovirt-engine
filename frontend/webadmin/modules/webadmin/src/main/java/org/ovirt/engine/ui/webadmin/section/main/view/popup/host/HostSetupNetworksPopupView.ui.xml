@@ -104,8 +104,12 @@
 			background-color: #F6F6F6;
 		}
 
-		.actionButton {
+		.actionButtonNetwork {
 			padding: 8px;
+		}
+
+		.actionButtonBond {
+			padding: 5px 8px;
 		}
 
 		.networkImageBorder {

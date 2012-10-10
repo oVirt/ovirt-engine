@@ -17,6 +17,7 @@ public class BondPanel extends NicPanel {
 
     public BondPanel(BondNetworkInterfaceModel item, NetworkPanelsStyle style) {
         super(item, style, false);
+        actionButton.setStyleName(style.actionButtonBond());
     }
 
     @Override
