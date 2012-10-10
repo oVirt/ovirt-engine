@@ -518,6 +518,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Correlation Id")
     String correltaionIdEvent();
 
+    @DefaultStringValue("Until")
+    String untilEndTime();
+
     // Snapshot
     @DefaultStringValue("Date")
     String dateSnapshot();
