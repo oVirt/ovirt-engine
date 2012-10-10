@@ -51,6 +51,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
+        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
@@ -58,24 +60,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$
-
-        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
-            @Override
-            public String getValue(VM object) {
-                return object.getvds_group_name();
-            }
-        };
-        getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<VM> dcColumn = new TextColumnWithTooltip<VM>() {
-            @Override
-            public String getValue(VM object) {
-                return object.getstorage_pool_name();
-            }
-        };
-        getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -92,6 +76,22 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
         getTable().addColumn(ipColumn, constants.ipVm(), "120px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getvds_group_name();
+            }
+        };
+        getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VM> dcColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getstorage_pool_name();
+            }
+        };
+        getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
 
         PercentColumn<VM> memoryColumn = new PercentColumn<VM>() {
             @Override
