@@ -212,7 +212,7 @@ public class VmBackupModel extends ManageBackupModel {
 
         objectsInSetupMap = new HashMap<Guid, Object>();
         for (Object object : (ArrayList<Object>) importModel.getItems()) {
-            if (importModel.isObjectInSetup(object)) {
+            if (importModel.isObjectInSetup(object) || (Boolean) importModel.getCloneAll().getEntity()) {
                 objectsInSetupMap.put((Guid) ((IVdcQueryable) object).getQueryableId(), object);
             }
         }
@@ -228,7 +228,7 @@ public class VmBackupModel extends ManageBackupModel {
         ImportCloneModel entity = new ImportCloneModel();
         Object object = objectsInSetupMap.values().toArray()[0];
         entity.setEntity(object);
-        entity.setTitle("Import Conflict"); //$NON-NLS-1$
+        entity.setTitle(ConstantsManager.getInstance().getConstants().importConflictTitle());
         entity.setHashName("import_conflict"); //$NON-NLS-1$
         UICommand command = new UICommand("onClone", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -375,7 +375,8 @@ public class VmBackupModel extends ManageBackupModel {
 
             prm.setImageToDestinationDomainMap(map);
 
-            if (importModel.isObjectInSetup(vm)) {
+            if (importModel.isObjectInSetup(vm) ||
+                    (Boolean) importModel.getCloneAll().getEntity()) {
                 if (!cloneObjectMap.containsKey(vm.getId())) {
                     continue;
                 }

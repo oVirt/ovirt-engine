@@ -97,6 +97,10 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @Path(value = "collapseSnapshots.entity")
     EntityModelCheckBoxEditor collapseSnapshotEditor;
 
+    @UiField(provided = true)
+    @Path(value = "cloneAll.entity")
+    EntityModelCheckBoxEditor cloneAllEditor;
+
     @UiField
     SplitLayoutPanel splitLayoutPanel;
 
@@ -166,6 +170,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     private void addStyles() {
         collapseSnapshotEditor.addContentWidgetStyleName(style.collapseEditor());
+        cloneAllEditor.addContentWidgetStyleName(style.collapseEditor());
     }
 
     private void initSubTabLayoutPanel() {
@@ -541,6 +546,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     private void initCheckboxes() {
         collapseSnapshotEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cloneAllEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private void localize(ApplicationConstants constants) {
@@ -548,6 +554,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         destClusterQuotaEditor.setLabel(constants.importVm_destClusterQuota());
         destStorageEditor.setLabel(constants.defaultStorage());
         collapseSnapshotEditor.setLabel(constants.importVm_collapseSnapshots());
+        cloneAllEditor.setLabel(constants.importVm_CloneAll());
     }
 
     @SuppressWarnings("unchecked")

@@ -78,7 +78,10 @@ public class ImportTemplateModel extends ImportVmModel implements IIsObjectInSet
                         for (VmTemplate template : vmtList) {
                             alreadyInSystem.put(template.getId(), template);
                         }
-
+                        if (vmtList.size() == list.size()) {
+                            getCloneAll().setEntity(true);
+                            getCloneAll().setIsChangable(false);
+                        }
                         ImportTemplateModel.super.setSuperItems(value);
                     }
                 }));

@@ -725,6 +725,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Collapse All Snapshots")
     String importVm_collapseSnapshots();
 
+    @DefaultStringValue("Clone All")
+    String importVm_CloneAll();
+
     @DefaultStringValue("Expand All")
     String treeExpandAll();
 
@@ -2216,10 +2219,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clone")
     String clone();
 
-    @DefaultStringValue("There is already a VM(s) with the same name")
+    @DefaultStringValue("Please select a name for the cloned VM(s)")
     String sameVmNameExists();
 
-    @DefaultStringValue("There is already a Template(s) with the same name")
+    @DefaultStringValue("Please select a name for the cloned Template(s)")
     String sameTemplateNameExists();
 
     @DefaultStringValue("[No jobs available]")

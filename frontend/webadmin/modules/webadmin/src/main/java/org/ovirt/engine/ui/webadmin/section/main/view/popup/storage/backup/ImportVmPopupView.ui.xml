@@ -88,6 +88,7 @@
 							<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
 							<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
 						</g:HorizontalPanel>
+						<e:EntityModelCheckBoxEditor ui:field="cloneAllEditor" />
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />

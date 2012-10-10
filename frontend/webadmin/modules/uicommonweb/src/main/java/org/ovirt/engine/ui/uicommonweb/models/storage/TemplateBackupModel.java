@@ -213,7 +213,8 @@ public class TemplateBackupModel extends VmBackupModel
 
             improtVmTemplateParameters.setImageToDestinationDomainMap(map);
 
-            if (importModel.isObjectInSetup(template)) {
+            if (importModel.isObjectInSetup(template) ||
+                    (Boolean) importModel.getCloneAll().getEntity()) {
                 if (!cloneObjectMap.containsKey(template.getId())) {
                     continue;
                 }

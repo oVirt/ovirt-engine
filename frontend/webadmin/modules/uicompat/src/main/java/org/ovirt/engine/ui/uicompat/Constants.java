@@ -1551,4 +1551,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Missing Quota for the selected Cluster, Please define proper Quota")
     String missingQuotaClusterEnforceMode();
+
+    @DefaultStringValue("Import Conflict")
+    String importConflictTitle();
 }

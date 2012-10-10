@@ -64,6 +64,16 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<Guid, List<Disk>>();
     private final Map<Guid, ImportData> diskImportDataMap = new HashMap<Guid, ImportData>();
 
+    private EntityModel cloneAll;
+
+    public EntityModel getCloneAll() {
+        return cloneAll;
+    }
+
+    public void setCloneAll(EntityModel cloneAll) {
+        this.cloneAll = cloneAll;
+    }
+
     public storage_pool getStoragePool() {
         return storagePool;
     }
@@ -173,6 +183,8 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         setCluster(new ListModel());
         setClusterQuota(new ListModel());
         getClusterQuota().setIsAvailable(false);
+        setCloneAll(new EntityModel());
+        getCloneAll().setEntity(false);
     }
 
     public void init(Guid storageDomainId) {
@@ -574,7 +586,10 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                         for (VM vm : vmList) {
                             alreadyInSystemVmMap.put(vm.getId(), vm);
                         }
-
+                        if (vmList.size() == list.size()) {
+                            getCloneAll().setEntity(true);
+                            getCloneAll().setIsChangable(false);
+                        }
                         ImportVmModel.super.setItems(value);
                     }
                 }));
