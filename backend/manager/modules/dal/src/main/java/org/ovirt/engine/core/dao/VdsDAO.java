@@ -158,6 +158,15 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
     List<VDS> getAllForStoragePool(Guid storagePool, Guid userID, boolean isFiltered);
 
     /**
+     * Retrieves all VDS instances by storage pool ID and status.
+     *
+     * @param storagePool The storage pool's ID
+     * @param status The status of vds
+     * @return the list of VDS instances
+     */
+    List<VDS> getAllForStoragePoolAndStatus(Guid storagePool, VDSStatus status);
+
+    /**
      * Retrieves all VDS instances in the given Storage Pool, that are in status "UP"
      * ordered by their vds_spm_priority, not including -1
      * @return the list of VDS instances

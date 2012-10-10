@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,26 +8,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -59,36 +54,15 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         super(commandId);
     }
 
-    public static final String UpVdssInStoragePoolQuery = "HOST: status = UP and DATACENTER = {0}";
     public static final String UpVdssInCluster = "HOST: status = UP and CLUSTER = {0}";
     public static final String DesktopsInStoragePoolQuery = "VMS: DATACENTER = {0}";
 
     public static List<VDS> GetAllRunningVdssInPool(storage_pool pool) {
-        return GetAllRunningVdssInPool(Backend.getInstance(), pool);
-    }
-
-    private static List<VDS> GetAllRunningVdssInPool(BackendInternal backend, storage_pool pool) {
-        List<VDS> returnValue = new ArrayList<VDS>();
-
-        SearchParameters p = new SearchParameters(MessageFormat.format(UpVdssInStoragePoolQuery, pool.getname()),
-                SearchType.VDS);
-        p.setMaxCount(Integer.MAX_VALUE);
-
-        @SuppressWarnings("unchecked")
-        Iterable<IVdcQueryable> fromVds =
-                (Iterable<IVdcQueryable>) (backend.runInternalQuery(VdcQueryType.Search, p).getReturnValue());
-        if (fromVds != null) {
-            for (IVdcQueryable vds : fromVds) {
-                if (vds instanceof VDS) {
-                    returnValue.add((VDS) vds);
-                }
-            }
-        }
-        return returnValue;
+        return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
     }
 
     protected List<VDS> getAllRunningVdssInPool() {
-        return GetAllRunningVdssInPool(getBackend(), getStoragePool());
+        return getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
     }
 
     protected void updateStoragePoolInDiffTransaction() {
@@ -116,12 +90,11 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected boolean InitializeVds() {
         boolean returnValue = true;
         if (getVds() == null) {
-            SearchParameters p = new SearchParameters(MessageFormat.format(UpVdssInStoragePoolQuery, getStoragePool()
-                    .getname()), SearchType.VDS);
-            p.setMaxCount(Integer.MAX_VALUE);
-            Object tempVar = LinqUtils.firstOrNull((List) Backend.getInstance()
-                    .runInternalQuery(VdcQueryType.Search, p).getReturnValue(), new All());
-            setVds(((VDS) ((tempVar instanceof VDS) ? tempVar : null)));
+            VDS tempVar =
+                    LinqUtils.firstOrNull(getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(),
+                            VDSStatus.Up),
+                            new All());
+            setVds(tempVar);
             if (getVds() == null) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);

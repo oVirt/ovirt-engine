@@ -318,6 +318,12 @@ public class VdsDAOTest extends BaseDAOTestCase {
         assertGetAllForVdsGroupCorrectResult(result);
     }
 
+    @Test
+    public void testGetAllForStoragePoolAndStatus() {
+        List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getstorage_pool_id(), existingVds.getstatus());
+        assertCorrectGetAllResult(result);
+    }
+
     private void assertGetAllForVdsGroupCorrectResult(List<VDS> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());

@@ -817,6 +817,19 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Returns all VDS for a given pool and having given status
+CREATE OR REPLACE FUNCTION getVdsByStoragePoolIdWithStatus(v_storage_pool_id UUID, v_status integer) RETURNS SETOF vds
+    AS $procedure$
+BEGIN
+    BEGIN
+        RETURN QUERY SELECT vds.*
+        FROM vds
+        WHERE (status = v_status) AND (storage_pool_id = v_storage_pool_id);
+    END;
+    RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION UpdateVdsDynamicStatus(
         v_vds_guid UUID,
