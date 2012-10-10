@@ -265,7 +265,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Custom Properties")
     String customPropertiesVm();
 
-    @DefaultStringValue("Domain")
+    @DefaultStringValue("Directory Domain")
     String domainVm();
 
     @DefaultStringValue("Time Zone")
@@ -687,7 +687,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Is Stateless")
     String isStatelessTemplateGeneral();
 
-    @DefaultStringValue("Domain")
+    @DefaultStringValue("Directory Domain")
     String domainTemplateGeneral();
 
     @DefaultStringValue("Time Zone")

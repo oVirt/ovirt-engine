@@ -44,14 +44,6 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmTemplate> domainColumn = new TextColumnWithTooltip<VmTemplate>() {
-            @Override
-            public String getValue(VmTemplate object) {
-                return object.getdomain();
-            }
-        };
-        getTable().addColumn(domainColumn, constants.domainTemplate(), "150px"); //$NON-NLS-1$
-
         TextColumnWithTooltip<VmTemplate> creationDateColumn = new GeneralDateTimeColumn<VmTemplate>() {
             @Override
             protected Date getRawValue(VmTemplate object) {
