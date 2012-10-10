@@ -20,8 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -34,7 +32,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ReflectionUtils;
-import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -90,13 +87,8 @@ public class ResourceManager {
             }
         }
         if (allVdsList.size() > 0) {
-            int sleepTimout = Config.<Integer> GetValue(ConfigValues.VdsRefreshRate)
-                    * Config.<Integer> GetValue(ConfigValues.NumberVmRefreshesBeforeSave) * 1000 / allVdsList.size();
             // Populate the VDS dictionary
             for (VDS curVds : allVdsList) {
-                log.debugFormat("Putting thread to sleep for {0} milliseconds before adding VDS {1}, with name {2}",
-                        sleepTimout, curVds.getId(), curVds.getvds_name());
-                ThreadUtils.sleep(sleepTimout);
                 AddVds(curVds, true);
             }
         }
