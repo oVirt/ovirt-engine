@@ -373,6 +373,19 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
         }
     }
 
+    protected abstract class EntityResolver {
+
+        public abstract Object lookupEntity(Guid id) throws BackendFailureException;
+
+        public Object resolve(Guid id) throws BackendFailureException {
+            Object entity = lookupEntity(id);
+            if (entity == null) {
+                throw new EntityNotFoundException(id.toString());
+            }
+            return entity;
+        }
+    }
+
     protected class QueryIdResolver extends EntityIdResolver {
 
         private VdcQueryType query;

@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 
 import javax.ws.rs.WebApplicationException;
@@ -32,6 +33,42 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         super(id, modelType, entityType, subCollections);
     }
 
+    protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType, EntityResolver entityResolver) {
+        awaitGrace(action);
+        try {
+            VdcReturnValueBase actionResult = doAction(task, params);
+            if (actionResult.getHasAsyncTasks()) {
+                if (expectBlocking(action)) {
+                    CreationStatus status = awaitCompletion(actionResult, pollingType);
+                    if (status != CreationStatus.FAILED){
+                        Object model = resolveCreated(actionResult, entityResolver, null);
+                        return actionStatus(status, action, model);
+                    }
+                    return actionStatus(status, action);
+                } else {
+                    return actionAsync(actionResult, action);
+                }
+            } else {
+                Object model = resolveCreated(actionResult, entityResolver, null);
+                return actionSuccess(action, model);
+            }
+        } catch (Exception e) {
+            return handleError(e, action);
+        }
+    }
+
+    protected Object resolveCreated(VdcReturnValueBase result, EntityResolver entityResolver, Class<? extends BaseResource> suggestedParentType) {
+        try {
+            return entityResolver.resolve((Guid)result.getActionReturnValue());
+        } catch (Exception e) {
+            // we tolerate a failure in the entity resolution
+            // as the substantive action (entity creation) has
+            // already succeeded
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType) {
         awaitGrace(action);
         try {
@@ -49,6 +86,21 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         } catch (Exception e) {
             return handleError(e, action);
         }
+    }
+
+    /**
+     * Perform an action, managing asynchrony and returning an appropriate
+     * response with entity returned by backend in action body.
+     *
+     * @param uriInfo  wraps the URI for the current request
+     * @param task     the backend task
+     * @param params   the task parameters
+     * @param action   action representation
+     * @param entityResolver   backend response resolver
+     * @return
+     */
+    protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, EntityResolver entityResolver) {
+        return doAction(task, params, action, PollingType.VDSM_TASKS, entityResolver);
     }
 
     /**
@@ -129,7 +181,36 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         return Response.ok().entity(action).build();
     }
 
+    private Response actionSuccess(Action action, Object result) {
+        setActionItem(action, result);
+        action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
+        return Response.ok().entity(action).build();
+    }
+
+    private void setActionItem(Action action, Object result) {
+        String name = result.getClass().getSimpleName().toLowerCase();
+        for (Method m : action.getClass().getMethods()) {
+            if (m.getName().startsWith("set") && m.getName().replace("set", "").toLowerCase().equals(name)) {
+                try {
+                    m.invoke(action, result);
+                    break;
+                } catch (Exception e) {
+                    // should not happen
+                    LOG.error("Resource to action asignment failure.", e);
+                    e.printStackTrace();
+                    break;
+                }
+            }
+        }
+    }
+
     protected Response actionStatus(CreationStatus status, Action action) {
+        action.setStatus(StatusUtils.create(status));
+        return Response.ok().entity(action).build();
+    }
+
+    protected Response actionStatus(CreationStatus status, Action action, Object result) {
+        setActionItem(action, result);
         action.setStatus(StatusUtils.create(status));
         return Response.ok().entity(action).build();
     }

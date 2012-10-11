@@ -3,29 +3,39 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 import static org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource.SUB_COLLECTION;
 
 public class BackendVmPoolResource
-    extends AbstractBackendSubResource<VmPool, vm_pools>
+    extends AbstractBackendActionableResource<VmPool, vm_pools>
     implements VmPoolResource {
 
     private BackendVmPoolsResource parent;
@@ -117,5 +127,48 @@ public class BackendVmPoolResource
             parameters.setStorageDomainId(getStorageDomainId(vm.getvmt_guid()));
             return parameters;
         }
+    }
+
+    @Override
+    public Response allocatevm(Action action) {
+        return doAction(VdcActionType.AttachUserToVmFromPoolAndRun,
+                        new VmPoolUserParameters(guid,  getCurrent().get(VdcUser.class), false),
+                        action,
+                        new VmQueryIdResolver(VdcQueryType.GetVmByVmId,
+                                              GetVmByVmIdParameters.class));
+
+    }
+
+    protected class VmQueryIdResolver extends EntityResolver {
+
+        private VdcQueryType query;
+        private Class<? extends VdcQueryParametersBase> queryParamsClass;
+
+        public VmQueryIdResolver(VdcQueryType query, Class<? extends VdcQueryParametersBase> queryParamsClass) {
+            this.query = query;
+            this.queryParamsClass = queryParamsClass;
+        }
+
+        public org.ovirt.engine.api.model.VM lookupEntity(Guid id) throws BackendFailureException {
+            VM vm = doGetEntity(VM.class,
+                    query, getQueryParams(queryParamsClass, id), id.toString());
+            org.ovirt.engine.api.model.VM model = new org.ovirt.engine.api.model.VM();
+            model.setId(vm.getId().toString());
+            return LinkHelper.addLinks(getUriInfo(), model);
+        }
+    }
+
+    @Override
+    public CreationResource getCreationSubresource(String ids) {
+        return inject(new BackendCreationResource(ids));
+    }
+
+    @Override
+    public ActionResource getActionSubresource(String action, String ids) {
+        return inject(new BackendActionResource(action, ids));
+    }
+
+    public BackendVmPoolsResource getParent() {
+        return parent;
     }
 }
