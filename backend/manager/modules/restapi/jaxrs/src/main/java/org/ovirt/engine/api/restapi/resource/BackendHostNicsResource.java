@@ -353,7 +353,8 @@ public class BackendHostNicsResource
             ifaces.add(iface);
             if (nic.isSetBonding() && nic.getBonding().isSetSlaves()) {
                 for (HostNIC slave : nic.getBonding().getSlaves().getSlaves()) {
-                    VdsNetworkInterface slaveIface = map(slave, lookupInterface(slave.getId()));
+                    VdsNetworkInterface slaveIface = map(slave, slave.getId() == null
+                            ? lookupInterfaceByName(slave.getName()) : lookupInterface(slave.getId()));
                     slaveIface.setBondName(nic.getName());
                     ifaces.add(slaveIface);
                 }
