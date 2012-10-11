@@ -52,10 +52,6 @@ public class VdsManager {
 
     private static Log log = LogFactory.getLog(VdsManager.class);
 
-    protected VDS getVds() {
-        return _vds;
-    }
-
     protected void setVds(VDS value) {
         _vds = value;
     }
@@ -230,9 +226,9 @@ public class VdsManager {
                         mUnrespondedAttempts.set(0);
                         setLastUpdate();
                     }
-                    if (!getInitialized() && getVds().getstatus() != VDSStatus.NonResponsive
-                            && getVds().getstatus() != VDSStatus.PendingApproval) {
-                        log.info("Initializing Host: " + getVds().getvds_name());
+                    if (!getInitialized() && _vds.getstatus() != VDSStatus.NonResponsive
+                            && _vds.getstatus() != VDSStatus.PendingApproval) {
+                        log.infoFormat("Initializing Host: {0}",  _vds.getvds_name());
                         ResourceManager.getInstance().HandleVdsFinishedInit(_vds.getId());
                         setInitialized(true);
                     }
@@ -510,12 +506,6 @@ public class VdsManager {
             log.infoFormat("Vds {0} moved to Error mode after {1} attemts. Time: {2}", vds.getvds_name(),
                     mFailedToRunVmAttempts, new java.util.Date());
         }
-    }
-
-    public void forceRefreshRunTimeInfo() {
-        // TODO should be solved with a thread pool
-        SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "OnTimer", new Class[0], new Object[0], 0,
-                TimeUnit.MILLISECONDS);
     }
 
     /**

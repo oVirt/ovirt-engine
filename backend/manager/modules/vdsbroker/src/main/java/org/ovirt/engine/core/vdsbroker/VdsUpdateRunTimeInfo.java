@@ -97,7 +97,6 @@ public class VdsUpdateRunTimeInfo {
     private boolean _saveVdsDynamic;
     private VDSStatus _firstStatus = VDSStatus.forValue(0);
     private boolean _saveVdsStatistics;
-    private List<Guid> _vdssToRefresh;
     private VdsManager _vdsManager;
     private MonitoringStrategy monitoringStrategy;
     private VDS _vds;
@@ -839,12 +838,6 @@ public class VdsUpdateRunTimeInfo {
             // setVmStatusDownForVmNotFound();
 
             refreshCommitedMemory();
-            if (_vdssToRefresh != null) {
-                for (Guid vdsToRefreshId : _vdssToRefresh) {
-                    VdsManager vdsm = ResourceManager.getInstance().GetVdsManager(vdsToRefreshId);
-                    vdsm.forceRefreshRunTimeInfo();
-                }
-            }
             // Handle VM devices were changed (for 3.1 cluster and above)
             if (!VmDeviceCommonUtils.isOldClusterVersion(_vds.getvds_group_compatibility_version())) {
                 handleVmDeviceChange();
@@ -1189,11 +1182,7 @@ public class VdsUpdateRunTimeInfo {
         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), curVm.getId());
         switch (curVm.getstatus()) {
         case MigratingFrom: {
-            if (vmDynamic == null || vmDynamic.getExitStatus() == VmExitStatus.Normal) {
-                // type = AuditLogType.VM_MIGRATION_DONE;
-                migratingFromTreatment(curVm);
-            } else {
-                if (curVm.getmigrating_to_vds() != null) {
+                if (vmDynamic != null && vmDynamic.getExitStatus() != VmExitStatus.Normal && curVm.getmigrating_to_vds() != null) {
                     DestroyVmVDSCommand<DestroyVmVDSCommandParameters> destroyCmd =
                             new DestroyVmVDSCommand<DestroyVmVDSCommandParameters>
                             (new DestroyVmVDSCommandParameters(new Guid(curVm.getmigrating_to_vds().toString()),
@@ -1221,7 +1210,6 @@ public class VdsUpdateRunTimeInfo {
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
             }
             break;
-        }
         case PoweredDown: {
             logable.AddCustomValue("VmStatus", "PoweredDown");
             type = AuditLogType.VM_DOWN;
@@ -1232,17 +1220,6 @@ public class VdsUpdateRunTimeInfo {
         }
         if (type != AuditLogType.UNASSIGNED) {
             auditLog(logable, type);
-        }
-    }
-
-    private void migratingFromTreatment(VM curVm) {
-        if (curVm.getmigrating_to_vds() != null) {
-            if (_vdssToRefresh == null) {
-                _vdssToRefresh = new ArrayList<Guid>();
-            }
-            if (!_vdssToRefresh.contains(curVm.getmigrating_to_vds())) {
-                _vdssToRefresh.add(new Guid(curVm.getmigrating_to_vds().toString()));
-            }
         }
     }
 
