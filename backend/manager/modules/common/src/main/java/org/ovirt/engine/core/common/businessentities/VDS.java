@@ -6,13 +6,10 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
+public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic mVdsStatic;
     private VdsDynamic mVdsDynamic;
@@ -315,7 +312,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     public void setvds_group_compatibility_version(Version value) {
         if (Version.OpInequality(vds_group_compatibility_versionField, value)) {
             this.vds_group_compatibility_versionField = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("vds_group_compatibility_version"));
         }
     }
 
@@ -325,7 +321,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setvds_group_id(Guid value) {
         this.mVdsStatic.setvds_group_id(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vds_group_id"));
     }
 
     private String vds_group_nameField;
@@ -336,7 +331,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setvds_group_name(String value) {
         this.vds_group_nameField = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("vds_group_name"));
     }
 
     private String vds_group_descriptionField;
@@ -376,10 +370,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     }
 
     public void setvds_name(String value) {
-        if (!StringHelper.EqOp(this.mVdsStatic.getvds_name(), value)) {
-            this.mVdsStatic.setvds_name(value);
-            OnPropertyChanged(new PropertyChangedEventArgs("vds_name"));
-        }
+        this.mVdsStatic.setvds_name(value);
     }
 
     public String getManagmentIp() {
@@ -404,7 +395,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void sethost_name(String value) {
         this.mVdsStatic.sethost_name(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("host_name"));
     }
 
     public int getport() {
@@ -429,7 +419,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setvds_type(VDSType value) {
         this.mVdsStatic.setvds_type(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vds_type"));
     }
 
     public VDSStatus getstatus() {
@@ -437,39 +426,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     }
 
     public void setstatus(VDSStatus value) {
-        if (this.mVdsDynamic.getstatus() != value) {
-            this.mVdsDynamic.setstatus(value);
-            // TODO: check how to do deal with locks
-            // mLockObj = mLockObj ?? new object();
-            // //lock (mLockObj)
-            // //{
-            // if (((mVdsDynamic.status == VDSStatus.Up) ||
-            // (mVdsDynamic.status == VDSStatus.PreparingForMaintenance)) &&
-            // (value == VDSStatus.NonResponsive) &&
-            // (previous_status != mVdsDynamic.status))
-            // {
-            // previous_status = mVdsDynamic.status;
-            // }
-            // this.mVdsDynamic.status = value;
-            // if (value == VDSStatus.NonResponsive ||
-            // value == VDSStatus.Down ||
-            // value == VDSStatus.Maintenance)
-            // {
-            // this.cpu_sys = 0;
-            // this.cpu_user = 0;
-            // this.cpu_idle = 0;
-            // this.tx_rate = 0;
-            // this.rx_rate = 0;
-            // this.cpu_load = 0;
-            // this.usage_cpu_percent = 0;
-            // this.usage_mem_percent = 0;
-            // this.usage_network_percent = 0;
-
-            // }
-            // //}
-
-            OnPropertyChanged(new PropertyChangedEventArgs("status"));
-        }
+        this.mVdsDynamic.setstatus(value);
     }
 
     public Integer getcpu_cores() {
@@ -591,8 +548,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     public void setmem_commited(Integer value) {
         this.mVdsDynamic.setmem_commited(value);
         calculateFreeVirtualMemory();
-        OnPropertyChanged(new PropertyChangedEventArgs("mem_commited"));
-        OnPropertyChanged(new PropertyChangedEventArgs("mem_commited_percent"));
     }
 
     public Integer getvm_active() {
@@ -601,7 +556,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setvm_active(Integer value) {
         this.mVdsDynamic.setvm_active(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vm_active"));
     }
 
     public int getvm_count() {
@@ -610,7 +564,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setvm_count(int value) {
         this.mVdsDynamic.setvm_count(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vm_count"));
     }
 
     public Integer getvms_cores_count() {
@@ -619,7 +572,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setvms_cores_count(Integer value) {
         this.mVdsDynamic.setvms_cores_count(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vms_cores_count"));
     }
 
     public Integer getvm_migrating() {
@@ -636,7 +588,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setusage_mem_percent(Integer value) {
         this.mVdsStatistics.setusage_mem_percent(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("usage_mem_percent"));
     }
 
     public Integer getusage_cpu_percent() {
@@ -645,7 +596,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setusage_cpu_percent(Integer value) {
         this.mVdsStatistics.setusage_cpu_percent(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("usage_cpu_percent"));
     }
 
     public Integer getusage_network_percent() {
@@ -654,7 +604,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setusage_network_percent(Integer value) {
         this.mVdsStatistics.setusage_network_percent(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("usage_network_percent"));
     }
 
     public Integer getguest_overhead() {
@@ -695,8 +644,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setmem_shared(Long value) {
         this.mVdsStatistics.setmem_shared(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("mem_shared"));
-        OnPropertyChanged(new PropertyChangedEventArgs("mem_shared_percent"));
     }
 
     public Integer getmem_commited_percent() {
@@ -781,7 +728,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setksm_state(Boolean value) {
         this.mVdsStatistics.setksm_state(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("ksm_state"));
     }
 
     public String getsoftware_version() {
@@ -934,7 +880,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setnet_config_dirty(Boolean value) {
         mVdsDynamic.setnet_config_dirty(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("net_config_dirty"));
     }
 
     public String getpm_type() {
@@ -943,7 +888,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setpm_type(String value) {
         mVdsStatic.setpm_type(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("pm_type"));
     }
 
     public String getpm_user() {
@@ -952,7 +896,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setpm_user(String value) {
         mVdsStatic.setpm_user(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("pm_user"));
     }
 
     public String getpm_password() {
@@ -961,7 +904,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setpm_password(String value) {
         mVdsStatic.setpm_password(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("pm_password"));
     }
 
     public Integer getpm_port() {
@@ -970,7 +912,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setpm_port(Integer value) {
         mVdsStatic.setpm_port(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("pm_port"));
     }
 
     public String getpm_options() {
@@ -987,7 +928,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setPmOptionsMap(ValueObjectMap value) {
         mVdsStatic.setPmOptionsMap(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("PmOptionsMap"));
     }
 
     public boolean getpm_enabled() {
@@ -996,7 +936,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setpm_enabled(boolean value) {
         mVdsStatic.setpm_enabled(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("pm_enabled"));
     }
 
     public String gethost_os() {
@@ -1079,9 +1018,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsStatistics = value;
     }
 
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-    }
-
     public java.util.ArrayList<Network> getNetworks() {
         return this.mNetworkList;
     }
@@ -1121,7 +1057,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setVersion(RpmVersion value) {
         mVdsDynamic.setVersion(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("Version"));
     }
 
     public RpmVersion getVersion() {
@@ -1140,7 +1075,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setCpuName(ServerCpu value) {
         _cpuName = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("CpuName"));
     }
 
     private Integer privatevds_spm_id;
@@ -1204,7 +1138,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     public void setspm_status(VdsSpmStatus value) {
         _spm_status = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("spm_status"));
     }
 
     public NonOperationalReason getNonOperationalReason() {
