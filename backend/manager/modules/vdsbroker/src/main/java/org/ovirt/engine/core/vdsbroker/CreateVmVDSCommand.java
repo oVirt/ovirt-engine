@@ -117,7 +117,6 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 getVds().getpending_vmem_size() + getParameters().getVm().getMinAllocatedMem());
         log.infoFormat("IncreasePendingVms::CreateVmIncreasing vds {0} pending vcpu count, now {1}. Vm: {2}", getVds()
                 .getvds_name(), getVds().getpending_vcpus_count(), getParameters().getVm().getvm_name());
-        SaveVdsDynamicToDBThreaded(getVds(), getParameters().getVm());
         _vdsManager.UpdateDynamicData(getVds().getDynamicData());
     }
 
