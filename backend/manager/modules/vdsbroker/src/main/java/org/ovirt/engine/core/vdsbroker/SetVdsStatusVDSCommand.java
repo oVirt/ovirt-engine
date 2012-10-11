@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -27,9 +26,6 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
             _vdsManager.UpdateDynamicData(vds.getDynamicData());
             _vdsManager.UpdateStatisticsData(vds.getStatisticsData());
 
-            // In case the SPM status has changed during execution in the StoragePool table we have to fetch the VDS
-            // (which is a view) again.
-            vds = DbFacade.getInstance().getVdsDao().get(parameters.getVdsId());
             if (vds.getspm_status() != VdsSpmStatus.None && parameters.getStatus() != VDSStatus.Up) {
                 log.infoFormat("SetVdsStatusVDSCommand::VSD {0} is spm and moved from up calling ResetIrs.",
                         vds.getvds_name());
