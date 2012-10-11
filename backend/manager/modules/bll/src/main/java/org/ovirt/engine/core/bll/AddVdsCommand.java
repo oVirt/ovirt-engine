@@ -359,6 +359,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         serverUniqueId = serverUniqueId.trim();
                     }
                     retrunValue = retrunValue && validateHostUniqueId(vds, serverUniqueId);
+                    if(retrunValue) {
+                        vds.setUniqueId(serverUniqueId);
+                    }
                 }
             } finally {
                 try {
