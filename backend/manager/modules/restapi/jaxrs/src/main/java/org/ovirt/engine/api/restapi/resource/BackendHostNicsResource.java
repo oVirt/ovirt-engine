@@ -119,13 +119,26 @@ public class BackendHostNicsResource
         return notFound();
     }
 
+    /**
+     * Look for the interface by ID, and raise an error if the interface was not found.
+     *
+     * @param id
+     *            The ID of the interface to look for.
+     * @return The interface.
+     */
     public VdsNetworkInterface lookupInterface(String id) {
+        VdsNetworkInterface iface = lookupInterfaceById(id);
+
+        return iface == null ? entityNotFound() : iface;
+    }
+
+    private VdsNetworkInterface lookupInterfaceById(String id) {
         for (VdsNetworkInterface iface : getCollection()) {
             if (iface.getId().toString().equals(id)) {
                 return iface;
             }
         }
-        return entityNotFound();
+        return null;
     }
 
     protected VdsNetworkInterface lookupInterfaceByName(String name) {
@@ -354,7 +367,7 @@ public class BackendHostNicsResource
             if (nic.isSetBonding() && nic.getBonding().isSetSlaves()) {
                 for (HostNIC slave : nic.getBonding().getSlaves().getSlaves()) {
                     VdsNetworkInterface slaveIface = map(slave, slave.getId() == null
-                            ? lookupInterfaceByName(slave.getName()) : lookupInterface(slave.getId()));
+                            ? lookupInterfaceByName(slave.getName()) : lookupInterfaceById(slave.getId()));
                     slaveIface.setBondName(nic.getName());
                     ifaces.add(slaveIface);
                 }
