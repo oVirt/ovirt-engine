@@ -108,6 +108,9 @@ public class TemplateMapper {
             if (model.getDisplay().isSetAllowOverride()) {
                 entity.setAllowConsoleReconnect(model.getDisplay().isAllowOverride());
             }
+            if (model.getDisplay().isSetSmartcardEnabled()) {
+                entity.setSmartcardEnabled(model.getDisplay().isSmartcardEnabled());
+            }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
             entity.setdomain(model.getDomain().getName());
@@ -200,6 +203,9 @@ public class TemplateMapper {
             if (model.getDisplay().isSetAllowOverride()) {
                 staticVm.setAllowConsoleReconnect(model.getDisplay().isAllowOverride());
             }
+            if (model.getDisplay().isSmartcardEnabled()) {
+                staticVm.setSmartcardEnabled(model.getDisplay().isSmartcardEnabled());
+            }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
             staticVm.setdomain(model.getDomain().getName());
@@ -267,6 +273,7 @@ public class TemplateMapper {
             model.getDisplay().setType(VmMapper.map(entity.getdefault_display_type(), null));
             model.getDisplay().setMonitors(entity.getnum_of_monitors());
             model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
+            model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
         }
         if (entity.getcreation_date() != null) {
             model.setCreationTime(DateMapper.map(entity.getcreation_date(), null));

@@ -78,6 +78,7 @@ public class VmMapper {
         staticVm.setfail_back(entity.getfail_back());
         staticVm.setauto_startup(entity.getauto_startup());
         staticVm.setis_stateless(entity.getis_stateless());
+        staticVm.setSmartcardEnabled(entity.isSmartcardEnabled());
         staticVm.setauto_startup(entity.getauto_startup());
         staticVm.setdefault_boot_sequence(entity.getdefault_boot_sequence());
         staticVm.setvm_type(entity.getvm_type());
@@ -186,6 +187,9 @@ public class VmMapper {
             }
             if (vm.getDisplay().isSetAllowOverride()) {
                 staticVm.setAllowConsoleReconnect(vm.getDisplay().isAllowOverride());
+            }
+            if (vm.getDisplay().isSetSmartcardEnabled()) {
+                staticVm.setSmartcardEnabled(vm.getDisplay().isSmartcardEnabled());
             }
         }
         if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetAffinity()) {
@@ -323,6 +327,7 @@ public class VmMapper {
             model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort==-1 ? null : displaySecurePort);
             model.getDisplay().setMonitors(entity.getnum_of_monitors());
             model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
+            model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
         }
         model.setType(map(entity.getvm_type(), null));
         model.setStateless(entity.getis_stateless());
