@@ -10,10 +10,12 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
+@NonTransactiveCommandAttribute(forceCompensation=true)
 public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCommandBase<T> {
     public ShutdownVmCommand(T shutdownVmParamsData) {
         super(shutdownVmParamsData);
@@ -26,6 +28,10 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
         } else {
             return getSucceeded() ? AuditLogType.USER_INITIATED_SHUTDOWN_VM : AuditLogType.USER_FAILED_SHUTDOWN_VM;
         }
+    }
+
+    protected ShutdownVmCommand(Guid commandId) {
+        super(commandId);
     }
 
     @Override

@@ -25,6 +25,8 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> implements Quotable {
     private boolean privateSuspendedVm;
@@ -39,6 +41,10 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
 
     private void setSuspendedVm(boolean value) {
         privateSuspendedVm = value;
+    }
+
+    protected StopVmCommandBase(Guid guid) {
+        super(guid);
     }
 
     @Override
@@ -94,16 +100,26 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     private void removeStatelessVmUnmanagedDevices() {
         if (getSucceeded() && (getVm().getis_stateless() ||  isRunOnce())) {
             // remove all unmanaged devices of a stateless VM
-            List<VmDevice> vmDevices =
-                DbFacade.getInstance()
-                        .getVmDeviceDao()
-                        .getUnmanagedDevicesByVmId(getVm().getId());
-            for (VmDevice device : vmDevices) {
-                // do not remove device if appears in white list
-                if (! VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
-                    DbFacade.getInstance().getVmDeviceDao().remove(device.getId());
+
+            final List<VmDevice> vmDevices =
+                    DbFacade.getInstance()
+                            .getVmDeviceDao()
+                            .getUnmanagedDevicesByVmId(getVm().getId());
+
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                    for (VmDevice device : vmDevices) {
+                        // do not remove device if appears in white list
+                        if (! VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
+                            DbFacade.getInstance().getVmDeviceDao().remove(device.getId());
+                        }
+                    }
+                    return null;
                 }
-            }
+
+            });
         }
     }
 
@@ -141,17 +157,27 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         // Check whether stop VM procedure didn't started yet (Status is not imageLocked), by another transaction.
         if (getVm().getstatus() != VMStatus.ImageLocked) {
             // Set the VM to image locked to decrease race condition.
-            getVm().setstatus(VMStatus.ImageLocked);
-            updateVmData(getVm().getDynamicData());
-            if (!StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())
+            updateVmStatus(VMStatus.ImageLocked);
+             if (!StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())
                     && handleHibernatedVm(getActionType(), false)) {
                 returnVal = true;
             } else {
-                getVm().setstatus(vmStatus);
-                updateVmData(getVm().getDynamicData());
+                updateVmStatus(vmStatus);
             }
         }
         return returnVal;
+    }
+
+    private void updateVmStatus(VMStatus newStatus) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                getCompensationContext().snapshotEntityStatus(getVm().getDynamicData(),getVm().getstatus());
+                updateVmData(getVm().getDynamicData());
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
     }
 
     /**
