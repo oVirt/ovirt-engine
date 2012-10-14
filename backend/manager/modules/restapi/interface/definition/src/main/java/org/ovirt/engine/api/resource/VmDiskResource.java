@@ -18,6 +18,7 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,10 +27,11 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
+import org.ovirt.engine.api.model.Disk;
 
 
 @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
-public interface VmDiskResource extends DiskResource {
+public interface VmDiskResource extends DiskResource, DeviceResource<Disk> {
 
     @Path("{action: (activate|deactivate)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
@@ -47,4 +49,9 @@ public interface VmDiskResource extends DiskResource {
     @Path("deactivate")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
     public Response deactivate(Action action);
+
+    @PUT
+    @Formatted
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+    public Disk update(Disk device);
 }

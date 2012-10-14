@@ -6,7 +6,6 @@ import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.NotImplementedException;
 
 public class BackendDiskResource extends AbstractBackendSubResource<Disk, org.ovirt.engine.core.common.businessentities.Disk> implements DiskResource {
 
@@ -24,13 +23,6 @@ public class BackendDiskResource extends AbstractBackendSubResource<Disk, org.ov
         QueryIdResolver resolver = new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class);
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>(entityType, guid, query));
-    }
-
-    @Override
-    public Disk update(Disk disk) {
-          //TODO: implmenet when Backend is ready. Implementation stub:
-//      return performUpdate(this, new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class), ?, ?);
-        throw new NotImplementedException("Pending Backend support");
     }
 
     @Override
