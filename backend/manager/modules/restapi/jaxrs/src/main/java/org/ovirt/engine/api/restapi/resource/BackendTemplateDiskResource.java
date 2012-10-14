@@ -14,13 +14,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>
         implements TemplateDiskResource {
 
-    protected BackendTemplateDisksResource collection;
-
     public BackendTemplateDiskResource(Guid guid,
                                        BackendTemplateDisksResource collection,
                                        String... subCollections) {
         super(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class, guid, collection, subCollections);
-        this.collection = collection;
     }
 
     @Override
