@@ -233,6 +233,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("vm_guid", id));
     }
 
+    @Override
+    public List<VM> getAllForNetwork(Guid id) {
+        return getCallsHandler().executeReadList("GetVmsByNetworkId",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("network_id", id));
+    }
+
     static final class VMRowMapper implements ParameterizedRowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 

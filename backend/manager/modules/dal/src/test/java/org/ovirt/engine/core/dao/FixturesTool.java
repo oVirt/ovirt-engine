@@ -117,9 +117,20 @@ public class FixturesTool {
     /**
      * Predefined VM for testing with the following properties :
      * <ul>
+     * <li>VM name: rhel5-pool-51</li>
+     * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
+     * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
+     * </ul>
+     */
+    protected static final Guid VM_RHEL5_POOL_51 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356");
+
+    /**
+     * Predefined VM for testing with the following properties :
+     * <ul>
      * <li>VM name: rhel5-pool-57</li>
      * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
-     * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li></ul>
+     * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
+     * </ul>
      */
     protected static final Guid VM_RHEL5_POOL_57 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 

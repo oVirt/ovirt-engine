@@ -194,4 +194,12 @@ public interface VmDAO extends DAO {
      */
     void remove(Guid vm);
 
+    /**
+     * Retrieves all VMS that have a Network Interface that the given Network is attached to.
+     *
+     * @param networkId
+     *            the network id
+     * @return the list of VMs
+     */
+    List<VM> getAllForNetwork(Guid networkId);
 }

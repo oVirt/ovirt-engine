@@ -325,6 +325,27 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertNull(after);
     }
 
+    /**
+     * Ensures that only the correct vm is fetched.
+     */
+    @Test
+    public void testGetAllForNetwork() {
+        List<VM> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE_2);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(existingVm, result.get(0));
+    }
+
+    /**
+     * Ensures that no vms are fetched since the network is not assigned to any cluster
+     */
+    @Test
+    public void testGetAllForNetworkEmpty() {
+        List<VM> result = dao.getAllForNetwork(FixturesTool.NETWORK_NO_CLUSTERS_ATTACHED);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
     private static void assertCorrectGetAllResult(List<VM> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
