@@ -15,16 +15,19 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 public class VdsDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
+    private static final Guid EXISTING_VDS_ID_2 = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
     private static final String IP_ADDRESS = "192.168.122.17";
     private VdsDAO dao;
     private VDS existingVds;
+    private VDS existingVds2;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         dao = prepareDAO(dbFacade.getVdsDao());
         existingVds = dao.get(EXISTING_VDS_ID);
+        existingVds2 = dao.get(EXISTING_VDS_ID_2);
     }
 
     /**
@@ -411,6 +414,17 @@ public class VdsDAOTest extends BaseDAOTestCase {
         List<VDS> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
         assertNotNull(result);
         assertFalse(result.contains(existingVds));
+    }
+
+    /**
+     * Ensures that only the correct vds is fetched.
+     */
+    @Test
+    public void testGetAllWithoutNetwork() {
+        List<VDS> result = dao.getAllWithoutNetwork(FixturesTool.NETWORK_ENGINE_2);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(existingVds2, result.get(0));
     }
 
     private void assertGetAllForStoragePoolCorrectResult(List<VDS> result) {

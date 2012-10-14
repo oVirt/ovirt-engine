@@ -189,4 +189,14 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      * @return the list of VDS instances
      */
     List<VDS> getAllForNetwork(Guid networkId);
+
+    /**
+     * Retrieves all VDS instances that the given Network is not attached to, while the Network is assigned to their
+     * Cluster
+     *
+     * @param networkId
+     *            the network
+     * @return the list of VDS instances
+     */
+    List<VDS> getAllWithoutNetwork(Guid networkId);
 }

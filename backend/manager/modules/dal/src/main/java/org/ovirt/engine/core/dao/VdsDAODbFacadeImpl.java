@@ -187,6 +187,16 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                 parameterSource);
     }
 
+    @Override
+    public List<VDS> getAllWithoutNetwork(Guid networkId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("network_id", networkId);
+
+        return getCallsHandler().executeReadList("GetVdsWithoutNetwork",
+                VdsRowMapper.instance,
+                parameterSource);
+    }
+
     static final class VdsRowMapper implements ParameterizedRowMapper<VDS> {
         // single instance
         public final static VdsRowMapper instance = new VdsRowMapper();
