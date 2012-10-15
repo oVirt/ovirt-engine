@@ -617,26 +617,6 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/disks/{disk:id}|rel=update
-  request:
-    body:
-      parameterType: Disk
-      signatures:
-      - mandatoryArguments: {}
-        optionalArguments:
-          size: xs:int #deprecated, replaced by 'provisioned_size'
-          provisioned_size: xs:int
-          disk.interface: xs:string
-          disk.format: xs:string
-          disk.sparse: xs:boolean
-          disk.bootable: xs:boolean
-          disk.shareable: xs:boolean
-          disk.propagate_errors: xs:boolean
-          disk.wipe_after_delete: xs:boolean
-    urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
-      Correlation-Id: {value: 'any string', required: false}
 - name: /api/disks|rel=add
   request:
     body:
