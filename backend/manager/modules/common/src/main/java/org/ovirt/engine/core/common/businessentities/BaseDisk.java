@@ -64,7 +64,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * Should the disk be wiped after it's deleted.
      */
-    private boolean wipeAfterDelete;
+    private Boolean wipeAfterDelete;
 
     /**
      * Should disk errors be propagated to the guest?
@@ -125,7 +125,14 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     public boolean isWipeAfterDelete() {
-        return wipeAfterDelete;
+        if (isWipeAfterDeleteSet()) {
+            return wipeAfterDelete;
+        }
+        return false;
+    }
+
+    public boolean isWipeAfterDeleteSet() {
+        return wipeAfterDelete != null;
     }
 
     public void setWipeAfterDelete(boolean wipeAfterDelete) {
@@ -182,7 +189,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((propagateErrors == null) ? 0 : propagateErrors.hashCode());
         result = prime * result + (shareable ? 1231 : 1237);
-        result = prime * result + (wipeAfterDelete ? 1231 : 1237);
+        result = prime * result + (isWipeAfterDelete() ? 1231 : 1237);
         result = prime * result + (boot ? 1231 : 1237);
         return result;
     }
@@ -217,7 +224,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
             return false;
         if (shareable != other.shareable)
             return false;
-        if (wipeAfterDelete != other.wipeAfterDelete)
+        if (isWipeAfterDelete() != other.isWipeAfterDelete())
             return false;
         if (boot != other.boot)
             return false;

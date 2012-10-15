@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -299,6 +300,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     protected void executeVmCommand() {
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
+        if(!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
+            StorageType storageType = getStorageDomain().getstorage_type();
+            getParameters().getDiskInfo().setWipeAfterDelete(WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(storageType));
+        }
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             createDiskBasedOnImage();
         } else {
