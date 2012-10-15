@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -117,13 +118,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
     public DataCenterNetworkListModel()
     {
         // get management network name
-        AsyncDataProvider.GetManagementNetworkName(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                ENGINE_NETWORK = (String) returnValue;
-                UpdateActionAvailability();
-            }
-        }));
+        ENGINE_NETWORK = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
         setHashName("logical_networks"); //$NON-NLS-1$

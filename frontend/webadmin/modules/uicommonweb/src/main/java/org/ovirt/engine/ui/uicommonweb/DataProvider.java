@@ -485,19 +485,6 @@ public final class DataProvider
         return null;
     }
 
-    public static String GetDefaultExportPath()
-    {
-        VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.ExportDefaultPath, Config.DefaultConfigurationVersion));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return (String) returnValue.getReturnValue();
-        }
-
-        return ""; //$NON-NLS-1$
-    }
-
     public static String GetDefaultImportPath()
     {
         VdcQueryReturnValue returnValue =

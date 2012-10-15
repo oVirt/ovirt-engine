@@ -206,7 +206,7 @@ public class UserPortalLoginModel extends LoginModel
                         if (success)
                         {
                             model.setLoggedUser((VdcUser) returnValue.getActionReturnValue());
-                            model.getLoggedInEvent().raise(this, EventArgs.Empty);
+                            model.raiseLoggedInEvent();
                         }
                         else
                         {

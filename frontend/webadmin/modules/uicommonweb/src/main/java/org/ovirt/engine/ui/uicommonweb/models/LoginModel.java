@@ -308,7 +308,7 @@ public class LoginModel extends Model
                     }
                     else
                     {
-                        loginModel.getLoggedInEvent().raise(this, EventArgs.Empty);
+                        raiseLoggedInEvent();
                     }
                     StopProgress();
                 }
@@ -320,6 +320,17 @@ public class LoginModel extends Model
                 _asyncQuery);
     }
 
+    protected void raiseLoggedInEvent() {
+        // Cache all configurations values before logging-in
+        AsyncDataProvider.CacheConfigValues(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                LoginModel loginModel = (LoginModel) target;
+                loginModel.getLoggedInEvent().raise(this, EventArgs.Empty);
+            }
+        }));
+    }
+
     public void AutoLogin(VdcUser user)
     {
         loggingInAutomatically = true;
@@ -327,7 +338,7 @@ public class LoginModel extends Model
         getDomain().setSelectedItem(user.getDomainControler());
         disableLoginScreen();
         setLoggedUser(user);
-        getLoggedInEvent().raise(this, EventArgs.Empty);
+        raiseLoggedInEvent();
     }
 
     protected void disableLoginScreen() {

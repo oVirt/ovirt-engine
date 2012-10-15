@@ -239,9 +239,9 @@ public class DBConfigUtils extends ConfigUtilsBase {
                 Map<String, Object> defaultValues = new HashMap<String, Object>();
                 defaultValues.put(version, returnValue);
                 _vdcOptionCache.put(option.getoption_name(), defaultValues);
-                log.warn("Adding new value to configuration cache.");
+                log.debug("Adding new value to configuration cache.");
             }
-            log.warnFormat("Didn't find the value of {0} in DB for version {1} - using default: {2}",
+            log.debugFormat("Didn't find the value of {0} in DB for version {1} - using default: {2}",
                     name, version, returnValue);
         }
 

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -331,15 +332,9 @@ public class HostInterfaceListModel extends SearchableListModel
 
     public HostInterfaceListModel()
     {
-
         // get management network name
-        AsyncDataProvider.GetManagementNetworkName(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                ENGINE_NETWORK_NAME = (String) returnValue;
-                UpdateActionAvailability();
-            }
-        }));
+        ENGINE_NETWORK_NAME =
+                (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
         setIsTimerDisabled(true);
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());

@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 public class Version implements Comparable<Version>, Serializable {
     private static final long serialVersionUID = -3938214651005908651L;
@@ -13,6 +15,8 @@ public class Version implements Comparable<Version>, Serializable {
     public static final Version v2_2 = new Version(2, 2);
     public static final Version v3_0 = new Version(3, 0);
     public static final Version v3_1 = new Version(3, 1);
+    public static final Version v3_2 = new Version(3, 2);
+    public static final List<Version> ALL = Arrays.asList(v2_2, v3_0, v3_1, v3_2);
 
 
     public Version(String value) {

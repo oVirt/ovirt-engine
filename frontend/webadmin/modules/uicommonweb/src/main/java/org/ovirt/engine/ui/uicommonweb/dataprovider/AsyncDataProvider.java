@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -34,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
@@ -117,8 +117,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 public final class AsyncDataProvider {
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
-    private static HashMap<Map.Entry<ConfigurationValues, String>, Object> cachedConfigValues =
-            new HashMap<Map.Entry<ConfigurationValues, String>, Object>();
+    private static HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues =
+            new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
+
+    private static HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValuesPreConvert =
+            new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
 
     public static void GetDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
         aQuery.converterCallback = new IAsyncConverter() {
@@ -2109,6 +2112,63 @@ public final class AsyncDataProvider {
     }
 
     /**
+     * Cache configuration values [raw (not converted) values from vdc_options table].
+     */
+    public static void CacheConfigValues(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object returnValue, AsyncQuery _asyncQuery)
+            {
+                if (returnValue != null) {
+                    cachedConfigValuesPreConvert.putAll((HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>) returnValue);
+                }
+                return cachedConfigValuesPreConvert;
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetConfigurationValues, new VdcQueryParametersBase(), aQuery);
+    }
+
+
+    /**
+     * Get configuration value from 'cachedConfigValuesPreConvert'
+     * (raw values from vdc_options table).
+     *
+     * @param version
+     */
+    public static Object GetConfigValuePreConverted(ConfigurationValues configValue, String version) {
+        KeyValuePairCompat<ConfigurationValues, String> key =
+                new KeyValuePairCompat<ConfigurationValues, String>(configValue, version);
+
+        return cachedConfigValuesPreConvert.get(key);
+    }
+
+    /**
+     * Get configuration value from 'cachedConfigValuesPreConvert'
+     * (raw values from vdc_options table).
+     */
+    public static Object GetConfigValuePreConverted(ConfigurationValues configValue) {
+        KeyValuePairCompat<ConfigurationValues, String> key =
+                new KeyValuePairCompat<ConfigurationValues, String>(configValue, Config.DefaultConfigurationVersion);
+
+        return cachedConfigValuesPreConvert.get(key);
+    }
+
+    /**
+     * Get configuration value from using a specified converter.
+     */
+    public static Object GetConfigValue(ConfigurationValues configValue, String version, IAsyncConverter converter) {
+        if (converter == null) {
+            return null;
+        }
+
+        KeyValuePairCompat<ConfigurationValues, String> key =
+                new KeyValuePairCompat<ConfigurationValues, String>(configValue, version);
+
+        return converter.Convert(cachedConfigValuesPreConvert.get(key), null);
+    }
+
+    /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
      * @param aQuery
      *            an async query
@@ -2116,43 +2176,31 @@ public final class AsyncDataProvider {
      *            a converter for the async query
      */
     public static void GetConfigFromCache(GetConfigurationValueParameters parameters, AsyncQuery aQuery) {
-
         // cache key
-        final Map.Entry<ConfigurationValues, String> config_key =
+        final KeyValuePairCompat<ConfigurationValues, String> config_key =
                 new KeyValuePairCompat<ConfigurationValues, String>(parameters.getConfigValue(),
                         parameters.getVersion());
 
+        Object returnValue = null;
+
         if (cachedConfigValues.containsKey(config_key)) {
-            // Cache hit
-            Object cached = cachedConfigValues.get(config_key);
-            // return result
-            if (cached != null) {
-                aQuery.asyncCallback.OnSuccess(aQuery.getModel(), cached);
-                return;
+            // cache hit
+            returnValue = cachedConfigValues.get(config_key);
+        }
+        // cache miss: convert configuration value using query's converter
+        // and call asyncCallback's OnSuccess
+        else if (cachedConfigValuesPreConvert.containsKey(config_key)) {
+            returnValue = cachedConfigValuesPreConvert.get(config_key);
+
+            // run converter
+            if (aQuery.converterCallback != null) {
+                returnValue = aQuery.converterCallback.Convert(returnValue, aQuery);
+            }
+            if (returnValue != null) {
+                cachedConfigValues.put(config_key, returnValue);
             }
         }
-
-        // save original converter
-        final IAsyncConverter origConverter = aQuery.converterCallback;
-
-        // Cache miss: run the query and replace the converter to cache the results
-        aQuery.converterCallback = new IAsyncConverter() {
-
-            @Override
-            public Object Convert(Object returnValue, AsyncQuery asyncQuery) {
-                // run original converter
-                if (origConverter != null) {
-                    returnValue = origConverter.Convert(returnValue, asyncQuery);
-                }
-                if (returnValue != null) {
-                    cachedConfigValues.put(config_key, returnValue);
-                }
-                return returnValue;
-            }
-        };
-
-        // run query
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValue, parameters, aQuery);
+        aQuery.asyncCallback.OnSuccess(aQuery.getModel(), returnValue);
     }
 
     /**
