@@ -288,7 +288,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         storage_domains newMaster = null;
         if (getStoragePool() != null) {
             List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
-            Collections.sort(storageDomains, new LastTimeUsedAsMasterComp());
+            Collections.sort(storageDomains, LastTimeUsedAsMasterComp.instance);
             if (storageDomains.size() > 0) {
                 storage_domains storageDomain = getStorageDomain();
                 for (storage_domains dbStorageDomain : storageDomains) {
@@ -372,6 +372,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     private static final class LastTimeUsedAsMasterComp implements Comparator<storage_domains> {
+        public static final LastTimeUsedAsMasterComp instance = new LastTimeUsedAsMasterComp();
+
         @Override
         public int compare(storage_domains o1, storage_domains o2) {
             // TODO: When moving to JDK7 - this can be replaced with
