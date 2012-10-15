@@ -769,7 +769,6 @@ def backupDB(db, user, backupFile, host="localhost", port="5432"):
         basedefs.EXEC_PGDUMP,
         "-C", "-E",
         "UTF8",
-        "--column-inserts",
         "--disable-dollar-quoting",
         "--disable-triggers",
         "--format=p",

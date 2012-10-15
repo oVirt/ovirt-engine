@@ -340,14 +340,12 @@ class DB():
             print "* %s %s" % (MSG_INFO_DB_BACKUP_FILE, self.sqlfile)
 
     def backup(self):
-        # pg_dump -C -E UTF8  --column-inserts --disable-dollar-quoting  --disable-triggers -U postgres -h host -p port --format=p -f $dir/$file  ovirt-engine
         logging.debug("DB Backup started")
         #cmd = "%s -C -E UTF8 --column-inserts --disable-dollar-quoting  --disable-triggers -U %s -h %s -p %s --format=p -f %s %s"\
             #%(basedefs.EXEC_PGDUMP, SERVER_ADMIN, SERVER_HOST, SERVER_PORT, self.sqlfile, basedefs.DB_NAME)
         cmd = [
             basedefs.EXEC_PGDUMP,
             "-C", "-E", "UTF8",
-            "--column-inserts",
             "--disable-dollar-quoting",
             "--disable-triggers",
             "-U", SERVER_ADMIN,

@@ -284,7 +284,6 @@ class DB():
         cmd = [
             basedefs.EXEC_PGDUMP,
             "-C", "-E", "UTF8",
-            "--column-inserts",
             "--disable-dollar-quoting",
             "--disable-triggers",
             "-U", DB_ADMIN,
