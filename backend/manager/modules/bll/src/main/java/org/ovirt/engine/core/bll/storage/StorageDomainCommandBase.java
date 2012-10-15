@@ -1,20 +1,14 @@
 package org.ovirt.engine.core.bll.storage;
 
-import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -30,7 +24,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -230,19 +223,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             }
             getStorageDomain().setstatus(status);
             getStoragePoolIsoMapDAO().updateStatus(map.getId(), status);
-        }
-    }
-
-    protected void refreshAllVdssInPool(boolean connect) {
-        List<Guid> vdsIdsToSetNonOperational = new ArrayList<Guid>();
-        runSynchronizeOperation(new RefreshPoolSingleAsyncOperationFactory(), vdsIdsToSetNonOperational);
-        for (Guid vdsId : vdsIdsToSetNonOperational) {
-            SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vdsId,
-                    STORAGE_DOMAIN_UNREACHABLE);
-            tempVar.setSaveToDb(true);
-            tempVar.setStorageDomainId(getStorageDomain().getId());
-            tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            getBackend().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar, ExecutionHandler.createInternalJobContext());
         }
     }
 

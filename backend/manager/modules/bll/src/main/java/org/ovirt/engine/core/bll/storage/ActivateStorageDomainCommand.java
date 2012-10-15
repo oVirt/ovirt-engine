@@ -1,14 +1,21 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -18,6 +25,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -68,7 +76,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                 new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain().getId()));
         log.infoFormat("ActivateStorage Domain. After Connect all hosts to pool. Time:{0}", new Date());
 
-        refreshAllVdssInPool(false);
+        refreshAllVdssInPool();
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -88,6 +96,21 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                     getStoragePool().getId());
         }
         setSucceeded(true);
+    }
+
+    private void refreshAllVdssInPool() {
+        List<Guid> vdsIdsToSetNonOperational = new ArrayList<Guid>();
+        runSynchronizeOperation(new RefreshPoolSingleAsyncOperationFactory(), vdsIdsToSetNonOperational);
+        for (Guid vdsId : vdsIdsToSetNonOperational) {
+            SetNonOperationalVdsParameters tempVar =
+                    new SetNonOperationalVdsParameters(vdsId, STORAGE_DOMAIN_UNREACHABLE);
+            tempVar.setSaveToDb(true);
+            tempVar.setStorageDomainId(getStorageDomain().getId());
+            tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+            getBackend().runInternalAction(VdcActionType.SetNonOperationalVds,
+                    tempVar,
+                    ExecutionHandler.createInternalJobContext());
+        }
     }
 
     @Override
