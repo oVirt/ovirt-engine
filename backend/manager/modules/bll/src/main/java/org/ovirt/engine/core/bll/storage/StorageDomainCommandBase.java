@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -232,7 +233,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected void refreshAllVdssInPool(boolean connect) {
-        java.util.ArrayList<Guid> vdsIdsToSetNonOperational = new java.util.ArrayList<Guid>();
+        List<Guid> vdsIdsToSetNonOperational = new ArrayList<Guid>();
         runSynchronizeOperation(new RefreshPoolSingleAsyncOperationFactory(), vdsIdsToSetNonOperational);
         for (Guid vdsId : vdsIdsToSetNonOperational) {
             SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vdsId,
