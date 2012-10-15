@@ -74,7 +74,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected boolean canDoAction() {
-        if (!(CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {
+        if (!(checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {
             return false;
         }
 

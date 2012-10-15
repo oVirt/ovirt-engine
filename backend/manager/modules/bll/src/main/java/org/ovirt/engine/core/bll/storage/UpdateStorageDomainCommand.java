@@ -27,8 +27,8 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     @Override
     protected boolean canDoAction() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        boolean returnValue = super.canDoAction() && CheckStorageDomain()
-                && checkStorageDomainStatus(StorageDomainStatus.Active) && CheckStorageDomainNameLengthValid();
+        boolean returnValue = super.canDoAction() && checkStorageDomain()
+                && checkStorageDomainStatus(StorageDomainStatus.Active) && checkStorageDomainNameLengthValid();
         storage_domain_static oldDomain =
                 DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId());
 

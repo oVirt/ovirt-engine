@@ -76,7 +76,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                             return null;
                         }
                     });
-                    ConnectAllHostsToPool();
+                    connectAllHostsToPool();
                     runVdsCommand(VDSCommandType.AttachStorageDomain,
                             new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                                     getParameters().getStorageDomainId()));
@@ -125,7 +125,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
         // which is not attached.
         boolean returnValue =
                 checkStoragePool()
-                        && InitializeVds() && CheckStorageDomain() && checkDomainCanBeAttached(getStorageDomain());
+                        && InitializeVds() && checkStorageDomain() && checkDomainCanBeAttached(getStorageDomain());
 
         if (returnValue && getStoragePool().getstatus() == StoragePoolStatus.Uninitialized
                 && getStorageDomain().getstorage_domain_type() != StorageDomainType.Data) {
@@ -133,7 +133,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
         }
         if (returnValue && getStoragePool().getstatus() != StoragePoolStatus.Uninitialized) {
-            returnValue = CheckMasterDomainIsUp();
+            returnValue = checkMasterDomainIsUp();
         }
         return returnValue;
     }

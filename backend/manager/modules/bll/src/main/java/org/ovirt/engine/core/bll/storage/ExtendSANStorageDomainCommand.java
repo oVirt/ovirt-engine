@@ -23,7 +23,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
 
     @Override
     protected void executeCommand() {
-        SetStorageDomainStatus(StorageDomainStatus.Locked, null);
+        setStorageDomainStatus(StorageDomainStatus.Locked, null);
         for (LUNs lun : getParameters().getLunsList()) {
             proceedLUNInDb(lun, getStorageDomain().getstorage_type());
         }
@@ -34,7 +34,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                         VDSCommandType.ExtendStorageDomain,
                         new ExtendStorageDomainVDSCommandParameters(getStoragePoolId().getValue(), getStorageDomain()
                                 .getId(), getParameters().getLunIds())).getSucceeded()) {
-            SetStorageDomainStatus(StorageDomainStatus.Active, null);
+            setStorageDomainStatus(StorageDomainStatus.Active, null);
             setSucceeded(true);
         }
     }
@@ -44,7 +44,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
     protected boolean canDoAction() {
         super.canDoAction();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXTEND);
-        boolean returnValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active);
+        boolean returnValue = checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active);
         if (returnValue
                 && (getStorageDomain().getstorage_type() == StorageType.NFS || getStorageDomain().getstorage_type() == StorageType.UNKNOWN)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);

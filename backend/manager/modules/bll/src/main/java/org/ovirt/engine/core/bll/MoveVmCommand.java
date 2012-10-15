@@ -123,7 +123,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     }
 
     protected boolean checkTemplateInStorageDomain(List<DiskImage> diskImages) {
-        boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
+        boolean retValue = checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
                 && checkIfDisksExist(diskImages);
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())) {
             List<DiskImage> imageList =

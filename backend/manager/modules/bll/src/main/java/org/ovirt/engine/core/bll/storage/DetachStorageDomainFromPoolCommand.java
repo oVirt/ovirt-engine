@@ -40,7 +40,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         changeStorageDomainStatusInTransaction(getStorageDomain().getStoragePoolIsoMapData(),
                 StorageDomainStatus.Locked);
         log.info(" Detach storage domain: before connect");
-        ConnectAllHostsToPool();
+        connectAllHostsToPool();
 
         log.info(" Detach storage domain: after connect");
 
@@ -50,7 +50,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                         getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
                                 .getmaster_domain_version()));
         log.info(" Detach storage domain: after detach in vds");
-        DiconnectAllHostsInPool();
+        diconnectAllHostsInPool();
 
         log.info(" Detach storage domain: after disconnect storage");
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {

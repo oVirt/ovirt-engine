@@ -46,9 +46,9 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         boolean returnValue = checkStoragePool()
                 && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
                                                   VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
-                && CheckStorageDomain()
+                && checkStorageDomain()
                 && storageDomainStatusIsValid()
-                && (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master || CheckMasterDomainIsUp());
+                && (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master || checkMasterDomainIsUp());
         return returnValue;
     }
 
@@ -63,12 +63,12 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         freeLock();
 
         log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new Date());
-        ConnectAllHostsToPool();
+        connectAllHostsToPool();
         runVdsCommand(VDSCommandType.ActivateStorageDomain,
                 new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain().getId()));
         log.infoFormat("ActivateStorage Domain. After Connect all hosts to pool. Time:{0}", new Date());
 
-        RefreshAllVdssInPool(false);
+        refreshAllVdssInPool(false);
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {

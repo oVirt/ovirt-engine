@@ -79,7 +79,7 @@ public class StorageDomainCommandBaseTest {
     @Test
     public void checkStorageDomainNotEqualWithStatusActive() {
         setStorageDomainStatus(StorageDomainStatus.Active);
-        assertFalse(cmd.CheckStorageDomainStatusNotEqual(StorageDomainStatus.Active));
+        assertFalse(cmd.checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
         List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
         assertEquals(messages.size(), 2);
         assertEquals(messages.get(0), VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
@@ -89,7 +89,7 @@ public class StorageDomainCommandBaseTest {
     @Test
     public void checkStorageDomainNotEqualWithNonActiveStatus() {
         setStorageDomainStatus(StorageDomainStatus.Maintenance);
-        assertTrue(cmd.CheckStorageDomainStatusNotEqual(StorageDomainStatus.Active));
+        assertTrue(cmd.checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
     }
 
     private void storagePoolExists() {
@@ -97,7 +97,7 @@ public class StorageDomainCommandBaseTest {
     }
 
     private void masterDomainIsUp() {
-        doReturn(true).when(cmd).CheckMasterDomainIsUp();
+        doReturn(true).when(cmd).checkMasterDomainIsUp();
     }
 
     private void isNotLocalData() {

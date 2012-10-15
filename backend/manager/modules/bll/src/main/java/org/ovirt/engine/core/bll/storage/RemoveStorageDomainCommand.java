@@ -96,11 +96,11 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
 
-        if (!CheckStorageDomain() || !checkStorageDomainSharedStatusNotLocked(dom)) {
+        if (!checkStorageDomain() || !checkStorageDomainSharedStatusNotLocked(dom)) {
             return false;
         }
 
-        if (!localFs && !CheckStorageDomainNotInPool()) {
+        if (!localFs && !checkStorageDomainNotInPool()) {
             return false;
         }
 

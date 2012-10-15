@@ -69,9 +69,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast, boolean isInternal) {
         return checkStoragePool()
-                && CheckStorageDomain()
+                && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Maintenance)
-                && (isMaster() || isDestroyStoragePool || CheckMasterDomainIsUp())
+                && (isMaster() || isDestroyStoragePool || checkMasterDomainIsUp())
                 && isNotLocalData(isInternal)
                 && isDetachAllowed(isRemoveLast);
     }
@@ -149,7 +149,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return super.canDoAction();
     }
 
-    protected boolean CheckStorageDomainNameLengthValid() {
+    protected boolean checkStorageDomainNameLengthValid() {
         boolean result = true;
         if (getStorageDomain().getstorage_name().length() > Config
                 .<Integer> GetValue(ConfigValues.StorageDomainNameSizeLimit)) {
@@ -159,7 +159,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return result;
     }
 
-    protected boolean CheckStorageDomain() {
+    protected boolean checkStorageDomain() {
         return isStorageDomainNotNull(getStorageDomain());
     }
 
@@ -178,7 +178,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return valid;
     }
 
-    protected boolean CheckStorageDomainStatusNotEqual(StorageDomainStatus status) {
+    protected boolean checkStorageDomainStatusNotEqual(StorageDomainStatus status) {
         boolean returnValue = false;
         if (getStorageDomain() != null && getStorageDomain().getstatus() != null) {
             returnValue = (getStorageDomain().getstatus() != status);
@@ -190,11 +190,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return returnValue;
     }
 
-    protected boolean CheckStorageDomainNotInPool() {
+    protected boolean checkStorageDomainNotInPool() {
         return isStorageDomainNotInPool(getStorageDomain());
     }
 
-    protected boolean CheckStorageConnection(String storageDomainConnection) {
+    protected boolean checkStorageConnection(String storageDomainConnection) {
         boolean returnValue = true;
         if (getStorageServerConnectionDAO().get(storageDomainConnection) == null) {
             returnValue = false;
@@ -203,7 +203,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return returnValue;
     }
 
-    protected boolean CheckMasterDomainIsUp() {
+    protected boolean checkMasterDomainIsUp() {
         boolean returnValue = true;
         List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
         storageDomains = LinqUtils.filter(storageDomains, new Predicate<storage_domains>() {
@@ -220,7 +220,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return returnValue;
     }
 
-    protected void SetStorageDomainStatus(StorageDomainStatus status, CompensationContext context) {
+    protected void setStorageDomainStatus(StorageDomainStatus status, CompensationContext context) {
         if (getStorageDomain() != null && getStorageDomain().getstorage_pool_id() != null) {
             storage_pool_iso_map map = getStorageDomain().getStoragePoolIsoMapData();
             if(context != null) {
@@ -231,7 +231,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
     }
 
-    protected void RefreshAllVdssInPool(boolean connect) {
+    protected void refreshAllVdssInPool(boolean connect) {
         java.util.ArrayList<Guid> vdsIdsToSetNonOperational = new java.util.ArrayList<Guid>();
         runSynchronizeOperation(new RefreshPoolSingleAsyncOperationFactory(), vdsIdsToSetNonOperational);
         for (Guid vdsId : vdsIdsToSetNonOperational) {
@@ -269,11 +269,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
     }
 
-    protected void ConnectAllHostsToPool() {
+    protected void connectAllHostsToPool() {
         runSynchronizeOperation(new ConnectSingleAsyncOperationFactory());
     }
 
-    protected void DiconnectAllHostsInPool() {
+    protected void diconnectAllHostsInPool() {
         runSynchronizeOperation(new RefreshStoragePoolAndDisconnectAsyncOperationFactory());
     }
 

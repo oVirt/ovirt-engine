@@ -51,7 +51,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             }
 
             if (retVal && storagePool.getstatus() != StoragePoolStatus.Uninitialized) {
-                retVal = CheckMasterDomainIsUp();
+                retVal = checkMasterDomainIsUp();
             }
 
             // we limit RHEV-H local storage to its persistence mount - /data/images/rhev/

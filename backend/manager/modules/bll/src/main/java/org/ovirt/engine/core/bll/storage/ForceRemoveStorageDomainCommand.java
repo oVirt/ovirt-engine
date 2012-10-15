@@ -83,8 +83,8 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DESTROY_DOMAIN);
         boolean returnValue =
                 super.canDoAction()
-                        && CheckStorageDomain()
-                        && (getStorageDomain().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached || CheckStorageDomainStatusNotEqual(StorageDomainStatus.Active));
+                        && checkStorageDomain()
+                        && (getStorageDomain().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached || checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
 
         if (returnValue && getStorageDomain().getstorage_domain_type() == StorageDomainType.Master
                 && getStoragePool() != null) {
