@@ -178,6 +178,7 @@ RPM_LOCK_LIST = """
 ovirt-engine
 ovirt-engine-backend
 ovirt-engine-config
+ovirt-engine-dbscripts
 ovirt-engine-genericapi
 ovirt-engine-notification-service
 ovirt-engine-restapi
