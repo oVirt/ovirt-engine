@@ -44,6 +44,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@SuppressWarnings("serial")
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
 
@@ -315,6 +316,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected void changeStorageDomainStatusInTransaction(final storage_pool_iso_map map,
             final StorageDomainStatus status) {
         executeInNewTransaction(new TransactionMethod<storage_pool_iso_map>() {
+            @SuppressWarnings("synthetic-access")
             @Override
             public storage_pool_iso_map runInTransaction() {
                 CompensationContext context = getCompensationContext();
