@@ -64,47 +64,43 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
 
     @Override
     protected void executeCommand() {
-        java.util.ArrayList<LUNs> processedLunsList = new java.util.ArrayList<LUNs>();
-        boolean operationSucceeded = true;
-
-        VDS spmVds = LinqUtils.filter(getAllRunningVdssInPool(), new Predicate<VDS>() {
+        VDS spmVds = LinqUtils.first(LinqUtils.filter(getAllRunningVdssInPool(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS vds) {
                 return vds.getspm_status() == VdsSpmStatus.SPM;
             }
-        }).get(0);
+        }));
 
-        List<LUNs> luns = getHostLuns(spmVds);
-        Map<String, LUNs> lunsMap = new HashMap<String, LUNs>();
+        final List<LUNs> luns = getHostLuns(spmVds);
+        final Map<String, LUNs> lunsMap = new HashMap<String, LUNs>();
         for (LUNs lun : luns) {
             lunsMap.put(lun.getLUN_id(), lun);
         }
+        final List<LUNs> processedLunsList = new ArrayList<LUNs>();
         for (String lunId : getParameters().getLunIds()) {
             LUNs lun = lunsMap.get(lunId);
             if (lun == null) {
-                operationSucceeded = false;
-                break;
+                //fail
+                return;
             }
 
             lun.setvolume_group_id(getStorageDomain().getstorage());
             processedLunsList.add(lun);
         }
-        if (operationSucceeded) {
-            // connect all vds in pool (except spm) to lun and getDeviceList
-            Pair<Boolean, Map<String, List<Guid>>> result = ConnectVdsToLun(processedLunsList);
-            if (result.getFirst()) {
-                getReturnValue().setActionReturnValue(processedLunsList);
-                setCommandShouldBeLogged(false);
-                setSucceeded(true);
-            } else {
-                // disconnect all hosts if connection is not in use by other luns
-                Map<String, List<Guid>> processed = result.getSecond();
-                for (String lunId : processed.keySet()) {
-                    for (Guid vdsId : processed.get(lunId)) {
-                        LUNs lun = lunsMap.get(lunId);
-                        StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
-                                .DisconnectStorageFromLunByVdsId(getStorageDomain(), vdsId, lun);
-                    }
+        // connect all vds in pool (except spm) to lun and getDeviceList
+        Pair<Boolean, Map<String, List<Guid>>> result = ConnectVdsToLun(processedLunsList);
+        if (result.getFirst()) {
+            getReturnValue().setActionReturnValue(processedLunsList);
+            setCommandShouldBeLogged(false);
+            setSucceeded(true);
+        } else {
+            // disconnect all hosts if connection is not in use by other luns
+            Map<String, List<Guid>> processed = result.getSecond();
+            for (String lunId : processed.keySet()) {
+                for (Guid vdsId : processed.get(lunId)) {
+                    LUNs lun = lunsMap.get(lunId);
+                    StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
+                            .DisconnectStorageFromLunByVdsId(getStorageDomain(), vdsId, lun);
                 }
             }
         }
