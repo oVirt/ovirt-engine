@@ -334,7 +334,7 @@
     <profile>
       <id>all-langs</id>
       <properties>
-        <gwt.locale>default,ja</gwt.locale>
+        <gwt.locale>default,es,fr,ja,pt_BR,zh_CN</gwt.locale>
       </properties>
     </profile>
   </profiles>
