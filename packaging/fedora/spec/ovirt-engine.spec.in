@@ -336,7 +336,7 @@ The configuration tool for %{product_name_short}
 Summary: All-in-one plugin for %{product_name_short}'s setup
 Group: Virtualization/Management
 Requires: %{name}-setup
-Requires: %{name}-sdk
+Requires: %{name}-sdk >= 3.1.0.6
 Requires: vdsm
 Requires: ovirt-host-deploy-offline
 Requires: openssh
