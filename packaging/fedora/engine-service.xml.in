@@ -96,7 +96,6 @@
             <prefill>true</prefill>
           </pool>
           <security>
-            <user-name>$getString('ENGINE_DB_USER')</user-name>
             <security-domain>EncryptDBPassword</security-domain>
           </security>
           <statement>
