@@ -134,7 +134,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
             List<storage_server_connections> connections, LUNs lun) {
         AuditLogableBase logable = new AuditLogableBase();
 
-        String connectionField = getConnectionField(connections, connection) +
+        String connectionField = getConnectionDescription(connections, connection) +
                 (lun == null ? "" : " (LUN " + lun.getphysical_volume_id() + ")");
         logable.AddCustomValue("Connection", connectionField);
 
@@ -175,14 +175,18 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return translatedError;
     }
 
-    private String getConnectionField(List<storage_server_connections> connections, String connectionId) {
+    private String getConnectionDescription(List<storage_server_connections> connections, String connectionId) {
         // Using Guid in order to handle nulls. This can happened when we trying
         // to import an existing domain
         Guid connectionIdGuid = Guid.createGuidFromString(connectionId);
         for (storage_server_connections connection : connections) {
             Guid connectionGuid = Guid.createGuidFromString(connection.getid());
             if (connectionGuid.equals(connectionIdGuid)) {
-                return connection.getconnection();
+                String desc = connection.getconnection();
+                if (connection.getiqn() != null) {
+                    desc = desc + " " + connection.getiqn();
+                }
+                return desc;
             }
         }
         return "";
