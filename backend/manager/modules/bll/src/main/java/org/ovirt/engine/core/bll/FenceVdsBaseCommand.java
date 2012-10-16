@@ -152,28 +152,40 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     _executor = new FencingExecutor(getVds(), FenceActionType.Status);
                     if (waitForStatus(getVds().getvds_name(), getParameters().getAction())) {
                         handleSpecificCommandActions();
-                    }
-                    else {
-                        // We reach this if we wait for on/off status
-                        // after start/stop as defined in configurable delay/retries and
-                        // did not reach the desired on/off status.
-                        // We assume that fencing operation didn't complete successfully
-                        // Setting this flag will cause the appropriate Alert to pop
-                        // and to restore host status to it's previous value as
-                        // appears in the finally block.
-                        setFencingSucceeded(false);
+                    } else {
+                        // since there is a chance that Agent & Host use the same power supply and
+                        // a Start command had failed (because we just get success on the script
+                        // invocation and not on its result), we have to try the Start command again
+                        // before giving up
+                        if (getParameters().getAction() == FenceActionType.Start) {
+                            _executor = new FencingExecutor(getVds(), FenceActionType.Start);
+                            vdsReturnValue = _executor.Fence();
+                            setFencingSucceeded(vdsReturnValue.getSucceeded());
+                            if (getFencingSucceeded()) {
+                                _executor = new FencingExecutor(getVds(), FenceActionType.Status);
+                                if (waitForStatus(getVds().getvds_name(), FenceActionType.Start)) {
+                                    handleSpecificCommandActions();
+                                } else {
+                                    setFencingSucceeded(false);
+                                }
+                            } else {
+                                handleError(lastStatus, vdsReturnValue);
+                            }
+
+                        } else {
+
+                            // We reach this if we wait for on/off status
+                            // after start/stop as defined in configurable delay/retries and
+                            // did not reach the desired on/off status.
+                            // We assume that fencing operation didn't complete successfully
+                            // Setting this flag will cause the appropriate Alert to pop
+                            // and to restore host status to it's previous value as
+                            // appears in the finally block.
+                            setFencingSucceeded(false);
+                        }
                     }
                 } else {
-                    if (!((FenceStatusReturnValue) (vdsReturnValue.getReturnValue())).getIsSkipped()) {
-                        // Since this is a non-transactive command , restore last status
-                        setSucceeded(false);
-                        log.errorFormat("Failed to {0} VDS", getParameters().getAction()
-                                .name()
-                                .toLowerCase());
-                        throw new VdcBLLException(VdcBllErrors.VDS_FENCING_OPERATION_FAILED);
-                    } else { // Fencing operation was skipped because Host is already in the requested state.
-                        setStatus(lastStatus);
-                    }
+                    handleError(lastStatus, vdsReturnValue);
                 }
             }
             setSucceeded(getFencingSucceeded());
@@ -182,6 +194,19 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 setStatus(lastStatus);
                 AlertIfPowerManagementOperationFailed();
             }
+        }
+    }
+
+    private void handleError(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
+        if (!((FenceStatusReturnValue) (vdsReturnValue.getReturnValue())).getIsSkipped()) {
+            // Since this is a non-transactive command , restore last status
+            setSucceeded(false);
+            log.errorFormat("Failed to {0} VDS", getParameters().getAction()
+                    .name()
+                    .toLowerCase());
+            throw new VdcBLLException(VdcBllErrors.VDS_FENCING_OPERATION_FAILED);
+        } else { // Fencing operation was skipped because Host is already in the requested state.
+            setStatus(lastStatus);
         }
     }
 
