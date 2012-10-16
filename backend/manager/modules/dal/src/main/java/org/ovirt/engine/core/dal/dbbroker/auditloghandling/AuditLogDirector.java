@@ -264,6 +264,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VDS_ALERT_FENCING_NO_PROXY_HOST, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_LOW_MEM, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_STORAGE_CONNECTION_FAILED_BUT_LAST_VDS, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.VDS_STORAGES_CONNECTION_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_STORAGE_VDS_STATS_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_LOW_DISK_SPACE, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_LOW_DISK_SPACE_ERROR, AuditLogSeverity.ERROR);

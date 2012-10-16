@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
@@ -11,6 +15,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCommandParameters>
         extends VdsBrokerCommand<P> {
@@ -25,7 +31,9 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
         _result = getBroker().connectStorageServer(getParameters().getStorageType().getValue(),
                 getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
         ProceedProxyReturnValue();
-        setReturnValue(_result.convertToStatusList());
+        Map<String, String> returnValue = _result.convertToStatusList();
+        setReturnValue(returnValue);
+        logFailedStorageConnections(returnValue);
     }
 
     @SuppressWarnings("unchecked")
@@ -84,6 +92,31 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
             addIfNotNullOrEmpty(con, connection.getNfsRetrans(), "retrans");
         }
         return con;
+    }
+
+    private void logFailedStorageConnections(Map<String, String> returnValue) {
+        StringBuilder failedDomainNames = new StringBuilder();
+        String namesSeparator = ",";
+        for (Entry<String, String> result : returnValue.entrySet()) {
+            if (!"0".equals(result.getValue())) {
+                List<storage_domains> domains =
+                        DbFacade.getInstance().getStorageDomainDao().getAllByConnectionId(new Guid(result.getKey()));
+                if (!domains.isEmpty()) {
+                    for (storage_domains domain : domains) {
+                        if (failedDomainNames.length() > 0) {
+                            failedDomainNames.append(namesSeparator);
+                        }
+                        failedDomainNames.append(domain.getstorage_name());
+                    }
+                }
+            }
+        }
+
+        if (failedDomainNames.length() > 0) {
+            AuditLogableBase logable = new AuditLogableBase(getParameters().getVdsId());
+            logable.AddCustomValue("failedStorageDomains", failedDomainNames.toString());
+            AuditLogDirector.log(logable, AuditLogType.VDS_STORAGES_CONNECTION_FAILED);
+        }
     }
 
     @Override
