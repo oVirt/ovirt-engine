@@ -61,6 +61,9 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         return new ConnectAllHostsToLunCommandReturnValue();
     }
 
+    private ConnectAllHostsToLunCommandReturnValue getResult() {
+        return (ConnectAllHostsToLunCommandReturnValue) getReturnValue();
+    }
 
     @Override
     protected void executeCommand() {
@@ -81,6 +84,10 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             LUNs lun = lunsMap.get(lunId);
             if (lun == null) {
                 //fail
+                final ConnectAllHostsToLunCommandReturnValue result = getResult();
+                result.setFailedVds(spmVds);
+                result.setFailedLun(getDbFacade().getLunDao()
+                        .get(lunId));
                 return;
             }
 
@@ -122,8 +129,9 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                 if (!connectStorageToLunByVdsId(vds, lun)) {
                     log.errorFormat("Could not connect host {0} to lun {1}", vds.getvds_name(), lun.getLUN_id());
                     setVds(vds);
-                    ((ConnectAllHostsToLunCommandReturnValue)getReturnValue()).setFailedVds(vds);
-                    ((ConnectAllHostsToLunCommandReturnValue)getReturnValue()).setFailedLun(lun);
+                    final ConnectAllHostsToLunCommandReturnValue result = getResult();
+                    result.setFailedVds(vds);
+                    result.setFailedLun(lun);
                     return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.FALSE, resultMap);
                 } else {
                     List<Guid> hosts = resultMap.get(lun.getLUN_id());
@@ -160,7 +168,9 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                     .getItem(getStorageDomain().getstorage_type())
                     .ConnectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty);
         } catch (VdcBLLException e) {
-            ((ConnectAllHostsToLunCommandReturnValue) getReturnValue()).setFailedVds(vds);
+            final ConnectAllHostsToLunCommandReturnValue result = getResult();
+            result.setFailedVds(vds);
+            result.setFailedLun(lun);
             throw e;
         }
     }
@@ -173,7 +183,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                     new GetDeviceListVDSCommandParameters(vds.getId(),
                             getStorageDomain().getstorage_type())).getReturnValue();
         } catch (VdcBLLException e) {
-            ((ConnectAllHostsToLunCommandReturnValue) getReturnValue()).setFailedVds(vds);
+            getResult().setFailedVds(vds);
             throw e;
         }
     }
