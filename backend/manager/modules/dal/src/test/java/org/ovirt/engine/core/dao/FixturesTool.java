@@ -188,4 +188,15 @@ public class FixturesTool {
      * ID of an existing snapshot
      */
     protected static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");
+
+    /**
+     * ID of an existing storage connection
+     */
+    protected static final Guid EXISTING_STORAGE_CONNECTION_ID = new Guid("7fe9a439-a68e-4c15-8885-29d34eb6cabf");
+
+    /**
+     * ID of an existing storage domain with the storage connection which ID is defined in
+     * EXISTING_STORAGE_CONNECTION_ID
+     */
+    protected static final Guid EXISTING_DOMAIN_ID_FOR_CONNECTION_ID = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");
 }

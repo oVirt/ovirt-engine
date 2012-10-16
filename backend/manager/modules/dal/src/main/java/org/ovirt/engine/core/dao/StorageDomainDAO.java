@@ -74,6 +74,15 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
     List<storage_domains> getAllForConnection(String connection);
 
     /**
+     * Retrieves all storage domains for the specified connection id.
+     *
+     * @param connectionId
+     *            The connection id
+     * @return the list of storage domains (empty if no storage is using this connection id)
+     */
+    List<storage_domains> getAllByConnectionId(Guid connectionId);
+
+    /**
      * Retrieves all storage domains for the specified storage pool.
      *
      * @param pool

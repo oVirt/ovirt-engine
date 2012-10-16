@@ -102,6 +102,12 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     }
 
     @Override
+    public List<storage_domains> getAllByConnectionId(Guid connectionId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public List<storage_domains> getAllForStoragePool(Guid pool) {
         return createDomains(staticDAO.getAllForStoragePool(pool));
     }

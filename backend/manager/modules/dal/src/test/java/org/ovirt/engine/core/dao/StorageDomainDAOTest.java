@@ -421,6 +421,14 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
 
     }
 
+    @Test
+    public void testAllByConnectionId() {
+        List<storage_domains> domains = dao.getAllByConnectionId(FixturesTool.EXISTING_STORAGE_CONNECTION_ID);
+        assertEquals("Unexpected number of storage domains by connection id", domains.size(), 1);
+        assertEquals("Wrong storage domain id for search by connection id",
+                domains.get(0).getId(),
+                FixturesTool.EXISTING_DOMAIN_ID_FOR_CONNECTION_ID);
+    }
     /**
      * Asserts the result from {@link StorageDomainDAO#getAll()} is correct without filtering
      *

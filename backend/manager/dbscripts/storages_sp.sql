@@ -469,6 +469,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetAllFromStorageDomainsByConnectionId(v_connection_id CHARACTER VARYING)
+RETURNS SETOF storage_domains
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM storage_domains
+   WHERE storage = v_connection_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION GetAllFromstorage_domains(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_domains
    AS $procedure$

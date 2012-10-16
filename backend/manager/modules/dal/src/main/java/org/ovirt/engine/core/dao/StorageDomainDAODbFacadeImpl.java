@@ -64,6 +64,14 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
+    public List<storage_domains> getAllByConnectionId(Guid connectionId) {
+        return getCallsHandler().executeReadList("GetAllFromStorageDomainsByConnectionId",
+                StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("connection_id", connectionId));
+    }
+
+    @Override
     public List<storage_domains> getAllForStoragePool(Guid pool) {
         return getAllForStoragePool(pool, null, false);
     }
