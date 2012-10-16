@@ -857,19 +857,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.Initialize(this.getSystemTreeSelectedItem());
 
-        // TODO:
-        // VDSGroup cluster = null;
-        // if (model.Cluster.Items == null)
-        // {
-        // model.Commands.Add(
-        // new UICommand("Cancel", this)
-        // {
-        // Title = "Cancel",
-        // IsCancel = true
-        // });
-        // return;
-        // }
-
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);

@@ -1226,7 +1226,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     public void OnSuccess(Object target, Object returnValue) {
 
                         UserPortalListModel userPortalListModel = (UserPortalListModel) target;
-                        stopProgress(target);
                         boolean isNameUnique = (Boolean) returnValue;
                         String newName = (String) model.getName().getEntity();
                         String currentName = userPortalListModel.gettempVm().getvm_name();
@@ -1241,6 +1240,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             unitModel.getName().setIsValid(false);
                             unitModel.setIsValid(false);
                             unitModel.setIsGeneralTabValid(false);
+                            stopProgress(target);
                         }
                         else
                         {
@@ -1337,7 +1337,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             gettempVm().setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
         }
 
-        boolean cancel = true;
         if (model.getIsNew())
         {
             if (gettempVm().getvmt_guid().equals(NGuid.Empty))
@@ -1353,6 +1352,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             @Override
                             public void Executed(FrontendActionAsyncResult result) {
                                 stopProgress(result.getState());
+                                cancel();
                             }
                         }, this);
             }
@@ -1409,16 +1409,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                         @Override
                                         public void Executed(FrontendMultipleActionAsyncResult a) {
                                             stopProgress(a.getState());
+                                            cancel();
                                         }
                                     },
                                     this);
-
-                            userPortalListModel1.cancel();
-
                         }
                     };
                     AsyncDataProvider.GetTemplateDiskList(_asyncQuery, template.getId());
-                    cancel = false;
                 }
                 else
                 {
@@ -1433,6 +1430,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 @Override
                                 public void Executed(FrontendMultipleActionAsyncResult a) {
                                     stopProgress(a.getState());
+                                    cancel();
                                 }
                             },
                             this);
@@ -1455,6 +1453,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                             @Override
                                             public void Executed(FrontendActionAsyncResult a) {
                                                 stopProgress(a.getState());
+                                                cancel();
                                             }
                                         }, this);
 
@@ -1468,14 +1467,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             @Override
                             public void Executed(FrontendActionAsyncResult a) {
                                 stopProgress(a.getState());
+                                cancel();
                             }
                         }, this);
             }
-        }
-
-        if (cancel)
-        {
-            cancel();
         }
     }
 
