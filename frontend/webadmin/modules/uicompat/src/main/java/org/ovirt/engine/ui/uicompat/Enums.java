@@ -41,6 +41,8 @@ public interface Enums extends LocalizedEnums {
 
     String StoragePoolStatus___Problematic();
 
+    String StoragePoolStatus___Contend();
+
     String StorageType___ALL();
 
     String StorageType___FCP();
