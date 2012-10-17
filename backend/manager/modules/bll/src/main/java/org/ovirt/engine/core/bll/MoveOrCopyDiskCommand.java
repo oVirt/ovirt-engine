@@ -10,8 +10,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.quota.Quotable;
-import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -44,7 +44,7 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 @CustomLogFields({ @CustomLogField("DiskAlias") })
 @NonTransactiveCommandAttribute
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends MoveOrCopyImageGroupCommand<T>
-        implements Quotable {
+        implements QuotaStorageDependent {
 
     private static final long serialVersionUID = -7219975636530710384L;
     private Map<String, String> sharedLockMap;
@@ -385,69 +385,35 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        if (ImageOperation.Move.equals(getParameters().getOperation())) {
-            // If source and destination are in the same quota - do nothing and return true
-            if (getImage().getQuotaId() != null && getImage().getQuotaId().equals(getQuotaId())) {
-                return true;
-            }
-            if (getQuotaManager()
-                    .validateAndSetStorageQuota(getStoragePool(),
-                            getDestQuotaListParameters(),
-                            getReturnValue().getCanDoActionMessages())) {
-                return true;
-            }
-            getQuotaManager().rollbackQuota(getStoragePool(),
-                    getQuotaManager().getQuotaListFromParameters(getSourceStorageQuotaListParameters()));
-            return false;
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        // If source and destination are in the same quota - return empty list
+        if (getImage().getQuotaId() != null && getImage().getQuotaId().equals(getDestinationQuotaId())) {
+            return list;
         }
-        return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
-                getDestQuotaListParameters(),
-                getReturnValue().getCanDoActionMessages());
-    }
 
-    @Override
-    public void rollbackQuota() {
-        if (ImageOperation.Move.equals(getParameters().getOperation())) {
-            getQuotaManager().rollbackQuota(getStoragePool(),
-                    getQuotaManager().getQuotaListFromParameters(getSourceStorageQuotaListParameters()));
-        }
-        getQuotaManager().rollbackQuota(getStoragePool(),
-                getQuotaManager().getQuotaListFromParameters(getDestQuotaListParameters()));
-    }
-
-    private List<StorageQuotaValidationParameter> getSourceStorageQuotaListParameters() {
-        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
-        list.add(new StorageQuotaValidationParameter(getImage().getQuotaId(),
-                getParameters().getSourceDomainId().getValue(),
-                getImage().getSizeInGigabytes()));
-        return list;
-    }
-
-    private List<StorageQuotaValidationParameter> getDestQuotaListParameters() {
-        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
-        list.add(new StorageQuotaValidationParameter(getQuotaId(),
+        list.add(new QuotaStorageConsumptionParameter(
+                getDestinationQuotaId(),
+                null,
+                QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getParameters().getStorageDomainId(),
-                getImage().getSizeInGigabytes()));
+                (double)getImage().getSizeInGigabytes()));
+
+        if (ImageOperation.Move == getParameters().getOperation()) {
+            if (getImage().getQuotaId() != null && !Guid.Empty.equals(getImage().getQuotaId())) {
+                list.add(new QuotaStorageConsumptionParameter(
+                        getImage().getQuotaId(),
+                        null,
+                        QuotaConsumptionParameter.QuotaAction.RELEASE,
+                        getParameters().getSourceDomainId().getValue(),
+                        (double)getImage().getSizeInGigabytes()));
+            }
+        }
         return list;
     }
 
-    @Override
-    public Guid getQuotaId() {
+    private Guid getDestinationQuotaId() {
         return getParameters().getQuotaId();
-    }
-
-    @Override
-    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-        if (getStoragePool() != null &&
-                getQuotaId() != null &&
-                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            if (!getQuotaId().equals(getDiskImage().getQuotaId())) {
-                quotaPermissionList.add(new PermissionSubject(getQuotaId(),
-                        VdcObjectType.Quota,
-                        ActionGroup.CONSUME_QUOTA));
-            }
-        }
     }
 
     @Override

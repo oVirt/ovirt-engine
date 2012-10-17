@@ -9,7 +9,10 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -19,14 +22,13 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.businessentities.VmStatic;import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -45,7 +47,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 
 @LockIdNameAttribute
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
-        implements Quotable {
+        implements QuotaVdsDependent {
     private static final long serialVersionUID = -2444359305003244168L;
 
     public UpdateVmCommand(T parameters) {
@@ -348,36 +350,36 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        return getQuotaManager().validateQuotaForStoragePool(getStoragePool(),
-                getVdsGroupId(),
-                getQuotaId(),
-                getReturnValue().getCanDoActionMessages());
-    }
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
-    @Override
-    public void rollbackQuota() {
-        // In update vm, we don't omit resources from quota, just
-        // assign the vm to the quota, so there's nothing to rollback.
-    }
-
-    @Override
-    public Guid getQuotaId() {
-        return getParameters().getVmStaticData().getQuotaId();
-    }
-
-    @Override
-    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-        if (getStoragePool() != null &&
-                getQuotaId() != null &&
-                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            VM vm = getVm();
-            if (vm != null && !getQuotaId().equals(vm.getQuotaId())) {
-                quotaPermissionList.add(new PermissionSubject(getQuotaId(),
-                        VdcObjectType.Quota,
-                        ActionGroup.CONSUME_QUOTA));
+        // The cases must be persistent with the create_functions_sp
+        if (getVm().getstatus() == VMStatus.Down
+                || getVm().getstatus() == VMStatus.Suspended
+                || getVm().getstatus() == VMStatus.ImageIllegal
+                || getVm().getstatus() == VMStatus.ImageLocked
+                || getVm().getstatus() == VMStatus.PoweringDown) {
+            list.add(new QuotaSanityParameter(getParameters().getVmStaticData().getQuotaId(), null));
+        } else {
+            if (getParameters().getVmStaticData().getQuotaId() != null
+                    && !getParameters().getVmStaticData().getQuotaId().equals(getVm().getQuotaId())) {
+                list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+                        null,
+                        QuotaConsumptionParameter.QuotaAction.RELEASE,
+                        getVdsGroupId(),
+                        getVm().getvmt_cpu_per_socket() * getVm().getnum_of_sockets(),
+                        getVm().getmem_size_mb()));
+                list.add(new QuotaVdsGroupConsumptionParameter(getParameters().getVmStaticData().getQuotaId(),
+                        null,
+                        QuotaConsumptionParameter.QuotaAction.CONSUME,
+                        getParameters().getVmStaticData().getvds_group_id(),
+                        getParameters().getVmStaticData().getcpu_per_socket()
+                                * getParameters().getVmStaticData().getnum_of_sockets(),
+                        getParameters().getVmStaticData().getmem_size_mb()));
             }
+
         }
+        return list;
     }
 
 }

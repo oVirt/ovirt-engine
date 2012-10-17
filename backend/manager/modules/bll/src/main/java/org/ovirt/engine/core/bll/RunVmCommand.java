@@ -15,7 +15,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
-import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -71,7 +73,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
-        implements Quotable {
+        implements QuotaVdsDependent {
 
     private static final long serialVersionUID = 3317745769686161108L;
     private String _cdImagePath = "";
@@ -742,7 +744,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endWithFailure() {
         setIsVmRunningStateless();
-        rollbackQuota();
         if (_isVmRunningStateless) {
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext()));
@@ -860,35 +861,19 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private static final Log log = LogFactory.getLog(RunVmCommand.class);
 
     @Override
-    public boolean validateAndSetQuota() {
-        if (isInternalExecution()) {
-            return true;
-        }
-        boolean canDoAction = getQuotaManager().validateAndSetClusterQuota(getStoragePool(),
-                getVm().getvds_group_id(),
-                getQuotaId(),
-                getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
-                getVm().getmem_size_mb(),
-                getReturnValue().getCanDoActionMessages());
-        getReturnValue().getCanDoActionMessages().add(String.format("$VmName %1$s", getVm().getvm_name()));
-        return canDoAction;
-    }
-
-    @Override
-    public void rollbackQuota() {
-        List<Guid> list = new ArrayList<Guid>();
-        list.add(getQuotaId());
-        getQuotaManager().rollbackQuota(getStoragePool(),
-                list);
-    }
-
-    @Override
-    public Guid getQuotaId() {
-        return getVm().getQuotaId();
-    }
-
-    @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
     }
 
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+
+        list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+                null,
+                QuotaConsumptionParameter.QuotaAction.CONSUME,
+                getVm().getvds_group_id(),
+                getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
+                getVm().getmem_size_mb()));
+        return list;
+    }
 }

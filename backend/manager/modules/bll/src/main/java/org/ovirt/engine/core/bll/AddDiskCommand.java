@@ -8,8 +8,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.quota.Quotable;
-import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -29,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -59,7 +59,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmCommand<T>
-        implements Quotable {
+        implements QuotaStorageDependent {
 
     private static final long serialVersionUID = 4499428315430159917L;
 
@@ -187,7 +187,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 Collections.emptyList());
     }
 
-    private long getRequestDiskSpace() {
+    private double getRequestDiskSpace() {
         if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
             return getDiskImageInfo().getSizeInGigabytes();
         }
@@ -469,29 +469,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return null;
     }
 
-    @Override
-    public boolean validateAndSetQuota() {
-        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
-            if (getStoragePool() == null) {
-                setStoragePoolId(getStorageDomain().getstorage_pool_id().getValue());
-            }
-            return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
-                    getStorageQuotaListParameters(),
-                    getReturnValue().getCanDoActionMessages());
-        }
-        return true;
-    }
-
-    @Override
-    public void rollbackQuota() {
-        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
-            getQuotaManager().rollbackQuota(getStoragePool(),
-                    getQuotaManager().getQuotaListFromParameters(getStorageQuotaListParameters()));
-        }
-    }
-
-    @Override
-    public Guid getQuotaId() {
+    private Guid getQuotaId() {
         if (getParameters().getDiskInfo() != null
                 && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             return ((DiskImage) getParameters().getDiskInfo()).getQuotaId();
@@ -499,27 +477,18 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return null;
     }
 
-    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
-        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
-        list.add(new StorageQuotaValidationParameter(getQuotaId(),
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+
+        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+            list.add(new QuotaStorageConsumptionParameter(
+                getQuotaId(),
+                null,
+                QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getStorageDomainId().getValue(),
                 getRequestDiskSpace()));
+        }
         return list;
     }
-
-    @Override
-    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-        if (getStoragePool() != null &&
-                getQuotaId() != null &&
-                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
-        }
-    }
-
-    @Override
-    protected void endWithFailure() {
-        super.endWithFailure();
-        rollbackQuota();
-    }
-
 }

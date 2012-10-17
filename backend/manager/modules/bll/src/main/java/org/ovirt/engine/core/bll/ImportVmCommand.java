@@ -14,8 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.quota.Quotable;
-import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -35,7 +36,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -84,7 +84,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters>
-        implements Quotable {
+        implements QuotaStorageDependent {
     private static final long serialVersionUID = -5500615685812075744L;
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -568,7 +568,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             p.setStoragePoolId(getParameters().getStoragePoolId());
             p.setImportEntity(true);
             p.setEntityId(disk.getImageId());
-            p.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getQuotaId());
+            p.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getParameters().getQuotaId());
             if (getParameters().getVm().getDiskMap() != null
                     && getParameters().getVm().getDiskMap().containsKey(diskGuidList.get(i))) {
                 DiskImageBase diskImageBase =
@@ -912,7 +912,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             // No point in trying to end action again, as the imported VM does not exist in the DB.
             getReturnValue().setEndActionTryAgain(false);
         }
-        rollbackQuota();
     }
 
     protected void removeVmNetworkInterfaces() {
@@ -994,67 +993,26 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        if (getQuotaManager().validateQuotaForStoragePool(getStoragePool(),
-                getVdsGroupId(),
-                getQuotaId(),
-                getReturnValue().getCanDoActionMessages())) {
-            return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
-                    getStorageQuotaListParameters(),
-                    getReturnValue().getCanDoActionMessages());
-        }
-        return false;
+    protected AuditLogType getAuditLogTypeForInvalidInterfaces() {
+        return AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES;
     }
 
     @Override
-    public void rollbackQuota() {
-        getQuotaManager().rollbackQuota(getStoragePool(),
-                getQuotaManager().getQuotaListFromParameters(getStorageQuotaListParameters()));
-    }
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
-    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
-        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
         for (Disk disk : getParameters().getVm().getDiskMap().values()) {
+            //TODO: handle import more than once;
             if(disk instanceof DiskImage){
                 DiskImage diskImage = (DiskImage)disk;
-                list.add(new StorageQuotaValidationParameter(diskImage.getQuotaId(),
-                        //TODO: handle import more than once;
+                list.add(new QuotaStorageConsumptionParameter(
+                        diskImage.getQuotaId(),
+                        null,
+                        QuotaConsumptionParameter.QuotaAction.CONSUME,
                         imageToDestinationDomainMap.get(diskImage.getId()),
-                        diskImage.getSizeInGigabytes()));
+                        (double)diskImage.getSizeInGigabytes()));
             }
         }
         return list;
-    }
-
-    @Override
-    public Guid getQuotaId() {
-        return getParameters().getQuotaId();
-    }
-
-    @Override
-    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-        if (getStoragePool() != null &&
-                getQuotaId() != null &&
-                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            quotaPermissionList.add(new PermissionSubject(getQuotaId(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
-            Map<Guid, Guid> quotaMap = new HashMap<Guid, Guid>();
-            quotaMap.put(getQuotaId(), getQuotaId());
-            for (Disk disk : getVm().getDiskMap().values()) {
-                if (disk instanceof DiskImage) {
-                    DiskImage diskImage = (DiskImage) disk;
-                    if (diskImage.getQuotaId() != null && !quotaMap.containsKey(diskImage.getQuotaId())) {
-                        quotaPermissionList.add(new PermissionSubject(diskImage.getQuotaId(),
-                                VdcObjectType.Quota,
-                                ActionGroup.CONSUME_QUOTA));
-                        quotaMap.put(diskImage.getQuotaId(), diskImage.getQuotaId());
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    protected AuditLogType getAuditLogTypeForInvalidInterfaces() {
-        return AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES;
     }
 }

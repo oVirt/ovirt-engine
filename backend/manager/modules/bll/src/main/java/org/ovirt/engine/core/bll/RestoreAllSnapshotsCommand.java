@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -46,7 +46,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * since this command can only handle the aforementioned cases.
  */
 @LockIdNameAttribute
-public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> implements Quotable{
+public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
     private static final long serialVersionUID = -461387501474222174L;
 
@@ -347,36 +347,25 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        this.rollbackQuota();
-
-        //Since quota utilization is always reduced here
-        return true;
-    }
-
-    @Override
-    public void rollbackQuota() {
-        if (getImagesList().isEmpty()) {
-            return;
-        }
-        setStoragePoolId(getImagesList().get(0).getstorage_pool_id());
-        for (DiskImage image : getImagesList()) {
-            Guid quotaId = image.getQuotaId();
-            if (quotaId != null) {
-                // Uncache the details of this quota. next time the quota will be called, a new calculation
-                // would be done base on the DB.
-                QuotaManager.getInstance().rollbackQuota(getStoragePool(), Arrays.asList(quotaId));
-            }
-        }
-    }
-
-    @Override
-    public Guid getQuotaId() {
-        return null; // The command handles numerous Images, and thus have no single Quota.
-    }
-
-    @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
         //
+    }
+
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        // TODO: need to be fixed. sp id should be available
+        setStoragePoolId(getImagesList().get(0).getstorage_pool_id());
+
+        for (DiskImage image : getImagesList()) {
+            if (!image.getImage().isActive() && image.getQuotaId() != null && !Guid.Empty.equals(image.getQuotaId())) {
+                list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
+                        QuotaConsumptionParameter.QuotaAction.RELEASE,
+                        image.getstorage_ids().get(0),
+                        image.getActualSize()));
+            }
+        }
+
+        return list;
     }
 }

@@ -10,8 +10,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.quota.Quotable;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -33,7 +34,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @LockIdNameAttribute
 public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T>
-        implements Quotable {
+        implements QuotaStorageDependent {
 
     private List<DiskImage> imageTemplates;
     private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
@@ -246,7 +247,6 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     protected void endWithFailure() {
-        rollbackQuota();
         HandleEndAction();
     }
 
@@ -267,32 +267,21 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        rollbackDisksQuota();
-        return true;
-    }
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
-    @Override
-    public void rollbackQuota() {
-        rollbackDisksQuota();
-    }
-
-    private void rollbackDisksQuota() {
-        List<Guid> quotaList = new ArrayList<Guid>();
         if (imageTemplates != null) {
-            for (DiskImage image : imageTemplates) {
-                quotaList.add(image.getQuotaId());
+            for (DiskImage disk : imageTemplates) {
+                if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
+                    list.add(new QuotaStorageConsumptionParameter(
+                            disk.getQuotaId(),
+                            null,
+                            QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
+                            disk.getstorage_ids().get(0),
+                            (double) disk.getSizeInGigabytes()));
+                }
             }
-            getQuotaManager().rollbackQuota(getStoragePool(), quotaList);
         }
-    }
-
-    @Override
-    public Guid getQuotaId() {
-        return null;
-    }
-
-    @Override
-    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        return list;
     }
 }

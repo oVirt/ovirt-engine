@@ -44,7 +44,7 @@ public class VmPoolHandler {
             removeVmStatelessImages(vmId, context);
         }
 
-        QuotaManager.getInstance().rollbackQuota(vmId);
+        QuotaManager.getInstance().rollbackQuotaByVmId(vmId);
     }
 
     public static void removeVmStatelessImages(Guid vmId, CommandContext context) {

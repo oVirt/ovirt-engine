@@ -54,9 +54,13 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
                 if (object.getStorageSizeGB() == null) {
                     return ""; //$NON-NLS-1$
                 } else if (object.getStorageSizeGB().equals(QuotaStorage.UNLIMITED)) {
-                    return messages.unlimitedStorageConsumption(diskSizeRenderer.render(object.getStorageSizeGBUsage()));
+                    return messages.unlimitedStorageConsumption(object.getStorageSizeGBUsage() == 0 ?
+                            "0" : //$NON-NLS-1$
+                            diskSizeRenderer.render(object.getStorageSizeGBUsage()));
                 } else {
-                    return messages.limitedStorageConsumption(diskSizeRenderer.render(object.getStorageSizeGBUsage())
+                    return messages.limitedStorageConsumption(object.getStorageSizeGBUsage() == 0 ?
+                            "0" : //$NON-NLS-1$
+                            diskSizeRenderer.render(object.getStorageSizeGBUsage())
                             ,object.getStorageSizeGB());
                 }
             }

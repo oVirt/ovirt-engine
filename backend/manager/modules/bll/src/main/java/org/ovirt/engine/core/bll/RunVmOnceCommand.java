@@ -5,8 +5,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
@@ -15,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> {
+public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
     public RunVmOnceCommand(T runVmParams) {
         super(runVmParams);
     }
@@ -78,41 +79,17 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        if (isInternalExecution()) {
-            return true;
-        }
-        boolean quotaAcc = super.validateAndSetQuota();
-        if (!quotaAcc) {
-            return false;
-        }
-        // Only if this is run-stateless mode we calculate storage quota.
-        if (!Boolean.TRUE.equals(getParameters().getRunAsStateless())) {
-            return quotaAcc;
-        }
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
-        return QuotaManager.getInstance().validateAndSetStorageQuota(getStoragePool(),
-                getStorageQuotaListParameters(),
-                getReturnValue().getCanDoActionMessages());
-
-    }
-
-    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
-        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
-        for (DiskImage image : getVm().getDiskList()) {
-            if (image.getQuotaId() != null) {
-                list.add(new StorageQuotaValidationParameter(image.getQuotaId(),
-                        image.getstorage_ids().get(0),
-                        image.getActualSize()));
+        //if runAsStateless
+        if (Boolean.TRUE.equals(getParameters().getRunAsStateless())) {
+            for (DiskImage image : getVm().getDiskList()) {
+                list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
+                        QuotaConsumptionParameter.QuotaAction.CONSUME,
+                        image.getstorage_ids().get(0), image.getActualSize()));
             }
         }
         return list;
     }
-
-    @Override
-    public void rollbackQuota() {
-        super.rollbackQuota();
-        QuotaManager.getInstance().decreaseStorageQuota(getStoragePool(), getStorageQuotaListParameters());
-    }
-
 }

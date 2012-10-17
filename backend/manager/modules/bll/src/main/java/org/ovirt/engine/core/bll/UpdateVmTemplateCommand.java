@@ -1,15 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.quota.Quotable;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,7 +17,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
-        implements Quotable {
+        implements QuotaVdsDependent{
     private VmTemplate mOldTemplate;
 
     public UpdateVmTemplateCommand(T parameters) {
@@ -115,34 +114,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        return getQuotaManager().validateQuotaForStoragePool(getStoragePool(),
-                getVdsGroupId(),
-                getQuotaId(),
-                getReturnValue().getCanDoActionMessages());
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        list.add(new QuotaSanityParameter(getParameters().getVmTemplateData().getQuotaId(), null));
+        return list;
     }
-
-    @Override
-    public void rollbackQuota() {
-    }
-
-    @Override
-    public Guid getQuotaId() {
-        return getParameters().getVmTemplateData().getQuotaId();
-    }
-
-    @Override
-    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-        if (getStoragePool() != null &&
-                getQuotaId() != null &&
-                !getStoragePool().getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-            VmTemplate template = getVmTemplate();
-            if (template != null && !getQuotaId().equals(template.getQuotaId())) {
-                quotaPermissionList.add(new PermissionSubject(getQuotaId(),
-                        VdcObjectType.Quota,
-                        ActionGroup.CONSUME_QUOTA));
-            }
-        }
-    }
-
 }

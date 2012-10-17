@@ -1,15 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -28,7 +26,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> implements Quotable {
+public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> implements QuotaVdsDependent {
     private boolean privateSuspendedVm;
 
     public StopVmCommandBase(T parameters) {
@@ -217,49 +215,26 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
 
     private static Log log = LogFactory.getLog(StopVmCommandBase.class);
 
-    @Override
-    public boolean validateAndSetQuota() {
-        return true;
-    }
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
-    @Override
-    public void rollbackQuota() {
-        if (getStoragePool() == null) {
-            setStoragePool(getStoragePoolDAO().getForVdsGroup(getVm().getvds_group_id()));
+        if (getVm().getQuotaId() != null && !Guid.Empty.equals(getVm().getQuotaId())
+                && (getVm().getstatus() == VMStatus.Up
+                || getVm().getstatus() == VMStatus.Paused
+                || getVm().getstatus() == VMStatus.PoweringUp
+                ||getVm().getstatus() == VMStatus.RebootInProgress)) {
+            list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
+                    null,
+                    QuotaConsumptionParameter.QuotaAction.RELEASE,
+                    getVm().getvds_group_id(),
+                    getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
+                    getVm().getmem_size_mb()));
         }
-        Guid quotaId = getVm().getQuotaId();
-        Set<Guid> quotaIdsForRollback = new HashSet<Guid>();
-        if (quotaId != null) {
-            // Uncache the details of this quota. next time the quota will be called, a new calculation
-            // would be done base on the DB.
-            quotaIdsForRollback.add(quotaId);
-        }
-        VmHandler.updateDisksFromDb(getVm());
-        for (DiskImage image : getVm().getDiskList()){
-            quotaId = image.getQuotaId();
-
-            if (quotaId != null) {
-                quotaIdsForRollback.add(quotaId);
-            }
-        }
-        QuotaManager.getInstance().rollbackQuota(getStoragePool(), new ArrayList<Guid>(quotaIdsForRollback));
-    }
-
-    @Override
-    public Guid getQuotaId() {
-        return null;
+        return list;
     }
 
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
         //
-    }
-
-    @Override
-    protected void setSucceeded(boolean value) {
-        super.setSucceeded(value);
-        if (value) {
-            rollbackQuota();
-        }
     }
 }

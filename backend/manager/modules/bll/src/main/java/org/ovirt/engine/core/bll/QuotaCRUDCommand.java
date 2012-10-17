@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -15,7 +14,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
 @CustomLogFields({ @CustomLogField("QuotaName") })
-public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> implements Quotable {
+public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> {
 
     private Quota quota;
 
@@ -112,17 +111,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
         return isValid;
     }
 
-    @Override
-    public boolean validateAndSetQuota() {
-        return true;
-    }
-
-    @Override
-    public void rollbackQuota() {
-    }
-
-    @Override
-    public Guid getQuotaId() {
+    protected Guid getQuotaId() {
         return getQuota().getId();
     }
 

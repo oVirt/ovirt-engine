@@ -5,268 +5,268 @@ import java.util.HashMap;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
 public enum VdcActionType {
-    Unknown(0),
+    Unknown(0, QuotaDependency.NONE),
     // Vm Commands
-    AddVm(1, ActionGroup.CREATE_VM),
-    AddVmFromTemplate(2, ActionGroup.CREATE_VM),
-    AddVmFromScratch(3, ActionGroup.CREATE_VM),
-    RemoveVm(4, ActionGroup.DELETE_VM),
-    UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES),
-    StopVm(7, ActionGroup.VM_BASIC_OPERATIONS),
-    ShutdownVm(8, ActionGroup.VM_BASIC_OPERATIONS),
-    ChangeDisk(9, ActionGroup.CHANGE_VM_CD),
-    PauseVm(10),
-    HibernateVm(11, ActionGroup.VM_BASIC_OPERATIONS),
-    RunVm(12, ActionGroup.VM_BASIC_OPERATIONS),
-    RunVmOnce(13, ActionGroup.VM_BASIC_OPERATIONS),
-    MigrateVm(14, ActionGroup.MIGRATE_VM),
-    InternalMigrateVm(15),
-    MigrateVmToServer(16, ActionGroup.MIGRATE_VM),
-    VmLogon(18, ActionGroup.CONNECT_TO_VM),
-    VmLogoff(19),
-    VmLock(20),
-    SetVmTicket(22, ActionGroup.CONNECT_TO_VM, false),
-    ExportVm(23, ActionGroup.IMPORT_EXPORT_VM),
-    ExportVmTemplate(24, ActionGroup.IMPORT_EXPORT_VM),
-    RestoreStatelessVm(25),
-    RunVmOnPowerClient(26),
-    RunVmOnDedicatedVds(27),
-    AddVmInterface(28, ActionGroup.CONFIGURE_VM_NETWORK, false),
-    RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false),
-    UpdateVmInterface(30, ActionGroup.CONFIGURE_VM_NETWORK, false),
-    AddDisk(31, ActionGroup.CONFIGURE_VM_STORAGE),
+    AddVm(1, ActionGroup.CREATE_VM, QuotaDependency.STORAGE),
+    AddVmFromTemplate(2, ActionGroup.CREATE_VM, QuotaDependency.STORAGE),
+    AddVmFromScratch(3, ActionGroup.CREATE_VM, QuotaDependency.NONE),
+    RemoveVm(4, ActionGroup.DELETE_VM, QuotaDependency.STORAGE),
+    UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.VDS_GROUP),
+    StopVm(7, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.VDS_GROUP),
+    ShutdownVm(8, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.VDS_GROUP),
+    ChangeDisk(9, ActionGroup.CHANGE_VM_CD, QuotaDependency.NONE),
+    PauseVm(10, QuotaDependency.NONE),
+    HibernateVm(11, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.NONE),
+    RunVm(12, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.VDS_GROUP),
+    RunVmOnce(13, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.BOTH),
+    MigrateVm(14, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
+    InternalMigrateVm(15, QuotaDependency.NONE),
+    MigrateVmToServer(16, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
+    VmLogon(18, ActionGroup.CONNECT_TO_VM, QuotaDependency.NONE),
+    VmLogoff(19, QuotaDependency.NONE),
+    VmLock(20, QuotaDependency.NONE),
+    SetVmTicket(22, ActionGroup.CONNECT_TO_VM, false, QuotaDependency.NONE),
+    ExportVm(23, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    ExportVmTemplate(24, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    RestoreStatelessVm(25, QuotaDependency.NONE),
+    RunVmOnPowerClient(26, QuotaDependency.VDS_GROUP),
+    RunVmOnDedicatedVds(27, QuotaDependency.VDS_GROUP),
+    AddVmInterface(28, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
+    RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
+    UpdateVmInterface(30, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
+    AddDisk(31, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     @Deprecated
-    MoveVm(33, ActionGroup.MOVE_VM),
-    UpdateVmDisk(34, ActionGroup.CONFIGURE_VM_STORAGE, false),
-    AttachDiskToVm(180, ActionGroup.CONFIGURE_VM_STORAGE, false),
-    DetachDiskFromVm(181, ActionGroup.CONFIGURE_VM_STORAGE, false),
-    HotPlugDiskToVm(182, ActionGroup.CONFIGURE_VM_STORAGE, false),
-    HotUnPlugDiskFromVm(183, ActionGroup.CONFIGURE_VM_STORAGE, false),
-    ChangeFloppy(35),
-    ImportVm(36, ActionGroup.IMPORT_EXPORT_VM),
-    RemoveVmFromImportExport(37, ActionGroup.IMPORT_EXPORT_VM),
-    RemoveVmTemplateFromImportExport(38, ActionGroup.IMPORT_EXPORT_VM),
-    ImportVmTemplate(39, ActionGroup.IMPORT_EXPORT_VM),
-    ChangeVMCluster(40, ActionGroup.EDIT_VM_PROPERTIES, false),
-    CancelMigrateVm(41, ActionGroup.MIGRATE_VM, false),
-    ActivateDeactivateVmNic(42, ActionGroup.CONFIGURE_VM_NETWORK, false),
+    MoveVm(33, ActionGroup.MOVE_VM, QuotaDependency.NONE),
+    UpdateVmDisk(34, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
+    AttachDiskToVm(180, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
+    DetachDiskFromVm(181, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
+    HotPlugDiskToVm(182, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
+    HotUnPlugDiskFromVm(183, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
+    ChangeFloppy(35, QuotaDependency.NONE),
+    ImportVm(36, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
+    RemoveVmFromImportExport(37, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    RemoveVmTemplateFromImportExport(38, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    ImportVmTemplate(39, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
+    ChangeVMCluster(40, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    CancelMigrateVm(41, ActionGroup.MIGRATE_VM, false, QuotaDependency.NONE),
+    ActivateDeactivateVmNic(42, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
 
     // powerclient 4.2
-    PowerClientMigrateOnConnectCheck(50),
-    SetDedicatedVm(51),
-    AddVmFromSnapshot(52, ActionGroup.CREATE_VM),
+    PowerClientMigrateOnConnectCheck(50, QuotaDependency.NONE),
+    SetDedicatedVm(51, QuotaDependency.NONE),
+    AddVmFromSnapshot(52, ActionGroup.CREATE_VM, QuotaDependency.STORAGE),
     // VdsCommands
-    AddVds(101, ActionGroup.CREATE_HOST),
-    UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false),
-    RemoveVds(103, ActionGroup.DELETE_HOST, false),
-    RestartVds(104, ActionGroup.MANIPUTLATE_HOST),
-    VdsNotRespondingTreatment(105),
-    MaintananceVds(106),
-    MaintananceNumberOfVdss(107, ActionGroup.MANIPUTLATE_HOST, false),
-    ActivateVds(108, ActionGroup.MANIPUTLATE_HOST),
-    InstallVds(109),
-    ClearNonResponsiveVdsVms(110),
-    ShutdownVds(111),
-    ApproveVds(112, ActionGroup.CREATE_HOST),
-    HandleVdsCpuFlagsOrClusterChanged(114),
-    InitVdsOnUp(115),
-    SetNonOperationalVds(117),
-    AddVdsSpmId(119),
+    AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
+    UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
+    RemoveVds(103, ActionGroup.DELETE_HOST, false, QuotaDependency.NONE),
+    RestartVds(104, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
+    VdsNotRespondingTreatment(105, QuotaDependency.NONE),
+    MaintananceVds(106, QuotaDependency.NONE),
+    MaintananceNumberOfVdss(107, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
+    ActivateVds(108, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
+    InstallVds(109, QuotaDependency.NONE),
+    ClearNonResponsiveVdsVms(110, QuotaDependency.NONE),
+    ShutdownVds(111, QuotaDependency.NONE),
+    ApproveVds(112, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
+    HandleVdsCpuFlagsOrClusterChanged(114, QuotaDependency.NONE),
+    InitVdsOnUp(115, QuotaDependency.NONE),
+    SetNonOperationalVds(117, QuotaDependency.NONE),
+    AddVdsSpmId(119, QuotaDependency.NONE),
     // Fencing (including RestartVds above)
-    StartVds(121, ActionGroup.MANIPUTLATE_HOST),
-    StopVds(122, ActionGroup.MANIPUTLATE_HOST),
-    HandleVdsVersion(124),
-    ChangeVDSCluster(125, ActionGroup.EDIT_HOST_CONFIGURATION, false),
+    StartVds(121, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
+    StopVds(122, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
+    HandleVdsVersion(124, QuotaDependency.NONE),
+    ChangeVDSCluster(125, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     // Network
-    UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK),
-    AttachNetworkToVdsInterface(150, ActionGroup.CONFIGURE_HOST_NETWORK),
-    DetachNetworkFromVdsInterface(151, ActionGroup.CONFIGURE_HOST_NETWORK),
-    AddBond(152, ActionGroup.CONFIGURE_HOST_NETWORK),
-    RemoveBond(153, ActionGroup.CONFIGURE_HOST_NETWORK),
-    AddNetwork(154, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false),
-    RemoveNetwork(155, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false),
-    UpdateNetwork(156, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false),
-    CommitNetworkChanges(157, ActionGroup.CONFIGURE_HOST_NETWORK),
-    SetupNetworks(158, ActionGroup.CONFIGURE_HOST_NETWORK),
+    UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    AttachNetworkToVdsInterface(150, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    DetachNetworkFromVdsInterface(151, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    AddBond(152, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    RemoveBond(153, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    AddNetwork(154, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    RemoveNetwork(155, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    UpdateNetwork(156, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    CommitNetworkChanges(157, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    SetupNetworks(158, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     // VmTemplatesCommand
-    AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE),
-    UpdateVmTemplate(202, ActionGroup.EDIT_TEMPLATE_PROPERTIES),
-    RemoveVmTemplate(203, ActionGroup.DELETE_TEMPLATE),
-    MoveOrCopyTemplate(226, ActionGroup.COPY_TEMPLATE),
-    AddVmTemplateInterface(220, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false),
-    RemoveVmTemplateInterface(221, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false),
-    UpdateVmTemplateInterface(222, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false),
+    AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE, QuotaDependency.STORAGE),
+    UpdateVmTemplate(202, ActionGroup.EDIT_TEMPLATE_PROPERTIES, QuotaDependency.VDS_GROUP),
+    RemoveVmTemplate(203, ActionGroup.DELETE_TEMPLATE, QuotaDependency.STORAGE),
+    MoveOrCopyTemplate(226, ActionGroup.COPY_TEMPLATE, QuotaDependency.STORAGE),
+    AddVmTemplateInterface(220, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false, QuotaDependency.NONE),
+    RemoveVmTemplateInterface(221, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false, QuotaDependency.NONE),
+    UpdateVmTemplateInterface(222, ActionGroup.CONFIGURE_TEMPLATE_NETWORK, false, QuotaDependency.NONE),
     // ImagesCommands
-    TryBackToSnapshot(204),
-    RestoreFromSnapshot(205),
-    CreateAllSnapshotsFromVm(206, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
-    CreateSnapshot(207),
-    CreateSnapshotFromTemplate(208),
-    CreateImageTemplate(209),
-    RemoveSnapshot(210, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
-    RemoveImage(211),
-    RemoveAllVmImages(212),
-    AddImageFromScratch(213),
-    RemoveTemplateSnapshot(215),
-    RemoveAllVmTemplateImageTemplates(216),
-    TryBackToAllSnapshotsOfVm(223, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
-    RestoreAllSnapshots(224, ActionGroup.MANIPULATE_VM_SNAPSHOTS),
-    MoveOrCopyImageGroup(225),
-    MoveOrCopyDisk(226),
-    RemoveSnapshotSingleDisk(227),
-    CreateCloneOfTemplate(229),
-    RemoveDisk(230),
+    TryBackToSnapshot(204, QuotaDependency.NONE),
+    RestoreFromSnapshot(205, QuotaDependency.STORAGE),
+    CreateAllSnapshotsFromVm(206, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.STORAGE),
+    CreateSnapshot(207, QuotaDependency.STORAGE),
+    CreateSnapshotFromTemplate(208, QuotaDependency.STORAGE),
+    CreateImageTemplate(209, QuotaDependency.STORAGE),
+    RemoveSnapshot(210, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.STORAGE),
+    RemoveImage(211, QuotaDependency.STORAGE),
+    RemoveAllVmImages(212, QuotaDependency.STORAGE),
+    AddImageFromScratch(213, QuotaDependency.STORAGE),
+    RemoveTemplateSnapshot(215, QuotaDependency.STORAGE),
+    RemoveAllVmTemplateImageTemplates(216, QuotaDependency.STORAGE),
+    TryBackToAllSnapshotsOfVm(223, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
+    RestoreAllSnapshots(224, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.STORAGE),
+    MoveOrCopyImageGroup(225, QuotaDependency.STORAGE),
+    MoveOrCopyDisk(226, QuotaDependency.STORAGE),
+    RemoveSnapshotSingleDisk(227, QuotaDependency.STORAGE),
+    CreateCloneOfTemplate(229, QuotaDependency.STORAGE),
+    RemoveDisk(230, QuotaDependency.STORAGE),
     // VmPoolCommands
-    AddVmPool(301),
-    UpdateUserVm(303),
-    AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL),
-    UpdateVmPoolWithVms(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION),
-    AddVmAndAttachToPool(306),
-    RemoveVmPool(307, ActionGroup.DELETE_VM_POOL),
-    DetachUserFromVmFromPool(312),
-    AddVmToPool(313),
-    RemoveVmFromPool(314, ActionGroup.EDIT_VM_POOL_CONFIGURATION, false),
-    AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS),
+    AddVmPool(301, QuotaDependency.NONE),
+    UpdateUserVm(303, QuotaDependency.NONE),
+    AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.STORAGE),
+    UpdateVmPoolWithVms(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION, QuotaDependency.STORAGE),
+    AddVmAndAttachToPool(306, QuotaDependency.NONE),
+    RemoveVmPool(307, ActionGroup.DELETE_VM_POOL, QuotaDependency.NONE),
+    DetachUserFromVmFromPool(312, QuotaDependency.NONE),
+    AddVmToPool(313, QuotaDependency.NONE),
+    RemoveVmFromPool(314, ActionGroup.EDIT_VM_POOL_CONFIGURATION, false, QuotaDependency.NONE),
+    AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS, QuotaDependency.NONE),
     // UserAndGroupsCommands
-    SetUserRole(405),
-    LoginUser(406, ActionGroup.LOGIN, false),
-    AutoLogin(407, false),
-    LogoutUser(408, false),
-    RemoveUser(409, ActionGroup.MANIPULATE_USERS, false),
-    SetAdGroupRole(410),
-    RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS, false),
-    ChangeUserPassword(416),
-    CreateComputerAccount(417),
-    LoginAdminUser(418, ActionGroup.LOGIN, false),
-    AddUser(419, ActionGroup.MANIPULATE_USERS, false),
+    SetUserRole(405, QuotaDependency.NONE),
+    LoginUser(406, ActionGroup.LOGIN, false, QuotaDependency.NONE),
+    AutoLogin(407, false, QuotaDependency.NONE),
+    LogoutUser(408, false, QuotaDependency.NONE),
+    RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
+    SetAdGroupRole(410, QuotaDependency.NONE),
+    RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
+    ChangeUserPassword(416, QuotaDependency.NONE),
+    CreateComputerAccount(417, QuotaDependency.NONE),
+    LoginAdminUser(418, ActionGroup.LOGIN, false, QuotaDependency.NONE),
+    AddUser(419, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     // Tags
-    AddTag(501, false),
-    RemoveTag(502, false),
-    UpdateTag(503, false),
-    MoveTag(504, false),
-    AttachUserToTag(505, false),
-    DetachUserFromTag(506, false),
-    AttachUserGroupToTag(507, false),
-    DetachUserGroupFromTag(508, false),
-    AttachVmsToTag(509, false),
-    DetachVmFromTag(510, false),
-    AttachVdsToTag(511, false),
-    DetachVdsFromTag(512, false),
-    UpdateTagsVmMapDefaultDisplayType(515, false),
+    AddTag(501, false, QuotaDependency.NONE),
+    RemoveTag(502, false, QuotaDependency.NONE),
+    UpdateTag(503, false, QuotaDependency.NONE),
+    MoveTag(504, false, QuotaDependency.NONE),
+    AttachUserToTag(505, false, QuotaDependency.NONE),
+    DetachUserFromTag(506, false, QuotaDependency.NONE),
+    AttachUserGroupToTag(507, false, QuotaDependency.NONE),
+    DetachUserGroupFromTag(508, false, QuotaDependency.NONE),
+    AttachVmsToTag(509, false, QuotaDependency.NONE),
+    DetachVmFromTag(510, false, QuotaDependency.NONE),
+    AttachVdsToTag(511, false, QuotaDependency.NONE),
+    DetachVdsFromTag(512, false, QuotaDependency.NONE),
+    UpdateTagsVmMapDefaultDisplayType(515, false, QuotaDependency.NONE),
 
     // Quota
-    AddQuota(601, ActionGroup.CONFIGURE_QUOTA, false),
-    UpdateQuota(602, ActionGroup.CONFIGURE_QUOTA, false),
-    RemoveQuota(603, ActionGroup.CONFIGURE_QUOTA, false),
-    ChangeQuotaForDisk(604, ActionGroup.CONSUME_QUOTA, false),
+    AddQuota(601, ActionGroup.CONFIGURE_QUOTA, false, QuotaDependency.NONE),
+    UpdateQuota(602, ActionGroup.CONFIGURE_QUOTA, false, QuotaDependency.NONE),
+    RemoveQuota(603, ActionGroup.CONFIGURE_QUOTA, false, QuotaDependency.NONE),
+    ChangeQuotaForDisk(604, ActionGroup.CONSUME_QUOTA, false, QuotaDependency.STORAGE),
 
     // bookmarks
-    AddBookmark(701),
-    RemoveBookmark(702),
-    UpdateBookmark(703),
+    AddBookmark(701, QuotaDependency.NONE),
+    RemoveBookmark(702, QuotaDependency.NONE),
+    UpdateBookmark(703, QuotaDependency.NONE),
     // vdsGroups
-    AddVdsGroup(704, ActionGroup.CREATE_CLUSTER, false),
-    UpdateVdsGroup(705, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false),
-    RemoveVdsGroup(706, ActionGroup.DELETE_CLUSTER, false),
-    AttachNetworkToVdsGroup(708, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false),
-    DetachNetworkToVdsGroup(709, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false),
+    AddVdsGroup(704, ActionGroup.CREATE_CLUSTER, false, QuotaDependency.NONE),
+    UpdateVdsGroup(705, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
+    RemoveVdsGroup(706, ActionGroup.DELETE_CLUSTER, false, QuotaDependency.NONE),
+    AttachNetworkToVdsGroup(708, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
+    DetachNetworkToVdsGroup(709, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
     @Deprecated
     // AttachNetworkToVdsGroup is taking over this functionality
-    UpdateDisplayToVdsGroup(710, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false),
-    UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false),
+    UpdateDisplayToVdsGroup(710, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
+    UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
     /**
      * 4.0
      */
-    MigrateIrsSnapshotsToVdc(707),
+    MigrateIrsSnapshotsToVdc(707, QuotaDependency.NONE),
     /**
      * MultiLevelAdministration
      */
-    AddPermission(800, ActionGroup.MANIPULATE_PERMISSIONS, false),
-    RemovePermission(801, ActionGroup.MANIPULATE_PERMISSIONS, false),
-    UpdateRole(803, ActionGroup.MANIPULATE_ROLES, false),
-    RemoveRole(804, ActionGroup.MANIPULATE_ROLES, false),
-    AttachActionGroupsToRole(805, ActionGroup.MANIPULATE_ROLES, false),
-    DetachActionGroupsFromRole(806, ActionGroup.MANIPULATE_ROLES, false),
-    AddRoleWithActionGroups(809, ActionGroup.MANIPULATE_ROLES, false),
-    AddSelfPermission(810),
-    AddSystemPermission(811, ActionGroup.MANIPULATE_PERMISSIONS, false),
+    AddPermission(800, ActionGroup.MANIPULATE_PERMISSIONS, false, QuotaDependency.NONE),
+    RemovePermission(801, ActionGroup.MANIPULATE_PERMISSIONS, false, QuotaDependency.NONE),
+    UpdateRole(803, ActionGroup.MANIPULATE_ROLES, false, QuotaDependency.NONE),
+    RemoveRole(804, ActionGroup.MANIPULATE_ROLES, false, QuotaDependency.NONE),
+    AttachActionGroupsToRole(805, ActionGroup.MANIPULATE_ROLES, false, QuotaDependency.NONE),
+    DetachActionGroupsFromRole(806, ActionGroup.MANIPULATE_ROLES, false, QuotaDependency.NONE),
+    AddRoleWithActionGroups(809, ActionGroup.MANIPULATE_ROLES, false, QuotaDependency.NONE),
+    AddSelfPermission(810, QuotaDependency.NONE),
+    AddSystemPermission(811, ActionGroup.MANIPULATE_PERMISSIONS, false, QuotaDependency.NONE),
 
     /**
      * Storages handling
      */
-    AddLocalStorageDomain(916, ActionGroup.CREATE_STORAGE_DOMAIN),
-    AddNFSStorageDomain(902, ActionGroup.CREATE_STORAGE_DOMAIN),
-    UpdateStorageDomain(903, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION, false),
-    RemoveStorageDomain(904, ActionGroup.DELETE_STORAGE_DOMAIN),
-    ForceRemoveStorageDomain(905, ActionGroup.DELETE_STORAGE_DOMAIN),
-    AttachStorageDomainToPool(906, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
-    DetachStorageDomainFromPool(907, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
-    ActivateStorageDomain(908, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
-    ConnectDomainToStorage(916),
-    DeactivateStorageDomain(909, ActionGroup.MANIPULATE_STORAGE_DOMAIN),
-    AddSANStorageDomain(910, ActionGroup.CREATE_STORAGE_DOMAIN),
-    ExtendSANStorageDomain(911, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION),
-    ReconstructMasterDomain(913),
-    RecoveryStoragePool(915, ActionGroup.CREATE_STORAGE_POOL),
-    AddEmptyStoragePool(950, ActionGroup.CREATE_STORAGE_POOL, false),
-    AddStoragePoolWithStorages(951, ActionGroup.CREATE_STORAGE_POOL),
-    RemoveStoragePool(957, ActionGroup.DELETE_STORAGE_POOL),
-    UpdateStoragePool(958, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION),
-    FenceVdsManualy(959, ActionGroup.MANIPUTLATE_HOST, false),
-    AddExistingNFSStorageDomain(960, ActionGroup.CREATE_STORAGE_DOMAIN),
-    AddExistingSANStorageDomain(961, ActionGroup.CREATE_STORAGE_DOMAIN),
-    AddStorageServerConnection(1000, ActionGroup.CREATE_STORAGE_DOMAIN),
-    RemoveStorageServerConnection(1002, ActionGroup.CREATE_STORAGE_DOMAIN),
-    ConnectHostToStoragePoolServers(1004),
-    DisconnectHostFromStoragePoolServers(1005),
-    ConnectStorageToVds(1006, ActionGroup.CREATE_STORAGE_DOMAIN),
-    SetStoragePoolStatus(1007),
-    ConnectAllHostsToLun(1008),
-    AddPosixFsStorageDomain(1009, ActionGroup.CREATE_STORAGE_DOMAIN),
-    LiveMigrateDisk(1010),
-    MoveDisk(1011),
-
+    AddLocalStorageDomain(916, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    AddNFSStorageDomain(902, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    UpdateStorageDomain(903, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION, false, QuotaDependency.NONE),
+    RemoveStorageDomain(904, ActionGroup.DELETE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    ForceRemoveStorageDomain(905, ActionGroup.DELETE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    AttachStorageDomainToPool(906, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    DetachStorageDomainFromPool(907, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    ActivateStorageDomain(908, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    ConnectDomainToStorage(916, QuotaDependency.NONE),
+    DeactivateStorageDomain(909, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    AddSANStorageDomain(910, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    ExtendSANStorageDomain(911, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION, QuotaDependency.NONE),
+    ReconstructMasterDomain(913, QuotaDependency.NONE),
+    RecoveryStoragePool(915, ActionGroup.CREATE_STORAGE_POOL, QuotaDependency.NONE),
+    AddEmptyStoragePool(950, ActionGroup.CREATE_STORAGE_POOL, false, QuotaDependency.NONE),
+    AddStoragePoolWithStorages(951, ActionGroup.CREATE_STORAGE_POOL, QuotaDependency.NONE),
+    RemoveStoragePool(957, ActionGroup.DELETE_STORAGE_POOL, QuotaDependency.NONE),
+    UpdateStoragePool(958, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, QuotaDependency.NONE),
+    FenceVdsManualy(959, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
+    AddExistingNFSStorageDomain(960, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    AddExistingSANStorageDomain(961, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    AddStorageServerConnection(1000, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    RemoveStorageServerConnection(1002, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    ConnectHostToStoragePoolServers(1004, QuotaDependency.NONE),
+    DisconnectHostFromStoragePoolServers(1005, QuotaDependency.NONE),
+    ConnectStorageToVds(1006, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    SetStoragePoolStatus(1007, QuotaDependency.NONE),
+    ConnectAllHostsToLun(1008, QuotaDependency.NONE),
+    AddPosixFsStorageDomain(1009, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    LiveMigrateDisk(1010, QuotaDependency.NONE),
+    MoveDisk(1011, QuotaDependency.STORAGE),
     // Event Notification
-    AddEventSubscription(1100),
-    RemoveEventSubscription(1101),
+    AddEventSubscription(1100, QuotaDependency.NONE),
+    RemoveEventSubscription(1101, QuotaDependency.NONE),
 
 
     // UI User Tabs
-    DataCenters(1200),
-    Clusters(1201),
-    Hosts(1202),
-    Storage(1203),
-    VirtualMachines(1204),
-    Pools(1205),
-    Templates(1206),
-    Users(1207),
-    Events(1208),
-    Monitor(1209),
-    Quota(1210),
-    Disks(1211),
+    DataCenters(1200, QuotaDependency.NONE),
+    Clusters(1201, QuotaDependency.NONE),
+    Hosts(1202, QuotaDependency.NONE),
+    Storage(1203, QuotaDependency.NONE),
+    VirtualMachines(1204, QuotaDependency.NONE),
+    Pools(1205, QuotaDependency.NONE),
+    Templates(1206, QuotaDependency.NONE),
+    Users(1207, QuotaDependency.NONE),
+    Events(1208, QuotaDependency.NONE),
+    Monitor(1209, QuotaDependency.NONE),
+    Quota(1210, QuotaDependency.NONE),
+    Disks(1211, QuotaDependency.NONE),
 
     // Config
-    ReloadConfigurations(1301, ActionGroup.CONFIGURE_ENGINE, false),
+    ReloadConfigurations(1301, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE),
 
     // Gluster
-    CreateGlusterVolume(1400, ActionGroup.CREATE_GLUSTER_VOLUME),
-    SetGlusterVolumeOption(1401, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    StartGlusterVolume(1402, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    StopGlusterVolume(1403, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    ResetGlusterVolumeOptions(1404, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    DeleteGlusterVolume(1405, ActionGroup.DELETE_GLUSTER_VOLUME),
-    GlusterVolumeRemoveBricks(1406, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    StartRebalanceGlusterVolume(1407, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    ReplaceGlusterVolumeBrick(1408, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    AddBricksToGlusterVolume(1409, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    StartGlusterVolumeProfile(1410, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
-    StopGlusterVolumeProfile(1411, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
+    CreateGlusterVolume(1400, ActionGroup.CREATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    SetGlusterVolumeOption(1401, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    StartGlusterVolume(1402, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    StopGlusterVolume(1403, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    ResetGlusterVolumeOptions(1404, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    DeleteGlusterVolume(1405, ActionGroup.DELETE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    GlusterVolumeRemoveBricks(1406, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    StartRebalanceGlusterVolume(1407, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    ReplaceGlusterVolumeBrick(1408, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    AddBricksToGlusterVolume(1409, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    StartGlusterVolumeProfile(1410, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    StopGlusterVolumeProfile(1411, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     ;
 
     private int intValue;
     private ActionGroup actionGroup;
     private boolean isActionMonitored = true;
     private static java.util.HashMap<Integer, VdcActionType> mappings = new HashMap<Integer, VdcActionType>();
+    private QuotaDependency quotaDependency;
 
     static {
         for (VdcActionType action : values()) {
@@ -274,25 +274,26 @@ public enum VdcActionType {
         }
     }
 
-    private VdcActionType(int value) {
-        this(value, null);
+    private VdcActionType(int value , QuotaDependency quotaDependency) {
+        this(value, null, quotaDependency);
     }
 
-    private VdcActionType(int value, boolean isActionMonitored) {
-        this(value, null);
+    private VdcActionType(int value, boolean isActionMonitored, QuotaDependency quotaDependency) {
+        this(value, null, isActionMonitored, quotaDependency);
+    }
+
+    private VdcActionType(int value, ActionGroup actionGroupValue, QuotaDependency quotaDependency) {
+        this(value, actionGroupValue, true, quotaDependency);
+    }
+
+    private VdcActionType(int value, ActionGroup actionGroupValue, boolean isActionMonitored, QuotaDependency quotaDependency) {
+        this.intValue = value;
+        this.actionGroup = actionGroupValue;
         this.isActionMonitored = isActionMonitored;
+        this.quotaDependency = quotaDependency;
     }
 
-    private VdcActionType(int value, ActionGroup actionGroupValue) {
-        intValue = value;
-        actionGroup = actionGroupValue;
-    }
 
-    private VdcActionType(int value, ActionGroup actionGroupValue, boolean isActionMonitored) {
-        intValue = value;
-        actionGroup = actionGroupValue;
-        this.isActionMonitored = isActionMonitored;
-    }
 
     public int getValue() {
         return intValue;
@@ -310,4 +311,21 @@ public enum VdcActionType {
         return mappings.get(value);
     }
 
+    public QuotaDependency getQuotaDependency() {
+        return quotaDependency;
+    }
+
+    /**
+     * The QuotaDependency marks on which kind of quota regulated resources each command is dependant.
+     * i.e. - Creating new Disk is dependant of Storage resources. Running a VM is dependant of VDS (cluster) resources.
+     *
+     * NONE - indicates no dependency of any quota regulated resources.
+     *
+     * !!! Notice !!! - marking your command with QuotaDependency is not enough. In order to avoid Exceptions and
+     * Quota consumption errors, the command must implement the correct interface: STORAGE=>QuotaStorageDependant,
+     * VDS=>QuotaVdsDependant, BOTH=>QuotaStorageDependant and QuotaVdsDependant
+     */
+    public enum QuotaDependency {
+        NONE, STORAGE, VDS_GROUP, BOTH
+    }
 }

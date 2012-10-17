@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParameters> implements Quotable {
+public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParameters> implements QuotaStorageDependent {
 
 
     private static final long serialVersionUID = 2919605640067763395L;
@@ -49,13 +49,9 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
     }
 
     @Override
-    public abstract boolean validateAndSetQuota();
+    public abstract List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters();
 
-    @Override
-    public abstract void rollbackQuota();
-
-    @Override
-    public Guid getQuotaId() {
+    protected Guid getQuotaId() {
         return getParameters().getQuotaId();
     }
 

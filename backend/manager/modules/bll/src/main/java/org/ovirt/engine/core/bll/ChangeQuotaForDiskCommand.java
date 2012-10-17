@@ -1,13 +1,16 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.quota.ChangeQuotaCommand;
-import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
@@ -43,35 +46,29 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        // no change to quota
-        if (getQuotaId().equals(getDisk().getQuotaId())) {
-            return true;
-        }
-        getQuotaManager().decreaseStorageQuota(getStoragePool(),
-                Arrays.asList(new StorageQuotaValidationParameter(getDisk().getQuotaId(),
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        if (!getQuotaId().equals(getDisk().getQuotaId())) {
+            if (getDisk().getQuotaId() != null && !Guid.Empty.equals(getDisk().getQuotaId())) {
+                list.add(new QuotaStorageConsumptionParameter(
+                        getDisk().getQuotaId(),
+                        null,
+                        QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getParameters().getContainerId(),
-                        getDiskSize())));
-        if (getQuotaManager()
-                .validateAndSetStorageQuota(getStoragePool(),
-                        Arrays.asList(new StorageQuotaValidationParameter(getQuotaId(),
-                                getParameters().getContainerId(),
-                                getDiskSize())),
-                        getReturnValue().getCanDoActionMessages())) {
-            return true;
+                        getDiskSize()));
+            }
+            list.add(new QuotaStorageConsumptionParameter(
+                    getQuotaId(),
+                    null,
+                    QuotaConsumptionParameter.QuotaAction.CONSUME,
+                    getParameters().getContainerId(),
+                    getDiskSize()));
         }
-        getQuotaManager().rollbackQuota(getStoragePool(),
-                Arrays.asList(getQuotaId(), getDisk().getQuotaId()));
-        return false;
+
+        return list;
     }
 
-    @Override
-    public void rollbackQuota() {
-        getQuotaManager().rollbackQuota(getStoragePool(),
-                Arrays.asList(getQuotaId(), getDisk().getQuotaId()));
-    }
-
-    private long getDiskSize() {
+    private double getDiskSize() {
         return disk.getSizeInGigabytes();
     }
 

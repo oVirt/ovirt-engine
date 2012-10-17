@@ -578,6 +578,7 @@ CREATE TYPE vds_group_usage_rs AS
 
 -- Summarize the VCPU usage and the RAM usage for all the VMs in the quota which are not down or suspended
 -- If vds group id is null, then returns the global usage of the quota, other wise returns only the summarize of all VMs in the specific cluster.
+-- NOTE: VmDynamic status (0/13/14/15) must be persistent with UpdateVmCommand
 CREATE OR REPLACE FUNCTION CalculateVdsGroupUsage(v_quota_id UUID, v_vds_group_id UUID)
 RETURNS SETOF vds_group_usage_rs
 AS $function$

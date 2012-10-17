@@ -8,11 +8,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.quota.Quotable;
-import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -44,7 +44,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @LockIdNameAttribute
-public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements Quotable {
+public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent{
 
     private static final long serialVersionUID = -2407757772735253053L;
     List<DiskImage> selectedActiveDisks;
@@ -290,44 +290,17 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    public boolean validateAndSetQuota() {
-        if (isInternalExecution()) {
-            return true;
-        }
-        return getQuotaManager().validateAndSetStorageQuota(getStoragePool(),
-                getStorageQuotaListParameters(),
-                getReturnValue().getCanDoActionMessages());
-    }
-
-    @Override
-    public void rollbackQuota() {
-        if (isInternalExecution()) {
-            return;
-        }
-        getQuotaManager().rollbackQuota(getStoragePool(),
-                getQuotaManager().getQuotaListFromParameters(getStorageQuotaListParameters()));
-    }
-
-    private List<StorageQuotaValidationParameter> getStorageQuotaListParameters() {
-        List<StorageQuotaValidationParameter> list = new ArrayList<StorageQuotaValidationParameter>();
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
         for (DiskImage disk : getDisksList()) {
-            list.add(new StorageQuotaValidationParameter(disk.getQuotaId() != null ? disk.getQuotaId()
-                    : getVm().getQuotaId(),
-                    //TODO: shared disk?
+            list.add(new QuotaStorageConsumptionParameter(
+                    disk.getQuotaId(),
+                    null,
+                    QuotaConsumptionParameter.QuotaAction.CONSUME,
                     disk.getstorage_ids().get(0),
                     disk.getActualSize()));
         }
+
         return list;
     }
-
-    @Override
-    public Guid getQuotaId() {
-        return null;
-    }
-
-    @Override
-    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-        // no need to check permissions for snapshots, it is inherited from the disk
-    }
-
 }

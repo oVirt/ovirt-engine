@@ -22,8 +22,12 @@ import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParametersWrapper;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.quota.InvalidQuotaParametersException;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
@@ -103,6 +107,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private VdcActionType actionType;
     private final List<Class<?>> validationGroups = new ArrayList<Class<?>>();
     private final Guid commandId;
+    private boolean quotaChanged = false;
 
     protected Log log = LogFactory.getLog(getClass());
 
@@ -331,8 +336,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     @SuppressWarnings({ "unchecked", "synthetic-access" })
     protected final void internalCompensate() {
         try {
-            if (this instanceof Quotable) {
-                ((Quotable) this).rollbackQuota();
+            if (isQuotaDependant()) {
+                rollbackQuota();
             }
         } catch (NullPointerException e) {
             log.debug("RollbackQuota: failed (may be because quota is disabled)", e);
@@ -525,6 +530,51 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         } else {
             endWithFailure();
         }
+        rollbackQuota();
+    }
+
+    private void rollbackQuota() {
+        // Quota accounting is done only in the most external Command.
+        if (isQuotaChanged()) {
+            List<QuotaConsumptionParameter> consumptionParameters = getQuotaConsumptionParameters();
+            if (consumptionParameters != null) {
+                for (QuotaConsumptionParameter parameter : consumptionParameters) {
+                    getQuotaManager().removeQuotaFromCache(getStoragePool().getId(), parameter.getQuotaGuid());
+                }
+            }
+        }
+    }
+
+    private List<QuotaConsumptionParameter> getQuotaConsumptionParameters() {
+        List<QuotaConsumptionParameter> consumptionParameters;
+
+        // This a double marking mechanism which was created to ensure Quota dependencies would not be inherited
+        // by descendants commands. Each Command is both marked by the QuotaDependency and implements the required
+        // Interfaces (NONE does not implement any of the two interfaces).
+        // The enum markings prevent Quota dependencies unintentional inheritance.
+        switch (getActionType().getQuotaDependency()) {
+            case NONE:
+                return null;
+            case STORAGE:
+                consumptionParameters = getThisQuotaStorageDependent().getQuotaStorageConsumptionParameters();
+                break;
+            case VDS_GROUP:
+                consumptionParameters = getThisQuotaVdsDependent().getQuotaVdsConsumptionParameters();
+                break;
+            default:
+                consumptionParameters = getThisQuotaStorageDependent().getQuotaStorageConsumptionParameters();
+                consumptionParameters.addAll(getThisQuotaVdsDependent().getQuotaVdsConsumptionParameters());
+                break;
+        }
+        return consumptionParameters;
+    }
+
+    private QuotaStorageDependent getThisQuotaStorageDependent() {
+        return (QuotaStorageDependent) this;
+    }
+
+    private QuotaVdsDependent getThisQuotaVdsDependent() {
+        return (QuotaVdsDependent) this;
     }
 
     private void revertPreviousHandlers() {
@@ -547,6 +597,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void endWithFailure() {
         setSucceeded(true);
+        rollbackQuota();
     }
 
     private boolean internalCanDoAction() {
@@ -556,10 +607,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             try {
                 returnValue =
                         isUserAuthorizedToRunAction() && isBackwardsCompatible() && validateInputs() && acquireLock()
-                                && canDoAction();
-                if (returnValue && this instanceof Quotable) {
-                    returnValue &= ((Quotable) this).validateAndSetQuota();
-                }
+                                && canDoAction()
+                                && internalValidateAndSetQuota();
                 if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
                     log.warnFormat("CanDoAction of action {0} failed. Reasons:{1}", getActionType(),
                             StringUtils.join(getReturnValue().getCanDoActionMessages(), ','));
@@ -579,6 +628,35 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         }
         return returnValue;
+    }
+
+    private boolean internalValidateAndSetQuota() {
+        // Quota accounting is done only in the most external Command.
+        if (isInternalExecution() || !isQuotaDependant()) {
+            return true;
+        }
+
+        if (getStoragePool() == null) {
+            throw new InvalidQuotaParametersException("Command: " + this.getClass().getName()
+                    + ". Storage pool is not available for quota calculation. ");
+        }
+
+        QuotaConsumptionParametersWrapper quotaConsumptionParametersWrapper = new QuotaConsumptionParametersWrapper(this,
+                getReturnValue().getCanDoActionMessages());
+        quotaConsumptionParametersWrapper.setParameters(getQuotaConsumptionParameters());
+
+        if (quotaConsumptionParametersWrapper.getParameters() == null) {
+            throw new InvalidQuotaParametersException("Command: " + this.getClass().getName()
+                    + ". No Quota parameters available.");
+        }
+
+        boolean result = getQuotaManager().consume(quotaConsumptionParametersWrapper);
+        setQuotaChanged(result);
+        return result;
+    }
+
+    private boolean isQuotaDependant() {
+        return getActionType().getQuotaDependency() != VdcActionType.QuotaDependency.NONE;
     }
 
     /**
@@ -758,8 +836,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             return false;
         }
 
-        if (this instanceof Quotable) {
-            ((Quotable) this).addQuotaPermissionSubject(permSubjects);
+        if (isQuotaDependant()) {
+            addQuotaPermissionSubject(permSubjects);
         }
 
         for (PermissionSubject permSubject : permSubjects) {
@@ -792,6 +870,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         // If we are here then we should grant the permission:
         return true;
+    }
+
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        if (!isInternalExecution() && getStoragePool() != null
+                && getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+
+            List<QuotaConsumptionParameter> consumptionParameters = getQuotaConsumptionParameters();
+
+            if (consumptionParameters != null) {
+                for (QuotaConsumptionParameter parameter : getQuotaConsumptionParameters()) {
+                    quotaPermissionList.add(new PermissionSubject(parameter.getQuotaGuid(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+                }
+            }
+        }
     }
 
     protected List<tags> getTagsAttachedToObject() {
@@ -1211,8 +1303,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void rollback() {
         log.errorFormat("Transaction rolled-back for command: {0}.", CommandBase.this.getClass().getName());
         try {
-            if (this instanceof Quotable) {
-                ((Quotable) this).rollbackQuota();
+            if (isQuotaDependant()) {
+                rollbackQuota();
             }
         } catch (NullPointerException e) {
             log.debug("RollbackQuota: failed (may be because quota is disabled)", e);
@@ -1570,5 +1662,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private int getExecutionIndex() {
         return getParameters().getExecutionIndex();
+    }
+
+    public boolean isQuotaChanged() {
+        return quotaChanged;
+    }
+
+    public void setQuotaChanged(boolean quotaChanged) {
+        this.quotaChanged = quotaChanged;
     }
 }

@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -59,6 +60,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     public VmCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getVmId());
+    }
+
+    @Override
+    public NGuid getStoragePoolId() {
+        if (super.getStoragePoolId() == null) {
+            VM vm = getVm();
+            if (vm != null) {
+                setStoragePoolId(vm.getstorage_pool_id());
+            }
+        }
+        return super.getStoragePoolId();
     }
 
     /**
