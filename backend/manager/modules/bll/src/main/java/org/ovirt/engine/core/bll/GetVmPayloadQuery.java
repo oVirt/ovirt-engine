@@ -18,17 +18,19 @@ public class GetVmPayloadQuery<P extends GetVmByVmIdParameters> extends QueriesC
 
     @Override
     protected void executeQueryCommand() {
-        VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
-        List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceType.DISK.getName());
+        if (MultiLevelAdministrationHandler.isAdminUser(getUser())) {
+            VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
+            List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceType.DISK.getName());
 
-        for (VmDevice disk: disks) {
-            if (VmPayload.isPayload(disk.getSpecParams())) {
-                VmPayload payload = new VmPayload(VmDeviceType.valueOf(disk.getType().toUpperCase()),
-                    disk.getSpecParams());
-                payload.setType(VmDeviceType.valueOf(disk.getDevice().toUpperCase()));
-                payload.setContent(new String(Base64.decodeBase64(payload.getContent())));
+            for (VmDevice disk : disks) {
+                if (VmPayload.isPayload(disk.getSpecParams())) {
+                    VmPayload payload = new VmPayload(VmDeviceType.valueOf(disk.getType().toUpperCase()),
+                            disk.getSpecParams());
+                    payload.setType(VmDeviceType.valueOf(disk.getDevice().toUpperCase()));
+                    payload.setContent(new String(Base64.decodeBase64(payload.getContent())));
 
-                getQueryReturnValue().setReturnValue(payload);
+                    getQueryReturnValue().setReturnValue(payload);
+                }
             }
         }
     }
