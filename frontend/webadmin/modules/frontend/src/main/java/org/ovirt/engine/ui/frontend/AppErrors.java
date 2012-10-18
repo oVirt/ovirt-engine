@@ -307,11 +307,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is previewing a Snapshot.")
     String ACTION_TYPE_FAILED_VM_IN_PREVIEW();
 
-    @DefaultStringValue("Cannot ${action} ${type}: The disks ${diskAliases} are locked. Please try again in a few minutes.")
-    String ACTION_TYPE_FAILED_DISKS_ARE_LOCKED();
-
-    @DefaultStringValue("Cannot ${action} ${type}: The disk ${diskAlias} is locked. Please try again in a few minutes.")
-    String ACTION_TYPE_FAILED_DISK_IS_LOCKED();
+    @DefaultStringValue("Cannot ${action} ${type}: The following disks are locked: ${diskAliases}. Please try again in a few minutes.")
+    String ACTION_TYPE_FAILED_DISKS_LOCKED();
 
     @DefaultStringValue("Cannot ${action} ${type}: VM is locked. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_VM_IS_LOCKED();

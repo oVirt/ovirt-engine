@@ -7,8 +7,8 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.MoveOrCopyDiskCommand;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
+import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -87,7 +87,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     /** Live migration is not allowed if any of the VM's disks are locked, since we need to perform a live snapshot*/
     @Override
-    protected boolean isImageIsNotLocked() {
+    protected boolean isImageNotLocked() {
         return ImagesHandler.checkImagesLocked(getVm(), getReturnValue().getCanDoActionMessages());
     }
 

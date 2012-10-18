@@ -72,7 +72,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && checkOperationIsCorrect()
                 && canFindVmOrTemplate()
                 && acquireLockInternal()
-                && isImageIsNotLocked()
+                && isImageNotLocked()
                 && isSourceAndDestTheSame()
                 && validateSourceStorageDomain(canDoActionMessages)
                 && validateDestStorage(canDoActionMessages)
@@ -100,10 +100,12 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return true;
     }
 
-    protected boolean isImageIsNotLocked() {
-        if (getImage().getimageStatus() == ImageStatus.LOCKED) {
+    protected boolean isImageNotLocked() {
+        DiskImage diskImage = getImage();
+        if (diskImage.getimageStatus() == ImageStatus.LOCKED) {
             if (getParameters().getOperation() == ImageOperation.Move) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+                addCanDoActionMessage(String.format("$%1$s %2$s", "diskAlias", diskImage.getDiskAlias()));
             } else {
                 addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
             }

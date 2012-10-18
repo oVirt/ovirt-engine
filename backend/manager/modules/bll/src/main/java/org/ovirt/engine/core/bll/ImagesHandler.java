@@ -506,10 +506,13 @@ public final class ImagesHandler {
                 returnValue = false;
             }
         }
+
         if (lockedDisksAliases.size() > 0) {
-            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED.toString());
-            messages.add(String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
+            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.toString());
+            ListUtils.nullSafeAdd(messages,
+                    String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
         }
+
         if (returnValue && vm.getstatus() == VMStatus.ImageLocked) {
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED.toString());
             returnValue = false;

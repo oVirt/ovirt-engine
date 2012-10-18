@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -129,6 +132,32 @@ public class MoveOrCopyDiskCommandTest {
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString()));
+    }
+
+    @Test
+    public void canDoActionDiskIsLocked() throws Exception {
+        initializeCommand(ImageOperation.Move);
+        initVmDiskImage();
+        initVm();
+        command.getImage().setimageStatus(ImageStatus.LOCKED);
+        doReturn(vmDeviceDao).when(command).getVmDeviceDAO();
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
+                VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.toString()));
+    }
+
+    @Test
+    public void canDoActionTemplateImageIsLocked() throws Exception {
+        initializeCommand(ImageOperation.Copy);
+        initTemplateDiskImage();
+        command.getImage().setimageStatus(ImageStatus.LOCKED);
+        doReturn(vmTemplateDao).when(command).getVmTemplateDAO();
+
+        Map<Boolean, VmTemplate> map = Collections.singletonMap(true, new VmTemplate());
+        doReturn(map).when(vmTemplateDao).getAllForImage(any(Guid.class));
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
+                VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString()));
     }
 
     protected void initVm() {

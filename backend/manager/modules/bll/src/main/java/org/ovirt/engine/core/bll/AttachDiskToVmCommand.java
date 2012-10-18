@@ -65,7 +65,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         retValue = acquireLockInternal();
 
         if (retValue && isImageDisk && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_LOCKED);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
             addCanDoActionMessage(String.format("$%1$s %2$s", "diskAlias", disk.getDiskAlias()));
             return false;
         }

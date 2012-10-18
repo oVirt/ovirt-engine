@@ -353,8 +353,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 // the stateless VM in the EndAction part.
                 VmHandler.updateDisksFromDb(getVm());
             } else {
-                if (vdcReturnValue.getCanDoActionMessages().contains(
-                        VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED.name())) {
+                if (areDisksLocked(vdcReturnValue)) {
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 }
                 getReturnValue().setFault(vdcReturnValue.getFault());
@@ -362,6 +361,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
         }
     }
+
+    private boolean areDisksLocked(VdcReturnValueBase vdcReturnValue) {
+        return vdcReturnValue.getCanDoActionMessages().contains(
+                VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.name());
+    }
+
 
     private void warnIfNotAllDisksPermitSnapshots() {
         for (Disk disk : getVm().getDiskMap().values()) {
