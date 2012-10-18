@@ -1169,9 +1169,7 @@ public class VdsUpdateRunTimeInfo {
             // if failed in destination right after migration
             else // => cacheVm == null
             {
-                if (ResourceManager.getInstance().IsVmInAsyncRunningList(vmDynamic.getId())) {
-                    ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
-                }
+                ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
                 AddVmDynamicToList(vmDynamic);
             }
         } else {
