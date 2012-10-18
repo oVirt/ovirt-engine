@@ -17,10 +17,13 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
+@NonTransactiveCommandAttribute
 public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    private boolean _hasFlags = true;
+    private static final long serialVersionUID = 8734106870574677571L;
+
     public HandleVdsCpuFlagsOrClusterChangedCommand(T parameters) {
         super(parameters);
     }
@@ -35,13 +38,11 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         return result;
     }
 
-    private boolean _hasFlags = true;
-
     @Override
     protected void executeCommand() {
         String vdsGroupCpuName = getVds().getvds_group_cpu_name();
         boolean foundCPU = true;
-        // if cluster doesnt have cpu then get the cpu from the vds
+        // if cluster doesn't have cpu then get the cpu from the vds
         if (StringUtils.isEmpty(vdsGroupCpuName)) {
             ServerCpu sc = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(getVds().getcpu_flags(), getVds()
                     .getvds_group_compatibility_version());
@@ -87,7 +88,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
             tempVar2.setSaveToDb(true);
             Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar2,  ExecutionHandler.createInternalJobContext());
         } else {
-            // if no need to change to non operational then dont log the command
+            // if no need to change to non operational then don't log the command
             setCommandShouldBeLogged(false);
         }
         setSucceeded(true);
@@ -98,6 +99,4 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         // check first if no flags and then if succeeded
         return (!_hasFlags) ? AuditLogType.VDS_CPU_RETRIEVE_FAILED : AuditLogType.VDS_CPU_LOWER_THAN_CLUSTER;
     }
-
-    private static Log log = LogFactory.getLog(HandleVdsCpuFlagsOrClusterChangedCommand.class);
 }
