@@ -41,8 +41,16 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 
 public class ResourceManager {
-    private static Log log = LogFactory.getLog(ResourceManager.class);
+
     private static ResourceManager _Instance = new ResourceManager();
+    private final Map<Guid, HashSet<Guid>> _vdsAndVmsList = new HashMap<Guid, HashSet<Guid>>();
+    private final Map<Guid, VdsManager> _vdsManagersDict = new ConcurrentHashMap<Guid, VdsManager>();
+    private final ConcurrentHashMap<Guid, Boolean> _asyncRunningVms =
+            new ConcurrentHashMap<Guid, Boolean>();
+
+    private static final String VDSCommandPrefix = "VDSCommand";
+
+    private static Log log = LogFactory.getLog(ResourceManager.class);
 
     private ResourceManager() {
 
@@ -56,10 +64,8 @@ public class ResourceManager {
         log.info("ResourceManager::ResourceManager::Entered");
         List<VDS> allVdsList = DbFacade.getInstance().getVdsDao().getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
-        for (VDS helper_vds : allVdsList)
-        {
-            if (helper_vds.getstatus() == VDSStatus.NonResponsive)
-            {
+        for (VDS helper_vds : allVdsList) {
+            if (helper_vds.getstatus() == VDSStatus.NonResponsive) {
                 nonResponsiveVdss.add(helper_vds.getId());
             }
         }
@@ -86,19 +92,12 @@ public class ResourceManager {
                 }
             }
         }
-        if (allVdsList.size() > 0) {
-            // Populate the VDS dictionary
-            for (VDS curVds : allVdsList) {
-                AddVds(curVds, true);
-            }
+        // Populate the VDS dictionary
+        for (VDS curVds : allVdsList) {
+            AddVds(curVds, true);
         }
         IrsBrokerCommand.Init();
     }
-
-    private final HashMap<Guid, HashSet<Guid>> _vdsAndVmsList = new HashMap<Guid, HashSet<Guid>>();
-    private final Map<Guid, VdsManager> _vdsManagersDict = new ConcurrentHashMap<Guid, VdsManager>();
-    private final ConcurrentHashMap<Guid, Boolean> _asyncRunningVms =
-            new ConcurrentHashMap<Guid, Boolean>();
 
     public boolean AddAsyncRunningVm(Guid vmId) {
         boolean returnValue = false;
@@ -196,16 +195,15 @@ public class ResourceManager {
     }
 
     public VdsManager GetVdsManager(Guid vdsId) {
-        if (_vdsManagersDict.containsKey(vdsId)) {
-            return _vdsManagersDict.get(vdsId);
-        } else {
+        VdsManager vdsManger = _vdsManagersDict.get(vdsId);
+        if (vdsManger == null) {
             log.errorFormat("Cannot get vdsManager for vdsid={0}", vdsId);
         }
-        return null;
+        return vdsManger;
     }
 
     /**
-     * Set vm status to DOWN and save to DB.
+     * Set vm status to Unknown and save to DB.
      * @param vm
      */
     public void SetVmUnknown(VM vm) {
@@ -306,8 +304,6 @@ public class ResourceManager {
         }
     }
 
-    private static final String VDSCommandPrefix = "VDSCommand";
-
     private static String GetCommandTypeName(VDSCommandType command) {
         String packageName = command.getPackageName();
         String commandName = String.format("%s.%s%s", packageName, command, VDSCommandPrefix);
@@ -326,7 +322,7 @@ public class ResourceManager {
         try {
             @SuppressWarnings("unchecked")
             Class<VDSCommandBase<P>> type =
-                    (Class<VDSCommandBase<P>>) java.lang.Class.forName(GetCommandTypeName(commandType));
+                    (Class<VDSCommandBase<P>>) Class.forName(GetCommandTypeName(commandType));
             Constructor<VDSCommandBase<P>> constructor =
                     ReflectionUtils.findConstructor(type, parameters.getClass());
 
@@ -350,7 +346,7 @@ public class ResourceManager {
             P parameters) {
         try {
             Class<FutureVDSCommand> type =
-                    (Class<FutureVDSCommand>) java.lang.Class.forName(commandType.getFullyQualifiedClassName());
+                    (Class<FutureVDSCommand>) Class.forName(commandType.getFullyQualifiedClassName());
             Constructor<FutureVDSCommand> constructor =
                     ReflectionUtils.findConstructor(type,
                             parameters.getClass());
