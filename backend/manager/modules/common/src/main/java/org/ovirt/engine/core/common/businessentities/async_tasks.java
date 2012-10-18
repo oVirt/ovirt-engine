@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,6 +36,7 @@ public class async_tasks implements Serializable {
         this.taskId = task_id;
         this.setaction_parameters(action_parameters);
         this.stepId = stepId;
+        this.startTime = new Date();
         this.commandId = commandId;
     }
 
@@ -53,6 +55,18 @@ public class async_tasks implements Serializable {
     @Column(name = "result", nullable = false)
     @Enumerated
     private AsyncTaskResultEnum result = AsyncTaskResultEnum.forValue(0);
+
+
+    private Date startTime;
+
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
 
     public AsyncTaskResultEnum getresult() {
         return this.result;
@@ -133,6 +147,7 @@ public class async_tasks implements Serializable {
         results = prime * results + ((taskId == null) ? 0 : taskId.hashCode());
         results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
         results = prime * results + ((commandId == null) ? 0 : commandId.hashCode());
+        results =  prime * results + ((startTime == null) ? 0 : startTime.hashCode());
         return results;
     }
 
@@ -173,6 +188,13 @@ public class async_tasks implements Serializable {
                 return false;
             }
         } else if (!commandId.equals(other.commandId)) {
+            return false;
+        }
+        if (startTime == null) {
+            if (other.startTime != null) {
+                return false;
+            }
+        } else if (!startTime.equals(other.startTime)) {
             return false;
         }
 

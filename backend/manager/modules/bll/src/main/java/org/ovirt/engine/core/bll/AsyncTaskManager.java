@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -176,11 +175,10 @@ public final class AsyncTaskManager {
                 .AddMinutes((-1) * Config.<Integer> GetValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
         for (SPMAsyncTask task : _tasks.values()) {
 
-            if (task.getParameters().getDbAsyncTask().getaction_parameters().getTaskStartTime() < maxTime) {
+            if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
                 AuditLogableBase logable = new AuditLogableBase();
                 logable.AddCustomValue("CommandName", task.getParameters().getDbAsyncTask().getaction_type().toString());
-                logable.AddCustomValue("Date", new Date(task.getParameters().getDbAsyncTask()
-                        .getaction_parameters().getTaskStartTime()).toString());
+                logable.AddCustomValue("Date", task.getParameters().getDbAsyncTask().getStartTime().toString());
 
                 // if task is not finish and not unknown then it's in running
                 // status
@@ -189,16 +187,16 @@ public final class AsyncTaskManager {
                     AuditLogDirector.log(logable, AuditLogType.TASK_STOPPING_ASYNC_TASK);
 
                     log.infoFormat("Cleaning zombie tasks: Stopping async task {0} that started at {1}",
-                            task.getParameters().getDbAsyncTask().getaction_type(), new Date(task
-                                    .getParameters().getDbAsyncTask().getaction_parameters().getTaskStartTime()));
+                            task.getParameters().getDbAsyncTask().getaction_type(), task
+                                    .getParameters().getDbAsyncTask().getStartTime());
 
                     task.StopTask();
                 } else {
                     AuditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
 
                     log.infoFormat("Cleaning zombie tasks: Clearing async task {0} that started at {1}",
-                            task.getParameters().getDbAsyncTask().getaction_type(), new Date(task
-                                    .getParameters().getDbAsyncTask().getaction_parameters().getTaskStartTime()));
+                            task.getParameters().getDbAsyncTask().getaction_type(), task
+                                    .getParameters().getDbAsyncTask().getStartTime());
 
                     task.ClearAsyncTask();
                 }

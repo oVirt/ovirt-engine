@@ -38,6 +38,7 @@
         <column>result</column>
         <column>action_parameters</column>
         <column>command_id</column>
+        <column>started_at</column>
         <row>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0aa</value>
             <value>1</value> <!--  Add VM -->
@@ -45,6 +46,7 @@
             <value>0</value> <!--  Success -->
             <null />
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0aa</value>
+            <value>2010-12-01 14:13:07</value>
         </row>
         <row>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0ab</value>
@@ -53,6 +55,7 @@
             <value>0</value> <!--  Success -->
             <null />
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0ab</value>
+            <value>2010-12-01 14:13:07</value>
         </row>
     </table>
 

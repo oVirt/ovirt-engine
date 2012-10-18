@@ -16,6 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -55,6 +56,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setaction_parameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
             entity.setStepId(NGuid.createGuidFromString(rs.getString("step_id")));
             entity.setCommandId(Guid.createGuidFromString(rs.getString("command_id")));
+            entity.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("started_at")));
             return entity;
         }
 
@@ -114,6 +116,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     public void save(async_tasks task, VdcObjectType entityType, Guid... entityIds) {
         AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
         parameterSource.addValue("entity_type", (entityType != null) ? entityType.toString() : null);
+        parameterSource.addValue("started_at", task.getStartTime());
         parameterSource.addValue("entity_ids", StringUtils.join(entityIds, ","));
         getCallsHandler().executeModification("Insertasync_tasks", parameterSource);
     }

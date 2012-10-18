@@ -49,8 +49,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     private boolean taskGroupSuccess = true;
 
-    private long taskStartTime;
-
     private ArrayList<Guid> taskIds;
 
     /**
@@ -65,7 +63,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
         shouldbelogged = true;
         transctionOption = TransactionScopeOption.Required;
         setTaskGroupSuccess(true);
-        taskStartTime = System.currentTimeMillis();
         setParentCommand(VdcActionType.Unknown);
     }
 
@@ -219,14 +216,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
         entityId = value;
     }
 
-    public long getTaskStartTime() {
-        return taskStartTime;
-    }
-
-    public void setTaskStartTime(long value) {
-        taskStartTime = value;
-    }
-
     public ArrayList<Guid> getTaskIds() {
         return taskIds;
     }
@@ -249,7 +238,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
         int result = 1;
         result = prime * result + ((imagesParameters == null) ? 0 : imagesParameters.hashCode());
         result = prime * result + (shouldbelogged ? 1231 : 1237);
-        result = prime * result + (int) (taskStartTime ^ (taskStartTime >>> 32));
         result = prime * result + ((transctionOption == null) ? 0 : transctionOption.hashCode());
         result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
         result = prime * result + ((httpSessionId == null) ? 0 : httpSessionId.hashCode());
@@ -277,8 +265,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
         } else if (!imagesParameters.equals(other.imagesParameters))
             return false;
         if (shouldbelogged != other.shouldbelogged)
-            return false;
-        if (taskStartTime != other.taskStartTime)
             return false;
         if (transctionOption != other.transctionOption)
             return false;

@@ -281,7 +281,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (actionAllowed) {
                 getReturnValue().setCanDoAction(true);
                 getReturnValue().setIsSyncronious(true);
-                getParameters().setTaskStartTime(System.currentTimeMillis());
                 execute();
             } else {
                 getReturnValue().setCanDoAction(false);

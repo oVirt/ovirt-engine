@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -45,6 +46,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         // create some test data
         newAsyncTask = new async_tasks();
         newAsyncTask.settask_id(Guid.NewGuid());
+        newAsyncTask.setStartTime(new Date());
         newAsyncTask.setaction_type(VdcActionType.AddDisk);
         newAsyncTask.setstatus(AsyncTaskStatusEnum.running);
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
@@ -123,7 +125,12 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         dao.save(newAsyncTask);
 
         async_tasks result = dao.get(newAsyncTask.gettask_id());
-
+        /*
+        //Setting startTime to null is required as DB auto generates
+        //the value of start time
+        //Without this, the comparison would fail
+        result.setStartTime(null);
+    */
         assertEquals(newAsyncTask, result);
     }
 
