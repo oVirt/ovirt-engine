@@ -16,7 +16,8 @@ public enum SearchType implements Serializable {
     StorageDomain,
     Quota,
     Disk,
-    GlusterVolume;
+    GlusterVolume,
+    Network;
 
     public int getValue() {
         return this.ordinal();

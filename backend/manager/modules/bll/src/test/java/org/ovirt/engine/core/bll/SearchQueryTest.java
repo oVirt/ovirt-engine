@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.NetworkViewDao;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -52,6 +54,7 @@ public class SearchQueryTest {
     List<VDSGroup> vdsGroupResultList = new ArrayList<VDSGroup>();
     List<storage_pool> storagePoolResultList = new ArrayList<storage_pool>();
     List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<GlusterVolumeEntity>();
+    List<NetworkView> networkResultList = new ArrayList<NetworkView>();
 
     private DbFacade mockDAO() {
         final DiskDao diskDao = Mockito.mock(DiskDao.class);
@@ -61,6 +64,7 @@ public class SearchQueryTest {
         final VdsGroupDAO vdsGroupDAO = Mockito.mock(VdsGroupDAO.class);
         final StoragePoolDAO storagePoolDAO = Mockito.mock(StoragePoolDAO.class);
         final GlusterVolumeDao glusterVolumeDao = Mockito.mock(GlusterVolumeDao.class);
+        final NetworkViewDao networkViewDao = Mockito.mock(NetworkViewDao.class);
         final DbEngineDialect dbEngineDialect = Mockito.mock(DbEngineDialect.class);
         final DbFacade facadeMock = new DbFacade() {
             @Override
@@ -102,6 +106,11 @@ public class SearchQueryTest {
             public QuotaDAO getQuotaDao() {
                 return quotaDAO;
             }
+
+            @Override
+            public NetworkViewDao getNetworkViewDao() {
+                return networkViewDao;
+            }
         };
 
         Mockito.when(dbEngineDialect.getPreSearchQueryCommand()).thenReturn("");
@@ -114,6 +123,7 @@ public class SearchQueryTest {
         mockVdsGroupDAO(vdsGroupDAO);
         mockStoragePoolDAO(storagePoolDAO);
         mockGlusterVolumeDao(glusterVolumeDao);
+        mockNetworkDao(networkViewDao);
 
         return facadeMock;
     }
@@ -188,6 +198,12 @@ public class SearchQueryTest {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
         Mockito.when(glusterVolumeDao.getAllWithQuery(Matchers.matches(getGlusterVolumeRegexString(search))))
                 .thenReturn(glusterVolumeList);
+    }
+
+    private void mockNetworkDao(final NetworkViewDao networkViewDao) {
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        Mockito.when(networkViewDao.getAllWithQuery(Matchers.matches(getNetworkRegexString(search))))
+                .thenReturn(networkResultList);
     }
 
     /**
@@ -284,6 +300,17 @@ public class SearchQueryTest {
         return ".*" + search.getDefaultSort(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".*";
+    }
+
+    /**
+     * Regex string which contains all of the Network properties.
+     *
+     * @param search
+     */
+    private static String getNetworkRegexString(SearchObjectAutoCompleter search) {
+        return ".*" + search.getDefaultSort(SearchObjects.NETWORK_OBJ_NAME) + ".*"
+                + search.getRelatedTableNameWithOutTags(SearchObjects.NETWORK_OBJ_NAME) + ".* "
+                + search.getPrimeryKeyName(SearchObjects.NETWORK_OBJ_NAME) + ".*";
     }
 
     private SearchQuery<SearchParameters> spySearchQuery(SearchParameters searchParam) {
@@ -397,5 +424,13 @@ public class SearchQueryTest {
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(quotaResultList == searchQuery.getQueryReturnValue().getReturnValue());
+    }
+
+    @Test
+    public void testGetAllNetworkSearch() throws Exception {
+        SearchParameters searchParam = new SearchParameters("Network:", SearchType.Network);
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
+        searchQuery.executeQueryCommand();
+        assertTrue(networkResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
 }

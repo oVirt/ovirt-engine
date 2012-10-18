@@ -32,6 +32,11 @@ public final class SearchObjects {
     public static final String GLUSTER_VOLUME_PLU_OBJ_NAME = "VOLUMES";
     public static final String QUOTA_OBJ_NAME = "QUOTA";
     public static final String QUOTA_PLU_OBJ_NAME = "QUOTAS";
+    public static final String NETWORK_OBJ_NAME = "NETWORK";
+    public static final String NETWORK_PLU_OBJ_NAME = "NETWORKS";
+    public static final String VDS_NETWORK_INTERFACE_OBJ_NAME = "NIC";
+    public static final String VM_NETWORK_INTERFACE_OBJ_NAME = "VNIC";
+    public static final String NETWORK_CLUSTER_OBJ_NAME = "CLUSTER_NETWORK";
 
     //special searches
     private static final String ALERT = "EVENTS: severity=alert";
@@ -68,6 +73,8 @@ public final class SearchObjects {
         SAFE_SEARCH_EXPR.add(GLUSTER_VOLUME_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(QUOTA_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(QUOTA_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+        SAFE_SEARCH_EXPR.add(NETWORK_OBJ_NAME.toLowerCase() + SEPERATOR);
+        SAFE_SEARCH_EXPR.add(NETWORK_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(ALERT.toLowerCase());
         SAFE_SEARCH_EXPR.add(ERROR.toLowerCase());
         SAFE_SEARCH_EXPR.add(HOST_BY_CPU.toLowerCase());

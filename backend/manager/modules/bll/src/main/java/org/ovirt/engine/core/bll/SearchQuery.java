@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -125,6 +126,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
         case GlusterVolume: {
             returnValue = searchGlusterVolumes();
+            break;
+        }
+        case Network: {
+            returnValue = searchNetworks();
             break;
         }
         default: {
@@ -256,6 +261,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<GlusterVolumeEntity> searchGlusterVolumes() {
         return genericSearch(getDbFacade().getGlusterVolumeDao(), true, null);
+    }
+
+    private List<NetworkView> searchNetworks() {
+        return genericSearch(getDbFacade().getNetworkViewDao(), true, null);
     }
 
     private QueryData2 InitQueryData(boolean useCache) {

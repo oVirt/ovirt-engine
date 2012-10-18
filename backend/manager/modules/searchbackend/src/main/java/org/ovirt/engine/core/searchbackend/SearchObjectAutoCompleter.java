@@ -27,6 +27,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
         mVerbs.put(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME);
         mVerbs.put(SearchObjects.QUOTA_OBJ_NAME, SearchObjects.QUOTA_OBJ_NAME);
+        mVerbs.put(SearchObjects.NETWORK_PLU_OBJ_NAME, SearchObjects.NETWORK_PLU_OBJ_NAME);
 
         buildCompletions();
         mVerbs.put(SearchObjects.VM_OBJ_NAME, SearchObjects.VM_OBJ_NAME);
@@ -40,6 +41,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.put(SearchObjects.VDC_USER_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.VDC_CLUSTER_OBJ_NAME);
         mVerbs.put(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
+        mVerbs.put(SearchObjects.NETWORK_OBJ_NAME, SearchObjects.NETWORK_OBJ_NAME);
 
         // vms - vds
         addJoin(SearchObjects.VM_OBJ_NAME, "run_on_vds", SearchObjects.VDS_OBJ_NAME, "vds_id");
@@ -53,11 +55,17 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         // vms - audit
         addJoin(SearchObjects.VM_OBJ_NAME, "vm_guid", SearchObjects.AUDIT_OBJ_NAME, "vm_id");
 
+        // vms - vm network interface
+        addJoin(SearchObjects.VM_OBJ_NAME, "vm_guid", SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, "vm_guid");
+
         // vms - storage domain
         addJoin(SearchObjects.VM_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
         // templates - storage domain
         addJoin(SearchObjects.TEMPLATE_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+
+        // templates - vm template network interface
+        addJoin(SearchObjects.TEMPLATE_OBJ_NAME, "vmt_guid", SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, "vmt_guid");
 
         // vds - storage domain
         addJoin(SearchObjects.VDS_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
@@ -66,7 +74,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
         // disk - storage domain images
-        addJoin(SearchObjects.DISK_OBJ_NAME, "image_guid", SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME, "image_guid");
+        addJoin(SearchObjects.DISK_OBJ_NAME,
+                "image_guid",
+                SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
+                "image_guid");
 
         // storage domain images - storage domain
         addJoin(SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME, "id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
@@ -95,8 +106,20 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         // gluster volume - cluster
         addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, "cluster_id", SearchObjects.VDC_CLUSTER_OBJ_NAME, "vds_group_id");
 
+        // cluster - network
+        addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,
+                "vds_group_id",
+                SearchObjects.NETWORK_CLUSTER_OBJ_NAME,
+                "cluster_id");
+
         // audit - gluster volume
         addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, "id", SearchObjects.AUDIT_OBJ_NAME, "gluster_volume_id");
+
+        // data center - network
+        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.NETWORK_OBJ_NAME, "storage_pool_id");
+
+        // host interface - host
+        addJoin(SearchObjects.VDS_OBJ_NAME, "vds_id", SearchObjects.VDS_NETWORK_INTERFACE_OBJ_NAME, "vds_id");
     }
 
     private void addJoin(String firstObj, String firstColumnName, String secondObj, String secondColumnName) {
@@ -213,6 +236,30 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vm_pools_full_view",
                             "vm_pool_id",
                             "vm_pool_name ASC "));
+                    put(SearchObjects.NETWORK_OBJ_NAME, new EntitySearchInfo(null,
+                            new NetworkConditionFieldAutoCompleter(),
+                            "network_view",
+                            "network_view",
+                            "id",
+                            "name ASC"));
+                    put(SearchObjects.VDS_NETWORK_INTERFACE_OBJ_NAME, new EntitySearchInfo(null,
+                            new NetworkInterfaceConditionFieldAutoCompleter(),
+                            "vds_interface",
+                            "vds_interface",
+                            "vds_id",
+                            "name ASC"));
+                    put(SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, new EntitySearchInfo(null,
+                            new NetworkInterfaceConditionFieldAutoCompleter(),
+                            "vm_interface",
+                            "vm_interface",
+                            "name",
+                            "vm_id ASC"));
+                    put(SearchObjects.NETWORK_CLUSTER_OBJ_NAME, new EntitySearchInfo(null,
+                            new NetworkClusterConditionFieldAutoCompleter(),
+                            "network_cluster_view",
+                            "network_cluster_view",
+                            "vds_group_id",
+                            "vds_group_name ASC"));
                 }
             });
 
@@ -234,6 +281,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             put(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
             put(SearchObjects.VDC_POOL_PLU_OBJ_NAME, SearchObjects.VDC_POOL_OBJ_NAME);
             put(SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
+            put(SearchObjects.NETWORK_PLU_OBJ_NAME, SearchObjects.NETWORK_OBJ_NAME);
         }
     });
 

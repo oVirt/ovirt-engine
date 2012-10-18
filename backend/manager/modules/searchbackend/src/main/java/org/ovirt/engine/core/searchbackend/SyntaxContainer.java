@@ -213,6 +213,10 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
             retval = SearchObjects.GLUSTER_VOLUME_OBJ_NAME;
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.NETWORK_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.NETWORK_PLU_OBJ_NAME)) {
+            retval = SearchObjects.NETWORK_OBJ_NAME;
         } else {
             retval = obj;
 
