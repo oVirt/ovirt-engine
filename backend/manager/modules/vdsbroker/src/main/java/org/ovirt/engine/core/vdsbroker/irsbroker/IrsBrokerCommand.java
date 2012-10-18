@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
@@ -133,7 +134,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         // multithreaded
         public Object syncObj = new Object();
 
-        public static final String UpVdssInStoragePoolQuery = "STORAGE: status = UP and DATACENTER = {0}";
         private final String storagePoolRefreshJobId;
         private final java.util.HashSet<Guid> mTriedVdssList = new java.util.HashSet<Guid>();
         private Guid mCurrentVdsId;
@@ -546,13 +546,13 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
                     if (host != null) {
                         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
-                        KeyValuePairCompat<IrsServerConnector, HttpClient> returnValue =
+                        Pair<IrsServerConnector, HttpClient> returnValue =
                                 XmlRpcUtils.getConnection(host,
                                         getmIrsPort(),
                                         clientTimeOut,
                                         IrsServerConnector.class,
                                         Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
-                        setmIrsProxy(new IrsServerWrapper(returnValue.getKey(), returnValue.getValue()));
+                        setmIrsProxy(new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond()));
                         Class[] inputTypes = new Class[] { storage_pool.class, boolean.class };
                         Object[] inputParams = new Object[] { storagePool, _isSpmStartCalled };
                         // TODO use thread pool

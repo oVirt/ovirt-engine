@@ -24,11 +24,11 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -179,13 +179,13 @@ public class VdsManager {
     private void InitVdsBroker() {
         log.infoFormat("vdsBroker({0},{1})", _vds.gethost_name(), _vds.getport());
         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
-        KeyValuePairCompat<VdsServerConnector, HttpClient> returnValue =
+        Pair<VdsServerConnector, HttpClient> returnValue =
                 XmlRpcUtils.getConnection(_vds.gethost_name(),
                         _vds.getport(),
                         clientTimeOut,
                         VdsServerConnector.class,
                         Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
-        _vdsProxy = new VdsServerWrapper(returnValue.getKey(), returnValue.getValue());
+        _vdsProxy = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
     }
 
     public void UpdateVmDynamic(VmDynamic vmDynamic) {
@@ -613,9 +613,7 @@ public class VdsManager {
 
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
-            if (ResourceManager.getInstance().getEventListener() != null) {
-                ResourceManager.getInstance().getEventListener().vdsNotResponding(vds);
-            }
+            ResourceManager.getInstance().getEventListener().vdsNotResponding(vds);
         }
         return true;
     }

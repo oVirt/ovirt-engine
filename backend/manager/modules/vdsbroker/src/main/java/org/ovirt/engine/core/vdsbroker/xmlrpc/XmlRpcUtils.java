@@ -26,7 +26,7 @@ import org.apache.xmlrpc.client.XmlRpcTransport;
 import org.apache.xmlrpc.client.util.ClientFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -77,7 +77,7 @@ public class XmlRpcUtils {
      *            - if a connection should be https or http
      * @return an instance of the given type.
      */
-    public static <T> KeyValuePairCompat<T, HttpClient> getConnection(String hostName, int port, int clientTimeOut,
+    public static <T> Pair<T, HttpClient> getConnection(String hostName, int port, int clientTimeOut,
             Class<T> type, boolean isSecure) {
         URL serverUrl;
         String prefix;
@@ -102,7 +102,7 @@ public class XmlRpcUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> KeyValuePairCompat<T, HttpClient> getHttpConnection(URL serverUrl, int clientTimeOut,
+    private static <T> Pair<T, HttpClient> getHttpConnection(URL serverUrl, int clientTimeOut,
             Class<T> type) {
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
         config.setServerURL(serverUrl);
@@ -120,8 +120,8 @@ public class XmlRpcUtils {
         T connector = (T) clientFactory.newInstance(Thread.currentThread().getContextClassLoader(), type, null);
         T asyncConnector = (T) AsyncProxy.newInstance(connector, clientTimeOut);
 
-        KeyValuePairCompat<T, HttpClient> returnValue =
-                new KeyValuePairCompat<T, HttpClient>(asyncConnector, httpclient);
+        Pair<T, HttpClient> returnValue =
+                new Pair<T, HttpClient>(asyncConnector, httpclient);
 
         return returnValue;
     }
