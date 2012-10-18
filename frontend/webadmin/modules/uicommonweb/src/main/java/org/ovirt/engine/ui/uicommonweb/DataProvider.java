@@ -736,7 +736,6 @@ public final class DataProvider
                                                  // that type already
         if (IsWindowsOsType(osType))
         {
-            list.remove(VmInterfaceType.e1000);
             if (osType == VmOsType.WindowsXP && hasDualmode)
             {
                 list.add(VmInterfaceType.rtl8139_pv);
