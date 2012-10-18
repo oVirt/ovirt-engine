@@ -159,11 +159,10 @@ public class VdsManager {
 
     public static VdsManager buildVdsManager(VDS vds) {
         VdsManager vdsManager = new VdsManager(vds);
-        vdsManager.schedulJobs();
         return vdsManager;
     }
 
-    private void schedulJobs() {
+    public void schedulJobs() {
         SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
         duringFailureJobId = sched.scheduleAFixedDelayJob(this, "OnVdsDuringFailureTimer", new Class[0],
                     new Object[0], VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES, VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES,

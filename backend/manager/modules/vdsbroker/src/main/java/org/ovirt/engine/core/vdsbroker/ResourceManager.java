@@ -181,6 +181,7 @@ public class ResourceManager {
             vds.setpending_vcpus_count(0);
             vdsManager.UpdateDynamicData(vds.getDynamicData());
         }
+        vdsManager.schedulJobs();
         _vdsManagersDict.put(vds.getId(), vdsManager);
         log.infoFormat("ResourceManager::AddVds - VDS {0} was added to the Resource Manager", vds.getId());
 
