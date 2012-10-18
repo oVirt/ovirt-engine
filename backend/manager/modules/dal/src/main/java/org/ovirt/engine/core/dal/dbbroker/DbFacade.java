@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Image;
+import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -30,9 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -66,6 +66,7 @@ import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
 import org.ovirt.engine.core.dao.NetworkDAO;
+import org.ovirt.engine.core.dao.NetworkViewDao;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
@@ -630,6 +631,15 @@ public class DbFacade {
      */
     public NetworkDAO getNetworkDao() {
         return getDao(NetworkDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link NetworkViewDao}.
+     *
+     * @return the dao
+     */
+    public NetworkViewDao getNetworkViewDao() {
+        return getDao(NetworkViewDao.class);
     }
 
     /**

@@ -199,4 +199,9 @@ public class FixturesTool {
      * EXISTING_STORAGE_CONNECTION_ID
      */
     protected static final Guid EXISTING_DOMAIN_ID_FOR_CONNECTION_ID = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");
+
+    /**
+     * ID of an existing network
+     */
+    protected static final Guid EXISTING_NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
 }

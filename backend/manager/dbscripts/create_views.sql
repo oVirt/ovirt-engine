@@ -1036,6 +1036,28 @@ AND  q_limit.vds_group_id IS NOT NULL
 AND  q_limit.storage_id IS NULL
 AND  vds_groups.vds_group_id = q_limit.vds_group_id;
 
+----------------------------------------------
+-- Network
+----------------------------------------------
+
+CREATE OR REPLACE VIEW network_view
+AS
+SELECT network.id AS id,
+   network.name AS name,
+   network.description AS description,
+   network.type AS type,
+   network.addr AS addr,
+   network.subnet AS subnet,
+   network.gateway AS gateway,
+   network.vlan_id AS vlan_id,
+   network.stp AS stp,
+   network.mtu AS mtu,
+   network.vm_network AS vm_network,
+   network.storage_pool_id AS storage_pool_id,
+   storage_pool.name AS storage_pool_name,
+   storage_pool.compatibility_version AS compatibility_version
+FROM network
+INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id;
 
 ----------------------------------------------
 -- Query Permissions

@@ -114,7 +114,7 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         }
     }
 
-    private static class NetworkRowMapper implements ParameterizedRowMapper<Network> {
+    static class NetworkRowMapper implements ParameterizedRowMapper<Network> {
         public final static NetworkRowMapper instance = new NetworkRowMapper();
 
         @Override
