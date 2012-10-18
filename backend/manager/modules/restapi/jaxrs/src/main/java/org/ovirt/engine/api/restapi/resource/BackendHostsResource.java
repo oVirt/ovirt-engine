@@ -9,6 +9,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
@@ -17,8 +18,8 @@ import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostsResource;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
+import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -106,7 +107,14 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveVds, new VdsActionParameters(asGuid(id)));
+        return performAction(VdcActionType.RemoveVds, new RemoveVdsParameters(asGuid(id)));
+    }
+
+    @Override
+    public Response remove(String id, Action action) {
+        getEntity(id); //verifies that entity exists, returns 404 otherwise.
+        return performAction(VdcActionType.RemoveVds,
+                new RemoveVdsParameters(asGuid(id), action != null && action.isSetForce() ? action.isForce() : false));
     }
 
     @Override

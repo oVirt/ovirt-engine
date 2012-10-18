@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -60,7 +60,7 @@ public class RemoveVdsCommandTest {
     /**
      * The command under test.
      */
-    private RemoveVdsCommand<VdsActionParameters> command;
+    private RemoveVdsCommand<RemoveVdsParameters> command;
 
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
@@ -68,8 +68,8 @@ public class RemoveVdsCommandTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        VdsActionParameters parameters = createParameters();
-        command = spy(new RemoveVdsCommand<VdsActionParameters>(parameters));
+        command =
+                spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
         clusterUtils = mock(ClusterUtils.class);
 
         doReturn(vdsDAO).when(command).getVdsDAO();
@@ -223,13 +223,5 @@ public class RemoveVdsCommandTest {
         boolean canDoAction = command.canDoAction();
         System.out.println(command.getReturnValue().getCanDoActionMessages());
         assertTrue(canDoAction);
-    }
-
-    /**
-     * @return Valid parameters for the command.
-     */
-    private VdsActionParameters createParameters() {
-        VdsActionParameters parameters = new VdsActionParameters(Guid.NewGuid());
-        return parameters;
     }
 }

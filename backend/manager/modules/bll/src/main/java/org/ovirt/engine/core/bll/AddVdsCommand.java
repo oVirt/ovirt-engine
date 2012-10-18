@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
+import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -211,7 +212,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     @Override
                     public VdcReturnValueBase runInTransaction() {
                         return Backend.getInstance().runInternalAction(VdcActionType.RemoveVds,
-                                new VdsActionParameters(oVirtId));
+                                new RemoveVdsParameters(oVirtId));
                     }
                 });
 

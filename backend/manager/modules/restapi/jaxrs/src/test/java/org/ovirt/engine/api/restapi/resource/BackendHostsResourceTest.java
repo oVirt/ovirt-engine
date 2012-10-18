@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -7,21 +9,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
+import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendHostsResourceTest
         extends AbstractBackendCollectionResourceTest<Host, VDS, BackendHostsResource> {
@@ -78,7 +78,7 @@ public class BackendHostsResourceTest
     public void testRemove() throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVds,
-                                           VdsActionParameters.class,
+                                           RemoveVdsParameters.class,
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] },
                                            true,
@@ -101,6 +101,32 @@ public class BackendHostsResourceTest
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }
+    }
+
+    @Test
+    public void testRemoveForced() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVds,
+                RemoveVdsParameters.class,
+                new String[] { "VdsId", "ForceAction" },
+                new Object[] { GUIDS[0], Boolean.TRUE },
+                true,
+                true));
+        Action action = new Action();
+        action.setForce(true);
+        verifyRemove(collection.remove(GUIDS[0].toString(), action));
+    }
+
+    @Test
+    public void testRemoveForcedIncomplete() throws Exception {
+        setUpGetEntityExpectations();
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVds,
+                RemoveVdsParameters.class,
+                new String[] { "VdsId", "ForceAction" },
+                new Object[] { GUIDS[0], Boolean.FALSE },
+                true,
+                true));
+        verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{}}));
     }
 
     private void setUpGetEntityExpectations() throws Exception {
@@ -127,7 +153,7 @@ public class BackendHostsResourceTest
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVds,
-                                           VdsActionParameters.class,
+                                           RemoveVdsParameters.class,
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] },
                                            canDo,

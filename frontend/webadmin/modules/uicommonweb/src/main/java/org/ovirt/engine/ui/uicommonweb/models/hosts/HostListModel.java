@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -934,7 +935,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new VdsActionParameters(vds.getId()));
+            list.add(new RemoveVdsParameters(vds.getId()));
         }
 
         model.StartProgress(null);

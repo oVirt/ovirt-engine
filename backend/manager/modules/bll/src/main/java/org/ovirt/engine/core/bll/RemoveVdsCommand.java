@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute
-public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<T> {
 
     private AuditLogType errorType = AuditLogType.USER_FAILED_REMOVE_VDS;
     private VDS upServer;
@@ -190,16 +190,13 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
     }
 
     private void glusterHostRemove() {
-        // UI will implement forceAction later
-        // Now assume that the force option is false
-        boolean forceAction = false;
         if (isGlusterEnabled() && clusterHasMultipleHosts() && !hasVolumeOnServer()) {
             VDSReturnValue returnValue =
                     runVdsCommand(
                             VDSCommandType.RemoveGlusterServer,
                             new RemoveGlusterServerVDSParameters(upServer.getId(),
                                     getVds().gethost_name(),
-                                    forceAction));
+                                    getParameters().isForceAction()));
             setSucceeded(returnValue.getSucceeded());
             if (!getSucceeded()) {
                 getReturnValue().getFault().setError(returnValue.getVdsError().getCode());

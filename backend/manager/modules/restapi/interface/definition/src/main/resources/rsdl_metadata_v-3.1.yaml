@@ -1449,11 +1449,15 @@ actions:
 - name: /api/hosts/{host:id}|rel=delete
   request:
     body:
-      parameterType: null
-      signatures: []
+      required: false
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.force: 'xs:boolean'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
+      Content-Type: {value: application/xml|json, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}|rel=update
   request:
