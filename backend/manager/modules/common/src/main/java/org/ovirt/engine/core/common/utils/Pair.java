@@ -1,6 +1,10 @@
-package org.ovirt.engine.core.utils;
+package org.ovirt.engine.core.common.utils;
 
-public final class Pair<T, K> {
+import java.io.Serializable;
+
+public final class Pair<T, K> implements Serializable {
+    private static final long serialVersionUID = -6761191157220811690L;
+
     private T first;
     private K second;
 

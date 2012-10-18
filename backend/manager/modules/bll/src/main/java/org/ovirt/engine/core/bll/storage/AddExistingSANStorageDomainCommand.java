@@ -4,9 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.Pair;
 
 public class AddExistingSANStorageDomainCommand<T extends AddSANStorageDomainParameters> extends
         AddSANStorageDomainCommand<T> {

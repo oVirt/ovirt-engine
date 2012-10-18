@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils;
+package org.ovirt.engine.core.common.utils;
 
 import java.util.HashMap;
 import java.util.Map;
