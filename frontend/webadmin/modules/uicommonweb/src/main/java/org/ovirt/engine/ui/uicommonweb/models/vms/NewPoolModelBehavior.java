@@ -18,13 +18,16 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         getModel().getTemplate().setSelectedItem(Linq.<VmTemplate> FirstOrDefault(templates));
     }
 
+    @Override
     public void Template_SelectedItemChanged() {
         super.Template_SelectedItemChanged();
-
         VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
 
-        setupWindowModelFrom(template);
+        if (template == null) {
+            return;
+        }
 
+        setupWindowModelFrom(template);
         updateHostPinning(template.getMigrationSupport());
         doChangeDefautlHost(template.getdedicated_vm_for_vds());
     }
