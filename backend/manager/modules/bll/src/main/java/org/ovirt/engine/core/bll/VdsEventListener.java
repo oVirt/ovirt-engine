@@ -92,10 +92,6 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void processOnVmStop(Guid vmId) {
         VmPoolHandler.ProcessVmPoolOnStopVm(vmId, null);
-        /**
-         * Vitaly wating for Vm.ExitStatus in DB.
-         * //HighAvailableVmsDirector.TryRunHighAvailableVmsOnVmDown(vmId);
-         */
     }
 
     @Override
@@ -167,11 +163,6 @@ public class VdsEventListener implements IVdsEventListener {
                         // instead of power client. this is a possible use case
                         // to fasten the inital boot, then live migrate to power
                         // client on spice connect.
-                        /**
-                         * Vitaly wating for Vm.ExitStatus in DB.
-                         * //HighAvailableVmsDirector
-                         * .TryRunHighAvailableVdsUp(vdsId);
-                         */
                         List<VM> vms = DbFacade.getInstance().getVmDao().getAllForDedicatedPowerClientByVds(vdsId);
                         if (vms.size() != 0) {
                             if (Config
