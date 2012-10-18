@@ -81,19 +81,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected boolean canDoAction() {
         boolean returnValue = isVmExist() && acquireLockInternal();
         VM vm = getVm();
-        if (returnValue && (vm != null && vm.getstatus() == VMStatus.ImageLocked)) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED);
-        } else {
-            // if user sent drive check that its not in use
-            returnValue = returnValue && (vm == null || isDiskCanBeAddedToVm(getParameters().getDiskInfo()));
-            if (returnValue && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-                returnValue = checkIfImageDiskCanBeAdded(vm);
-            }
-            if (returnValue && DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
-                returnValue = checkIfLunDiskCanBeAdded();
-            }
+
+        // if user sent drive check that its not in use
+        returnValue = returnValue && (vm == null || isDiskCanBeAddedToVm(getParameters().getDiskInfo()));
+        if (returnValue && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
+            returnValue = checkIfImageDiskCanBeAdded(vm);
         }
+        if (returnValue && DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
+            returnValue = checkIfLunDiskCanBeAdded();
+        }
+
         return returnValue;
     }
 
@@ -179,14 +176,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 vm.getstorage_pool_id(),
                 getStorageDomainId().getValue(),
                 false,
-                false,
-                false,
-                false,
                 true,
                 false,
                 false,
                 true,
-                Collections.emptyList());
+                false,
+                false,
+                true,
+                null);
     }
 
     private long getRequestDiskSpace() {

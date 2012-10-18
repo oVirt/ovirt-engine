@@ -459,23 +459,19 @@ public final class ImagesHandler {
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
         }
 
+        List<DiskImage> images = getImages(vm, diskImageList);
         if (returnValue && checkImagesLocked) {
             List<String> lockedDisksAliases = new ArrayList<String>();
-            if (diskImageList != null) {
-                for (Object object : diskImageList) {
-                    Disk disk = (Disk) object;
-                    if (DiskStorageType.IMAGE == disk.getDiskStorageType()
-                            && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED) {
-                        lockedDisksAliases.add(disk.getDiskAlias());
-                        returnValue = false;
-                    }
-                }
-                if (lockedDisksAliases.size() > 0) {
-                    ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED.toString());
-                    messages.add(String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
+            for (DiskImage diskImage : images) {
+                if (diskImage.getimageStatus() == ImageStatus.LOCKED) {
+                    lockedDisksAliases.add(diskImage.getDiskAlias());
+                    returnValue = false;
                 }
             }
-
+            if (lockedDisksAliases.size() > 0) {
+                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ARE_LOCKED.toString());
+                messages.add(String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
+            }
             if (returnValue && vm.getstatus() == VMStatus.ImageLocked) {
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED.toString());
                 returnValue = false;
@@ -490,7 +486,6 @@ public final class ImagesHandler {
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
         }
         if (returnValue && isValid) {
-            List<DiskImage> images = getImages(vm, diskImageList);
             if (images.size() > 0) {
                 returnValue = returnValue &&
                         checkDiskImages(messages,
