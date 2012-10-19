@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.dal.dbbroker.*;
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetTagsByUserIdQuery<P extends GetTagsByUserIdParameters> extends
         QueriesCommandBase<P> {
@@ -11,7 +11,6 @@ public class GetTagsByUserIdQuery<P extends GetTagsByUserIdParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        VdcQueryParametersBase tempVar = getParameters();
         getQueryReturnValue().setReturnValue(
                 DbFacade.getInstance().getTagDao()
                         .getAllForUsers((getParameters().getUserId())));
