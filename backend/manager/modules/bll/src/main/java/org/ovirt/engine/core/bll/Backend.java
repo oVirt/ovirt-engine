@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -291,7 +292,23 @@ public class Backend implements BackendInternal {
 
     @Override
     public VdcReturnValueBase RunAction(VdcActionType actionType, VdcActionParametersBase parameters) {
+        VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
+        if (returnValue != null) {
+            return returnValue;
+        }
         return runActionImpl(actionType, parameters, false, null);
+    }
+
+    private VdcReturnValueBase notAllowToRunAction(VdcActionType actionType) {
+        EngineWorkingMode mode =
+                Config.<EngineWorkingMode> GetValue(ConfigValues.EngineMode);
+        switch (mode) {
+        case MAINTENANCE:
+            return getErrorCommandReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
+        case PREPARE:
+            return notAllowedInPrepForMaintMode(actionType);
+        }
+        return null;
     }
 
     /**
@@ -314,12 +331,9 @@ public class Backend implements BackendInternal {
         VdcReturnValueBase returnValue = null;
         switch (actionType) {
         case AutoLogin:
-            returnValue = new VdcReturnValueBase();
-            returnValue.setCanDoAction(false);
-            returnValue.getCanDoActionMessages().add(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION.toString());
-            return returnValue;
+            return getErrorCommandReturnValue(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
 
-        default: {
+        default:
             // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
             boolean hasCorrelationId =
                     parameters == null ? false : StringUtils.isNotEmpty(parameters.getCorrelationId());
@@ -337,8 +351,6 @@ public class Backend implements BackendInternal {
             returnValue.setCorrelationId(parameters.getCorrelationId());
             returnValue.setJobId(command.getJobId());
             return returnValue;
-        }
-
         }
     }
 
@@ -373,10 +385,14 @@ public class Backend implements BackendInternal {
             String sessionId = addSessionToContext(parameters);
             if (StringUtils.isEmpty(sessionId)
                     || SessionDataContainer.getInstance().getUser(sessionId, parameters.getRefresh()) == null) {
-                VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
-                returnValue.setSucceeded(false);
-                returnValue.setExceptionString(VdcBllMessages.USER_IS_NOT_LOGGED_IN.toString());
-                return returnValue;
+                return getErrorQueryReturnValue(VdcBllMessages.USER_IS_NOT_LOGGED_IN);
+            }
+        }
+        if (EngineWorkingMode.MAINTENANCE == Config.<EngineWorkingMode> GetValue(ConfigValues.EngineMode)) {
+            Class<CommandBase<? extends VdcActionParametersBase>> clazz =
+                    CommandsFactory.getQueryClass(actionType.name());
+            if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
+                return getErrorQueryReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
             }
         }
         QueriesCommandBase<?> command = createQueryCommand(actionType, parameters);
@@ -384,10 +400,6 @@ public class Backend implements BackendInternal {
         command.Execute();
         return command.getQueryReturnValue();
 
-    }
-
-    protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        return CommandsFactory.CreateQueryCommand(actionType, parameters);
     }
 
     private static String addSessionToContext(VdcQueryParametersBase parameters) {
@@ -412,7 +424,14 @@ public class Backend implements BackendInternal {
     @Override
     public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass) {
-        return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllCanDoPass);
+        VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
+        if (returnValue != null) {
+            ArrayList<VdcReturnValueBase> list = new ArrayList<VdcReturnValueBase>();
+            list.add(returnValue);
+            return list;
+        } else {
+            return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllCanDoPass);
+        }
     }
 
     @Override
@@ -491,11 +510,8 @@ public class Backend implements BackendInternal {
         }
     }
 
-    private static VdcReturnValueBase NotAutorizedError() {
-        VdcReturnValueBase returnValue = new VdcReturnValueBase();
-        returnValue.setCanDoAction(false);
-        returnValue.getCanDoActionMessages().add(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION.toString());
-        return returnValue;
+    private VdcReturnValueBase NotAutorizedError() {
+        return getErrorCommandReturnValue(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
     }
 
     @Override
@@ -528,7 +544,7 @@ public class Backend implements BackendInternal {
         case CheckDBConnection:
         case ValidateSession:
             return runQueryImpl(actionType, parameters, false);
-        case GetConfigurationValue: {
+        case GetConfigurationValue:
             GetConfigurationValueParameters configParameters = (GetConfigurationValueParameters) parameters;
             if (configParameters.getConfigValue() == ConfigurationValues.VdcVersion ||
                     configParameters.getConfigValue() == ConfigurationValues.ProductRPMVersion ||
@@ -536,17 +552,9 @@ public class Backend implements BackendInternal {
                 return runQueryImpl(actionType, parameters, false);
             }
 
-            VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
-            returnValue.setSucceeded(false);
-            returnValue.setExceptionString(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC.toString());
-            return returnValue;
-        }
-        default: {
-            VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
-            returnValue.setSucceeded(false);
-            returnValue.setExceptionString(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC.toString());
-            return returnValue;
-        }
+            return getErrorQueryReturnValue(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
+        default:
+            return getErrorQueryReturnValue(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
         }
     }
 
@@ -594,6 +602,33 @@ public class Backend implements BackendInternal {
             VdcActionParametersBase parameters,
             CommandContext context) {
         return runActionImpl(actionType, parameters, true, context);
+    }
+
+    private VdcReturnValueBase getErrorCommandReturnValue(VdcBllMessages message) {
+        VdcReturnValueBase returnValue = new VdcReturnValueBase();
+        returnValue.setCanDoAction(false);
+        returnValue.getCanDoActionMessages().add(message.toString());
+        return returnValue;
+    }
+
+    private VdcReturnValueBase notAllowedInPrepForMaintMode(VdcActionType action) {
+        Class<CommandBase<? extends VdcActionParametersBase>> clazz =
+                CommandsFactory.getCommandClass(action.name());
+        if (clazz.isAnnotationPresent(DisableInPrepareMode.class)) {
+            return getErrorCommandReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_PREPARE_MODE);
+        }
+        return null;
+    }
+
+    private VdcQueryReturnValue getErrorQueryReturnValue(VdcBllMessages errorMessage) {
+        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        returnValue.setSucceeded(false);
+        returnValue.setExceptionString(errorMessage.toString());
+        return returnValue;
+    }
+
+    protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters) {
+        return CommandsFactory.CreateQueryCommand(actionType, parameters);
     }
 
     private static final Log log = LogFactory.getLog(Backend.class);

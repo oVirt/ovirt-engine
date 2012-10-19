@@ -91,6 +91,14 @@ public final class CommandsFactory {
         }
     }
 
+    public static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name) {
+        return getCommandClass(name, CommandSuffix);
+    }
+
+    public static Class<CommandBase<? extends VdcActionParametersBase>> getQueryClass(String name) {
+        return getCommandClass(name, QueryPrefix);
+    }
+
     private static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name, String suffix) {
         // try the cache first
         String key = name + suffix;

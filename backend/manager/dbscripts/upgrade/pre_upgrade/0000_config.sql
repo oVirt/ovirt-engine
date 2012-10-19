@@ -115,6 +115,8 @@ select fn_db_add_config_value('EnableUSBAsDefault','true','general');
 --Handling Enables Host Load Balancing system.
 select fn_db_add_config_value('EnableVdsLoadBalancing','true','general');
 select fn_db_add_config_value('ENGINEEARLib','%JBOSS_HOME%/server/engine-slimmed/deploy/engine.ear','general');
+--Handling Engine working mode
+select fn_db_add_config_value('EngineMode','Active','general');
 --Handling Mail User Domain
 select fn_db_add_config_value('ENMailDomain','','general');
 --Handling Use HTML in message body

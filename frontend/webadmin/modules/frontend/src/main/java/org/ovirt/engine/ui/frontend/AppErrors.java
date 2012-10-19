@@ -2080,4 +2080,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Console connection denied. Another user has already accessed the console of this VM. The VM should be rebooted to allow another user to access it, or changed by an admin to not enforce reboot between users accessing its console.")
     String USER_CANNOT_FORCE_RECONNECT_TO_VM();
+
+    @DefaultStringValue("Engine is running in Maintenance mode and is not accepting commands.")
+    String ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE();
+
+    @DefaultStringValue("This action is not allowed when Engine is preparing for maintenance.")
+    String ENGINE_IS_RUNNING_IN_PREPARE_MODE();
 }

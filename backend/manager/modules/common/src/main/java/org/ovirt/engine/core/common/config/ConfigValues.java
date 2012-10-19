@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.EngineWorkingMode;
+
 public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
@@ -1529,6 +1531,11 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     OnlyRequiredNetworksMandatoryForVdsSelection(392),
+
+    @Reloadable
+    @TypeConverterAttribute(EngineWorkingMode.class)
+    @DefaultValueAttribute("Active")
+    EngineMode(393),
 
     Invalid(65535);
 

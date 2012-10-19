@@ -26,6 +26,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@DisableInPrepareMode
 @LockIdNameAttribute
 public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T> {
 

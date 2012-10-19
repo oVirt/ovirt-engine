@@ -666,8 +666,11 @@ public enum VdcBllMessages {
     /* VDSM Error that propagates up to the client. See VdcBLLErrors */
     ERROR_GET_STORAGE_DOMAIN_LIST, // VdcBllErrors.GetStorageDomainListError
 
-    USER_CANNOT_FORCE_RECONNECT_TO_VM
-    ;
+    USER_CANNOT_FORCE_RECONNECT_TO_VM,
+    // Engine maintenance mode
+    ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE,
+    // Engine prepare mode
+    ENGINE_IS_RUNNING_IN_PREPARE_MODE;
 
     public int getValue() {
         return this.ordinal();

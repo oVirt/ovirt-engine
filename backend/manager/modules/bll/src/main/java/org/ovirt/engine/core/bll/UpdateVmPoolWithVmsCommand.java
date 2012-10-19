@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
+@DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T> {
 

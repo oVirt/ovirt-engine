@@ -34,6 +34,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOperationCommandBase<T> {
     private boolean isHibernateVdsProblematic = false;

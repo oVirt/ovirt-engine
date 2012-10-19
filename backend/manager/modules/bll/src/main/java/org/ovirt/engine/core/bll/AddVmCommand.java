@@ -66,6 +66,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 
 
 @SuppressWarnings("serial")
+@DisableInPrepareMode
 @LockIdNameAttribute
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements Quotable {

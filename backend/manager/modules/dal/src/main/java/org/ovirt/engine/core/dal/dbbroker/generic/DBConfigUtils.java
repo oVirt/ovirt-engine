@@ -36,6 +36,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static Object parseValue(String value, String name, java.lang.Class<?> fieldType) {
         if (value == null) {
             return null;
@@ -63,6 +64,8 @@ public class DBConfigUtils extends ConfigUtilsBase {
                 } else {
                     return value;
                 }
+            } else if (fieldType.isEnum()) {
+                return Enum.valueOf((Class<Enum>)fieldType, value.toUpperCase());
             } else {
                 return value;
             }

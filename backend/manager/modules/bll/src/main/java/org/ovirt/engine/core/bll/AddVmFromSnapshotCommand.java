@@ -35,6 +35,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * @param <T>
  */
 
+@DisableInPrepareMode
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> extends AddVmAndCloneImageCommand<T> {

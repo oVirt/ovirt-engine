@@ -13,6 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@DisableInPrepareMode
 public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameters> extends
         VmPoolSimpleUserCommandBase<T> {
 
