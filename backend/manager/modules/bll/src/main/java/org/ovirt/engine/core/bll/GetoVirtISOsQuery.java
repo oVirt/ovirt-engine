@@ -183,7 +183,10 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
             BufferedReader input = null;
             try {
                 input = new BufferedReader(new FileReader(file));
-                versions = input.readLine().split(",");
+                String lineRead = input.readLine();
+                if (lineRead != null) {
+                    versions = lineRead.split(",");
+                }
             } catch (FileNotFoundException e) {
                 log.errorFormat("Failed to open version file {0} with error {1}",
                         file.getParent(),
