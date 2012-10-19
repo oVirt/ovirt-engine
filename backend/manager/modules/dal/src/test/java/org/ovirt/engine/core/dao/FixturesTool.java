@@ -206,6 +206,11 @@ public class FixturesTool {
     protected static final Guid EXISTING_STORAGE_CONNECTION_ID = new Guid("7fe9a439-a68e-4c15-8885-29d34eb6cabf");
 
     /**
+     * ID of an existing NFS storage connection with version 'auto'
+     */
+    protected static final Guid EXISTING_STORAGE_CONNECTION_NFS_AUTO_ID = new Guid("0cc146e8-e5ed-482c-8814-270bc48c2981");
+
+    /**
      * ID of an existing storage domain with the storage connection which ID is defined in
      * EXISTING_STORAGE_CONNECTION_ID
      */

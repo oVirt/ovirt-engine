@@ -9,18 +9,20 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
     private static final int SERVER_CONNECTION_COUNT_FOR_SPECIFIC_STORAGE = 7;
-    private static final int SERVER_CONNECTION_COUNT = 8;
+    private static final int SERVER_CONNECTION_COUNT = 9;
     private static final String EXISTING_DOMAIN_STORAGE_NAME = "fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk";
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");;
 
     private StorageServerConnectionDAO dao;
     private storage_server_connections newServerConnection;
     private storage_server_connections existingConnection;
+    private storage_server_connections existingNfsAutoConnection;
 
     @Override
     public void setUp() throws Exception {
@@ -29,6 +31,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
         dao = prepareDAO(dbFacade.getStorageServerConnectionDao());
 
         existingConnection = dao.get("0cc146e8-e5ed-482c-8814-270bc48c297f");
+        existingNfsAutoConnection = dao.get(FixturesTool.EXISTING_STORAGE_CONNECTION_NFS_AUTO_ID.toString());
 
         newServerConnection = new storage_server_connections();
         newServerConnection.setid("0cc146e8-e5ed-482c-8814-270bc48c2980");
@@ -169,4 +172,30 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
 
         assertNull(result);
     }
+
+    /**
+     * Ensures NFS options work as expected.
+     */
+    @Test
+    public void testNfsOptions() {
+        newServerConnection.setNfsVersion(NfsVersion.V4);
+        newServerConnection.setNfsRetrans((short)5);
+        dao.save(newServerConnection);
+
+        storage_server_connections result = dao.get(newServerConnection.getid());
+        assertEquals(result.getNfsVersion(), NfsVersion.V4);
+        assertTrue(result.getNfsRetrans() == 5);
+        assertNull(result.getNfsTimeo());
+
+        result = dao.get(existingNfsAutoConnection.getid());
+        assertEquals(result.getNfsVersion(), NfsVersion.AUTO);
+        assertTrue(result.getNfsRetrans() == 7);
+        assertTrue(result.getNfsTimeo() == 42);
+
+        result = dao.get(existingConnection.getid());
+        assertNull(result.getNfsVersion());
+        assertNull(result.getNfsRetrans());
+        assertNull(result.getNfsTimeo());
+    }
+
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageFormat;
@@ -21,6 +22,9 @@ public class StorageDomainValidator implements Validator<StorageDomain> {
             }
             if (storageDomain.isSetFormat()) {
                 validateEnum(StorageFormat.class, storageDomain.getStorageFormat(), true);
+            }
+            if (storageDomain.isSetStorage() && storageDomain.getStorage().isSetNfsVersion()) {
+                validateEnum(NfsVersion.class, storageDomain.getStorage().getNfsVersion(), true);
             }
         }
     }

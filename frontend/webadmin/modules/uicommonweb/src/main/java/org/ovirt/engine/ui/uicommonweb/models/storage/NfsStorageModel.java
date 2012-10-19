@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -142,9 +143,9 @@ public class NfsStorageModel extends Model implements IStorageModel {
         setVersion(new ListModel());
 
         List<EntityModel> versionItems = new ArrayList<EntityModel>();
-        versionItems.add(new EntityModel(constants.nfsVersionAutoNegotiate(), null));
-        versionItems.add(new EntityModel(constants.nfsVersion3(), (short) 3));
-        versionItems.add(new EntityModel(constants.nfsVersion4(), (short) 4));
+        versionItems.add(new EntityModel(constants.nfsVersionAutoNegotiate(), NfsVersion.AUTO));
+        versionItems.add(new EntityModel(constants.nfsVersion3(), NfsVersion.V3));
+        versionItems.add(new EntityModel(constants.nfsVersion4(), NfsVersion.V4));
         getVersion().setItems(versionItems);
 
         setRetransmissions(new EntityModel());

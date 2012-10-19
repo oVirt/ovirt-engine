@@ -87,7 +87,9 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
             // we should not send a key with an empty value
             addIfNotNullOrEmpty(con, connection.getMountOptions(), "mnt_options");
             addIfNotNullOrEmpty(con, connection.getVfsType(), "vfs_type");
-            addIfNotNullOrEmpty(con, connection.getNfsVersion(), "protocol_version");
+            if (connection.getNfsVersion() != null) {
+                con.put("protocol_version", connection.getNfsVersion().getValue());
+            }
             addIfNotNullOrEmpty(con, connection.getNfsTimeo(), "timeout");
             addIfNotNullOrEmpty(con, connection.getNfsRetrans(), "retrans");
         }

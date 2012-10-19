@@ -570,6 +570,7 @@
           <xs:element ref="permits" minOccurs="0"/>
           <xs:element ref="scheduling_policies" minOccurs="0"/>
           <xs:element ref="usages" minOccurs="0"/>
+          <xs:element ref="nfs_versions" minOccurs="0"/>
 
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>
@@ -823,6 +824,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="StorageFormats"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="nfs_versions" type="NfsVersions"/>
+
+  <xs:complexType name="NfsVersions">
+    <xs:sequence>
+      <xs:element name="nfs_version" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="NfsVersions"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -1599,7 +1614,7 @@
       <xs:element name="path" type="xs:string" minOccurs="0"/>
       <xs:element name="mount_options" type="xs:string" minOccurs="0"/>
       <xs:element name="vfs_type" type="xs:string" minOccurs="0"/>
-      <xs:element name="nfs_version" type="xs:unsignedShort" minOccurs="0"/>
+      <xs:element name="nfs_version" type="xs:string" minOccurs="0"/>
       <xs:element name="nfs_timeo" type="xs:unsignedShort" minOccurs="0"/>
       <xs:element name="nfs_retrans" type="xs:unsignedShort" minOccurs="0"/>
     </xs:sequence>

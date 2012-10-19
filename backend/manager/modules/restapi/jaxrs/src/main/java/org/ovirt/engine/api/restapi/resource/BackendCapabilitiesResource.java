@@ -42,6 +42,8 @@ import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.NicInterfaces;
 import org.ovirt.engine.api.model.NicStatus;
+import org.ovirt.engine.api.model.NfsVersion;
+import org.ovirt.engine.api.model.NfsVersions;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.OsTypes;
 import org.ovirt.engine.api.model.Permit;
@@ -165,6 +167,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addMigrateOnErrorOptions(version, MigrateOnError.values());
         addStorageFormatOptions(version, StorageFormat.values());
         addOsTypes(version, OsType.values());
+        addNfsVersions(version, NfsVersion.values());
 
         addGlusterTypesAndStates(version);
 
@@ -249,6 +252,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setOsTypes(new OsTypes());
         for (OsType type : types) {
             version.getOsTypes().getOsTypes().add(type.value());
+        }
+    }
+
+    private void addNfsVersions(VersionCaps version, NfsVersion[] nfsVersions) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
+            version.setNfsVersions(new NfsVersions());
+            for (NfsVersion nfsVersion : nfsVersions) {
+                version.getNfsVersions().getNfsVersions().add(nfsVersion.value());
+            }
         }
     }
 

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -1322,7 +1323,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storage_server_connections tempVar = new storage_server_connections();
         tempVar.setconnection(path);
         tempVar.setstorage_type(nfsModel.getType());
-        tempVar.setNfsVersion(((EntityModel) nfsModel.getVersion().getSelectedItem()).AsConvertible().nullableShort());
+        tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
         tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
         tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
         connection = tempVar;
@@ -1719,7 +1720,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                     tempVar.setconnection(storageListModel.path);
                     tempVar.setstorage_type(StorageType.NFS);
-                    tempVar.setNfsVersion(((EntityModel) nfsModel.getVersion().getSelectedItem()).AsConvertible().nullableShort());
+                    tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
                     tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
                     tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
                     storageListModel.nfsConnection = tempVar;

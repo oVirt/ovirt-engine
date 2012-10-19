@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.compat.Guid;
@@ -113,7 +114,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                 .addValue("user_name", connection.getuser_name())
                 .addValue("mount_options", connection.getMountOptions())
                 .addValue("vfs_type", connection.getVfsType())
-                .addValue("nfs_version", connection.getNfsVersion())
+                .addValue("nfs_version", (connection.getNfsVersion() != null) ? connection.getNfsVersion().getValue() : null)
                 .addValue("nfs_timeo", connection.getNfsTimeo())
                 .addValue("nfs_retrans", connection.getNfsRetrans());
     }
@@ -135,7 +136,8 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                     entity.setuser_name(rs.getString("user_name"));
                     entity.setMountOptions(rs.getString("mount_options"));
                     entity.setVfsType(rs.getString("vfs_type"));
-                    entity.setNfsVersion(getShort(rs, "nfs_version"));
+                    entity.setNfsVersion((rs.getString("nfs_version") != null) ?
+                            NfsVersion.forValue(rs.getString("nfs_version")) : null);
                     entity.setNfsRetrans(getShort(rs, "nfs_retrans"));
                     entity.setNfsTimeo(getShort(rs, "nfs_timeo"));
                     return entity;

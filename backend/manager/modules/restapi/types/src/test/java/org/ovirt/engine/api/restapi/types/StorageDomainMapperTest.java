@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
@@ -76,6 +77,18 @@ public class StorageDomainMapperTest extends
                 .businessentities.StorageDomainStatus.Uninitialized, null) == null);
         assertEquals(StorageDomainStatus.MAINTENANCE, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.StorageDomainStatus.Maintenance, null));
-    }
 
+        assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.V3,
+                StorageDomainMapper.map(NfsVersion.V3, null));
+        assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.V4,
+                StorageDomainMapper.map(NfsVersion.V4, null));
+        assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.AUTO,
+                StorageDomainMapper.map(NfsVersion.AUTO, null));
+        assertEquals(NfsVersion.V3.value(), StorageDomainMapper.map(org.ovirt.engine.core.common
+                .businessentities.NfsVersion.V3, null));
+        assertEquals(NfsVersion.V4.value(), StorageDomainMapper.map(org.ovirt.engine.core.common
+                .businessentities.NfsVersion.V4, null));
+        assertEquals(NfsVersion.AUTO.value(), StorageDomainMapper.map(org.ovirt.engine.core.common
+                .businessentities.NfsVersion.AUTO, null));
+    }
 }

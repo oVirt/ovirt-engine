@@ -92,6 +92,21 @@
         <column>nfs_timeo</column>
         <column>nfs_retrans</column>
         <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2981</value>
+            <value>10.35.64.25:/export/nfs1</value>
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value></value>
+            <value>1</value>
+            <value></value>
+            <value>nfs</value>
+            <value>auto</value>
+            <value>42</value>
+            <value>7</value>
+        </row>
+        <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
             <value>10.35.64.25:/export/share</value>
             <null />
@@ -102,7 +117,7 @@
             <value>3</value>
             <value>rw</value>
             <value>nfs</value>
-            <value>4</value>
+            <null/>
             <null/>
             <null/>
         </row>

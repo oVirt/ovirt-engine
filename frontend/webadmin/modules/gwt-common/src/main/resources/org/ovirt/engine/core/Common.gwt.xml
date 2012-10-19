@@ -61,6 +61,7 @@
 		<include name="common/businessentities/NetworkInterface.java" />
 		<include name="common/businessentities/NetworkStatistics.java" />
 		<include name="common/businessentities/NetworkStatus.java" />
+		<include name="common/businessentities/NfsVersion.java" />
 		<include name="common/businessentities/OperationMode.java" />
 		<include name="common/businessentities/OriginType.java" />
 		<include name="common/businessentities/VmEntityType.java" />

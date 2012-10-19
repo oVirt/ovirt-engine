@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParamete
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.api.restapi.types.StorageDomainMapper;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.getLinksToExclude;
@@ -253,7 +254,7 @@ public class BackendStorageDomainsResource
             storage.setNfsTimeo(cnx.getNfsTimeo().intValue());
         }
         if (cnx.getNfsVersion()!=null) {
-            storage.setNfsVersion(cnx.getNfsVersion().intValue());
+            storage.setNfsVersion(StorageDomainMapper.map(cnx.getNfsVersion(), null));
         }
     }
 

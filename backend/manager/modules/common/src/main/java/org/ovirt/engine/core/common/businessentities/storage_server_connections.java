@@ -28,7 +28,7 @@ public class storage_server_connections implements Serializable {
             String portal,
             String vfsType,
             String mountOptions,
-            Short nfsVersion,
+            NfsVersion nfsVersion,
             Short nfsRetrans,
             Short nfsTimeo) {
         this.connection = connection;
@@ -168,8 +168,16 @@ public class storage_server_connections implements Serializable {
         return vfsType;
     }
 
-    @Column(name = "nfs_version")
-    private Short nfsVersion;
+    @Column(name = "nfs_version", length = 4)
+    private NfsVersion nfsVersion;
+
+    public NfsVersion getNfsVersion() {
+        return nfsVersion;
+    }
+
+    public void setNfsVersion(NfsVersion nfsVersion) {
+        this.nfsVersion = nfsVersion;
+    }
 
     @Column(name = "nfs_timeo")
     private Short nfsTimeo;
@@ -212,8 +220,7 @@ public class storage_server_connections implements Serializable {
 
     public static storage_server_connections copyOf(storage_server_connections ssc) {
         // using the constructor since all fields do not need deep copy (string
-        // is immutable,
-        // and storage_type is an enum
+        // is immutable, and storageType and nfsVersion are enums
         return new storage_server_connections(ssc.connection,
                 ssc.id,
                 ssc.iqn,
@@ -250,14 +257,6 @@ public class storage_server_connections implements Serializable {
         sb.append(this.getNfsTimeo());
         sb.append(" };");
         return sb.toString();
-    }
-
-    public Short getNfsVersion() {
-        return nfsVersion;
-    }
-
-    public void setNfsVersion(Short nfsVersion) {
-        this.nfsVersion = nfsVersion;
     }
 
     public Short getNfsRetrans() {

@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.common.util.SizeConverter;
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
@@ -75,7 +76,10 @@ public class StorageDomainMapper {
                         entity.setNfsTimeo(storage.getNfsTimeo().shortValue());
                     }
                     if(storage.getNfsVersion() != null) {
-                        entity.setNfsVersion(storage.getNfsVersion().shortValue());
+                        NfsVersion nfsVersion = NfsVersion.fromValue(storage.getNfsVersion());
+                        if (nfsVersion != null) {
+                            entity.setNfsVersion(map(nfsVersion, null));
+                        }
                     }
                     break;
                 case LOCALFS:
@@ -229,6 +233,34 @@ public class StorageDomainMapper {
             return StorageDomainStatus.UNKNOWN;
         case Uninitialized:
             return null;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = NfsVersion.class, to = org.ovirt.engine.core.common.businessentities.NfsVersion.class)
+    public static org.ovirt.engine.core.common.businessentities.NfsVersion map(NfsVersion version, org.ovirt.engine.core.common.businessentities.NfsVersion outgoing) {
+        switch(version) {
+        case V3:
+            return org.ovirt.engine.core.common.businessentities.NfsVersion.V3;
+        case V4:
+            return org.ovirt.engine.core.common.businessentities.NfsVersion.V4;
+        case AUTO:
+            return org.ovirt.engine.core.common.businessentities.NfsVersion.AUTO;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.NfsVersion.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.NfsVersion version, String outgoing) {
+        switch(version) {
+        case V3:
+            return NfsVersion.V3.value();
+        case V4:
+            return NfsVersion.V4.value();
+        case AUTO:
+            return NfsVersion.AUTO.value();
         default:
             return null;
         }
