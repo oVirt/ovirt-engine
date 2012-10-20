@@ -379,3 +379,87 @@ get_config_value() {
    # current implementation of execute_command use --echo-all flag of psql that outputs the query in 1st line
    echo $(execute_command "${cmd}" ${DATABASE} ${SERVERNAME} ${PORT} | sed 's/^ *//g' | head -2 | tail -1 | tr -d ' ')
 }
+
+#adds a record to audit_log in case of calling unlock_entity
+log_unlock_entity() {
+   local object_type=${1}
+   local id=${2}
+   local user=${3}
+   msg="System user ${user} run unlock_entity script on ${object_type} ${id} with db user ${USERNAME}"
+   CMD="insert into audit_log(log_time,log_type_name,log_type,severity,message)
+        values(now(), 'USER_RUN_UNLOCK_ENTITY_SCRIPT', 2024, 10, '${msg}')"
+   execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
+}
+
+
+#unlocks the given VM/Template and its disks or a given disk
+#in case of VM/Template the id is the name, in case of a disk, the id is the disk UUID
+unlock_entity() {
+   local object_type=${1}
+   local id=${2}
+   local user=${3}
+   local recursive=${4}
+   if [ ! -n "$recursive" ]; then
+       recursive=false
+   fi
+   CMD=""
+   if [ "${object_type}" = "vm" -o "${object_type}" = "template" ]; then
+      CMD="select fn_db_unlock_entity('${object_type}', '${id}', ${recursive});"
+   elif [ "${object_type}" = "disk" ]; then
+      CMD="select fn_db_unlock_disk('${id}');"
+   else
+      printf "Error : $* "
+   fi
+
+   if [ "${CMD}" != "" ]; then
+       echo "${CMD}"
+       execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
+       if [ $? -eq 0 ]; then
+           log_unlock_entity ${object_type} ${id} ${user}
+           printf "unlock ${object_type} ${id} completed successfully."
+       else
+           printf "unlock ${object_type} ${id} completed with errors.."
+       fi
+   fi
+}
+
+#Displays locked entities
+query_locked_entities() {
+   local object_type=${1}
+   LOCKED=2
+   TEMPLATE_LOCKED=1
+   IMAGE_LOCKED=15;
+   if [ "${object_type}" = "vm" ]; then
+       CMD="select vm_name as vm_name from vm_static a ,vm_dynamic b
+            where a.vm_guid = b.vm_guid and status = ${IMAGE_LOCKED};"
+       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+       CMD="select vm_name as vm_name , image_group_id as disk_id
+            from images a,vm_static b,vm_device c
+            where a.image_group_id = c.device_id and b.vm_guid = c.vm_id and
+            imagestatus = ${LOCKED} and
+            entity_type ilike 'VM' and
+            image_group_id in
+            (select device_id from vm_device where is_plugged);"
+       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+   elif [ "${object_type}" = "template" ]; then
+       CMD="select vm_name as template_name from vm_static a ,vm_dynamic b
+            where a.vm_guid = b.vm_guid and
+                  template_status = ${TEMPLATE_LOCKED};"
+       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+       CMD="select vm_name as template_name, image_group_id as disk_id
+            from images a,vm_static b,vm_device c
+            where a.image_group_id = c.device_id and b.vm_guid = c.vm_id and
+            imagestatus = ${LOCKED} and
+            entity_type ilike 'TEMPLATE' and
+            image_group_id in
+            (select device_id from vm_device where is_plugged);"
+       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+   elif [ "${object_type}" = "disk" ]; then
+       CMD="select vm_id as entity_id,disk_id
+            from base_disks a ,images b, vm_device c
+            where a.disk_id = b.image_group_id and
+                  b.image_group_id = c.device_id and
+                  imagestatus = ${LOCKED} and is_plugged;"
+       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+   fi
+}

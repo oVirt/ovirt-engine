@@ -149,7 +149,7 @@ $BODY$
 -- or this could be in a config table
 
 -- NOTE: We should look at checking error codes as not all are suitable for exceptions some are just notice or info
-declare 
+declare
     result boolean := false;
     prop text;
 begin
@@ -161,7 +161,7 @@ result = true;
     return result;
 exception
     when others then
-result = true;  -- default to log if not specified 
+result = true;  -- default to log if not specified
 return result;
 end;
 $BODY$
@@ -400,3 +400,60 @@ begin
     end if;
 END; $procedure$
 LANGUAGE plpgsql;
+
+-- Unlocks a specific disk
+create or replace FUNCTION fn_db_unlock_disk(v_id UUID)
+returns void
+AS $procedure$
+declare
+    OK integer;
+    LOCKED integer;
+begin
+    OK:=1;
+    LOCKED:=2;
+    update images set imagestatus = OK where imagestatus = LOCKED and
+    image_group_id in (select device_id from vm_device where device_id = v_id and is_plugged);
+END; $procedure$
+LANGUAGE plpgsql;
+
+-- Unlocks all VM/Template disks
+create or replace FUNCTION fn_db_unlock_entity(v_object_type varchar(10), v_name varchar(255), v_recursive boolean)
+returns void
+AS $procedure$
+declare
+    DOWN integer;
+    OK integer;
+    LOCKED integer;
+    TEMPLATE_OK integer;
+    TEMPLATE_LOCKED integer;
+    IMAGE_LOCKED integer;
+    v_id UUID;
+begin
+    DOWN:=0;
+    OK:=1;
+    LOCKED:=2;
+    TEMPLATE_OK:=0;
+    TEMPLATE_LOCKED:=1;
+    IMAGE_LOCKED:=15;
+    if (v_recursive) then
+        v_id := vm_guid from vm_static where vm_name = v_name and entity_type ilike v_object_type;
+        update images set imagestatus = OK where imagestatus = LOCKED and
+        image_group_id in (select device_id from vm_device where vm_id = v_id and is_plugged);
+    end if;
+    -- set VM status to DOWN
+    if (v_object_type = 'vm') then
+        update vm_dynamic set status = DOWN where status = IMAGE_LOCKED and
+        vm_guid in
+            (select vm_guid from vm_static where vm_name = v_name);
+    -- set Template status to OK
+    else
+        if (v_object_type = 'template') then
+            update vm_static set template_status = TEMPLATE_OK
+            where template_status = TEMPLATE_LOCKED and
+            vm_guid in
+                (select vm_guid from vm_static where vm_name = v_name);
+        end if;
+    end if;
+END; $procedure$
+LANGUAGE plpgsql;
+
