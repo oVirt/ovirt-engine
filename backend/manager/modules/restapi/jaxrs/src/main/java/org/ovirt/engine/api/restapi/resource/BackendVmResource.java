@@ -16,6 +16,8 @@ import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Certificate;
+import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
@@ -58,6 +60,7 @@ import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -340,6 +343,7 @@ public class BackendVmResource extends
         addStatistics(model, entity, uriInfo, httpHeaders);
         parent.setPayload(model);
         setBallooning(model);
+        setCertificateInfo(model);
         return model;
     }
 
@@ -407,4 +411,17 @@ public class BackendVmResource extends
         return parent;
     }
 
+    public void setCertificateInfo(VM model) {
+        VdcQueryReturnValue result =
+            runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
+                    new GetVmByVmIdParameters(asGuid(model.getId())));
+
+        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
+            if (!model.isSetDisplay()) {
+                model.setDisplay(new Display());
+            }
+            model.getDisplay().setCertificate(new Certificate());
+            model.getDisplay().getCertificate().setSubject(result.getReturnValue().toString());
+        }
+    }
 }

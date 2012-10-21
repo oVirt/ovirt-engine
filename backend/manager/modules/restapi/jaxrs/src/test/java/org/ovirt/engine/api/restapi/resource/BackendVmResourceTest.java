@@ -70,6 +70,7 @@ public class BackendVmResourceTest
 
     private static final String ISO_ID = "foo.iso";
     private static final String FLOPPY_ID = "bar.vfd";
+    public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
 
     public BackendVmResourceTest() {
         super(new BackendVmResource(GUIDS[0].toString(), new BackendVmsResource()));
@@ -114,8 +115,11 @@ public class BackendVmResourceTest
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0);
         setUpGetBallooningExpectations();
+        setUpGetCertuficateExpectations();
         control.replay();
-        verifyModel(resource.get(), 0);
+        VM response = resource.get();
+        verifyModel(response, 0);
+        verifyCertificate(response);
     }
 
     @Test
@@ -762,6 +766,12 @@ public class BackendVmResourceTest
         verifyModelSpecific(model, index);
     }
 
+    private void verifyCertificate(VM model) {
+        assertNotNull(model.getDisplay());
+        assertNotNull(model.getDisplay().getCertificate());
+        assertEquals(model.getDisplay().getCertificate().getSubject(), CERTIFICATE);
+    }
+
     protected storage_domains getStorageDomain(int idx) {
         storage_domains dom = new storage_domains();
         dom.setId(GUIDS[idx]);
@@ -785,4 +795,11 @@ public class BackendVmResourceTest
                 true);
     }
 
+    private void setUpGetCertuficateExpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
+                GetVmByVmIdParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                CERTIFICATE);
+    }
 }
