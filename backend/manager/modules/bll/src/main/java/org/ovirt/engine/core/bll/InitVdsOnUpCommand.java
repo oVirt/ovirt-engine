@@ -64,23 +64,24 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         VDSGroup vdsGroup = getVdsGroup();
 
         if (vdsGroup.supportsVirtService()) {
-            initVirtResources();
+            setSucceeded(initVirtResources());
         }
 
         if (vdsGroup.supportsGlusterService()) {
-            initGlusterPeerProcess();
+            setSucceeded(initGlusterPeerProcess());
         }
-        setSucceeded(true);
     }
 
-    private void initVirtResources() {
+    private boolean initVirtResources() {
         if (InitializeStorage()) {
             processFencing();
             processStoragePoolStatus();
         } else {
             Map<String, String> customLogValues = Collections.singletonMap("StoragePoolName", getStoragePoolName());
             setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE, customLogValues);
+            return false;
         }
+        return true;
     }
 
     private void processFencing() {
@@ -229,7 +230,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         return type;
     }
 
-    private void initGlusterPeerProcess() {
+    private boolean initGlusterPeerProcess() {
         _glusterPeerListSucceeded = true;
         _glusterPeerProbeSucceeded = true;
         List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
@@ -248,13 +249,16 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                 List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer.getId());
                 if (glusterServers.size() == 0) {
                     setNonOperational(NonOperationalReason.GLUSTER_PEER_LIST_FAILED, null);
+                    return false;
                 } else if (!hostExists(glusterServers, getVds())) {
                     if (!glusterPeerProbe(upServer.getId(), getVds().gethost_name())) {
                         setNonOperational(NonOperationalReason.GLUSTER_PEER_PROBE_FAILED, null);
+                        return false;
                     }
                 }
             }
         }
+        return true;
     }
 
     private boolean hostExists(List<GlusterServerInfo> glusterServers, VDS server) {
