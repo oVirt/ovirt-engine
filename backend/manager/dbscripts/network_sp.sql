@@ -341,6 +341,17 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+
+Create or replace FUNCTION GetVdsInterfaceById(v_vds_interface_id UUID) RETURNS SETOF vds_interface_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vds_interface_view
+   WHERE id = v_vds_interface_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 ----------------------------------------------------------------
 -- [vm_interface] Table
 --

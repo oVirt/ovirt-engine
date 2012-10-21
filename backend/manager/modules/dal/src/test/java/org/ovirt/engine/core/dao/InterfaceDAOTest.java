@@ -21,7 +21,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 public class InterfaceDAOTest extends BaseDAOTestCase {
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
-    private static final Guid VDS_STATISTICS_ID = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
 
     private InterfaceDAO dao;
     private VdsNetworkInterface newVdsInterface;
@@ -102,16 +101,16 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
         // ensure we have records before the test
         boolean found = false;
         for (VdsNetworkInterface iface : before) {
-            found |= (VDS_STATISTICS_ID.equals(iface.getId()));
+            found |= (FixturesTool.VDS_NETWORK_INTERFACE.equals(iface.getId()));
         }
         assertTrue(found);
 
-        dao.removeInterfaceFromVds(VDS_STATISTICS_ID);
+        dao.removeInterfaceFromVds(FixturesTool.VDS_NETWORK_INTERFACE);
 
         List<VdsNetworkInterface> after = dao.getAllInterfacesForVds(VDS_ID);
 
         for (VdsNetworkInterface iface : after) {
-            assertNotSame(VDS_STATISTICS_ID, iface.getId());
+            assertNotSame(FixturesTool.VDS_NETWORK_INTERFACE, iface.getId());
         }
     }
 
@@ -128,7 +127,7 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
             assertNotSame(0.0, iface.getStatistics().getReceiveDropRate());
             assertNotSame(0.0, iface.getStatistics().getReceiveDropRate());
         }
-        dao.removeStatisticsForVds(VDS_STATISTICS_ID);
+        dao.removeStatisticsForVds(FixturesTool.VDS_NETWORK_INTERFACE);
 
         List<VdsNetworkInterface> after = dao.getAllInterfacesForVds(VDS_ID);
 
@@ -276,6 +275,18 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
     public void testGetManagedInterfaceForVdsFilteringDisabledForUnpriviligedUser() {
         VdsNetworkInterface result = dao.getManagedInterfaceForVds(VDS_ID, UNPRIVILEGED_USER_ID, false);
         assertCorrectGetManagedInterfaceForVdsResult(result);
+    }
+
+    /**
+     * Ensures that get works as expected.
+     */
+    @Test
+    public void testGet() {
+        newVdsInterface.setVdsId(VDS_ID);
+        dao.saveInterfaceForVds(newVdsInterface);
+        dao.saveStatisticsForVds(newVdsInterface.getStatistics());
+        VdsNetworkInterface result = dao.get(newVdsInterface.getId());
+        assertEquals(newVdsInterface, result);
     }
 
     static private void assertCorrectGetManagedInterfaceForVdsResult(VdsNetworkInterface result) {

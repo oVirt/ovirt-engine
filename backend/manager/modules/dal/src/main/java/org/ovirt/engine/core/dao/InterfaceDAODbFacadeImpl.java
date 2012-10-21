@@ -169,6 +169,13 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
                 getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
 
+    @Override
+    public VdsNetworkInterface get(Guid id) {
+        return getCallsHandler().executeRead("GetVdsInterfaceById",
+                vdsNetworkInterfaceRowMapper,
+                getCustomMapSqlParameterSource().addValue("vds_interface_id", id));
+    }
+
     private static final ParameterizedRowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
             new ParameterizedRowMapper<VdsNetworkInterface>() {
                 @Override

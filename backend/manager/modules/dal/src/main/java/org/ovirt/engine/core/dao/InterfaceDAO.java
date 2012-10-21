@@ -113,4 +113,13 @@ public interface InterfaceDAO extends DAO {
      * @return the list of VdsNetworkInterfaces
      */
     List<VdsNetworkInterface> getVdsInterfacesByNetworkId(Guid networkId);
+
+    /**
+     * Returns the VdsNetworkInterface with the specified id.
+     *
+     * @param id
+     *            the VdsNetworkInterface Id
+     * @return the VdsNetworkInterfaces
+     */
+    VdsNetworkInterface get(Guid id);
 }

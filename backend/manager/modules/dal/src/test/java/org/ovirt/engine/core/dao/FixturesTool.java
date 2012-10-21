@@ -254,4 +254,15 @@ public class FixturesTool {
      * </ul>
      */
     protected static final Guid VM_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
+
+    /**
+     * Predefined VdsNetworkInterface with the following properties :
+     * <ul>
+     * <li>name: eth0</li>
+     * <li>network_name: engine</li>
+     * <li>vds_id: afce7a39-8e8c-4819-ba9c-796d316592e6</li>
+     * <li>mac_addr: 78:E7:D1:E4:8C:70</li>
+     * </ul>
+     */
+    protected static final Guid VDS_NETWORK_INTERFACE = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
 }
