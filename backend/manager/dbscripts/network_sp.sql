@@ -789,6 +789,24 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmTemplateInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vm_interface_view.*
+   FROM vm_interface_view
+   INNER JOIN vm_templates_view
+   ON vm_templates_view.vmt_guid = vm_interface_view.vmt_guid
+   INNER JOIN network_cluster
+   ON network_cluster.cluster_id = vm_templates_view.vds_group_id
+   INNER JOIN network
+   ON network.id = network_cluster.network_id
+   AND network.name = vm_interface_view.network_name
+   WHERE network.id = v_network_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION set_network_exclusively_as_display(v_cluster_id UUID, v_network_id UUID)
 RETURNS VOID
    AS $procedure$

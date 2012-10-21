@@ -18,7 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     private static final Guid TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
-    private static final Guid INTERFACE_ID = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
     protected static final Guid PRIVILEGED_USER_ID   = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
@@ -28,6 +27,7 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     private VmDeviceDAO vmDevicesDao;
     private VmNetworkStatisticsDAO StatsDao;
 
+    private VmNetworkInterface existingVmInterface;
     private VmNetworkInterface newVmInterface;
     private VmDevice newVmDevice = new VmDevice();
 
@@ -38,6 +38,7 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
         dao = prepareDAO(dbFacade.getVmNetworkInterfaceDao());
         vmDevicesDao = prepareDAO(dbFacade.getVmDeviceDao());
         StatsDao = prepareDAO(dbFacade.getVmNetworkStatisticsDao());
+        existingVmInterface = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
 
         newVmInterface = new VmNetworkInterface();
         newVmInterface.setStatistics(new VmNetworkStatistics());
@@ -72,10 +73,10 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        VmNetworkInterface result = dao.get(INTERFACE_ID);
+        VmNetworkInterface result = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
 
         assertNotNull(result);
-        assertEquals(INTERFACE_ID, result.getId());
+        assertEquals(FixturesTool.VM_NETWORK_INTERFACE, result.getId());
     }
 
     /**
@@ -238,16 +239,23 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        assertNotNull(dao.get(INTERFACE_ID));
+        assertNotNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
+        dao.remove(FixturesTool.VM_NETWORK_INTERFACE);
+        assertNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
 
-        dao.remove(INTERFACE_ID);
-
-        assertNull(dao.get(INTERFACE_ID));
+        dao.save(existingVmInterface);
+        assertNotNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
     }
 
     @Test(expected = NotImplementedException.class)
     public void testGetAll() throws Exception {
         dao.getAll();
+    }
+
+    @Test
+    public void testGetAllForTemplatesByNetwork() throws Exception {
+        List<VmNetworkInterface> result = dao.getAllForTemplatesByNetwork(FixturesTool.NETWORK_ENGINE);
+        assertEquals(existingVmInterface, result.get(0));
     }
 
     private void assertCorrectResultForTemplate(List<VmNetworkInterface> result) {

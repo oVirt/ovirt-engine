@@ -63,4 +63,13 @@ public interface VmNetworkInterfaceDAO extends GenericDao<VmNetworkInterface, Gu
      * @return the list of VmNetworkInterfaces
      */
     List<VmNetworkInterface> getAllForNetwork(Guid networkId);
+
+    /**
+     * Retrieves the VmTemplate Network Interfaces that the given network is attached to.
+     *
+     * @param networkId
+     *            the network
+     * @return the list of VmNetworkInterfaces
+     */
+    List<VmNetworkInterface> getAllForTemplatesByNetwork(Guid networkId);
 }

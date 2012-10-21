@@ -130,4 +130,10 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
         return getCallsHandler().executeReadList("GetVmInterfacesByNetworkId",
                 mapper, getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
+
+    @Override
+    public List<VmNetworkInterface> getAllForTemplatesByNetwork(Guid networkId) {
+        return getCallsHandler().executeReadList("GetVmTemplateInterfacesByNetworkId",
+                mapper, getCustomMapSqlParameterSource().addValue("network_id", networkId));
+    }
 }

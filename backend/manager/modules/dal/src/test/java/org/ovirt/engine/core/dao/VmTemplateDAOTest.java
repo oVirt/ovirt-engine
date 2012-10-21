@@ -260,6 +260,15 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         assertGetResult(result);
     }
 
+    /**
+     * Asserts that the correct template is returned for the given network id
+     */
+    @Test
+    public void testGetAllForNetwork() {
+        List<VmTemplate> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
+        assertEquals(existingTemplate, result.get(0));
+    }
+
     private static void assertGetResult(VmTemplate result) {
         assertNotNull(result);
         assertEquals(EXISTING_TEMPLATE_ID, result.getId());

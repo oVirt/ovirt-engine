@@ -328,3 +328,21 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetVmTemplatesByNetworkId(v_network_id UUID) RETURNS SETOF vm_templates_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vm_templates_view
+   WHERE EXISTS (
+      SELECT 1
+      FROM vm_interface
+      INNER JOIN network
+      ON network.name = vm_interface.network_name
+      INNER JOIN network_cluster
+      ON network.id = network_cluster.network_id
+      WHERE network.id = v_network_id
+      AND vm_templates_view.vds_group_id = network_cluster.cluster_id
+      AND vm_interface.vmt_guid = vm_templates_view.vmt_guid);
+END; $procedure$
+LANGUAGE plpgsql;
+

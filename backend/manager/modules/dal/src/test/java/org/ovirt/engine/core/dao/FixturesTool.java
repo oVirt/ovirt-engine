@@ -242,4 +242,16 @@ public class FixturesTool {
      * </ul>
      */
     protected static final Guid NETWORK_NO_CLUSTERS_ATTACHED = new Guid("58d5c1c6-cb15-4832-b2a4-023770607190");
+
+    /**
+     * Predefined VmNetworkInterface with the following properties :
+     * <ul>
+     * <li>network_name: engine</li>
+     * <li>vm_guid: 77296e00-0cad-4e5a-9299-008a7b6f4355</li>
+     * <li>vmt_guid: 1b85420c-b84c-4f29-997e-0eb674b40b79</li>
+     * <li>mac_addr: 00:1a:4a:16:87:d9</li>
+     * <li>name: nic1</li>
+     * </ul>
+     */
+    protected static final Guid VM_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
 }

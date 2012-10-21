@@ -94,4 +94,13 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      * @return A {@link Map} from the image's plug status to a {@link List} of the template associated with it.
      */
     Map<Boolean, VmTemplate> getAllForImage(Guid imageId);
+
+    /**
+     * Retrieves all VmTemplates that have a Network Interface that the given Network is attached to.
+     *
+     * @param networkId
+     *            the network id
+     * @return the list of VmTemplates
+     */
+    List<VmTemplate> getAllForNetwork(Guid networkId);
 }
