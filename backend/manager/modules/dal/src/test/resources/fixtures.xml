@@ -2511,26 +2511,6 @@
             <null />
         </row>
         <row>
-            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dc</value>
-            <value>eth0</value>
-            <value>engine</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
-            <value>78:E7:D1:E4:8C:70</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>1000</value>
-            <value>10.35.110.10</value>
-            <value>255.255.255.0</value>
-            <null />
-            <value>1</value>
-            <value>2</value>
-            <value>2010-11-12 10:12:41</value>
-            <value>2010-11-12 15:57:01</value>
-            <null />
-        </row>
-        <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
             <value>eth0</value>
             <value>engine2</value>
