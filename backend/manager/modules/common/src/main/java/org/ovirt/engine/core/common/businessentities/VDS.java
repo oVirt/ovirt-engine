@@ -1178,6 +1178,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         if (getmem_commited() != null && getphysical_mem_mb() != null && getreserved_mem() != null) {
             maxSchedulingMemory = (getmax_vds_memory_over_commit() * getphysical_mem_mb() / 100.0f) -
                     (getmem_commited() + getreserved_mem());
+            // avoid negative values
+            maxSchedulingMemory = maxSchedulingMemory > 0 ? maxSchedulingMemory : 0;
         }
     }
 
