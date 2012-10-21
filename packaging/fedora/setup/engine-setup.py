@@ -1618,26 +1618,44 @@ def setMaxSharedMemory():
     """
     Check and verify that the kernel.shmmax kernel parameter is above 35mb
     """
-    # First verify that kernel.shmmax is not set and is below the requested value.
-    logging.debug("loading %s", basedefs.FILE_SYSCTL)
-    txtHandler = utils.TextConfigFileHandler(basedefs.FILE_SYSCTL)
-    txtHandler.open()
-
     # Compare to basedefs.CONST_SHMMAX
-    currentShmmax = txtHandler.getParam("kernel.shmmax")
+    cmd = [
+        basedefs.EXEC_SYSCTL, "-b", "kernel.shmmax",
+    ]
+    currentShmmax, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_FAILED_KERNEL_PARAMS)
     if currentShmmax and (int(currentShmmax) >= basedefs.CONST_SHMMAX):
         logging.debug("current shared memory max in kernel is %s, there is no need to update the kernel parameters", currentShmmax)
         return
 
+    # Decide what is the file that we are going to modify according to the
+    # existence or not of sysctl.conf, it exists in older distributions but
+    # has been replaced by a sysctl.d directory in newer distributions using
+    # systemd
+    sysctlFile = basedefs.FILE_SYSCTL
+    if not os.path.exists(sysctlFile):
+        sysctlFile = basedefs.FILE_ENGINE_SYSCTL
+
+    # Create the chosen file if it doesn't exist.
+    if not os.path.exists(sysctlFile):
+        open(sysctlFile, "w").close()
+
     # If we got here, it means we need to update kernel.shmmax in sysctl.conf
+    txtHandler = utils.TextConfigFileHandler(sysctlFile)
+    txtHandler.open()
     logging.debug("setting SHARED MEMORY MAX to: %s", basedefs.CONST_SHMMAX)
     txtHandler.editParam("kernel.shmmax", basedefs.CONST_SHMMAX)
     txtHandler.close()
 
-    # Execute sysctl -a
-    cmd = [
-        basedefs.EXEC_SYSCTL, "-e", "-p",
-    ]
+    # Restart sysctl service for systemd based systems or reload parameters for
+    # sysVinit
+    if os.path.exists(basedefs.EXEC_SYSTEMCTL):
+        cmd = [
+             basedefs.EXEC_SYSTEMCTL, "restart", "systemd-sysctl.service",
+        ]
+    else :
+        cmd = [
+            basedefs.EXEC_SYSCTL, "-e", "-p",
+        ]
     utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_FAILED_KERNEL_PARAMS)
 
 def _addIsoDomaintoDB(uuid, description):

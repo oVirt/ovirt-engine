@@ -57,7 +57,8 @@ MSG_INFO_LOG_FILE = "Cleanup log available at"
 MSG_INFO_CLEANUP_OK = "\nCleanup finished successfully!"
 MSG_INFO_FINISHED_WITH_ERRORS = "\nCleanup finished with errors, please see log file"
 MSG_INFO_STOP_INSTALL_EXIT = "Cleanup stopped, Goodbye."
-MSG_INFO_KILL_DB_CONNS="Stopping all connections to DB"
+MSG_INFO_KILL_DB_CONNS = "Stopping all connections to DB"
+MSG_INFO_DELETE_SYSCTL_CONF = "Error deleting %s" % basedefs.FILE_ENGINE_SYSCTL
 
 MSG_ALERT_CLEANUP = "WARNING: Executing %s cleanup utility.\n\
 This utility will wipe all existing data including configuration settings, certificates and database.\n\
@@ -366,6 +367,12 @@ class DB():
 
         return True
 
+def deleteSysctlConf():
+    try :
+        os.remove(basedefs.FILE_ENGINE_SYSCTL)
+    except:
+        raise Exception(MSG_INFO_DELETE_SYSCTL_CONF)
+
 def stopEngine():
     logging.debug("stoping %s service." % basedefs.ENGINE_SERVICE_NAME)
 
@@ -425,6 +432,10 @@ def main(options):
     # Backup DB, drop DB and clean .pgpass file (only if 'basedefs.DB_NAME' db exists)
     if db.exists() and options.drop_db:
         runFunc([db.backup, db.drop, cleanPgpass], MSG_INFO_REMOVE_DB)
+
+    # Remove 00-ovirt.conf
+    if os.path.exists(basedefs.FILE_ENGINE_SYSCTL):
+        deleteSysctlConf()
 
     # Remove CA
     if ca.exists() and options.remove_ca:

@@ -116,7 +116,11 @@ FILE_ENGINE_SYSCONFIG_MAINTENANCE="%s/99-maintenance.conf" % DIR_ENGINE_SYSCONFI
 FILE_VIRTIO_WIN_VFD="/usr/share/virtio-win/virtio-win.vfd"
 FILE_VIRTIO_WIN_ISO="/usr/share/virtio-win/virtio-win.iso"
 FILE_RHEV_GUEST_TOOLS_ISO="/usr/share/rhev-guest-tools-iso/rhev-tools-setup.iso"
-FILE_SYSCTL="/etc/sysctl.conf"
+
+#Locations of kernel configuration files
+FILE_SYSCTL = "/etc/sysctl.conf"
+DIR_SYSCTL = "/etc/sysctl.d"
+FILE_ENGINE_SYSCTL = os.path.join(DIR_SYSCTL, "00-ovirt-engine.conf")
 
 # ISO
 ISO_DISPLAY_NAME = "ISO_DOMAIN"
@@ -145,6 +149,7 @@ EXEC_DROPDB="/usr/bin/dropdb"
 EXEC_SHELL="/bin/sh"
 EXEC_SSH_KEYGEN="/usr/bin/ssh-keygen"
 EXEC_SYSCTL="/sbin/sysctl"
+EXEC_SYSTEMCTL="/bin/systemctl"
 EXEC_SETSEBOOL="/usr/sbin/setsebool"
 EXEC_SEMANAGE="/usr/sbin/semanage"
 EXEC_KEYTOOL="/usr/bin/keytool"
