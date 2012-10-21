@@ -103,6 +103,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
     }
 
+    @Override
+    protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
+        return new IRSErrorException(errorMessage);
+    }
+
     public static void unlockDbSave(Guid storagePoolId) {
         IrsProxyData proxy = _irsProxyData.get(storagePoolId);
         if (proxy != null) {

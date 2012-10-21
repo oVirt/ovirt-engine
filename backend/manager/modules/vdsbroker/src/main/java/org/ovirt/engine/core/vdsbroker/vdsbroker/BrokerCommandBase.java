@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.VDSCommandBase;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNoMasterDomainException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNonOperationalException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSUnicodeArgumentException;
@@ -194,16 +193,12 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
     }
 
     private VDSExceptionBase createException() {
-        VDSExceptionBase outEx;
         final String errorMessage = String.format("Failed to %1$s, error = %2$s", getCommandName(),
                 getReturnStatus().mMessage);
-        if (this instanceof IrsBrokerCommand) {
-            outEx = new IRSErrorException(errorMessage);
-        } else {
-            outEx = new VDSErrorException(errorMessage);
-        }
-        return outEx;
+        return createDefaultConcreteException(errorMessage);
     }
+
+    protected abstract VDSExceptionBase createDefaultConcreteException(String errorMessage);
 
     protected VdcBllErrors GetReturnValueFromStatus(StatusForXmlRpc xmlRpcStatus) {
         try {

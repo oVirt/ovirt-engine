@@ -26,6 +26,11 @@ public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> exte
     }
 
     @Override
+    protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
+        return new IrsOperationFailedNoFailoverException(errorMessage);
+    }
+
+    @Override
     protected Object getReturnValueFromBroker() {
         return _isoList;
     }

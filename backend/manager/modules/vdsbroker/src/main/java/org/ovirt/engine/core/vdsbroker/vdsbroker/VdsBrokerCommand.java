@@ -60,6 +60,11 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     }
 
     @Override
+    protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
+        return new VDSErrorException(errorMessage);
+    }
+
+    @Override
     protected String getAdditionalInformation() {
         if (getVds() != null) {
             return String.format("HostName = %1$s", getVds().getvds_name());
