@@ -208,24 +208,22 @@ public class BackendVmResource extends
 
     @Override
     public Response start(Action action) {
-        RunVmOnceParams params = new RunVmOnceParams(guid);
-
-        if (action.isSetPause() && action.isPause()) {
-            params.setRunAndPause(true);
-        }
-
+        RunVmOnceParams params =
+                map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(guid), id, true),
+                        new VM()),
+                        new RunVmOnceParams(guid));
         if (action.isSetVm()) {
             validateEnums(VM.class, action.getVm());
             VM vm = action.getVm();
-
+            params = map(vm, params);
             if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {
                 validateParameters(vm.getPlacementPolicy(), "host.id|name");
                 params.setDestinationVdsId(getHostId(vm.getPlacementPolicy().getHost()));
             }
-
-            params = map(vm, params);
         }
-
+        if (action.isSetPause() && action.isPause()) {
+            params.setRunAndPause(true);
+        }
         return doAction(VdcActionType.RunVmOnce, setReinitializeSysPrep(params), action);
     }
 

@@ -304,7 +304,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testStart() throws Exception {
-        setUpWindowsGetEntityExpectations(1, false);
+        setUpWindowsGetEntityExpectations(2, false);
         setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId" },
@@ -315,7 +315,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testStartWithPauseAndStateless() throws Exception {
-        setUpWindowsGetEntityExpectations(1, false);
+        setUpWindowsGetEntityExpectations(2, false);
         setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "RunAndPause", "RunAsStateless" },
@@ -331,7 +331,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testStartWithVnc() throws Exception {
-        setUpWindowsGetEntityExpectations(1, false);
+        setUpWindowsGetEntityExpectations(2, false);
         setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "UseVnc" },
@@ -347,7 +347,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testStartWithBootDev() throws Exception {
-        setUpWindowsGetEntityExpectations(1, false);
+        setUpWindowsGetEntityExpectations(2, false);
         setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "BootSequence" },
@@ -364,7 +364,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testStartWithCdRomAndFloppy() throws Exception {
-        setUpWindowsGetEntityExpectations(1, false);
+        setUpWindowsGetEntityExpectations(2, false);
         setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "DiskPath", "FloppyPath" },
@@ -403,7 +403,7 @@ public class BackendVmResourceTest
     }
 
     protected void testStartWithHost(Host host, Guid hostId) throws Exception {
-        setUpWindowsGetEntityExpectations(1, false);
+        setUpWindowsGetEntityExpectations(2, false);
         setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "DestinationVdsId" },
