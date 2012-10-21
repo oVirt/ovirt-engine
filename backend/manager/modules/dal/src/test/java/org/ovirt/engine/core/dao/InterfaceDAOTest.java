@@ -23,6 +23,7 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
     private InterfaceDAO dao;
+    private VdsNetworkInterface existingVdsInterface;
     private VdsNetworkInterface newVdsInterface;
     private VdsNetworkStatistics newVdsStatistics;
 
@@ -31,6 +32,7 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
         super.setUp();
 
         dao = prepareDAO(dbFacade.getInterfaceDao());
+        existingVdsInterface = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
 
         newVdsInterface = new VdsNetworkInterface();
         newVdsInterface.setStatistics(new VdsNetworkStatistics());
@@ -287,6 +289,15 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
         dao.saveStatisticsForVds(newVdsInterface.getStatistics());
         VdsNetworkInterface result = dao.get(newVdsInterface.getId());
         assertEquals(newVdsInterface, result);
+    }
+
+    /**
+     * Asserts that the correct VdsNetworkInterface is returned for the given network.
+     */
+    @Test
+    public void testGetVdsInterfacesByNetworkId() throws Exception {
+        List<VdsNetworkInterface> result = dao.getVdsInterfacesByNetworkId(FixturesTool.NETWORK_ENGINE);
+        assertEquals(existingVdsInterface, result.get(0));
     }
 
     static private void assertCorrectGetManagedInterfaceForVdsResult(VdsNetworkInterface result) {
