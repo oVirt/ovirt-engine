@@ -93,7 +93,7 @@ public enum VdcQueryType implements Serializable {
     // Users queries
     GetUserVmsByUserIdAndGroups(VdcQueryAuthType.User),
     GetTimeLeasedUsersByVmPoolId,
-    GetDbUserByUserId,
+    GetDbUserByUserId(VdcQueryAuthType.User),
     GetUsersByVmid,
     GetVmsByUserid,
     GetUserMessage,

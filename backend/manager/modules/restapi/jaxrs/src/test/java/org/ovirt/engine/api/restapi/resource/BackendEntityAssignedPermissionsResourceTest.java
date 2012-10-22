@@ -14,10 +14,9 @@ import org.ovirt.engine.api.model.User;
 
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendEntityAssignedPermissionsResourceTest
@@ -83,11 +82,11 @@ public class BackendEntityAssignedPermissionsResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
-        setUpGetEntityExpectations(VdcQueryType.Search,
-                                    SearchParameters.class,
-                                    new String[] {"SearchPattern", "SearchTypeValue"},
-                                    new Object[] {"users:", SearchType.DBUser},
-                                    getUsers());
+        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
+                                    GetDbUserByUserIdParameters.class,
+                                    new String[] {"UserId"},
+                                    new Object[] {GUIDS[1]},
+                                    getUserByIdx(1));
         setUpQueryExpectations("");
 
         collection.setUriInfo(uriInfo);

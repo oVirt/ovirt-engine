@@ -150,13 +150,17 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected ArrayList<DbUser> getUsers() {
         ArrayList<DbUser> users = new ArrayList<DbUser>();
         for (int i=0; i < NAMES.length; i++) {
-            DbUser user = new DbUser();
-            user.setuser_id(GUIDS[i]);
-            user.setname(NAMES[i]);
-            user.setusername(NAMES[i]);
-            users.add(user);
+            users.add(getUserByIdx(i));
         }
         return users;
+    }
+
+    protected DbUser getUserByIdx(int idx) {
+        DbUser user = new DbUser();
+        user.setuser_id(GUIDS[idx]);
+        user.setname(NAMES[idx]);
+        user.setusername(NAMES[idx]);
+        return user;
     }
 
     protected abstract Permission getModel();

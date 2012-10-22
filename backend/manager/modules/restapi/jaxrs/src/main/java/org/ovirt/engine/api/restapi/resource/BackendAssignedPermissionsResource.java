@@ -24,7 +24,9 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -90,14 +92,25 @@ public class BackendAssignedPermissionsResource
 
     protected Permissions mapCollection(List<permissions> entities) {
         Permissions collection = new Permissions();
-        Map<Guid, DbUser> users = getUsers();
         for (permissions entity : entities) {
             if (entity.getObjectType() != VdcObjectType.System) {
-                Permission permission = map(entity, users.containsKey(entity.getad_element_id()) ? users.get(entity.getad_element_id()) : null);
+                Permission permission = map(entity, getUserById(entity.getad_element_id()));
                 collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? suggestedParentType : Group.class));
             }
         }
         return collection;
+    }
+
+    public DbUser getUserById(Guid userId) {
+        GetDbUserByUserIdParameters queryParameters = new GetDbUserByUserIdParameters(userId);
+        VdcQueryReturnValue userQueryResponse = runQuery(VdcQueryType.GetDbUserByUserId, queryParameters);
+
+        DbUser returnValue = null;
+        if (userQueryResponse != null && userQueryResponse.getSucceeded()) {
+            returnValue = (DbUser) userQueryResponse.getReturnValue();
+        }
+
+        return returnValue;
     }
 
     public Map<Guid, DbUser> getUsers() {
