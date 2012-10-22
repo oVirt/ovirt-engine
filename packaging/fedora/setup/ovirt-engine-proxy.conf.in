@@ -21,7 +21,7 @@
 # (controlled by the Timeout directive in httpd.conf) is 60 seconds.
 #
 #end raw
-ProxyPass / ajp://localhost:${basedefs.JBOSS_AJP_PORT}/ retry=5 timeout=600
+ProxyPass / ajp://localhost:${basedefs.JBOSS_AJP_PORT}/ retry=5 timeout=3600
 
 #raw
 #
