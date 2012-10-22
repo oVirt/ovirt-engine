@@ -7,8 +7,10 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DisksResource;
+import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -28,12 +30,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
 
     @Override
     public Response add(Disk disk) {
-        validateParameters(disk, "format", "interface");
-        if (!disk.isSetLunStorage() || disk.getLunStorage().getLogicalUnits().isEmpty()) { // lun-disk does not require
-                                                                                           // size
-            validateParameters(disk, "provisionedSize|size");
-        }
-        validateEnums(Disk.class, disk);
+        validateDiskForCreation(disk);
         AddDiskParameters params = new AddDiskParameters();
         params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, null));
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
@@ -48,6 +45,20 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         }
         return performCreation(VdcActionType.AddDisk, params,
                 new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class));
+    }
+
+    protected void validateDiskForCreation(Disk disk) {
+        validateParameters(disk, "format", "interface");
+        if (DiskResourceUtils.isLunDisk(disk)) {
+            validateParameters(disk.getLunStorage(), "type"); // when creating a LUN disk, user must specify type.
+            StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
+            if (storageType!=null && storageType==StorageType.ISCSI) {
+                    validateParameters(disk.getLunStorage().getLogicalUnits().get(0), "address", "target", "port");
+            }
+        } else {
+            validateParameters(disk, "provisionedSize|size"); // Non lun disks require size
+        }
+        validateEnums(Disk.class, disk);
     }
 
     private Guid getStorageDomainId(String storageDomainName) {

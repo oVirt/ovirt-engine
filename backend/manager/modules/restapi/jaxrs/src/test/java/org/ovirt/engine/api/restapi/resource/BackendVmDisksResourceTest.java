@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,7 +31,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendVmDisksResourceTest
         extends AbstractBackendDisksResourceTest<BackendVmDisksResource> {
 
+    private static final String ISCSI_SERVER_ADDRESS = "1.1.1.1";
     private static final Guid DISK_ID = GUIDS[0];
+    private static final int ISCSI_SERVER_CONNECTION_PORT = 4567;
+    private static final String ISCSI_SERVER_TARGET = "iqn.1986-03.com.sun:02:ori01";
 
     public BackendVmDisksResourceTest() {
         super(new BackendVmDisksResource(PARENT_ID,
@@ -336,29 +337,96 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddIncompleteParameters() throws Exception {
         Disk model = new Disk();
-        model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Disk", "add", "format", "interface");
+            verifyIncompleteException(wae, "Disk", "validateDiskForCreation", "format", "interface");
         }
     }
 
     @Test
     public void testAddIncompleteParameters_2() throws Exception {
         Disk model = getModel(0);
-        model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Disk", "add", "provisionedSize|size");
+            verifyIncompleteException(wae, "Disk", "validateDiskForCreation", "provisionedSize|size");
         }
+    }
+
+    @Test
+    public void testAddLunDisk_MissingType() {
+        Disk model = createIscsiLunDisk();
+        model.getLunStorage().setType(null);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "Storage", "validateDiskForCreation", "type");
+        }
+    }
+
+    @Test
+    public void testAddIscsiLunDisk_IncompleteParameters_ConnectionAddress() {
+        Disk model = createIscsiLunDisk();
+        model.getLunStorage().getLogicalUnits().get(0).setAddress(null);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "LogicalUnit", "validateDiskForCreation", "address");
+        }
+    }
+
+    @Test
+    public void testAddIscsiLunDisk_IncompleteParameters_ConnectionTarget() {
+        Disk model = createIscsiLunDisk();
+        model.getLunStorage().getLogicalUnits().get(0).setTarget(null);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "LogicalUnit", "validateDiskForCreation", "target");
+        }
+    }
+
+    @Test
+    public void testAddIscsiLunDisk_IncompleteParameters_ConnectionPort() {
+        Disk model = createIscsiLunDisk();
+        model.getLunStorage().getLogicalUnits().get(0).setPort(null);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "LogicalUnit", "validateDiskForCreation", "port");
+        }
+    }
+
+    private Disk createIscsiLunDisk() {
+        Disk model = getModel(0);
+        model.setLunStorage(new Storage());
+        model.getLunStorage().setType("iscsi");
+        model.getLunStorage().getLogicalUnits().add(new LogicalUnit());
+        model.getLunStorage().getLogicalUnits().get(0).setAddress(ISCSI_SERVER_ADDRESS);
+        model.getLunStorage().getLogicalUnits().get(0).setTarget(ISCSI_SERVER_TARGET);
+        model.getLunStorage().getLogicalUnits().get(0).setPort(ISCSI_SERVER_CONNECTION_PORT);
+        model.setSize(null);
+        model.setProvisionedSize(null);
+        return model;
     }
 
     @Test
@@ -371,12 +439,7 @@ public class BackendVmDisksResourceTest
      * when creating a LUN-Disk
      */
     public void testAddLunDisk() {
-        Disk model = getModel(0);
-        model.setName(NAMES[0]);
-        model.setLunStorage(new Storage());
-        model.getLunStorage().getLogicalUnits().add(new LogicalUnit());
-        model.setSize(null);
-        model.setProvisionedSize(null);
+        Disk model = createIscsiLunDisk();
         testAddDiskImpl(model);
     }
 

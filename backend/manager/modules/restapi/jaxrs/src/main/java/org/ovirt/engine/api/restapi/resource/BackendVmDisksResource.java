@@ -14,6 +14,7 @@ import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
+import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 
 public class BackendVmDisksResource
         extends AbstractBackendDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>
@@ -58,12 +60,7 @@ public class BackendVmDisksResource
                            .entity(lookupEntity(asGuid(disk.getId())))
                            .build();
         }else {
-            validateParameters(disk, "format", "interface");
-            if (!disk.isSetLunStorage() || disk.getLunStorage().getLogicalUnits().isEmpty()) { // lun-disk does not
-                                                                                               // require
-                                                                                               // size
-                validateParameters(disk, "provisionedSize|size");
-            }
+            validateDiskForCreation(disk);
             return performCreation(addAction,
                     getAddParameters(map(disk), disk),
                     getEntityIdResolver(disk.getName()));
@@ -184,5 +181,19 @@ public class BackendVmDisksResource
             params = new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromString(disk.getId()));
         }
         return performAction(VdcActionType.AttachDiskToVm, params);
+    }
+
+    protected void validateDiskForCreation(Disk disk) {
+        validateParameters(disk, "format", "interface");
+        if (DiskResourceUtils.isLunDisk(disk)) {
+            validateParameters(disk.getLunStorage(), "type"); // when creating a LUN disk, user must specify type.
+            StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
+            if (storageType != null && storageType == StorageType.ISCSI) {
+                validateParameters(disk.getLunStorage().getLogicalUnits().get(0), "address", "target", "port");
+            }
+        } else {
+            validateParameters(disk, "provisionedSize|size"); // Non lun disks require size
+        }
+        validateEnums(Disk.class, disk);
     }
 }
