@@ -130,10 +130,11 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void vdsUpEvent(final Guid vdsId) {
+    public boolean vdsUpEvent(final Guid vdsId) {
         StoragePoolParametersBase tempVar = new StoragePoolParametersBase(Guid.Empty);
         tempVar.setVdsId(vdsId);
-        if (Backend.getInstance().runInternalAction(VdcActionType.InitVdsOnUp, tempVar).getSucceeded()) {
+        boolean isSucceeded = Backend.getInstance().runInternalAction(VdcActionType.InitVdsOnUp, tempVar).getSucceeded();
+        if (isSucceeded) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -183,6 +184,7 @@ public class VdsEventListener implements IVdsEventListener {
                 }
             });
         }
+        return isSucceeded;
     }
 
     @Override

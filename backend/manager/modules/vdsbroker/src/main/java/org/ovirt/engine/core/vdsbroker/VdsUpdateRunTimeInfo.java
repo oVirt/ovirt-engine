@@ -279,8 +279,9 @@ public class VdsUpdateRunTimeInfo {
                     if (log.isDebugEnabled()) {
                         log.debugFormat("vds {0}-{1} firing up event.", _vds.getId(), _vds.getvds_name());
                     }
-                    ResourceManager.getInstance().getEventListener().vdsUpEvent(_vds.getId());
-                    markIsSetNonOperationalExecuted();
+                    _vdsManager.setIsSetNonOperationalExecuted(!ResourceManager.getInstance()
+                            .getEventListener()
+                            .vdsUpEvent(_vds.getId()));
 
                     // Check hardware capabilities in case VDS moved to up
                     processHardwareCapsNeeded = true;
