@@ -1,13 +1,17 @@
 package org.ovirt.engine.ui.common.widget.uicommon.template;
 
+import java.util.Date;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
+import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
@@ -32,21 +36,22 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         };
         getTable().addColumn(nameColumn, constants.nameDisk());
 
-        TextColumnWithTooltip<DiskImage> sizeColumn = new TextColumnWithTooltip<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> provisionedSizeColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return String.valueOf(object.getSizeInGigabytes()) + " GB"; //$NON-NLS-1$
             }
         };
-        getTable().addColumn(sizeColumn, constants.sizeDisk());
+        getTable().addColumn(provisionedSizeColumn, constants.provisionedSizeDisk());
 
-        TextColumnWithTooltip<DiskImage> formatColumn = new EnumColumn<DiskImage, VolumeFormat>() {
+        DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>(DiskSizeUnit.GIGABYTE) {
             @Override
-            protected VolumeFormat getRawValue(DiskImage object) {
-                return object.getvolume_format();
+            protected Long getRawValue(DiskImage object) {
+                       return Math.round((object.getActualDiskWithSnapshotsSize()));
             }
         };
-        getTable().addColumn(formatColumn, constants.formatDisk());
+
+        getTable().addColumn(actualSizeColumn, constants.sizeDisk());
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -63,6 +68,15 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
             }
         };
         getTable().addColumn(interfaceColumn, constants.interfaceDisk());
+
+        TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
+            @Override
+            protected Date getRawValue(DiskImage object) {
+                return object.getcreation_date();
+            }
+        };
+
+        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk());
     }
 
 }
