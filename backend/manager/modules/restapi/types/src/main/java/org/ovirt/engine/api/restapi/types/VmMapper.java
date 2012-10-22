@@ -319,7 +319,11 @@ public class VmMapper {
         }
         if (entity.getdefault_display_type() != null) {
             model.setDisplay(new Display());
-            model.getDisplay().setType(map(entity.getdefault_display_type(), null));
+            if (getIsVmRunning(entity) && entity.getDynamicData() != null) {
+                model.getDisplay().setType(map(entity.getDynamicData().getdisplay_type(), null));
+            } else {
+                model.getDisplay().setType(map(entity.getdefault_display_type(), null));
+            }
             model.getDisplay().setAddress(entity.getdisplay_ip());
             Integer displayPort = entity.getdisplay();
             model.getDisplay().setPort(displayPort==null || displayPort==-1 ? null : displayPort);
@@ -939,6 +943,15 @@ public class VmMapper {
             throw new IllegalArgumentException("Bad format: " + strPin[1]);
         }
         return pin;
+    }
+
+    private static boolean getIsVmRunning(org.ovirt.engine.core.common.businessentities.VM entity) {
+        return entity.getstatus() == VMStatus.Up ||
+                entity.getstatus() == VMStatus.PoweringUp ||
+                entity.getstatus() == VMStatus.WaitForLaunch ||
+                entity.getstatus() == VMStatus.PoweredDown ||
+                entity.getstatus() == VMStatus.RebootInProgress ||
+                entity.getstatus() == VMStatus.RestoringState;
     }
 
 }
