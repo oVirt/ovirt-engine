@@ -98,6 +98,10 @@
 
 		}
 
+		.radioButtonSpecificHost {
+            margin-left: 5px;
+		}
+
 		.label {
 			width: 350px;
 		}
@@ -324,13 +328,15 @@
 				<t:content>
 					<g:FlowPanel>
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
-						<g:HorizontalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
+						<g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
 							<e:EntityModelRadioButtonEditor width="150px" ui:field="isAutoAssignEditor"
 								addStyleNames="{style.radioButton}" />
-							<g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButton}" />
-							<g:Label text="{constants.specificVmPopup}" />
-							<e:ListModelListBoxEditor ui:field="defaultHostEditor" />
-						</g:HorizontalPanel>
+                            <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
+                                <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
+                                <g:Label text="{constants.specificVmPopup}" />
+                                <e:ListModelListBoxEditor ui:field="defaultHostEditor" />
+                            </g:HorizontalPanel>
+						</g:VerticalPanel>
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
 						<g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
 							<e:EntityModelCheckBoxEditor ui:field="runVMOnSpecificHostEditor" addStyleNames="{style.checkbox}" />
