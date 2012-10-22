@@ -428,3 +428,4 @@ WARN_IPA_INSTALLED="Warning! IPA Installation detected. Support for port 80/443 
 
 # passwords errors
 ERR_SPACES_IN_PASS = "Error: White spaces are not allowed in passwords"
+ERR_NOT_ALLOWED_CHAR = "Error: The %s chars are not allowed in passwords"

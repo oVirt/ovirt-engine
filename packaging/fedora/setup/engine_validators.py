@@ -161,6 +161,10 @@ def validatePassword(param, options=[]):
     logging.debug("Validating password")
     if not validateStringNotEmpty(param, options):
         return False
+    if "'" in param:
+        logging.error(output_messages.ERR_NOT_ALLOWED_CHAR % "'")
+        print output_messages.ERR_NOT_ALLOWED_CHAR % "'"
+        return False
     if re.search("\s", param):
         logging.error(output_messages.ERR_SPACES_IN_PASS)
         print output_messages.ERR_SPACES_IN_PASS
