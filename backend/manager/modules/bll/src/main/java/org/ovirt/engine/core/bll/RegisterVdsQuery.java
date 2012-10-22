@@ -31,6 +31,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
+@DisableInMaintenanceMode
 public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCommandBase<P> {
 
     private AuditLogType error = AuditLogType.UNASSIGNED;
