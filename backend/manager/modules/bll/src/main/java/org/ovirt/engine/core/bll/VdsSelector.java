@@ -335,6 +335,17 @@ public class VdsSelector {
                     return null;
                 }
             });
+            add(new HostValidator() {
+
+                @Override
+                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                    if (isVdsFailedToRunVm(vds.getId())) {
+                        sb.append("have failed running this VM in the current selection cycle");
+                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
+                    }
+                    return null;
+                }
+            });
         }
     });
 
@@ -350,6 +361,21 @@ public class VdsSelector {
         }
 
         return ValidationResult.VALID;
+    }
+
+    /**
+     * Determine if specific vds already failed to run vm - to prevent
+     * sequentual running of vm on problematic vds
+     *
+     * @param vdsId
+     * @return
+     */
+    private boolean isVdsFailedToRunVm(Guid vdsId) {
+        boolean retValue = false;
+        if (getRunVdssList() != null && getRunVdssList().contains(vdsId)) {
+            retValue = true;
+        }
+        return retValue;
     }
 
     /**
