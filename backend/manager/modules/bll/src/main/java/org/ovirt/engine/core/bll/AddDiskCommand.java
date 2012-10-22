@@ -297,9 +297,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     protected void executeVmCommand() {
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
-        if(!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
+        if (!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
             StorageType storageType = getStorageDomain().getstorage_type();
-            getParameters().getDiskInfo().setWipeAfterDelete(WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(storageType));
+            getParameters().getDiskInfo()
+                    .setWipeAfterDelete(WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(storageType));
         }
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             createDiskBasedOnImage();
