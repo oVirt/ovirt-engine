@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 {
-    private static final ActionGroup EDIT_VM_PROPERTIES = ActionGroup.EDIT_VM_PROPERTIES;
+    private static final ActionGroup CREATE_VM = ActionGroup.CREATE_VM;
 
     public UserPortalExistingVmModelBehavior(VM vm)
     {
@@ -51,7 +51,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         behavior.InitCdImage();
 
                     }
-                }, getModel().getHash()), EDIT_VM_PROPERTIES);
+                }, getModel().getHash()), CREATE_VM);
 
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);

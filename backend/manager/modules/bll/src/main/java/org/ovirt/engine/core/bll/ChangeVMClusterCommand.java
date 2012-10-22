@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -179,8 +180,9 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        // In addition to having EDIT_VM_PROPERTIES on the VM, you must have CREATE_VM on the cluster
         permissionList.add(new PermissionSubject(getParameters().getVmId(), VdcObjectType.VM, getActionType().getActionGroup()));
-        permissionList.add(new PermissionSubject(getParameters().getClusterId(), VdcObjectType.VdsGroups, getActionType().getActionGroup()));
+        permissionList.add(new PermissionSubject(getParameters().getClusterId(), VdcObjectType.VdsGroups, ActionGroup.CREATE_VM));
         return permissionList;
     }
 }
