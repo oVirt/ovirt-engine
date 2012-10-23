@@ -55,6 +55,11 @@ INFO_LOGIN_USER="Please use the user \"admin\" and password specified in order t
 INFO_ADD_USERS="To configure additional users, first configure authentication domains using the '%s' utility" % CONST_MANAGE_DOMAINS
 WARN_SECOND_RUN="\nWARNING: %s setup has already been run on this host.\nTo remove all configuration and reset %s please run %s.\nPlease be advised that executing %s without cleanup is not supported." % (basedefs.APP_NAME, basedefs.APP_NAME, CONST_CLEANUP, CONST_SETUP)
 
+# ASYNC TASKS AND COMPENSATIONS
+INFO_RETRYING = "Retrying to clear system tasks. "
+INFO_STOPPING_TASKS = "System will try to clear tasks during the next %s minutes.\n"
+INFO_STOP_WITH_RUNNING_TASKS = "User decided not to stop running system tasks. Stopping upgrade.\n"
+
 #runFunction
 INFO_DONE="DONE"
 INFO_ERROR="ERROR"
@@ -240,7 +245,7 @@ rerun the setup."
 ERR_CANT_FIND_VDC_OPTION_FILE="Unexpected error, Cannot find %s"
 ERR_CANT_FIND_RHEVM_CONFIG_FILE="Unexpected error, Cannot find %s"
 ERR_FAILED_UPD_VDC_OPTIONS="Failed updating configuration parameter: %s"
-
+ERR_FAILED_GET_VDC_OPTIONS="Failed to retrieve configuration parameter: %s"
 #start_jboss
 ERR_FAILED_CHKCFG_JBOSS="Failed to configure JBoss service to start on boot"
 ERR_FAILED_STP_JBOSS_SERVICE="Failed stopping JBoss service"

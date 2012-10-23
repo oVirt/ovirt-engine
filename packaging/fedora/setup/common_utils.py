@@ -561,6 +561,14 @@ def getCurrentDateTime(isUtc=None):
         now = datetime.datetime.now()
     return now.strftime("%Y_%m_%d_%H_%M_%S")
 
+def getCurrentDateTimeHuman(isUtc=None):
+    now = None
+    if (isUtc is not None):
+        now = datetime.datetime.utcnow()
+    else:
+        now = datetime.datetime.now()
+    return now.strftime("%b %d %H:%M:%S")
+
 def verifyStringFormat(str, matchRegex):
     '''
     Verify that the string given matches the matchRegex.
@@ -816,6 +824,23 @@ def renameDB(oldname, newname):
     execRemoteSqlCommand(getDbUser(), getDbHostName(), getDbPort(),
                                basedefs.DB_POSTGRES, sqlQuery, True,
                                output_messages.ERR_DB_RENAME % (oldname, newname))
+
+def getVDCOption(key):
+    """
+    Query vdc_option in db and return its value.
+    """
+
+    cmd = [
+        basedefs.FILE_RHEVM_CONFIG_BIN,
+        "-g", key,
+    ]
+
+    out, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_FAILED_GET_VDC_OPTIONS % key)
+    if out and 'version' in out:
+        # The value is the second field in the output
+        return out.split()[1]
+    else:
+        return None
 
 def updateVDCOption(key, value, maskList=[], keyType='text'):
     """
@@ -1345,3 +1370,32 @@ def findJavaHome():
 
     # Return the result:
     return javaHome
+
+def configureTasksTimeout(timeout):
+    """
+    Set AsyncTaskZombieTaskLifeInMinutes
+    to a specified value
+    """
+
+    # First, get the originalTimeout value
+    originalTimeout = getVDCOption("AsyncTaskZombieTaskLifeInMinutes")
+
+    # Now, set the value to timeout
+    updateVDCOption(key="AsyncTaskZombieTaskLifeInMinutes",
+                    value=timeout,
+                    keyType='text')
+
+    # Return the original value
+    return originalTimeout
+
+def configureEngineForMaintenance():
+    if not os.path.exists(basedefs.DIR_ENGINE_SYSCONFIG):
+        os.mkdir(basedefs.DIR_ENGINE_SYSCONFIG)
+    with open(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE, "w") as configFile:
+        configFile.write("ENGINE_HTTP_ENABLED=false\n")
+        configFile.write("ENGINE_HTTPS_ENABLED=false\n")
+        configFile.write("ENGINE_AJP_ENABLED=false\n")
+
+def restoreEngineFromMaintenance():
+    if os.path.exists(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE):
+        os.remove(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE)

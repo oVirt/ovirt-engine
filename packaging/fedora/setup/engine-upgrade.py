@@ -8,13 +8,21 @@ import shutil
 import logging
 import traceback
 import types
+import time
 import pwd
-from optparse import OptionParser
+from optparse import OptionParser, SUPPRESS_HELP
 import common_utils as utils
 import basedefs
+import output_messages
 from miniyum import MiniYum
 
 # Consts
+
+# The following constants are used in maintenance mode for
+# running things in a loop
+MAINTENANCE_TASKS_WAIT_PERIOD  = 180
+MAINTENANCE_TASKS_CYCLES = 20
+
 #TODO: Work with a real list here
 RPM_LIST = """
 ovirt-engine
@@ -50,12 +58,24 @@ BACKUP_DIR = "/var/lib/ovirt-engine/backups"
 BACKUP_FILE = "ovirt-engine_db_backup"
 LOG_PATH = "/var/log/ovirt-engine"
 
+# ASYNC TASKS AND COMPLETIONS QUERIES
+ASYNC_TASKS_QUERY = "select * from fn_db_get_async_tasks();"
+COMPENSATIONS_QUERY = "select command_type, entity_type from business_entity_snapshot;"
+
 ETL_SERVICE="/etc/init.d/ovirt-engine-etl"
 
 # Versions
 UNSUPPORTED_VERSION = "2.2"
 
 #MSGS
+MSG_TASKS_COMPENSATIONS = "\n\nSystem Tasks:\n%s\n%s\n\n"
+MSG_STOP_RUNNING_TASKS = "\nInfo: There are following running system tasks \
+found in the manager: %s%sWould you like to proceed and try to stop tasks automatically?\
+\n(Answering 'no' will stop the upgrade)"
+MSG_RUNNING_TASKS = "Checking active system tasks"
+MSG_TASKS_STILL_RUNNING = "\nThere are still running tasks: %sPlease make sure \
+that there are no running system tasks before you continue. Stopping upgrade."
+MSG_WAITING_RUNNING_TASKS = "Still waiting for system tasks to be cleared."
 MSG_ERROR_USER_NOT_ROOT = "Error: insufficient permissions for user %s, you must run with user root."
 MSG_NO_ROLLBACK = "Error: Current installation "
 MSG_RC_ERROR = "Return Code is not zero"
@@ -108,6 +128,7 @@ MSG_INFO_ERROR = "ERROR"
 MSG_INFO_REASON = " **Reason: %s**\n"
 MSG_INFO_STOP_ENGINE = "Stopping ovirt-engine service"
 MSG_INFO_STOP_DB = "Stopping DB related services"
+MSG_INFO_START_DB = "Starting DB related services"
 MSG_INFO_PREUPGRADE = "Pre-upgrade validations"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_RENAME_DB = "Rename Database"
@@ -121,7 +142,7 @@ MSG_INFO_YUM_ROLLBACK = "Rolling back rpms..."
 MSG_INFO_START_ENGINE = "Starting ovirt-engine"
 MSG_INFO_DB_BACKUP_FILE = "DB Backup available at "
 MSG_INFO_LOG_FILE = "Upgrade log available at"
-MSG_INFO_CHECK_UPDATE = "Checking for updates... (This may take several minutes)"
+MSG_INFO_CHECK_UPDATE = "\nChecking for updates... (This may take several minutes)"
 MSG_INFO_UPGRADE_OK = "%s upgrade completed successfully!" % basedefs.APP_NAME
 MSG_INFO_STOP_INSTALL_EXIT="Upgrade stopped, Goodbye."
 MSG_INFO_UPDATE_ENGINE_PROFILE="Updating ovirt-engine Profile"
@@ -174,6 +195,10 @@ def getOptions():
     parser.add_option("-c", "--check-update",
                       action="store_true", dest="check_update", default=False,
                       help="Check for available package updates")
+
+    parser.add_option("-f", "--upgrade-ignore-tasks",
+                      action="store_true", dest="ignore_tasks", default=False,
+                      help=SUPPRESS_HELP)
 
     (options, args) = parser.parse_args()
     return (options, args)
@@ -408,6 +433,11 @@ class DB():
                 "-u", SERVER_ADMIN,
                 "-d", self.name,
             ]
+
+            # If ignore_tasks supplied, use it:
+            if options.ignore_tasks:
+                cmd.extend(["-c"])
+
             output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_UPDATE_DB)
             logging.debug("DB Update completed successfully")
 
@@ -551,10 +581,10 @@ def stopEngine(service=basedefs.ENGINE_SERVICE_NAME):
     ]
     output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STOP_ENGINE_SERVICE)
 
-def startEngine():
-    logging.debug("starting %s service.", basedefs.ENGINE_SERVICE_NAME)
+def startEngine(service=basedefs.ENGINE_SERVICE_NAME):
+    logging.debug("starting %s service.", service)
     cmd = [
-        basedefs.EXEC_SERVICE, basedefs.ENGINE_SERVICE_NAME, "start",
+        basedefs.EXEC_SERVICE, service, "start",
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_ENGINE_SERVICE)
 
@@ -738,6 +768,122 @@ def modifyUUIDs():
             MSG_ERROR_CONNECT_DB
         )
 
+def deployDbAsyncTasks(dbName=basedefs.DB_NAME):
+    # Deploy DB functionality first
+    cmd = [
+        basedefs.EXEC_PSQL,
+        "-U", SERVER_ADMIN,
+        "-f", basedefs.FILE_DB_ASYNC_TASKS,
+        "-d", dbName,
+    ]
+
+    out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg="Error updating DB for getting async_tasks", envDict=utils.getPgPassEnv())
+
+def getRunningTasks(dbName=basedefs.DB_NAME):
+    # Get async tasks:
+    runningTasks, rc = utils.execRemoteSqlCommand(
+                                       userName=SERVER_ADMIN,
+                                       dbHost=SERVER_NAME,
+                                       dbPort=SERVER_PORT,
+                                       dbName=basedefs.DB_NAME,
+                                       sqlQuery=ASYNC_TASKS_QUERY,
+                                       failOnError=True,
+                                       errMsg="Can't get async tasks list",
+                                   )
+
+    # We only want to return anything if there are really async tasks records
+    if runningTasks and "RECORD" in runningTasks:
+        return runningTasks
+    else:
+        return None
+
+def getCompensations(dbName=basedefs.DB_NAME):
+    # Get compensations
+    compensations, rc = utils.execRemoteSqlCommand(
+                                       userName=SERVER_ADMIN,
+                                       dbHost=SERVER_NAME,
+                                       dbPort=SERVER_PORT,
+                                       dbName=basedefs.DB_NAME,
+                                       sqlQuery=COMPENSATIONS_QUERY,
+                                       failOnError=True,
+                                       errMsg="Can't get compensations list",
+                                    )
+
+    # We only want to return anything if there are really compensations records
+    if not compensations or \
+       (compensations and "0 rows" in compensations):
+        return None
+    elif compensations:
+        return
+
+def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_NAME):
+    # Find running tasks first
+    logging.debug(MSG_RUNNING_TASKS)
+    deployDbAsyncTasks(dbName)
+    runningTasks = getRunningTasks(dbName)
+    compensations = getCompensations(dbName)
+    origTimeout = 0
+
+    if runningTasks or compensations:
+
+        try:
+            # TODO: update runningTasks names/presentation and compensations
+            timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
+            stopTasksQuestion = MSG_STOP_RUNNING_TASKS % (
+                                 MSG_TASKS_COMPENSATIONS % (runningTasks, compensations),
+                                 timestamp,
+                                )
+            answerYes = utils.askYesNo(stopTasksQuestion)
+            if not answerYes:
+                raise Exception(output_messages.INFO_STOP_WITH_RUNNING_TASKS)
+
+            MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES = MAINTENANCE_TASKS_WAIT_PERIOD / 60
+            timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
+            print timestamp + output_messages.INFO_STOPPING_TASKS % MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES
+
+            # restart jboss/engine in maintenace mode (i.e different port):
+            utils.configureEngineForMaintenance()
+            origTimeout = utils.configureTasksTimeout(timeout=0)
+            startEngine(service)
+
+            # Pull tasks in a loop for some time
+            # MAINTENANCE_TASKS_WAIT_PERIOD  = 120 (seconds, between trials)
+            # MAINTENANCE_TASKS_CYCLES = 20 (how many times to try)
+            while runningTasks or compensations:
+                time.sleep(MAINTENANCE_TASKS_WAIT_PERIOD)
+                runningTasks = getRunningTasks(dbName)
+                compensations = getCompensations(dbName)
+                logging.debug(MSG_WAITING_RUNNING_TASKS)
+
+                # Show the list of tasks to the user, ask what to do
+                if runningTasks or compensations:
+                    timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
+                    stopTasksQuestion = MSG_STOP_RUNNING_TASKS % (
+                                         MSG_TASKS_COMPENSATIONS % (runningTasks, compensations),
+                                         timestamp,
+                                        )
+                    answerYes = utils.askYesNo(stopTasksQuestion)
+
+                    # Should we continue? If yes, go for another iteration
+                    # If not, break the loop
+                    if not answerYes:
+                        # There are still tasks running, so exit and tell to resolve
+                        # before user continues.
+                        RUNNING_TASKS_MSG = MSG_TASKS_COMPENSATIONS % (runningTasks, compensations)
+                        raise Exception(MSG_TASKS_STILL_RUNNING % RUNNING_TASKS_MSG)
+
+                    logging.debug(output_messages.INFO_RETRYING + output_messages.INFO_STOPPING_TASKS, MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES)
+                    timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
+                    print timestamp + output_messages.INFO_RETRYING + output_messages.INFO_STOPPING_TASKS % MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES
+
+        finally:
+            # Restore previous engine configuration
+            utils.restoreEngineFromMaintenance()
+            if origTimeout != 0:
+                utils.configureTasksTimeout(origTimeout)
+
+
+
 def main(options):
     # BEGIN: PROCESS-INITIALIZATION
     miniyumsink = utils.MiniYumSink()
@@ -777,6 +923,7 @@ def main(options):
 
     # Functions/parameters definitions
     stopEngineService = [stopEngine]
+    startEngineService = [startEngine]
     preupgradeFunc = [preupgradeUUIDCheck]
     upgradeFunc = [rhyum.update]
     postFunc = [modifyUUIDs, ca.commit, runPost]
@@ -840,6 +987,15 @@ def main(options):
                 runFunc(stopEngineService, MSG_INFO_STOP_ENGINE)
                 if updateRelatedToDB:
                     runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
+
+                if not options.ignore_tasks:
+                    # Check that there are no running tasks/compensations
+                    try:
+                        checkRunningTasks()
+                    # If something went wrong, restart DB services and the engine
+                    finally:
+                        runFunc([[startDbRelatedServices, etlService, notificationService]], MSG_INFO_START_DB)
+                        runFunc(startEngineService, MSG_INFO_START_ENGINE)
             else:
                 # This means that user chose not to stop ovirt-engine
                 logging.debug("exiting gracefully")

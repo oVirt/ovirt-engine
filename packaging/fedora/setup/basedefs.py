@@ -73,6 +73,7 @@ FILE_APACHE_CERT="%s/certs/apache.cer"%(DIR_OVIRT_PKI)
 FILE_JBOSSAS_CONF="/etc/%s/%s.conf" % (ENGINE_SERVICE_NAME, ENGINE_SERVICE_NAME)
 FILE_DB_INSTALL_SCRIPT="engine-db-install.sh"
 FILE_DB_UPGRADE_SCRIPT="upgrade.sh"
+FILE_DB_ASYNC_TASKS="%s/scripts/add_fn_db_get_async_tasks_function.sql" % DIR_ENGINE
 FILE_RHEVM_CONFIG_BIN="/usr/bin/engine-config"
 FILE_RHEVM_CONFIG_PROPS="engine-config-install.properties"
 FILE_RHEVM_EXTENDED_CONF = os.path.join(DIR_CONFIG, FILE_RHEVM_CONFIG_PROPS)
@@ -105,6 +106,11 @@ FILE_ENGINE_SYSCONFIG="/etc/sysconfig/ovirt-engine"
 # This directory can also contain local configuration files for the
 # engine that will be loaded in alphabetial order:
 DIR_ENGINE_SYSCONFIG="%s.d" % FILE_ENGINE_SYSCONFIG
+
+# This file will be automatically created when the engine goes into
+# maintenance mode during upgrades and automatically removed when the
+# engine goes back into normal mode once the upgrade is finished:
+FILE_ENGINE_SYSCONFIG_MAINTENANCE="%s/99-maintenance.conf" % DIR_ENGINE_SYSCONFIG
 
 # ISO FILES
 FILE_VIRTIO_WIN_VFD="/usr/share/virtio-win/virtio-win.vfd"
