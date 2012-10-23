@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-
 public class BackendVmsResource extends
         AbstractBackendCollectionResource<VM, org.ovirt.engine.core.common.businessentities.VM>
         implements VmsResource {
@@ -101,7 +100,7 @@ public class BackendVmsResource extends
                 if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
                         && vm.getPlacementPolicy().getHost().isSetName()
                         && !vm.getPlacementPolicy().getHost().isSetId()) {
-                    vm.getPlacementPolicy().getHost().setId(getHostId(vm.getPlacementPolicy().getHost().getName()));
+                    staticVm.setdedicated_vm_for_vds(asGuid(getHostId(vm.getPlacementPolicy().getHost().getName())));
                 }
             } else {
                 vm.setPlacementPolicy(null);
