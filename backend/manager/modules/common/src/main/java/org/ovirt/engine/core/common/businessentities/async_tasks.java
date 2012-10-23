@@ -15,6 +15,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -25,11 +26,13 @@ import org.ovirt.engine.core.compat.NGuid;
 public class async_tasks implements Serializable {
     private static final long serialVersionUID = 5913365704117183118L;
 
+
+
     public async_tasks() {
     }
 
     public async_tasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid task_id,
-            VdcActionParametersBase action_parameters, NGuid stepId, Guid commandId) {
+            VdcActionParametersBase action_parameters, NGuid stepId, Guid commandId, Guid storagePoolId, AsyncTaskType taskType) {
         this.actionType = action_type;
         this.result = result;
         this.status = status;
@@ -38,6 +41,8 @@ public class async_tasks implements Serializable {
         this.stepId = stepId;
         this.startTime = new Date();
         this.commandId = commandId;
+        this.storagePoolId = storagePoolId;
+        this.taskType = taskType;
     }
 
     @Column(name = "action_type", nullable = false)
@@ -136,6 +141,26 @@ public class async_tasks implements Serializable {
         this.commandId = commandId;
     }
 
+    public Guid getStoragePoolId() {
+        return storagePoolId;
+    }
+
+    public void setStoragePoolId(Guid storagePoolId) {
+        this.storagePoolId = storagePoolId;
+    }
+
+    private Guid storagePoolId;
+
+    public AsyncTaskType getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(AsyncTaskType taskType) {
+        this.taskType = taskType;
+    }
+
+    private AsyncTaskType taskType;
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -148,6 +173,9 @@ public class async_tasks implements Serializable {
         results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
         results = prime * results + ((commandId == null) ? 0 : commandId.hashCode());
         results =  prime * results + ((startTime == null) ? 0 : startTime.hashCode());
+        results = prime * results + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
+        results = prime * results + ((taskType == null) ? 0 : taskType.hashCode());
+
         return results;
     }
 
@@ -195,6 +223,20 @@ public class async_tasks implements Serializable {
                 return false;
             }
         } else if (!startTime.equals(other.startTime)) {
+            return false;
+        }
+        if (storagePoolId == null) {
+            if (other.storagePoolId != null) {
+                return false;
+            }
+        } else if (!storagePoolId.equals(other.storagePoolId)) {
+            return false;
+        }
+        if (taskType == null) {
+            if (other.taskType != null) {
+                return false;
+            }
+        } else if (!taskType.equals(other.taskType)) {
             return false;
         }
 

@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
@@ -57,6 +58,8 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setStepId(NGuid.createGuidFromString(rs.getString("step_id")));
             entity.setCommandId(Guid.createGuidFromString(rs.getString("command_id")));
             entity.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("started_at")));
+            entity.setTaskType(AsyncTaskType.forValue(rs.getInt("task_type")));
+            entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
             return entity;
         }
 
@@ -117,6 +120,8 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
         parameterSource.addValue("entity_type", (entityType != null) ? entityType.toString() : null);
         parameterSource.addValue("started_at", task.getStartTime());
+        parameterSource.addValue("storage_pool_id",task.getStoragePoolId());
+        parameterSource.addValue("async_task_type", task.getTaskType());
         parameterSource.addValue("entity_ids", StringUtils.join(entityIds, ","));
         getCallsHandler().executeModification("Insertasync_tasks", parameterSource);
     }

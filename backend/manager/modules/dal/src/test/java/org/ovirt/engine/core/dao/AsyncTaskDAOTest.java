@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
@@ -52,6 +53,8 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
         newAsyncTask.setaction_parameters(params);
         newAsyncTask.setCommandId(Guid.NewGuid());
+        newAsyncTask.setTaskType(AsyncTaskType.copyImage);
+        newAsyncTask.setStoragePoolId(Guid.NewGuid());
 
         existingAsyncTask = dao.get(FixturesTool.EXISTING_TASK_ID);
     }

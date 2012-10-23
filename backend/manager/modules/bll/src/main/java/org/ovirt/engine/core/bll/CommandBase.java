@@ -1114,7 +1114,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         asyncTaskCreationInfo.getTaskID(),
                         parametersForTask,
                         asyncTaskCreationInfo.getStepId(),
-                        getCommandId()));
+                        getCommandId(),asyncTaskCreationInfo.getStoragePoolID(),
+                        asyncTaskCreationInfo.getTaskType()));
         p.setEntityId(getParameters().getEntityId());
         return AsyncTaskManager.getInstance().CreateTask(getTaskType(), p);
     }
