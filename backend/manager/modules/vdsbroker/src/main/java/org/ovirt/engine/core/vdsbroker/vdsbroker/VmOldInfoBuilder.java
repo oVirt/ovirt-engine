@@ -195,7 +195,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmSoundDevices() {
         if (vm.getvm_type() == VmType.Desktop) {
-            createInfo.add(VdsProperties.soundDevice, getSoundDevice(vm));
+            createInfo.add(VdsProperties.soundDevice, getSoundDevice(vm.getStaticData(), vm.getvds_group_compatibility_version()));
         }
     }
 

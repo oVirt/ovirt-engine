@@ -47,7 +47,8 @@ public class VmDeviceUtils {
     /**
      * Update the vm devices according to changes made in vm static for existing VM
      */
-    public static void updateVmDevices(VmManagementParametersBase params, VmBase oldVmBase) {
+    public static void updateVmDevices(VmManagementParametersBase params, VM oldVm) {
+        VmBase oldVmBase = oldVm.getStaticData();
         VmBase entity = params.getVmStaticData();
         if (entity != null) {
             updateCdInVmDevice(oldVmBase, entity);
@@ -78,6 +79,37 @@ public class VmDeviceUtils {
             }
             updateUSBSlots(oldVmBase, entity);
             updateMemoryBalloon(oldVmBase, entity, params.isBalloonEnabled());
+
+            updateAudioDevice(oldVm, entity);
+        }
+    }
+
+    /**
+     * Replace desktop-vm audio device if OS has changed
+     *
+     * @param oldVm
+     * @param newVmBase
+     */
+    private static void updateAudioDevice(VM oldVm, VmBase newVmBase) {
+        // for desktop, if the os type has changed, recreate Audio devices
+        if (newVmBase.getvm_type() == VmType.Desktop && oldVm.getos() != newVmBase.getos()) {
+            Guid vmId = oldVm.getId();
+            // remove any old sound device
+            List<VmDevice> list =
+                    DbFacade.getInstance()
+                            .getVmDeviceDao()
+                            .getVmDeviceByVmIdAndType(vmId, VmDeviceType.SOUND.getName());
+            removeNumberOfDevices(list, list.size());
+
+            // create new device
+            String soundDevice =
+                    VmInfoBuilderBase.getSoundDevice(newVmBase, oldVm.getvds_group_compatibility_version());
+            addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
+                    VmDeviceType.SOUND,
+                    VmDeviceType.getSoundDeviceType(soundDevice),
+                    new HashMap<String, Object>(),
+                    true,
+                    true);
         }
     }
 
@@ -195,7 +227,7 @@ public class VmDeviceUtils {
             if (vmBase.getvm_type() == VmType.Desktop) {
                 List<VmDevice> list = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceType.SOUND.getName());
                 if (list.size() == 0) {
-                    String soundDevice = VmInfoBuilderBase.getSoundDevice(vm);
+                    String soundDevice = VmInfoBuilderBase.getSoundDevice(vm.getStaticData(), vm.getvds_group_compatibility_version());
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
                             VmDeviceType.SOUND,
                             VmDeviceType.getSoundDeviceType(soundDevice),

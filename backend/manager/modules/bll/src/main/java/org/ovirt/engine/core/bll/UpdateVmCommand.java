@@ -9,10 +9,10 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.quota.Quotable;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -69,16 +69,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected void executeVmCommand() {
-        VmStatic oldVmStatic = getVm().getStaticData();
+        VM oldVm = getVm();
         VmStatic newVmStatic = getParameters().getVmStaticData();
-        newVmStatic.setcreation_date(oldVmStatic.getcreation_date());
+        newVmStatic.setcreation_date(oldVm.getStaticData().getcreation_date());
         if (newVmStatic.getcreation_date().equals(DateTime.getMinValue())) {
             newVmStatic.setcreation_date(new Date());
         }
         UpdateVmNetworks();
         getVmStaticDAO().update(newVmStatic);
         updateVmPayload();
-        VmDeviceUtils.updateVmDevices(getParameters(), oldVmStatic);
+        VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
         if (((Boolean) runVdsCommand(VDSCommandType.IsValid,
                 new IrsBaseVDSCommandParameters(getVm().getstorage_pool_id())).getReturnValue())) {
 

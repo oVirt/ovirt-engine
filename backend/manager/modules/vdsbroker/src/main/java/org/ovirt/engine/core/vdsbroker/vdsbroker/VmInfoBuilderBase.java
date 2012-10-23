@@ -14,11 +14,13 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.comparators.DiskImageByBootComparator;
 import org.ovirt.engine.core.dal.comparators.DiskImageByDiskAliasComparator;
@@ -195,9 +197,10 @@ public abstract class VmInfoBuilderBase {
      *
      * @param vm
      *            The VM
+     * @param compatibilityVersion
      * @return String, the sound card device type
      */
-    public static String getSoundDevice(VM vm) {
+    public static String getSoundDevice(VmBase vm, Version compatibilityVersion) {
         final String OS_REGEX = "^.*%1s,([^,]*).*$";
         final String DEFAULT_TYPE = "default";
         String ret = DEFAULT_TYPE;
@@ -205,8 +208,7 @@ public abstract class VmInfoBuilderBase {
         if (vm.getvm_type() == VmType.Desktop) {
 
             String soundDeviceTypeConfig = Config.<String> GetValue(
-                    ConfigValues.DesktopAudioDeviceType, vm
-                            .getvds_group_compatibility_version().toString());
+                    ConfigValues.DesktopAudioDeviceType, compatibilityVersion.toString());
             String vmOS = vm.getos().name();
 
             Pattern regexPattern = Pattern.compile(String
