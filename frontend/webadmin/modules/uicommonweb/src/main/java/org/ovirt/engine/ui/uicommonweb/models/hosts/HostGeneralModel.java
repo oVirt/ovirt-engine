@@ -946,9 +946,8 @@ public class HostGeneralModel extends EntityModel
         setUsedMemory(null);
         if (getEntity().getphysical_mem_mb() != null && getEntity().getusage_mem_percent() != null)
         {
-            setFreeMemory(getEntity().getphysical_mem_mb()
-                    - (getEntity().getphysical_mem_mb() / 100 * getEntity().getusage_mem_percent()));
-            setUsedMemory(getEntity().getphysical_mem_mb() - getFreeMemory());
+            setUsedMemory((int) Math.round(getEntity().getphysical_mem_mb() * (getEntity().getusage_mem_percent() / 100.0)));
+            setFreeMemory(getEntity().getphysical_mem_mb() - getUsedMemory());
         }
     }
 
