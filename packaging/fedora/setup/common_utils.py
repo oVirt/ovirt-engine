@@ -1012,7 +1012,7 @@ def getHostParams(webconf):
     handler = TextConfigFileHandler(webconf)
     handler.open()
 
-    pattern = "\"(.+)\";"
+    pattern = "\"(.+)\""
     values = {
                 "fqdn" : handler.getParam("var host_fqdn"),
                 "httpPort" : handler.getParam("var http_port"),
