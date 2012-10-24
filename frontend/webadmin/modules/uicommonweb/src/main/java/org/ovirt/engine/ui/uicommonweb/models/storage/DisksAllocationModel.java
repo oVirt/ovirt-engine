@@ -170,6 +170,7 @@ public class DisksAllocationModel extends EntityModel
     private boolean isSourceStorageDomainAvailable;
     private boolean isSourceStorageDomainChangable;
     private boolean isSourceStorageDomainNameAvailable;
+    private boolean isWarningAvailable;
 
     public DisksAllocationModel()
     {
@@ -445,4 +446,13 @@ public class DisksAllocationModel extends EntityModel
     public boolean getIsSingleDiskCopy() {
         return isSingleDiskCopy;
     }
+
+    public boolean isWarningAvailable() {
+        return isWarningAvailable;
+    }
+
+    public void setWarningAvailable(boolean isWarningAvailable) {
+        this.isWarningAvailable = isWarningAvailable;
+    }
+
 }

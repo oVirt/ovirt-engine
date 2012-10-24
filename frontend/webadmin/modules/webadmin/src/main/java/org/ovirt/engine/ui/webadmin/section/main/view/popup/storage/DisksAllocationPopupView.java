@@ -28,6 +28,8 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     @Ignore
     DisksAllocationView disksAllocationView;
 
+    DisksAllocationModel disksAllocationModel;
+
     @Inject
     public DisksAllocationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -39,6 +41,7 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     @Override
     public void edit(DisksAllocationModel object) {
         disksAllocationView.edit(object);
+        disksAllocationModel = object;
     }
 
     @Override
@@ -49,10 +52,10 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
-        // Hide table in case of message
-        if (message != null && !message.isEmpty()) {
-            disksAllocationView.setVisible(false);
-        }
+
+        boolean isMessageEmpty = message == null || message.isEmpty();
+        disksAllocationView.setVisible(isMessageEmpty || disksAllocationModel.isWarningAvailable());
+        messageLabel.setVisible(!isMessageEmpty);
         messageLabel.setText(message);
     }
 

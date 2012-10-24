@@ -10,7 +10,7 @@
 		.messageLabel {
 			color: #CD2127;
 			text-align: center;
-			padding-top: 20px;
+			padding: 10px;
 		}
 		
 		.disksAllocationPanel {
@@ -46,8 +46,8 @@
 					</g:HorizontalPanel>
 				</g:SimplePanel>
 				<g:FlowPanel>
-					<w:DisksAllocationView ui:field="disksAllocationView" listHeight="300px" listWidth="525px" showSource="true"  addStyleNames="{style.disksAllocationPanel}" />
-					<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+					<g:Label ui:field="messageLabel" visible="false" addStyleNames="{style.messageLabel}" />
+					<w:DisksAllocationView ui:field="disksAllocationView" listHeight="280px" listWidth="525px" showSource="true" addStyleNames="{style.disksAllocationPanel}" />
 				</g:FlowPanel>
 			</g:VerticalPanel>
 		</d:content>

@@ -141,6 +141,18 @@ public class VmDiskListModel extends VmDiskListModelBase
         privateChangeQuotaCommand = value;
     }
 
+    private UICommand privateMoveCommand;
+
+    public UICommand getMoveCommand()
+    {
+        return privateMoveCommand;
+    }
+
+    private void setMoveCommand(UICommand value)
+    {
+        privateMoveCommand = value;
+    }
+
     private boolean privateIsDiskHotPlugSupported;
 
     public boolean getIsDiskHotPlugSupported()
@@ -162,16 +174,20 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
     }
 
-    private UICommand privateMoveCommand;
+    private boolean isLiveStorageMigrationEnabled;
 
-    public UICommand getMoveCommand()
+    public boolean getIsLiveStorageMigrationEnabled()
     {
-        return privateMoveCommand;
+        return isLiveStorageMigrationEnabled;
     }
 
-    private void setMoveCommand(UICommand value)
+    private void setIsLiveStorageMigrationEnabled(boolean value)
     {
-        privateMoveCommand = value;
+        if (isLiveStorageMigrationEnabled != value)
+        {
+            isLiveStorageMigrationEnabled = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsLiveStorageMigrationEnabled")); //$NON-NLS-1$
+        }
     }
 
     private ArrayList<DiskImageBase> presets;
@@ -214,10 +230,11 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (getEntity() != null)
         {
             getSearchCommand().Execute();
+            UpdateIsDiskHotPlugAvailable();
+            UpdateLiveStorageMigrationEnabled();
         }
 
         UpdateActionAvailability();
-        UpdateIsDiskHotPlugAvailable();
     }
 
     @Override
@@ -831,6 +848,11 @@ public class VmDiskListModel extends VmDiskListModelBase
         MoveDiskModel model = new MoveDiskModel();
         model.setIsSingleDiskMove(disks.size() == 1);
         setWindow(model);
+        model.setVmId(vm.getstatus() == VMStatus.Up ? vm.getId() : null);
+        model.setWarningAvailable(vm.getstatus() == VMStatus.Up);
+        model.setMessage(vm.getstatus() == VMStatus.Up ?
+                ConstantsManager.getInstance().getConstants().liveStorageMigrationWarning() :
+                null);
         model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
         model.setHashName("move_disk"); //$NON-NLS-1$
         model.setIsSourceStorageDomainNameAvailable(true);
@@ -900,7 +922,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 && isRemoveCommandAvailable());
 
         getMoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && isMoveCommandAvailable());
+                && (isMoveCommandAvailable() || isLiveMoveCommandAvailable()));
 
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
@@ -963,16 +985,39 @@ public class VmDiskListModel extends VmDiskListModelBase
         return true;
     }
 
+    private boolean isImageDiskOK(Disk disk) {
+        return disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                ((DiskImage) disk).getimageStatus() == ImageStatus.OK;
+    }
+
     private boolean isMoveCommandAvailable() {
         ArrayList<Disk> disks =
                 getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
 
-        for (Disk disk : disks)
-        {
-            if (disk.getDiskStorageType() == DiskStorageType.LUN ||
-                    ((DiskImage) disk).getimageStatus() != ImageStatus.OK ||
-                    (!isVmDown() && disk.getPlugged()))
-            {
+        for (Disk disk : disks) {
+            if (!isImageDiskOK(disk) || (!isVmDown() && disk.getPlugged())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isLiveMoveCommandAvailable() {
+        if (!getIsLiveStorageMigrationEnabled()) {
+            return false;
+        }
+
+        VM vm = getEntity();
+        if (vm == null || vm.getstatus() != VMStatus.Up) {
+            return false;
+        }
+
+        ArrayList<Disk> disks = getSelectedItems() != null ?
+                Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
+
+        for (Disk disk : disks) {
+            if (!isImageDiskOK(disk) || !disk.getPlugged()) {
                 return false;
             }
         }
@@ -1053,10 +1098,6 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     protected void UpdateIsDiskHotPlugAvailable()
     {
-        if (getEntity() == null)
-        {
-            return;
-        }
         VM vm = getEntity();
         Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
                 ? vm.getvds_group_compatibility_version() : new Version();
@@ -1069,6 +1110,33 @@ public class VmDiskListModel extends VmDiskListModelBase
                         model.setIsDiskHotPlugSupported((Boolean) returnValue);
                     }
                 }), clusterCompatibilityVersion.toString());
+    }
+
+    protected void UpdateLiveStorageMigrationEnabled()
+    {
+        VM vm = getEntity();
+
+        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                VmDiskListModel model = (VmDiskListModel) target;
+                VM vm = (VM) model.getEntity();
+
+                storage_pool dataCenter = (storage_pool) returnValue;
+                Version dcCompatibilityVersion = dataCenter.getcompatibility_version() != null
+                        ? dataCenter.getcompatibility_version() : new Version();
+
+                AsyncDataProvider.IsLiveStorageMigrationEnabled(new AsyncQuery(model,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object target, Object returnValue) {
+                                VmDiskListModel model = (VmDiskListModel) target;
+                                model.setIsLiveStorageMigrationEnabled((Boolean) returnValue);
+                            }
+                        }), dcCompatibilityVersion.toString());
+            }
+        }), vm.getstorage_pool_id().getValue());
+
     }
 
     @Override

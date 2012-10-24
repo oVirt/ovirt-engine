@@ -6,12 +6,11 @@ import java.util.Collections;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
@@ -82,6 +81,16 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
     }
 
+    private Guid vmId;
+
+    public Guid getVmId() {
+        return vmId;
+    }
+
+    public void setVmId(Guid vmId) {
+        this.vmId = vmId;
+    }
+
     protected ArrayList<storage_domains> activeStorageDomains;
     protected ArrayList<storage_domains> intersectStorageDomains;
     protected ArrayList<storage_domains> unionStorageDomains;
@@ -94,6 +103,13 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     protected abstract void updateMoveOrCopySingleDiskParameters(ArrayList<VdcActionParametersBase> parameters,
             DiskModel diskModel);
+
+    protected abstract VdcActionType getActionType();
+
+    protected abstract MoveOrCopyImageGroupParameters createParameters(
+            Guid sourceStorageDomainGuid,
+            Guid destStorageDomainGuid,
+            DiskImage disk);
 
     public MoveOrCopyDiskModel() {
         allDisks = new ArrayList<DiskModel>();
@@ -126,7 +142,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                 storageDomains.add(storage);
             }
         }
-
         Collections.sort(storageDomains, new Linq.StorageDomainByNameComparer());
 
         if (!storageDomains.isEmpty()) {
@@ -234,14 +249,14 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     private void OnMove() {
-        OnMoveOrCopy(ImageOperation.Move);
+        OnMoveOrCopy();
     }
 
     private void OnCopy() {
-        OnMoveOrCopy(ImageOperation.Copy);
+        OnMoveOrCopy();
     }
 
-    protected void OnMoveOrCopy(ImageOperation imageOperation) {
+    protected void OnMoveOrCopy() {
         if (this.getProgress() != null)
         {
             return;
@@ -286,14 +301,13 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                 addMoveOrCopyParameters(parameters,
                         sourceStorageDomainGuid,
                         destStorageDomainGuid,
-                        disk,
-                        imageOperation);
+                        disk);
             }
         }
 
         StartProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.MoveOrCopyDisk, parameters,
+        Frontend.RunMultipleAction(getActionType(), parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -308,16 +322,12 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     protected void addMoveOrCopyParameters(ArrayList<VdcActionParametersBase> parameters,
             Guid sourceStorageDomainGuid,
             Guid destStorageDomainGuid,
-            DiskImage disk,
-            ImageOperation imageOperation) {
-        MoveOrCopyImageGroupParameters diskParameters =
-                new MoveOrCopyImageGroupParameters(disk.getImageId(),
-                        sourceStorageDomainGuid,
-                        destStorageDomainGuid,
-                        imageOperation);
-        diskParameters.setQuotaId(disk.getQuotaId());
+            DiskImage disk) {
 
-        parameters.add(diskParameters);
+        MoveOrCopyImageGroupParameters params = createParameters(sourceStorageDomainGuid, destStorageDomainGuid, disk);
+        params.setQuotaId(disk.getQuotaId());
+
+        parameters.add(params);
     }
 
     @Override

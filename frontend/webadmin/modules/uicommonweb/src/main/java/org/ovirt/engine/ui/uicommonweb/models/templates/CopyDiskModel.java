@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -113,9 +115,23 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
             addMoveOrCopyParameters(parameters,
                     Guid.Empty,
                     storageDomain.getId(),
-                    (DiskImage) diskModel.getDisk(),
-                    ImageOperation.Copy);
+                    (DiskImage) diskModel.getDisk());
         }
+    }
+
+    @Override
+    protected VdcActionType getActionType() {
+        return VdcActionType.MoveOrCopyDisk;
+    }
+
+    @Override
+    protected MoveOrCopyImageGroupParameters createParameters(Guid sourceStorageDomainGuid,
+            Guid destStorageDomainGuid,
+            DiskImage disk) {
+        return new MoveOrCopyImageGroupParameters(disk.getImageId(),
+                sourceStorageDomainGuid,
+                destStorageDomainGuid,
+                ImageOperation.Copy);
     }
 
 }

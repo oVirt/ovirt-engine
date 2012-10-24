@@ -2,11 +2,13 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.MoveDiskParameters;
+import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -62,8 +64,8 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
 
         if (!getStorageDomain().getItems().iterator().hasNext())
         {
-            setMessage(ConstantsManager.getInstance()
-                    .getConstants()
+            setWarningAvailable(false);
+            setMessage(ConstantsManager.getInstance().getConstants()
                     .theSystemCouldNotFindAvailableTargetStorageDomainMsg());
 
             UICommand tempVar = new UICommand("Cancel", target); //$NON-NLS-1$
@@ -96,8 +98,21 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
         addMoveOrCopyParameters(parameters,
                 Guid.Empty,
                 selectedStorageDomain.getId(),
-                (DiskImage) diskModel.getDisk(),
-                ImageOperation.Move);
+                (DiskImage) diskModel.getDisk());
+    }
+
+    @Override
+    protected VdcActionType getActionType() {
+        return VdcActionType.MoveDisk;
+    }
+
+    @Override
+    protected MoveOrCopyImageGroupParameters createParameters(Guid sourceStorageDomainGuid,
+            Guid destStorageDomainGuid,
+            DiskImage disk) {
+        return new MoveDiskParameters(disk.getImageId(),
+                sourceStorageDomainGuid,
+                destStorageDomainGuid);
     }
 
 }
