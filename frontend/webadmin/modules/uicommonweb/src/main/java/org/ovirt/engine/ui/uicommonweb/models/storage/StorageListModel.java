@@ -422,10 +422,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         final NfsStorageModel model = new NfsStorageModel();
         model.setRole(storage.getstorage_domain_type());
-        model.getPath().setIsChangable(false);
-        model.getVersion().setIsChangable(false);
-        model.getRetransmissions().setIsChangable(false);
-        model.getTimeout().setIsChangable(false);
+        model.setIsEditMode(true);
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
@@ -448,6 +445,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         break;
                     }
                 }
+
+                // If any settings were overridden, reflect this in the override checkbox
+                model.getOverride().setEntity(
+                        connection.getNfsVersion() != null ||
+                        connection.getNfsRetrans() != null ||
+                        connection.getNfsTimeo() != null);
 
             }
         }), storage.getstorage(), true);
@@ -1323,9 +1326,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storage_server_connections tempVar = new storage_server_connections();
         tempVar.setconnection(path);
         tempVar.setstorage_type(nfsModel.getType());
-        tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-        tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
-        tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+        if ((Boolean) nfsModel.getOverride().getEntity()) {
+            tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
+            tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
+            tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+        }
         connection = tempVar;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
@@ -1720,9 +1725,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                     tempVar.setconnection(storageListModel.path);
                     tempVar.setstorage_type(StorageType.NFS);
-                    tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-                    tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
-                    tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+                    if ((Boolean) nfsModel.getOverride().getEntity()) {
+                        tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
+                        tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
+                        tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+                    }
                     storageListModel.nfsConnection = tempVar;
                     storageListModel.ImportNfsStorageConnect();
                 }

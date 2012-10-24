@@ -92,6 +92,16 @@ public class NfsStorageModel extends Model implements IStorageModel {
         path = value;
     }
 
+    private EntityModel override;
+
+    public EntityModel getOverride() {
+        return override;
+    }
+
+    private void setOverride(EntityModel value) {
+        override = value;
+    }
+
     private ListModel version;
 
     public ListModel getVersion() {
@@ -120,6 +130,22 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
     private void setTimeout(EntityModel value) {
         timeout = value;
+    }
+
+    private boolean isEditMode;
+
+    public void setIsEditMode(boolean isEditMode) {
+        boolean isChangable = !isEditMode && (Boolean) getOverride().getEntity();
+        getPath().setIsChangable(isChangable);
+        getOverride().setIsChangable(isChangable);
+        getVersion().setIsChangable(isChangable);
+        getRetransmissions().setIsChangable(isChangable);
+        getTimeout().setIsChangable(isChangable);
+        this.isEditMode = isEditMode;
+    }
+
+    public boolean getIsEditMode() {
+        return isEditMode;
     }
 
 
@@ -151,6 +177,22 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
         setRetransmissions(new EntityModel());
         setTimeout(new EntityModel());
+
+        setOverride(new EntityModel());
+        getOverride().getEntityChangedEvent().addListener(this);
+        getOverride().setEntity(false);
+
+    }
+
+    private void Override_EntityChanged(EventArgs e) {
+        // Advanced options are editable only if override checkbox is enabled
+        // and the dialog is not editing existing nfs storage.
+        if (!getIsEditMode()) {
+            boolean isChangable = (Boolean) getOverride().getEntity();
+            getVersion().setIsChangable(isChangable);
+            getRetransmissions().setIsChangable(isChangable);
+            getTimeout().setIsChangable(isChangable);
+        }
     }
 
     @Override
@@ -160,11 +202,13 @@ public class NfsStorageModel extends Model implements IStorageModel {
             // Notify about path change.
             getPathChangedEvent().raise(this, EventArgs.Empty);
         }
+        else if (ev.equals(EntityModel.EntityChangedEventDefinition) && sender == getOverride()) {
+            Override_EntityChanged(args);
+        }
     }
 
     @Override
     public boolean Validate() {
-
         getPath().ValidateEntity(new IValidation[] {
             new NotEmptyValidation(),
             new LinuxMountPointValidation(),

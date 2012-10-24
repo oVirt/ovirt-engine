@@ -73,6 +73,11 @@
                         </td>
                     </tr>
                     <tr>
+                        <td colspan="2">
+                            <e:EntityModelCheckBoxEditor ui:field="overrideEditor" addStyleNames="{style.label}"/>
+                        </td>
+                    </tr>
+                    <tr>
                         <td nowrap="nowrap">
                             <g:Label ui:field="versionLabel" addStyleNames="{style.label}"/>
                         </td>

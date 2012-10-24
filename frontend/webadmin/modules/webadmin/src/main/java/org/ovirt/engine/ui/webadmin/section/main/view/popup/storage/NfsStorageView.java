@@ -5,7 +5,9 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
@@ -18,6 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -67,6 +70,11 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @UiField
     @Ignore
     Label warningLabel;
+
+    @UiField(provided = true)
+    @Path(value = "override.entity")
+    @WithElementId("overrideEditor")
+    EntityModelCheckBoxEditor overrideEditor;
 
     @UiField
     @Ignore
@@ -142,6 +150,8 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
                 return model.getTitle();
             }
         });
+
+        overrideEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize(ApplicationConstants constants) {
@@ -149,6 +159,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         pathLabel.setText(constants.storagePopupNfsPathLabel());
         pathHintLabel.setText(constants.storagePopupNfsPathHintLabel());
         warningLabel.setText(constants.advancedOptionsLabel());
+        overrideEditor.setLabel(constants.storagePopupNfsOverrideLabel());
         versionLabel.setText(constants.storagePopupNfsVersionLabel());
         retransmissionsLabel.setText(constants.storagePopupNfsRetransmissionsLabel());
         timeoutLabel.setText(constants.storagePopupNfsTimeoutLabel());
@@ -161,19 +172,18 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         EntityModel version = (EntityModel) object.getVersion().getSelectedItem();
         versionReadOnlyEditor.asValueBox().setValue(version != null ? version.getTitle() : null);
 
-        pathHintLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
+        pathHintLabel.setVisible(object.getPath().getIsAvailable() && !object.getIsEditMode());
 
-        styleTextBoxEditor(pathEditor, object.getPath().getIsChangable());
-        styleTextBoxEditor(timeoutEditor, object.getTimeout().getIsChangable());
-        styleTextBoxEditor(retransmissionsEditor, object.getRetransmissions().getIsChangable());
-        styleTextBoxEditor(versionReadOnlyEditor, object.getVersion().getIsChangable());
+        styleTextBoxEditor(pathEditor, !object.getIsEditMode());
+        styleTextBoxEditor(timeoutEditor, !object.getIsEditMode());
+        styleTextBoxEditor(retransmissionsEditor, !object.getIsEditMode());
+        styleTextBoxEditor(versionReadOnlyEditor, !object.getIsEditMode());
 
-        setElementVisibility(versionEditor, object.getVersion().getIsChangable() && object.getVersion().getIsAvailable());
-        setElementVisibility(versionReadOnlyEditor, !object.getVersion().getIsChangable() || !object.getVersion().getIsAvailable());
+        setElementVisibility(versionEditor, !object.getIsEditMode() && object.getVersion().getIsAvailable());
+        setElementVisibility(versionReadOnlyEditor, object.getIsEditMode() || !object.getVersion().getIsAvailable());
         setElementVisibility(versionLabel, object.getVersion().getIsAvailable());
         setElementVisibility(retransmissionsLabel, object.getRetransmissions().getIsAvailable());
         setElementVisibility(timeoutLabel, object.getTimeout().getIsAvailable());
-
 
         // When all advanced fields are unavailable - hide the expander.
         boolean anyField = object.getVersion().getIsAvailable()

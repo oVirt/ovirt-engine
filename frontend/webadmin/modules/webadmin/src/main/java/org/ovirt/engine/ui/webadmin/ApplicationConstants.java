@@ -226,6 +226,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Export Path")
     String storagePopupNfsPathLabel();
 
+    @DefaultStringValue("Override Default Options")
+    String storagePopupNfsOverrideLabel();
+
     @DefaultStringValue("NFS Version")
     String storagePopupNfsVersionLabel();
 
