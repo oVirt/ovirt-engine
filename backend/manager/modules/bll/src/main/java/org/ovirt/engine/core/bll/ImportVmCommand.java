@@ -556,7 +556,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             p.setParentCommand(getActionType());
             p.setUseCopyCollapse(getParameters().getCopyCollapse());
             p.setCopyVolumeType(CopyVolumeType.LeafVol);
-            p.setPostZero(disk.isWipeAfterDelete());
             p.setForceOverride(true);
             p.setSourceDomainId(getParameters().getSourceDomainId());
             p.setStoragePoolId(getParameters().getStoragePoolId());

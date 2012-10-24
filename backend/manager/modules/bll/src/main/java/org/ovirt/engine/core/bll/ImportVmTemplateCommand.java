@@ -292,7 +292,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     tempVar.setVolumeType(disk.getvolume_type());
                     tempVar.setVolumeFormat(disk.getvolume_format());
                     tempVar.setCopyVolumeType(CopyVolumeType.SharedVol);
-                    tempVar.setPostZero(disk.isWipeAfterDelete());
                     tempVar.setSourceDomainId(getParameters().getSourceDomainId());
                     tempVar.setForceOverride(true);
                     tempVar.setImportEntity(true);

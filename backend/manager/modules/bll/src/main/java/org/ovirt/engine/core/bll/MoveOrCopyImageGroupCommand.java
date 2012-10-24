@@ -79,7 +79,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             getParameters().getVolumeFormat(),
                             getParameters()
                                     .getVolumeType(),
-                            getParameters().getPostZero(),
+                            getImage().isWipeAfterDelete(),
                             getParameters()
                                     .getForceOverride(),
                             getStoragePool().getcompatibility_version().toString()));
@@ -94,8 +94,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             getParameters().getStorageDomainId(),
                             getParameters().getContainerId(),
                             getParameters().getOperation(),
-                            getParameters()
-                                    .getPostZero(),
+                            getImage().isWipeAfterDelete(),
                             getParameters().getForceOverride(),
                             getStoragePool()
                                     .getcompatibility_version().toString()));

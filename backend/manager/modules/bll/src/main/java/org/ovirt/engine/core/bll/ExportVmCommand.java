@@ -288,7 +288,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             tempVar.setVolumeFormat(diskForVolumeInfo.getvolume_format());
             tempVar.setVolumeType(diskForVolumeInfo.getvolume_type());
             tempVar.setCopyVolumeType(CopyVolumeType.LeafVol);
-            tempVar.setPostZero(disk.isWipeAfterDelete());
             tempVar.setForceOverride(getParameters().getForceOverride());
             MoveOrCopyImageGroupParameters p = tempVar;
             p.setParentParameters(getParameters());

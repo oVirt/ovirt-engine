@@ -15,7 +15,6 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     private VolumeType volumeType = VolumeType.Unassigned;
     private CopyVolumeType copyVolumeType = CopyVolumeType.SharedVol;
     private boolean addImageDomainMapping;
-    private boolean postZero;
     private boolean forceOverride;
     private NGuid sourceDomainId;
     private Guid destImageGroupId;
@@ -42,7 +41,6 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         setUseCopyCollapse(false);
         setVolumeFormat(VolumeFormat.Unassigned);
         setVolumeType(VolumeType.Unassigned);
-        setPostZero(false);
         setForceOverride(false);
         setDestinationImageId(leafSnapshotID);
         setDestImageGroupId(imageGroupId);
@@ -113,14 +111,6 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
 
     public void setAddImageDomainMapping(boolean value) {
         addImageDomainMapping = value;
-    }
-
-    public boolean getPostZero() {
-        return postZero;
-    }
-
-    public void setPostZero(boolean value) {
-        postZero = value;
     }
 
     public boolean getForceOverride() {
