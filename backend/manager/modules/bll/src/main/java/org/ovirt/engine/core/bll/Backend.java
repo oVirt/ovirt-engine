@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -499,40 +498,17 @@ public class Backend implements BackendInternal {
         switch (parameters.getActionType()) {
         case AutoLogin:
         case LoginUser:
-        case LoginAdminUser: {
+        case LoginAdminUser:
             CommandBase<?> command = CommandsFactory.CreateCommand(parameters.getActionType(), parameters);
             return command.executeAction();
+        default:
+            return getErrorCommandReturnValue(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
         }
-        default: {
-            return NotAutorizedError();
-        }
-
-        }
-    }
-
-    private VdcReturnValueBase NotAutorizedError() {
-        return getErrorCommandReturnValue(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
     }
 
     @Override
     public VdcReturnValueBase Logoff(LogoutUserParameters parameters) {
         return RunAction(VdcActionType.LogoutUser, parameters);
-    }
-
-    /**
-     * @param vdsId
-     * @return
-     */
-    public VDSStatus PowerUpVDS(int vdsId) {
-        return VDSStatus.Up;
-    }
-
-    /**
-     * @param vdsId
-     * @return
-     */
-    public VDSStatus ShutDownVDS(int vdsId) {
-        return VDSStatus.Down;
     }
 
     @Override
@@ -556,34 +532,6 @@ public class Backend implements BackendInternal {
         default:
             return getErrorQueryReturnValue(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
         }
-    }
-
-    public VdcReturnValueBase RunUserAction(VdcActionType actionType, VdcActionParametersBase parameters) {
-        if (StringUtils.isEmpty(parameters.getHttpSessionId())) {
-            return NotAutorizedError();
-        }
-
-        return RunAction(actionType, parameters);
-    }
-
-    public VdcQueryReturnValue RunUserQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        return runQueryImpl(actionType, parameters, true);
-    }
-
-    public ArrayList<VdcReturnValueBase> RunUserMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters) {
-        for (VdcActionParametersBase parameter : parameters) {
-            if (StringUtils.isEmpty(parameter.getHttpSessionId())) {
-                ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
-                for (int i = 0; i < parameters.size(); i++) {
-                    returnValues.add(NotAutorizedError());
-                }
-                return returnValues;
-            }
-        }
-
-        return runInternalMultipleActions(actionType, parameters);
-
     }
 
     @Override
