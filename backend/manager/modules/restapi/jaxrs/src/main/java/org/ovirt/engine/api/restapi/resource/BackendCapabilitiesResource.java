@@ -137,16 +137,18 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setMinor(v.getMinor());
         version.setId(generateId(v));
 
-        version.setCpus(new CPUs());
-
-        for (ServerCpu sc : getServerCpuList(v)) {
-            CPU cpu = new CPU();
-            cpu.setId(sc.getCpuName());
-            cpu.setLevel(sc.getLevel());
-            version.getCpus().getCPUs().add(cpu);
+        // Not exposing CPU list and power managers on filtered queries
+        if (!isFiltered()) {
+            version.setCpus(new CPUs());
+            for (ServerCpu sc : getServerCpuList(v)) {
+                CPU cpu = new CPU();
+                cpu.setId(sc.getCpuName());
+                cpu.setLevel(sc.getLevel());
+                version.getCpus().getCPUs().add(cpu);
+            }
+            addPowerManagers(version, getPowerManagers(v));
         }
 
-        addPowerManagers(version, getPowerManagers(v));
         addVmTypes(version, VmType.values());
         addStorageTypes(version, getStorageTypes(v));
         addStorageDomainTypes(version, StorageDomainType.values());
@@ -359,17 +361,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         ret.add(StorageType.ISCSI);
         ret.add(StorageType.FCP);
         ret.add(StorageType.NFS);
-        if (localStorageEnabled(version)) {
+
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_0)) {
             ret.add(StorageType.LOCALFS);
         }
+
         if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
             ret.add(StorageType.POSIXFS);
         }
         return ret;
-    }
-
-    private boolean localStorageEnabled(Version version) {
-        return getConfigurationValue(Boolean.class, ConfigurationValues.LocalStorageEnabled, version);
     }
 
     private List<CustomProperty> getVmHooksEnvs(Version version) {

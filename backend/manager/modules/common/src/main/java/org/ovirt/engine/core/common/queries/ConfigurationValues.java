@@ -62,7 +62,7 @@ public enum ConfigurationValues {
     SupportCustomProperties(ConfigAuthType.User),
     VdsFenceOptionTypes,
     ServerCPUList,
-    SupportedClusterLevels,
+    SupportedClusterLevels(ConfigAuthType.User),
     ProductRPMVersion(ConfigAuthType.User),
     RhevhLocalFSPath,
     CustomPublicConfig_AppsWebSite(ConfigAuthType.User),
