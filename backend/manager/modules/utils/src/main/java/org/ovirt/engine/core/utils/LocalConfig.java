@@ -2,12 +2,16 @@ package org.ovirt.engine.core.utils;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -23,8 +27,8 @@ public class LocalConfig {
     private static final Logger log = Logger.getLogger(LocalConfig.class);
 
     // Default files for defaults and overriden values:
-    private static final File DEFAULTS_FILE = new File("/usr/share/ovirt-engine/conf/engine.conf.defaults");
-    private static final File VARS_FILE = new File("/etc/sysconfig/ovirt-engine");
+    private static final String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/engine.conf.defaults";
+    private static final String VARS_PATH = "/etc/sysconfig/ovirt-engine";
 
     // This is a singleton and this is the instance:
     private static final LocalConfig instance = new LocalConfig();
@@ -34,30 +38,69 @@ public class LocalConfig {
     }
 
     // The properties object storing the current values of the parameters:
-    private Properties values;
+    private Properties values = new Properties();
 
     private LocalConfig() {
-        // Load the defaults:
-        Properties defaults = null;
-        try {
-            defaults = loadProperties("ENGINE_DEFAULTS", DEFAULTS_FILE, null);
+        // This is the list of configuration files that will be loaded and
+        // merged (the initial size is 2 because usually we will have only two
+        // configuration files to merge, the defaults and the variables):
+        List<File> configFiles = new ArrayList<File>(2);
+
+        // Locate the defaults file and add it to the list:
+        String defaultsPath = System.getenv("ENGINE_DEFAULTS");
+        if (defaultsPath == null) {
+            defaultsPath = DEFAULTS_PATH;
         }
-        catch (IOException exception) {
-            String message = "Can't load defaults file.";
-            log.error(message, exception);
-            throw new IllegalStateException(message, exception);
+        File defaultsFile = new File(defaultsPath);
+        configFiles.add(defaultsFile);
+
+        // Locate the overriden values file and add it to the list:
+        String varsPath = System.getenv("ENGINE_VARS");
+        if (varsPath == null) {
+            varsPath = VARS_PATH;
+        }
+        File varsFile = new File(varsPath);
+        configFiles.add(varsFile);
+
+        // Locate the override values directory and add the .conf files inside
+        // to the list, sorted alphabetically:
+        File varsDir = new File(varsPath + ".d");
+        if (varsDir.isDirectory()) {
+            File[] varsFiles = varsDir.listFiles(
+                new FilenameFilter() {
+                    @Override
+                    public boolean accept(File parent, String name) {
+                        return name.endsWith(".conf");
+                    }
+                }
+            );
+            Arrays.sort(
+                varsFiles,
+                new Comparator<File>() {
+                    @Override
+                    public int compare (File leftFile, File rightFile) {
+                        String leftName = leftFile.getName();
+                        String rightName = rightFile.getName();
+                        return leftName.compareTo(rightName);
+                    }
+                }
+            );
+            for (File file : varsFiles) {
+                configFiles.add(file);
+            }
         }
 
-        // Load the overriden values:
-        try {
-            values = loadProperties("ENGINE_VARS", VARS_FILE, defaults);
+        // Load the configuration files in the order they are in the list:
+        for (File configFile : configFiles) {
+            try {
+                loadProperties(configFile);
+            }
+            catch (IOException exception) {
+                String message = "Can't load configuration file.";
+                log.error(message, exception);
+                throw new IllegalStateException(message, exception);
+            }
         }
-        catch (IOException exception) {
-            String message = "Can't load configuration file.";
-            log.error(message, exception);
-            throw new IllegalStateException(message, exception);
-        }
-
 
         // Dump the properties to the log (this should probably be DEBUG, but as
         // it will usually happen only once, during the startup, is not that a
@@ -75,37 +118,21 @@ public class LocalConfig {
      * Load the contents of the properties file located by the given environment
      * variable or file.
      *
-     * @param variable the name of the environment variable that contains the name of
-     *    the file containing the properties
      * @param file the file that will be used to load the properties if the given
      *    environment variable doesn't have a value
-     * @param properties the previously created properties object
-     * @param defaults if not <code>null</code> this will be used as the defaults
-     *    for the created properties object
      */
-    private Properties loadProperties(String variable, File file, Properties defaults) throws IOException {
-        // Locate the file (the given file is just ignored if the environment
-        // variable has a value):
-        String path = System.getenv(variable);
-        if (path != null) {
-            log.info("Environment variable \"" + variable + "\" contains \"" + path + "\". Will load that file instead of \"" + file.getAbsolutePath() + "\".");
-            file = new File(path);
-        }
-
-        // Create an empty properties object:
-        Properties properties = new Properties(defaults);
-
+    private void loadProperties(File file) throws IOException {
         // Do nothing if the file doesn't exist or isn't readable:
         if (!file.canRead()) {
             log.warn("The file \"" + file.getAbsolutePath() + "\" doesn't exist or isn't readable. Will return an empty set of properties.");
-            return properties;
+            return;
         }
 
         // Load the file:
         Reader reader = null;
         try {
             reader = new FileReader(file);
-            properties.load(reader);
+            values.load(reader);
             log.info("Loaded file \"" + file.getAbsolutePath() + "\".");
         }
         catch (IOException exception) {
@@ -122,9 +149,6 @@ public class LocalConfig {
                 }
             }
         }
-
-        // Done:
-        return properties;
     }
 
     /**

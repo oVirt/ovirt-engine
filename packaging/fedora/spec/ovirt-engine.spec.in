@@ -627,8 +627,9 @@ fi
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf
 
 # Files needed by the service:
-%config(noreplace) %{_sysconfdir}/sysconfig/%{engine_name}
 %config(noreplace) %{_sysconfdir}/security/limits.d/10-ovirt-engine.conf
+%config(noreplace) %{_sysconfdir}/sysconfig/%{engine_name}
+%dir %{_sysconfdir}/sysconfig/%{engine_name}.d
 %{engine_data}/service
 %{_bindir}/engine-service
 %{_unitdir}/%{engine_name}.service

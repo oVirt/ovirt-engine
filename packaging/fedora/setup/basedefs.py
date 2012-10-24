@@ -71,7 +71,6 @@ FILE_CERT_TEMPLATE="%s/cert.template"%(DIR_OVIRT_PKI)
 FILE_ENGINE_CERT="%s/certs/engine.cer"%(DIR_OVIRT_PKI)
 FILE_APACHE_CERT="%s/certs/apache.cer"%(DIR_OVIRT_PKI)
 FILE_JBOSSAS_CONF="/etc/%s/%s.conf" % (ENGINE_SERVICE_NAME, ENGINE_SERVICE_NAME)
-FILE_ENGINE_SYSCONFIG="/etc/sysconfig/ovirt-engine"
 FILE_DB_INSTALL_SCRIPT="engine-db-install.sh"
 FILE_DB_UPGRADE_SCRIPT="upgrade.sh"
 FILE_RHEVM_CONFIG_BIN="/usr/bin/engine-config"
@@ -99,6 +98,13 @@ FILE_OVIRT_HTTPD_CONF="/etc/httpd/conf.d/ovirt-engine.conf"
 FILE_HTTPD_SSL_CONFIG="/etc/httpd/conf.d/ssl.conf"
 FILE_HTTPD_CONF="/etc/httpd/conf/httpd.conf"
 FILE_IMAGE_UPLOADER_CONF="/etc/ovirt-engine/imageuploader.conf"
+
+# File containing the local configuration of the engine:
+FILE_ENGINE_SYSCONFIG="/etc/sysconfig/ovirt-engine"
+
+# This directory can also contain local configuration files for the
+# engine that will be loaded in alphabetial order:
+DIR_ENGINE_SYSCONFIG="%s.d" % FILE_ENGINE_SYSCONFIG
 
 # ISO FILES
 FILE_VIRTIO_WIN_VFD="/usr/share/virtio-win/virtio-win.vfd"

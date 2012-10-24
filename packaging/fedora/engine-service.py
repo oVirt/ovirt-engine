@@ -129,12 +129,25 @@ def loadConfig():
     if not os.path.exists(engineConfigFile):
         raise Exception("The engine configuration file \"%s\" doesn't exist." % engineConfigFile)
 
-    # Merge all the configuration files:
-    global engineConfig
-    engineConfig = Config([
+    # This will be the list of configuration files to load and merge, later
+    # files override earlier ones:
+    engineConfigFiles = [
         engineDefaultsFile,
         engineConfigFile,
-    ])
+    ]
+
+    # Find additional configuration files in the optional configuration
+    # directory, sorted alphabetically so that numeric prefixes can be used to
+    # force the order:
+    engineConfigDir = engineConfigFile + ".d"
+    if os.path.isdir(engineConfigDir):
+        additionalEngineConfigFiles = glob.glob(engineConfigDir + "/*.conf")
+        additionalEngineConfigFiles.sort()
+        engineConfigFiles.extend(additionalEngineConfigFiles)
+
+    # Merge all the configuration files:
+    global engineConfig
+    engineConfig = Config(engineConfigFiles)
 
     # Get the id of the engine user:
     global engineUser

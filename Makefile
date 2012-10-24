@@ -206,7 +206,6 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains
-	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/sysconfig
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/cron.daily
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/security/limits.d
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d
@@ -382,6 +381,8 @@ install_service:
 
 	# Install the files:
 	install -dm 755 $(DESTDIR)$(DATA_DIR)/service
+	install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/sysconfig
+	install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/sysconfig/ovirt-engine.d
 	install -m 644 packaging/fedora/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/service
 	install -m 644 packaging/fedora/engine-service-logging.properties $(DESTDIR)$(DATA_DIR)/service
 	install -m 755 packaging/fedora/engine-service.py $(DESTDIR)$(DATA_DIR)/service
