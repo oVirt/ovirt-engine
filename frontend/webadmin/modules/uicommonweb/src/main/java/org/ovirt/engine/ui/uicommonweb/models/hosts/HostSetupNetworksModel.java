@@ -761,11 +761,10 @@ public class HostSetupNetworksModel extends EntityModel {
         // check if management network is attached
         LogicalNetworkModel mgmtNetwork = networkMap.get(HostInterfaceListModel.ENGINE_NETWORK_NAME);
         if (!mgmtNetwork.isAttached()) {
+            okCommand.getExecuteProhibitionReasons().add(ConstantsManager.getInstance().getConstants().mgmtNotAttachedToolTip());
             okCommand.setIsExecutionAllowed(false);
-            okCommand.setTitle(ConstantsManager.getInstance().getConstants().mgmtNotAttachedToolTip());
         } else {
             okCommand.setIsExecutionAllowed(true);
-            okCommand.setTitle(null);
         }
     }
 

@@ -362,10 +362,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         }
 
-        UICommand tempVar2 = new UICommand("AddDataStorage", this); //$NON-NLS-1$
-        tempVar2.setIsExecutionAllowed(upHosts.size() > 0);
-        UICommand addDataStorageAction = tempVar2;
+        UICommand addDataStorageAction = new UICommand("AddDataStorage", this); //$NON-NLS-1$
         addDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
+        addDataStorageAction.setIsExecutionAllowed(upHosts.size() > 0);
 
         if (unattachedStorage.isEmpty() && attachedDataStorages.isEmpty())
         {
@@ -379,13 +378,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
         // Attach data storage action.
-        UICommand tempVar3 = new UICommand("AttachDataStorage", this); //$NON-NLS-1$
-        tempVar3.setIsExecutionAllowed(unattachedStorage.size() > 0 && upHosts.size() > 0);
-        UICommand attachDataStorageAction = tempVar3;
+        UICommand attachDataStorageAction = new UICommand("AttachDataStorage", this); //$NON-NLS-1$
         if (upHosts.isEmpty())
         {
             attachDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
         }
+        attachDataStorageAction.setIsExecutionAllowed(unattachedStorage.size() > 0 && upHosts.size() > 0);
+
         if (attachedDataStorages.isEmpty())
         {
             attachDataStorageAction.setTitle(DataCenterAttachStorageAction);
@@ -397,10 +396,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             getOptionalActions().add(attachDataStorageAction);
         }
 
-        UICommand tempVar4 = new UICommand("AddIsoStorage", this); //$NON-NLS-1$
-        tempVar4.setIsExecutionAllowed(getEntity().getstatus() == StoragePoolStatus.Up);
-        UICommand addIsoStorageAction = tempVar4;
+        UICommand addIsoStorageAction = new UICommand("AddIsoStorage", this); //$NON-NLS-1$
         addIsoStorageAction.getExecuteProhibitionReasons().add(NoDataDomainAttachedReason);
+        addIsoStorageAction.setIsExecutionAllowed(getEntity().getstatus() == StoragePoolStatus.Up);
 
         if (isoStorageDomains.isEmpty())
         {
@@ -429,14 +427,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         // Data Center. It will not always be allowed.
         boolean attachIsoAvailable = attachedIsoStorages.isEmpty();
 
-        UICommand tempVar5 = new UICommand("AttachIsoStorage", this); //$NON-NLS-1$
-        tempVar5.setIsExecutionAllowed(attachIsoAllowed);
-        tempVar5.setIsAvailable(attachIsoAvailable);
-        UICommand attachIsoStorageAction = tempVar5;
+        UICommand attachIsoStorageAction = new UICommand("AttachIsoStorage", this); //$NON-NLS-1$
+        attachIsoStorageAction.setIsAvailable(attachIsoAvailable);
         if (upHosts.isEmpty())
         {
             attachIsoStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
         }
+        attachIsoStorageAction.setIsExecutionAllowed(attachIsoAllowed);
 
         if (attachIsoAvailable)
         {
@@ -497,12 +494,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
             if (localStorageHost != null)
             {
-                addHostAction.setIsExecutionAllowed(false);
-                selectHost.setIsExecutionAllowed(false);
                 String hasHostReason =
                         ConstantsManager.getInstance().getConstants().localDataCenterAlreadyContainsAHostDcGuide();
                 addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
+                addHostAction.setIsExecutionAllowed(false);
                 selectHost.getExecuteProhibitionReasons().add(hasHostReason);
+                selectHost.setIsExecutionAllowed(false);
                 if (localStorageHost.getstatus() == VDSStatus.Up)
                 {
                     UICommand tempVar8 = new UICommand("AddLocalStorage", this); //$NON-NLS-1$
@@ -513,12 +510,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
             else if (getEntity().getstatus() != StoragePoolStatus.Uninitialized)
             {
-                addHostAction.setIsExecutionAllowed(false);
-                selectHost.setIsExecutionAllowed(false);
                 String dataCenterInitializeReason =
                         ConstantsManager.getInstance().getConstants().dataCenterWasAlreadyInitializedDcGuide();
                 addHostAction.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
+                addHostAction.setIsExecutionAllowed(false);
                 selectHost.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
+                selectHost.setIsExecutionAllowed(false);
             }
 
             if (hasMaintenance3_0Host)

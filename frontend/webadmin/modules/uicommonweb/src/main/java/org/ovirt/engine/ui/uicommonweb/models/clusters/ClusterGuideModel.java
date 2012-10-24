@@ -134,10 +134,10 @@ public class ClusterGuideModel extends GuideModel
         }
         if (getEntity().getstorage_pool_id() == null)
         {
-            addHostAction.setIsExecutionAllowed(false);
             addHostAction.getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .theClusterIsntAttachedToADcClusterGuide());
+            addHostAction.setIsExecutionAllowed(false);
             return;
         }
 
@@ -172,23 +172,23 @@ public class ClusterGuideModel extends GuideModel
     }
 
     private void UpdateOptionsLocalFS() {
-        UICommand tempVar = new UICommand("AddHost", this); //$NON-NLS-1$
-        tempVar.setTitle(ClusterAddAnotherHostAction);
-        UICommand addHostAction = tempVar;
-        UICommand tempVar2 = new UICommand("SelectHost", this); //$NON-NLS-1$
-        tempVar2.setTitle(SelectHostsAction);
-        UICommand selectHost = tempVar2;
+
+        UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
+        addHostAction.setTitle(ClusterAddAnotherHostAction);
+        UICommand selectHost = new UICommand("SelectHost", this); //$NON-NLS-1$
+        selectHost.setTitle(SelectHostsAction);
 
         if (localStorageHost != null)
         {
-            addHostAction.setIsExecutionAllowed(false);
-            selectHost.setIsExecutionAllowed(false);
             String hasHostReason =
-                    ConstantsManager.getInstance()
-                            .getConstants()
-                            .thisClusterBelongsToALocalDcWhichAlreadyContainHostClusterGuide();
+                ConstantsManager.getInstance()
+                    .getConstants()
+                    .thisClusterBelongsToALocalDcWhichAlreadyContainHostClusterGuide();
+
             addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
+            addHostAction.setIsExecutionAllowed(false);
             selectHost.getExecuteProhibitionReasons().add(hasHostReason);
+            selectHost.setIsExecutionAllowed(false);
         }
 
         getCompulsoryActions().add(addHostAction);

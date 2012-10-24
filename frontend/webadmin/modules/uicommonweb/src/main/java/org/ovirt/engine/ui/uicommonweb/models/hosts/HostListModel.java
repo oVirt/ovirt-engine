@@ -1653,10 +1653,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (!hasAdminSystemPermission && getConfigureLocalStorageCommand().getIsExecutionAllowed()) {
 
-            getConfigureLocalStorageCommand().setIsExecutionAllowed(false);
             getConfigureLocalStorageCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .configuringLocalStoragePermittedOnlyAdministratorsWithSystemLevelPermissionsReason());
+            getConfigureLocalStorageCommand().setIsExecutionAllowed(false);
         }
     }
 

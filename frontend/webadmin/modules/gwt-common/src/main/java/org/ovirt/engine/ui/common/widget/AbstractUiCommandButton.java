@@ -54,7 +54,21 @@ public abstract class AbstractUiCommandButton extends Composite implements HasUi
     void updateButton() {
         getButtonWidget().setVisible(command.getIsAvailable() && command.getIsVisible());
         getButtonWidget().setEnabled(command.getIsExecutionAllowed());
-        getButtonWidget().setTitle(command.getTitle());
+
+        // Use prohibition reasons for tooltip if exist.
+        String title = "";  //$NON-NLS-1$
+        if (!command.getExecuteProhibitionReasons().isEmpty()) {
+            for (String reason : command.getExecuteProhibitionReasons()) {
+                title += reason + ",";  //$NON-NLS-1$
+            }
+        } else {
+            title = command.getTitle();
+        }
+        getButtonWidget().setTitle(title);
+
+        if (command.getTitle() != null) {
+            getButtonWidget().setText(command.getTitle());
+        }
     }
 
     protected abstract ButtonBase getButtonWidget();

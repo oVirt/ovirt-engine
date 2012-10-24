@@ -904,13 +904,14 @@ public class HostGeneralModel extends EntityModel
                             {
                                 VDS vds = hostGeneralModel.getEntity();
                                 hostGeneralModel.setHasUpgradeAlert(true);
-                                hostGeneralModel.getInstallCommand()
-                                        .setIsExecutionAllowed(vds.getstatus() != VDSStatus.Up
-                                                && vds.getstatus() != VDSStatus.Installing
-                                                && vds.getstatus() != VDSStatus.PreparingForMaintenance
-                                                && vds.getstatus() != VDSStatus.Reboot
-                                                && vds.getstatus() != VDSStatus.PendingApproval);
-                                if (!hostGeneralModel.getInstallCommand().getIsExecutionAllowed())
+
+                                boolean executionAllowed = vds.getstatus() != VDSStatus.Up
+                                    && vds.getstatus() != VDSStatus.Installing
+                                    && vds.getstatus() != VDSStatus.PreparingForMaintenance
+                                    && vds.getstatus() != VDSStatus.Reboot
+                                    && vds.getstatus() != VDSStatus.PendingApproval;
+
+                                if (!executionAllowed)
                                 {
                                     hostGeneralModel.getInstallCommand()
                                             .getExecuteProhibitionReasons()
@@ -918,6 +919,7 @@ public class HostGeneralModel extends EntityModel
                                                     .getConstants()
                                                     .switchToMaintenanceModeToEnableUpgradeReason());
                                 }
+                                hostGeneralModel.getInstallCommand().setIsExecutionAllowed(executionAllowed);
                             }
 
                         }

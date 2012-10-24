@@ -24,17 +24,20 @@ public class UICommand extends Model implements ICommand
         return isExecutionAllowed;
     }
 
+    /*
+     * Call this method after adding execute prohibition reasons.
+     */
     public void setIsExecutionAllowed(boolean value)
     {
         if (isExecutionAllowed != value)
         {
             isExecutionAllowed = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsExecutionAllowed")); //$NON-NLS-1$
-
-            if (getIsExecutionAllowed())
+            if (value)
             {
                 getExecuteProhibitionReasons().clear();
             }
+
+            OnPropertyChanged(new PropertyChangedEventArgs("IsExecutionAllowed")); //$NON-NLS-1$
         }
     }
 

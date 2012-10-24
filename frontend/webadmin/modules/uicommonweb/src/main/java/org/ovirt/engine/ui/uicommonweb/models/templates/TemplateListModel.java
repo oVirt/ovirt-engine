@@ -646,20 +646,20 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                 && item.getstatus() != VmTemplateStatus.Locked);
         if (getEditCommand().getIsExecutionAllowed() && blankSelected)
         {
-            getEditCommand().setIsExecutionAllowed(false);
             getEditCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .blankTemplateCannotBeEdited());
+            getEditCommand().setIsExecutionAllowed(false);
         }
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, VmTemplate.class, VdcActionType.RemoveVmTemplate));
         if (getRemoveCommand().getIsExecutionAllowed() && blankSelected)
         {
-            getRemoveCommand().setIsExecutionAllowed(false);
             getRemoveCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .blankTemplateCannotBeRemoved());
+            getRemoveCommand().setIsExecutionAllowed(false);
         }
 
         getExportCommand().setIsExecutionAllowed(items.size() > 0
@@ -667,10 +667,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         if (getExportCommand().getIsExecutionAllowed() && blankSelected)
         {
-            getExportCommand().setIsExecutionAllowed(false);
             getExportCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .blankTemplateCannotBeExported());
+            getExportCommand().setIsExecutionAllowed(false);
         }
 
         getCopyCommand().setIsExecutionAllowed(items.size() == 1 && item != null
@@ -678,10 +678,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         if (getCopyCommand().getIsExecutionAllowed() && blankSelected)
         {
-            getCopyCommand().setIsExecutionAllowed(false);
             getCopyCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .blankTemplateCannotBeCopied());
+            getCopyCommand().setIsExecutionAllowed(false);
         }
     }
 
