@@ -27,7 +27,10 @@ public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, V
 
     @Override
     public CdRom update(CdRom resource) {
-        if (QueryHelper.hasConstraint(getUriInfo().getQueryParameters(), CURRENT_CONSTRAINT_PARAMETER)) {
+        // TODO: CURRENT_CONSTRAINT_PARAMETER as query parameter is depreciated and supported
+        // for backward compatibility only - should be dropped at 4.0.
+        if (QueryHelper.hasConstraint(getUriInfo().getQueryParameters(), CURRENT_CONSTRAINT_PARAMETER) ||
+                QueryHelper.hasMatrixParam(getUriInfo(), CURRENT_CONSTRAINT_PARAMETER)) {
             validateParameters(resource, requiredUpdateFields);
             performAction(VdcActionType.ChangeDisk,
                           new ChangeDiskCommandParameters(getEntity(entityResolver, true).getId(),

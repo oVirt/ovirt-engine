@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
@@ -124,8 +125,8 @@ public class BackendCdRomResourceTest
     }
 
     @Test
-    public void testChangeCd() throws Exception {
-        resource.setUriInfo(setUpChangeCdUriExpectations());
+    public void testChangeCdUsingQueryParameter() throws Exception {
+        resource.setUriInfo(setUpChangeCdUriQueryExpectations());
         setUpGetEntityExpectations(1, VMStatus.Up);
         setUpActionExpectations(VdcActionType.ChangeDisk,
                 ChangeDiskCommandParameters.class,
@@ -137,11 +138,43 @@ public class BackendCdRomResourceTest
         assertTrue(cdrom.isSetFile());
     }
 
-    protected UriInfo setUpChangeCdUriExpectations() {
+    @Test
+    public void testChangeCdUsingMatrixParameter() throws Exception {
+        resource.setUriInfo(setUpChangeCdUriMatrixExpectations());
+        setUpGetEntityExpectations(1, VMStatus.Up);
+        setUpActionExpectations(VdcActionType.ChangeDisk,
+                ChangeDiskCommandParameters.class,
+                new String[] { "CdImagePath" },
+                new Object[] { ISO_PATH },
+                true,
+                true);
+        CdRom cdrom = resource.update(getUpdate());
+        assertTrue(cdrom.isSetFile());
+    }
+
+    protected UriInfo setUpChangeCdUriQueryExpectations() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         MultivaluedMap<String, String> queries = control.createMock(MultivaluedMap.class);
         expect(queries.containsKey("current")).andReturn(true).anyTimes();
         expect(uriInfo.getQueryParameters()).andReturn(queries).anyTimes();
+        return uriInfo;
+    }
+
+    protected UriInfo setUpChangeCdUriMatrixExpectations() {
+        UriInfo uriInfo = control.createMock(UriInfo.class);;
+
+        List<PathSegment> psl = new ArrayList<PathSegment>();
+
+        PathSegment ps = control.createMock(PathSegment.class);
+        MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
+        expect(matrixParams.isEmpty()).andReturn(false);
+        expect(matrixParams.containsKey("current")).andReturn(true);
+        expect(ps.getMatrixParameters()).andReturn(matrixParams);
+
+        psl.add(ps);
+
+        expect(uriInfo.getPathSegments()).andReturn(psl).anyTimes();
+
         return uriInfo;
     }
 
