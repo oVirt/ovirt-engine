@@ -34,12 +34,12 @@
 		}
 
 		.nameEditor {
-			width: 340px;
+			width: 400px;
 		}
 
 		.datacenterListEditor,
 		.hostListEditor {
-			width: 340px;
+			width: 400px;
 		}
 
 		.formatListEditor {
@@ -48,7 +48,7 @@
 		}
 
 		.storageTypeListEditor {
-			width: 435px;
+			width: 500px;
 			padding-left: 5px;
 		}
 
