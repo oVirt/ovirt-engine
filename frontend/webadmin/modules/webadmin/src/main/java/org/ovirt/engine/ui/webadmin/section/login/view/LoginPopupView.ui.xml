@@ -58,7 +58,7 @@
 			background: none repeat scroll 0 0 transparent;
 			opacity:0;
 			position:fixed;
-			width: 60px;
+			width: 150px;
 		}
 
 		.localeBox option{
@@ -70,8 +70,7 @@
 			overflow: hidden;
 			background: url(images/triangle_down_gray.gif) no-repeat right white;
 			margin-right:25px;
-			margin-left:300px;
-			width:60px;
+			margin-left:270px;
 			margin-top:10px;
 		}
 
@@ -80,11 +79,13 @@
 			text-align: right;
 			color:gray;
 			font-size: 11px;
+			width: 130px;
 		}
 		
 		.headerLabelStyle {
 			font-weight: bold;
 			color: white;
+			width: 250px;
 		}
 
 	</ui:style>
