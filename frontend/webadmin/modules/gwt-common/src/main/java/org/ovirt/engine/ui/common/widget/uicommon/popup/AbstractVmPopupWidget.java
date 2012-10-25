@@ -22,6 +22,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -55,8 +56,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -93,13 +92,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         String labelDisabled();
     }
-
-    interface PrestartedVmsContextHelp extends SafeHtmlTemplates {
-        @Template("<i>{0}</i>")
-        SafeHtml italicTextContainer(String text);
-    }
-
-    private static PrestartedVmsContextHelp prestartedVmsContextHelp;
 
     @UiField
     protected Style style;
@@ -458,12 +450,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     Panel generalAdvancedParameterExpanderContent;
 
+    private final CommonApplicationTemplates applicationTemplates;
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(CommonApplicationConstants constants,
             CommonApplicationResources resources,
-            final CommonApplicationMessages messages) {
+            final CommonApplicationMessages messages,
+            CommonApplicationTemplates applicationTemplates) {
+
         this.constants = constants;
         this.messages = messages;
+        this.applicationTemplates = applicationTemplates;
 
         initListBoxEditors();
         // Contains a special parser/renderer
@@ -486,10 +483,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
-
-        if (prestartedVmsContextHelp == null) {
-            prestartedVmsContextHelp = GWT.create(PrestartedVmsContextHelp.class);
-        }
 
         initPoolSpecificWidgets(resources, messages);
 
@@ -527,10 +520,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         numOfVmsEditor.setKeepTitleOnSetEnabled(true);
 
         newPoolPrestartedVmsIcon =
-                new InfoIcon(prestartedVmsContextHelp.italicTextContainer(messages.prestartedHelp()), resources); //$NON-NLS-1$
+                new InfoIcon(applicationTemplates.italicText(messages.prestartedHelp()), resources);
 
         editPoolPrestartedVmsIcon =
-                new InfoIcon(prestartedVmsContextHelp.italicTextContainer(messages.prestartedHelp()), resources); //$NON-NLS-1$
+                new InfoIcon(applicationTemplates.italicText(messages.prestartedHelp()), resources);
 
         outOfxInPool = new ValueLabel<Object>(new AbstractRenderer<Object>() {
 

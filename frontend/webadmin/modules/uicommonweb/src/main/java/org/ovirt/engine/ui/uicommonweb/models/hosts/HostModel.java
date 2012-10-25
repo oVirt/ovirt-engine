@@ -41,7 +41,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class HostModel extends Model
 {
 
@@ -224,6 +223,26 @@ public class HostModel extends Model
     private void setPmPassword(EntityModel value)
     {
         privatePmPassword = value;
+    }
+
+    private EntityModel consoleAddress;
+
+    public void setConsoleAddress(EntityModel consoleAddress) {
+        this.consoleAddress = consoleAddress;
+    }
+
+    public EntityModel getConsoleAddress() {
+        return consoleAddress;
+    }
+
+    private EntityModel consoleAddressEnabled;
+
+    public EntityModel getConsoleAddressEnabled() {
+        return consoleAddressEnabled;
+    }
+
+    public void setConsoleAddressEnabled(EntityModel consoleAddressEnabled) {
+        this.consoleAddressEnabled = consoleAddressEnabled;
     }
 
     private ListModel privatePmType;
@@ -663,6 +682,12 @@ public class HostModel extends Model
             }
         });
 
+        setConsoleAddress(new EntityModel());
+        getConsoleAddress().setEntity(null);
+        setConsoleAddressEnabled(new EntityModel());
+        getConsoleAddressEnabled().setEntity(false);
+        getConsoleAddressEnabled().getEntityChangedEvent().addListener(this);
+
         setIsPm(new EntityModel());
         getIsPm().getEntityChangedEvent().addListener(pmListener);
         getIsPm().setEntity(false);
@@ -813,7 +838,14 @@ public class HostModel extends Model
         else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getCluster())
         {
             Cluster_SelectedItemChanged();
+        } else if (sender == getConsoleAddressEnabled()) {
+            consoleAddressChanged();
         }
+    }
+
+    private void consoleAddressChanged() {
+        boolean enabled = (Boolean) getConsoleAddressEnabled().getEntity();
+        getConsoleAddress().setIsChangable(enabled);
     }
 
     private void DataCenter_SelectedItemChanged()
@@ -1173,18 +1205,15 @@ public class HostModel extends Model
 
         getPort().ValidateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
+        if ((Boolean) getConsoleAddressEnabled().getEntity()) {
+            getConsoleAddress().ValidateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
+        } else {
+            // the console address is ignored so can not be invalid
+            getConsoleAddress().setIsValid(true);
+        }
+
         getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-
-        // TODO: async validation.
-        // string name = (string)Name.Entity;
-
-        // //Check name unicitate.
-        // if (String.Compare(name, OriginalName, true) != 0 && !DataProvider.IsHostNameUnique(name))
-        // {
-        // Name.IsValid = false;
-        // Name.InvalidityReasons.Add("Name must be unique.");
-        // }
 
         if ((Boolean) getIsPm().getEntity())
         {
@@ -1229,9 +1258,8 @@ public class HostModel extends Model
                 && getPmSecondaryType().getIsValid()
                 && getPmSecondaryPort().getIsValid()
                 && getPmSecondaryOptions().getIsValid());
-
         return getIsGeneralTabValid()
-            && getIsPowerManagementTabValid();
+            && getIsPowerManagementTabValid() && getConsoleAddress().getIsValid();
     }
 
     private boolean isEntityModelEmpty(EntityModel model) {

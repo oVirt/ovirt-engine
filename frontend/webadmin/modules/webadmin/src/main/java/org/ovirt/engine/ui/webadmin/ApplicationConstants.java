@@ -433,6 +433,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("SPM")
     String spmTestButtonLabel();
 
+    @DefaultStringValue("Console")
+    String consoleButtonLabel();
+
+    @DefaultStringValue("Override display address")
+    String enableConsoleAddressOverride();
+
+    @DefaultStringValue("Overrides the display address of all VMs on this host by the specified address")
+    String enableConsoleAddressOverrideHelpMessage();
+
+    @DefaultStringValue("Display address")
+    String consoleAddress();
+
     @DefaultStringValue("Never")
     String spmNeverText();
 
@@ -1658,6 +1670,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Show All")
     String showAllService();
 
+    @DefaultStringValue("Display Address Overridden")
+    String overriddenConsoleAddress();
+
     // Interface
     @DefaultStringValue("Empty")
     String emptyInterface();
@@ -2511,4 +2526,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Allow all users to use this Network")
     String networkPublicUseLabel();
+
+    @DefaultStringValue("Some hosts in this cluster have the console address overridden and some not. For details please see the Hosts subtab")
+    String consolePartiallyOverridden();
 }

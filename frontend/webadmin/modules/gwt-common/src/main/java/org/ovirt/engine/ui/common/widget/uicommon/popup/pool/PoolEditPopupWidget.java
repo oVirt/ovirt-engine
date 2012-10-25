@@ -8,6 +8,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -25,8 +26,9 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
     public PoolEditPopupWidget(CommonApplicationConstants constants,
             CommonApplicationResources resources,
-            CommonApplicationMessages messages) {
-        super(constants, resources, messages);
+            CommonApplicationMessages messages,
+            CommonApplicationTemplates applicationTemplates) {
+        super(constants, resources, messages, applicationTemplates);
     }
 
     @Override

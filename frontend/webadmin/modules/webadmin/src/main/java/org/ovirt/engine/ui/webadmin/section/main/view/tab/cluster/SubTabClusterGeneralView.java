@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -32,7 +33,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -234,6 +234,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
         policyPanel.setVisible(selectedItem.supportsVirtService());
         volumeSummaryPanel.setVisible(selectedItem.supportsGlusterService());
+
     }
 
     @Override
@@ -245,17 +246,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
     @Override
     public void addAlert(Widget alertWidget) {
-        // Create a composite panel that contains the alert icon and the widget provided
-        // by the caller, both rendered horizontally:
-        FlowPanel alertPanel = new FlowPanel();
-        Image alertIcon = new Image(resources.alertImage());
-        alertIcon.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
-        alertWidget.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
-        alertPanel.add(alertIcon);
-        alertPanel.add(alertWidget);
-
-        // Add the composite panel to the alerts panel:
-        alertsList.add(alertPanel);
+        alertsList.add(new InLineAlertWidget(resources, alertWidget));
 
         // Make the panel visible if it wasn't:
         if (!alertsPanel.isVisible()) {

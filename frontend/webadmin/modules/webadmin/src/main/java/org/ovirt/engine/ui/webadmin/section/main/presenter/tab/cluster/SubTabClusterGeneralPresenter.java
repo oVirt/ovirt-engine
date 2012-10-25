@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -37,6 +38,8 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterGeneralModel, SubTabClusterGeneralPresenter.ViewDef, SubTabClusterGeneralPresenter.ProxyDef> {
+
+    private final ApplicationConstants constants;
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.clusterGeneralSubTabPlace)
@@ -69,10 +72,11 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
 
     @Inject
     public SubTabClusterGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<ClusterListModel, ClusterGeneralModel> modelProvider) {
+            PlaceManager placeManager, DetailModelProvider<ClusterListModel, ClusterGeneralModel> modelProvider, ApplicationConstants constants) {
         super(eventBus, view, proxy, placeManager, modelProvider);
         // Inject a reference to the messages:
         messages = ClientGinjectorProvider.instance().getApplicationMessages();
+        this.constants = constants;
     }
 
     @Override
@@ -91,6 +95,8 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
                 if (args instanceof PropertyChangedEventArgs) {
                     PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
                     if (changedArgs.PropertyName.contains("Alert")) { //$NON-NLS-1$
+                        updateAlerts(getView(), model);
+                    } else if (changedArgs.PropertyName.contains("consoleAddressPartiallyOverridden")) { //$NON-NLS-1$
                         updateAlerts(getView(), model);
                     }
                 }
@@ -116,6 +122,10 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
                     messages.clusterHasNewGlusterHosts(),
                     model.getImportNewGlusterHostsCommand(),
                     model.getDetachNewGlusterHostsCommand());
+        }
+
+        if (model.isConsoleAddressPartiallyOverridden()) {
+            view.addAlert(new Label(constants.consolePartiallyOverridden()));
         }
     }
 
@@ -183,6 +193,7 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
             // Add the alert to the view:
             view.addAlert(alertPanel);
         }
+
     }
 
     @Override

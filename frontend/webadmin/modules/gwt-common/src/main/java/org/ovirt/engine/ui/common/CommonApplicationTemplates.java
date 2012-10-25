@@ -61,4 +61,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("Link State: {0}")
     SafeHtml linkState(String state);
 
+    @Template("<i>{0}</i>")
+    SafeHtml italicText(String text);
+
 }

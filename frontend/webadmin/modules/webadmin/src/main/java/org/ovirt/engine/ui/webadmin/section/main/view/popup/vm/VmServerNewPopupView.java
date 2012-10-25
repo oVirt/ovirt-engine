@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractVmPopupView;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmServerNewPopupWidget;
@@ -19,8 +20,8 @@ public class VmServerNewPopupView extends AbstractVmPopupView implements VmServe
     }
 
     @Inject
-    public VmServerNewPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationMessages messages) {
-        super(eventBus, resources, new VmServerNewPopupWidget(constants, resources, messages));
+    public VmServerNewPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationMessages messages, CommonApplicationTemplates templates) {
+        super(eventBus, resources, new VmServerNewPopupWidget(constants, resources, messages, templates));
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

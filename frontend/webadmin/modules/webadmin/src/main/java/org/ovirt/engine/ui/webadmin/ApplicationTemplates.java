@@ -118,7 +118,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='font-weight:bold; border-bottom-style:solid; border-bottom-width:1px; border-top-style:solid; border-top-width:1px; width:100%;'>{0}</div> ")
     SafeHtml titleSetupNetworkTooltip(String title);
 
-    @Template("<I>{0}<BR>{1}</I>")
+    @Template("<i>{0}<br />{1}</i>")
     SafeHtml italicTwoLines(String firstLine, String secondLine);
 
     @Template("<div style='width: {0}; font-style: italic;'>{1}</div>")

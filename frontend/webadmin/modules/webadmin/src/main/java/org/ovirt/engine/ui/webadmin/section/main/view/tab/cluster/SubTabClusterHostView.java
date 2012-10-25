@@ -65,6 +65,16 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
             };
             getTable().addColumn(loadColumn, constants.loadClusterHost());
         }
-    }
 
+        if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
+            TextColumnWithTooltip<VDS> consoleColumn = new TextColumnWithTooltip<VDS>() {
+                @Override
+                public String getValue(VDS host) {
+                    return host.getConsoleAddress() != null ? constants.yes() : constants.no();
+                }
+
+            };
+            getTable().addColumn(consoleColumn, constants.overriddenConsoleAddress());
+        }
+    }
 }

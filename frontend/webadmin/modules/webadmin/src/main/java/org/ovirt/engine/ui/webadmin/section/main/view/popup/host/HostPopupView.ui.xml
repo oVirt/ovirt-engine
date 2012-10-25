@@ -75,6 +75,31 @@
             width: 220px;
         }
 
+
+        .consoleAddressStyle {
+            line-height: 30px;
+	    padding: 0 5px;
+	    padding-bottom: 35px;
+        }
+
+        .consoleAddressWithHelp {
+            float: left;
+        }
+
+        .consoleAddressEnabledLabel {
+            float: left;
+            color: #333333;
+        }
+
+        .consoleAddressHelpIcon {
+            float: right;
+            padding-top: 5px;
+        }
+
+        .consoleAddressEnabledChecbox {
+            float: right;
+            width: 230px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="650px" height="500px">
@@ -152,6 +177,24 @@
                                 <g:Label text="{constants.spmPriority}" addStyleNames="{style.headerLabel}"/>
                                 <g:VerticalPanel ui:field="spmPanel"/>
                             </g:VerticalPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="consoleTab">
+                        <t:content>
+                            <g:FlowPanel>
+                                <g:FlowPanel addStyleNames="{style.consoleAddressStyle}">
+                                    <g:FlowPanel addStyleNames="{style.consoleAddressWithHelp}">
+                                        <g:Label ui:field="consoleAddressLabel" addStyleNames="{style.consoleAddressEnabledLabel}" />
+                                        <d:InfoIcon ui:field="consoleAddressInfoIcon" addStyleNames="{style.consoleAddressHelpIcon}" />
+                                    </g:FlowPanel>
+                                    <e:EntityModelCheckBoxOnlyEditor ui:field="consoleAddressEnabled" addStyleNames="{style.consoleAddressEnabledChecbox}" />
+	                            </g:FlowPanel>
+	                        <g:FlowPanel>
+                                    <e:EntityModelTextBoxEditor ui:field="consoleAddress"/>
+                                </g:FlowPanel>
+                            </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
@@ -36,7 +37,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -218,17 +218,8 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
     @Override
     public void addAlert(Widget alertWidget) {
-        // Create a composite panel that contains the alert icon and the widget provided
-        // by the caller, both rendered horizontally:
-        FlowPanel alertPanel = new FlowPanel();
-        Image alertIcon = new Image(resources.alertImage());
-        alertIcon.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
-        alertWidget.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
-        alertPanel.add(alertIcon);
-        alertPanel.add(alertWidget);
-
         // Add the composite panel to the alerts panel:
-        alertsList.add(alertPanel);
+        alertsList.add(new InLineAlertWidget(resources, alertWidget));
 
         // Make the panel visible if it wasn't:
         if (!alertsPanel.isVisible()) {

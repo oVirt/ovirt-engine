@@ -3,13 +3,13 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 import java.text.ParseException;
 
 import org.ovirt.engine.core.compat.Event;
-import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.text.shared.Parser;
 
 public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
@@ -25,8 +26,8 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public PoolNewPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages) {
-        super(constants, resources, messages);
+    public PoolNewPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages, CommonApplicationTemplates applicationTemplates) {
+        super(constants, resources, messages, applicationTemplates);
     }
 
     @Override

@@ -528,6 +528,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         hostModel.getPort().setEntity(54321);
         hostModel.getOverrideIpTables().setIsAvailable(false);
         hostModel.setSpmPriorityValue(null);
+        hostModel.getConsoleAddressEnabled().setEntity(false);
+        hostModel.getConsoleAddress().setIsChangable(false);
 
         AsyncDataProvider.GetDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
@@ -793,7 +795,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.sethost_name((String) model.getHost().getEntity());
         host.setport(Integer.parseInt(model.getPort().getEntity().toString()));
         host.setVdsSpmPriority(model.getSpmPriorityValue());
-
+        boolean consoleAddressSet = (Boolean) model.getConsoleAddressEnabled().getEntity();
+        host.setConsoleAddress(!consoleAddressSet ? null : (String) model.getConsoleAddress().getEntity());
         Guid oldClusterId = host.getvds_group_id();
         Guid newClusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         host.setvds_group_id(newClusterId);
@@ -1142,6 +1145,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getName().setEntity(vds.getvds_name());
         model.getHost().setEntity(vds.gethost_name());
         model.getPort().setEntity(vds.getport());
+
+        boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
+        model.getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
+        model.getConsoleAddress().setEntity(vds.getConsoleAddress());
+        model.getConsoleAddress().setIsChangable(consoleAddressEnabled);
 
         if (vds.getstatus() != VDSStatus.InstallFailed)
         {

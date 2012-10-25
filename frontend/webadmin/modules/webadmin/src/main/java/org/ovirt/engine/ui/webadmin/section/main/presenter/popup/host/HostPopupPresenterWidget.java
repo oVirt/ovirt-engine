@@ -35,14 +35,12 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
     public void init(final HostModel model) {
         super.init(model);
 
-        registerHandler(getView().getTestButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                getView().flush();
-                getView().getTestButton().getCommand().Execute();
-            }
-        }));
+        addTestButtonListener();
+        addPowerManagementListener(model);
 
+    }
+
+    private void addPowerManagementListener(final HostModel model) {
         model.getPropertyChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -56,6 +54,15 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
                 }
             }
         });
+    }
 
+    private void addTestButtonListener() {
+        registerHandler(getView().getTestButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                getView().flush();
+                getView().getTestButton().getCommand().Execute();
+            }
+        }));
     }
 }

@@ -12,6 +12,9 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -36,6 +39,9 @@ public class ClusterGeneralModel extends EntityModel {
     private Integer noOfVolumesTotal;
     private Integer noOfVolumesUp;
     private Integer noOfVolumesDown;
+
+    // set to true, if some hosts in the cluster has the console address overridden and some not
+    private Boolean consoleAddressPartiallyOverridden;
 
     public String getNoOfVolumesTotal() {
         return Integer.toString(noOfVolumesTotal);
@@ -129,6 +135,17 @@ public class ClusterGeneralModel extends EntityModel {
         detachNewGlusterHostsCommand = value;
     }
 
+    public void setConsoleAddressPartiallyOverridden(Boolean consoleAddressPartiallyOverridden) {
+        if (this.consoleAddressPartiallyOverridden != consoleAddressPartiallyOverridden) {
+            this.consoleAddressPartiallyOverridden = consoleAddressPartiallyOverridden;
+            OnPropertyChanged(new PropertyChangedEventArgs("consoleAddressPartiallyOverridden")); //$NON-NLS-1$
+        }
+    }
+
+    public Boolean isConsoleAddressPartiallyOverridden() {
+        return consoleAddressPartiallyOverridden;
+    }
+
     @Override
     public VDSGroup getEntity()
     {
@@ -149,6 +166,7 @@ public class ClusterGeneralModel extends EntityModel {
         setNoOfVolumesUp(0);
         setNoOfVolumesDown(0);
 
+        setConsoleAddressPartiallyOverridden(false);
         setImportNewGlusterHostsCommand(new UICommand("ImportGlusterHosts", this)); //$NON-NLS-1$
         setDetachNewGlusterHostsCommand(new UICommand("DetachGlusterHosts", this)); //$NON-NLS-1$
 
@@ -192,6 +210,7 @@ public class ClusterGeneralModel extends EntityModel {
         {
             AsyncDataProvider.GetHighUtilizationForPowerSave(_asyncQuery);
         }
+
     }
 
     @Override
@@ -203,9 +222,29 @@ public class ClusterGeneralModel extends EntityModel {
         {
             UpdateVolumeDetails();
             updateAlerts();
+            updateConsoleAddressPartiallyOverridden(getEntity());
         }
 
         UpdateActionAvailability();
+    }
+
+    private void updateConsoleAddressPartiallyOverridden(VDSGroup cluster) {
+
+        AsyncQuery query = new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        boolean isConsistent = (Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        setConsoleAddressPartiallyOverridden(!isConsistent);
+                    }
+                }
+                );
+
+        Frontend.RunQuery(
+                VdcQueryType.IsDisplayAddressConsistentInCluster,
+                new IdQueryParameters(cluster.getId()),
+                query
+                );
     }
 
     public void fetchAndImportNewGlusterHosts() {

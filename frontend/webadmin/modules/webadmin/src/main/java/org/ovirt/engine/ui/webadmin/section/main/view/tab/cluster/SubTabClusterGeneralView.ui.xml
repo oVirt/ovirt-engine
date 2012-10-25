@@ -98,7 +98,6 @@
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 			</g:HorizontalPanel>
-
 			<g:VerticalPanel ui:field="volumeSummaryPanel">
 				<g:Label ui:field="volumeHeaderLabel" addStyleNames="{style.headerLabel}"/>
 				<f:GeneralFormPanel  ui:field="volumeFormPanel">

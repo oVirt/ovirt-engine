@@ -1,11 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.FlowPanel;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -13,12 +9,14 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
@@ -38,18 +36,22 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupP
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
-
-import java.util.List;
 
 public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implements HostPopupPresenterWidget.ViewDef {
 
@@ -245,14 +247,42 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @Ignore
     DialogTab spmTab;
 
-    @UiField()
+    @UiField
+    @Ignore
+    DialogTab consoleTab;
+
+    @UiField
     @Ignore
     VerticalPanel spmPanel;
 
+    @UiField(provided=true)
+    @Ignore
+    InfoIcon consoleAddressInfoIcon;
+
+    @UiField
+    @Ignore
+    Label consoleAddressLabel;
+
+    @UiField
+    @Path(value = "consoleAddress.entity")
+    @WithElementId
+    EntityModelTextBoxEditor consoleAddress;
+
+    @UiField
+    @Path(value = "consoleAddressEnabled.entity")
+    EntityModelCheckBoxEditor consoleAddressEnabled;
+
+    private final CommonApplicationTemplates applicationTemplates;
+
+    private final ApplicationResources resources;
+
     @Inject
-    public HostPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public HostPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationTemplates applicationTemplates) {
         super(eventBus, resources);
+        this.resources = resources;
+        this.applicationTemplates = applicationTemplates;
         initEditors();
+        initInfoIcon(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
@@ -260,6 +290,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         Driver.driver.initialize(this);
         applyModeCustomizations();
+    }
+
+    private void initInfoIcon(ApplicationConstants constants) {
+        consoleAddressInfoIcon =
+                new InfoIcon(applicationTemplates.italicText(constants.enableConsoleAddressOverrideHelpMessage()), resources); //$NON-NLS-1$
     }
 
     private void addStyles() {
@@ -347,9 +382,12 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         pmSecondaryOptionsEditor.setLabel(constants.hostPopupPmOptionsLabel());
         pmSecondaryOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
         pmSecondarySecureEditor.setLabel(constants.hostPopupPmSecureLabel());
+        consoleAddress.setLabel(constants.consoleAddress());
+        consoleAddressLabel.setText(constants.enableConsoleAddressOverride());
 
         // SPM tab
         spmTab.setLabel(constants.spmTestButtonLabel());
+        consoleTab.setLabel(constants.consoleButtonLabel());
     }
 
     private void applyModeCustomizations() {
@@ -498,7 +536,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         spmPanel.clear();
 
-        Iterable items = object.getSpmPriority().getItems();
+        Iterable<?> items = object.getSpmPriority().getItems();
         if (items == null) {
             return;
         }
@@ -550,4 +588,5 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         String overrideIpStyle();
     }
+
 }
