@@ -1075,6 +1075,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot import Storage Domain. Internal Error: The connection data is illegal.")
     String ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL();
 
+    @DefaultStringValue("Cannot import SAN Export Storage Domain as it is no longer supported.")
+    String ERROR_CANNOT_ADD_DEPRECATED_EXISTING_SAN_EXPORT_STORAGE_DOMAIN();
+
     @DefaultStringValue("Cannot import Storage Domain. Not all LUNs connected to Storage Domain.")
     String ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_LUNS_PROBLEM();
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.SANState;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -34,6 +35,11 @@ public class AddExistingSANStorageDomainCommand<T extends AddSANStorageDomainPar
 
     @Override
     protected boolean CanAddDomain() {
+        if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ImportExport) {
+            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);
+            return false;
+        }
+
         return CheckExistingStorageDomain();
     }
 

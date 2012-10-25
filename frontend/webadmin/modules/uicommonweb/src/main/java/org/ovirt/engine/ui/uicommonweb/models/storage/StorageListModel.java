@@ -578,14 +578,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         tempVar2.setRole(StorageDomainType.ImportExport);
         items.add(tempVar2);
 
-        IscsiImportStorageModel tempVar3 = new IscsiImportStorageModel();
-        tempVar3.setRole(StorageDomainType.ImportExport);
-        items.add(tempVar3);
-
-        FcpImportStorageModel tempVar4 = new FcpImportStorageModel();
-        tempVar4.setRole(StorageDomainType.ImportExport);
-        items.add(tempVar4);
-
         model.setItems(items);
 
         model.Initialize();
