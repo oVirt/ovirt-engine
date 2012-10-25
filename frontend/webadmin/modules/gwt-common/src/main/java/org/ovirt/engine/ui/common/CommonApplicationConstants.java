@@ -793,6 +793,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Storage Domain")
     String storageDomainVmDiskTable();
 
+    @DefaultStringValue("Specific User/Group")
+    String specificUserGroupPermission();
+
+    @DefaultStringValue("Everyone")
+    String everyonePermission();
+
     // Permissions popup
     @DefaultStringValue("Role to Assign:")
     String roleToAssignPermissionsPopup();

@@ -48,8 +48,8 @@
 			<g:FlowPanel>
 				<g:SimplePanel ui:field="everyonePanel" addStyleNames="{style.everyonePanel}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-						<g:RadioButton name="everyoneOrSpecific" ui:field="specificUserOrGroupRadio">Specific User/Group</g:RadioButton>
- 						<g:RadioButton name="everyoneOrSpecific" ui:field="everyoneRadio">Everyone</g:RadioButton>
+                        <g:RadioButton name="everyoneOrSpecific" ui:field="specificUserOrGroupRadio" text="{constants.specificUserGroupPermission}"></g:RadioButton>
+                        <g:RadioButton name="everyoneOrSpecific" ui:field="everyoneRadio" text="{constants.everyonePermission}"></g:RadioButton>
 					</g:HorizontalPanel>
 				</g:SimplePanel>
 				<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.searchStringPanel}">
