@@ -1031,4 +1031,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Assign Quota")
     String assignQuota();
+
+    @DefaultStringValue("Increase number of VMs in pool by")
+    String increaseNumberOfVMsInPoolBy();
+
+    @DefaultStringValue("VMs")
+    String vms();
 }

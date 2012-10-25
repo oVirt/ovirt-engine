@@ -249,10 +249,10 @@
                             </g:FlowPanel>
                             
                             <g:FlowPanel ui:field="editPoolIncraseNumOfVmsPanel" addStyleNames="{style.poolEditVms}">
-								<g:Label text="Increase number of VMs in pool by" addStyleNames="{style.incrasePrestartedLabel}" />
+								<g:Label text="{constants.increaseNumberOfVMsInPoolBy}" addStyleNames="{style.incrasePrestartedLabel}" />
 								<g:FlowPanel addStyleNames="{style.eidtIncreaseVms}">
 									<e:EntityModelTextBoxOnlyEditor ui:field="incraseNumOfVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
-									<g:Label text="VMs" addStyleNames="{style.incrasteVmsInPoolVms}" />
+									<g:Label text="{constants.vms}" addStyleNames="{style.incrasteVmsInPoolVms}" />
 								</g:FlowPanel>
                             </g:FlowPanel>
                             <e:ListModelListBoxEditor ui:field="templateEditor"/>
