@@ -170,7 +170,7 @@ Requires: policycoreutils-python
 Requires: postgresql-jdbc
 Requires: python-configobj
 Requires: python-cheetah
-Requires: vdsm-bootstrap >= 4.10.0
+Requires: vdsm-bootstrap >= 4.10.1
 Requires: yum-plugin-versionlock
 Requires: ovirt-engine-cli
 
