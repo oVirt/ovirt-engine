@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
-import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
 import org.ovirt.engine.core.dao.NetworkDAO;
@@ -48,8 +48,9 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
         setupVdsGroupDao();
         setupNetworkClusterDao();
 
-        Pair<VDSGroup, network_cluster> networkClusterPair = new Pair(cluster, networkCluster);
-        List<Pair<VDSGroup, network_cluster>> expected = Collections.singletonList(networkClusterPair);
+        PairQueryable<VDSGroup, network_cluster> networkClusterPair =
+                new PairQueryable<VDSGroup, network_cluster>(cluster, networkCluster);
+        List<PairQueryable<VDSGroup, network_cluster>> expected = Collections.singletonList(networkClusterPair);
 
         // Run the query
         GetVdsGroupsAndNetworksByNetworkIdQuery<NetworkIdParameters> query = getQuery();

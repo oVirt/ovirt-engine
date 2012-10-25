@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
-import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 
 /**
  * A query to retrieve all VDSGroup-network_cluster pairs in the Storage Pool of the given Network. In case the Network
@@ -23,7 +23,8 @@ public class GetVdsGroupsAndNetworksByNetworkIdQuery<P extends NetworkIdParamete
 
     @Override
     protected void executeQueryCommand() {
-        List<Pair<VDSGroup, network_cluster>> networkClusterPairs = new ArrayList<Pair<VDSGroup, network_cluster>>();
+        List<PairQueryable<VDSGroup, network_cluster>> networkClusterPairs =
+                new ArrayList<PairQueryable<VDSGroup, network_cluster>>();
 
         Network network = getDbFacade().getNetworkDao().get(getParameters().getNetworkId());
         if (network != null && network.getstorage_pool_id() != null) {
@@ -36,7 +37,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQuery<P extends NetworkIdParamete
                     Entities.businessEntitiesById(networkClusters);
 
             for (VDSGroup vdsGroup : vdsGroups) {
-                networkClusterPairs.add(new Pair<VDSGroup, network_cluster>(vdsGroup,
+                networkClusterPairs.add(new PairQueryable<VDSGroup, network_cluster>(vdsGroup,
                         networkClustersById.get(new NetworkClusterId(vdsGroup.getId(), getParameters().getNetworkId()))));
             }
         }

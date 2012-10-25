@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
-import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.InterfaceDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -36,8 +36,9 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
         setupVdsDao();
         setupVdsNetworkInterfaceDao();
 
-        Pair<VdsNetworkInterface, VDS> vdsInterfaceVdsPair = new Pair(vdsNetworkInterface, vds);
-        List<Pair<VdsNetworkInterface, VDS>> expected = Collections.singletonList(vdsInterfaceVdsPair);
+        PairQueryable<VdsNetworkInterface, VDS> vdsInterfaceVdsPair =
+                new PairQueryable<VdsNetworkInterface, VDS>(vdsNetworkInterface, vds);
+        List<PairQueryable<VdsNetworkInterface, VDS>> expected = Collections.singletonList(vdsInterfaceVdsPair);
 
         // Run the query
         GetVdsAndNetworkInterfacesByNetworkIdQuery<NetworkIdParameters> query = getQuery();

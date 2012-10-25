@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
-import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -29,9 +29,10 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends NetworkIdParam
 
         final Map<Guid, VDS> vdsById = Entities.businessEntitiesById(vdsList);
 
-        List<Pair<VdsNetworkInterface, VDS>> vdsInterfaceVdsPairs = new ArrayList<Pair<VdsNetworkInterface, VDS>>();
+        List<PairQueryable<VdsNetworkInterface, VDS>> vdsInterfaceVdsPairs =
+                new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
         for (VdsNetworkInterface vdsNetworkInterface : vdsNetworkInterfaceList) {
-            vdsInterfaceVdsPairs.add(new Pair(vdsNetworkInterface, vdsById.get(vdsNetworkInterface.getVdsId())));
+            vdsInterfaceVdsPairs.add(new PairQueryable(vdsNetworkInterface, vdsById.get(vdsNetworkInterface.getVdsId())));
         }
 
         getQueryReturnValue().setReturnValue(vdsInterfaceVdsPairs);
