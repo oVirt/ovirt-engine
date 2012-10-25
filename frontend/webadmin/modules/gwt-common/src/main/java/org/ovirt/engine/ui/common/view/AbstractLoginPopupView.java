@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -59,6 +60,12 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
               selectedLocale.setText(localeBox.getItemText(localeBox.getSelectedIndex()));
             }
         }
+
+        ClientAgentType clientAgentType = new ClientAgentType();
+        if (clientAgentType.isIE && clientAgentType.version <= 8) {
+            selectedLocale.getElement().getStyle().setOpacity(0);
+        }
+
         localeBox.addChangeHandler(new ChangeHandler() {
           @Override
         public void onChange(ChangeEvent event) {
