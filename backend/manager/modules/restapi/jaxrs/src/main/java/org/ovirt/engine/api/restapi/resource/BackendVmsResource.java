@@ -120,6 +120,11 @@ public class BackendVmsResource extends
         return removeRestrictedInfoFromResponse(response);
     }
 
+    private boolean shouldMakeCreatorExplicitOwner() {
+        // In the user level API we should make the creator the owner of the new created machine
+        return isFiltered();
+    }
+
     private boolean isCreateFromSnapshot(VM vm) {
         return vm.isSetSnapshots() && vm.getSnapshots().getSnapshots() != null
                 && !vm.getSnapshots().getSnapshots().isEmpty();
@@ -213,6 +218,7 @@ public class BackendVmsResource extends
         AddVmFromSnapshotParameters params =
                 new AddVmFromSnapshotParameters(staticVm, sourceSnapshotId);
         params.setDiskInfoDestinationMap(images);
+        params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreation(VdcActionType.AddVmFromSnapshot,
                                 params,
                                 new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
@@ -224,6 +230,7 @@ public class BackendVmsResource extends
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
         }
+        params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreation(VdcActionType.AddVmFromTemplate,
                                params,
                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
@@ -270,6 +277,7 @@ public class BackendVmsResource extends
         }
         params.setStorageDomainId(storageDomainId);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
+        params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreation(VdcActionType.AddVm,
                                params,
                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
@@ -281,6 +289,7 @@ public class BackendVmsResource extends
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
         }
+        params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         params.setStorageDomainId(storageDomainId);
         return performCreation(VdcActionType.AddVmFromScratch,
                                params,
