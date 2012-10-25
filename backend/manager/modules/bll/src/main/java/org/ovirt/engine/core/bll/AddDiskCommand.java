@@ -298,11 +298,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     protected void executeVmCommand() {
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
-        if (!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
-            StorageType storageType = getStorageDomain().getstorage_type();
-            getParameters().getDiskInfo()
-                    .setWipeAfterDelete(WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(storageType));
-        }
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             createDiskBasedOnImage();
         } else {
@@ -334,6 +329,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private void createDiskBasedOnImage() {
+        if(!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
+            StorageType storageType = getStorageDomain().getstorage_type();
+            getParameters().getDiskInfo().setWipeAfterDelete(WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(storageType));
+        }
         // create from blank template, create new vm snapshot id
         AddImageFromScratchParameters parameters =
                 new AddImageFromScratchParameters(Guid.Empty,
