@@ -57,7 +57,7 @@ public class BackendVmDisksResource
 
         if (disk.isSetId()) {
             return Response.fromResponse(attachDiskToVm(disk))
-                           .entity(lookupEntity(asGuid(disk.getId())))
+                           .entity(map(lookupEntity(asGuid(disk.getId()))))
                            .build();
         }else {
             validateDiskForCreation(disk);
