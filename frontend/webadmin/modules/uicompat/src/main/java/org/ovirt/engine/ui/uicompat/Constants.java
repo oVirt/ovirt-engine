@@ -527,7 +527,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Shut down Virtual Machine(s)")
     String shutdownVirtualMachinesTitle();
 
-    @DefaultStringValue("Stop Virtual Machine(s)")
+    @DefaultStringValue("Power Off Virtual Machine(s)")
     String stopVirtualMachinesTitle();
 
     @DefaultStringValue("Change CD")
