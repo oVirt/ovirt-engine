@@ -553,13 +553,14 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 --The default network connectivity check timeout
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
-select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"false\"}','general');
+select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"true\"}','general');
 
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
 
+select fn_db_update_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"true\"}','general');
 select fn_db_update_config_value('CertAlias','1','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DebugSearchLogging','false','general');
