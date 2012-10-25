@@ -1037,4 +1037,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("VMs")
     String vms();
+
+    @DefaultStringValue("SPM Priority")
+    String spmPriority();
 }
