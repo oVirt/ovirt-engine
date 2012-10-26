@@ -327,6 +327,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
             entity.setHardwareUUID(rs.getString("hw_uuid"));
             entity.setHardwareFamily(rs.getString("hw_family"));
+            entity.setConsoleAddress(rs.getString("console_address"));
             entity.calculateFreeVirtualMemory();
             return entity;
         }

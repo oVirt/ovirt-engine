@@ -13,9 +13,12 @@ public class ExtendedVmDynamic extends VmDynamic {
 
     @Override
     public void setdisplay_ip(String value) {
-        if (value.startsWith("0")) {
-            value = host.gethost_name();
+        if (host.getConsoleAddress() != null) {
+            super.setdisplay_ip(host.getConsoleAddress());
+        } else if (value.startsWith("0")) {
+            super.setdisplay_ip(host.gethost_name());
+        } else {
+            super.setdisplay_ip(value);
         }
-        super.setdisplay_ip(value);
     }
 }

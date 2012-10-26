@@ -68,6 +68,12 @@ public class VdsStatic implements BusinessEntity<Guid> {
     @Column(name = "ip")
     private String ip;
 
+    @HostnameOrIp(message = "VALIDATION.VDS.CONSOLEADDRESSS.HOSTNAME_OR_IP",
+            groups = { CreateEntity.class, UpdateEntity.class })
+    @Size(max = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
+    @Column(name = "console_address", length = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
+    private String consoleAddress;
+
     @Size(max = BusinessEntitiesDefinitions.HOST_UNIQUE_ID_SIZE)
     @Column(name = "vds_unique_id")
     private String uniqueId;
@@ -444,6 +450,14 @@ public class VdsStatic implements BusinessEntity<Guid> {
         this.sshKeyFingerprint = sshKeyFingerprint;
     }
 
+    public String getConsoleAddress() {
+        return consoleAddress;
+    }
+
+    public void setConsoleAddress(String consoleAddress) {
+        this.consoleAddress = consoleAddress;
+    }
+
     /**
      * Converts a PM Options map to string
      *
@@ -497,6 +511,7 @@ public class VdsStatic implements BusinessEntity<Guid> {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
+        result = prime * result + ((consoleAddress == null) ? 0 : consoleAddress.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((ip == null) ? 0 : ip.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -538,6 +553,11 @@ public class VdsStatic implements BusinessEntity<Guid> {
             if (other.hostname != null)
                 return false;
         } else if (!hostname.equals(other.hostname))
+            return false;
+        if (consoleAddress == null) {
+            if (other.consoleAddress != null)
+                return false;
+        } else if (!consoleAddress.equals(other.consoleAddress))
             return false;
         if (id == null) {
             if (other.id != null)

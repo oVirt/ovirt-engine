@@ -23,6 +23,7 @@ public final class BusinessEntitiesDefinitions {
     // HOST (vds_static)
     public static final int HOST_NAME_SIZE = 255;
     public static final int HOST_HOSTNAME_SIZE = 255;
+    public static final int CONSOLE_ADDRESS_SIZE = 255;
     public static final int HOST_IP_SIZE = 255;
     public static final int HOST_UNIQUE_ID_SIZE = 128;
     public static final int HOST_PM_USER_SIZE = 50;

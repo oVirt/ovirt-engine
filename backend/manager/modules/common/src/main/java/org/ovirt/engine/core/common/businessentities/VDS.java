@@ -172,7 +172,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
             String vds_group_cpu_name, String cpu_name, Boolean net_config_dirty, String pm_type, String pm_user,
             String pm_password, Integer pm_port, String pm_options, boolean pm_enabled, String pmSecondaryIp,
             String pmSecondaryType, String pmSecondaryUser, String pmSecondaryPassword, Integer pmSecondaryPort,
-            String pmSecondaryOptions, boolean pmSecondaryConcurrent)
+            String pmSecondaryOptions, boolean pmSecondaryConcurrent, String consoleAddress)
     {
         mVdsStatic = new VdsStatic();
         mVdsDynamic = new VdsDynamic();
@@ -236,6 +236,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.setPmSecondaryUser(pmSecondaryUser);
         this.setPmSecondaryPassword(pmSecondaryPassword);
         this.setPmSecondaryConcurrent(pmSecondaryConcurrent);
+        this.setConsoleAddress(consoleAddress);
     }
 
     public VDS(VdsStatic vdsStatic, VdsDynamic vdsDynamic, VdsStatistics vdsStatistics) {
@@ -303,7 +304,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getPmSecondaryPassword(),
                         getPmSecondaryPort(),
                         getPmSecondaryOptions(),
-                        isPmSecondaryConcurrent());
+                        isPmSecondaryConcurrent(),
+                        getConsoleAddress());
 
         vds.setcpu_flags(getcpu_flags());
         vds.setVdsSpmPriority(getVdsSpmPriority());
@@ -733,6 +735,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public void setmem_shared(Long value) {
         this.mVdsStatistics.setmem_shared(value);
+    }
+
+    public String getConsoleAddress() {
+        return mVdsStatic.getConsoleAddress();
+    }
+
+    public void setConsoleAddress(String value) {
+        mVdsStatic.setConsoleAddress(value);
     }
 
     public Integer getmem_commited_percent() {

@@ -102,6 +102,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("pm_secondary_concurrent", vds.isPmSecondaryConcurrent())
                 .addValue("otp_validity", vds.getOtpValidity())
                 .addValue("vds_spm_priority", vds.getVdsSpmPriority())
+                .addValue("console_address", vds.getConsoleAddress())
                 .addValue("sshKeyFingerprint", vds.getSSHKeyFingerprint());
     }
 
@@ -152,6 +153,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setPmSecondaryConcurrent(rs.getBoolean("pm_secondary_concurrent"));
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setSSHKeyFingerprint(rs.getString("sshKeyFingerprint"));
+            entity.setConsoleAddress(rs.getString("console_address"));
 
             return entity;
         }

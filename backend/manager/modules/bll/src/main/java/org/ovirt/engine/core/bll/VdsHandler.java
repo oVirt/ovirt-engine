@@ -58,6 +58,7 @@ public class VdsHandler extends BaseHandler {
         mUpdateVdsStatic.AddPermittedField("pmSecondaryConcurrent");
         mUpdateVdsStatic.AddPermittedField("vdsSpmPriority");
         mUpdateVdsStatic.AddPermittedField("otpValidity");
+        mUpdateVdsStatic.AddPermittedField("consoleAddress");
         mUpdateVdsStatic.AddFields(
                 java.util.Arrays.asList(new Enum<?>[] { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
                         VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval }),
