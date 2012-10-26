@@ -34,6 +34,10 @@ public class ConnectAutomaticallyManager {
         this.connectAutomatically = connectAutomatically;
     }
 
+    public void resetAlreadyOpened() {
+        this.alreadyOpened = false;
+    }
+
     public void unregisterModels() {
         if (listeners == null) {
             return;
@@ -62,7 +66,7 @@ public class ConnectAutomaticallyManager {
 
     class EventChangeListener implements IEventListener {
 
-        private IUserPortalListModel model;
+        private final IUserPortalListModel model;
 
         public EventChangeListener(IUserPortalListModel model) {
             this.model = model;

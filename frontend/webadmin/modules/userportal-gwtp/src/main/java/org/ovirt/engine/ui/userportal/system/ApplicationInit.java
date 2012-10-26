@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
+import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
@@ -26,6 +27,7 @@ import com.google.inject.Provider;
 public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
     private final CurrentUserRole userRole;
+    private final ConnectAutomaticallyManager connectAutomaticallyManager;
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
@@ -34,10 +36,12 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             CurrentUser user, EventBus eventBus,
             Provider<UserPortalLoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
+            ConnectAutomaticallyManager connectAutomaticallyManager,
             CurrentUserRole userRole,
             ApplicationConstants constants) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, eventBus, loginModelProvider, lockInteractionManager);
         this.userRole = userRole;
+        this.connectAutomaticallyManager = connectAutomaticallyManager;
         Window.setTitle(constants.applicationTitle());
     }
 
@@ -91,6 +95,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
                 Frontend.setLoggedInUser(null);
                 getLoginModel().resetAfterLogout();
                 AsyncDataProvider.clearCache();
+                connectAutomaticallyManager.resetAlreadyOpened();
                 ApplicationInit.super.onLogout();
             }
         };
