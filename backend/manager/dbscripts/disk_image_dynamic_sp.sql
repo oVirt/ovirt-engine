@@ -21,7 +21,7 @@ BEGIN
 INSERT INTO disk_image_dynamic(image_id, read_rate, write_rate, actual_size, read_latency_seconds, write_latency_seconds, flush_latency_seconds)
 	VALUES(v_image_id, v_read_rate, v_write_rate, v_actual_size, v_read_latency_seconds, v_write_latency_seconds, v_flush_latency_seconds);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -53,10 +53,10 @@ Create or replace FUNCTION Deletedisk_image_dynamic(v_image_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    DELETE FROM disk_image_dynamic
    WHERE image_id = v_image_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -77,7 +77,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getdisk_image_dynamicByimage_id(v_image_id UUID) 
+Create or replace FUNCTION Getdisk_image_dynamicByimage_id(v_image_id UUID)
 RETURNS SETOF disk_image_dynamic
    AS $procedure$
 BEGIN

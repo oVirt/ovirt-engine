@@ -15,10 +15,10 @@ Create or replace FUNCTION InsertVdcOption(v_option_name VARCHAR(50),
 BEGIN
 INSERT INTO vdc_options(OPTION_NAME, option_value, version)
 	VALUES(v_option_name, v_option_value, v_version);
-    
+
       v_option_id := CURRVAL('vdc_options_seq');
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 

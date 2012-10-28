@@ -22,7 +22,7 @@ BEGIN
 INSERT INTO vm_statistics(cpu_sys, cpu_user, elapsed_time, usage_cpu_percent, usage_mem_percent, usage_network_percent, disks_usage, vm_guid)
 	VALUES(v_cpu_sys, v_cpu_user, v_elapsed_time, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_disks_usage, v_vm_guid);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -40,8 +40,8 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_statistics
-      SET cpu_sys = v_cpu_sys,cpu_user = v_cpu_user,elapsed_time = v_elapsed_time, 
-      usage_cpu_percent = v_usage_cpu_percent,usage_mem_percent = v_usage_mem_percent, 
+      SET cpu_sys = v_cpu_sys,cpu_user = v_cpu_user,elapsed_time = v_elapsed_time,
+      usage_cpu_percent = v_usage_cpu_percent,usage_mem_percent = v_usage_mem_percent,
       usage_network_percent = v_usage_network_percent,disks_usage = v_disks_usage
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
@@ -129,7 +129,7 @@ BEGIN
 INSERT INTO vm_dynamic(app_list,	guest_cur_user_id, guest_cur_user_name, guest_last_login_time, guest_last_logout_time, console_user_id, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, last_start_time, vm_pid, display, acpi_enable, session, display_ip, display_type, kvm_enable, boot_sequence, display_secure_port, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, hibernation_vol_handle,exit_status,pause_status,exit_message)
 	VALUES(v_app_list, v_guest_cur_user_id, v_guest_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_vm_pid, v_display, v_acpi_enable, v_session, v_display_ip, v_display_type, v_kvm_enable, v_boot_sequence, v_display_secure_port, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_hibernation_vol_handle, v_exit_status, v_pause_status, v_exit_message);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -173,20 +173,20 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_dynamic
-      SET app_list = v_app_list,guest_cur_user_id = v_guest_cur_user_id,guest_cur_user_name = v_guest_cur_user_name, 
-      guest_last_login_time = v_guest_last_login_time, 
-      guest_last_logout_time = v_guest_last_logout_time, 
+      SET app_list = v_app_list,guest_cur_user_id = v_guest_cur_user_id,guest_cur_user_name = v_guest_cur_user_name,
+      guest_last_login_time = v_guest_last_login_time,
+      guest_last_logout_time = v_guest_last_logout_time,
       console_user_id = v_console_user_id,
-      guest_os = v_guest_os,migrating_to_vds = v_migrating_to_vds,RUN_ON_VDS = v_run_on_vds, 
-      status = v_status,vm_host = v_vm_host,vm_ip = v_vm_ip, 
-      last_start_time = v_last_start_time, 
-      vm_pid = v_vm_pid,display = v_display,acpi_enable = v_acpi_enable, 
-      session = v_session,display_ip = v_display_ip, 
-      display_type = v_display_type,kvm_enable = v_kvm_enable,boot_sequence = v_boot_sequence, 
-      display_secure_port = v_display_secure_port, 
-      utc_diff = v_utc_diff,last_vds_run_on = v_last_vds_run_on,client_ip = v_client_ip, 
-      guest_requested_memory = v_guest_requested_memory, 
-      hibernation_vol_handle = v_hibernation_vol_handle,exit_status = v_exit_status, 
+      guest_os = v_guest_os,migrating_to_vds = v_migrating_to_vds,RUN_ON_VDS = v_run_on_vds,
+      status = v_status,vm_host = v_vm_host,vm_ip = v_vm_ip,
+      last_start_time = v_last_start_time,
+      vm_pid = v_vm_pid,display = v_display,acpi_enable = v_acpi_enable,
+      session = v_session,display_ip = v_display_ip,
+      display_type = v_display_type,kvm_enable = v_kvm_enable,boot_sequence = v_boot_sequence,
+      display_secure_port = v_display_secure_port,
+      utc_diff = v_utc_diff,last_vds_run_on = v_last_vds_run_on,client_ip = v_client_ip,
+      guest_requested_memory = v_guest_requested_memory,
+      hibernation_vol_handle = v_hibernation_vol_handle,exit_status = v_exit_status,
       pause_status = v_pause_status,exit_message = v_exit_message, hash=v_hash
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
@@ -220,8 +220,8 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_dynamic
-      SET  
-      status = v_status 
+      SET
+      status = v_status
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -269,35 +269,35 @@ LANGUAGE plpgsql;
 --
 
 
-Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000) ,  
- v_mem_size_mb INTEGER,  
- v_os INTEGER,  
- v_vds_group_id UUID,  
- v_vm_guid UUID,  
- v_vm_name VARCHAR(255),  
- v_vmt_guid UUID,  
- v_domain  VARCHAR(40),  
- v_creation_date TIMESTAMP WITH TIME ZONE,  
- v_num_of_monitors INTEGER,  
+Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000) ,
+ v_mem_size_mb INTEGER,
+ v_os INTEGER,
+ v_vds_group_id UUID,
+ v_vm_guid UUID,
+ v_vm_name VARCHAR(255),
+ v_vmt_guid UUID,
+ v_domain  VARCHAR(40),
+ v_creation_date TIMESTAMP WITH TIME ZONE,
+ v_num_of_monitors INTEGER,
  v_allow_console_reconnect BOOLEAN,
- v_is_initialized BOOLEAN,  
-    v_is_auto_suspend BOOLEAN,  
-    v_num_of_sockets INTEGER,  
-    v_cpu_per_socket INTEGER,  
- v_usb_policy INTEGER,  
- v_time_zone VARCHAR(40) ,  
- v_auto_startup BOOLEAN,  
- v_is_stateless BOOLEAN,  
- v_dedicated_vm_for_vds UUID ,  
-    v_fail_back BOOLEAN ,  
-    v_vm_type INTEGER ,  
-    v_hypervisor_type INTEGER ,  
-    v_operation_mode INTEGER ,  
- v_nice_level INTEGER,  
-    v_default_boot_sequence INTEGER,  
- v_default_display_type INTEGER,  
- v_priority INTEGER,  
-    v_iso_path VARCHAR(4000) ,  
+ v_is_initialized BOOLEAN,
+    v_is_auto_suspend BOOLEAN,
+    v_num_of_sockets INTEGER,
+    v_cpu_per_socket INTEGER,
+ v_usb_policy INTEGER,
+ v_time_zone VARCHAR(40) ,
+ v_auto_startup BOOLEAN,
+ v_is_stateless BOOLEAN,
+ v_dedicated_vm_for_vds UUID ,
+    v_fail_back BOOLEAN ,
+    v_vm_type INTEGER ,
+    v_hypervisor_type INTEGER ,
+    v_operation_mode INTEGER ,
+ v_nice_level INTEGER,
+    v_default_boot_sequence INTEGER,
+ v_default_display_type INTEGER,
+ v_priority INTEGER,
+    v_iso_path VARCHAR(4000) ,
     v_origin INTEGER ,
     v_initrd_url    VARCHAR(4000) ,
     v_kernel_url    VARCHAR(4000) ,
@@ -320,35 +320,35 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,  
- v_mem_size_mb INTEGER,  
- v_os INTEGER,  
- v_vds_group_id UUID,  
- v_vm_guid UUID,  
- v_vm_name VARCHAR(255),  
- v_vmt_guid UUID,  
- v_domain  VARCHAR(40),  
- v_creation_date TIMESTAMP WITH TIME ZONE,  
- v_num_of_monitors INTEGER,  
+Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
+ v_mem_size_mb INTEGER,
+ v_os INTEGER,
+ v_vds_group_id UUID,
+ v_vm_guid UUID,
+ v_vm_name VARCHAR(255),
+ v_vmt_guid UUID,
+ v_domain  VARCHAR(40),
+ v_creation_date TIMESTAMP WITH TIME ZONE,
+ v_num_of_monitors INTEGER,
  v_allow_console_reconnect BOOLEAN,
- v_is_initialized BOOLEAN,  
- v_is_auto_suspend BOOLEAN,  
-    v_num_of_sockets INTEGER,  
-    v_cpu_per_socket INTEGER,  
- v_usb_policy  INTEGER,  
- v_time_zone VARCHAR(40) ,  
- v_auto_startup BOOLEAN,  
- v_is_stateless BOOLEAN,  
- v_dedicated_vm_for_vds UUID ,  
-    v_fail_back BOOLEAN ,  
-    v_vm_type INTEGER ,  
-    v_hypervisor_type INTEGER ,  
-    v_operation_mode INTEGER ,  
-    v_nice_level INTEGER,  
-    v_default_boot_sequence INTEGER,  
- v_default_display_type INTEGER,  
- v_priority INTEGER,  
-    v_iso_path VARCHAR(4000) ,  
+ v_is_initialized BOOLEAN,
+ v_is_auto_suspend BOOLEAN,
+    v_num_of_sockets INTEGER,
+    v_cpu_per_socket INTEGER,
+ v_usb_policy  INTEGER,
+ v_time_zone VARCHAR(40) ,
+ v_auto_startup BOOLEAN,
+ v_is_stateless BOOLEAN,
+ v_dedicated_vm_for_vds UUID ,
+    v_fail_back BOOLEAN ,
+    v_vm_type INTEGER ,
+    v_hypervisor_type INTEGER ,
+    v_operation_mode INTEGER ,
+    v_nice_level INTEGER,
+    v_default_boot_sequence INTEGER,
+ v_default_display_type INTEGER,
+ v_priority INTEGER,
+    v_iso_path VARCHAR(4000) ,
     v_origin INTEGER ,
     v_initrd_url    VARCHAR(4000) ,
     v_kernel_url    VARCHAR(4000) ,
@@ -365,20 +365,20 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_static
-      SET description = v_description,mem_size_mb = v_mem_size_mb,os = v_os,vds_group_id = v_vds_group_id, 
-      VM_NAME = v_vm_name,vmt_guid = v_vmt_guid, 
-      domain = v_domain,creation_date = v_creation_date,num_of_monitors = v_num_of_monitors, 
+      SET description = v_description,mem_size_mb = v_mem_size_mb,os = v_os,vds_group_id = v_vds_group_id,
+      VM_NAME = v_vm_name,vmt_guid = v_vmt_guid,
+      domain = v_domain,creation_date = v_creation_date,num_of_monitors = v_num_of_monitors,
       allow_console_reconnect = v_allow_console_reconnect,
-      is_initialized = v_is_initialized,is_auto_suspend = v_is_auto_suspend, 
-      num_of_sockets = v_num_of_sockets,cpu_per_socket = v_cpu_per_socket, 
-      usb_policy = v_usb_policy,time_zone = v_time_zone,auto_startup = v_auto_startup, 
-      is_stateless = v_is_stateless,dedicated_vm_for_vds = v_dedicated_vm_for_vds, 
-      fail_back = v_fail_back,vm_type = v_vm_type, 
-      hypervisor_type = v_hypervisor_type,nice_level = v_nice_level,operation_mode = v_operation_mode, 
-      _update_date = LOCALTIMESTAMP,default_boot_sequence = v_default_boot_sequence, 
-      default_display_type = v_default_display_type, 
-      priority = v_priority,iso_path = v_iso_path,origin = v_origin, 
-      initrd_url = v_initrd_url,kernel_url = v_kernel_url, 
+      is_initialized = v_is_initialized,is_auto_suspend = v_is_auto_suspend,
+      num_of_sockets = v_num_of_sockets,cpu_per_socket = v_cpu_per_socket,
+      usb_policy = v_usb_policy,time_zone = v_time_zone,auto_startup = v_auto_startup,
+      is_stateless = v_is_stateless,dedicated_vm_for_vds = v_dedicated_vm_for_vds,
+      fail_back = v_fail_back,vm_type = v_vm_type,
+      hypervisor_type = v_hypervisor_type,nice_level = v_nice_level,operation_mode = v_operation_mode,
+      _update_date = LOCALTIMESTAMP,default_boot_sequence = v_default_boot_sequence,
+      default_display_type = v_default_display_type,
+      priority = v_priority,iso_path = v_iso_path,origin = v_origin,
+      initrd_url = v_initrd_url,kernel_url = v_kernel_url,
       kernel_params = v_kernel_params,migration_support = v_migration_support,
       predefined_properties = v_predefined_properties,userdefined_properties = v_userdefined_properties,
       min_allocated_mem = v_min_allocated_mem, quota_id = v_quota_id, cpu_pinning = v_cpu_pinning
@@ -398,7 +398,7 @@ RETURNS VOID
    v_val  UUID;
 BEGIN
 			-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-            -- in order to force locking parent before children 
+            -- in order to force locking parent before children
       select   vm_guid INTO v_val FROM vm_static  WHERE vm_guid = v_vm_guid     FOR UPDATE;
       DELETE FROM vm_static
       WHERE vm_guid = v_vm_guid
@@ -636,33 +636,33 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION InsertVm(v_description VARCHAR(4000) ,  
- v_mem_size_mb INTEGER,  
- v_os INTEGER,  
- v_vds_group_id UUID,  
- v_vm_guid UUID,  
- v_vm_name VARCHAR(255),  
- v_vmt_guid UUID,  
- v_num_of_monitors INTEGER,  
+Create or replace FUNCTION InsertVm(v_description VARCHAR(4000) ,
+ v_mem_size_mb INTEGER,
+ v_os INTEGER,
+ v_vds_group_id UUID,
+ v_vm_guid UUID,
+ v_vm_name VARCHAR(255),
+ v_vmt_guid UUID,
+ v_num_of_monitors INTEGER,
  v_allow_console_reconnect BOOLEAN,
- v_is_initialized   BOOLEAN,  
- v_is_auto_suspend   BOOLEAN,  
-    v_num_of_sockets INTEGER,  
-    v_cpu_per_socket INTEGER,  
- v_usb_policy INTEGER,  
- v_time_zone VARCHAR(40) ,  
- v_auto_startup BOOLEAN,  
- v_is_stateless BOOLEAN,  
- v_dedicated_vm_for_vds UUID ,  
-    v_fail_back BOOLEAN ,  
-    v_vm_type INTEGER ,  
-    v_hypervisor_type INTEGER ,  
-    v_operation_mode INTEGER ,  
-    v_nice_level INTEGER,  
-    v_default_boot_sequence INTEGER,  
- v_default_display_type INTEGER,  
- v_priority INTEGER,  
-    v_iso_path VARCHAR(4000) ,  
+ v_is_initialized   BOOLEAN,
+ v_is_auto_suspend   BOOLEAN,
+    v_num_of_sockets INTEGER,
+    v_cpu_per_socket INTEGER,
+ v_usb_policy INTEGER,
+ v_time_zone VARCHAR(40) ,
+ v_auto_startup BOOLEAN,
+ v_is_stateless BOOLEAN,
+ v_dedicated_vm_for_vds UUID ,
+    v_fail_back BOOLEAN ,
+    v_vm_type INTEGER ,
+    v_hypervisor_type INTEGER ,
+    v_operation_mode INTEGER ,
+    v_nice_level INTEGER,
+    v_default_boot_sequence INTEGER,
+ v_default_display_type INTEGER,
+ v_priority INTEGER,
+    v_iso_path VARCHAR(4000) ,
     v_origin INTEGER ,
     v_initrd_url VARCHAR(4000) ,
     v_kernel_url VARCHAR(4000) ,
@@ -677,11 +677,11 @@ RETURNS VOID
 BEGIN
 INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid, num_of_monitors, allow_console_reconnect, is_initialized, is_auto_suspend, num_of_sockets, cpu_per_socket, usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds,fail_back,vm_type,hypervisor_type,operation_mode,nice_level,default_boot_sequence,default_display_type,priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem,cpu_pinning)
 	VALUES(v_description, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_num_of_monitors, v_num_of_monitors, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone,v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back,v_vm_type,v_hypervisor_type,v_operation_mode,v_nice_level,v_default_boot_sequence,v_default_display_type,v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem,v_cpu_pinning);
-	
+
       INSERT INTO vm_dynamic(vm_guid, status) VALUES(v_vm_guid, 0);
-	
+
       INSERT INTO vm_statistics(vm_guid) VALUES(v_vm_guid);
-	
+
       UPDATE vm_static
       SET child_count =(SELECT COUNT(*) FROM vm_static WHERE vmt_guid = v_vmt_guid)
       WHERE vm_guid = v_vmt_guid;
@@ -729,7 +729,7 @@ BEGIN
 RETURN QUERY select distinct vms.* from vms
    inner join permissions on vms.vm_guid = permissions.object_id
    inner join ad_groups on ad_groups.id = permissions.ad_element_id
-   WHERE     (ad_groups.name in(select Id from fnSplitter(v_ad_group_names))); 
+   WHERE     (ad_groups.name in(select Id from fnSplitter(v_ad_group_names)));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -825,7 +825,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION UpdateIsInitialized(v_vm_guid UUID,  
+Create or replace FUNCTION UpdateIsInitialized(v_vm_guid UUID,
  v_is_initialized BOOLEAN)
 RETURNS VOID
 
@@ -853,7 +853,7 @@ BEGIN
    FOR v_ordered_guids IN EXECUTE 'SELECT vm_guid from vm_static where vm_guid in( ' || v_vm_guids || ' ) AND entity_type = ''VM''  order by auto_startup desc,priority desc, migration_support desc' LOOP
       RETURN NEXT v_ordered_guids;
    END LOOP;
-	
+
 END; $procedure$
 LANGUAGE plpgsql;
 

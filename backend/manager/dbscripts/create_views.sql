@@ -118,7 +118,7 @@ CREATE OR REPLACE VIEW vm_images_view
 AS
 SELECT                storage_for_image_view.storage_id as storage_id, storage_for_image_view.storage_path as storage_path, storage_for_image_view.storage_name as storage_name,
 					  images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
-                      images_storage_domain_view.creation_date as creation_date, disk_image_dynamic.actual_size as actual_size, disk_image_dynamic.read_rate as read_rate, 
+                      images_storage_domain_view.creation_date as creation_date, disk_image_dynamic.actual_size as actual_size, disk_image_dynamic.read_rate as read_rate,
                       disk_image_dynamic.read_latency_seconds as read_latency_seconds, disk_image_dynamic.write_latency_seconds as write_latency_seconds,
                       disk_image_dynamic.flush_latency_seconds as flush_latency_seconds, disk_image_dynamic.write_rate as write_rate,
                       images_storage_domain_view.size as size, images_storage_domain_view.it_guid as it_guid,
@@ -393,20 +393,20 @@ INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TR
 CREATE OR REPLACE VIEW vm_templates_storage_domain
 AS
 	SELECT            vm_templates.vm_guid AS vmt_guid, vm_templates.vm_name AS name, vm_templates.mem_size_mb,
-                      vm_templates.os, vm_templates.creation_date,		
-                      vm_templates.child_count, vm_templates.num_of_sockets, vm_templates.cpu_per_socket,		
-	                  vm_templates.num_of_sockets*vm_templates.cpu_per_socket AS num_of_cpus, vm_templates.description,		
-	                  vm_templates.vds_group_id, vm_templates.domain, vm_templates.num_of_monitors, vm_templates.allow_console_reconnect, vm_templates.template_status AS status,		
-	                  vm_templates.usb_policy, vm_templates.time_zone, vm_templates.is_auto_suspend, vm_templates.fail_back,		
+                      vm_templates.os, vm_templates.creation_date,
+                      vm_templates.child_count, vm_templates.num_of_sockets, vm_templates.cpu_per_socket,
+	                  vm_templates.num_of_sockets*vm_templates.cpu_per_socket AS num_of_cpus, vm_templates.description,
+	                  vm_templates.vds_group_id, vm_templates.domain, vm_templates.num_of_monitors, vm_templates.allow_console_reconnect, vm_templates.template_status AS status,
+	                  vm_templates.usb_policy, vm_templates.time_zone, vm_templates.is_auto_suspend, vm_templates.fail_back,
 	                  vds_groups.name AS vds_group_name, vm_templates.vm_type, vm_templates.hypervisor_type, vm_templates.operation_mode,		                      vm_templates.nice_level, storage_pool.id AS storage_pool_id, storage_pool.name
-                      AS storage_pool_name,		
-	                  vm_templates.default_boot_sequence, vm_templates.default_display_type, vm_templates.priority, vm_templates.auto_startup,		
-	                  vm_templates.is_stateless, vm_templates.iso_path, vm_templates.origin, vm_templates.initrd_url, vm_templates.kernel_url,		
+                      AS storage_pool_name,
+	                  vm_templates.default_boot_sequence, vm_templates.default_display_type, vm_templates.priority, vm_templates.auto_startup,
+	                  vm_templates.is_stateless, vm_templates.iso_path, vm_templates.origin, vm_templates.initrd_url, vm_templates.kernel_url,
 	                  vm_templates.kernel_params, image_storage_domain_map.storage_domain_id AS storage_id,
                           quota.quota_name as quota_name
-FROM                  vm_static AS vm_templates INNER JOIN		
-	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN		
-                      storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN		
+FROM                  vm_static AS vm_templates INNER JOIN
+	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
+                      storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
                       vm_device ON vm_device.vm_id = vm_templates.vm_guid LEFT JOIN
 	                  images ON images.image_group_id = vm_device.device_id
 	                  LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid

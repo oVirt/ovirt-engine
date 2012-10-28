@@ -3,11 +3,11 @@ CREATE OR REPLACE FUNCTION insert_entity_snapshot(v_command_id uuid,v_command_ty
 $procedure$
 declare v_id uuid;
 BEGIN
-	BEGIN 	 
+	BEGIN
 		INSERT INTO business_entity_snapshot(id, command_id, command_type, entity_id,entity_type,entity_snapshot, snapshot_class, snapshot_type,insertion_order)
 				VALUES(uuid_generate_v1(), v_command_id, v_command_type, v_entity_id,v_entity_type,v_entity_snapshot, v_snapshot_class, v_snapshot_type,v_insertion_order);
 	END;
-    
+
    RETURN;
 END; $procedure$
   LANGUAGE plpgsql;

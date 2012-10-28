@@ -22,11 +22,11 @@ Create or replace FUNCTION DeleteRepo_domain_file_list(v_repo_domain_id UUID, v_
 RETURNS VOID
    AS $procedure$
 BEGIN
-    
+
    DELETE FROM repo_file_meta_data
    WHERE repo_domain_id = v_repo_domain_id
      AND file_type = v_file_type;
-    
+
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -68,8 +68,8 @@ RETURNS SETOF GetRepo_files_in_all_storage_pools_rs
    AS $procedure$
 BEGIN
  RETURN QUERY SELECT distinct b.storage_domain_id,c.last_refreshed,b.file_type
-   FROM storage_domain_file_repos b  
-   LEFT OUTER JOIN 
+   FROM storage_domain_file_repos b
+   LEFT OUTER JOIN
    (SELECT storage_domain_id,file_type,min(last_refreshed) as last_refreshed
       FROM storage_domain_file_repos a
    	  Group by storage_domain_id,file_type) as c ON b.storage_domain_id = c.storage_domain_id

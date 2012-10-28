@@ -17,7 +17,7 @@ BEGIN
 INSERT INTO LUNs(LUN_id, physical_volume_id, volume_group_id, serial, lun_mapping, vendor_id, product_id, device_size)
 	VALUES(v_LUN_id, v_physical_volume_id, v_volume_group_id, v_serial, v_lun_mapping, v_vendor_id, v_product_id, v_device_size);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -30,14 +30,14 @@ RETURNS VOID
    DECLARE
    v_val  VARCHAR(50);
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children 
+	-- in order to force locking parent before children
    select   LUN_id INTO v_val FROM LUNs  WHERE LUN_id = v_LUN_id     FOR UPDATE;
 
    DELETE FROM LUNs
    WHERE LUN_id = v_LUN_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -84,7 +84,7 @@ RETURNS SETOF luns_view
 BEGIN
    RETURN QUERY SELECT *
    FROM luns_view
-   WHERE volume_group_id = v_volume_group_id; 
+   WHERE volume_group_id = v_volume_group_id;
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -93,13 +93,13 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetLUNByLUNId(v_LUN_id VARCHAR(50)) 
+Create or replace FUNCTION GetLUNByLUNId(v_LUN_id VARCHAR(50))
 RETURNS SETOF luns_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM luns_view
-   WHERE LUN_id = v_LUN_id; 
+   WHERE LUN_id = v_LUN_id;
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -121,7 +121,7 @@ BEGIN
 INSERT INTO storage_domain_dynamic(available_disk_size, id, used_disk_size)
 	VALUES(v_available_disk_size, v_id, v_used_disk_size);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -149,10 +149,10 @@ Create or replace FUNCTION Deletestorage_domain_dynamic(v_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    DELETE FROM storage_domain_dynamic
    WHERE id = v_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -204,7 +204,7 @@ BEGIN
 INSERT INTO storage_pool_iso_map(storage_id, storage_pool_id, status, owner)
 	VALUES(v_storage_id, v_storage_pool_id, v_status, v_owner);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -234,10 +234,10 @@ Create or replace FUNCTION Deletestorage_pool_iso_map(v_storage_id UUID,
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    DELETE FROM storage_pool_iso_map
    WHERE storage_id = v_storage_id AND storage_pool_id = v_storage_pool_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -272,7 +272,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_pool_iso_mapsBystorage_id(v_storage_id UUID) 
+Create or replace FUNCTION Getstorage_pool_iso_mapsBystorage_id(v_storage_id UUID)
 RETURNS SETOF storage_pool_iso_map
    AS $procedure$
 BEGIN
@@ -343,7 +343,7 @@ INSERT INTO storage_server_connections(connection, id, iqn, port,portal,
 	password, storage_type, user_name,mount_options,vfs_type,nfs_version,nfs_timeo,nfs_retrans)
 	VALUES(v_connection, v_id, v_iqn,v_port,v_portal, v_password, v_storage_type, v_user_name,v_mount_options,v_vfs_type,v_nfs_version,v_nfs_timeo,v_nfs_retrans);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -369,7 +369,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE storage_server_connections
-      SET connection = v_connection,iqn = v_iqn,password = v_password,port = v_port, 
+      SET connection = v_connection,iqn = v_iqn,password = v_password,port = v_port,
       portal = v_portal,storage_type = v_storage_type,user_name = v_user_name,mount_options = v_mount_options, vfs_type = v_vfs_type, nfs_version = v_nfs_version, nfs_timeo = v_nfs_timeo, nfs_retrans = v_nfs_retrans
       WHERE id = v_id;
 END; $procedure$
@@ -385,14 +385,14 @@ RETURNS VOID
    DECLARE
    v_val  VARCHAR(50);
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children 
+	-- in order to force locking parent before children
    select   id INTO v_val FROM storage_server_connections  WHERE id = v_id     FOR UPDATE;
-	
+
    DELETE FROM storage_server_connections
    WHERE id = v_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -513,7 +513,7 @@ Create or replace FUNCTION Getstorage_server_connectionsByVolumeGroupId(v_volume
 BEGIN
    RETURN QUERY SELECT storage_server_connections.*
    FROM
-   LUN_storage_server_connection_map  LUN_storage_server_connection_map 
+   LUN_storage_server_connection_map  LUN_storage_server_connection_map
    INNER JOIN
    LUNs ON LUN_storage_server_connection_map.LUN_id = LUNs.LUN_id INNER JOIN
    storage_domain_static ON LUNs.volume_group_id = storage_domain_static.storage INNER JOIN
@@ -588,7 +588,7 @@ BEGIN
 INSERT INTO LUN_storage_server_connection_map(LUN_id, storage_server_connection)
 	VALUES(v_LUN_id, v_storage_server_connection);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -613,10 +613,10 @@ Create or replace FUNCTION DeleteLUN_storage_server_connection_map(v_LUN_id VARC
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    DELETE FROM LUN_storage_server_connection_map
    WHERE LUN_id = v_LUN_id AND storage_server_connection = v_storage_server_connection;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -628,7 +628,7 @@ Create or replace FUNCTION GetAllFromLUN_storage_server_connection_map()
 RETURNS SETOF LUN_storage_server_connection_map
    AS $procedure$
 BEGIN
-	
+
    RETURN QUERY SELECT *
    FROM LUN_storage_server_connection_map lUN_storage_server_connection_map;
 
@@ -642,7 +642,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetLUN_storage_server_connection_mapByLUNBystorage_server_conn(v_LUN_id VARCHAR(50),v_storage_server_connection VARCHAR(50)) RETURNS SETOF LUN_storage_server_connection_map
    AS $procedure$
 BEGIN
-	
+
    RETURN QUERY SELECT *
    FROM LUN_storage_server_connection_map lUN_storage_server_connection_map
    WHERE LUN_id = v_LUN_id AND storage_server_connection = v_storage_server_connection;

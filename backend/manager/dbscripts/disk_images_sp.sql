@@ -28,7 +28,7 @@ RETURNS SETOF images_storage_domain_view
    AS $procedure$
 BEGIN
       RETURN QUERY WITH RECURSIVE ancestor_image(image_guid, parentid) AS (
-         SELECT image_guid, parentid 
+         SELECT image_guid, parentid
          FROM images
          WHERE image_guid = v_image_guid
          UNION ALL
@@ -89,7 +89,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmImageByImageGuid(v_image_guid UUID) 
+Create or replace FUNCTION GetVmImageByImageGuid(v_image_guid UUID)
 RETURNS SETOF vm_images_view
    AS $procedure$
 BEGIN
@@ -142,7 +142,7 @@ RETURNS SETOF images_storage_domain_view
 BEGIN
 	  IF v_template_id IS NULL then
            RETURN QUERY SELECT images_storage_domain_view.*
-           FROM images_storage_domain_view 
+           FROM images_storage_domain_view
            WHERE images_storage_domain_view.storage_id = v_storage_id AND images_storage_domain_view.entity_type::text = 'TEMPLATE'::text;
       ELSE
            RETURN QUERY SELECT images_storage_domain_view.*
@@ -151,7 +151,7 @@ BEGIN
            WHERE images_storage_domain_view.storage_id = v_storage_id
              AND vm_device.vm_id = v_template_id
              AND images_storage_domain_view.entity_type::text = 'TEMPLATE'::text;
-      END IF;     
+      END IF;
 END; $procedure$
 LANGUAGE plpgsql;
 

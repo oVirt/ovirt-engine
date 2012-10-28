@@ -7,34 +7,34 @@
 
 
 
-Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,  
- v_creation_date TIMESTAMP WITH TIME ZONE,  
- v_description VARCHAR(4000) ,  
- v_mem_size_mb INTEGER,  
- v_name VARCHAR(40),  
- v_num_of_sockets INTEGER,  
- v_cpu_per_socket INTEGER,  
- v_os INTEGER,  
- v_vmt_guid UUID,  
- v_vds_group_id UUID,  
- v_domain VARCHAR(40),  
- v_num_of_monitors INTEGER,  
+Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
+ v_creation_date TIMESTAMP WITH TIME ZONE,
+ v_description VARCHAR(4000) ,
+ v_mem_size_mb INTEGER,
+ v_name VARCHAR(40),
+ v_num_of_sockets INTEGER,
+ v_cpu_per_socket INTEGER,
+ v_os INTEGER,
+ v_vmt_guid UUID,
+ v_vds_group_id UUID,
+ v_domain VARCHAR(40),
+ v_num_of_monitors INTEGER,
  v_allow_console_reconnect BOOLEAN,
- v_status INTEGER,  
- v_usb_policy INTEGER,  
- v_time_zone VARCHAR(40) ,  
- v_fail_back BOOLEAN ,  
- v_is_auto_suspend BOOLEAN,  
- v_vm_type INTEGER ,  
- v_hypervisor_type INTEGER ,  
- v_operation_mode INTEGER ,  
- v_nice_level INTEGER,  
- v_default_boot_sequence INTEGER,  
- v_default_display_type INTEGER,  
- v_priority INTEGER,  
- v_auto_startup BOOLEAN,  
- v_is_stateless BOOLEAN,  
- v_iso_path VARCHAR(4000) ,  
+ v_status INTEGER,
+ v_usb_policy INTEGER,
+ v_time_zone VARCHAR(40) ,
+ v_fail_back BOOLEAN ,
+ v_is_auto_suspend BOOLEAN,
+ v_vm_type INTEGER ,
+ v_hypervisor_type INTEGER ,
+ v_operation_mode INTEGER ,
+ v_nice_level INTEGER,
+ v_default_boot_sequence INTEGER,
+ v_default_display_type INTEGER,
+ v_priority INTEGER,
+ v_auto_startup BOOLEAN,
+ v_is_stateless BOOLEAN,
+ v_iso_path VARCHAR(4000) ,
  v_origin INTEGER ,
  v_initrd_url    VARCHAR(4000) ,
  v_kernel_url    VARCHAR(4000) ,
@@ -126,40 +126,40 @@ VALUES(
     v_migration_support,
     v_dedicated_vm_for_vds);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,  
- v_creation_date TIMESTAMP WITH TIME ZONE,  
- v_description VARCHAR(4000) ,  
- v_mem_size_mb INTEGER,  
- v_name VARCHAR(40),  
- v_num_of_sockets INTEGER,  
- v_cpu_per_socket INTEGER,  
- v_os INTEGER,  
- v_vmt_guid UUID,  
- v_vds_group_id UUID,  
- v_domain VARCHAR(40),  
- v_num_of_monitors INTEGER,  
+Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
+ v_creation_date TIMESTAMP WITH TIME ZONE,
+ v_description VARCHAR(4000) ,
+ v_mem_size_mb INTEGER,
+ v_name VARCHAR(40),
+ v_num_of_sockets INTEGER,
+ v_cpu_per_socket INTEGER,
+ v_os INTEGER,
+ v_vmt_guid UUID,
+ v_vds_group_id UUID,
+ v_domain VARCHAR(40),
+ v_num_of_monitors INTEGER,
  v_allow_console_reconnect BOOLEAN,
- v_status INTEGER,  
- v_usb_policy INTEGER,  
- v_time_zone VARCHAR(40) ,  
- v_fail_back BOOLEAN ,  
- v_is_auto_suspend BOOLEAN,  
- v_vm_type INTEGER ,  
- v_hypervisor_type INTEGER ,  
- v_operation_mode INTEGER ,  
- v_nice_level INTEGER,  
- v_default_boot_sequence INTEGER,  
- v_default_display_type INTEGER,  
- v_priority INTEGER,  
- v_auto_startup BOOLEAN,  
- v_is_stateless BOOLEAN,  
- v_iso_path VARCHAR(4000) ,  
+ v_status INTEGER,
+ v_usb_policy INTEGER,
+ v_time_zone VARCHAR(40) ,
+ v_fail_back BOOLEAN ,
+ v_is_auto_suspend BOOLEAN,
+ v_vm_type INTEGER ,
+ v_hypervisor_type INTEGER ,
+ v_operation_mode INTEGER ,
+ v_nice_level INTEGER,
+ v_default_boot_sequence INTEGER,
+ v_default_display_type INTEGER,
+ v_priority INTEGER,
+ v_auto_startup BOOLEAN,
+ v_is_stateless BOOLEAN,
+ v_iso_path VARCHAR(4000) ,
  v_origin INTEGER ,
  v_initrd_url VARCHAR(4000) ,
  v_kernel_url VARCHAR(4000) ,
@@ -173,18 +173,18 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_static
-      SET child_count = v_child_count,creation_date = v_creation_date,description = v_description, 
+      SET child_count = v_child_count,creation_date = v_creation_date,description = v_description,
       mem_size_mb = v_mem_size_mb,vm_name = v_name,num_of_sockets = v_num_of_sockets,
-      cpu_per_socket = v_cpu_per_socket,os = v_os, 
+      cpu_per_socket = v_cpu_per_socket,os = v_os,
       vds_group_id = v_vds_group_id,domain = v_domain,num_of_monitors = v_num_of_monitors,
       allow_console_reconnect = v_allow_console_reconnect,
       template_status = v_status,usb_policy = v_usb_policy,time_zone = v_time_zone,
       fail_back = v_fail_back,is_auto_suspend = v_is_auto_suspend,
-      vm_type = v_vm_type,hypervisor_type = v_hypervisor_type,operation_mode = v_operation_mode, 
-      nice_level = v_nice_level,default_boot_sequence = v_default_boot_sequence, 
-      default_display_type = v_default_display_type, 
-      priority = v_priority,auto_startup = v_auto_startup,is_stateless = v_is_stateless, 
-      iso_path = v_iso_path,origin = v_origin,initrd_url = v_initrd_url, 
+      vm_type = v_vm_type,hypervisor_type = v_hypervisor_type,operation_mode = v_operation_mode,
+      nice_level = v_nice_level,default_boot_sequence = v_default_boot_sequence,
+      default_display_type = v_default_display_type,
+      priority = v_priority,auto_startup = v_auto_startup,is_stateless = v_is_stateless,
+      iso_path = v_iso_path,origin = v_origin,initrd_url = v_initrd_url,
       kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP, quota_id = v_quota_id,
       migration_support = v_migration_support, dedicated_vm_for_vds = v_dedicated_vm_for_vds
       WHERE vm_guid = v_vmt_guid
@@ -217,7 +217,7 @@ RETURNS VOID
    v_val  UUID;
 BEGIN
         -- Get (and keep) a shared lock with "right to upgrade to exclusive"
-		-- in order to force locking parent before children 
+		-- in order to force locking parent before children
       select   vm_guid INTO v_val FROM vm_static  WHERE vm_guid = v_vmt_guid AND entity_type = 'TEMPLATE' FOR UPDATE;
       DELETE FROM vm_static
       WHERE vm_guid = v_vmt_guid
@@ -293,7 +293,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetVmTemplatesByImageId(v_image_guid UUID) RETURNS SETOF vm_templates_with_plug_info
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT * 
+      RETURN QUERY SELECT *
       FROM vm_templates_with_plug_info t
       WHERE t.image_guid = v_image_guid;
 END; $procedure$

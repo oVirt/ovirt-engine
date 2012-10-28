@@ -28,7 +28,7 @@ insert into image_templates (it_guid,os,os_version,creation_date,size,descriptio
 insert into vm_templates (vmt_guid,name,mem_size_mb,os,creation_date,child_count,num_of_sockets,cpu_per_socket,description,vds_group_id,domain,num_of_monitors,status) select v_id_0000,'Blank' ,512,0,'2008/04/01 00:00:00',0,1,1,'Blank template',v_cluster_id,'',1,0 where not exists (select vmt_guid from vm_templates where vmt_guid = v_id_0000);
 insert into vm_template_image_map (it_guid,vmt_guid,internal_drive_mapping) select v_id_0000,v_id_0000,'1' where not exists (select * from vm_template_image_map where it_guid = v_id_0000  and vmt_guid = v_id_0000);
 
-delete from event_map; 
+delete from event_map;
 
 
 insert into event_map(event_up_name, event_down_name) values('VDC_STOP', 'VDC_START');
@@ -55,7 +55,7 @@ insert into event_map(event_up_name, event_down_name) values('VM_NOT_RESPONDING'
 -- Insert notification methods for notification service
 insert into event_notification_methods (method_id, method_type) values (0,'Email');
 
-delete from action_version_map; 
+delete from action_version_map;
 -- Inserting data to history timekeeping
 Insert into dwh_history_timekeeping  VALUES('lastSync',NULL,to_timestamp('01/01/2000', 'DD/MM/YYYY'));
 -- AddVmFromTemplate

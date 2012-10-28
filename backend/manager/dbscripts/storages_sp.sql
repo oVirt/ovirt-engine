@@ -18,7 +18,7 @@ BEGIN
 INSERT INTO storage_pool(description, id, name, storage_pool_type,status,master_domain_version,spm_vds_id,compatibility_version,quota_enforcement_type)
 	VALUES(v_description, v_id, v_name, v_storage_pool_type,v_status,v_master_domain_version,v_spm_vds_id,v_compatibility_version,v_quota_enforcement_type);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -40,9 +40,9 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE storage_pool
-      SET description = v_description,name = v_name,storage_pool_type = v_storage_pool_type, 
-      status = v_status,storage_pool_format_type = v_storage_pool_format_type,master_domain_version = v_master_domain_version, 
-      spm_vds_id = v_spm_vds_id,compatibility_version = v_compatibility_version, 
+      SET description = v_description,name = v_name,storage_pool_type = v_storage_pool_type,
+      status = v_status,storage_pool_format_type = v_storage_pool_format_type,master_domain_version = v_master_domain_version,
+      spm_vds_id = v_spm_vds_id,compatibility_version = v_compatibility_version,
       _update_date = LOCALTIMESTAMP,quota_enforcement_type=v_quota_enforcement_type
       WHERE id = v_id;
 END; $procedure$
@@ -76,7 +76,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE storage_pool
-      SET 
+      SET
       status = v_status,
       _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
@@ -89,7 +89,7 @@ RETURNS VOID
    DECLARE
    v_val  UUID;
 BEGIN
-	
+
          -- Get (and keep) a shared lock with "right to upgrade to exclusive"
     select vm_guid INTO v_val FROM vm_static where vm_guid in (select vm_guid from vms where storage_pool_id = v_id) FOR UPDATE;
     DELETE
@@ -101,15 +101,15 @@ BEGIN
     delete FROM vm_static where vm_guid in (select vm_guid from vms where storage_pool_id = v_id);
 
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children 
+	-- in order to force locking parent before children
    select   id INTO v_val FROM storage_pool  WHERE id = v_id     FOR UPDATE;
-	
+
    DELETE FROM storage_pool
    WHERE id = v_id;
 
 	-- delete StoragePool permissions --
-   DELETE FROM permissions where object_id = v_id; 
-    
+   DELETE FROM permissions where object_id = v_id;
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -151,7 +151,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_poolByName(v_name VARCHAR(40)) 
+Create or replace FUNCTION Getstorage_poolByName(v_name VARCHAR(40))
 RETURNS SETOF storage_pool
    AS $procedure$
 BEGIN
@@ -165,7 +165,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_poolsByType(v_storage_pool_type INTEGER) 
+Create or replace FUNCTION Getstorage_poolsByType(v_storage_pool_type INTEGER)
 RETURNS SETOF storage_pool
    AS $procedure$
 BEGIN
@@ -201,7 +201,7 @@ RETURNS SETOF storage_pool
    DECLARE
    v_clusterId  UUID;
 BEGIN
-select   vds_group_id INTO v_clusterId FROM Vds_static WHERE vds_id = v_vdsId; 
+select   vds_group_id INTO v_clusterId FROM Vds_static WHERE vds_id = v_vdsId;
    RETURN QUERY SELECT *
    FROM storage_pool
    WHERE storage_pool.id in(select storage_pool_id
@@ -250,7 +250,7 @@ RETURNS VOID
 INSERT INTO storage_domain_static(id, storage,storage_name, storage_type, storage_domain_type, storage_domain_format_type, last_time_used_as_master)
 	VALUES(v_id, v_storage, v_storage_name, v_storage_type, v_storage_domain_type, v_storage_domain_format_type, v_last_time_used_as_master);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domains_List_By_ImageId(v_image_id UUID) RETURNS SETOF storage_domains
@@ -297,16 +297,16 @@ RETURNS VOID
    DECLARE
    v_val  UUID;
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children 
+	-- in order to force locking parent before children
    select   id INTO v_val FROM storage_domain_static  WHERE id = v_id     FOR UPDATE;
-	
+
    DELETE FROM storage_domain_static
    WHERE id = v_id;
-    
+
 	-- delete Storage permissions --
-   DELETE FROM permissions where object_id = v_id; 	
+   DELETE FROM permissions where object_id = v_id;
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -524,7 +524,7 @@ Create or replace FUNCTION Force_Delete_storage_domain(v_storage_domain_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    BEGIN
       -- Images residing on only the specified storage domain
       CREATE GLOBAL TEMPORARY TABLE tt_TEMPSTORAGEDOMAINMAPTABLE AS select image_id
@@ -595,11 +595,11 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_vds_groups(v_user_id UUID, v_action_group_id integer) RETURNS SETOF storage_pool
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT * 
+      RETURN QUERY SELECT *
       FROM storage_pool
-      WHERE storage_pool.id in 
-	(SELECT storage_pool_id 
-	 FROM vds_groups 
+      WHERE storage_pool.id in
+	(SELECT storage_pool_id
+	 FROM vds_groups
 	 WHERE (SELECT get_entity_permissions(v_user_id, v_action_group_id, vds_groups.vds_group_id, 9)) IS NOT NULL);
 END; $procedure$
 LANGUAGE plpgsql;

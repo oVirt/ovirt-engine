@@ -30,7 +30,7 @@ RETURNS VOID
    DECLARE
    v_val  UUID;
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
 	-- in order to force locking parent before children
    select   id INTO v_val FROM permissions  WHERE id = v_id     FOR UPDATE;
@@ -75,7 +75,7 @@ RETURNS SETOF permissions_view
 BEGIN
    RETURN QUERY SELECT *
    FROM permissions_view
-   WHERE 
+   WHERE
    (permissions_view.ad_element_id = v_ad_element_id
     OR    ad_element_id IN (SELECT id FROM getUserAndGroupsById(v_ad_element_id)))
    AND (NOT v_is_filtered OR EXISTS (SELECT 1 FROM user_permissions_permissions_view WHERE user_id = v_user_id));
@@ -117,7 +117,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsByRoleIdAndAdElementIdAndObjectId(v_role_id UUID,
-	v_ad_element_id UUID,v_object_id UUID) 
+	v_ad_element_id UUID,v_object_id UUID)
 RETURNS SETOF permissions_view
    AS $procedure$
 BEGIN
@@ -198,7 +198,7 @@ RETURNS VOID
    DECLARE
    v_val  UUID;
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
     -- in order to force locking parent before children
    select   id INTO v_val FROM roles  WHERE id = v_id     FOR UPDATE;
@@ -252,7 +252,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllRolesByAdElementId(v_ad_element_id UUID) 
+Create or replace FUNCTION GetAllRolesByAdElementId(v_ad_element_id UUID)
 RETURNS SETOF roles
    AS $procedure$
 BEGIN
@@ -388,7 +388,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetPermissionByRoleId(v_role_id UUID) 
+Create or replace FUNCTION GetPermissionByRoleId(v_role_id UUID)
 RETURNS SETOF permissions
    AS $procedure$
 BEGIN
@@ -478,7 +478,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Get_roles_groups_By_action_group_id_And_By_role_id(v_action_group_id INTEGER,v_role_id UUID) RETURNS SETOF roles_groups 
+Create or replace FUNCTION Get_roles_groups_By_action_group_id_And_By_role_id(v_action_group_id INTEGER,v_role_id UUID) RETURNS SETOF roles_groups
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *

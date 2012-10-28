@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #include db general functions
 source ./dbfunctions.sh
 source ./dbcustomfunctions.sh

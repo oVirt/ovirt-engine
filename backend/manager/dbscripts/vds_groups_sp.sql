@@ -33,7 +33,7 @@ BEGIN
 	v_cpu_over_commit_duration_minutes, v_hypervisor_type, v_storage_pool_id,  v_max_vds_memory_over_commit, v_compatibility_version, v_transparent_hugepages, v_migrate_on_error,
 	v_virt_service, v_gluster_service);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -61,13 +61,13 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vds_groups
-      SET description = v_description,name = v_name,cpu_name = v_cpu_name,selection_algorithm = v_selection_algorithm, 
-      high_utilization = v_high_utilization, 
-      low_utilization = v_low_utilization,cpu_over_commit_duration_minutes = v_cpu_over_commit_duration_minutes, 
-      hypervisor_type = v_hypervisor_type, 
+      SET description = v_description,name = v_name,cpu_name = v_cpu_name,selection_algorithm = v_selection_algorithm,
+      high_utilization = v_high_utilization,
+      low_utilization = v_low_utilization,cpu_over_commit_duration_minutes = v_cpu_over_commit_duration_minutes,
+      hypervisor_type = v_hypervisor_type,
       storage_pool_id = v_storage_pool_id,_update_date = LOCALTIMESTAMP,
-      max_vds_memory_over_commit = v_max_vds_memory_over_commit, 
-      compatibility_version = v_compatibility_version,transparent_hugepages = v_transparent_hugepages, 
+      max_vds_memory_over_commit = v_max_vds_memory_over_commit,
+      compatibility_version = v_compatibility_version,transparent_hugepages = v_transparent_hugepages,
       migrate_on_error = v_migrate_on_error,
       virt_service = v_virt_service, gluster_service = v_gluster_service
       WHERE vds_group_id = v_vds_group_id;
@@ -85,7 +85,7 @@ RETURNS VOID
    v_val  UUID;
 BEGIN
 		-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-		-- in order to force locking parent before children 
+		-- in order to force locking parent before children
       select   vds_group_id INTO v_val FROM vds_groups  WHERE vds_group_id = v_vds_group_id     FOR UPDATE;
       DELETE FROM vds_groups
       WHERE vds_group_id = v_vds_group_id;
@@ -171,8 +171,8 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION fn_perms_get_vds_groups_with_permitted_action(v_user_id UUID, v_action_group_id integer) RETURNS SETOF vds_groups
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT * 
-      FROM vds_groups 
+      RETURN QUERY SELECT *
+      FROM vds_groups
       WHERE (SELECT get_entity_permissions(v_user_id, v_action_group_id, vds_groups.vds_group_id, 9)) IS NOT NULL;
 END; $procedure$
 LANGUAGE plpgsql;

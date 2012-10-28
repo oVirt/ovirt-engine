@@ -108,12 +108,12 @@ BEGIN
       event_up_name = v_event_up_name and
       method_id = v_method_id and
       tag_name = v_tag_name) then
-		 
+
 INSERT INTO event_subscriber(event_up_name, method_id, method_address, subscriber_id, tag_name)
 			VALUES(v_event_up_name, v_method_id, v_method_address, v_subscriber_id,v_tag_name);
       end if;
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -153,7 +153,7 @@ RETURNS SETOF event_audit_log_subscriber_view
 BEGIN
       -- begin tran
 
-			
+
 			-- get last event
 			select   audit_log_id INTO v_last from audit_log    order by audit_log_id desc LIMIT 1;
 			-- mark processed events
@@ -169,7 +169,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Deleteevent_subscriber(v_event_up_name VARCHAR(100) ,
-	v_method_id INTEGER ,	
+	v_method_id INTEGER ,
 	v_subscriber_id UUID,
     v_tag_name VARCHAR(50))
 RETURNS VOID
@@ -188,7 +188,7 @@ BEGIN
          and tag_name = v_tag_name;
       end if;
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -205,7 +205,7 @@ BEGIN
       and method_id = v_old_method_id
       and subscriber_id = v_subscriber_id;
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -218,7 +218,7 @@ BEGIN
       from event_notification_methods
       where method_id = v_method_id;
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -231,7 +231,7 @@ BEGIN
       from event_map
       where event_up_name = v_event_name;
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -244,7 +244,7 @@ BEGIN
       from event_notification_methods
       where method_type = v_method_type;
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------------
 --- GetAllFromevent_audit_log_subscriber used to get un notified events
@@ -276,6 +276,6 @@ RETURNS VOID
 BEGIN
       DELETE FROM event_notification_hist WHERE sent_at < v_sent_at;
 END; $procedure$
-LANGUAGE plpgsql;  
+LANGUAGE plpgsql;
 
 

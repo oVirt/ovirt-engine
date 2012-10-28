@@ -3,7 +3,7 @@
 --
 
 
-Create or replace FUNCTION Inserttags_vm_pool_map(v_tag_id UUID,  
+Create or replace FUNCTION Inserttags_vm_pool_map(v_tag_id UUID,
  v_vm_pool_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -11,7 +11,7 @@ BEGIN
 INSERT INTO tags_vm_pool_map(tag_id, vm_pool_id)
 	VALUES(v_tag_id, v_vm_pool_id);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -31,15 +31,15 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Deletetags_vm_pool_map(v_tag_id UUID,  
+Create or replace FUNCTION Deletetags_vm_pool_map(v_tag_id UUID,
  v_vm_pool_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    DELETE FROM tags_vm_pool_map
    WHERE tag_id = v_tag_id AND vm_pool_id = v_vm_pool_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -50,7 +50,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetAllFromtags_vm_pool_map() RETURNS SETOF tags_vm_pool_map
    AS $procedure$
 BEGIN
-	
+
    RETURN QUERY SELECT tags_vm_pool_map.*
    FROM tags_vm_pool_map;
 
@@ -61,11 +61,11 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Gettags_vm_pool_mapBytag_idAndByvm_pool_id(v_tag_id UUID,  
+Create or replace FUNCTION Gettags_vm_pool_mapBytag_idAndByvm_pool_id(v_tag_id UUID,
  v_vm_pool_id UUID) RETURNS SETOF tags_vm_pool_map
    AS $procedure$
 BEGIN
-	
+
    RETURN QUERY SELECT tags_vm_pool_map.*
    FROM tags_vm_pool_map
    WHERE tag_id = v_tag_id AND vm_pool_id = v_vm_pool_id;

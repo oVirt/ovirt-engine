@@ -7,7 +7,7 @@
 
 
 
-Create or replace FUNCTION InsertVm_pool_map(v_vm_guid UUID,  
+Create or replace FUNCTION InsertVm_pool_map(v_vm_guid UUID,
  v_vm_pool_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -15,13 +15,13 @@ BEGIN
 INSERT INTO vm_pool_map(vm_guid, vm_pool_id)
 	VALUES(v_vm_guid, v_vm_pool_id);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION UpdateVm_pool_map(v_vm_guid UUID,  
+Create or replace FUNCTION UpdateVm_pool_map(v_vm_guid UUID,
  v_vm_pool_id UUID)
 RETURNS VOID
 
@@ -45,7 +45,7 @@ RETURNS VOID
    v_val  VARCHAR(50);
 BEGIN
 		-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-		-- in order to force locking parent before children 
+		-- in order to force locking parent before children
       select   vm_guid INTO v_val FROM vm_pool_map  WHERE vm_guid = v_vm_guid     FOR UPDATE;
       DELETE FROM vm_pool_map
       WHERE vm_guid = v_vm_guid;

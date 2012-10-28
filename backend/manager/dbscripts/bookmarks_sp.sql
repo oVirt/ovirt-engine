@@ -15,7 +15,7 @@ BEGIN
 INSERT INTO bookmarks(bookmark_Id,bookmark_name, bookmark_value)
 	VALUES(uuid_generate_v1(),v_bookmark_name, v_bookmark_value);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -65,7 +65,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetBookmarkBybookmark_name(v_bookmark_name VARCHAR(40)) 
+Create or replace FUNCTION GetBookmarkBybookmark_name(v_bookmark_name VARCHAR(40))
 RETURNS SETOF bookmarks
    AS $procedure$
 BEGIN
@@ -79,7 +79,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetBookmarkBybookmark_id(v_bookmark_id UUID) 
+Create or replace FUNCTION GetBookmarkBybookmark_id(v_bookmark_id UUID)
 RETURNS SETOF bookmarks
    AS $procedure$
 BEGIN

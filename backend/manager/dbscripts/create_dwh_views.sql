@@ -139,9 +139,9 @@ SELECT     	a.vds_id AS host_id,
 			a.ip as pm_ip_address,
 			b.kernel_version,
 			b.kvm_version,
-      			CASE SUBSTR(b.software_version,1,3) 
+      			CASE SUBSTR(b.software_version,1,3)
 				WHEN '4.4' THEN '2.1' || SUBSTR(b.software_version,4,LENGTH(b.software_version))
-				WHEN '4.5' THEN '2.2' || SUBSTR(b.software_version,4,LENGTH(b.software_version)) 
+				WHEN '4.5' THEN '2.2' || SUBSTR(b.software_version,4,LENGTH(b.software_version))
 				WHEN '4.9' THEN '2.3' || SUBSTR(b.software_version,4,LENGTH(b.software_version))
 	   	        ELSE b.software_version
 	 	        END as vdsm_version,

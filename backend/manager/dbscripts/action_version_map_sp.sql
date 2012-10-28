@@ -16,7 +16,7 @@ BEGIN
 INSERT INTO action_version_map(action_type, cluster_minimal_version, storage_pool_minimal_version)
 	VALUES(v_action_type, v_cluster_minimal_version, v_storage_pool_minimal_version);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -25,10 +25,10 @@ Create or replace FUNCTION Deleteaction_version_map(v_action_type INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    DELETE FROM action_version_map
    WHERE action_type = v_action_type;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 

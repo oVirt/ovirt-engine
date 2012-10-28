@@ -4,7 +4,7 @@
 
 
 
-Create or replace FUNCTION GetTimeLeasedUsersVmsByGroupIdAndPoolId(v_groupId UUID,  
+Create or replace FUNCTION GetTimeLeasedUsersVmsByGroupIdAndPoolId(v_groupId UUID,
  v_vm_pool_id UUID) RETURNS SETOF tags_vm_map
    AS $procedure$
 BEGIN
@@ -47,7 +47,7 @@ BEGIN
 INSERT INTO users(department, desktop_device, domain, email, groups, name, note, role, status, surname, user_icon_path, user_id, session_count, username, group_ids)
 	VALUES(v_department, v_desktop_device, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_icon_path, v_user_id, v_session_count, v_username, v_group_ids);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -75,10 +75,10 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE users
-      SET department = v_department,desktop_device = v_desktop_device,domain = v_domain, 
-      email = v_email,groups = v_groups,name = v_name,note = v_note, 
-      role = v_role,status = v_status,surname = v_surname,user_icon_path = v_user_icon_path, 
-      username = v_username,session_count = v_session_count, 
+      SET department = v_department,desktop_device = v_desktop_device,domain = v_domain,
+      email = v_email,groups = v_groups,name = v_name,note = v_note,
+      role = v_role,status = v_status,surname = v_surname,user_icon_path = v_user_icon_path,
+      username = v_username,session_count = v_session_count,
       last_admin_check_status = v_last_admin_check_status,
       group_ids = v_group_ids
       WHERE user_id = v_user_id;
@@ -96,7 +96,7 @@ RETURNS VOID
    v_val  UUID;
 BEGIN
 			-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-			-- in order to force locking parent before children 
+			-- in order to force locking parent before children
       select   user_id INTO v_val FROM users  WHERE user_id = v_user_id     FOR UPDATE;
       DELETE FROM tags_user_map
       WHERE user_id = v_user_id;
@@ -177,17 +177,17 @@ RETURNS VOID
 BEGIN
       if (not exists(select session_id from user_sessions
       where session_id = v_session_id and user_id = v_user_id)) then
-		 
+
 INSERT INTO user_sessions(browser, client_type, login_time, os, session_id, user_id)
 				VALUES(v_browser, v_client_type, v_login_time, v_os, v_session_id, v_user_id);
-				
+
          UPDATE users
          SET session_count = session_count+1
          WHERE
          user_id = v_user_id;
       end if;
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -291,7 +291,7 @@ RETURNS VOID
    v_tempId  VARCHAR(4000);
    myCursor cursor for select id from fnSplitter(v_userIds);
    v_result  INTEGER;
-BEGIN	
+BEGIN
 	-- get users and its groups
 	-- get their permission based on ad_element_id.
 	-- if one permissions role's type is ADMIN(1) then set the user last_admin_check_status to 1
@@ -314,7 +314,7 @@ BEGIN
       where user_id = v_id;
       FETCH myCursor into v_tempId;
    END LOOP;
-   CLOSE myCursor;  
+   CLOSE myCursor;
 END; $procedure$
 LANGUAGE plpgsql;
 

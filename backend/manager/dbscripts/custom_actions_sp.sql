@@ -16,10 +16,10 @@ Create or replace FUNCTION Insertcustom_actions(INOUT v_action_id INTEGER ,
 BEGIN
 INSERT INTO custom_actions(action_name, path, tab, description)
 	VALUES(v_action_name, v_path, v_tab, v_description);
-    
+
       v_action_id := CURRVAL('custom_actions_seq');
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -70,7 +70,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getcustom_actionsByaction_id(v_action_id INTEGER) 
+Create or replace FUNCTION Getcustom_actionsByaction_id(v_action_id INTEGER)
 RETURNS SETOF custom_actions
    AS $procedure$
 BEGIN
@@ -97,7 +97,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getcustom_actionsByNameAndTab(v_action_name VARCHAR(50), 
+Create or replace FUNCTION Getcustom_actionsByNameAndTab(v_action_name VARCHAR(50),
 	v_tab INTEGER) RETURNS SETOF custom_actions
    AS $procedure$
 BEGIN

@@ -1,4 +1,4 @@
- 
+
 
 ----------------------------------------------------------------
 -- [audit_log] Table
@@ -7,25 +7,25 @@
 
 
 
-Create or replace FUNCTION InsertAuditLog(INOUT v_audit_log_id INTEGER ,  
- v_log_time TIMESTAMP WITH TIME ZONE,  
- v_log_type INTEGER,  
-    v_log_type_name VARCHAR(100),  
- v_severity INTEGER,  
- v_message VARCHAR(4000),  
- v_user_id UUID ,  
- v_user_name VARCHAR(255) ,  
- v_vds_id UUID ,  
- v_vds_name VARCHAR(255) ,  
- v_vm_id UUID ,  
- v_vm_name VARCHAR(255) ,  
- v_vm_template_id UUID ,  
-    v_vm_template_name VARCHAR(40) ,  
-    v_storage_pool_id UUID ,  
-    v_storage_pool_name VARCHAR(40) ,  
-    v_storage_domain_id UUID ,  
+Create or replace FUNCTION InsertAuditLog(INOUT v_audit_log_id INTEGER ,
+ v_log_time TIMESTAMP WITH TIME ZONE,
+ v_log_type INTEGER,
+    v_log_type_name VARCHAR(100),
+ v_severity INTEGER,
+ v_message VARCHAR(4000),
+ v_user_id UUID ,
+ v_user_name VARCHAR(255) ,
+ v_vds_id UUID ,
+ v_vds_name VARCHAR(255) ,
+ v_vm_id UUID ,
+ v_vm_name VARCHAR(255) ,
+ v_vm_template_id UUID ,
+    v_vm_template_name VARCHAR(40) ,
+    v_storage_pool_id UUID ,
+    v_storage_pool_name VARCHAR(40) ,
+    v_storage_domain_id UUID ,
     v_storage_domain_name VARCHAR(250) ,
-    v_vds_group_id UUID ,  
+    v_vds_group_id UUID ,
     v_vds_group_name VARCHAR(255),
     v_quota_id UUID,
     v_quota_name VARCHAR(60),
@@ -40,44 +40,44 @@ BEGIN
       v_min_alret_severity := 10;
 	-- insert regular log messages (non alerts)
       if (v_severity < v_min_alret_severity) then
-	 
+
 INSERT INTO audit_log(LOG_TIME, log_type, log_type_name, severity,message, user_id, USER_NAME, vds_id, VDS_NAME, vm_id, VM_NAME,vm_template_id,VM_TEMPLATE_NAME,storage_pool_id,STORAGE_POOL_NAME,storage_domain_id,STORAGE_DOMAIN_NAME,vds_group_id,vds_group_name, correlation_id, job_id, quota_id, quota_name, gluster_volume_id, gluster_volume_name)
 		VALUES(v_log_time, v_log_type, v_log_type_name, v_severity, v_message, v_user_id, v_user_name, v_vds_id, v_vds_name, v_vm_id, v_vm_name,v_vm_template_id,v_vm_template_name,v_storage_pool_id,v_storage_pool_name,v_storage_domain_id,v_storage_domain_name,v_vds_group_id,v_vds_group_name, v_correlation_id, v_job_id, v_quota_id, v_quota_name, v_gluster_volume_id, v_gluster_volume_name);
-		
+
          v_audit_log_id := CURRVAL('audit_log_seq');
       else
          if (not exists(select audit_log_id from audit_log where vds_name = v_vds_name and log_type = v_log_type)) then
-		 
+
 INSERT INTO audit_log(LOG_TIME, log_type, log_type_name, severity,message, user_id, USER_NAME, vds_id, VDS_NAME, vm_id, VM_NAME,vm_template_id,VM_TEMPLATE_NAME,storage_pool_id,STORAGE_POOL_NAME,storage_domain_id,STORAGE_DOMAIN_NAME,vds_group_id,vds_group_name, correlation_id, job_id, quota_id, quota_name, gluster_volume_id, gluster_volume_name)
 			VALUES(v_log_time, v_log_type, v_log_type_name, v_severity, v_message, v_user_id, v_user_name, v_vds_id, v_vds_name, v_vm_id, v_vm_name,v_vm_template_id,v_vm_template_name,v_storage_pool_id,v_storage_pool_name,v_storage_domain_id,v_storage_domain_name,v_vds_group_id,v_vds_group_name, v_correlation_id, v_job_id, v_quota_id, v_quota_name, v_gluster_volume_id, v_gluster_volume_name);
-			
+
             v_audit_log_id := CURRVAL('audit_log_seq');
          else
             select   audit_log_id INTO v_audit_log_id from audit_log where vds_name = v_vds_name and log_type = v_log_type;
          end if;
       end if;
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
-Create or replace FUNCTION UpdateAuditLog(v_audit_log_id INTEGER,  
- v_log_time TIMESTAMP WITH TIME ZONE,  
- v_log_type INTEGER,  
- v_severity INTEGER,  
- v_message VARCHAR(4000),  
- v_user_id UUID ,  
- v_user_name VARCHAR(255) ,  
- v_vds_id UUID ,  
- v_vds_name VARCHAR(255) ,  
- v_vm_id UUID ,  
- v_vm_name VARCHAR(255) ,   
- v_vm_template_id UUID ,  
-    v_vm_template_name VARCHAR(40) ,  
-    v_storage_pool_id UUID ,  
-    v_storage_pool_name VARCHAR(40) ,  
-    v_storage_domain_id UUID ,  
+Create or replace FUNCTION UpdateAuditLog(v_audit_log_id INTEGER,
+ v_log_time TIMESTAMP WITH TIME ZONE,
+ v_log_type INTEGER,
+ v_severity INTEGER,
+ v_message VARCHAR(4000),
+ v_user_id UUID ,
+ v_user_name VARCHAR(255) ,
+ v_vds_id UUID ,
+ v_vds_name VARCHAR(255) ,
+ v_vm_id UUID ,
+ v_vm_name VARCHAR(255) ,
+ v_vm_template_id UUID ,
+    v_vm_template_name VARCHAR(40) ,
+    v_storage_pool_id UUID ,
+    v_storage_pool_name VARCHAR(40) ,
+    v_storage_domain_id UUID ,
     v_storage_domain_name VARCHAR(250),
     v_vds_group_id UUID ,
     v_vds_group_name VARCHAR(255),
@@ -93,11 +93,11 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE audit_log
-      SET LOG_TIME = v_log_time,log_type = v_log_type,severity = v_severity,message = v_message, 
-      user_id = v_user_id,USER_NAME = v_user_name,vds_id = v_vds_id, 
+      SET LOG_TIME = v_log_time,log_type = v_log_type,severity = v_severity,message = v_message,
+      user_id = v_user_id,USER_NAME = v_user_name,vds_id = v_vds_id,
       VDS_NAME = v_vds_name,vm_id = v_vm_id,VM_NAME = v_vm_name,
       vm_template_id = v_vm_template_id,VM_TEMPLATE_NAME = v_vm_template_name,
-      storage_pool_id = v_storage_pool_id,STORAGE_POOL_NAME = v_storage_pool_name, 
+      storage_pool_id = v_storage_pool_id,STORAGE_POOL_NAME = v_storage_pool_name,
       storage_domain_id = v_storage_domain_id,STORAGE_DOMAIN_NAME = v_storage_domain_name,
       vds_group_id = v_vds_group_id,vds_group_name = v_vds_group_name, correlation_id = v_correlation_id, job_id = v_job_id, quota_id = v_quota_id, quota_name = v_quota_name,
       gluster_volume_id = v_gluster_volume_id, gluster_volume_name = v_gluster_volume_name
@@ -116,7 +116,7 @@ RETURNS VOID
    v_val  INTEGER;
 BEGIN
 		-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-		-- in order to force locking parent before children 
+		-- in order to force locking parent before children
       select   audit_log_id INTO v_val FROM audit_log  WHERE audit_log_id = v_audit_log_id     FOR UPDATE;
       DELETE FROM audit_log
       WHERE audit_log_id = v_audit_log_id;
@@ -189,7 +189,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAuditLogLaterThenDate(v_date TIMESTAMP WITH TIME ZONE) 
+Create or replace FUNCTION GetAuditLogLaterThenDate(v_date TIMESTAMP WITH TIME ZONE)
 RETURNS SETOF audit_log
    AS $procedure$
 BEGIN

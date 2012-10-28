@@ -363,7 +363,7 @@ updateDBUsers()
         # Create user $DB_USER + password
         PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -c "CREATE ROLE $DB_USER WITH CREATEDB LOGIN ENCRYPTED PASSWORD '$DB_PASS'" >> $LOGFILE 2>&1
         _verifyRC $? "failed creating user $DB_USER with encrypted password"
-        
+
         # Handle UUID extensions
         pushd $ENGINE_DB_SCRIPTS_DIR >> $LOGFILE
         source ./dbfunctions.sh

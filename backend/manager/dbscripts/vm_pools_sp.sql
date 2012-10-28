@@ -3,10 +3,10 @@
 --
 
 
-Create or replace FUNCTION InsertVm_pools(v_vm_pool_description VARCHAR(4000),  
- INOUT v_vm_pool_id UUID ,  
- v_vm_pool_name VARCHAR(255),  
- v_vm_pool_type INTEGER,  
+Create or replace FUNCTION InsertVm_pools(v_vm_pool_description VARCHAR(4000),
+ INOUT v_vm_pool_id UUID ,
+ v_vm_pool_name VARCHAR(255),
+ v_vm_pool_type INTEGER,
  v_parameters VARCHAR(200),
  v_prestarted_vms INTEGER,
  v_vds_group_id UUID)
@@ -16,16 +16,16 @@ BEGIN
       INSERT INTO vm_pools(vm_pool_id,vm_pool_description, vm_pool_name, vm_pool_type,parameters, prestarted_vms, vds_group_id)
       VALUES(v_vm_pool_id,v_vm_pool_description, v_vm_pool_name,v_vm_pool_type,v_parameters, v_prestarted_vms, v_vds_group_id);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION UpdateVm_pools(v_vm_pool_description VARCHAR(4000),  
- v_vm_pool_id UUID,  
- v_vm_pool_name VARCHAR(255),  
- v_vm_pool_type INTEGER,  
+Create or replace FUNCTION UpdateVm_pools(v_vm_pool_description VARCHAR(4000),
+ v_vm_pool_id UUID,
+ v_vm_pool_name VARCHAR(255),
+ v_vm_pool_type INTEGER,
  v_parameters VARCHAR(200),
  v_prestarted_vms INTEGER,
  v_vds_group_id UUID)
@@ -52,7 +52,7 @@ RETURNS VOID
    v_val  UUID;
 BEGIN
 		-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-		-- in order to force locking parent before children 
+		-- in order to force locking parent before children
       select   vm_pool_id INTO v_val FROM vm_pools  WHERE vm_pool_id = v_vm_pool_id     FOR UPDATE;
       DELETE FROM vm_pools
       WHERE vm_pool_id = v_vm_pool_id;

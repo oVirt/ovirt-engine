@@ -187,21 +187,21 @@ LANGUAGE plpgsql;
 --
 
 
-Create or replace FUNCTION Insertvds_interface(v_addr VARCHAR(20) ,  
- v_bond_name VARCHAR(50) ,  
- v_bond_type INTEGER ,  
- v_gateway VARCHAR(20) ,  
- v_id UUID,  
- v_is_bond BOOLEAN ,  
+Create or replace FUNCTION Insertvds_interface(v_addr VARCHAR(20) ,
+ v_bond_name VARCHAR(50) ,
+ v_bond_type INTEGER ,
+ v_gateway VARCHAR(20) ,
+ v_id UUID,
+ v_is_bond BOOLEAN ,
  v_bond_opts VARCHAR(4000) ,
- v_mac_addr VARCHAR(20) ,  
- v_name VARCHAR(50),  
- v_network_name VARCHAR(50) ,  
- v_speed INTEGER ,  
- v_subnet VARCHAR(20) ,  
- v_boot_protocol INTEGER ,  
- v_type INTEGER ,  
- v_vds_id UUID,  
+ v_mac_addr VARCHAR(20) ,
+ v_name VARCHAR(50),
+ v_network_name VARCHAR(50) ,
+ v_speed INTEGER ,
+ v_subnet VARCHAR(20) ,
+ v_boot_protocol INTEGER ,
+ v_type INTEGER ,
+ v_vds_id UUID,
  v_vlan_id INTEGER,
  v_mtu INTEGER,
  v_bridged BOOLEAN)
@@ -211,27 +211,27 @@ BEGIN
 INSERT INTO vds_interface(addr, bond_name, bond_type, gateway, id, is_bond, bond_opts, mac_addr, name, network_name, speed, subnet, boot_protocol, type, VDS_ID, vlan_id, mtu, bridged)
 	VALUES(v_addr, v_bond_name, v_bond_type, v_gateway, v_id, v_is_bond, v_bond_opts, v_mac_addr, v_name, v_network_name, v_speed, v_subnet, v_boot_protocol, v_type, v_vds_id, v_vlan_id, v_mtu, v_bridged);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION Updatevds_interface(v_addr VARCHAR(20) ,  
- v_bond_name VARCHAR(50) ,  
- v_bond_type INTEGER ,  
- v_gateway VARCHAR(20) ,  
- v_id UUID,  
- v_is_bond BOOLEAN ,  
+Create or replace FUNCTION Updatevds_interface(v_addr VARCHAR(20) ,
+ v_bond_name VARCHAR(50) ,
+ v_bond_type INTEGER ,
+ v_gateway VARCHAR(20) ,
+ v_id UUID,
+ v_is_bond BOOLEAN ,
  v_bond_opts VARCHAR(4000) ,
- v_mac_addr VARCHAR(20) ,  
- v_name VARCHAR(50),  
- v_network_name VARCHAR(50) ,  
- v_speed INTEGER ,  
- v_subnet VARCHAR(20) ,  
- v_boot_protocol INTEGER ,  
- v_type INTEGER ,  
- v_vds_id UUID,  
+ v_mac_addr VARCHAR(20) ,
+ v_name VARCHAR(50),
+ v_network_name VARCHAR(50) ,
+ v_speed INTEGER ,
+ v_subnet VARCHAR(20) ,
+ v_boot_protocol INTEGER ,
+ v_type INTEGER ,
+ v_vds_id UUID,
  v_vlan_id INTEGER,
  v_mtu INTEGER,
  v_bridged BOOLEAN)
@@ -241,10 +241,10 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vds_interface
-      SET addr = v_addr,bond_name = v_bond_name,bond_type = v_bond_type,gateway = v_gateway, 
-      is_bond = v_is_bond,bond_opts = v_bond_opts,mac_addr = v_mac_addr, 
-      name = v_name,network_name = v_network_name,speed = v_speed, 
-      subnet = v_subnet,boot_protocol = v_boot_protocol, 
+      SET addr = v_addr,bond_name = v_bond_name,bond_type = v_bond_type,gateway = v_gateway,
+      is_bond = v_is_bond,bond_opts = v_bond_opts,mac_addr = v_mac_addr,
+      name = v_name,network_name = v_network_name,speed = v_speed,
+      subnet = v_subnet,boot_protocol = v_boot_protocol,
       type = v_type,VDS_ID = v_vds_id,vlan_id = v_vlan_id,_update_date = LOCALTIMESTAMP, mtu = v_mtu,
       bridged = v_bridged
       WHERE id = v_id;
@@ -259,10 +259,10 @@ Create or replace FUNCTION Deletevds_interface(v_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    DELETE FROM vds_interface
    WHERE id = v_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -363,7 +363,7 @@ Create or replace FUNCTION Insertvm_interface(v_id UUID,
 	v_network_name VARCHAR(50) ,
 	v_speed INTEGER ,
 	v_vm_guid UUID ,
-	v_vmt_guid UUID , 
+	v_vmt_guid UUID ,
     v_type INTEGER,
     v_port_mirroring BOOLEAN)
 RETURNS VOID
@@ -372,7 +372,7 @@ BEGIN
 INSERT INTO vm_interface(id, mac_addr, name, network_name, speed, VM_GUID, VMT_GUID, type, port_mirroring)
 	VALUES(v_id, v_mac_addr, v_name, v_network_name, v_speed, v_vm_guid, v_vmt_guid, v_type, v_port_mirroring);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -393,8 +393,8 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_interface
-      SET mac_addr = v_mac_addr,name = v_name,network_name = v_network_name, 
-      speed = v_speed,VM_GUID = v_vm_guid,VMT_GUID = v_vmt_guid,type = v_type, 
+      SET mac_addr = v_mac_addr,name = v_name,network_name = v_network_name,
+      speed = v_speed,VM_GUID = v_vm_guid,VMT_GUID = v_vmt_guid,type = v_type,
       _update_date = LOCALTIMESTAMP, port_mirroring = v_port_mirroring
       WHERE id = v_id;
 END; $procedure$
@@ -410,14 +410,14 @@ RETURNS VOID
    DECLARE
    v_val  UUID;
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children 
+	-- in order to force locking parent before children
    select   id INTO v_val FROM vm_interface  WHERE id = v_id     FOR UPDATE;
-	
+
    DELETE FROM vm_interface
    WHERE id = v_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -454,7 +454,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getvm_interfaceByvm_guidAndByvmt_guid(v_vm_guid UUID,
-	v_vmt_guid UUID) RETURNS SETOF vm_interface 
+	v_vmt_guid UUID) RETURNS SETOF vm_interface
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -500,18 +500,18 @@ BEGIN
 INSERT INTO vm_interface_statistics(id, rx_drop, rx_rate, tx_drop, tx_rate, vm_id, iface_status)
 	VALUES(v_id, v_rx_drop, v_rx_rate, v_tx_drop, v_tx_rate, v_vm_id,v_iface_status);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION Updatevm_interface_statistics(v_id UUID,  
- v_rx_drop DECIMAL(18,0) ,  
- v_rx_rate DECIMAL(18,0) ,  
- v_tx_drop DECIMAL(18,0) ,  
- v_tx_rate DECIMAL(18,0) ,  
- v_iface_status INTEGER ,  
+Create or replace FUNCTION Updatevm_interface_statistics(v_id UUID,
+ v_rx_drop DECIMAL(18,0) ,
+ v_rx_rate DECIMAL(18,0) ,
+ v_tx_drop DECIMAL(18,0) ,
+ v_tx_rate DECIMAL(18,0) ,
+ v_iface_status INTEGER ,
  v_vm_id UUID)
 RETURNS VOID
 
@@ -519,7 +519,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_interface_statistics
-      SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate, 
+      SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate,
       vm_id = v_vm_id,iface_status = v_iface_status
       WHERE id = v_id;
 END; $procedure$
@@ -535,14 +535,14 @@ RETURNS VOID
    DECLARE
    v_val  UUID;
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children 
+	-- in order to force locking parent before children
    select   id INTO v_val FROM vm_interface_statistics  WHERE id = v_id     FOR UPDATE;
 
    DELETE FROM vm_interface_statistics
    WHERE id = v_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -567,18 +567,18 @@ BEGIN
 INSERT INTO vds_interface_statistics(id, rx_drop, rx_rate, tx_drop, tx_rate, vds_id, iface_status)
 	VALUES(v_id, v_rx_drop, v_rx_rate, v_tx_drop, v_tx_rate, v_vds_id,v_iface_status);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION Updatevds_interface_statistics(v_id UUID,  
- v_rx_drop DECIMAL(18,0) ,  
- v_rx_rate DECIMAL(18,0) ,  
- v_tx_drop DECIMAL(18,0) ,  
- v_tx_rate DECIMAL(18,0) ,  
- v_iface_status INTEGER ,  
+Create or replace FUNCTION Updatevds_interface_statistics(v_id UUID,
+ v_rx_drop DECIMAL(18,0) ,
+ v_rx_rate DECIMAL(18,0) ,
+ v_tx_drop DECIMAL(18,0) ,
+ v_tx_rate DECIMAL(18,0) ,
+ v_iface_status INTEGER ,
  v_vds_id UUID)
 RETURNS VOID
 
@@ -586,7 +586,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vds_interface_statistics
-      SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate, 
+      SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate,
       vds_id = v_vds_id,iface_status = v_iface_status
       WHERE id = v_id;
 END; $procedure$
@@ -602,14 +602,14 @@ RETURNS VOID
    DECLARE
    v_val  UUID;
 BEGIN
-	
+
 	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children 
+	-- in order to force locking parent before children
    select   id INTO v_val FROM vds_interface_statistics  WHERE id = v_id     FOR UPDATE;
 
    DELETE FROM vds_interface_statistics
    WHERE id = v_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -676,10 +676,10 @@ Create or replace FUNCTION Deletenetwork_cluster(v_cluster_id UUID,
 RETURNS VOID
    AS $procedure$
 BEGIN
-	
+
    DELETE FROM network_cluster
    WHERE cluster_id = v_cluster_id AND network_id = v_network_id;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -730,7 +730,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getnetwork_clusterBycluster_idAndBynetwork_id(v_cluster_id UUID,  
+Create or replace FUNCTION Getnetwork_clusterBycluster_idAndBynetwork_id(v_cluster_id UUID,
  v_network_id UUID) RETURNS SETOF network_cluster
    AS $procedure$
 BEGIN
@@ -747,7 +747,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetvmStaticByGroupIdAndNetwork(v_groupId UUID,  
+Create or replace FUNCTION GetvmStaticByGroupIdAndNetwork(v_groupId UUID,
      v_networkName VARCHAR(50)) RETURNS SETOF vm_static
    AS $procedure$
 BEGIN
@@ -758,7 +758,7 @@ BEGIN
    and network_name = v_networkName
    and vm_static.vds_group_id = v_groupId;
 
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 

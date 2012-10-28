@@ -3,7 +3,7 @@ RETURNS VOID
    AS $procedure$
    DECLARE
    v_super_user_id_0001 UUID;
-   v_power_user_id_0002 UUID; 
+   v_power_user_id_0002 UUID;
    v_user_id_1001 UUID;
    v_CLUSTER_ADMIN_ID UUID;
    v_DATA_CENTER_ADMIN_ID UUID;
@@ -143,7 +143,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_user_id_1001,303);
 ---------------
 delete from roles_groups where role_id = v_power_user_id_0002;
 INSERT INTO roles(id,name,description,is_readonly,role_type) select v_power_user_id_0002,'ENGINEPowerUser','oVirt power user',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_power_user_id_0002 and name='ENGINEPowerUser' and description='oVirt power user' and is_readonly=true and role_type=2);
- 
+
 
 ---Vm Groups
 --CREATE_VM
@@ -337,9 +337,9 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,
 --STORAGE_ADMIN role
 ---------------
 delete from roles_groups where role_id = v_STORAGE_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_STORAGE_ADMIN_ID,'StorageAdmin','Storage administrator',true,1 where 
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_STORAGE_ADMIN_ID,'StorageAdmin','Storage administrator',true,1 where
 not exists (select id,name,description,is_readonly,role_type from roles where id=v_STORAGE_ADMIN_ID and name='StorageAdmin' and description='Storage administrator' and is_readonly=true and role_type=1);
-   
+
 -- storage domains actions groups
 --CREATE_STORAGE_DOMAIN
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,600);
@@ -353,9 +353,9 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,603)
 -------------
 --HOST_ADMIN role
 ---------------
- 
+
 delete from roles_groups where role_id = v_HOST_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_HOST_ADMIN_ID,'HostAdmin','Host administrator',true,1 where 
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_HOST_ADMIN_ID,'HostAdmin','Host administrator',true,1 where
 not exists (select id,name,description,is_readonly,role_type from roles where id=v_HOST_ADMIN_ID and name='HostAdmin' and description='Host administrator' and is_readonly=true and role_type=1);
 
 -- host (vds) actions groups
@@ -385,7 +385,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,603);
 ---------------
 
 delete from roles_groups where role_id = v_NETWORK_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_NETWORK_ADMIN_ID,'NetworkAdmin','Network administrator',true,1 where 
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_NETWORK_ADMIN_ID,'NetworkAdmin','Network administrator',true,1 where
 not exists (select id,name,description,is_readonly,role_type from roles where id=v_NETWORK_ADMIN_ID and name='NetworkAdmin' and description='Network administrator' and is_readonly=true and role_type=1);
 --CONFIGURE_HOST_NETWORK
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,104);
@@ -447,7 +447,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,303)
 --TEMPLATE_ADMIN role
 ---------------
 delete from roles_groups where role_id = v_TEMPLATE_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_ADMIN_ID,'TemplateAdmin','Template administrator',true,1 where 
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_ADMIN_ID,'TemplateAdmin','Template administrator',true,1 where
 not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_ADMIN_ID and name='TemplateAdmin' and description='Template administrator' and is_readonly=true and role_type=1);
 -- templates actions groups
 --CREATE_TEMPLATE
@@ -465,7 +465,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,204
 --TEMPLATE_USER role
 ---------------
 delete from roles_groups where role_id = v_TEMPLATE_USER_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_USER_ID,'TemplateUser','Template User',true,2 where 
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_USER_ID,'TemplateUser','Template User',true,2 where
 not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_USER_ID and name='TemplateUser' and description='Template User' and is_readonly=true and role_type=2);
 
 --------------

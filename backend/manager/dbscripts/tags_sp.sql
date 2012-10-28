@@ -11,7 +11,7 @@ Create or replace FUNCTION Inserttags(v_description VARCHAR(4000) ,
 	INOUT v_tag_id UUID ,
 	v_tag_name VARCHAR(50),
 	v_parent_id UUID,
-	v_readonly BOOLEAN , 
+	v_readonly BOOLEAN ,
     v_type INTEGER)
    AS $procedure$
 BEGIN
@@ -19,7 +19,7 @@ BEGIN
       INSERT INTO tags(tag_id,description, tag_name,parent_id,readonly,type)
 	VALUES(v_tag_id,v_description, v_tag_name,v_parent_id,v_readonly,v_type);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
@@ -54,7 +54,7 @@ RETURNS VOID
    v_val  UUID;
 BEGIN
 			-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-			-- in order to force locking parent before children 
+			-- in order to force locking parent before children
       select   tag_id INTO v_val FROM tags  WHERE tag_id = v_tag_id     FOR UPDATE;
       DELETE FROM tags_user_group_map
       WHERE tag_id = v_tag_id;
@@ -127,7 +127,7 @@ LANGUAGE plpgsql;
 --
 
 
-Create or replace FUNCTION Inserttags_user_group_map(v_group_id UUID,  
+Create or replace FUNCTION Inserttags_user_group_map(v_group_id UUID,
  v_tag_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -135,13 +135,13 @@ BEGIN
 INSERT INTO tags_user_group_map(group_id, tag_id)
 	VALUES(v_group_id, v_tag_id);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION Deletetags_user_group_map(v_group_id UUID,  
+Create or replace FUNCTION Deletetags_user_group_map(v_group_id UUID,
  v_tag_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -168,7 +168,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetTagUserGroupByGroupIdAndByTagId(v_group_id UUID,  
+Create or replace FUNCTION GetTagUserGroupByGroupIdAndByTagId(v_group_id UUID,
  v_tag_id UUID) RETURNS SETOF tags_user_group_map
    AS $procedure$
 BEGIN
@@ -221,7 +221,7 @@ LANGUAGE plpgsql;
 --
 
 
-Create or replace FUNCTION Inserttags_user_map(v_tag_id UUID,  
+Create or replace FUNCTION Inserttags_user_map(v_tag_id UUID,
  v_user_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -229,13 +229,13 @@ BEGIN
 INSERT INTO tags_user_map(tag_id, user_id)
 	VALUES(v_tag_id, v_user_id);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION Deletetags_user_map(v_tag_id UUID,  
+Create or replace FUNCTION Deletetags_user_map(v_tag_id UUID,
  v_user_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -262,7 +262,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetTagUserByTagIdAndByuserId(v_tag_id UUID,  
+Create or replace FUNCTION GetTagUserByTagIdAndByuserId(v_tag_id UUID,
  v_user_id UUID) RETURNS SETOF tags_user_map
    AS $procedure$
 BEGIN
@@ -315,7 +315,7 @@ LANGUAGE plpgsql;
 --
 
 
-Create or replace FUNCTION Inserttags_vds_map(v_tag_id UUID,  
+Create or replace FUNCTION Inserttags_vds_map(v_tag_id UUID,
  v_vds_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -323,13 +323,13 @@ BEGIN
 INSERT INTO tags_vds_map(tag_id, vds_id)
 	VALUES(v_tag_id, v_vds_id);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION Deletetags_vds_map(v_tag_id UUID,  
+Create or replace FUNCTION Deletetags_vds_map(v_tag_id UUID,
  v_vds_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -356,7 +356,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetTagVdsBytagIdAndByVdsId(v_tag_id UUID,  
+Create or replace FUNCTION GetTagVdsBytagIdAndByVdsId(v_tag_id UUID,
  v_vds_id UUID) RETURNS SETOF tags_vds_map
    AS $procedure$
 BEGIN
@@ -409,8 +409,8 @@ LANGUAGE plpgsql;
 --
 
 
-Create or replace FUNCTION Inserttags_vm_map(v_tag_id UUID,  
- v_vm_id UUID,  
+Create or replace FUNCTION Inserttags_vm_map(v_tag_id UUID,
+ v_vm_id UUID,
     v_DefaultDisplayType INTEGER)
 RETURNS VOID
    AS $procedure$
@@ -418,13 +418,13 @@ BEGIN
 INSERT INTO tags_vm_map(tag_id, vm_id, DefaultDisplayType)
 	VALUES(v_tag_id, v_vm_id, v_DefaultDisplayType);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 
 
 
-Create or replace FUNCTION Deletetags_vm_map(v_tag_id UUID,  
+Create or replace FUNCTION Deletetags_vm_map(v_tag_id UUID,
  v_vm_id UUID)
 RETURNS VOID
    AS $procedure$
@@ -451,7 +451,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetTagVmByTagIdAndByvmId(v_tag_id UUID,  
+Create or replace FUNCTION GetTagVmByTagIdAndByvmId(v_tag_id UUID,
  v_vm_id UUID) RETURNS SETOF tags_vm_map
    AS $procedure$
 BEGIN
@@ -504,7 +504,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION UpdateVmTagsDefaultDisplayType(v_tag_id UUID,
-	v_vm_id UUID, 
+	v_vm_id UUID,
     v_DefaultDisplayType INTEGER)
 RETURNS VOID
    AS $procedure$

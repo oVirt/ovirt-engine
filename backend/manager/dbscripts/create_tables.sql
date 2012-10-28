@@ -1,22 +1,22 @@
--- ---------------------------------------------------------------------- 
--- Script generated with: DeZign for Databases v4.1.1                     
--- Target DBMS:           MS SQL Server 2005                              
--- Project file:          vdc_3.dez                                       
--- Project name:                                                          
--- Author:                                                                
--- Script type:           Database creation script                        
--- Created on:            2007-02-15 15:03                                
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Script generated with: DeZign for Databases v4.1.1
+-- Target DBMS:           MS SQL Server 2005
+-- Project file:          vdc_3.dez
+-- Project name:
+-- Author:
+-- Script type:           Database creation script
+-- Created on:            2007-02-15 15:03
+-- ----------------------------------------------------------------------
 
 
--- ---------------------------------------------------------------------- 
--- Tables                                                                 
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Tables
+-- ----------------------------------------------------------------------
 
 
--- ---------------------------------------------------------------------- 
--- Add table "tags_vm_pool_map"                                            
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "tags_vm_pool_map"
+-- ----------------------------------------------------------------------
 CREATE TABLE tags_vm_pool_map
 (
    tag_id UUID NOT NULL,
@@ -25,22 +25,22 @@ CREATE TABLE tags_vm_pool_map
    CONSTRAINT pk_tags_vm_pool_map PRIMARY KEY(tag_id,vm_pool_id)
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
--- Add table "tags_vm_map"                                            
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "tags_vm_map"
+-- ----------------------------------------------------------------------
 CREATE TABLE tags_vm_map
 (
    tag_id UUID NOT NULL,
    vm_id UUID NOT NULL,
    _create_date TIMESTAMP WITH TIME ZONE default LOCALTIMESTAMP,
-   DefaultDisplayType INTEGER DEFAULT 0, 
+   DefaultDisplayType INTEGER DEFAULT 0,
    constraint pk_tags_vm_map primary key(tag_id,vm_id)
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "tags_vds_map"                                            
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "tags_vds_map"
+-- ----------------------------------------------------------------------
 CREATE TABLE tags_vds_map
 (
    tag_id UUID NOT NULL,
@@ -50,9 +50,9 @@ CREATE TABLE tags_vds_map
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "tags"                                            
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "tags"
+-- ----------------------------------------------------------------------
 CREATE TABLE tags
 (
    tag_id UUID NOT NULL,
@@ -60,16 +60,16 @@ CREATE TABLE tags
    description VARCHAR(4000),
    parent_id  UUID,
    readonly  BOOLEAN,
-   type INTEGER NOT NULL DEFAULT 0,	
+   type INTEGER NOT NULL DEFAULT 0,
    _create_date TIMESTAMP WITH TIME ZONE default LOCALTIMESTAMP,
    _update_date TIMESTAMP WITH TIME ZONE default NULL,
    constraint pk_tags_id primary key(tag_id)
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "tags_user_map"                                            
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "tags_user_map"
+-- ----------------------------------------------------------------------
 CREATE TABLE tags_user_map
 (
    tag_id UUID NOT NULL,
@@ -78,9 +78,9 @@ CREATE TABLE tags_user_map
    constraint pk_tags_user_map primary key(tag_id,user_id)
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
--- Add table "tags_user_group_map"                                            
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "tags_user_group_map"
+-- ----------------------------------------------------------------------
 CREATE TABLE tags_user_group_map
 (
    tag_id UUID NOT NULL,
@@ -90,12 +90,12 @@ CREATE TABLE tags_user_group_map
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "custom_actions"                                            
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "custom_actions"
+-- ----------------------------------------------------------------------
 
 CREATE SEQUENCE custom_actions_seq INCREMENT BY 1 START WITH 1;
-CREATE TABLE custom_actions 
+CREATE TABLE custom_actions
 (
    action_id INTEGER DEFAULT NEXTVAL('custom_actions_seq') NOT NULL,
    action_name VARCHAR(50) NOT NULL,
@@ -106,11 +106,11 @@ CREATE TABLE custom_actions
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "image_templates"                                            
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "image_templates"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE image_templates 
+CREATE TABLE image_templates
 (
    it_guid UUID NOT NULL,
    creation_date TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -123,11 +123,11 @@ CREATE TABLE image_templates
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "images"                                                     
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "images"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE images 
+CREATE TABLE images
 (
    image_guid UUID NOT NULL,
    creation_date TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -154,9 +154,9 @@ CREATE TABLE images
    CONSTRAINT PK_images PRIMARY KEY(image_guid)
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
--- Add table "image_vm_map"                                                     
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "image_vm_map"
+-- ----------------------------------------------------------------------
 
 CREATE TABLE image_vm_map
 (
@@ -167,11 +167,11 @@ CREATE TABLE image_vm_map
 
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
--- Add table "vm_templates"                                               
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "vm_templates"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE vm_templates 
+CREATE TABLE vm_templates
 (
    vmt_guid UUID NOT NULL,
    name VARCHAR(40) NOT NULL,
@@ -186,7 +186,7 @@ CREATE TABLE vm_templates
    domain VARCHAR(40),
    num_of_monitors	INTEGER	NOT NULL,
    status INTEGER NOT NULL,
-   usb_policy		INTEGER,	
+   usb_policy		INTEGER,
    time_zone VARCHAR(40),
    is_auto_suspend	BOOLEAN	 default false,
    fail_back BOOLEAN  NOT NULL DEFAULT false,
@@ -208,11 +208,11 @@ CREATE TABLE vm_templates
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "vds_static"                                                 
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "vds_static"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE vds_static 
+CREATE TABLE vds_static
 (
    vds_id UUID NOT NULL,
    vds_name VARCHAR(255) NOT NULL,
@@ -236,11 +236,11 @@ CREATE TABLE vds_static
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "vm_static"                                                  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "vm_static"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE vm_static 
+CREATE TABLE vm_static
 (
    vm_guid UUID NOT NULL,
    vm_name VARCHAR(255) NOT NULL,
@@ -249,7 +249,7 @@ CREATE TABLE vm_static
    os INTEGER  NOT NULL DEFAULT 0,
    description VARCHAR(4000),
    vds_group_id UUID NOT NULL,
-   domain VARCHAR(40), 
+   domain VARCHAR(40),
    creation_date TIMESTAMP WITH TIME ZONE,
    num_of_monitors	INTEGER	NOT NULL,
    is_initialized	BOOLEAN,
@@ -257,7 +257,7 @@ CREATE TABLE vm_static
    num_of_sockets INTEGER  NOT NULL DEFAULT 1,
    cpu_per_socket INTEGER  NOT NULL DEFAULT 1,
    usb_policy		INTEGER,
-   time_zone	VARCHAR(40),    
+   time_zone	VARCHAR(40),
    is_stateless BOOLEAN,
    fail_back		BOOLEAN  NOT NULL DEFAULT false,
    _create_date TIMESTAMP WITH TIME ZONE default LOCALTIMESTAMP,
@@ -280,25 +280,25 @@ CREATE TABLE vm_static
    userdefined_properties VARCHAR(4000),
    predefined_properties VARCHAR(4000),
    min_allocated_mem INTEGER not null default 0, --indicates how much memory at least VM need to run, value is in MB
-   CONSTRAINT PK_vm_static PRIMARY KEY(vm_guid)	
+   CONSTRAINT PK_vm_static PRIMARY KEY(vm_guid)
 ) WITH OIDS;
 
 
-ALTER TABLE vm_static ADD CONSTRAINT FK_vds_static_vm_static FOREIGN KEY(dedicated_vm_for_vds) REFERENCES vds_static(vds_id); 
+ALTER TABLE vm_static ADD CONSTRAINT FK_vds_static_vm_static FOREIGN KEY(dedicated_vm_for_vds) REFERENCES vds_static(vds_id);
 
 
 -- add non clustered index on vm_name
-CREATE INDEX IDX_vm_static_vm_name ON vm_static 
+CREATE INDEX IDX_vm_static_vm_name ON vm_static
 (vm_name);
 
 
 
 
--- ---------------------------------------------------------------------- 
--- Add table "users"                                                      
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "users"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE users 
+CREATE TABLE users
 (
    user_id UUID NOT NULL,
    name VARCHAR(255),
@@ -319,11 +319,11 @@ CREATE TABLE users
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "vds_groups"                                                 
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "vds_groups"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE vds_groups 
+CREATE TABLE vds_groups
 (
    vds_group_id UUID NOT NULL,
    name VARCHAR(40) NOT NULL,
@@ -345,11 +345,11 @@ CREATE TABLE vds_groups
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "vm_template_image_map"                                      
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "vm_template_image_map"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE vm_template_image_map 
+CREATE TABLE vm_template_image_map
 (
    it_guid UUID NOT NULL,
    vmt_guid UUID NOT NULL,
@@ -358,12 +358,12 @@ CREATE TABLE vm_template_image_map
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "audit_log"                                                  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "audit_log"
+-- ----------------------------------------------------------------------
 
 CREATE SEQUENCE audit_log_seq INCREMENT BY 1 START WITH 1;
-CREATE TABLE audit_log 
+CREATE TABLE audit_log
 (
    audit_log_id BIGINT DEFAULT NEXTVAL('audit_log_seq') NOT NULL,
    user_id UUID,
@@ -378,7 +378,7 @@ CREATE TABLE audit_log
    log_type_name VARCHAR(100)  default '',
    log_type INTEGER NOT NULL,
    severity INTEGER NOT NULL,
-   message VARCHAR(4000) NOT NULL, 
+   message VARCHAR(4000) NOT NULL,
    processed BOOLEAN  NOT NULL default false,
    storage_pool_id UUID,
    storage_pool_name VARCHAR(40),
@@ -386,48 +386,48 @@ CREATE TABLE audit_log
    storage_domain_name VARCHAR(250),
    vds_group_id UUID,
    vds_group_name VARCHAR(255),
-   CONSTRAINT PK_audit_log PRIMARY KEY(audit_log_id) 
+   CONSTRAINT PK_audit_log PRIMARY KEY(audit_log_id)
 ) WITH OIDS;
 
 
 -- add non clustered index on log_time (desc)
-CREATE INDEX IDX_audit_log_log_time ON audit_log 
+CREATE INDEX IDX_audit_log_log_time ON audit_log
 (log_time);
 
 
--- add non clustered index on user_name 
-CREATE INDEX IDX_audit_log_user_name ON audit_log 
+-- add non clustered index on user_name
+CREATE INDEX IDX_audit_log_user_name ON audit_log
 (user_name);
 
 
 -- add non clustered index on vm_name (
-CREATE INDEX IDX_audit_log_vm_name ON audit_log 
+CREATE INDEX IDX_audit_log_vm_name ON audit_log
 (vm_name);
 
 
--- add non clustered index on vm_template_name 
-CREATE INDEX IDX_audit_log_vm_template_name ON audit_log 
+-- add non clustered index on vm_template_name
+CREATE INDEX IDX_audit_log_vm_template_name ON audit_log
 (vm_template_name);
 
 
 -- add non clustered index on vds_name
-CREATE INDEX IDX_audit_log_vds_name ON audit_log 
+CREATE INDEX IDX_audit_log_vds_name ON audit_log
 (vds_name);
 
 
--- add non clustered index on storage_pool_name 
-CREATE INDEX IDX_audit_log_storage_pool_name ON audit_log 
+-- add non clustered index on storage_pool_name
+CREATE INDEX IDX_audit_log_storage_pool_name ON audit_log
 (storage_pool_name);
 
 
--- add non clustered index on storage_domain_name 
-CREATE INDEX IDX_audit_log_storage_domain_name ON audit_log 
+-- add non clustered index on storage_domain_name
+CREATE INDEX IDX_audit_log_storage_domain_name ON audit_log
 (storage_domain_name);
 
 
--- ---------------------------------------------------------------------- 
--- Add table "vds_dynamic"                                                
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "vds_dynamic"
+-- ----------------------------------------------------------------------
 
 CREATE TABLE vds_dynamic
 (
@@ -473,11 +473,11 @@ CREATE TABLE vds_dynamic
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "vm_dynamic"                                                 
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- Add table "vm_dynamic"
+-- ----------------------------------------------------------------------
 
-CREATE TABLE vm_dynamic 
+CREATE TABLE vm_dynamic
 (
    vm_guid UUID NOT NULL,
    status INTEGER NOT NULL,
@@ -515,14 +515,14 @@ CREATE TABLE vm_dynamic
 
 
 -- add non clustered index on run_on_vds
-CREATE INDEX IDX_vm_dynamic_run_on_vds ON vm_dynamic 
+CREATE INDEX IDX_vm_dynamic_run_on_vds ON vm_dynamic
 (run_on_vds);
 
 
 
--- ---------------------------------------------------------------------- 
---	bookmarks						                                      
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--	bookmarks
+-- ----------------------------------------------------------------------
 
 CREATE TABLE bookmarks
 (
@@ -533,12 +533,12 @@ CREATE TABLE bookmarks
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
---	vm_pools						                                      
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--	vm_pools
+-- ----------------------------------------------------------------------
 CREATE TABLE vm_pools
 (
-   vm_pool_id UUID NOT NULL, 
+   vm_pool_id UUID NOT NULL,
    vm_pool_name VARCHAR(255) NOT NULL,
    vm_pool_description VARCHAR(4000) NOT NULL,
    vm_pool_type INTEGER,
@@ -549,20 +549,20 @@ CREATE TABLE vm_pools
 
 
 
--- ---------------------------------------------------------------------- 
---	vm_pool_map						                                      
--- ---------------------------------------------------------------------- 
-CREATE TABLE vm_pool_map 
+-- ----------------------------------------------------------------------
+--	vm_pool_map
+-- ----------------------------------------------------------------------
+CREATE TABLE vm_pool_map
 (
-   vm_pool_id UUID, 
-   vm_guid UUID, 
+   vm_pool_id UUID,
+   vm_guid UUID,
    CONSTRAINT PK_vm_pool_map PRIMARY KEY(vm_guid)
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
---	images_vm_pool_map    			                                      
--- ---------------------------------------------------------------------- 
-CREATE TABLE image_vm_pool_map 
+-- ----------------------------------------------------------------------
+--	images_vm_pool_map
+-- ----------------------------------------------------------------------
+CREATE TABLE image_vm_pool_map
 (
    vm_guid UUID not null,
    image_guid UUID not NULL,
@@ -581,9 +581,9 @@ CREATE TABLE time_lease_vm_pool_map
    CONSTRAINT pk_time_user_vm_pool_map PRIMARY KEY(vm_pool_id,id)
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
---         ad_groups                                                      
--- ----------------------------------------------------------------------  
+-- ----------------------------------------------------------------------
+--         ad_groups
+-- ----------------------------------------------------------------------
 CREATE TABLE  ad_groups
 (
    id UUID not null,
@@ -595,11 +595,11 @@ CREATE TABLE  ad_groups
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
---           options table								
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           options table
+-- ----------------------------------------------------------------------
 CREATE SEQUENCE vdc_options_seq INCREMENT BY 1 START WITH 1;
-CREATE TABLE vdc_options 
+CREATE TABLE vdc_options
 (
    option_id INTEGER DEFAULT NEXTVAL('vdc_options_seq') NOT NULL,
    option_name VARCHAR(100)  NOT NULL,
@@ -612,9 +612,9 @@ CREATE INDEX IX_vdc_options ON vdc_options
 (option_name);
 
 
--- ---------------------------------------------------------------------- 
---           vds_statistics table								
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           vds_statistics table
+-- ----------------------------------------------------------------------
 CREATE TABLE vds_statistics
 (
    vds_id UUID NOT NULL,
@@ -637,9 +637,9 @@ CREATE TABLE vds_statistics
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
---           vm_statistics table								
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           vm_statistics table
+-- ----------------------------------------------------------------------
 CREATE TABLE vm_statistics
 (
    vm_guid UUID NOT NULL,
@@ -654,23 +654,23 @@ CREATE TABLE vm_statistics
 
 
 
--- ---------------------------------------------------------------------- 
---           stateless_vm_image_map table								  
--- ---------------------------------------------------------------------- 
-CREATE TABLE stateless_vm_image_map 
+-- ----------------------------------------------------------------------
+--           stateless_vm_image_map table
+-- ----------------------------------------------------------------------
+CREATE TABLE stateless_vm_image_map
 (
    vm_guid UUID not null,
    image_guid UUID not NULL,
    internal_drive_mapping VARCHAR(50),
    CONSTRAINT PK_stateless_vm_image_map PRIMARY KEY(image_guid),
-   CONSTRAINT FK_stateless_vm_static 
+   CONSTRAINT FK_stateless_vm_static
    FOREIGN KEY(vm_guid) REFERENCES vm_static(vm_guid) ON DELETE CASCADE
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
---           user_sessions table								
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           user_sessions table
+-- ----------------------------------------------------------------------
 
 
 CREATE TABLE user_sessions
@@ -682,13 +682,13 @@ CREATE TABLE user_sessions
    client_type CHAR(10),
    login_time TIMESTAMP WITH TIME ZONE  default LOCALTIMESTAMP,
    constraint pk_user_sessions primary key(user_id,session_id)
-) WITH OIDS; 
+) WITH OIDS;
 
 
 
--- ---------------------------------------------------------------------- 
---           vdc_db_log table								              
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           vdc_db_log table
+-- ----------------------------------------------------------------------
 
 CREATE SEQUENCE vdc_db_log_seq INCREMENT BY 1 START WITH 1;
 CREATE TABLE vdc_db_log
@@ -700,13 +700,13 @@ CREATE TABLE vdc_db_log
    error_proc VARCHAR(126),
    error_line INTEGER,
    constraint pk_vdc_db_log primary key(error_id)
-) WITH OIDS; 
+) WITH OIDS;
 
 
 
--- ---------------------------------------------------------------------- 
---           multi level administration tables							  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           multi level administration tables
+-- ----------------------------------------------------------------------
 CREATE TABLE permissions
 (
    id UUID NOT NULL,
@@ -715,7 +715,7 @@ CREATE TABLE permissions
    object_id UUID NOT NULL,
    object_type_id INTEGER NOT NULL,
    constraint pk_permissions_id primary key(id)
-) WITH OIDS; 
+) WITH OIDS;
 
 
 
@@ -753,7 +753,7 @@ ALTER TABLE roles_relations ADD CONSTRAINT fk_roles_relations_role_id FOREIGN KE
 ALTER TABLE roles_relations ADD CONSTRAINT fk_roles_relations_container_id FOREIGN KEY(role_container_id) REFERENCES roles(id);
 
 
----StoragePool handling	
+---StoragePool handling
 CREATE TABLE storage_pool
 (
    id UUID not null,
@@ -789,7 +789,7 @@ CREATE TABLE storage_domain_dynamic
    available_disk_size INTEGER,
    used_disk_size INTEGER,
    CONSTRAINT PK_storage_domain_dynamic PRIMARY KEY(id)
-) WITH OIDS; 
+) WITH OIDS;
 
 ALTER TABLE storage_domain_dynamic  ADD  CONSTRAINT FK_storage_domain_dynamic_storage_domain_static FOREIGN KEY(id)
 REFERENCES storage_domain_static(id);
@@ -807,7 +807,7 @@ CREATE TABLE storage_server_connections
    portal VARCHAR(50),
    storage_type INTEGER NOT NULL,
    CONSTRAINT PK_storage_server PRIMARY KEY(id)
-) WITH OIDS; 
+) WITH OIDS;
 
 CREATE TABLE storage_pool_iso_map
 (
@@ -835,7 +835,7 @@ CREATE TABLE LUNs
    vendor_id VARCHAR(50),
    product_id VARCHAR(50),
    CONSTRAINT PK_LUNs PRIMARY KEY(LUN_id)
-) WITH OIDS; 
+) WITH OIDS;
 
 
 CREATE TABLE LUN_storage_server_connection_map
@@ -843,7 +843,7 @@ CREATE TABLE LUN_storage_server_connection_map
    LUN_id VARCHAR(50) NOT NULL,
    storage_server_connection VARCHAR(50) NOT NULL,
    CONSTRAINT PK_LUN_storage_server_connection_map PRIMARY KEY(LUN_id,storage_server_connection)
-) WITH OIDS; 
+) WITH OIDS;
 
 
 ALTER TABLE LUN_storage_server_connection_map  ADD  CONSTRAINT FK_LUN_storage_server_connection_map_LUNs FOREIGN KEY(LUN_id)
@@ -864,14 +864,14 @@ CREATE TABLE async_tasks
    CONSTRAINT PK_async_tasks PRIMARY KEY(task_id)
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- ----------------------------------------------------------------------
                              -- NETWORS --
--- ---------------------------------------------------------------------- 
--- ---------------------------------------------------------------------- 
--- ---------------------------------------------------------------------- 
---           vm_interface table             							  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- ----------------------------------------------------------------------
+-- ----------------------------------------------------------------------
+--           vm_interface table
+-- ----------------------------------------------------------------------
 CREATE TABLE vm_interface
 (
    id UUID NOT NULL,
@@ -889,15 +889,15 @@ CREATE TABLE vm_interface
 
 
 -- add non clustered index on [vm_guid],[vmt_guid]
-CREATE INDEX IDX_vm_interface_vm_vmt_guid ON vm_interface 
+CREATE INDEX IDX_vm_interface_vm_vmt_guid ON vm_interface
 (vm_guid,
 vmt_guid);
 
 
 
--- ---------------------------------------------------------------------- 
---           vm_interface_statistics table        							  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           vm_interface_statistics table
+-- ----------------------------------------------------------------------
 CREATE TABLE vm_interface_statistics
 (
    id UUID NOT NULL,
@@ -911,17 +911,17 @@ CREATE TABLE vm_interface_statistics
 ) WITH OIDS;
 
 
-ALTER TABLE vm_interface_statistics ADD CONSTRAINT fk_vm_interface_statistics_vm_static 
+ALTER TABLE vm_interface_statistics ADD CONSTRAINT fk_vm_interface_statistics_vm_static
 FOREIGN KEY(vm_id) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
 
 
 
--- ---------------------------------------------------------------------- 
---           vds_interface_statistics table        							  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           vds_interface_statistics table
+-- ----------------------------------------------------------------------
 CREATE TABLE vds_interface_statistics
 (
-   id UUID NOT NULL,	
+   id UUID NOT NULL,
    vds_id UUID,
    rx_rate DECIMAL(18,0),
    tx_rate DECIMAL(18,0),
@@ -932,13 +932,13 @@ CREATE TABLE vds_interface_statistics
 ) WITH OIDS;
 
 
-ALTER TABLE vds_interface_statistics ADD CONSTRAINT fk_vds_interface_statistics_vds_static 
+ALTER TABLE vds_interface_statistics ADD CONSTRAINT fk_vds_interface_statistics_vds_static
 FOREIGN KEY(vds_id) REFERENCES vds_static(vds_id) ON DELETE CASCADE;
 
 
--- ---------------------------------------------------------------------- 
---           vds_interface table             							  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           vds_interface table
+-- ----------------------------------------------------------------------
 CREATE TABLE vds_interface
 (
    id UUID NOT NULL,
@@ -956,7 +956,7 @@ CREATE TABLE vds_interface
    subnet VARCHAR(20),
    gateway VARCHAR(20),
    boot_protocol INTEGER,
-   type INTEGER  DEFAULT 0,	
+   type INTEGER  DEFAULT 0,
    _create_date TIMESTAMP WITH TIME ZONE default LOCALTIMESTAMP,
    _update_date TIMESTAMP WITH TIME ZONE default NULL,
    CONSTRAINT PK_vds_interface PRIMARY KEY(id)
@@ -965,15 +965,15 @@ CREATE TABLE vds_interface
 
 
 -- add non clustered index on [vds_id]
-CREATE INDEX IDX_vds_interface_vds_id ON vds_interface 
+CREATE INDEX IDX_vds_interface_vds_id ON vds_interface
 (vds_id);
 
 
 
 
--- ---------------------------------------------------------------------- 
---           network table                  							  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           network table
+-- ----------------------------------------------------------------------
 CREATE TABLE network
 (
    id UUID NOT NULL,
@@ -990,21 +990,21 @@ CREATE TABLE network
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
---           network_cluster table             							  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--           network_cluster table
+-- ----------------------------------------------------------------------
 CREATE TABLE network_cluster
 (
    network_id UUID NOT NULL,
    cluster_id UUID NOT NULL,
    status INTEGER NOT NULL DEFAULT 0,
-   is_display BOOLEAN NOT NULL DEFAULT false,    
+   is_display BOOLEAN NOT NULL DEFAULT false,
    CONSTRAINT PK_network_cluster PRIMARY KEY(network_id,cluster_id)
 ) WITH OIDS;
 
 
 -- -----------------------------------------------------------------------
--- Event Notification                                                       
+-- Event Notification
 -- -----------------------------------------------------------------------
 
 CREATE TABLE event_map
@@ -1045,13 +1045,13 @@ CREATE TABLE event_notification_hist
    method_type CHAR(10) NOT NULL,
    sent_at TIMESTAMP WITH TIME ZONE NOT NULL,
    status BOOLEAN NOT NULL,
-   reason CHAR(255)      
+   reason CHAR(255)
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- vds_spm_id_map table	                                                  
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- vds_spm_id_map table
+-- ----------------------------------------------------------------------
 CREATE TABLE vds_spm_id_map
 (
    storage_pool_id UUID NOT NULL,
@@ -1061,10 +1061,10 @@ CREATE TABLE vds_spm_id_map
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- Add table "disk_image_dynamic"                                            
--- ---------------------------------------------------------------------- 
-CREATE TABLE disk_image_dynamic 
+-- ----------------------------------------------------------------------
+-- Add table "disk_image_dynamic"
+-- ----------------------------------------------------------------------
+CREATE TABLE disk_image_dynamic
 (
    image_id UUID NOT NULL,
    read_rate INTEGER,
@@ -1074,24 +1074,24 @@ CREATE TABLE disk_image_dynamic
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
--- License Usage                                                 
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+-- License Usage
+-- ----------------------------------------------------------------------
 
 CREATE TABLE engine_license_usage
 (
    date TIMESTAMP WITH TIME ZONE primary key NOT NULL,
    quarter CHAR(7) NOT NULL,
-   lic_desktops INTEGER NOT NULL, 
-   max_used_desktops INTEGER NOT NULL, 
-   lic_sockets INTEGER NOT NULL, 
+   lic_desktops INTEGER NOT NULL,
+   max_used_desktops INTEGER NOT NULL,
+   lic_sockets INTEGER NOT NULL,
    max_used_sockets INTEGER NOT NULL
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
---  table "repo_file_meta_data"                                
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--  table "repo_file_meta_data"
+-- ----------------------------------------------------------------------
 CREATE TABLE repo_file_meta_data
 (
    repo_domain_id UUID NOT NULL,
@@ -1104,9 +1104,9 @@ CREATE TABLE repo_file_meta_data
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
---  table "image_group_storage_domain_map"                                
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--  table "image_group_storage_domain_map"
+-- ----------------------------------------------------------------------
 CREATE TABLE image_group_storage_domain_map
 (
    image_group_id UUID NOT NULL,
@@ -1115,9 +1115,9 @@ CREATE TABLE image_group_storage_domain_map
 ) WITH OIDS;
 
 
--- ---------------------------------------------------------------------- 
---  table action_version_map				                              
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--  table action_version_map
+-- ----------------------------------------------------------------------
 CREATE TABLE action_version_map
 (
    action_type INTEGER NOT NULL,
@@ -1126,9 +1126,9 @@ CREATE TABLE action_version_map
    CONSTRAINT PK_action_version_map PRIMARY KEY(action_type)
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
---  table dwh_history_timekeeping				                              
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--  table dwh_history_timekeeping
+-- ----------------------------------------------------------------------
 
 CREATE TABLE dwh_history_timekeeping
 (
@@ -1137,9 +1137,9 @@ var_value VARCHAR(255),
 var_datetime TIMESTAMP
 ) WITH OIDS;
 
--- ---------------------------------------------------------------------- 
---  table business_entity_snapshot				                              
--- ---------------------------------------------------------------------- 
+-- ----------------------------------------------------------------------
+--  table business_entity_snapshot
+-- ----------------------------------------------------------------------
 
 
 CREATE TABLE business_entity_snapshot
@@ -1158,70 +1158,70 @@ CREATE TABLE business_entity_snapshot
 )
 WITH OIDS;
 
--- ---------------------------------------------------------------------- 
--- Foreign key constraints                                                
--- ---------------------------------------------------------------------- 
-ALTER TABLE tags_user_group_map ADD CONSTRAINT tags_user_group_map_tag 
+-- ----------------------------------------------------------------------
+-- Foreign key constraints
+-- ----------------------------------------------------------------------
+ALTER TABLE tags_user_group_map ADD CONSTRAINT tags_user_group_map_tag
 FOREIGN KEY(tag_id) REFERENCES tags(tag_id);
 
-ALTER TABLE tags_user_group_map ADD CONSTRAINT tags_user_map_user_group 
+ALTER TABLE tags_user_group_map ADD CONSTRAINT tags_user_map_user_group
 FOREIGN KEY(group_id) REFERENCES ad_groups(id);
 
-ALTER TABLE image_vm_pool_map ADD CONSTRAINT vm_pool_map_image 
+ALTER TABLE image_vm_pool_map ADD CONSTRAINT vm_pool_map_image
 FOREIGN KEY(vm_guid) REFERENCES vm_pool_map(vm_guid) ON DELETE CASCADE;
 
 
-ALTER TABLE images ADD CONSTRAINT image_templates_images 
+ALTER TABLE images ADD CONSTRAINT image_templates_images
 FOREIGN KEY(it_guid) REFERENCES image_templates(it_guid);
 
 
 
 
-ALTER TABLE vm_templates ADD CONSTRAINT vds_groups_vm_templates 
+ALTER TABLE vm_templates ADD CONSTRAINT vds_groups_vm_templates
 FOREIGN KEY(vds_group_id) REFERENCES vds_groups(vds_group_id);
 
 
-ALTER TABLE vm_static ADD CONSTRAINT vm_templates_vm_static 
+ALTER TABLE vm_static ADD CONSTRAINT vm_templates_vm_static
 FOREIGN KEY(vmt_guid) REFERENCES vm_templates(vmt_guid);
 
 
-ALTER TABLE vm_static ADD CONSTRAINT vds_groups_vm_static 
+ALTER TABLE vm_static ADD CONSTRAINT vds_groups_vm_static
 FOREIGN KEY(vds_group_id) REFERENCES vds_groups(vds_group_id);
 
 
-ALTER TABLE vds_static ADD CONSTRAINT vds_groups_vds_static 
+ALTER TABLE vds_static ADD CONSTRAINT vds_groups_vds_static
 FOREIGN KEY(vds_group_id) REFERENCES vds_groups(vds_group_id);
 
 
-ALTER TABLE vm_template_image_map ADD CONSTRAINT image_templates_vm_template_image_map 
+ALTER TABLE vm_template_image_map ADD CONSTRAINT image_templates_vm_template_image_map
 FOREIGN KEY(it_guid) REFERENCES image_templates(it_guid);
 
 
-ALTER TABLE image_vm_map ADD CONSTRAINT FK_image_vm_map_vm_static 
+ALTER TABLE image_vm_map ADD CONSTRAINT FK_image_vm_map_vm_static
 FOREIGN KEY(vm_id) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
 
 
-ALTER TABLE vm_template_image_map ADD CONSTRAINT vm_templates_vm_template_image_map 
+ALTER TABLE vm_template_image_map ADD CONSTRAINT vm_templates_vm_template_image_map
 FOREIGN KEY(vmt_guid) REFERENCES vm_templates(vmt_guid);
 
 
-ALTER TABLE vds_dynamic ADD CONSTRAINT vds_static_vds_dynamic 
+ALTER TABLE vds_dynamic ADD CONSTRAINT vds_static_vds_dynamic
 FOREIGN KEY(vds_id) REFERENCES vds_static(vds_id);
 
 
-ALTER TABLE vm_dynamic ADD CONSTRAINT vm_static_vm_dynamic 
+ALTER TABLE vm_dynamic ADD CONSTRAINT vm_static_vm_dynamic
 FOREIGN KEY(vm_guid) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
 
 
-ALTER TABLE vm_dynamic ADD CONSTRAINT vds_static_vm_dynamic_r 
+ALTER TABLE vm_dynamic ADD CONSTRAINT vds_static_vm_dynamic_r
 FOREIGN KEY(run_on_vds) REFERENCES vds_static(vds_id);
 
 
-ALTER TABLE vm_dynamic ADD CONSTRAINT vds_static_vm_dynamic_m 
+ALTER TABLE vm_dynamic ADD CONSTRAINT vds_static_vm_dynamic_m
 FOREIGN KEY(migrating_to_vds) REFERENCES vds_static(vds_id);
 
 
-ALTER TABLE vm_pool_map ADD CONSTRAINT vm_pools_vm 
+ALTER TABLE vm_pool_map ADD CONSTRAINT vm_pools_vm
 FOREIGN KEY(vm_pool_id) REFERENCES vm_pools(vm_pool_id);
 
 
@@ -1229,51 +1229,51 @@ ALTER TABLE vm_pool_map ADD CONSTRAINT vm_guid_pools
 FOREIGN KEY(vm_guid) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
 
 
-ALTER TABLE vds_statistics ADD CONSTRAINT vds_static_vds_statistics 
+ALTER TABLE vds_statistics ADD CONSTRAINT vds_static_vds_statistics
 FOREIGN KEY(vds_id) REFERENCES vds_static(vds_id);
 
 
-ALTER TABLE vm_statistics ADD CONSTRAINT vm_static_vm_statistics 
+ALTER TABLE vm_statistics ADD CONSTRAINT vm_static_vm_statistics
 FOREIGN KEY(vm_guid) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
 
 
-ALTER TABLE tags_user_map ADD CONSTRAINT tags_user_map_tag 
+ALTER TABLE tags_user_map ADD CONSTRAINT tags_user_map_tag
 FOREIGN KEY(tag_id) REFERENCES tags(tag_id);
 
-ALTER TABLE tags_user_map ADD CONSTRAINT tags_user_map_user 
+ALTER TABLE tags_user_map ADD CONSTRAINT tags_user_map_user
 FOREIGN KEY(user_id) REFERENCES users(user_id);
 
-ALTER TABLE tags_vds_map ADD CONSTRAINT tags_vds_map_tag 
+ALTER TABLE tags_vds_map ADD CONSTRAINT tags_vds_map_tag
 FOREIGN KEY(tag_id) REFERENCES tags(tag_id);
 
-ALTER TABLE tags_vds_map ADD CONSTRAINT tags_vds_map_vds 
+ALTER TABLE tags_vds_map ADD CONSTRAINT tags_vds_map_vds
 FOREIGN KEY(vds_id) REFERENCES vds_static(vds_id);
 
-ALTER TABLE tags_vm_map ADD CONSTRAINT tags_vm_map_tag 
+ALTER TABLE tags_vm_map ADD CONSTRAINT tags_vm_map_tag
 FOREIGN KEY(tag_id) REFERENCES tags(tag_id);
 
-ALTER TABLE tags_vm_map ADD CONSTRAINT tags_vm_map_vm 
+ALTER TABLE tags_vm_map ADD CONSTRAINT tags_vm_map_vm
 FOREIGN KEY(vm_id) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
 
 ALTER TABLE vm_pools ADD CONSTRAINT FK_vds_groups_vm_pools
 FOREIGN KEY(vds_group_id) REFERENCES vds_groups(vds_group_id);
 
 
-ALTER TABLE vds_groups ADD  CONSTRAINT Fk_vds_groups_storage_pool_id FOREIGN KEY(storage_pool_id) 
+ALTER TABLE vds_groups ADD  CONSTRAINT Fk_vds_groups_storage_pool_id FOREIGN KEY(storage_pool_id)
 REFERENCES storage_pool(id) ON DELETE SET NULL;
 
 
-ALTER TABLE images ADD  CONSTRAINT Fk_images_storage_id FOREIGN KEY(storage_id) 
+ALTER TABLE images ADD  CONSTRAINT Fk_images_storage_id FOREIGN KEY(storage_id)
 REFERENCES storage_domain_static(id);
 
 ALTER TABLE tags_vm_pool_map   ADD  CONSTRAINT fk_tags_vm_pool_map_tag FOREIGN KEY(tag_id)
-REFERENCES tags(tag_id) ON DELETE CASCADE; 
+REFERENCES tags(tag_id) ON DELETE CASCADE;
 
 ALTER TABLE tags_vm_pool_map   ADD  CONSTRAINT fk_tags_vm_pool_map_vm_pool FOREIGN KEY(vm_pool_id)
-REFERENCES vm_pools(vm_pool_id) ON DELETE CASCADE; 
+REFERENCES vm_pools(vm_pool_id) ON DELETE CASCADE;
 
-ALTER TABLE user_sessions ADD CONSTRAINT fk_users 
-FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE; 
+ALTER TABLE user_sessions ADD CONSTRAINT fk_users
+FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE;
 
 
 ALTER TABLE vm_interface ADD  CONSTRAINT FK_vm_interface_vm_static FOREIGN KEY(vm_guid)
@@ -1297,7 +1297,7 @@ ALTER TABLE network ADD CONSTRAINT FK_network_storage_pool FOREIGN KEY(storage_p
 REFERENCES storage_pool(id) ON DELETE SET NULL;
 
 
--- Event Notification 
+-- Event Notification
 ALTER TABLE event_subscriber  ADD  CONSTRAINT FK_EVENT_SUBSCRIBER_EVENT_MAP FOREIGN KEY(event_up_name)
 REFERENCES event_map(event_up_name)  ON DELETE CASCADE;
 
@@ -1323,8 +1323,8 @@ ALTER TABLE vds_spm_id_map  ADD  CONSTRAINT FK_vds_spm_id_map_storage_pool FOREI
 REFERENCES storage_pool(id)
 ON DELETE CASCADE;
 
- 
-ALTER TABLE vds_spm_id_map  ADD  CONSTRAINT FK_vds_spm_id_map_vds_id FOREIGN KEY(vds_id) 
+
+ALTER TABLE vds_spm_id_map  ADD  CONSTRAINT FK_vds_spm_id_map_vds_id FOREIGN KEY(vds_id)
 REFERENCES vds_static(vds_id) ON DELETE CASCADE;
 
 
@@ -1334,7 +1334,7 @@ REFERENCES storage_domain_static(id) ON DELETE CASCADE;
 
 
 -- [repo_file_meta_data]
-ALTER TABLE repo_file_meta_data ADD CONSTRAINT FK_repo_file_meta_data_storage_domain_static 
+ALTER TABLE repo_file_meta_data ADD CONSTRAINT FK_repo_file_meta_data_storage_domain_static
 FOREIGN KEY(repo_domain_id) REFERENCES storage_domain_static(id) ON DELETE CASCADE;
 
 
@@ -1344,34 +1344,34 @@ FOREIGN KEY(image_id) REFERENCES images(image_guid) ON DELETE CASCADE;
 
 
 ALTER TABLE permissions ADD  CONSTRAINT fk_permissions_roles FOREIGN KEY(role_id)
-REFERENCES roles(id) ON DELETE CASCADE; 
+REFERENCES roles(id) ON DELETE CASCADE;
 
 CREATE INDEX IDX_permissions_ad_element_id
-ON permissions 
+ON permissions
 (ad_element_id);
 
 
 CREATE INDEX IDX_permissions_object_id
-ON permissions 
+ON permissions
 (object_id);
 
 
 CREATE INDEX IDX_permissions_role_id
-ON permissions 
+ON permissions
 (role_id);
 
 
 CREATE INDEX IDX_repo_file_file_type
-ON repo_file_meta_data 
+ON repo_file_meta_data
 (file_type);
 
 
 CREATE INDEX IDX_roles_groups_action_group_id
-ON roles_groups 
+ON roles_groups
 (action_group_id);
 
 
-CREATE UNIQUE INDEX IDX_combined_ad_role_object ON permissions 
+CREATE UNIQUE INDEX IDX_combined_ad_role_object ON permissions
 (ad_element_id,
 role_id,
 object_id);

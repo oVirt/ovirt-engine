@@ -22,7 +22,7 @@ INSERT INTO async_tasks(action_type, result, status, task_id, action_parameters,
 INSERT INTO async_tasks_entities (async_task_id,entity_id,entity_type)
 	SELECT v_task_id,id,v_entity_type from fnsplitteruuid(v_entity_ids);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Updateasync_tasks(v_action_type INTEGER,
@@ -68,7 +68,7 @@ BEGIN
    WHERE task_id = v_task_id;
    GET DIAGNOSTICS deleted_rows = ROW_COUNT;
    RETURN deleted_rows;
-    
+
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -18,7 +18,7 @@ BEGIN
 INSERT INTO ad_groups(id, name,status,domain,distinguishedname)
 	VALUES(v_id, v_name,v_status,v_domain,v_distinguishedname);
 END; $procedure$
-LANGUAGE plpgsql;    
+LANGUAGE plpgsql;
 
 
 

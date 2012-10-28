@@ -33,7 +33,7 @@ BEGIN
             q_storage_view.storage_name,
             COALESCE(q_storage_view.storage_size_gb, q_g_view.storage_size_gb) as storage_size_gb,
             COALESCE(q_storage_view.storage_size_gb_usage, q_g_view.storage_size_gb_usage) as storage_size_gb_usage
-    FROM  quota_global_view q_g_view 
+    FROM  quota_global_view q_g_view
     LEFT OUTER JOIN quota_storage_view q_storage_view ON q_g_view.quota_id = q_storage_view.quota_id
     AND  (v_storage_id = q_storage_view.storage_id OR v_storage_id IS NULL)
    WHERE q_g_view.quota_id = v_id) sub
@@ -82,7 +82,7 @@ BEGIN
                 COALESCE(q_vds_view.virtual_cpu_usage, q_g_view.virtual_cpu_usage) as virtual_cpu_usage,
                 COALESCE(q_vds_view.mem_size_mb,q_g_view.mem_size_mb) as mem_size_mb,
                 COALESCE(q_vds_view.mem_size_mb_usage, q_g_view.mem_size_mb_usage) as mem_size_mb_usage
-         FROM   quota_global_view q_g_view 
+         FROM   quota_global_view q_g_view
          LEFT OUTER JOIN quota_vds_group_view q_vds_view ON q_g_view.quota_id = q_vds_view.quota_id
          AND   (v_vds_group_id = q_vds_view.vds_group_id OR v_vds_group_id IS NULL)
          WHERE q_g_view.quota_id = v_id) sub

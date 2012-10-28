@@ -24,7 +24,7 @@ RETURNS VOID
    AS $procedure$
    DECLARE
    v_connection_id UUID;
-BEGIN        
+BEGIN
     v_connection_id := uuid_generate_v1();
     if not exists (select 1 from storage_server_connections where connection = v_connection) then
         -- Insert storage server connection info
@@ -34,9 +34,9 @@ BEGIN
         -- Insert storage domain dynamic  info
         perform Insertstorage_domain_dynamic(v_available,v_storage_domain_id,v_used);
     end if;
-    exception 
+    exception
         when others then
-	    RAISE EXCEPTION 'NUM:%, DETAILS:%', SQLSTATE, SQLERRM;        
+	    RAISE EXCEPTION 'NUM:%, DETAILS:%', SQLSTATE, SQLERRM;
 END; $procedure$
 LANGUAGE plpgsql;
 
