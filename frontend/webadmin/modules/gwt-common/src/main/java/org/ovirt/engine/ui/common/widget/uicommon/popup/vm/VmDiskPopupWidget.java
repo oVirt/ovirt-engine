@@ -332,7 +332,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return diskImage.getactual_size();
             }
         };
-        internalDiskTable.addColumn(actualSizeColumn, constants.sizeVmDiskTable());
+        internalDiskTable.addColumn(actualSizeColumn, constants.sizeVmDiskTable(), "105px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> storageDomainColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
