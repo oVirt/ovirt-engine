@@ -306,6 +306,8 @@ public class VdsEventListener implements IVdsEventListener {
 
         // Alert that the virtual machine failed:
         AuditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
+        log.infoFormat("Failed to start Highly Available VM. Attempting to restart. VM Name: {0}, VM Id:{1}",
+                event.getVmName(), vmId);
 
         // Try to start it again:
         final VdcReturnValueBase result = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
