@@ -258,7 +258,7 @@ select fn_db_add_config_value('LiveSnapshotEnabled','true','3.1');
 select fn_db_add_config_value('LiveSnapshotEnabled','true','3.2');
 select fn_db_add_config_value('LiveStorageMigrationEnabled','false','2.2');
 select fn_db_add_config_value('LiveStorageMigrationEnabled','false','3.0');
-select fn_db_add_config_value('LiveStorageMigrationEnabled','true','3.1');
+select fn_db_add_config_value('LiveStorageMigrationEnabled','false','3.1');
 select fn_db_add_config_value('LiveStorageMigrationEnabled','true','3.2');
 select fn_db_add_config_value('LocalAdminPassword','123456','general');
 select fn_db_add_config_value('LocalStorageEnabled','false','2.2');
