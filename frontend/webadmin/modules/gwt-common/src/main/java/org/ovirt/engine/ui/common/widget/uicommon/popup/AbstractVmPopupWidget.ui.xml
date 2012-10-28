@@ -174,12 +174,10 @@
         }
         
         .prestartedLabelWithHelp {
-        	width: 85px;
         	float: left;
         }
         
         .editPrestartedLabelWithHelp {
-        	width: 110px;
         	float: left;
         }
         
@@ -189,7 +187,7 @@
         
         .eidtPrestartedVms {
         	float: left;
-        	padding-left: 140px;
+        	padding-left: 58px;
         }
         
         .eidtIncreaseVms {
