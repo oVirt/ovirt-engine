@@ -666,16 +666,18 @@ def startDbRelatedServices(etlService, notificationService):
             logging.warn("Failed to start %s: exit code %d", notificationService.name, rc)
             messages.append(MSG_ERR_FAILED_START_SERVICE % notificationService.name)
 
-def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION):
+def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION, dbName=basedefs.DB_NAME):
     """ Check whether there are UNSUPPORTED_VERSION
     objects present. If yes, throw an Exception
+
+    dbName is provided for flexibility of quering different possible DBs.
     """
     queryCheckDCVersions="SELECT compatibility_version FROM storage_pool;"
     dcVersions, rc = utils.execRemoteSqlCommand(
         userName=SERVER_ADMIN,
         dbHost=SERVER_NAME,
         dbPort=SERVER_PORT,
-        dbName=basedefs.DB_NAME,
+        dbName=dbName,
         sqlQuery=queryCheckDCVersions,
         failOnError=True,
         errMsg=MSG_ERROR_CONNECT_DB,
@@ -685,7 +687,7 @@ def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION):
         userName=SERVER_ADMIN,
         dbHost=SERVER_NAME,
         dbPort=SERVER_PORT,
-        dbName=basedefs.DB_NAME,
+        dbName=dbName,
         sqlQuery=queryCheckClusterVersions,
         failOnError=True,
         errMsg=MSG_ERROR_CONNECT_DB,
@@ -924,6 +926,7 @@ def main(options):
         logging.info("Info: %s file found. Continue.", basedefs.DB_PASS_FILE)
 
     # Functions/parameters definitions
+    currentDbName = basedefs.DB_NAME
     stopEngineService = [stopEngine]
     startEngineService = [startEngine]
     preupgradeFunc = [preupgradeUUIDCheck]
@@ -934,7 +937,7 @@ def main(options):
     etlService = utils.Service(basedefs.ETL_SERVICE_NAME)
     notificationService = utils.Service(basedefs.NOTIFIER_SERVICE_NAME)
 
-    if unsupportedVersionsPresent():
+    if unsupportedVersionsPresent(dbName=currentDbName):
         print MSG_ERROR_INCOMPATIBLE_UPGRADE
         raise Exception(MSG_ERROR_INCOMPATIBLE_UPGRADE)
 
