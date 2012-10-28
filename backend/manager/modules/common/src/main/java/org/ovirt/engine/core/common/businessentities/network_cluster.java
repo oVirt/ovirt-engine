@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 @TypeDef(name = "guid", typeClass = GuidType.class)
 @NamedQueries(value = { @NamedQuery(name = "delete_network_cluster",
                                     query = "delete from network_cluster n where n.clusterId = :cluster_id and n.networkId = :network_id") })
-public class network_cluster implements BusinessEntity<NetworkClusterId> {
+public class network_cluster extends IVdcQueryable implements BusinessEntity<NetworkClusterId> {
     private static final long serialVersionUID = -4900811332744926545L;
 
     private NetworkClusterId id = new NetworkClusterId();
@@ -148,5 +148,10 @@ public class network_cluster implements BusinessEntity<NetworkClusterId> {
 
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
     }
 }
