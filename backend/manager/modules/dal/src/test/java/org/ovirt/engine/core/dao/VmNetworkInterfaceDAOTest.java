@@ -258,6 +258,12 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
         assertEquals(existingVmInterface, result.get(0));
     }
 
+    @Test
+    public void testGetAllForNetwork() throws Exception {
+        List<VmNetworkInterface> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
+        assertEquals(existingVmInterface, result.get(0));
+    }
+
     private void assertCorrectResultForTemplate(List<VmNetworkInterface> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
