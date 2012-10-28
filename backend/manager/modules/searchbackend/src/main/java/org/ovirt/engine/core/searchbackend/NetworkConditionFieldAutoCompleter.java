@@ -27,7 +27,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         // Building the types dict.
         getTypeDictionary().put(NAME, String.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
-        getTypeDictionary().put(VLAN_ID, String.class);
+        getTypeDictionary().put(VLAN_ID, Integer.class);
         getTypeDictionary().put(STP, Boolean.class);
         getTypeDictionary().put(MTU, Integer.class);
         getTypeDictionary().put(VM_NETWORK, Boolean.class);
