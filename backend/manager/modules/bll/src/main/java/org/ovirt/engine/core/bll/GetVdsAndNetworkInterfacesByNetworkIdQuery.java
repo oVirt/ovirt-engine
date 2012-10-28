@@ -32,7 +32,8 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends NetworkIdParam
         List<PairQueryable<VdsNetworkInterface, VDS>> vdsInterfaceVdsPairs =
                 new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
         for (VdsNetworkInterface vdsNetworkInterface : vdsNetworkInterfaceList) {
-            vdsInterfaceVdsPairs.add(new PairQueryable(vdsNetworkInterface, vdsById.get(vdsNetworkInterface.getVdsId())));
+            vdsInterfaceVdsPairs.add(new PairQueryable<VdsNetworkInterface, VDS>(vdsNetworkInterface,
+                    vdsById.get(vdsNetworkInterface.getVdsId())));
         }
 
         getQueryReturnValue().setReturnValue(vdsInterfaceVdsPairs);
