@@ -34,14 +34,13 @@
 		}
 
 		.attachImageCheckBoxLabel {
-			width: 115px;
+			width: 165px;
 		}
 
 		.attachImageCheckbox {
 		}
 
 		.attachImageSelectbox {
-			margin-left: 30px;
 		}
 
 		.attachImagePanel,.linuxBootOptionsPanel,.initialRunPanel {
