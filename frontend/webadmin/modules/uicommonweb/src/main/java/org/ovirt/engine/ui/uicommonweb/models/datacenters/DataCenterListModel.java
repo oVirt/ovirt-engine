@@ -42,9 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
@@ -663,14 +661,18 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         model.StartProgress(null);
 
-        Frontend.RunAction(model.getIsNew() ? VdcActionType.AddEmptyStoragePool : VdcActionType.UpdateStoragePool,
-                new StoragePoolManagementParameter(dataCenter),
-                new IFrontendActionAsyncCallback() {
+        ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
+        params.add(new StoragePoolManagementParameter(dataCenter));
+
+        Frontend.RunMultipleAction(model.getIsNew() ? VdcActionType.AddEmptyStoragePool
+                : VdcActionType.UpdateStoragePool,
+                params,
+                new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
 
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
-                        localModel.PostOnSaveInternal(result.getReturnValue());
+                        localModel.PostOnSaveInternal(result.getReturnValue().get(0));
 
                     }
                 },
@@ -683,16 +685,13 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         model.StopProgress();
 
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            Cancel();
+        Cancel();
 
-            if (model.getIsNew())
-            {
-                setGuideContext(returnValue.getActionReturnValue());
-                UpdateActionAvailability();
-                getGuideCommand().Execute();
-            }
+        if (model.getIsNew())
+        {
+            setGuideContext(returnValue.getActionReturnValue());
+            UpdateActionAvailability();
+            getGuideCommand().Execute();
         }
     }
 
