@@ -1539,7 +1539,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    LiveStorageMigrationEnabled(393),
+    LiveStorageMigrationEnabled(394),
 
     Invalid(65535);
 
