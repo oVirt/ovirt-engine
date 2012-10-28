@@ -29,7 +29,7 @@
 		
 		.contentWidget {
 			float: right;
-			width: 230px;
+			width: 220px;
 			padding: 0 5px;
 			line-height: 30px;
 		}
