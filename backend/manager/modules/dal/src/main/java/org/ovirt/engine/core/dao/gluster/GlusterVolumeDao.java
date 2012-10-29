@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao.gluster;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
@@ -46,7 +47,11 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity>, M
 
     public void addTransportType(Guid volumeId, TransportType transportType);
 
+    public void addTransportTypes(Guid volumeId, Collection<TransportType> transportTypes);
+
     public void removeTransportType(Guid volumeId, TransportType transportType);
+
+    public void removeTransportTypes(Guid volumeId, Collection<TransportType> transportTypes);
 
     public void updateReplicaCount(Guid volumeId, int replicaCount);
 

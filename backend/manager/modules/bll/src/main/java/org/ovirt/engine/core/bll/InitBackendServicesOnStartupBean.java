@@ -7,6 +7,7 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.ovirt.engine.core.bll.gluster.GlusterManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -30,6 +31,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
      * This method is called upon the bean creation as part
      * of the management Service bean life cycle.
      */
+    @Override
     @PostConstruct
     public void create() {
         log.infoFormat("InitResourceManager: {0}", new Date());
@@ -52,6 +54,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         });
         StoragePoolStatusHandler.Init();
 
+        GlusterManager.getInstance().init();
     }
 
 }

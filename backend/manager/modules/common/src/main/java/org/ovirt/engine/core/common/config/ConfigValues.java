@@ -1541,6 +1541,22 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     LiveStorageMigrationEnabled(394),
 
+    /**
+     * Refresh rate (in seconds) for light-weight gluster data i.e. data that can be fetched without much of an overhead
+     * on the GlusterFS processes
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    GlusterRefreshRateLight(395),
+
+    /**
+     * Refresh rate (in seconds) for heavy-weight gluster data i.e. commands to fetch such data adds a considerable
+     * overhead on the GlusterFS processes.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    GlusterRefreshRateHeavy(396),
+
     Invalid(65535);
 
     private int intValue;

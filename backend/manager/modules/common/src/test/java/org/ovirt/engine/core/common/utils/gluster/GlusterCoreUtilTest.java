@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.utils.gluster;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -11,17 +13,16 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-
 public class GlusterCoreUtilTest {
-    private static final String SERVER_1 = "server1";
-    private static final String SERVER_2 = "server2";
-    private static final String SERVER_3 = "server3";
-    private static final String DIR_1 = "dir1";
-    private static final String DIR_2 = "dir2";
-    private static final String DIR_3 = "dir3";
-    private static final Guid UUID_1 = Guid.NewGuid();
-    private static final Guid UUID_2 = Guid.NewGuid();
-    private static final Guid UUID_3 = Guid.NewGuid();
+    private final String SERVER_1 = "server1";
+    private final String SERVER_2 = "server2";
+    private final String SERVER_3 = "server3";
+    private final String DIR_1 = "dir1";
+    private final String DIR_2 = "dir2";
+    private final String DIR_3 = "dir3";
+    private final Guid UUID_1 = Guid.NewGuid();
+    private final Guid UUID_2 = Guid.NewGuid();
+    private final Guid UUID_3 = Guid.NewGuid();
     private final GlusterBrickEntity brick1 = createBrick(UUID_1, SERVER_1, DIR_1);
     private final GlusterBrickEntity brick2 = createBrick(UUID_2, SERVER_2, DIR_2);
     private final GlusterBrickEntity brick3 = createBrick(UUID_3, SERVER_3, DIR_3);
@@ -53,6 +54,27 @@ public class GlusterCoreUtilTest {
         assertEquals(brick1.getId(), brick.getId());
     }
 
+    public void testContainsBrick() {
+        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        bricks.add(brick1);
+        bricks.add(brick2);
+
+        assertTrue(GlusterCoreUtil.containsBrick(bricks, brick1));
+        assertTrue(GlusterCoreUtil.containsBrick(bricks, brick2));
+        assertFalse(GlusterCoreUtil.containsBrick(bricks, brick3));
+    }
+
+    @Test
+    public void testFindBrick() {
+        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        bricks.add(brick1);
+        bricks.add(brick2);
+
+        assertNotNull(GlusterCoreUtil.findBrick(bricks, brick1));
+        assertNotNull(GlusterCoreUtil.findBrick(bricks, brick2));
+        assertNull(GlusterCoreUtil.findBrick(bricks, brick3));
+    }
+
     private GlusterBrickEntity createBrick(Guid serverId, String serverName, String brickDir) {
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setId(Guid.NewGuid());
@@ -61,5 +83,4 @@ public class GlusterCoreUtilTest {
         brick.setBrickDirectory(brickDir);
         return brick;
     }
-
 }

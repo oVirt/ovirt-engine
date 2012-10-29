@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -247,12 +248,16 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             // If new server is not part of the existing gluster peers, add into peer group
             if (upServer != null) {
                 List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer.getId());
+                Map<String, String> customLogValues = new HashMap<String, String>();
+                customLogValues.put("Server", upServer.gethost_name());
                 if (glusterServers.size() == 0) {
-                    setNonOperational(NonOperationalReason.GLUSTER_PEER_LIST_FAILED, null);
+                    customLogValues.put("Command", "gluster peer status");
+                    setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                     return false;
                 } else if (!hostExists(glusterServers, getVds())) {
                     if (!glusterPeerProbe(upServer.getId(), getVds().gethost_name())) {
-                        setNonOperational(NonOperationalReason.GLUSTER_PEER_PROBE_FAILED, null);
+                        customLogValues.put("Command", "gluster peer probe " + getVds().gethost_name());
+                        setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                         return false;
                     }
                 }

@@ -497,7 +497,6 @@
             <value>200</value>
             <value>2.3</value>
             <value>0</value>
-            <value>2</value>
             <value>true</value>
             <value>false</value>
         </row>
@@ -517,7 +516,6 @@
             <value>200</value>
             <value>2.3</value>
             <value>0</value>
-            <value>2</value>
             <value>true</value>
             <value>false</value>
         </row>
@@ -537,7 +535,6 @@
             <value>200</value>
             <value>2.3</value>
             <value>0</value>
-            <value>2</value>
             <value>true</value>
             <value>false</value>
         </row>
@@ -554,11 +551,9 @@
             <value>2</value>
             <value>0</value>
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
-            <value>1</value>
             <value>100</value>
             <value>2.3</value>
             <value>0</value>
-            <value>2</value>
             <value>true</value>
             <value>false</value>
         </row>
@@ -575,11 +570,9 @@
             <value>2</value>
             <value>0</value>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
-            <value>1</value>
             <value>100</value>
             <value>2.3</value>
             <value>0</value>
-            <value>2</value>
             <value>true</value>
             <value>false</value>
         </row>
@@ -596,11 +589,9 @@
             <value>2</value>
             <value>0</value>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
-            <value>1</value>
             <value>100</value>
             <value>2.3</value>
             <value>0</value>
-            <value>2</value>
             <value>true</value>
             <value>false</value>
         </row>
@@ -620,9 +611,27 @@
             <value>200</value>
             <value>2.3</value>
             <value>0</value>
-            <value>2</value>
             <value>true</value>
             <value>false</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>gluster.only</value>
+            <null />
+            <value>Intel Xeon Core2</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>200</value>
+            <value>2.3</value>
+            <value>0</value>
+            <value>false</value>
+            <value>true</value>
         </row>
     </table>
 
@@ -804,6 +813,48 @@
             <value>2010-12-01 09:52:57</value>
             <value>6</value>
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
+        </row>
+        <row>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>gluster-server1</value>
+            <value>192.168.122.19</value>
+            <value>farkle</value>
+            <value>gluster1-vdsc.redhat.com</value>
+            <value>54321</value>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value>0</value>
+            <value>2010-11-17 17:25:39</value>
+            <value>2010-12-01 09:52:57</value>
+            <value>4</value>
+        </row>
+        <row>
+            <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
+            <value>gluster-server2</value>
+            <value>192.168.122.20</value>
+            <value>farkle</value>
+            <value>gluster2-vdsc.redhat.com</value>
+            <value>54321</value>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value>0</value>
+            <value>2010-11-17 17:25:39</value>
+            <value>2010-12-01 09:52:57</value>
+            <value>4</value>
         </row>
     </table>
 
@@ -1327,6 +1378,86 @@
             <value>{}</value>
             <value>0</value>
         </row>
+        <row>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>3</value>
+            <value>8</value>
+            <value>Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz</value>
+            <value>2494</value>
+            <null />
+            <value>1</value>
+            <value>15952</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>256</value>
+            <value>65</value>
+            <value>4.9.6-24.0.el6_3</value>
+            <value>4.9.0.25</value>
+            <value>Snow Man</value>
+            <null />
+            <value>12</value>
+            <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
+            <value>2010-11-17 17:26:10</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2</value>
+            <value>0</value>
+            <value>2.3</value>
+            <value>2.3</value>
+            <value>RHEL - 6Server - 6.0.0.37.el6</value>
+            <null />
+            <null />
+            <value>2.6.32 - 71.el6</value>
+            <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2010-12-01 14:13:10</value>
+            <value>{}</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
+            <value>3</value>
+            <value>8</value>
+            <value>Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz</value>
+            <value>2494</value>
+            <null />
+            <value>1</value>
+            <value>15952</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>256</value>
+            <value>65</value>
+            <value>4.9.6-24.0.el6_3</value>
+            <value>4.9.0.25</value>
+            <value>Snow Man</value>
+            <null />
+            <value>12</value>
+            <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
+            <value>2010-11-17 17:26:10</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2</value>
+            <value>0</value>
+            <value>2.3</value>
+            <value>2.3</value>
+            <value>RHEL - 6Server - 6.0.0.37.el6</value>
+            <null />
+            <null />
+            <value>2.6.32 - 71.el6</value>
+            <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2010-12-01 14:13:10</value>
+            <value>{}</value>
+            <value>0</value>
+        </row>
     </table>
 
     <table name="vds_statistics">
@@ -1364,6 +1495,40 @@
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>100</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>14741</value>
+            <value>0</value>
+            <value>15999</value>
+            <value>15999</value>
+            <value>0</value>
+            <value>64</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>100</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>14741</value>
+            <value>0</value>
+            <value>15999</value>
+            <value>15999</value>
+            <value>0</value>
+            <value>64</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
             <value>100</value>
             <value>0</value>
             <value>0</value>
@@ -3504,7 +3669,7 @@
         <column>_update_date</column>
         <row>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
-            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
             <value>test-vol-distribute-1</value>
             <value>DISTRIBUTE</value>
             <value>UP</value>
@@ -3515,7 +3680,7 @@
         </row>
         <row>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
-            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
             <value>test-vol-replicate-1</value>
             <value>DISTRIBUTED_REPLICATE</value>
             <value>UP</value>
@@ -3532,6 +3697,7 @@
         <column>server_id</column>
         <column>brick_dir</column>
         <column>status</column>
+        <column>brick_order</column>
         <column>_create_date</column>
         <column>_update_date</column>
 
@@ -3539,18 +3705,20 @@
         <row>
             <value>6ccdc294-d77b-4929-809d-8afe7634b47d</value>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
             <value>/export/test-vol-distribute-1/dir1</value>
             <value>UP</value>
+            <value>0</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
         <row>
             <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a754</value>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
             <value>/export/test-vol-distribute-1/dir2</value>
             <value>UP</value>
+            <value>1</value>
             <value>2010-10-22 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
@@ -3559,36 +3727,40 @@
         <row>
             <value>65d327f8-5864-4330-be04-fe27e1ffb553</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
             <value>/export/test-vol-replicate-1/r1dir1</value>
             <value>UP</value>
+            <value>0</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
         <row>
             <value>2ab384da-6190-4668-aa2e-37bc5c5ff014</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
             <value>/export/test-vol-replicate-1/r1dir2</value>
             <value>UP</value>
+            <value>1</value>
             <value>2010-10-21 03:38:23</value>
             <value>2010-11-29 15:57:10</value>
         </row>
         <row>
             <value>2702bb49-3037-405c-81c5-14a38793164e</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
             <value>/export/test-vol-replicate-1/r2dir1</value>
             <value>UP</value>
+            <value>2</value>
             <value>2010-10-22 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
         </row>
         <row>
             <value>41eb430f-c2ed-435c-b4eb-e1e19173754e</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
             <value>/export/test-vol-replicate-1/r2dir2</value>
             <value>UP</value>
+            <value>3</value>
             <value>2010-10-22 03:38:23</value>
             <value>2010-11-29 15:57:10</value>
         </row>

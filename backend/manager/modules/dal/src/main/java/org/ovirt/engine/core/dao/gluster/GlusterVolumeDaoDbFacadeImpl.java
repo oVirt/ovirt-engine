@@ -332,4 +332,17 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         return volumeRowMapper;
     }
 
+    @Override
+    public void addTransportTypes(Guid volumeId, Collection<TransportType> transportTypes) {
+        for (TransportType transportType : transportTypes) {
+            addTransportType(volumeId, transportType);
+        }
+    }
+
+    @Override
+    public void removeTransportTypes(Guid volumeId, Collection<TransportType> transportTypes) {
+        for (TransportType transportType : transportTypes) {
+            removeTransportType(volumeId, transportType);
+        }
+    }
 }

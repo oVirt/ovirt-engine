@@ -305,6 +305,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION Getinterface_viewByAddr(v_cluster_id UUID, v_addr VARCHAR(50))
+RETURNS SETOF vds_interface_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vds_interface_view.*
+   FROM vds_interface_view
+   INNER JOIN vds_static
+   ON vds_interface_view.vds_id = vds_static.vds_id
+   WHERE vds_interface_view.addr = v_addr
+   AND vds_static.vds_group_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 
 
 Create or replace FUNCTION GetVdsManagedInterfaceByVdsId(v_vds_id UUID, v_user_id UUID, v_is_filtered boolean)

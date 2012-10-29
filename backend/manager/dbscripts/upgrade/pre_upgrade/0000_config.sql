@@ -554,6 +554,9 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
 select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"true\"}','general');
+-- Gluster refresh rates (in seconds)
+select fn_db_add_config_value('GlusterRefreshRateLight', '5', 'general');
+select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
 
 
 ------------------------------------------------------------------------------------

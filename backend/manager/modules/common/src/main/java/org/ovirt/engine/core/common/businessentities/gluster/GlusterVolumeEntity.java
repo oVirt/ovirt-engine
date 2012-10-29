@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateReplicatedVolume;
@@ -376,8 +377,8 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         if (!(name.equals(volume.getName())
                 && volumeType == volume.getVolumeType()
                 && status == volume.getStatus()
-                && equalIntegers(replicaCount, volume.getReplicaCount())
-                && equalIntegers(stripeCount, volume.getStripeCount()))) {
+                && ObjectUtils.objectsEqual(replicaCount, volume.getReplicaCount())
+                && ObjectUtils.objectsEqual(stripeCount, volume.getStripeCount()))) {
             return false;
         }
 
@@ -407,14 +408,6 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
             }
         }
         return null;
-    }
-
-    private boolean equalIntegers(Integer int1, Integer int2) {
-        if(int1 == null) {
-            return int2 == null;
-        } else {
-            return int1.equals(int2);
-        }
     }
 
     @Override

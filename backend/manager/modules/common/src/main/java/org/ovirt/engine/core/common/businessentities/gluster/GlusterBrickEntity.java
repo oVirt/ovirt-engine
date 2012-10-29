@@ -129,6 +129,7 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
                 && (ObjectUtils.objectsEqual(volumeId, brick.getVolumeId()))
                 && (ObjectUtils.objectsEqual(serverId, brick.getServerId()))
                 && (ObjectUtils.objectsEqual(brickDirectory, brick.getBrickDirectory()))
+                && (ObjectUtils.objectsEqual(brickOrder, brick.getBrickOrder()))
                 && status == brick.getStatus());
     }
 

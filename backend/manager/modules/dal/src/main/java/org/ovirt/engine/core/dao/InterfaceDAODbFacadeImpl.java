@@ -125,6 +125,15 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
         return getAllInterfacesForVds(id, null, false);
     }
 
+    @Override
+    public List<VdsNetworkInterface> getAllInterfacesWithIpAddress(Guid clusterId, String ipAddress) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("addr", ipAddress).addValue("cluster_id", clusterId);
+
+        return getCallsHandler().executeReadList("Getinterface_viewByAddr",
+                vdsNetworkInterfaceRowMapper, parameterSource);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<VdsNetworkInterface> getAllInterfacesForVds(Guid id, Guid userID, boolean isFiltered) {

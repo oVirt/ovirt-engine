@@ -24,6 +24,8 @@ public interface GlusterBrickDao extends DAO, MassOperationsDao<GlusterBrickEnti
 
     public void updateBrickStatus(Guid brickId, GlusterStatus status);
 
+    public void updateBrickStatuses(List<GlusterBrickEntity> bricks);
+
     public void updateBrickOrder(Guid brickId, int brickOrder);
 
     public List<GlusterBrickEntity> getGlusterVolumeBricksByServerId(Guid serverId);

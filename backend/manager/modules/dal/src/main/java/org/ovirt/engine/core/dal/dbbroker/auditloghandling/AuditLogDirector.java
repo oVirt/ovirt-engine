@@ -86,6 +86,16 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_PROFILE_START_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_PROFILE_STOP, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_PROFILE_STOP_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_INFO_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.GLUSTER_COMMAND_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_CREATED_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_DELETED_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_OPTION_SET_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_OPTION_RESET_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_PROPERTIES_CHANGED_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_BRICK_ADDED_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_BRICK_REMOVED_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI, AuditLogSeverity.WARNING);
     }
 
     private static void initDefaultSeverities() {

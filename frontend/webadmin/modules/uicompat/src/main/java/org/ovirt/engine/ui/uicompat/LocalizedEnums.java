@@ -20,6 +20,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String NonOperationalReason___TIMEOUT_RECOVERING_FROM_CRASH();
 
+    String NonOperationalReason___GLUSTER_COMMAND_FAILED();
+
 	String VmPauseStatus___NONE();
 
 	String VmPauseStatus___NOERR();

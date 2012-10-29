@@ -26,7 +26,7 @@ import org.ovirt.engine.core.dao.BaseDAOTestCase;
  */
 public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     private static final Guid SERVER_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
-    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid EXISTING_VOL_DIST_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid EXISTING_VOL_REPL_ID = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private static final String EXISTING_VOL_REPL_NAME = "test-vol-replicate-1";
@@ -248,6 +248,33 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testAddTransportTypes() {
+        Set<TransportType> transportTypes = existingDistVol.getTransportTypes();
+        assertEquals(1, transportTypes.size());
+        dao.removeTransportType(EXISTING_VOL_DIST_ID, TransportType.TCP);
+        transportTypes = dao.getById(EXISTING_VOL_DIST_ID).getTransportTypes();
+        assertEquals(0, transportTypes.size());
+
+        List<TransportType> types = new ArrayList<TransportType>();
+        types.add(TransportType.TCP);
+        types.add(TransportType.RDMA);
+        dao.addTransportTypes(EXISTING_VOL_DIST_ID, types);
+
+        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
+        assertNotNull(volumeAfter);
+
+        transportTypes = volumeAfter.getTransportTypes();
+        assertEquals(2, transportTypes.size());
+        assertTrue(transportTypes.contains(TransportType.TCP));
+        assertTrue(transportTypes.contains(TransportType.RDMA));
+
+        assertFalse(volumeAfter.equals(existingDistVol));
+        existingDistVol.addTransportType(TransportType.TCP);
+        existingDistVol.addTransportType(TransportType.RDMA);
+        assertEquals(volumeAfter, existingDistVol);
+    }
+
+    @Test
     public void testRemoveTransportType() {
         Set<TransportType> transportTypes = existingReplVol.getTransportTypes();
         assertEquals(2, transportTypes.size());
@@ -276,6 +303,33 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertTrue(volumes.get(0).isNfsEnabled());
     }
 
+    @Test
+    public void testRemoveTransportTypes() {
+        Set<TransportType> transportTypes = existingReplVol.getTransportTypes();
+        assertEquals(2, transportTypes.size());
+        assertTrue(transportTypes.contains(TransportType.TCP));
+        assertTrue(transportTypes.contains(TransportType.RDMA));
+
+        List<TransportType> types = new ArrayList<TransportType>();
+        types.add(TransportType.TCP);
+        types.add(TransportType.RDMA);
+
+        dao.removeTransportTypes(EXISTING_VOL_REPL_ID, types);
+
+        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_REPL_ID);
+        assertNotNull(volumeAfter);
+
+        transportTypes = volumeAfter.getTransportTypes();
+        assertEquals(0, transportTypes.size());
+        assertFalse(transportTypes.contains(TransportType.TCP));
+        assertFalse(transportTypes.contains(TransportType.RDMA));
+
+        assertFalse(volumeAfter.equals(existingReplVol));
+        existingReplVol.removeTransportType(TransportType.TCP);
+        existingReplVol.removeTransportType(TransportType.RDMA);
+        assertEquals(volumeAfter, existingReplVol);
+    }
+
     private GlusterVolumeEntity insertTestVolume() {
         Guid volumeId = Guid.NewGuid();
 
@@ -294,6 +348,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
 
         GlusterBrickEntity brick =
                 new GlusterBrickEntity(volumeId, server, "/export/testVol1", GlusterStatus.UP);
+        brick.setBrickOrder(0);
         volume.addBrick(brick);
 
         dao.save(volume);

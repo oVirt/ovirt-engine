@@ -7,6 +7,7 @@ import java.util.concurrent.FutureTask;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterServersListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeStatusReturnForXmlRpc;
@@ -1201,6 +1202,17 @@ public class VdsServerWrapper implements IVdsServer {
                     vdsServer.glusterVolumeStatus(volumeName, brickName, volumeStatusOption);
             GlusterVolumeStatusReturnForXmlRpc wrapper =
                     new GlusterVolumeStatusReturnForXmlRpc(clusterId, xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumesListReturnForXmlRpc glusterVolumesList(Guid clusterId) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumesList();
+            GlusterVolumesListReturnForXmlRpc wrapper = new GlusterVolumesListReturnForXmlRpc(clusterId, xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);

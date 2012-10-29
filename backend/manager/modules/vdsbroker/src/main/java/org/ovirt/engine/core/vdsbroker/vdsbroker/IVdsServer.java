@@ -6,6 +6,7 @@ import java.util.concurrent.FutureTask;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterServersListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
@@ -250,4 +251,6 @@ public interface IVdsServer {
             String volumeName,
             String brickName,
             String volumeStatusOption);
+
+    GlusterVolumesListReturnForXmlRpc glusterVolumesList(Guid clusterId);
 }

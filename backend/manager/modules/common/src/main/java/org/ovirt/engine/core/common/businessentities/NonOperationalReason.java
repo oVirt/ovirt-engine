@@ -14,8 +14,8 @@ public enum NonOperationalReason {
     KVM_NOT_RUNNING(6),
     TIMEOUT_RECOVERING_FROM_CRASH(7),
     VM_NETWORK_IS_BRIDGELESS(8),
-    GLUSTER_PEER_LIST_FAILED(9),
-    GLUSTER_PEER_PROBE_FAILED(10);
+    GLUSTER_COMMAND_FAILED(9),
+    ;
 
     private final int value;
 

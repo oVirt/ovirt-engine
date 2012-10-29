@@ -122,4 +122,13 @@ public interface InterfaceDAO extends DAO {
      * @return the VdsNetworkInterfaces
      */
     VdsNetworkInterface get(Guid id);
+
+    /**
+     * Retrieves all interfaces with given IP address from all hosts of the given cluster
+     *
+     * @param clusterId
+     * @param ipAddress
+     * @return
+     */
+    List<VdsNetworkInterface> getAllInterfacesWithIpAddress(Guid clusterId, String ipAddress);
 }

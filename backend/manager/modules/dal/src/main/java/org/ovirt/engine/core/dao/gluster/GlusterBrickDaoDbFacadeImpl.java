@@ -61,6 +61,13 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
+    public void updateBrickStatuses(List<GlusterBrickEntity> bricks) {
+        for(GlusterBrickEntity brick : bricks) {
+            updateBrickStatus(brick.getId(), brick.getStatus());
+        }
+    }
+
+    @Override
     public void updateBrickOrder(Guid brickId, int brickOrder) {
         getCallsHandler().executeModification("UpdateGlusterVolumeBrickOrder",
                 getCustomMapSqlParameterSource()

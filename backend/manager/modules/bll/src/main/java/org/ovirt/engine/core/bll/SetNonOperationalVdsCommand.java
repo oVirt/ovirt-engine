@@ -76,26 +76,24 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             AddCustomValue(e.getKey(), e.getValue());
         }
         switch (getParameters().getNonOperationalReason()) {
-            case NETWORK_UNREACHABLE:
-                return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL_NETWORK
-                        : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
-            case STORAGE_DOMAIN_UNREACHABLE:
-                return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN
-                        : AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN_FAILED;
-            case TIMEOUT_RECOVERING_FROM_CRASH:
-                return AuditLogType.VDS_RECOVER_FAILED;
-            case KVM_NOT_RUNNING:
-                return AuditLogType.VDS_RUN_IN_NO_KVM_MODE;
-            case VERSION_INCOMPATIBLE_WITH_CLUSTER:
-                return AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER;
+        case NETWORK_UNREACHABLE:
+            return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL_NETWORK
+                    : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
+        case STORAGE_DOMAIN_UNREACHABLE:
+            return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN
+                    : AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN_FAILED;
+        case TIMEOUT_RECOVERING_FROM_CRASH:
+            return AuditLogType.VDS_RECOVER_FAILED;
+        case KVM_NOT_RUNNING:
+            return AuditLogType.VDS_RUN_IN_NO_KVM_MODE;
+        case VERSION_INCOMPATIBLE_WITH_CLUSTER:
+            return AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER;
         case VM_NETWORK_IS_BRIDGELESS:
-                return AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS;
-        case GLUSTER_PEER_LIST_FAILED:
-            return AuditLogType.GLUSTER_SERVERS_LIST_FAILED;
-        case GLUSTER_PEER_PROBE_FAILED:
-            return AuditLogType.GLUSTER_HOST_ADD_FAILED;
-            default:
-                return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
+            return AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS;
+        case GLUSTER_COMMAND_FAILED:
+            return AuditLogType.GLUSTER_COMMAND_FAILED;
+        default:
+            return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         }
     }
 

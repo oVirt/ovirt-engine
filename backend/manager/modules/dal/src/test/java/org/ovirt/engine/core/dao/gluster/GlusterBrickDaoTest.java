@@ -36,6 +36,7 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
                 server,
                 "/export/test-vol-distribute-1/dir3",
                 GlusterStatus.UP);
+        brickToAdd.setBrickOrder(0);
 
         dao.save(brickToAdd);
 
@@ -84,6 +85,7 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
                         server,
                         "/export/test-vol-distribute-1/dir3",
                         GlusterStatus.UP);
+        newBrick.setBrickOrder(0);
 
         assertNull(dao.getById(newBrick.getId()));
 
