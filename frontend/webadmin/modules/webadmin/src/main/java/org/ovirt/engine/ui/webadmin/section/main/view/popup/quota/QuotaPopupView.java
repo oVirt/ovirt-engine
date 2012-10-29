@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NullableButtonCell;
@@ -172,7 +173,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     @Inject
-    public QuotaPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public QuotaPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
+                          ApplicationMessages messages) {
         super(eventBus, resources);
         initListBoxEditors();
         initRadioButtonEditors();
@@ -182,7 +184,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         localize(constants);
         addStyles();
         Driver.driver.initialize(this);
-        initTables(constants);
+        initTables(constants, messages);
     }
 
     private void addStyles() {
@@ -200,12 +202,12 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         storageGraceSlider.setSliderValueChange(GRACE_STORAGE, this);
     }
 
-    private void initTables(ApplicationConstants constants) {
-        initQuotaClusterTable(constants);
-        initQuotaStorageTable(constants);
+    private void initTables(ApplicationConstants constants, ApplicationMessages messages) {
+        initQuotaClusterTable(constants, messages);
+        initQuotaStorageTable(constants, messages);
     }
 
-    private void initQuotaStorageTable(final ApplicationConstants constants) {
+    private void initQuotaStorageTable(final ApplicationConstants constants, final ApplicationMessages messages) {
         quotaStorageTable = new IVdcQueryableCellTable<QuotaStorage, ListModel>();
         storageQuotaTableContainer.add(quotaStorageTable);
 
@@ -256,16 +258,14 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaStorageTable.addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                String str;
                 if (object.getStorageSizeGB() == null) {
                     return ""; //$NON-NLS-1$
                 } else if (object.getStorageSizeGB().equals(QuotaStorage.UNLIMITED)) {
-                    str = constants.outOfQuota() + constants.unlimitedQuota();
+                    return messages.unlimitedStorageConsumption(diskSizeRenderer.render(object.getStorageSizeGBUsage()));
                 } else {
-                    str = constants.outOfQuota() + diskSizeRenderer.render(object.getStorageSizeGB());
+                    return messages.limitedStorageConsumption(diskSizeRenderer.render(object.getStorageSizeGBUsage())
+                            ,object.getStorageSizeGB());
                 }
-                return (object.getStorageSizeGBUsage() == 0 ? 0
-                        : diskSizeRenderer.render(object.getStorageSizeGBUsage())) + str;
             }
         }, constants.quota());
 
@@ -290,7 +290,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         });
     }
 
-    private void initQuotaClusterTable(final ApplicationConstants constants) {
+    private void initQuotaClusterTable(final ApplicationConstants constants, final ApplicationMessages messages) {
         quotaClusterTable = new IVdcQueryableCellTable<QuotaVdsGroup, ListModel>();
         clusterQuotaTableContainer.add(quotaClusterTable);
 
@@ -344,30 +344,26 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaClusterTable.addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                String str;
                 if (object.getMemSizeMB() == null) {
                     return ""; //$NON-NLS-1$
                 } else if (object.getMemSizeMB().equals(QuotaVdsGroup.UNLIMITED_MEM)) {
-                    str = constants.outOfQuota() + constants.unlimitedQuota();
+                    return messages.unlimitedMemConsumption(object.getMemSizeMBUsage());
                 } else {
-                    str = constants.outOfQuota() + object.getMemSizeMB();
+                    return messages.limitedMemConsumption(object.getMemSizeMBUsage(), object.getMemSizeMB());
                 }
-                return object.getMemSizeMBUsage() + str + " MB"; //$NON-NLS-1$
             }
         }, constants.quotaOfMemQuota());
 
         quotaClusterTable.addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                String str;
                 if (object.getVirtualCpu() == null) {
                     return ""; //$NON-NLS-1$
                 } else if (object.getVirtualCpu().equals(QuotaVdsGroup.UNLIMITED_VCPU)) {
-                    str = constants.outOfQuota() + constants.unlimitedQuota();
+                    return messages.unlimitedVcpuConsumption(object.getVirtualCpuUsage());
                 } else {
-                    str = constants.outOfQuota() + object.getVirtualCpu();
+                    return messages.limitedVcpuConsumption(object.getVirtualCpuUsage(), object.getVirtualCpu());
                 }
-                return object.getVirtualCpuUsage() + str + " vCPUs"; //$NON-NLS-1$
             }
         }, constants.quotaOfVcpuQuota());
 

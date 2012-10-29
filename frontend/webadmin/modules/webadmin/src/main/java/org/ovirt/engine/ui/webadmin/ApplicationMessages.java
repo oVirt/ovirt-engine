@@ -59,4 +59,22 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("{0} (VLAN {1})")
     String vlanNetwork(String name, String vlanId);
+
+    @DefaultMessage("{0} out of unlimited MB")
+    String unlimitedMemConsumption(long  mem);
+
+    @DefaultMessage("{0} out of unlimited vCPUs")
+    String unlimitedVcpuConsumption(int vcpu);
+
+    @DefaultMessage("{0} out of {1} MB")
+    String limitedMemConsumption(long mem, long limit);
+
+    @DefaultMessage("{0} out of {1} vCPUs")
+    String limitedVcpuConsumption(int vcpu, int limit);
+
+    @DefaultMessage("{0} out of unlimited GB")
+    String unlimitedStorageConsumption(String storage);
+
+    @DefaultMessage("{0} out of {1} GB")
+    String limitedStorageConsumption(String storage, double limit);
 }

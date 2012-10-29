@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -30,14 +31,14 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
 
     @Inject
     public SubTabQuotaStorageView(SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider,
-            ApplicationConstants constants) {
+            ApplicationConstants constants, ApplicationMessages messages) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable(constants, messages);
         initWidget(getTable());
     }
 
-    private void initTable(final ApplicationConstants constants) {
+    private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {
         getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
@@ -50,16 +51,14 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         getTable().addColumn(new TextColumnWithEditableTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                String str;
                 if (object.getStorageSizeGB() == null) {
                     return ""; //$NON-NLS-1$
                 } else if (object.getStorageSizeGB().equals(QuotaStorage.UNLIMITED)) {
-                    str = constants.outOfQuota() + constants.unlimitedQuota();
+                    return messages.unlimitedStorageConsumption(diskSizeRenderer.render(object.getStorageSizeGBUsage()));
                 } else {
-                    str = constants.outOfQuota() + diskSizeRenderer.render(object.getStorageSizeGB());
+                    return messages.limitedStorageConsumption(diskSizeRenderer.render(object.getStorageSizeGBUsage())
+                            ,object.getStorageSizeGB());
                 }
-                return (object.getStorageSizeGBUsage() == 0 ? 0
-                        : diskSizeRenderer.render(object.getStorageSizeGBUsage())) + str;
             }
 
             @Override

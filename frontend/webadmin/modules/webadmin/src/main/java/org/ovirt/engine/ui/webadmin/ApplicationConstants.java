@@ -1441,6 +1441,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("vCPU")
     String quotaOfVcpuQuota();
 
+    @DefaultStringValue("vCPUs")
+    String vcpus();
+
     @DefaultStringValue("Quota")
     String quota();
 
@@ -2158,12 +2161,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Storage Grace")
     String quotaStorageGrace();
-
-    @DefaultStringValue("Unlimited")
-    String unlimitedQuota();
-
-    @DefaultStringValue(" out of ")
-    String outOfQuota();
 
     @DefaultStringValue("Clone All VMs")
     String importVm_cloneAllVMs();
