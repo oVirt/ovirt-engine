@@ -2212,6 +2212,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Replace Brick")
     String replaceBrickBrick();
 
+    @DefaultStringValue("Advanced Details")
+    String advancedDetailsBrick();
+
     @DefaultStringValue("Server")
     String serverBricks();
 
@@ -2238,6 +2241,112 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Move Down")
     String moveBricksDownButtonLabel();
+
+    // Volume Brick Details
+    @DefaultStringValue("General")
+    String generalBrickAdvancedPopupLabel();
+
+    @DefaultStringValue("Brick")
+    String brickAdvancedLabel();
+
+    @DefaultStringValue("Status")
+    String statusBrickAdvancedLabel();
+
+    @DefaultStringValue("Port")
+    String portBrickAdvancedLabel();
+
+    @DefaultStringValue("Process ID")
+    String pidBrickAdvancedLabel();
+
+    @DefaultStringValue("Total Size (MB)")
+    String totalSizeBrickAdvancedLabel();
+
+    @DefaultStringValue("Free Size (MB)")
+    String freeSizeBrickAdvancedLabel();
+
+    @DefaultStringValue("Device")
+    String deviceBrickAdvancedLabel();
+
+    @DefaultStringValue("Block Size (Bytes)")
+    String blockSizeBrickAdvancedLabel();
+
+    @DefaultStringValue("Mount Options")
+    String mountOptionsBrickAdvancedLabel();
+
+    @DefaultStringValue("File System")
+    String fileSystemBrickAdvancedLabel();
+
+    @DefaultStringValue("Clients")
+    String clientsBrickAdvancedPopupLabel();
+
+    @DefaultStringValue("Client")
+    String clientBrickAdvancedLabel();
+
+    @DefaultStringValue("Bytes Read")
+    String bytesReadBrickAdvancedLabel();
+
+    @DefaultStringValue("Bytes Written")
+    String bytesWrittenBrickAdvancedLabel();
+
+    @DefaultStringValue("Memory Statistics")
+    String memoryStatsBrickAdvancedPopupLabel();
+
+    @DefaultStringValue("Total allocated - Non-mmapped (bytes)")
+    String totalAllocatedBrickAdvancedLabel();
+
+    @DefaultStringValue("No. of ordinary free blocks")
+    String freeBlocksBrickAdvancedLabel();
+
+    @DefaultStringValue("No. of free fastbin blocks")
+    String freeFastbinBlocksBrickAdvancedLabel();
+
+    @DefaultStringValue("No. of mmapped blocks allocated")
+    String mmappedBlocksBrickAdvancedLabel();
+
+    @DefaultStringValue("Space allocated in mmapped block (bytes)")
+    String allocatedInMmappedBlocksBrickAdvancedLabel();
+
+    @DefaultStringValue("Maximum total allocated space (bytes)")
+    String maxTotalAllocatedSpaceBrickAdvancedLabel();
+
+    @DefaultStringValue("Space in free fastbin blocks (bytes)")
+    String spaceInFreedFasbinBlocksBrickAdvancedLabel();
+
+    @DefaultStringValue("Total allocated space (bytes)")
+    String totalAllocatedSpaceBrickAdvancedLabel();
+
+    @DefaultStringValue("Total free space (bytes)")
+    String totalFreeSpaceBrickAdvancedLabel();
+
+    @DefaultStringValue("Releasable free space (bytes)")
+    String releasableFreeSpaceBrickAdvancedLabel();
+
+    @DefaultStringValue("Memory Pools")
+    String memoryPoolsBrickAdvancedPopupLabel();
+
+    @DefaultStringValue("Name")
+    String nameBrickAdvancedLabel();
+
+    @DefaultStringValue("Hot Count")
+    String hotCountBrickAdvancedLabel();
+
+    @DefaultStringValue("Cold Count")
+    String coldCountBrickAdvancedLabel();
+
+    @DefaultStringValue("Padded Size")
+    String paddedSizeBrickAdvancedLabel();
+
+    @DefaultStringValue("Allocated Count")
+    String allocatedCountBrickAdvancedLabel();
+
+    @DefaultStringValue("Max Allocated")
+    String maxAllocatedBrickAdvancedLabel();
+
+    @DefaultStringValue("Pool Misses")
+    String poolMissesBrickAdvancedLabel();
+
+    @DefaultStringValue("Max Std Allocated")
+    String maxStdAllocatedBrickAdvancedLabel();
 
     @DefaultStringValue("Cluster Threshold")
     String quotaClusterThreshold();

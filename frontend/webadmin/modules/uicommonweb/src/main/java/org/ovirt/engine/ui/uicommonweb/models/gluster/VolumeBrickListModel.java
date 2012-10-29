@@ -12,10 +12,14 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActi
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskOperation;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -44,6 +48,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setAddBricksCommand(new UICommand("Add Bricks", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("Remove Bricks", this)); //$NON-NLS-1$
         setReplaceBrickCommand(new UICommand("Replace Brick", this)); //$NON-NLS-1$
+        setBrickAdvancedDetailsCommand(new UICommand("Brick Advanced Details", this)); //$NON-NLS-1$
         getReplaceBrickCommand().setIsAvailable(false);
     }
 
@@ -81,6 +86,18 @@ public class VolumeBrickListModel extends SearchableListModel {
     private void setReplaceBrickCommand(UICommand value)
     {
         replaceBrickCommand = value;
+    }
+
+    private UICommand brickAdvancedDetailsCommand;
+
+    public UICommand getBrickAdvancedDetailsCommand()
+    {
+        return brickAdvancedDetailsCommand;
+    }
+
+    private void setBrickAdvancedDetailsCommand(UICommand value)
+    {
+        brickAdvancedDetailsCommand = value;
     }
 
     @Override
@@ -122,6 +139,8 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
 
         getReplaceBrickCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
+        getBrickAdvancedDetailsCommand().setIsExecutionAllowed(getSelectedItems() != null
+                && getSelectedItems().size() == 1 && ((GlusterVolumeEntity) getEntity()).isOnline());
     }
 
     @Override
@@ -678,6 +697,53 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     }
 
+    private void showBrickAdvancedDetails() {
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        final GlusterBrickEntity brickEntity = (GlusterBrickEntity) getSelectedItem();
+
+        final BrickAdvancedDetailsModel brickModel = new BrickAdvancedDetailsModel();
+        setWindow(brickModel);
+        brickModel.setTitle(ConstantsManager.getInstance().getConstants().advancedDetailsBrickTitle());
+        brickModel.setHashName("brick_advanced"); //$NON-NLS-1$
+        brickModel.StartProgress(null);
+
+        AsyncDataProvider.GetGlusterVolumeBrickDetails(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                brickModel.StopProgress();
+                GlusterVolumeAdvancedDetails advDetails = (GlusterVolumeAdvancedDetails) result;
+                brickModel.getBrick().setEntity(brickEntity.getQualifiedName());
+                if (advDetails != null && advDetails.getBrickDetails() != null
+                        && advDetails.getBrickDetails().size() == 1)
+                {
+                    BrickDetails brickDetails = advDetails.getBrickDetails().get(0);
+                    brickModel.getBrickProperties().setProperties(brickDetails.getBrickProperties());
+
+                    ArrayList<EntityModel> clients = new ArrayList<EntityModel>();
+                    for (GlusterClientInfo client : brickDetails.getClients()) {
+                        clients.add(new EntityModel(client));
+                    }
+                    brickModel.getClients().setItems(clients);
+
+                    brickModel.getMemoryStatistics().updateMemoryStatistics(brickDetails.getMemoryStatus()
+                            .getMallInfo());
+
+                    ArrayList<EntityModel> memoryPools = new ArrayList<EntityModel>();
+                    for (Mempool mempool : brickDetails.getMemoryStatus().getMemPools()) {
+                        memoryPools.add(new EntityModel(mempool));
+                    }
+                    brickModel.getMemoryPools().setItems(memoryPools);
+                }
+            }
+        }), volumeEntity.getClusterId(), volumeEntity.getName(), brickEntity.getQualifiedName());
+
+        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().close());
+        command.setIsDefault(true);
+        brickModel.getCommands().add(command);
+    }
+
     @Override
     public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
@@ -693,6 +759,8 @@ public class VolumeBrickListModel extends SearchableListModel {
             replaceBrick();
         } else if (command.getName().equals("OnReplace")) { //$NON-NLS-1$
             onReplaceBrick();
+        } else if (command.equals(getBrickAdvancedDetailsCommand())) {
+            showBrickAdvancedDetails();
         }
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             setWindow(null);

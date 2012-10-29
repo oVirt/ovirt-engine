@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView.WidgetStyle">
+		.tablePanel {
+			height: 450px;
+			width: 615px;
+			border: 1px solid #CED8DF;
+		}
+		.memStatLabel{
+			width: 150px;
+		}
+		.memStatValue{
+			width: 150px;
+		}
+		.generalValue{
+			width: 300px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="800px" height="530px">
+		<d:content>
+			<t:DialogTabPanel height="100%">
+				<t:tab>
+					<t:DialogTab ui:field="generalTab">
+						<t:content>
+							<g:FlowPanel>
+								<e:EntityModelLabelEditor ui:field="brickEditor" />
+								<e:EntityModelLabelEditor ui:field="statusEditor" />
+								<e:EntityModelLabelEditor ui:field="portEditor" />
+								<e:EntityModelLabelEditor ui:field="pidEditor" />
+								<e:EntityModelLabelEditor ui:field="totalSizeEditor" />
+								<e:EntityModelLabelEditor ui:field="freeSizeEditor" />
+								<e:EntityModelLabelEditor ui:field="deviceEditor" />
+								<e:EntityModelLabelEditor ui:field="blockSizeEditor" />
+								<e:EntityModelTextAreaLabelEditor ui:field="mountOptionsEditor" />
+								<e:EntityModelLabelEditor ui:field="fileSystemEditor" />
+							</g:FlowPanel>
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
+				<t:tab>
+					<t:DialogTab ui:field="clientsTab">
+						<t:content>
+							<g:FlowPanel >
+								<g:ScrollPanel addStyleNames="{style.tablePanel}">
+									<e:EntityModelCellTable ui:field="clientsTable"/>
+								</g:ScrollPanel>
+							</g:FlowPanel>
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
+				<t:tab>
+					<t:DialogTab ui:field="memoryStatsTab">
+						<t:content>
+							<g:FlowPanel>
+								<e:EntityModelLabelEditor ui:field="totalAllocatedEditor" />
+								<e:EntityModelLabelEditor ui:field="freeBlocksEditor" />
+								<e:EntityModelLabelEditor ui:field="freeFastbinBlocksEditor" />
+								<e:EntityModelLabelEditor ui:field="mmappedBlocksEditor" />
+								<e:EntityModelLabelEditor ui:field="spaceAllocatedMmappedEditor" />
+								<e:EntityModelLabelEditor ui:field="maxTotalAllocatedEditor" />
+								<e:EntityModelLabelEditor ui:field="spaceFreedFastbinEditor" />
+								<e:EntityModelLabelEditor ui:field="totalAllocatedSpaceEditor" />
+								<e:EntityModelLabelEditor ui:field="totalFreeSpaceEditor" />
+								<e:EntityModelLabelEditor ui:field="releasableFreeSpaceEditor" />
+							</g:FlowPanel>
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
+				<t:tab>
+					<t:DialogTab ui:field="memoryPoolsTab">
+						<t:content>
+							<g:FlowPanel>
+								<g:ScrollPanel addStyleNames="{style.tablePanel}">
+									<e:EntityModelCellTable ui:field="memoryPoolsTable"/>
+								</g:ScrollPanel>
+							</g:FlowPanel>
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
+			</t:DialogTabPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

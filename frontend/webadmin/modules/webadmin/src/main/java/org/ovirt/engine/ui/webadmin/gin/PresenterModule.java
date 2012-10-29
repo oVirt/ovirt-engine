@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewD
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
@@ -208,6 +209,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindSingl
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.NewDataCenterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.RecoveryStorageConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeParameterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumePopupView;
@@ -1098,6 +1100,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ReplaceBrickPopupPresenterWidget.class,
                 ReplaceBrickPopupPresenterWidget.ViewDef.class,
                 ReplaceBrickPopupView.class);
+
+        bindPresenterWidget(BrickAdvancedDetailsPopupPresenterWidget.class,
+                BrickAdvancedDetailsPopupPresenterWidget.ViewDef.class,
+                BrickAdvancedDetailsPopupView.class);
 
         bindPresenterWidget(VolumeParameterPopupPresenterWidget.class,
                 VolumeParameterPopupPresenterWidget.ViewDef.class,
