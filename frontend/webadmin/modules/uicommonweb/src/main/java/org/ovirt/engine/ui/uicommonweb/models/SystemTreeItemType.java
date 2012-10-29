@@ -16,7 +16,9 @@ public enum SystemTreeItemType
     Host,
     Disk,
     Volume,
-    Volumes;
+    Volumes,
+    Networks,
+    Network;
 
     public int getValue()
     {

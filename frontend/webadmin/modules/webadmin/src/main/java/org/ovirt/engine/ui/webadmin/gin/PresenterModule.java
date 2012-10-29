@@ -85,6 +85,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenter
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
@@ -125,6 +126,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkClusterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkHostPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkTemplatePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolPermissionPresenter;
@@ -250,6 +258,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDataCenterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDiskView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabHostView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabNetworkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabPoolView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabReportsView;
@@ -290,6 +299,13 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHookVie
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostInterfaceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.NetworkSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkClusterView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkHostView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkPermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkTemplateView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.PoolSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolPermissionView;
@@ -397,6 +413,10 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabHostPresenter.ViewDef.class,
                 MainTabHostView.class,
                 MainTabHostPresenter.ProxyDef.class);
+        bindPresenter(MainTabNetworkPresenter.class,
+                MainTabNetworkPresenter.ViewDef.class,
+                MainTabNetworkView.class,
+                MainTabNetworkPresenter.ProxyDef.class);
         bindPresenter(MainTabStoragePresenter.class,
                 MainTabStoragePresenter.ViewDef.class,
                 MainTabStorageView.class,
@@ -752,6 +772,37 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDiskPermissionPresenter.ViewDef.class,
                 SubTabDiskPermissionView.class,
                 SubTabDiskPermissionPresenter.ProxyDef.class);
+
+        // Network
+        bindPresenter(NetworkSubTabPanelPresenter.class,
+                NetworkSubTabPanelPresenter.ViewDef.class,
+                NetworkSubTabPanelView.class,
+                NetworkSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(SubTabNetworkGeneralPresenter.class,
+                SubTabNetworkGeneralPresenter.ViewDef.class,
+                SubTabNetworkGeneralView.class,
+                SubTabNetworkGeneralPresenter.ProxyDef.class);
+        bindPresenter(SubTabNetworkClusterPresenter.class,
+                SubTabNetworkClusterPresenter.ViewDef.class,
+                SubTabNetworkClusterView.class,
+                SubTabNetworkClusterPresenter.ProxyDef.class);
+        bindPresenter(SubTabNetworkHostPresenter.class,
+                SubTabNetworkHostPresenter.ViewDef.class,
+                SubTabNetworkHostView.class,
+                SubTabNetworkHostPresenter.ProxyDef.class);
+        bindPresenter(SubTabNetworkVmPresenter.class,
+                SubTabNetworkVmPresenter.ViewDef.class,
+                SubTabNetworkVmView.class,
+                SubTabNetworkVmPresenter.ProxyDef.class);
+        bindPresenter(SubTabNetworkTemplatePresenter.class,
+                SubTabNetworkTemplatePresenter.ViewDef.class,
+                SubTabNetworkTemplateView.class,
+                SubTabNetworkTemplatePresenter.ProxyDef.class);
+        bindPresenter(SubTabNetworkPermissionPresenter.class,
+                SubTabNetworkPermissionPresenter.ViewDef.class,
+                SubTabNetworkPermissionView.class,
+                SubTabNetworkPermissionPresenter.ProxyDef.class);
+
 
         // Main section: popups
 

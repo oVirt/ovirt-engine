@@ -37,6 +37,8 @@ public class ApplicationPlaces {
 
     public static final String diskMainTabPlace = "disks"; //$NON-NLS-1$
 
+    public static final String networkMainTabPlace = "networks"; //$NON-NLS-1$
+
     // Main section: sub tabs
 
     // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model
@@ -251,6 +253,28 @@ public class ApplicationPlaces {
     public static final String diskStorageSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "storage"; //$NON-NLS-1$
 
     public static final String diskPermissionSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
+
+
+    // Network
+    public static final String networkGeneralSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
+
+    public static final String networkClusterSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
+            + "clusters"; //$NON-NLS-1$
+
+    public static final String networkHostSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
+            + "hosts"; //$NON-NLS-1$
+
+    public static final String networkVmSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
+            + "virtual_machines"; //$NON-NLS-1$
+
+    public static final String networkTemplateSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
+            + "templates"; //$NON-NLS-1$
+
+    public static final String networkPermissionSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
+            + "permissions"; //$NON-NLS-1$
+
+
+
 
     // Default places
 

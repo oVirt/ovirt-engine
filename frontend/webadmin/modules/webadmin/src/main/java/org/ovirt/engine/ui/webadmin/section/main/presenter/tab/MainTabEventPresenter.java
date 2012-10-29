@@ -33,7 +33,7 @@ public class MainTabEventPresenter extends AbstractMainTabPresenter<AuditLog, Ev
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().eventMainTabLabel(), 10,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().eventMainTabLabel(), 12,
                 ginjector.getMainTabEventModelProvider(), Align.RIGHT);
     }
 

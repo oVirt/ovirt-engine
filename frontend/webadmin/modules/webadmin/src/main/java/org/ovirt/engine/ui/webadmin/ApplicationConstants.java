@@ -64,6 +64,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Hosts")
     String hostMainTabLabel();
 
+    @DefaultStringValue("Networks")
+    String networkMainTabLabel();
+
     @DefaultStringValue("Storage")
     String storageMainTabLabel();
 
@@ -916,6 +919,25 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Maintenance")
     String maintenanceStorageDc();
 
+    // Network
+    @DefaultStringValue("General")
+    String networkGeneralSubTabLabel();
+
+    @DefaultStringValue("Clusters")
+    String networkClusterSubTabLabel();
+
+    @DefaultStringValue("Hosts")
+    String networkHostSubTabLabel();
+
+    @DefaultStringValue("Virtual Machines")
+    String networkVmSubTabLabel();
+
+    @DefaultStringValue("Templates")
+    String networkTemplateSubTabLabel();
+
+    @DefaultStringValue("Permissions")
+    String networkPermissionSubTabLabel();
+
     // Quota Storage
     @DefaultStringValue("Name")
     String nameQuotaStorage();
@@ -1462,6 +1484,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Name")
     String nameNetwork();
+
+    @DefaultStringValue("Data Center")
+    String dcNetwork();
+
+    @DefaultStringValue("VLAN tagging")
+    String vlanNetwork();
+
+    @DefaultStringValue("MTU")
+    String mtuNetwork();
 
     @DefaultStringValue("Required")
     String requiredNetwork();

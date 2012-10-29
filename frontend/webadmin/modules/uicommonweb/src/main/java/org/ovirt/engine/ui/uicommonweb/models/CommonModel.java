@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
@@ -450,6 +451,7 @@ public class CommonModel extends ListModel
         userList.setIsAvailable(true);
         eventList.setIsAvailable(!getHasSelectedTags());
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled() && !getHasSelectedTags());
+        networkList.setIsAvailable(!getHasSelectedTags());
 
         // Switch the selected item as neccessary.
         ListModel oldSelectedItem = getSelectedItem();
@@ -589,6 +591,10 @@ public class CommonModel extends ListModel
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
                 && ReportInit.getInstance().getDashboard(model.getType().toString()) != null);
 
+        networkList.setIsAvailable(model.getType() == SystemTreeItemType.Network
+                || model.getType() == SystemTreeItemType.Networks
+                || model.getType() == SystemTreeItemType.System);
+
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
 
@@ -624,6 +630,10 @@ public class CommonModel extends ListModel
                 break;
             case Disk:
                 setSelectedItem(diskList);
+                break;
+            case Networks:
+            case Network:
+                setSelectedItem(networkList);
                 break;
             default:
                 // webadmin: redirect to default tab in case no tab is selected.
@@ -767,6 +777,7 @@ public class CommonModel extends ListModel
     private SearchableListModel monitor;
     private SearchableListModel volumeList;
     private SearchableListModel diskList;
+    private SearchableListModel networkList;
 
     private void InitItems()
     {
@@ -810,6 +821,9 @@ public class CommonModel extends ListModel
         list.add(reportsList);
 
         reportsList.setIsAvailable(false);
+
+        networkList = new NetworkListModel();
+        list.add(networkList);
 
         setItems(list);
 
@@ -1207,6 +1221,41 @@ public class CommonModel extends ListModel
                 if (vmList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue = StringFormat.format("Vms: cluster = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                }
+            }
+                break;
+            case Networks: {
+                if (networkList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Network: datacenter.name = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                }
+            }
+                break;
+            case Network: {
+                if (networkList.IsSearchStringMatch(source))
+                {
+                    // TODO get dc name from treeItem!!!
+                    prefix.argvalue = StringFormat.format("Network: name = %1$s datacenter.name = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
+                }
+                else if (clusterList.IsSearchStringMatch(source))
+                {
+                    // TODO get dc name from treeItem!!!
+                    prefix.argvalue = StringFormat.format("Cluster: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                }
+                else if (hostList.IsSearchStringMatch(source))
+                {
+                    // TODO get dc name from treeItem!!!
+                    prefix.argvalue = StringFormat.format("Host: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                }
+                else if (vmList.IsSearchStringMatch(source))
+                {
+                    // TODO get dc name from treeItem!!!
+                    prefix.argvalue = StringFormat.format("Vms: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                }
+                else if (templateList.IsSearchStringMatch(source))
+                {
+                    // TODO get dc name from treeItem!!!
+                    prefix.argvalue = StringFormat.format("Template: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
                 }
             }
                 break;

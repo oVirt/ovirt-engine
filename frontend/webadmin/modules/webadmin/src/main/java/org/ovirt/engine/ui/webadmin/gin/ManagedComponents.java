@@ -57,6 +57,12 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
@@ -117,6 +123,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenter
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
@@ -157,6 +164,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkClusterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkHostPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkTemplatePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolPermissionPresenter;
@@ -257,6 +271,10 @@ public interface ManagedComponents {
     AsyncProvider<MainTabHostPresenter> getMainTabHostPresenter();
 
     MainModelProvider<VDS, HostListModel> getMainTabHostModelProvider();
+
+    AsyncProvider<MainTabNetworkPresenter> getMainTabNetworkPresenter();
+
+    MainModelProvider<Network, NetworkListModel> getMainTabNetworkModelProvider();
 
     AsyncProvider<MainTabStoragePresenter> getMainTabStoragePresenter();
 
@@ -612,4 +630,32 @@ public interface ManagedComponents {
     AsyncProvider<SubTabDiskPermissionPresenter> getSubTabDiskPermissionPresenter();
 
     SearchableDetailModelProvider<permissions, DiskListModel, PermissionListModel> getSubTabDiskPermissionModelProvider();
+
+    // Network
+
+    AsyncProvider<NetworkSubTabPanelPresenter> getNetworkSubTabPanelPresenter();
+
+    AsyncProvider<SubTabNetworkGeneralPresenter> getSubTabNetworkGeneralPresenter();
+
+    DetailModelProvider<NetworkListModel, NetworkGeneralModel> getSubTabNetworkGeneralModelProvider();
+
+    AsyncProvider<SubTabNetworkClusterPresenter> getSubTabNetworkClusterPresenter();
+
+    SearchableDetailModelProvider<VDSGroup, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
+
+    AsyncProvider<SubTabNetworkHostPresenter> getSubTabNetworkHostPresenter();
+
+    SearchableDetailModelProvider<VDS, NetworkListModel, NetworkHostListModel> getSubTabNetworkHostModelProvider();
+
+    AsyncProvider<SubTabNetworkVmPresenter> getSubTabNetworkVmPresenter();
+
+    SearchableDetailModelProvider<VM, NetworkListModel, NetworkVmListModel> getSubTabNetworkVmModelProvider();
+
+    AsyncProvider<SubTabNetworkTemplatePresenter> getSubTabNetworkTemplatePresenter();
+
+    SearchableDetailModelProvider<VmTemplate, NetworkListModel, NetworkTemplateListModel> getSubTabNetworkTemplateModelProvider();
+
+    AsyncProvider<SubTabNetworkPermissionPresenter> getSubTabNetworkPermissionPresenter();
+
+    SearchableDetailModelProvider<permissions, NetworkListModel, PermissionListModel> getSubTabNetworkPermissionModelProvider();
 }

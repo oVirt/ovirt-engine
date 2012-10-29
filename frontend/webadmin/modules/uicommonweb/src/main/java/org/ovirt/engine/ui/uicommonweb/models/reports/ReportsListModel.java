@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.reports;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -160,14 +161,26 @@ public class ReportsListModel extends SearchableListModel {
                 setResourceId("P_StorageDomain_ID", storage.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
-            case Templates:
+            case Templates: {
                 storage_pool dataCenter = (storage_pool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
+            }
             case VMs: {
                 VM vm = (VM) treeItemModel.getEntity();
                 setDataCenterID(vm.getstorage_pool_id().toString());
                 setResourceId("P_VM_ID", vm.getQueryableId().toString()); //$NON-NLS-1$
+                break;
+            }
+            case Networks: {
+                storage_pool dataCenter = (storage_pool) treeItemModel.getEntity();
+                setDataCenterID(dataCenter.getId().toString());
+                break;
+            }
+            case Network: {
+                Network network = (Network) treeItemModel.getEntity();
+                setDataCenterID(network.getstorage_pool_id().toString());
+                setResourceId("P_Network_ID", network.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             default:

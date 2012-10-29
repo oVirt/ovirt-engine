@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.webadmin.gin.uicommon.DataCenterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.DiskModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.EventModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.HostModule;
+import org.ovirt.engine.ui.webadmin.gin.uicommon.NetworkModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.PoolModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.QuotaModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ReportsModule;
@@ -58,6 +59,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         install(new QuotaModule());
         install(new VolumeModule());
         install(new DiskModule());
+        install(new NetworkModule());
 
         // SystemTreeModel
         bind(SystemTreeModelProvider.class).asEagerSingleton();

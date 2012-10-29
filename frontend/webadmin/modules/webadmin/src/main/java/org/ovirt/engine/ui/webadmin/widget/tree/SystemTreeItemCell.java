@@ -66,6 +66,14 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         case Volumes:
             imageResource = applicationResources.volumesImage();
             break;
+        case Network:
+            // TODO fix the image
+            imageResource = applicationResources.nicIcon();
+            break;
+        case Networks:
+            // TODO fix the image
+            imageResource = applicationResources.nicIcon();
+            break;
 
         default:
             imageResource = applicationResources.questionMarkImage();

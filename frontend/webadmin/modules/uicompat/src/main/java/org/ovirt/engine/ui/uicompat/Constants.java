@@ -365,6 +365,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Hosts")
     String hostsTitle();
 
+    @DefaultStringValue("Networks")
+    String networksTitle();
+
     @DefaultStringValue("VMs")
     String vmsTitle();
 
