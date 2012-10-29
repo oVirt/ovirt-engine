@@ -163,7 +163,7 @@ public final class SysprepHandler {
     private static String useDefaultIfNull(String key, String value, String defaultValue,
             boolean printDefaultValue) {
         if (value == null && printDefaultValue) {
-            log.errorFormat("Could not find value for {0}. Going to use default value of: {1}",
+            log.warnFormat("Could not find value for key '{0}'. Going to use default value of: '{1}'",
                     key, defaultValue);
         }
         return value != null ? value : defaultValue;
