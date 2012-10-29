@@ -17,7 +17,7 @@ fi
 set_defaults
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-l DIR] -u USERNAME [-c] [-v] \n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-l DIR] [-f FILENAME] -u USERNAME [-c] [-v] \n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database       (def. ${PORT})\n"
@@ -25,6 +25,7 @@ usage() {
     printf "\t-u USERNAME   - The username for the database.\n"
     printf "\t-v            - Turn on verbosity (WARNING: lots of output)\n"
     printf "\t-l DIR        - Backup file directory. ${DIR}\n"
+    printf "\t-f FILENAME   - Backup file name. ${FILENAME}\n"
     printf "\t-c            - Backup each row as SQL insert statement.\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
@@ -46,6 +47,7 @@ while getopts hs:d:u:p:l:f:cv option; do
         d) DATABASE=$OPTARG;;
         u) USERNAME=$OPTARG;;
         l) DIR=$OPTARG;;
+        f) FILENAME=$OPTARG;;
         c) COLUMN_INSERTS=true;;
         v) VERBOSE=true;;
         h) usage;;
@@ -57,9 +59,16 @@ if [[ ! -n "${USERNAME}" ]]; then
    exit 1
 fi
 
-file=${DATABASE}_`date`.sql
-file=`echo $file | sed "s@ @_@g"`
+file=""
 column_inserts=""
+
+if [ -n "${FILENAME}" ]; then
+    file="${FILENAME}";
+else
+    file=${DATABASE}_`date`.sql
+    file=`echo $file | sed "s@ @_@g"`
+fi
+
 
 if [ -n "${DIR}" ]; then
     file="${DIR}/${file}"
