@@ -307,7 +307,7 @@ class MiniYumSink(object):
         for i in range(3):
             os.dup2(self._fds[i], i)
         print output_messages.WARN_INSTALL_GPG_KEY % (userid, hexkeyid)
-        ret = askYesNo(INFO_Q_PROCEED)
+        ret = askYesNo(output_messages.INFO_PROCEED)
         for i in range(3):
             os.dup2(save[i], i)
         return ret
@@ -825,13 +825,13 @@ def renameDB(oldname, newname):
                                basedefs.DB_POSTGRES, sqlQuery, True,
                                output_messages.ERR_DB_RENAME % (oldname, newname))
 
-def getVDCOption(key):
+def getVDCOption(key, engineConfigBin=basedefs.FILE_ENGINE_CONFIG_BIN):
     """
     Query vdc_option in db and return its value.
     """
 
     cmd = [
-        basedefs.FILE_RHEVM_CONFIG_BIN,
+        engineConfigBin,
         "-g", key,
     ]
 
@@ -842,7 +842,7 @@ def getVDCOption(key):
     else:
         return None
 
-def updateVDCOption(key, value, maskList=[], keyType='text'):
+def updateVDCOption(key, value, maskList=[], keyType='text', engineConfigBin=basedefs.FILE_ENGINE_CONFIG_BIN, engineConfigExtended=basedefs.FILE_ENGINE_EXTENDED_CONF):
     """
     Update vdc_option value in db
     using rhevm-config
@@ -860,7 +860,7 @@ def updateVDCOption(key, value, maskList=[], keyType='text'):
 
     # The first part of the command is really simple:
     cmd = [
-        basedefs.FILE_RHEVM_CONFIG_BIN,
+        engineConfigBin,
     ]
 
     # For text options we just provide the name of the option and the value in
@@ -885,7 +885,7 @@ def updateVDCOption(key, value, maskList=[], keyType='text'):
     cmd.extend([
         '--cver=' + basedefs.VDC_OPTION_CVER,
         '-p',
-        basedefs.FILE_RHEVM_EXTENDED_CONF,
+        engineConfigExtended,
     ])
 
     # Execute the command, and always remember to remove the password file:
@@ -1371,19 +1371,23 @@ def findJavaHome():
     # Return the result:
     return javaHome
 
-def configureTasksTimeout(timeout):
+def configureTasksTimeout(timeout,
+                          engineConfigBin=basedefs.FILE_ENGINE_CONFIG_BIN,
+                          engineConfigExtended=basedefs.FILE_ENGINE_EXTENDED_CONF):
     """
     Set AsyncTaskZombieTaskLifeInMinutes
     to a specified value
     """
 
     # First, get the originalTimeout value
-    originalTimeout = getVDCOption("AsyncTaskZombieTaskLifeInMinutes")
+    originalTimeout = getVDCOption("AsyncTaskZombieTaskLifeInMinutes", engineConfigBin)
 
     # Now, set the value to timeout
     updateVDCOption(key="AsyncTaskZombieTaskLifeInMinutes",
                     value=timeout,
-                    keyType='text')
+                    keyType='text',
+                    engineConfigBin=engineConfigBin,
+                    engineConfigExtended=engineConfigExtended)
 
     # Return the original value
     return originalTimeout

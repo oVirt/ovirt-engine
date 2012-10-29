@@ -58,7 +58,7 @@ DIR_ENGINE_EAR="%s/ovirt-engine/engine.ear" % DIR_USR_SHARE
 DIR_DB_SCRIPTS="%s/ovirt-engine/dbscripts/" % DIR_USR_SHARE
 DIR_DB_BACKUPS="%s/ovirt-engine/backups" % DIR_VAR_LIB
 DIR_ENGINE_CONFIG="%s/ovirt-engine/engine-config/" % DIR_USR_SHARE
-DIR_RHEVM_CONFIG_CONF="/etc/ovirt-engine/engine-config/"
+DIR_ENGINE_CONFIG_CONF="/etc/ovirt-engine/engine-config/"
 DIR_OVIRT_PKI="/etc/pki/ovirt-engine"
 
 
@@ -74,9 +74,9 @@ FILE_JBOSSAS_CONF="/etc/%s/%s.conf" % (ENGINE_SERVICE_NAME, ENGINE_SERVICE_NAME)
 FILE_DB_INSTALL_SCRIPT="engine-db-install.sh"
 FILE_DB_UPGRADE_SCRIPT="upgrade.sh"
 FILE_DB_ASYNC_TASKS="%s/scripts/add_fn_db_get_async_tasks_function.sql" % DIR_ENGINE
-FILE_RHEVM_CONFIG_BIN="/usr/bin/engine-config"
-FILE_RHEVM_CONFIG_PROPS="engine-config-install.properties"
-FILE_RHEVM_EXTENDED_CONF = os.path.join(DIR_CONFIG, FILE_RHEVM_CONFIG_PROPS)
+FILE_ENGINE_CONFIG_BIN="/usr/bin/engine-config"
+FILE_ENGINE_CONFIG_PROPS="engine-config-install.properties"
+FILE_ENGINE_EXTENDED_CONF = os.path.join(DIR_CONFIG, FILE_ENGINE_CONFIG_PROPS)
 FILE_RESOLV_CONF="/etc/resolv.conf"
 FILE_SLIMMING_PROFILE_CONF="/usr/share/ovirt-engine/conf/slimming.conf"
 FILE_IPTABLES_DEFAULT="%s/ovirt-engine/conf/iptables.default" % DIR_USR_SHARE

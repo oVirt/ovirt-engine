@@ -824,6 +824,8 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
     deployDbAsyncTasks(dbName)
     runningTasks = getRunningTasks(dbName)
     compensations = getCompensations(dbName)
+    engineConfigBinary = basedefs.FILE_ENGINE_CONFIG_BIN
+    engineConfigExtended = basedefs.FILE_ENGINE_EXTENDED_CONF
     origTimeout = 0
 
     if runningTasks or compensations:
@@ -845,7 +847,9 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
 
             # restart jboss/engine in maintenace mode (i.e different port):
             utils.configureEngineForMaintenance()
-            origTimeout = utils.configureTasksTimeout(timeout=0)
+            origTimeout = utils.configureTasksTimeout(timeout=0,
+                                                      engineConfigBin=engineConfigBinary,
+                                                      engineConfigExtended=engineConfigExtended)
             startEngine(service)
 
             # Pull tasks in a loop for some time
@@ -884,7 +888,9 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
             # Restore previous engine configuration
             utils.restoreEngineFromMaintenance()
             if origTimeout != 0:
-                utils.configureTasksTimeout(origTimeout)
+                utils.configureTasksTimeout(timeout=origTimeout,
+                                            engineConfigBin=engineConfigBinary,
+                                            engineConfigExtended=engineConfigExtended)
 
 
 

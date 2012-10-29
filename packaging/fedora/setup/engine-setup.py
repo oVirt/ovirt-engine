@@ -1097,8 +1097,8 @@ def _updateVDCOptions():
     )
 
     try:
-        if (os.path.exists(basedefs.FILE_RHEVM_CONFIG_BIN)):
-            if (os.path.exists(basedefs.FILE_RHEVM_EXTENDED_CONF)):
+        if (os.path.exists(basedefs.FILE_ENGINE_CONFIG_BIN)):
+            if (os.path.exists(basedefs.FILE_ENGINE_EXTENDED_CONF)):
                 #1st iterate on the CA related options
                 for subDict in options:
                     for key in subDict:
@@ -1107,9 +1107,9 @@ def _updateVDCOptions():
 
                 logging.debug("finished updating vdc options")
             else:
-                raise Exception(output_messages.ERR_CANT_FIND_VDC_OPTION_FILE%(basedefs.FILE_RHEVM_EXTENDED_CONF))
+                raise Exception(output_messages.ERR_CANT_FIND_VDC_OPTION_FILE%(basedefs.FILE_ENGINE_EXTENDED_CONF))
         else:
-            raise Exception(output_messages.ERR_CANT_FIND_RHEVM_CONFIG_FILE%(basedefs.FILE_RHEVM_CONFIG_BIN))
+            raise Exception(output_messages.ERR_CANT_FIND_RHEVM_CONFIG_FILE%(basedefs.FILE_ENGINE_CONFIG_BIN))
 
     except:
         raise Exception(output_messages.ERR_FAILED_UPD_VDC_OPTIONS%(sys.exc_info()[1]))
@@ -1119,10 +1119,10 @@ def _getVDCOption(key):
     logging.debug("getting vdc option %s" % key)
     msg = output_messages.ERR_EXP_GET_VDC_OPTION % key
     cmd = [
-        basedefs.FILE_RHEVM_CONFIG_BIN,
+        basedefs.FILE_ENGINE_CONFIG_BIN,
         "-g", key,
         "--cver=" + basedefs.VDC_OPTION_CVER,
-        "-p", basedefs.FILE_RHEVM_EXTENDED_CONF,
+        "-p", basedefs.FILE_ENGINE_EXTENDED_CONF,
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=msg, maskList=masked_value_set)
     logging.debug("Value of %s is %s" % (key, output))
