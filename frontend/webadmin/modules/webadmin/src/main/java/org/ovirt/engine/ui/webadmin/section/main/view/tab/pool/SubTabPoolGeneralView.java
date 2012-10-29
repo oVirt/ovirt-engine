@@ -71,7 +71,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, Pool
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
-        formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        formBuilder.setColumnsWidth("115px", "245px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
