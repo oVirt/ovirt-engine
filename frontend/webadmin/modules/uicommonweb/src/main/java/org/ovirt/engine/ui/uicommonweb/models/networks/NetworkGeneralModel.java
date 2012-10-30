@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -25,19 +26,19 @@ public class NetworkGeneralModel extends EntityModel
         }
     }
 
-    private Boolean privateVm;
+    private String privateRole;
 
-    public Boolean getVm()
+    public String getRole()
     {
-        return privateVm;
+        return privateRole;
     }
 
-    public void setVm(Boolean value)
+    public void setRole(String value)
     {
-        if (privateVm !=  value)
+        if (!StringHelper.stringsEqual(privateRole, value))
         {
-            privateVm = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Vm")); //$NON-NLS-1$
+            privateRole = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Role")); //$NON-NLS-1$
         }
     }
 
@@ -93,6 +94,22 @@ public class NetworkGeneralModel extends EntityModel
         }
     }
 
+    private Guid privateId;
+
+    public Guid getId()
+    {
+        return privateId;
+    }
+
+    public void setId(Guid value)
+    {
+        if ((privateId == null && value != null) || (privateId != null && !privateId.equals(value)))
+        {
+            privateId = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Id")); //$NON-NLS-1$
+        }
+    }
+
     public NetworkGeneralModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -120,13 +137,19 @@ public class NetworkGeneralModel extends EntityModel
 
     private void UpdateProperties()
     {
-        Network network = (Network) getEntity();
+        NetworkView extendedNetwork = (NetworkView) getEntity();
 
 
-        setName(network.getName());
-        setDescription(network.getdescription());
-        setVm(network.isVmNetwork());
-        setVlan(network.getvlan_id());
-        setMtu(network.getMtu());
+        setName(extendedNetwork.getNetwork().getName());
+        setId(extendedNetwork.getNetwork().getId());
+        setDescription(extendedNetwork.getNetwork().getdescription());
+        setRole(extendedNetwork.getNetwork().isVmNetwork() ? ConstantsManager.getInstance().getConstants().vmNetworkRole(): ""); //$NON-NLS-1$
+        setVlan(extendedNetwork.getNetwork().getvlan_id());
+
+        if (extendedNetwork.getNetwork().getMtu() == 0){
+            setMtu(null);
+        }else{
+            setMtu(extendedNetwork.getNetwork().getMtu());
+        }
     }
 }

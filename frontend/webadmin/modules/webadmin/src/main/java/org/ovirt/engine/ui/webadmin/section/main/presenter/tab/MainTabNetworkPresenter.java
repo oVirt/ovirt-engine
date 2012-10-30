@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -22,12 +22,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter<Network, NetworkListModel, MainTabNetworkPresenter.ViewDef, MainTabNetworkPresenter.ProxyDef> {
+public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter<NetworkView, NetworkListModel, MainTabNetworkPresenter.ViewDef, MainTabNetworkPresenter.ProxyDef> {
 
     @GenEvent
     public static class NetworkSelectionChange {
 
-        List<Network> selectedItems;
+        List<NetworkView> selectedItems;
 
     }
 
@@ -36,18 +36,18 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
     public interface ProxyDef extends TabContentProxyPlace<MainTabNetworkPresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<Network> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<NetworkView> {
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().networkMainTabLabel(), 10,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().networkMainTabLabel(), 3,
                 ginjector.getMainTabNetworkModelProvider());
     }
 
     @Inject
     public MainTabNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<Network, NetworkListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<NetworkView, NetworkListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

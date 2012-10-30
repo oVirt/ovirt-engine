@@ -41,7 +41,7 @@ public class MainTabVolumePresenter extends AbstractMainTabWithDetailsPresenter<
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().volumeMainTabLabel(), 8,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().volumeMainTabLabel(), 9,
                 ginjector.getMainTabVolumeModelProvider());
     }
 

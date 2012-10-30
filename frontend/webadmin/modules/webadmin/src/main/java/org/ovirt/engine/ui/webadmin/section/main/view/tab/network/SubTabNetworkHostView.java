@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -23,7 +23,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.RadioButton;
 
-public class SubTabNetworkHostView extends AbstractSubTabTableView<Network, VDS, NetworkListModel, NetworkHostListModel>
+public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, VDS, NetworkListModel, NetworkHostListModel>
         implements SubTabNetworkHostPresenter.ViewDef {
 
     private final ViewRadioGroup<NetworkHostFilter> viewRadioGroup;

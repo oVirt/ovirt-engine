@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabNetworkVmView extends AbstractSubTabTableView<Network, VM, NetworkListModel, NetworkVmListModel>
+public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, VM, NetworkListModel, NetworkVmListModel>
         implements SubTabNetworkVmPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabNetworkVmView> {

@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,6 +35,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
+    private static String ENGINE_NETWORK = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+
     private UICommand privateNewCommand;
 
     public UICommand getNewCommand()
@@ -87,6 +92,27 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
+    @Override
+    public void setItems(Iterable value) {
+
+        if (value != null){
+            List<NetworkView> networksList = (List<NetworkView>) value;
+            Collections.sort(networksList, new Comparator<NetworkView>() {
+
+                @Override
+                public int compare(NetworkView paramT1, NetworkView paramT2) {
+                   int compareValue = paramT1.getStoragePoolName().compareTo(paramT2.getStoragePoolName());
+
+                   if (compareValue!= 0){
+                       return compareValue;
+                   }
+
+                  return paramT1.getNetwork().getName().compareTo(paramT2.getNetwork().getName());
+                }
+            });
+        }
+        super.setItems(value);
+    }
 
     public void newNetwork()
     {
@@ -103,14 +129,14 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     public void edit()
     {
-        final Network network = (Network) getSelectedItem();
+        final NetworkView networkView = (NetworkView) getSelectedItem();
 
         if (getWindow() != null)
         {
             return;
         }
 
-        final NetworkModel networkModel = new EditNetworkModel(network, this);
+        final NetworkModel networkModel = new EditNetworkModel(networkView.getNetwork(), this);
         setWindow(networkModel);
 
         initDcList(networkModel);
@@ -233,8 +259,8 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         boolean anyEngine = false;
         for (Object item : selectedItems)
         {
-            Network network = (Network) item;
-            if (StringHelper.stringsEqual(network.getname(), NetworkModel.ENGINE_NETWORK))
+            NetworkView networkView = (NetworkView) item;
+            if (StringHelper.stringsEqual(networkView.getNetwork().getname(), ENGINE_NETWORK))
             {
                 anyEngine = true;
                 break;
@@ -293,9 +319,9 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    public Network getEntity()
+    public NetworkView getEntity()
     {
-        return (Network) super.getEntity();
+        return (NetworkView) super.getEntity();
     }
 
     @Override

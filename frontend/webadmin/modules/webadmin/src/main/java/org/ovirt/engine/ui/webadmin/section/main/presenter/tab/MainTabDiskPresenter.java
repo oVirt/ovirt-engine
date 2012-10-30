@@ -41,7 +41,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().diskMainTabLabel(), 4,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().diskMainTabLabel(), 5,
                 ginjector.getMainTabDiskModelProvider());
     }
 

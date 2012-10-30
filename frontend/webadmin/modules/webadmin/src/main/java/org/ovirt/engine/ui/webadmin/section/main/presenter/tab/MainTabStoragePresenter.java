@@ -41,7 +41,7 @@ public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().storageMainTabLabel(), 3,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().storageMainTabLabel(), 4,
                 ginjector.getMainTabStorageModelProvider());
     }
 

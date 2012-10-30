@@ -8,6 +8,8 @@ import com.google.gwt.text.client.NumberFormatRenderer;
 
 public class NullableNumberRenderer extends NumberFormatRenderer {
 
+    private String nullString = ClientGinjectorProvider.instance().getApplicationConstants().unAvailablePropertyLabel();
+
     public NullableNumberRenderer() {
         super();
     }
@@ -16,11 +18,16 @@ public class NullableNumberRenderer extends NumberFormatRenderer {
         super(format);
     }
 
+    public NullableNumberRenderer(String nullString) {
+        this();
+        this.nullString = nullString;
+    }
+
     @Override
     public String render(Number object) {
         String formattedNumber = super.render(object);
         return new EmptyValueRenderer<String>(
-                ClientGinjectorProvider.instance().getApplicationConstants().unAvailablePropertyLabel()).render(formattedNumber);
+                nullString).render(formattedNumber);
     }
 
 }

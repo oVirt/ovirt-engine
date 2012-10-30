@@ -1,7 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -10,12 +16,12 @@ public class NetworkTemplateListModel extends SearchableListModel
 {
 
     @Override
-    public Network getEntity()
+    public NetworkView getEntity()
     {
-        return (Network) super.getEntity();
+        return (NetworkView) super.getEntity();
     }
 
-    public void setEntity(Network value)
+    public void setEntity(NetworkView value)
     {
         super.setEntity(value);
     }
@@ -49,10 +55,6 @@ public class NetworkTemplateListModel extends SearchableListModel
         {
             super.Search();
         }
-        else
-        {
-            setItems(null);
-        }
     }
 
     @Override
@@ -63,24 +65,22 @@ public class NetworkTemplateListModel extends SearchableListModel
             return;
         }
 
-        super.SyncSearch();
-
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
-//        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-//            @Override
-//            public void OnSuccess(Object model, Object ReturnValue)
-//            {
-//                StorageTemplateListModel templateModel = (StorageTemplateListModel) model;
-//                templateModel.setItems((ArrayList<VmTemplate>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-//                templateModel.setIsEmpty(((List) templateModel.getItems()).size() == 0);
-//            }
-//        };
-//
-//        StorageDomainQueryParametersBase tempVar = new StorageDomainQueryParametersBase(getEntity().getId());
-//        tempVar.setRefresh(getIsQueryFirstTime());
-//        Frontend.RunQuery(VdcQueryType.GetVmTemplatesFromStorageDomain, tempVar, _asyncQuery);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                NetworkTemplateListModel.this.setItems((ArrayList<VmTemplate>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+            }
+        };
+
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
+        networkIdParams.setRefresh(getIsQueryFirstTime());
+
+        // Frontend.RunQuery(VdcQueryType.GetTemplatesByNetworkId, networkIdParams, _asyncQuery);
     }
+
 
     @Override
     protected void AsyncSearch()

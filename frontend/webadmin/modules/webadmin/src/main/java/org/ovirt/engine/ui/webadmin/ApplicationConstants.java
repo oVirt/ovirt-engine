@@ -1488,6 +1488,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameNetwork();
 
+    @DefaultStringValue("Id")
+    String idNetwork();
+
     @DefaultStringValue("Data Center")
     String dcNetwork();
 
@@ -1544,6 +1547,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Remove")
     String removeNetwork();
+
+    @DefaultStringValue("none")
+    String noneVlan();
+
+    @DefaultStringValue("host's default")
+    String defaultMtu();
 
     // Cluster host
     @DefaultStringValue("Name")

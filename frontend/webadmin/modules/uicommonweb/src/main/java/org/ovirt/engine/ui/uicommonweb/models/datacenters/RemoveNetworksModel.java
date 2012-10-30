@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -26,9 +27,20 @@ public class RemoveNetworksModel extends ConfirmationModel{
         setMessage(ConstantsManager.getInstance().getConstants().logicalNetworksMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Network a : Linq.<Network> Cast(sourceListModel.getSelectedItems()))
+        for (Object a : sourceListModel.getSelectedItems())
         {
-            list.add(a.getname());
+            if (a instanceof NetworkView){
+                NetworkView netView = (NetworkView) a;
+                if (netView.getNetwork().getdescription() == null || netView.getNetwork().getdescription().trim().equalsIgnoreCase("")){ //$NON-NLS-1$
+                    list.add(ConstantsManager.getInstance().getMessages().networkDc(netView.getNetwork().getname(), netView.getStoragePoolName()));
+                }else{
+                    list.add(ConstantsManager.getInstance().getMessages().networkDcDescription(netView.getNetwork().getname(), netView.getStoragePoolName(), netView.getNetwork().getdescription()));
+                }
+
+            }else if (a instanceof Network){
+                Network network = (Network) a;
+                list.add(network.getdescription());
+            }
         }
         setItems(list);
 

@@ -177,4 +177,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Unable to fetch the Fingerprint of the host(s) {0,list,text}")
     String unreachableGlusterHosts(List<String> hosts);
+
+    @DefaultMessage("{0} in Data Center {1} ({2})")
+    String networkDcDescription(String networkName, String dcName, String description);
+
+    @DefaultMessage("{0} in Data Center {1}")
+    String networkDc(String networkName, String dcName);
 }

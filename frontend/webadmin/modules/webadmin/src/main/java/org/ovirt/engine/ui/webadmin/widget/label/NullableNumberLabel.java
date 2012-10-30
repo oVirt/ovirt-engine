@@ -11,6 +11,10 @@ public class NullableNumberLabel<T extends Number> extends ValueLabel<T> {
         super(new NullableNumberRenderer());
     }
 
+    public NullableNumberLabel(String nullLabel) {
+        super(new NullableNumberRenderer(nullLabel));
+    }
+
     public NullableNumberLabel(NumberFormat format) {
         super(new NullableNumberRenderer(format));
     }

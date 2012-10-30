@@ -2,7 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -27,12 +28,12 @@ public class NetworkHostListModel extends HostListModel
     }
 
     @Override
-    public Network getEntity()
+    public NetworkView getEntity()
     {
-        return (Network) ((super.getEntity() instanceof Network) ? super.getEntity() : null);
+        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
     }
 
-    public void setEntity(Network value)
+    public void setEntity(NetworkView value)
     {
         super.setEntity(value);
     }
@@ -68,18 +69,18 @@ public class NetworkHostListModel extends HostListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 if (model.equals(getViewFilterType())){
-                    NetworkHostListModel.this.setItems((ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                    NetworkHostListModel.this.setItems((ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                 }
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
 
         if (NetworkHostFilter.unattached.equals(getViewFilterType())){
             Frontend.RunQuery(VdcQueryType.GetVdsWithoutNetwork, networkIdParams, _asyncQuery);
         }else{
-            Frontend.RunQuery(VdcQueryType.GetVdsByNetworkId, networkIdParams, _asyncQuery);
+         //   Frontend.RunQuery(VdcQueryType.GetVdsByNetworkId, networkIdParams, _asyncQuery);
         }
     }
 

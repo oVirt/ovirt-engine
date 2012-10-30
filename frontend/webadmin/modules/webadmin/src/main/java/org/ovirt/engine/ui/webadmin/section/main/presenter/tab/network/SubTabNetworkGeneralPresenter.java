@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -22,14 +22,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabNetworkGeneralPresenter extends AbstractSubTabPresenter<Network, NetworkListModel, NetworkGeneralModel, SubTabNetworkGeneralPresenter.ViewDef, SubTabNetworkGeneralPresenter.ProxyDef> {
+public class SubTabNetworkGeneralPresenter extends AbstractSubTabPresenter<NetworkView, NetworkListModel, NetworkGeneralModel, SubTabNetworkGeneralPresenter.ViewDef, SubTabNetworkGeneralPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.networkGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkGeneralPresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<Network> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<NetworkView> {
     }
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)

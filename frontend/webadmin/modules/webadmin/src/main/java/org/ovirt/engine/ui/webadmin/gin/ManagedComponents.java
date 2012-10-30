@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
@@ -274,7 +275,7 @@ public interface ManagedComponents {
 
     AsyncProvider<MainTabNetworkPresenter> getMainTabNetworkPresenter();
 
-    MainModelProvider<Network, NetworkListModel> getMainTabNetworkModelProvider();
+    MainModelProvider<NetworkView, NetworkListModel> getMainTabNetworkModelProvider();
 
     AsyncProvider<MainTabStoragePresenter> getMainTabStoragePresenter();
 

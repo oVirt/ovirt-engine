@@ -2,13 +2,13 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
+import org.ovirt.engine.ui.common.widget.label.GuidLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -24,7 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabNetworkGeneralView extends AbstractSubTabFormView<Network, NetworkListModel, NetworkGeneralModel> implements SubTabNetworkGeneralPresenter.ViewDef, Editor<NetworkGeneralModel> {
+public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView, NetworkListModel, NetworkGeneralModel> implements SubTabNetworkGeneralPresenter.ViewDef, Editor<NetworkGeneralModel> {
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabNetworkGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -34,18 +34,21 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<Network, Ne
         Driver driver = GWT.create(Driver.class);
     }
 
+    private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+
     TextBoxLabel name = new TextBoxLabel();
+    GuidLabel id = new GuidLabel();
     TextBoxLabel description = new TextBoxLabel();
-    BooleanLabel vm = new BooleanLabel();
-    NullableNumberLabel<Integer> vlan = new  NullableNumberLabel<Integer>();
-    NullableNumberLabel<Integer> mtu = new  NullableNumberLabel<Integer>();
+    TextBoxLabel role = new TextBoxLabel();
+    NullableNumberLabel<Integer> vlan = new  NullableNumberLabel<Integer>(constants.noneVlan());
+    NullableNumberLabel<Integer> mtu = new  NullableNumberLabel<Integer>(constants.defaultMtu());
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
 
     FormBuilder formBuilder;
 
-    private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+
 
     @Inject
     public SubTabNetworkGeneralView(DetailModelProvider<NetworkListModel, NetworkGeneralModel> modelProvider) {
@@ -62,15 +65,16 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<Network, Ne
 
         formBuilder.setColumnsWidth("300px", "300px"); //$NON-NLS-1$ //$NON-NLS-2$
         formBuilder.addFormItem(new FormItem(constants.nameNetwork(), name, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.vmNetwork(), vm, 0, 1));
+        formBuilder.addFormItem(new FormItem(constants.idNetwork(), id, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.roleNetwork(), role, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.vlanNetwork(), vlan, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.mtuNetwork(), mtu, 2, 1));
 
     }
 
     @Override
-    public void setMainTabSelectedItem(Network selectedItem) {
+    public void setMainTabSelectedItem(NetworkView selectedItem) {
         Driver.driver.edit(getDetailModel());
         formBuilder.showForm(getDetailModel());
     }

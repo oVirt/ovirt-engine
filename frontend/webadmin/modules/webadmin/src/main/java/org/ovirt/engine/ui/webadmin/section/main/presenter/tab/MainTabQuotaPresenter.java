@@ -41,7 +41,7 @@ public class MainTabQuotaPresenter extends AbstractMainTabWithDetailsPresenter<Q
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().quotaMainTabLabel(), 9,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().quotaMainTabLabel(), 10,
                 ginjector.getMainTabQuotaModelProvider());
     }
 

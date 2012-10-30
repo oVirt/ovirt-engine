@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -23,14 +23,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Network, NetworkListModel, PermissionListModel, SubTabNetworkPermissionPresenter.ViewDef, SubTabNetworkPermissionPresenter.ProxyDef> {
+public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<NetworkView, NetworkListModel, PermissionListModel, SubTabNetworkPermissionPresenter.ViewDef, SubTabNetworkPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.networkPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkPermissionPresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<Network> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<NetworkView> {
     }
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)

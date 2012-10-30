@@ -1565,4 +1565,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Unattached")
     String unattachedHost();
+
+    // Network
+    @DefaultStringValue("VM network")
+    String vmNetworkRole();
 }

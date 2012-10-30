@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
@@ -88,17 +89,7 @@ public abstract class NetworkModel extends Model
         syncWithBackend();
     }
 
-    public static String ENGINE_NETWORK;
-
-    public static void initProperties(){
-     // get management network name
-        AsyncDataProvider.GetManagementNetworkName(new AsyncQuery(null, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                ENGINE_NETWORK = (String) returnValue;
-            }
-        }));
-    }
+    protected static String ENGINE_NETWORK = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private EntityModel privateName;
 

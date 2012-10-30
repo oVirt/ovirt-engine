@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -22,6 +23,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class DataCenterNetworkListModel extends SearchableListModel
 {
+
+    private static String ENGINE_NETWORK;
 
     private UICommand privateNewCommand;
 
@@ -209,7 +212,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
         for (Object item : selectedItems)
         {
             Network network = (Network) item;
-            if (StringHelper.stringsEqual(network.getname(), NetworkModel.ENGINE_NETWORK))
+            if (StringHelper.stringsEqual(network.getname(), ENGINE_NETWORK))
             {
                 anyEngine = true;
                 break;

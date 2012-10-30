@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,11 +41,11 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<Network, NetworkListModel> getNetworkListProvider(ClientGinjector ginjector,
+    public MainModelProvider<NetworkView, NetworkListModel> getNetworkListProvider(ClientGinjector ginjector,
             final Provider<NewNetworkPopupPresenterWidget> newNetworkPopupProvider,
             final Provider<EditNetworkPopupPresenterWidget> editNetworkPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new MainTabModelProvider<Network, NetworkListModel>(ginjector, NetworkListModel.class) {
+        return new MainTabModelProvider<NetworkView, NetworkListModel>(ginjector, NetworkListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {

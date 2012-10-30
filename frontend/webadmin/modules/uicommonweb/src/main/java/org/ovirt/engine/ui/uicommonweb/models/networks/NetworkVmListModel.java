@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 
 @SuppressWarnings("unused")
@@ -13,12 +16,12 @@ public class NetworkVmListModel extends VmListModel
 {
 
     @Override
-    public Network getEntity()
+    public NetworkView getEntity()
     {
-        return (Network) ((super.getEntity() instanceof Network) ? super.getEntity() : null);
+        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
     }
 
-    public void setEntity(Network value)
+    public void setEntity(NetworkView value)
     {
         super.setEntity(value);
     }
@@ -35,7 +38,6 @@ public class NetworkVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Vms: network=%1$s", getEntity().getname())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -43,10 +45,27 @@ public class NetworkVmListModel extends VmListModel
     @Override
     protected void SyncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VM);
-        tempVar.setRefresh(getIsQueryFirstTime());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        if (getEntity() == null)
+        {
+            return;
+        }
+
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                NetworkVmListModel.this.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+            }
+        };
+
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
+        networkIdParams.setRefresh(getIsQueryFirstTime());
+
+     //   Frontend.RunQuery(VdcQueryType.GetVmsByNetworkId, networkIdParams, _asyncQuery);
     }
+
 
     @Override
     protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)

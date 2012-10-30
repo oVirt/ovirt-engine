@@ -2,7 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -38,7 +39,7 @@ public class NetworkClusterListModel extends ClusterListModel
             return;
         }
 
-        ClusterNetworkManageModel networkManageModel = new ClusterNetworkManageModel(getEntity());
+        ClusterNetworkManageModel networkManageModel = new ClusterNetworkManageModel(getEntity().getNetwork());
         setWindow(networkManageModel);
         networkManageModel.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
         networkManageModel.setHashName("assign_networks"); //$NON-NLS-1$
@@ -183,12 +184,12 @@ public class NetworkClusterListModel extends ClusterListModel
     }
 
     @Override
-    public Network getEntity()
+    public NetworkView getEntity()
     {
-        return (Network) ((super.getEntity() instanceof Network) ? super.getEntity() : null);
+        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
     }
 
-    public void setEntity(Network value)
+    public void setEntity(NetworkView value)
     {
         super.setEntity(value);
     }
@@ -224,11 +225,11 @@ public class NetworkClusterListModel extends ClusterListModel
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
-                NetworkClusterListModel.this.setItems((ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                NetworkClusterListModel.this.setItems((ArrayList<VDSGroup>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetVdsGroupsByNetworkId, networkIdParams, _asyncQuery);
     }

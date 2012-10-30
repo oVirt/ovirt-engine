@@ -1231,7 +1231,7 @@ public class CommonModel extends ListModel
                 if (networkList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue =
-                            StringFormat.format("Network: datacenter.name = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                            StringFormat.format("Network: datacenter = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
                 }
             }
                 break;
@@ -1240,31 +1240,31 @@ public class CommonModel extends ListModel
                 {
                     // TODO get dc name from treeItem!!!
                     prefix.argvalue =
-                            StringFormat.format("Network: name = %1$s datacenter.name = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
+                            StringFormat.format("Network: name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (clusterList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
                     prefix.argvalue =
-                            StringFormat.format("Cluster: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                            StringFormat.format("Cluster: Cluster_network.network_name = %1$s Datacenter.name = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (hostList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
                     prefix.argvalue =
-                            StringFormat.format("Host: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                            StringFormat.format("Host : Nic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (vmList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
                     prefix.argvalue =
-                            StringFormat.format("Vms: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                            StringFormat.format("Vm : Vnic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
                     prefix.argvalue =
-                            StringFormat.format("Template: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                            StringFormat.format("Template : Vnic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
             }
                 break;
