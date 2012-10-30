@@ -1530,6 +1530,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Assign/Unassign Networks")
     String assignDetatchNetworksNework();
 
+    @DefaultStringValue("Assign/Unassign Network")
+    String assignUnassignNetwork();
+
     @DefaultStringValue("Set as Display")
     String setAsDisplayNetwork();
 

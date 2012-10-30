@@ -1,16 +1,30 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 
 @SuppressWarnings("unused")
 public class NetworkHostListModel extends HostListModel
 {
+    private NetworkHostFilter viewFilterType;
+
+    public NetworkHostFilter getViewFilterType() {
+        return viewFilterType;
+    }
+
+    public void setViewFilterType(NetworkHostFilter viewFilterType) {
+        this.viewFilterType = viewFilterType;
+        Search();
+    }
 
     @Override
     public Network getEntity()
@@ -35,7 +49,6 @@ public class NetworkHostListModel extends HostListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("hosts: network=%1$s", getEntity().getname())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -43,9 +56,31 @@ public class NetworkHostListModel extends HostListModel
     @Override
     protected void SyncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VDS);
-        tempVar.setRefresh(getIsQueryFirstTime());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        if (getEntity() == null)
+        {
+            return;
+        }
+
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(getViewFilterType());
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                if (model.equals(getViewFilterType())){
+                    NetworkHostListModel.this.setItems((ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                }
+            }
+        };
+
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
+        networkIdParams.setRefresh(getIsQueryFirstTime());
+
+        if (NetworkHostFilter.unattached.equals(getViewFilterType())){
+            Frontend.RunQuery(VdcQueryType.GetVdsWithoutNetwork, networkIdParams, _asyncQuery);
+        }else{
+            Frontend.RunQuery(VdcQueryType.GetVdsByNetworkId, networkIdParams, _asyncQuery);
+        }
     }
 
     @Override

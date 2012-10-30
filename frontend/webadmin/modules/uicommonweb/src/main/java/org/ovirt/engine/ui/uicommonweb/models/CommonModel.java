@@ -528,13 +528,14 @@ public class CommonModel extends ListModel
         clusterList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Clusters || model.getType() == SystemTreeItemType.Cluster
                 || model.getType() == SystemTreeItemType.Cluster_Gluster
-                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
+                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.Network
+                || model.getType() == SystemTreeItemType.System);
 
         hostList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster
                 || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Hosts
                 || model.getType() == SystemTreeItemType.Host || model.getType() == SystemTreeItemType.Storage
-                || model.getType() == SystemTreeItemType.System);
+                || model.getType() == SystemTreeItemType.Network || model.getType() == SystemTreeItemType.System);
 
         volumeList.setIsAvailable(model.getType() == SystemTreeItemType.Cluster_Gluster
                 || model.getType() == SystemTreeItemType.Volume
@@ -568,7 +569,8 @@ public class CommonModel extends ListModel
         vmList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster
                 || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
-                || isDataStorage || model.getType() == SystemTreeItemType.VMs
+                || model.getType() == SystemTreeItemType.Network || isDataStorage
+                || model.getType() == SystemTreeItemType.VMs
                 || model.getType() == SystemTreeItemType.System);
 
         if (poolList != null)
@@ -579,7 +581,8 @@ public class CommonModel extends ListModel
         templateList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster
                 || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
-                || isDataStorage || model.getType() == SystemTreeItemType.Templates
+                || model.getType() == SystemTreeItemType.Network || isDataStorage
+                || model.getType() == SystemTreeItemType.Templates
                 || model.getType() == SystemTreeItemType.System);
 
         userList.setIsAvailable(model.getType() == SystemTreeItemType.System);
@@ -1227,7 +1230,8 @@ public class CommonModel extends ListModel
             case Networks: {
                 if (networkList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Network: datacenter.name = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue =
+                            StringFormat.format("Network: datacenter.name = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
                 }
             }
                 break;
@@ -1235,27 +1239,32 @@ public class CommonModel extends ListModel
                 if (networkList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
-                    prefix.argvalue = StringFormat.format("Network: name = %1$s datacenter.name = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue =
+                            StringFormat.format("Network: name = %1$s datacenter.name = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (clusterList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
-                    prefix.argvalue = StringFormat.format("Cluster: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue =
+                            StringFormat.format("Cluster: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
                 }
                 else if (hostList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
-                    prefix.argvalue = StringFormat.format("Host: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue =
+                            StringFormat.format("Host: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
                 }
                 else if (vmList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
-                    prefix.argvalue = StringFormat.format("Vms: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue =
+                            StringFormat.format("Vms: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
                     // TODO get dc name from treeItem!!!
-                    prefix.argvalue = StringFormat.format("Template: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue =
+                            StringFormat.format("Template: network.name = %1$s datacenter.name = %2$s", model.getTitle()); //$NON-NLS-1$
                 }
             }
                 break;

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
 
+
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("OK")
@@ -1557,4 +1558,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Import Conflict")
     String importConflictTitle();
+
+    // Network- Host
+    @DefaultStringValue("Attached")
+    String attachedHost();
+
+    @DefaultStringValue("Unattached")
+    String unattachedHost();
 }
