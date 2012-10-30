@@ -759,7 +759,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("No new devices were found. This may be due to either: incorrect multipath configuration on the Host or wrong address of the iscsi target or a failure to authenticate on the target device. Please consult your Storage Administrator.")
     String noNewDevicesWereFoundMsg();
 
-    @DefaultStringValue("Tag(s):")
+    @DefaultStringValue("Tag(s)")
     String tagsMsg();
 
     @DefaultStringValue("The system could not find available target Storage Domain.\nPossible reasons:\n  - No active Storage Domain available\n  - The Template that the VM is based on does not exist on active Storage Domain")
