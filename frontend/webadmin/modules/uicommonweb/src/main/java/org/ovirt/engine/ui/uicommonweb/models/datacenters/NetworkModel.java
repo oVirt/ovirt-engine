@@ -2,10 +2,24 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -15,10 +29,77 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-@SuppressWarnings("unused")
-public class NetworkModel extends Model
+public abstract class NetworkModel extends Model
 {
+    public NetworkModel(ListModel sourceListModel)
+    {
+        this(new Network(), sourceListModel);
+    }
+    public NetworkModel(Network network, ListModel sourceListModel)
+    {
+        this.network = network;
+        this.sourceListModel = sourceListModel;
+        setName(new EntityModel());
+        setDescription(new EntityModel());
+        setDataCenters(new ListModel());
+        getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                syncWithBackend();
+            }
+        });
+        setVLanTag(new EntityModel());
+        EntityModel tempVar = new EntityModel();
+        tempVar.setEntity(false);
+        setIsStpEnabled(tempVar);
+        EntityModel tempVar2 = new EntityModel();
+        tempVar2.setEntity(false);
+        setHasVLanTag(tempVar2);
+        setMtu(new EntityModel());
+        EntityModel tempVar3 = new EntityModel();
+        tempVar3.setEntity(false);
+        setHasMtu(tempVar3);
+        EntityModel tempVar4 = new EntityModel();
+        tempVar4.setEntity(true);
+        setIsVmNetwork(tempVar4);
+
+        setNetworkClusterList(new ListModel());
+        setOriginalClusters(new ArrayList<VDSGroup>());
+        setIsEnabled(new EntityModel() {
+            @Override
+            public void setEntity(Object value) {
+                super.setEntity(value);
+                getName().setIsChangable((Boolean) value);
+                getDescription().setIsChangable((Boolean) value);
+                getIsVmNetwork().setIsChangable(isSupportBridgesReportByVDSM() && (Boolean) value);
+                getHasVLanTag().setIsChangable((Boolean) value);
+                getVLanTag().setIsChangable((Boolean)getHasVLanTag().getEntity() && (Boolean) value);
+                getHasMtu().setIsChangable((Boolean) value && isMTUOverrideSupported());
+                getMtu().setIsChangable((Boolean) getHasMtu().getEntity() && (Boolean) value
+                        && isMTUOverrideSupported());
+            }
+
+        });
+        init();
+        syncWithBackend();
+    }
+
+    public static String ENGINE_NETWORK;
+
+    public static void initProperties(){
+     // get management network name
+        AsyncDataProvider.GetManagementNetworkName(new AsyncQuery(null, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                ENGINE_NETWORK = (String) returnValue;
+            }
+        }));
+    }
+
     private EntityModel privateName;
 
     public EntityModel getName()
@@ -115,18 +196,6 @@ public class NetworkModel extends Model
         privateIsVmNetwork = value;
     }
 
-    private UICommand privateApplyCommand;
-
-    public UICommand getApplyCommand()
-    {
-        return privateApplyCommand;
-    }
-
-    public void setApplyCommand(UICommand value)
-    {
-        privateApplyCommand = value;
-    }
-
     private EntityModel privateIsEnabled;
 
     public EntityModel getIsEnabled()
@@ -149,31 +218,6 @@ public class NetworkModel extends Model
     public void setNetworkClusterList(ListModel value)
     {
         privateNetworkClusterList = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("NetworkClusterList")); //$NON-NLS-1$
-    }
-
-    private Network privatecurrentNetwork;
-
-    public Network getcurrentNetwork()
-    {
-        return privatecurrentNetwork;
-    }
-
-    public void setcurrentNetwork(Network value)
-    {
-        privatecurrentNetwork = value;
-    }
-
-    private ArrayList<VDSGroup> privatenewClusters;
-
-    public ArrayList<VDSGroup> getnewClusters()
-    {
-        return privatenewClusters;
-    }
-
-    public void setnewClusters(ArrayList<VDSGroup> value)
-    {
-        privatenewClusters = value;
     }
 
     private ArrayList<VDSGroup> privateOriginalClusters;
@@ -196,6 +240,12 @@ public class NetworkModel extends Model
 
     public void setSupportBridgesReportByVDSM(boolean isSupportBridgesReportByVDSM) {
         this.isSupportBridgesReportByVDSM = isSupportBridgesReportByVDSM;
+        if (!isSupportBridgesReportByVDSM) {
+            getIsVmNetwork().setEntity(true);
+            getIsVmNetwork().setIsChangable(false);
+        }else{
+            getIsVmNetwork().setIsChangable(true);
+        }
     }
 
     private boolean mtuOverrideSupported;
@@ -206,44 +256,39 @@ public class NetworkModel extends Model
 
     public void setMTUOverrideSupported(boolean mtuOverrideSupported) {
         this.mtuOverrideSupported = mtuOverrideSupported;
+        if (!mtuOverrideSupported) {
+            getHasMtu().setIsChangable(false);
+            getMtu().setIsChangable(false);
+            getHasMtu().setEntity(false);
+            getMtu().setEntity(null);
+        }else{
+            getHasMtu().setIsChangable(true);
+            getMtu().setIsChangable(true);
+        }
     }
 
-    public NetworkModel()
+    private ListModel privateDataCenters;
+
+    public ListModel getDataCenters()
     {
-        setName(new EntityModel());
-        setDescription(new EntityModel());
-        setVLanTag(new EntityModel());
-        EntityModel tempVar = new EntityModel();
-        tempVar.setEntity(false);
-        setIsStpEnabled(tempVar);
-        EntityModel tempVar2 = new EntityModel();
-        tempVar2.setEntity(false);
-        setHasVLanTag(tempVar2);
-        setMtu(new EntityModel());
-        EntityModel tempVar3 = new EntityModel();
-        tempVar3.setEntity(false);
-        setHasMtu(tempVar3);
-        EntityModel tempVar4 = new EntityModel();
-        tempVar4.setEntity(true);
-        setIsVmNetwork(tempVar4);
+        return privateDataCenters;
+    }
 
-        setNetworkClusterList(new ListModel());
-        setOriginalClusters(new ArrayList<VDSGroup>());
-        setIsEnabled(new EntityModel() {
-            @Override
-            public void setEntity(Object value) {
-                super.setEntity(value);
-                getName().setIsChangable((Boolean) value);
-                getDescription().setIsChangable((Boolean) value);
-                getIsVmNetwork().setIsChangable(isSupportBridgesReportByVDSM() && (Boolean) value);
-                getHasVLanTag().setIsChangable((Boolean) value);
-                getVLanTag().setIsChangable((Boolean)getHasVLanTag().getEntity() && (Boolean) value);
-                getHasMtu().setIsChangable((Boolean) value && isMTUOverrideSupported());
-                getMtu().setIsChangable((Boolean) getHasMtu().getEntity() && (Boolean) value
-                        && isMTUOverrideSupported());
-            }
+    private void setDataCenters(ListModel value)
+    {
+        privateDataCenters = value;
+    }
 
-        });
+    private final Network network;
+
+    public Network getNetwork(){
+        return network;
+    }
+
+    private final ListModel sourceListModel;
+
+    public ListModel getSourceListModel(){
+        return sourceListModel;
     }
 
     public boolean Validate()
@@ -283,4 +328,200 @@ public class NetworkModel extends Model
                 && getMtu().getIsValid();
     }
 
+    protected boolean firstInit = true;
+
+    public void syncWithBackend(){
+        final storage_pool dc = getSelectedDc();
+        if (dc == null){
+            return;
+        }
+
+        // Get IsSupportBridgesReportByVDSM
+        AsyncDataProvider.IsSupportBridgesReportByVDSM(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        boolean isSupportBridgesReportByVDSM = (Boolean) returnValue;
+                        setSupportBridgesReportByVDSM(isSupportBridgesReportByVDSM);
+
+                        // Get IsMTUOverrideSupported
+                        AsyncDataProvider.IsMTUOverrideSupported(new AsyncQuery(NetworkModel.this,
+                                new INewAsyncCallback() {
+                                    @Override
+                                    public void OnSuccess(Object model, Object returnValue) {
+                                        boolean isMTUOverrideSupported = (Boolean) returnValue;
+
+                                        setMTUOverrideSupported(isMTUOverrideSupported);
+
+                                        // Get dc- cluster list
+                                        AsyncDataProvider.GetClusterList(new AsyncQuery(NetworkModel.this, new INewAsyncCallback() {
+                                            @Override
+                                            public void OnSuccess(Object model, Object ReturnValue)
+                                            {
+                                                onGetClusterList((ArrayList<VDSGroup>) ReturnValue);
+                                            }
+                                        }), dc.getId());
+                                    }
+                                }),
+                                dc.getcompatibility_version().toString());
+                    }
+                }),
+                dc.getcompatibility_version().toString());
+    }
+
+    protected abstract void onGetClusterList(ArrayList<VDSGroup> clusterList);
+    protected abstract void addCommands();
+
+    public storage_pool getSelectedDc(){
+        return (storage_pool) getDataCenters().getSelectedItem();
+    }
+    public void flush(){
+        network.setstorage_pool_id(getSelectedDc().getId());
+        network.setname((String) getName().getEntity());
+        network.setstp((Boolean) getIsStpEnabled().getEntity());
+        network.setdescription((String) getDescription().getEntity());
+        network.setVmNetwork((Boolean) getIsVmNetwork().getEntity());
+
+        network.setMtu(0);
+        if (getMtu().getEntity() != null)
+        {
+            network.setMtu(Integer.parseInt(getMtu().getEntity().toString()));
+        }
+
+        network.setvlan_id(null);
+        if ((Boolean) getHasVLanTag().getEntity())
+        {
+            network.setvlan_id(Integer.parseInt(getVLanTag().getEntity().toString()));
+        }
+    }
+
+
+    public ArrayList<VDSGroup> getnewClusters()
+    {
+        ArrayList<VDSGroup> newClusters =new ArrayList<VDSGroup>();
+
+        for (Object item : getNetworkClusterList().getItems())
+        {
+            NetworkClusterModel networkClusterModel = (NetworkClusterModel) item;
+            if (networkClusterModel.isAttached())
+            {
+                newClusters.add(networkClusterModel.getEntity());
+            }
+        }
+        return newClusters;
+    }
+
+    protected void executeSave(){
+        ArrayList<VDSGroup> detachNetworkFromClusters =
+                Linq.Except(getOriginalClusters(), getnewClusters());
+        ArrayList<VdcActionParametersBase> actionParameters =
+                new ArrayList<VdcActionParametersBase>();
+
+        for (VDSGroup detachNetworkFromCluster : detachNetworkFromClusters)
+        {
+            actionParameters.add(new AttachNetworkToVdsGroupParameter(detachNetworkFromCluster,
+                    network));
+        }
+
+        StartProgress(null);
+
+        if (!actionParameters.isEmpty()){
+            Frontend.RunMultipleAction(VdcActionType.DetachNetworkToVdsGroup, actionParameters,
+                    new IFrontendMultipleActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendMultipleActionAsyncResult result) {
+                           postExecuteSave();
+                        }
+                    },
+                    null);
+        }else{
+            postExecuteSave();
+        }
+    }
+
+    protected abstract void postExecuteSave();
+
+    protected void postSaveAction(Guid networkGuid, boolean succeeded)
+    {
+        if (succeeded)
+        {
+            cancel();
+        }
+        else
+        {
+            StopProgress();
+            return;
+        }
+        StopProgress();
+        Guid networkId = network.getId() == null ? networkGuid : network.getId();
+        ArrayList<VDSGroup> attachNetworkToClusters =
+                Linq.Except(getnewClusters(), getOriginalClusters());
+        ArrayList<VdcActionParametersBase> actionParameters1 =
+                new ArrayList<VdcActionParametersBase>();
+
+        for (VDSGroup attachNetworkToCluster : attachNetworkToClusters)
+        {
+            Network tempVar = new Network();
+            tempVar.setId(networkId);
+            tempVar.setname(network.getname());
+            // Init default network_cluster values (required, display, status)
+            tempVar.setCluster(new network_cluster());
+            actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
+        }
+
+        Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
+    }
+
+    private void cancel(){
+            sourceListModel.setWindow(null);
+            sourceListModel.setConfirmWindow(null);
+    }
+
+    protected abstract void init();
+
+    public void onSave()
+    {
+        if (!Validate())
+        {
+            return;
+        }
+
+        // Save changes.
+        flush();
+
+        // Execute all the required commands (detach, attach, update) to save the updates
+        executeSave();
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
+
+        if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
+        {
+            onSave();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        {
+            cancel();
+        }
+    }
+
+    public NetworkClusterModel findNetworkClusterModel(VDSGroup cluster) {
+        for (Object item : getNetworkClusterList().getItems())
+        {
+            NetworkClusterModel ncm = (NetworkClusterModel) item;
+            if (cluster.getname().equals(ncm.getName())) {
+                return ncm;
+            }
+        }
+        return null;
+    }
+
+    protected void refreshClustersTable(){
+        getNetworkClusterList()
+        .getItemsChangedEvent()
+        .raise(getNetworkClusterList(), EventArgs.Empty);
+    }
 }

@@ -59,7 +59,7 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="435px" height="500px">
+	<d:SimpleDialogPanel width="435px" height="520px">
 		<d:content>
 			<g:DockLayoutPanel unit="PCT">
 				<g:center>
@@ -67,6 +67,7 @@
 						<g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
 						<g:HTMLPanel addStyleNames="{style.indent}">
 							<g:HTML ui:field="messageLabel" addStyleNames="{style.message}"/>
+							<e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
 							<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 							<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />

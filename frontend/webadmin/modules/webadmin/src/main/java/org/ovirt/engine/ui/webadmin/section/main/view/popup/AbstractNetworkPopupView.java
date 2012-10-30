@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
@@ -11,6 +13,8 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMo
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -49,6 +53,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @UiField
     @Ignore
     public Label assignLabel;
+
+    @UiField(provided = true)
+    @Path(value = "dataCenters.selectedItem")
+    @WithElementId("dataCenter")
+    public ListModelListBoxEditor<Object> dataCenterEditor;
 
     @UiField
     @Path(value = "name.entity")
@@ -97,18 +106,25 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public AbstractNetworkPopupView(EventBus eventBus, ApplicationResources resources,
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
+        // Initialize Editors
+        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((storage_pool) object).getname();
+            }
+        });
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.clustersTable = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable(constants, templates);
-        updateVisibility();
         localize(constants);
         addStyles();
     }
 
     protected void localize(ApplicationConstants constants) {
+        dataCenterEditor.setLabel(constants.networkPopupDataCenterLabel());
         assignLabel.setText(constants.networkPopupAssignLabel());
         nameEditor.setLabel(constants.nameLabel());
         descriptionEditor.setLabel(constants.descriptionLabel());
@@ -163,7 +179,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @SuppressWarnings("unchecked")
     Iterable<EntityModel> getClustersTableItems() {
         ListModel tableModel = clustersTable.flush();
-        return tableModel != null ? tableModel.getItems() : new ArrayList<EntityModel>();
+        return tableModel != null && tableModel.getItems() != null ? tableModel.getItems() : new ArrayList<EntityModel>();
     }
 
     void refreshClustersTable() {

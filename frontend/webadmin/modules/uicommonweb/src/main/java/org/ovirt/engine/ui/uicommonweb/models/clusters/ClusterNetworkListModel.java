@@ -1,16 +1,15 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -30,12 +29,10 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
@@ -369,11 +366,10 @@ public class ClusterNetworkListModel extends SearchableListModel
             return;
         }
 
-        ClusterNetworkModel networkModel = new ClusterNetworkModel();
+        final ClusterNewNetworkModel networkModel = new ClusterNewNetworkModel(this, getEntity());
         setWindow(networkModel);
-        networkModel.setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
-        networkModel.setHashName("new_logical_network"); //$NON-NLS-1$
 
+        // Set selected dc
         if (getEntity().getstorage_pool_id() != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -382,195 +378,14 @@ public class ClusterNetworkListModel extends SearchableListModel
                 @Override
                 public void OnSuccess(Object model, Object result)
                 {
-                    final ClusterNetworkModel clusterNetworkModel = (ClusterNetworkModel) model;
                     final storage_pool dataCenter = (storage_pool) result;
+                    networkModel.getDataCenters().setItems(Arrays.asList(dataCenter));
+                    networkModel.getDataCenters().setSelectedItem(dataCenter);
 
-                    AsyncDataProvider.IsSupportBridgesReportByVDSM(new AsyncQuery(this,
-                            new INewAsyncCallback() {
-                                @Override
-                                public void OnSuccess(Object target, Object returnValue) {
-                                    Boolean isSupportBridgesReportByVDSM = (Boolean) returnValue;
-                                    clusterNetworkModel.setSupportBridgesReportByVDSM(isSupportBridgesReportByVDSM);
-
-                                    if (!isSupportBridgesReportByVDSM) {
-                                        clusterNetworkModel.getIsVmNetwork().setEntity(true);
-                                        clusterNetworkModel.getIsVmNetwork().setIsChangable(false);
-                                    }
-
-                                    AsyncDataProvider.IsMTUOverrideSupported(new AsyncQuery(ClusterNetworkListModel.this,
-                                            new INewAsyncCallback() {
-                                                @Override
-                                                public void OnSuccess(Object model, Object returnValue) {
-                                                    boolean isMTUOverrideSupported = (Boolean) returnValue;
-                                                    ClusterNetworkListModel networkListModel =
-                                                            ClusterNetworkListModel.this;
-                                                    ClusterNetworkModel networkModel =
-                                                            (ClusterNetworkModel) networkListModel.getWindow();
-
-                                                    networkModel.setMTUOverrideSupported(isMTUOverrideSupported);
-                                                    if (!isMTUOverrideSupported) {
-                                                        networkModel.getHasMtu().setIsChangable(false);
-                                                        networkModel.getMtu().setIsChangable(false);
-                                                    }
-
-                                                    clusterNetworkModel.setDataCenterName(dataCenter.getname());
-                                                    AsyncQuery _asyncQuery2 = new AsyncQuery();
-                                                    _asyncQuery2.asyncCallback = new INewAsyncCallback() {
-                                                        @Override
-                                                        public void OnSuccess(Object model, Object ReturnValue)
-                                                        {
-                                                            ClusterNetworkListModel networkListModel = ClusterNetworkListModel.this;
-                                                            ClusterNetworkModel networkModel =
-                                                                    (ClusterNetworkModel) networkListModel.getWindow();
-
-                                                            // Cluster list
-                                                            ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) ReturnValue;
-                                                            NetworkClusterModel networkClusterModel;
-                                                            ListModel networkClusterList =
-                                                                    new ListModel();
-                                                            List<NetworkClusterModel> items = new ArrayList<NetworkClusterModel>();
-                                                            for (VDSGroup cluster : clusterList)
-                                                            {
-                                                                networkClusterModel = new NetworkClusterModel(cluster);
-                                                                if (!(cluster.getId().equals(getEntity().getId()))) {
-                                                                    networkClusterModel.setAttached(false);
-                                                                } else {
-                                                                    networkClusterModel.setAttached(true);
-                                                                    networkClusterModel.setIsChangable(false);
-                                                                }
-
-                                                                items.add(networkClusterModel);
-                                                            }
-                                                            networkClusterList.setItems(items);
-                                                            networkModel.setNetworkClusterList(networkClusterList);
-
-                                                            UICommand tempVar = new UICommand("OnSave", networkListModel); //$NON-NLS-1$
-                                                            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                                                            tempVar.setIsDefault(true);
-                                                            networkModel.getCommands().add(tempVar);
-
-                                                            UICommand tempVar2 = new UICommand("Cancel", networkListModel); //$NON-NLS-1$
-                                                            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                                                            tempVar2.setIsCancel(true);
-                                                            networkModel.getCommands().add(tempVar2);
-                                                        }
-                                                    };
-                                                    AsyncDataProvider.GetClusterList(_asyncQuery2, dataCenter.getId());
-                                                }
-                                            }),
-                                            getEntity().getcompatibility_version().toString());
-                                }
-                            }),
-                            dataCenter.getcompatibility_version().toString());
                 }
             };
             AsyncDataProvider.GetDataCenterById(_asyncQuery, getEntity().getstorage_pool_id().getValue());
         }
-    }
-
-    public void OnSave()
-    {
-        ClusterNetworkModel model = (ClusterNetworkModel) getWindow();
-
-        if (getEntity() == null)
-        {
-            Cancel();
-            return;
-        }
-
-        model.setcurrentNetwork(new Network());
-
-        if (!model.Validate() || getEntity().getstorage_pool_id() == null)
-        {
-            return;
-        }
-
-        // Save changes.
-        model.getcurrentNetwork().setstorage_pool_id(getEntity().getstorage_pool_id());
-        model.getcurrentNetwork().setname((String) model.getName().getEntity());
-        model.getcurrentNetwork().setstp((Boolean) model.getIsStpEnabled().getEntity());
-        model.getcurrentNetwork().setdescription((String) model.getDescription().getEntity());
-        model.getcurrentNetwork().setVmNetwork((Boolean) model.getIsVmNetwork().getEntity());
-
-        model.getcurrentNetwork().setMtu(0);
-        if (model.getMtu().getEntity() != null)
-        {
-            model.getcurrentNetwork().setMtu(Integer.parseInt(model.getMtu().getEntity().toString()));
-        }
-
-        model.getcurrentNetwork().setvlan_id(null);
-        if ((Boolean) model.getHasVLanTag().getEntity())
-        {
-            model.getcurrentNetwork().setvlan_id(Integer.parseInt(model.getVLanTag().getEntity().toString()));
-        }
-
-        model.StartProgress(null);
-
-        Frontend.RunAction(VdcActionType.AddNetwork,
-                new AddNetworkStoragePoolParameters(model.getcurrentNetwork().getstorage_pool_id().getValue(),
-                        model.getcurrentNetwork()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result1) {
-
-                        ClusterNetworkListModel networkListModel1 =
-                                (ClusterNetworkListModel) result1.getState();
-                        VdcReturnValueBase retVal = result1.getReturnValue();
-                        boolean succeeded = false;
-                        if (retVal != null && retVal.getSucceeded())
-                        {
-                            succeeded = true;
-                        }
-                        networkListModel1.PostNetworkAction(succeeded ? (Guid) retVal.getActionReturnValue()
-                                : null,
-                                succeeded);
-
-                    }
-                },
-                this);
-    }
-
-    public void PostNetworkAction(Guid networkGuid, boolean succeeded)
-    {
-        ClusterNetworkModel networkModel = (ClusterNetworkModel) getWindow();
-        if (succeeded)
-        {
-            Cancel();
-        }
-        else
-        {
-            networkModel.StopProgress();
-            return;
-        }
-        networkModel.StopProgress();
-
-        Network network = networkModel.getcurrentNetwork();
-        networkModel.setnewClusters(new ArrayList<VDSGroup>());
-
-        for (Object item : networkModel.getNetworkClusterList().getItems())
-        {
-            NetworkClusterModel networkClusterModel = (NetworkClusterModel) item;
-            if (networkClusterModel.isAttached())
-            {
-                networkModel.getnewClusters().add(networkClusterModel.getEntity());
-            }
-        }
-        Guid networkId = networkGuid;
-
-        ArrayList<VdcActionParametersBase> actionParameters1 =
-                new ArrayList<VdcActionParametersBase>();
-
-        for (VDSGroup attachNetworkToCluster : networkModel.getnewClusters())
-        {
-            Network tempVar = new Network();
-            tempVar.setId(networkId);
-            tempVar.setname(network.getname());
-            // Init default network_cluster values (required, display, status)
-            tempVar.setCluster(new network_cluster());
-            actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
-        }
-
-        Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
     }
 
     @Override
@@ -594,10 +409,6 @@ public class ClusterNetworkListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "New")) //$NON-NLS-1$
         {
             New();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
-        {
-            OnSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {

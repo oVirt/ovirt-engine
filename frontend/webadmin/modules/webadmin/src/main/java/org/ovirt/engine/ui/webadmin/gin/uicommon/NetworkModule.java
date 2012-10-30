@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
@@ -26,6 +27,8 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -38,22 +41,35 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<Network, NetworkListModel> getNetworkListProvider(ClientGinjector ginjector) {
+    public MainModelProvider<Network, NetworkListModel> getNetworkListProvider(ClientGinjector ginjector,
+            final Provider<NewNetworkPopupPresenterWidget> newNetworkPopupProvider,
+            final Provider<EditNetworkPopupPresenterWidget> editNetworkPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<Network, NetworkListModel>(ginjector, NetworkListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
 
-                return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                if (lastExecutedCommand == getModel().getNewCommand()) {
+                    return newNetworkPopupProvider.get();
+                }else if (lastExecutedCommand == getModel().getEditCommand()) {
+                    return editNetworkPopupProvider.get();
+                }else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
             }
 
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(NetworkListModel source,
                     UICommand lastExecutedCommand) {
 
+                if (lastExecutedCommand == getModel().getRemoveCommand()
+                        || lastExecutedCommand.getName().equals(EditNetworkModel.APPLY_COMMAND_NAME)) { //$NON-NLS-1$
+                    return removeConfirmPopupProvider.get();
+                } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
             }
-
 
         };
     }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -32,7 +33,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     }
 
 
-    void initTable(ApplicationConstants constants) {
+    void initTable(final ApplicationConstants constants) {
 
         TextColumnWithTooltip<Network> nameColumn = new TextColumnWithTooltip<Network>() {
             @Override
@@ -40,7 +41,44 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getName();
             }
         };
+
         getTable().addColumn(nameColumn, constants.nameNetwork());
+
+        TextColumnWithTooltip<Network> dcColumn = new TextColumnWithTooltip<Network>() {
+            @Override
+            public String getValue(Network object) {
+                return object.getstorage_pool_id()== null ? "" : object.getstorage_pool_id().toString(); //$NON-NLS-1$
+            }
+        };
+
+        getTable().addColumn(dcColumn, constants.dcNetwork());
+
+        BooleanColumn<Network> vmColumn = new BooleanColumn<Network>(constants.trueVmNetwork()) {
+            @Override
+            public Boolean getRawValue(Network object) {
+                return object.isVmNetwork();
+            }
+        };
+
+        getTable().addColumn(vmColumn, constants.vmNetwork());
+
+        TextColumnWithTooltip<Network> vlanColumn = new TextColumnWithTooltip<Network>() {
+            @Override
+            public String getValue(Network object) {
+                return object.getvlan_id()== null ? "" : object.getvlan_id().toString(); //$NON-NLS-1$
+            }
+        };
+
+        getTable().addColumn(vlanColumn, constants.vlanNetwork());
+
+        TextColumnWithTooltip<Network> mtuColumn = new TextColumnWithTooltip<Network>() {
+            @Override
+            public String getValue(Network object) {
+                return object.getMtu() == 0 ? constants.mtuDefault() : String.valueOf(object.getMtu());
+            }
+        };
+
+        getTable().addColumn(mtuColumn, constants.mtuNetwork());
 
         TextColumnWithTooltip<Network> descriptionColumn = new TextColumnWithTooltip<Network>() {
             @Override

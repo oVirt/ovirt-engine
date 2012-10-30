@@ -3,14 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 
@@ -32,6 +29,8 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         HasClickHandlers getApply();
 
         void setApplyEnabled(boolean enabled);
+
+        void updateVisibility();
 
     }
 
@@ -82,20 +81,7 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         });
 
         // Listen to Properties
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                NetworkModel model = (NetworkModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
-
-                if ("NetworkClusterList".equals(propertyName)) { //$NON-NLS-1$
-                    // update the view
-                    getView().setNetworkClusterList(model.getNetworkClusterList());
-                }else if ("Message".equals(propertyName)) { //$NON-NLS-1$
-                    getView().setMessageLabel(model.getMessage());
-                }
-            }
-        });
+        getView().setNetworkClusterList(model.getNetworkClusterList());
 
         // Listen to "IsEnabled" property
         model.getIsEnabled().getEntityChangedEvent().addListener(new IEventListener() {
@@ -106,13 +92,11 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
                 getView().postModelEnabled(inputFieldsEnabled);
             }
         });
-
-        registerHandler(getView().getApply().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.getApplyCommand().Execute();
-            }
-        }));
     }
 
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        getView().updateVisibility();
+    }
 }

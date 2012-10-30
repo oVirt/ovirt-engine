@@ -938,6 +938,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Permissions")
     String networkPermissionSubTabLabel();
 
+    @DefaultStringValue("Data Center")
+    String networkPopupDataCenterLabel();
+
     // Quota Storage
     @DefaultStringValue("Name")
     String nameQuotaStorage();
@@ -1494,6 +1497,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("MTU")
     String mtuNetwork();
 
+    @DefaultStringValue("default")
+    String mtuDefault();
+
     @DefaultStringValue("Required")
     String requiredNetwork();
 
@@ -1502,6 +1508,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("VM Network")
     String vmNetwork();
+
+    @DefaultStringValue("true")
+    String trueVmNetwork();
 
     @DefaultStringValue("Status")
     String statusNetwork();

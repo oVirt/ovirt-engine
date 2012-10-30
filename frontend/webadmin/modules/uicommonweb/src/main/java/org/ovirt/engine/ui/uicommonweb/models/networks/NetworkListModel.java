@@ -4,28 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.RemoveNetworksModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
-    private static String ENGINE_NETWORK;
-
     private UICommand privateNewCommand;
 
     public UICommand getNewCommand()
@@ -79,28 +85,86 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-
-     // get management network name
-        AsyncDataProvider.GetManagementNetworkName(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                ENGINE_NETWORK = (String) returnValue;
-                UpdateActionAvailability();
-            }
-        }));
     }
 
 
     public void newNetwork()
     {
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        final NetworkModel networkModel = new NewNetworkModel(this);
+        setWindow(networkModel);
+
+        initDcList(networkModel);
     }
 
     public void edit()
     {
+        final Network network = (Network) getSelectedItem();
+
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        final NetworkModel networkModel = new EditNetworkModel(network, this);
+        setWindow(networkModel);
+
+        initDcList(networkModel);
+
     }
+
+
+    public void apply()
+    {
+        EditNetworkModel model = (EditNetworkModel) getWindow();
+        model.apply();
+    }
+
+    boolean firstFinished;
 
     public void remove()
     {
+        if (getConfirmWindow() != null)
+        {
+            return;
+        }
+
+        ConfirmationModel model = new RemoveNetworksModel(this);
+        setConfirmWindow(model);
+    }
+
+    private void initDcList(final NetworkModel networkModel){
+        // Get all data centers
+        AsyncDataProvider.GetDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
+
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
+                networkModel.getDataCenters().setItems(dataCenters);
+
+                if (networkModel instanceof EditNetworkModel){
+                    storage_pool currentDc = findDc(networkModel.getNetwork().getstorage_pool_id().getValue(), dataCenters);
+                    networkModel.getDataCenters().setSelectedItem(currentDc);
+                }else{
+                    networkModel.getDataCenters().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                }
+
+            }
+        }));
+    }
+
+    private storage_pool findDc(Guid dcId, List<storage_pool> dataCenters){
+        for (storage_pool dc : dataCenters){
+            if (dcId.equals(dc.getId())){
+                return dc;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -143,11 +207,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         setItems(getAsyncResult().getData());
     }
 
-    public void cancel()
-    {
-        setWindow(null);
-        setConfirmWindow(null);
-    }
 
     @Override
     protected void OnSelectedItemChanged()
@@ -175,7 +234,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         for (Object item : selectedItems)
         {
             Network network = (Network) item;
-            if (StringHelper.stringsEqual(network.getname(), ENGINE_NETWORK))
+            if (StringHelper.stringsEqual(network.getname(), NetworkModel.ENGINE_NETWORK))
             {
                 anyEngine = true;
                 break;
@@ -185,8 +244,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0 && !anyEngine);
     }
-
-
 
     @Override
     public void ExecuteCommand(UICommand command)
@@ -206,8 +263,11 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         {
             remove();
         }
+        else if (StringHelper.stringsEqual(command.getName(), EditNetworkModel.APPLY_COMMAND_NAME))
+        {
+            apply();
+        }
     }
-
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
@@ -230,6 +290,12 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     private void OnSystemTreeSelectedItemChanged()
     {
         UpdateActionAvailability();
+    }
+
+    @Override
+    public Network getEntity()
+    {
+        return (Network) super.getEntity();
     }
 
     @Override

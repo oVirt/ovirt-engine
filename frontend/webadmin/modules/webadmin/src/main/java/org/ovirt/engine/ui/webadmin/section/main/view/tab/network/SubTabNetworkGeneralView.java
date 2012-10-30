@@ -58,9 +58,9 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<Network, Ne
         Driver.driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 2, 6);
+        formBuilder = new FormBuilder(formPanel, 2, 3);
 
-        formBuilder.setColumnsWidth("300px"); //$NON-NLS-1$
+        formBuilder.setColumnsWidth("300px", "300px"); //$NON-NLS-1$ //$NON-NLS-2$
         formBuilder.addFormItem(new FormItem(constants.nameNetwork(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.vmNetwork(), vm, 0, 1));

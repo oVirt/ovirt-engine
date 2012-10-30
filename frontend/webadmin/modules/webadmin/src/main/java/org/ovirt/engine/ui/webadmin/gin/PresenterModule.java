@@ -17,17 +17,19 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmat
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterForceRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditDataCenterNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewDataCenterNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -44,9 +46,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
@@ -187,17 +189,19 @@ import org.ovirt.engine.ui.webadmin.section.main.view.ReportView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DetachConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.NewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPolicyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.NewClusterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.ConfigurePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.RolePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterForceRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.EditDataCenterNetworkPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.EditNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindMultiStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindSingleStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.NewDataCenterNetworkPopupView;
@@ -217,9 +221,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.MultipleHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksManagementPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.MultipleHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPopupView;
@@ -850,9 +854,9 @@ public class PresenterModule extends BasePresenterModule {
                 DataCenterForceRemovePopupView.class);
 
         // Cluster
-        bindPresenterWidget(ClusterNetworkPopupPresenterWidget.class,
-                ClusterNetworkPopupPresenterWidget.ViewDef.class,
-                ClusterNetworkPopupView.class);
+        bindPresenterWidget(NewClusterNetworkPopupPresenterWidget.class,
+                NewClusterNetworkPopupPresenterWidget.ViewDef.class,
+                NewClusterNetworkPopupView.class);
 
         bindPresenterWidget(ClusterManageNetworkPopupPresenterWidget.class,
                 ClusterManageNetworkPopupPresenterWidget.ViewDef.class,
@@ -1092,6 +1096,13 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VolumeParameterPopupPresenterWidget.class,
                 VolumeParameterPopupPresenterWidget.ViewDef.class,
                 VolumeParameterPopupView.class);
-    }
 
+        // Network
+        bindPresenterWidget(NewNetworkPopupPresenterWidget.class,
+                NewNetworkPopupPresenterWidget.ViewDef.class,
+                NewNetworkPopupView.class);
+        bindPresenterWidget(EditNetworkPopupPresenterWidget.class,
+                EditNetworkPopupPresenterWidget.ViewDef.class,
+                EditNetworkPopupView.class);
+    }
 }
