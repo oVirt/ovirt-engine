@@ -24,8 +24,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CheckboxHeader;
-import org.ovirt.engine.ui.webadmin.widget.table.column.EntityModelCheckboxColumn;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -231,7 +231,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
         }, constants.nameClusterHeader());
 
-        clustersTable.addColumn(new EntityModelCheckboxColumn(new FieldUpdater<EntityModel, Boolean>() {
+        clustersTable.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
             @Override
             public void update(int index, EntityModel model, Boolean value) {
                 NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
@@ -263,6 +263,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         clustersTable.edit(networkClusterList);
     }
 
+    @Override
     public void updateVisibility() {
         messageLabel.setVisible(false);
     }

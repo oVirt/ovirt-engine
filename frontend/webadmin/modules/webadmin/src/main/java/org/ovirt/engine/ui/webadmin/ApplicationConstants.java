@@ -952,8 +952,17 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameCluster();
 
+    @DefaultStringValue("Network Attached")
+    String attachedNetworkCluster();
+
     @DefaultStringValue("Compatiblity Version")
     String comptVersCluster();
+
+    @DefaultStringValue("Network Required")
+    String requiredNetCluster();
+
+    @DefaultStringValue("Network Role")
+    String roleNetCluster();
 
     @DefaultStringValue("Description")
     String descriptionCluster();
@@ -2285,4 +2294,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("These calculations represents the max growth potential and may differ from the actual consumption. Please refer documentation for further explanations.")
     String quotaCalculationsMessage();
+
+    // Network cluster
+    @DefaultStringValue("Network Status")
+    String networkStatus();
 }

@@ -9,11 +9,17 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class NetworkVmListModel extends VmListModel
+public class NetworkVmListModel extends SearchableListModel
 {
+
+    public NetworkVmListModel() {
+        setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHashName("virtual_machines"); //$NON-NLS-1$
+    }
 
     @Override
     public NetworkView getEntity()
@@ -76,6 +82,11 @@ public class NetworkVmListModel extends VmListModel
         {
             getSearchCommand().Execute();
         }
+    }
+
+    @Override
+    protected String getListName() {
+        return "NetworkVmListModel"; //$NON-NLS-1$
     }
 }
 

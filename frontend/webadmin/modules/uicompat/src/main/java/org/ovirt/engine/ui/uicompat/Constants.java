@@ -41,6 +41,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Assign/Unassign Networks")
     String assignDetachNetworksTitle();
 
+    @DefaultStringValue("Assign/Unassign Network")
+    String assignDetachNetworkTitle();
+
     @DefaultStringValue("Clusters")
     String clustersTitle();
 
@@ -1567,6 +1570,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unattachedHost();
 
     // Network
-    @DefaultStringValue("VM network")
+    @DefaultStringValue("VM")
     String vmNetworkRole();
+
+    @DefaultStringValue("Management")
+    String mgmgtNetworkRole();
 }

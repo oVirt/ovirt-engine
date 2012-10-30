@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
@@ -11,7 +9,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
 
-public abstract class EntityModelCheckboxColumn extends Column<EntityModel, Boolean> {
+public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
 
     static class EnabledDisabledCheckboxCell extends CheckboxCell {
 
@@ -41,17 +39,17 @@ public abstract class EntityModelCheckboxColumn extends Column<EntityModel, Bool
     static final SafeHtml INPUT_UNCHECKED_DISABLED =
             SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" disabled/>"); //$NON-NLS-1$
 
-    public EntityModelCheckboxColumn() {
+    public CheckboxColumn() {
         super(new EnabledDisabledCheckboxCell());
     }
 
-    public EntityModelCheckboxColumn(FieldUpdater<EntityModel, Boolean> fieldUpdater) {
+    public CheckboxColumn(FieldUpdater<T, Boolean> fieldUpdater) {
         this();
         setFieldUpdater(fieldUpdater);
     }
 
     @Override
-    public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
+    public void render(Context context, T object, SafeHtmlBuilder sb) {
         Cell<Boolean> cell = getCell();
         if (cell instanceof EnabledDisabledCheckboxCell) {
             ((EnabledDisabledCheckboxCell) cell).renderEditable(context, getValue(object), canEdit(object), sb);
@@ -60,6 +58,6 @@ public abstract class EntityModelCheckboxColumn extends Column<EntityModel, Bool
         }
     }
 
-    protected abstract boolean canEdit(EntityModel object);
+    protected abstract boolean canEdit(T object);
 
 }

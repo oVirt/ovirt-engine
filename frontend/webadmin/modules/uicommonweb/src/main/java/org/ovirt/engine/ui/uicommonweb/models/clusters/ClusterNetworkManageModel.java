@@ -1,74 +1,39 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
+import java.util.List;
 
-public class ClusterNetworkManageModel extends EntityModel {
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
-    private boolean attached;
-    private boolean vmNetwork;
-    private boolean management;
+public class ClusterNetworkManageModel extends ListModel{
 
-    public ClusterNetworkManageModel(Network network) {
-        setEntity(network);
-        if (network.getCluster() == null){
-            // Init with default values
-            getEntity().setCluster(new network_cluster());
-        }
-        if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getname())) {
-            setManagement(true);
-        }
+    public boolean isMultiDisplay(){
+        return false;
     }
 
     @Override
-    public Network getEntity() {
-        return (Network) super.getEntity();
+    public List<ClusterNetworkModel> getItems() {
+        return (List<ClusterNetworkModel>) super.getItems();
     }
 
-    public String getName() {
-        return getEntity().getname();
+    public ClusterNetworkModel getDisplayNetwork(){
+        if (!isMultiDisplay()){
+            for (ClusterNetworkModel clusterNetworkManageModel : getItems()) {
+                if (clusterNetworkManageModel.isDisplayNetwork()) {
+                   return clusterNetworkManageModel;
+                }
+            }
+        }
+        return null;
     }
 
-    public boolean isAttached() {
-        return attached;
-    }
-
-    public boolean isDisplayNetwork() {
-        return getEntity().getCluster().getis_display();
-    }
-
-    public boolean isManagement() {
-        return management;
-    }
-
-    public boolean isRequired() {
-        return getEntity().getCluster().isRequired();
-    }
-
-    public boolean isVmNetwork() {
-        return vmNetwork;
-    }
-
-    public void setAttached(boolean attached) {
-        this.attached = attached;
-    }
-
-    public void setDisplayNetwork(boolean displayNetwork) {
-        getEntity().getCluster().setis_display(displayNetwork);
-    }
-
-    public void setManagement(boolean management) {
-        this.management = management;
-    }
-
-    public void setRequired(boolean required) {
-        getEntity().getCluster().setRequired(required);
-    }
-
-    public void setVmNetwork(boolean vmNetwork) {
-        this.vmNetwork = vmNetwork;
+    public void setDisplayNetwork(ClusterNetworkModel model, boolean value){
+        if (!isMultiDisplay()){
+            // Reset the old display
+            if (getDisplayNetwork()!= null){
+                getDisplayNetwork().setDisplayNetwork(!value);
+            }
+        }
+        model.setDisplayNetwork(value);
     }
 
 }

@@ -124,4 +124,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='background: url({0}) no-repeat; height: {1}px; width: {2}px;'></div>")
     SafeHtml image(String url, int height, int width);
 
+    @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
+    SafeHtml image(SafeHtml statusImage);
 }

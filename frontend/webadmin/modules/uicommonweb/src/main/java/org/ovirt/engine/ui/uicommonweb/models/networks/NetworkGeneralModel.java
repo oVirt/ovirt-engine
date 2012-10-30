@@ -2,14 +2,18 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 
 import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NetworkGeneralModel extends EntityModel
 {
+    private final String ENGINE_NETWORK_NAME = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+
     private String privateName;
 
     public String getName()
@@ -143,7 +147,21 @@ public class NetworkGeneralModel extends EntityModel
         setName(extendedNetwork.getNetwork().getName());
         setId(extendedNetwork.getNetwork().getId());
         setDescription(extendedNetwork.getNetwork().getdescription());
-        setRole(extendedNetwork.getNetwork().isVmNetwork() ? ConstantsManager.getInstance().getConstants().vmNetworkRole(): ""); //$NON-NLS-1$
+
+        String role = "";  //$NON-NLS-1$
+
+        if (ENGINE_NETWORK_NAME.equals(extendedNetwork.getNetwork().getName())){
+            role = role.concat(ConstantsManager.getInstance().getConstants().mgmgtNetworkRole());
+        }
+
+        if (extendedNetwork.getNetwork().isVmNetwork()){
+            if (!role.equals("")) //$NON-NLS-1$
+            {
+                role = role.concat(" ,"); //$NON-NLS-1$
+            }
+            role = role.concat(ConstantsManager.getInstance().getConstants().vmNetworkRole());
+        }
+        setRole(role);
         setVlan(extendedNetwork.getNetwork().getvlan_id());
 
         if (extendedNetwork.getNetwork().getMtu() == 0){

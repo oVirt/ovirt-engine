@@ -11,11 +11,17 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class NetworkHostListModel extends HostListModel
+public class NetworkHostListModel extends SearchableListModel
 {
+    public NetworkHostListModel() {
+        setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
+        setHashName("hosts"); //$NON-NLS-1$
+    }
+
     private NetworkHostFilter viewFilterType;
 
     public NetworkHostFilter getViewFilterType() {
@@ -93,5 +99,10 @@ public class NetworkHostListModel extends HostListModel
         {
             getSearchCommand().Execute();
         }
+    }
+
+    @Override
+    protected String getListName() {
+        return "NetworkHostListModel"; //$NON-NLS-1$
     }
 }

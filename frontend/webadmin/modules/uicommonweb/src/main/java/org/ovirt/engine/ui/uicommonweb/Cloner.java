@@ -43,6 +43,10 @@ public final class Cloner
         {
             return CloneNetwork((Network) instance);
         }
+        if (instance instanceof network_cluster)
+        {
+            return CloneNetworkCluster((network_cluster) instance);
+        }
         if (instance instanceof vm_pools)
         {
             return CloneVmPool((vm_pools) instance);
@@ -276,11 +280,18 @@ public final class Cloner
         obj.setstp(instance.getstp());
         obj.setstorage_pool_id(instance.getstorage_pool_id());
         if (instance.getCluster() !=null){
-            obj.setCluster(new network_cluster());
-            obj.getCluster().setstatus(instance.getCluster().getstatus());
-            obj.getCluster().setis_display(instance.getCluster().getis_display());
-            obj.getCluster().setRequired(instance.getCluster().isRequired());
+            obj.setCluster(CloneNetworkCluster(instance.getCluster()));
         }
+        return obj;
+    }
+
+    private static network_cluster CloneNetworkCluster(network_cluster instance)
+    {
+        network_cluster obj = new network_cluster();
+
+        obj.setstatus(instance.getstatus());
+        obj.setis_display(instance.getis_display());
+        obj.setRequired(instance.isRequired());
         return obj;
     }
 

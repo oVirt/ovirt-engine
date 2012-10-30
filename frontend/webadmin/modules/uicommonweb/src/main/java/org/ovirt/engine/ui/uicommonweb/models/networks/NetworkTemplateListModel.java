@@ -14,6 +14,11 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class NetworkTemplateListModel extends SearchableListModel
 {
+    public NetworkTemplateListModel()
+    {
+        setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
+        setHashName("templates"); //$NON-NLS-1$
+    }
 
     @Override
     public NetworkView getEntity()
@@ -24,12 +29,6 @@ public class NetworkTemplateListModel extends SearchableListModel
     public void setEntity(NetworkView value)
     {
         super.setEntity(value);
-    }
-
-    public NetworkTemplateListModel()
-    {
-        setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
-        setHashName("templates"); // $//$NON-NLS-1$
     }
 
     @Override

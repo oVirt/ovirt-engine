@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -24,10 +23,10 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
@@ -75,14 +74,14 @@ public class ClusterNetworkListModel extends SearchableListModel
         privateSetAsDisplayCommand = value;
     }
 
-    private Network displayNetwork = null;
+    private final Network displayNetwork = null;
 
-    private final Comparator<ClusterNetworkManageModel> networkComparator =
-            new Comparator<ClusterNetworkManageModel>() {
+    private final Comparator<ClusterNetworkModel> networkComparator =
+            new Comparator<ClusterNetworkModel>() {
                 @Override
-                public int compare(ClusterNetworkManageModel o1, ClusterNetworkManageModel o2) {
+                public int compare(ClusterNetworkModel o1, ClusterNetworkModel o2) {
                     // management first
-                    return o1.isManagement() ? -1 : o1.getName().compareTo(o2.getName());
+                    return o1.isManagement() ? -1 : o1.getNetworkName().compareTo(o2.getNetworkName());
                 }
             };
 
@@ -197,7 +196,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             {
                 ClusterNetworkListModel clusterNetworkListModel = (ClusterNetworkListModel) model;
                 ArrayList<Network> dcNetworks = (ArrayList<Network>) result;
-                ListModel networkToManage = createNetworkList(dcNetworks);
+                ClusterNetworkManageModel networkToManage = createNetworkList(dcNetworks);
                 clusterNetworkListModel.setWindow(networkToManage);
                 networkToManage.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
                 networkToManage.setHashName("assign_networks"); //$NON-NLS-1$
@@ -207,36 +206,25 @@ public class ClusterNetworkListModel extends SearchableListModel
         AsyncDataProvider.GetNetworkList(_asyncQuery, storagePoolId);
     }
 
-    private ListModel createNetworkList(List<Network> dcNetworks) {
-        List<ClusterNetworkManageModel> networkList = new ArrayList<ClusterNetworkManageModel>();
+    private ClusterNetworkManageModel createNetworkList(List<Network> dcNetworks) {
+        List<ClusterNetworkModel> networkList = new ArrayList<ClusterNetworkModel>();
         java.util.ArrayList<Network> clusterNetworks = Linq.<Network> Cast(getItems());
         for (Network network : dcNetworks) {
-            ClusterNetworkManageModel networkManageModel = new ClusterNetworkManageModel(network);
+            ClusterNetworkModel networkManageModel;
             int index = clusterNetworks.indexOf(network);
             if (index >= 0) {
                 Network clusterNetwork = clusterNetworks.get(index);
-                networkManageModel.setVmNetwork(clusterNetwork.isVmNetwork());
-
-                // getCluster can return null if the networks is not attached
-                if (clusterNetwork.getCluster() == null) {
-                    // Init default network_cluster values
-                    clusterNetwork.setCluster(new network_cluster());
-                }
-                networkManageModel.setRequired(clusterNetwork.getCluster().isRequired());
-                networkManageModel.setDisplayNetwork(clusterNetwork.getCluster().getis_display());
-                if (clusterNetwork.getCluster().getis_display()) {
-                    displayNetwork = clusterNetwork;
-                }
-                networkManageModel.setAttached(true);
-            } else {
-                networkManageModel.setAttached(false);
+                networkManageModel = new ClusterNetworkModel((Network) Cloner.clone(clusterNetwork));
+            }else{
+                networkManageModel = new ClusterNetworkModel((Network) Cloner.clone(network));
             }
+            networkManageModel.setCluster((VDSGroup) Cloner.clone(getEntity()));
             networkList.add(networkManageModel);
         }
 
         Collections.sort(networkList, networkComparator);
 
-        ListModel listModel = new ListModel();
+        ClusterNetworkManageModel listModel = new ClusterNetworkManageModel();
         listModel.setItems(networkList);
 
         UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
@@ -253,14 +241,14 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     public void OnManage() {
-        final ListModel windowModel = (ListModel) getWindow();
+        final ClusterNetworkManageModel windowModel = (ClusterNetworkManageModel) getWindow();
 
-        List<ClusterNetworkManageModel> manageList = Linq.<ClusterNetworkManageModel> Cast(windowModel.getItems());
+        List<ClusterNetworkModel> manageList = windowModel.getItems();
         List<Network> existingClusterNetworks = Linq.<Network> Cast(getItems());
         final ArrayList<VdcActionParametersBase> toAttach = new ArrayList<VdcActionParametersBase>();
         final ArrayList<VdcActionParametersBase> toDetach = new ArrayList<VdcActionParametersBase>();
 
-        for (ClusterNetworkManageModel networkModel : manageList) {
+        for (ClusterNetworkModel networkModel : manageList) {
             Network network = networkModel.getEntity();
             boolean contains = existingClusterNetworks.contains(network);
 
