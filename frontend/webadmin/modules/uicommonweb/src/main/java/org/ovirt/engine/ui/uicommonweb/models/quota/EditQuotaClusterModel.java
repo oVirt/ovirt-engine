@@ -123,7 +123,6 @@ public class EditQuotaClusterModel extends EntityModel {
     public boolean Validate() {
         IntegerValidation intValidation = new IntegerValidation();
         intValidation.setMinimum(1);
-        intValidation.setMaximum(65535);
         getSpecificMemValue().setIsValid(true);
         getSpecificCpuValue().setIsValid(true);
         if ((Boolean) getSpecificMem().getEntity()) {
