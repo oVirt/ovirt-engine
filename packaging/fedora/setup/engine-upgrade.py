@@ -877,6 +877,8 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
                     print timestamp + output_messages.INFO_RETRYING + output_messages.INFO_STOPPING_TASKS % MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES
 
         finally:
+            # Stop the engine first
+            stopEngine(service)
             # Restore previous engine configuration
             utils.restoreEngineFromMaintenance()
             if origTimeout != 0:
@@ -993,9 +995,10 @@ def main(options):
                     try:
                         checkRunningTasks()
                     # If something went wrong, restart DB services and the engine
-                    finally:
+                    except:
                         runFunc([[startDbRelatedServices, etlService, notificationService]], MSG_INFO_START_DB)
                         runFunc(startEngineService, MSG_INFO_START_ENGINE)
+                        raise
             else:
                 # This means that user chose not to stop ovirt-engine
                 logging.debug("exiting gracefully")
