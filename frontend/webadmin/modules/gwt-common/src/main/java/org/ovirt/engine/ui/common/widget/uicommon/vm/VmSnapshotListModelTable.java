@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -26,7 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -85,9 +85,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 if (snapshot.getType() == SnapshotType.ACTIVE) {
                     return constants.currentSnapshotLabel();
                 }
-
-                DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MMM-dd, HH:mm:ss"); //$NON-NLS-1$
-                return format.format(snapshot.getCreationDate());
+                return FullDateTimeRenderer.getLocalizedDateTimeFormat().format(snapshot.getCreationDate());
             }
         };
         getTable().addColumn(dateColumn, constants.dateSnapshot());
