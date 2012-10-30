@@ -2,10 +2,12 @@ package org.ovirt.engine.ui.common.widget.refresh;
 
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.renderer.MilisecondRenderer;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
@@ -43,6 +45,8 @@ import com.google.gwt.user.client.ui.ToggleButton;
  * Works with an {@link AbstractRefreshManager}.
  */
 public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHandlers, HasElementId {
+
+    private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
 
     public interface BaseResources extends ClientBundle {
 
@@ -326,7 +330,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         refreshOptionsMenu.setStylePrimaryName(style.refreshRateMenu());
 
         // Create menu's title and add it as the first item
-        MenuItem title = new MenuItem("Refresh Rate", new Command() { //$NON-NLS-1$
+        MenuItem title = new MenuItem(CONSTANTS.refreshRate(), new Command() {
             @Override
             public void execute() {
             }

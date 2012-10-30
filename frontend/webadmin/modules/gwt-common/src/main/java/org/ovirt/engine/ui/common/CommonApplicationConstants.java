@@ -1043,4 +1043,8 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("SPM Priority")
     String spmPriority();
+
+    @DefaultStringValue("Refresh Rate")
+    String refreshRate();
+
 }
