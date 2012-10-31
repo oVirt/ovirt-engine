@@ -19,7 +19,7 @@ SCRIPT_NAME="engine-db-install"
 CUR_DATE=`date +"%Y_%m_%d_%H_%M_%S"`
 
 #list of mandatory rpms - please add here any additional rpms required before configuring the postgresql server
-REQUIRED_RPMS=(postgresql-server postgresql postgresql-libs postgresql-contrib uuid)
+REQUIRED_RPMS=(postgresql-server postgresql postgresql-libs)
 
 #postgresql data dir
 PGDATA=/var/lib/pgsql/data
@@ -85,8 +85,6 @@ fi
 #auth security file path
 PG_HBA_FILE=/var/lib/pgsql/data/pg_hba.conf
 
-#uuid generate sql
-UUID_SQL=/usr/share/pgsql/contrib/uuid-ossp.sql
 LOG_PATH=/var/log/ovirt-engine
 USER=`/usr/bin/whoami`
 
@@ -363,22 +361,6 @@ updateDBUsers()
         # Create user $DB_USER + password
         PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -c "CREATE ROLE $DB_USER WITH CREATEDB LOGIN ENCRYPTED PASSWORD '$DB_PASS'" >> $LOGFILE 2>&1
         _verifyRC $? "failed creating user $DB_USER with encrypted password"
-
-        # Handle UUID extensions
-        pushd $ENGINE_DB_SCRIPTS_DIR >> $LOGFILE
-        source ./dbfunctions.sh
-        source ./dbcustomfunctions.sh
-        if [ $(pg_version | egrep "^9.1") ]; then
-            echo "Creating uuid-ossp extension..."
-            USERNAME=$DB_ADMIN
-            DATABASE=$TEMPLATE
-            VERBOSE=false
-            check_and_install_uuid_osspa_pg9
-        else
-            echo "adding uuid-ossp.sql from contrib..."
-            PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -d $TEMPLATE -f $UUID_SQL >> $LOGFILE 2>&1
-        fi
-        popd >> $LOGFILE
 
         DB_ADMIN=$DB_USER
     fi

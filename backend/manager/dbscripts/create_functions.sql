@@ -624,4 +624,43 @@ END; $function$
 LANGUAGE plpgsql;
 
 
+--
+-- Create the sequence used to generate UUIDs:
+--
+create or replace function create_uuid_sequence() returns void
+as $procedure$
+begin
+  if not exists (select 1 from information_schema.sequences where sequence_name = 'uuid_sequence') then
+    create sequence uuid_sequence increment by 1 start with 1;
+  end if;
+end; $procedure$
+language plpgsql;
 
+select create_uuid_sequence();
+
+drop function create_uuid_sequence();
+
+
+--
+-- This function replaces the same function from the uuid-ossp extension
+-- so that we don't need that extension any more:
+--
+create or replace function uuid_generate_v1() returns uuid
+as $procedure$
+declare
+    v_val bigint;
+    v_4_part char(4);
+    v_8_part char(8);
+    v_12_part char(12);
+    v_4_part_max int;
+begin
+    -- The only part we should use modulo is the 4 digit part, all the
+    -- rest are really big numbers (i.e 16^8 - 1 and 16^12 - 1)
+    v_4_part_max = 65535; -- this is 16^4 -1
+    v_val := nextval('uuid_sequence');
+    v_4_part := lpad(to_hex(v_val % v_4_part_max), 4, '0');
+    v_8_part := lpad(to_hex(v_val), 8, '0');
+    v_12_part := lpad(to_hex(v_val), 12, '0');
+    return v_8_part || v_4_part || v_4_part || v_4_part || v_12_part;
+end; $procedure$
+language plpgsql;

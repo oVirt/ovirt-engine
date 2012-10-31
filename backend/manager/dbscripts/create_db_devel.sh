@@ -8,14 +8,13 @@ USERNAME="postgres"
 PORT="5432"
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] [-f UUID] [-l LOGFILE] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
     printf "\t-d DATABASE   - The database name                         (def. ${DATABASE})\n"
     printf "\t-u USERNAME   - The admin username for the database.\n"
     printf "\t-l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})\n"
-    printf "\t-f UUID       - The [optional] location of uuid-ossp.sql file\n"
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
@@ -39,7 +38,7 @@ while getopts hs:d:u:p:l:f:v option; do
 done
 
 printf "Running original create_db script...\n"
-./create_db.sh   -s $SERVERNAME -p $PORT -d $DATABASE -u $USERNAME -f $UUID;
+./create_db.sh   -s $SERVERNAME -p $PORT -d $DATABASE -u $USERNAME;
 if [ $? -ne 0 ]
     then
       printf "Failed to create database ${DATABASE}\n"

@@ -176,7 +176,6 @@ Requires: ovirt-engine-cli
 
 # For local database:
 Requires: postgresql-server >= 8.4.7
-Requires: postgresql-contrib >= 8.4.7
 
 # Require JBoss AS 7:
 Requires: jboss-as >= 7.1.1

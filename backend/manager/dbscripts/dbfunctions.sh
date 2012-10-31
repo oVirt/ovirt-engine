@@ -314,61 +314,6 @@ pg_version() {
     echo $(psql --version | head -1 | awk '{print $3}')
 }
 
-check_and_install_uuid_osspa_pg8() {
-    if [ $1 ]; then
-        psql -d ${DATABASE} -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f "$1"
-        return $?
-    elif [ ! -f /usr/share/pgsql/contrib/uuid-ossp.sql ] ; then
-        return 1
-    else
-        psql -d ${DATABASE} -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f /usr/share/pgsql/contrib/uuid-ossp.sql
-        return $?
-    fi
-}
-
-check_and_install_uuid_osspa_pg9() {
-    # Checks that the extension is installed
-    CMD_CHECK_INSTALLED="SELECT COUNT(extname) FROM pg_extension WHERE extname='uuid-ossp';"
-    UUID_INSTALLED=$(expr `execute_command "${CMD_CHECK_INSTALLED}" ${DATABASE} ${SERVERNAME} ${PORT}`)
-    # Checks that the extension can be installed
-    CMD_CHECK_AVAILABLE="SELECT COUNT(name) FROM pg_available_extensions WHERE name='uuid-ossp';"
-    UUID_AVAILABLE=$(expr `execute_command "${CMD_CHECK_AVAILABLE}" ${DATABASE} ${SERVERNAME} ${PORT}`)
-
-    # If uuid is not installed, check whether it's available and install
-    if [ $UUID_INSTALLED -eq 1 ]; then
-        return 0
-    else
-        if [ $UUID_AVAILABLE -eq 0 ]; then
-            return 1
-        else
-            CMD="CREATE EXTENSION \"uuid-ossp\";"
-            execute_command "${CMD}"  ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-            return $?
-        fi
-    fi
-}
-
-check_and_install_uuid_osspa() {
-
-    if [ $(pg_version | egrep "^9.1") ]; then
-        echo "Creating uuid-ossp extension..."
-        check_and_install_uuid_osspa_pg9 $1
-    else
-        echo "adding uuid-ossp.sql from contrib..."
-        check_and_install_uuid_osspa_pg8 $1
-    fi
-
-    if [ $? -ne 0 ]; then
-        printf "\nThe uuid-ossp extension is not available."
-        printf "\nIt is possible the 'postgresql-contrib' package was not installed.\n"
-        printf "In order to install the package in Fedora please perform: "
-        printf "yum install postgresql-contrib\n"
-        printf "After installation is done, please run create_db.sh script again.\n"
-        printf "\nAlternatively, specify the location of the file with -f parameter\n"
-        exit 1
-    fi
-}
-
 # gets the configuration value of the given option name and version.
 # usage: <some variable>=get_config_value <name> <version>
 get_config_value() {

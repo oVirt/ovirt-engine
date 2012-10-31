@@ -279,9 +279,6 @@ def validateRemoteDB(param={}, options=[]):
         # DB Create check
         _checkCreateDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
 
-        # UUID extention check.
-        _checkUUIDExtension(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
-
         # Delete DB check
         _checkDropDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
 
@@ -462,20 +459,6 @@ def _checkDropDbPrivilege(dbAdminUser, dbHost, dbPort):
         raise Exception("\n" + output_messages.ERR_DB_DROP_PRIV % dbHost + ".\n")
     else:
         logging.info("Successfully deleted database on server %s." % dbHost)
-
-def _checkUUIDExtension(dbAdminUser, dbHost, dbPort):
-    """ Check that UUID extension is already loaded and raise Exception if not"""
-    logging.info("Checking that uuid extension is loaded by default on the remote server")
-    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
-                                         "ovirt_engine_test",
-                                         "SELECT uuid_generate_v1();")
-
-    # Extension was found
-    if not rc and out and "1 row" in out:
-        logging.info("Successfully passed UUID check")
-    else:
-        logging.error(output_messages.ERR_DB_UUID)
-        raise Exception(output_messages.ERR_DB_UUID)
 
 def _createTempPgPass(dbAdminUser, dbHost, dbPort, dbPass):
     """docstring for _createTempPgPass"""
