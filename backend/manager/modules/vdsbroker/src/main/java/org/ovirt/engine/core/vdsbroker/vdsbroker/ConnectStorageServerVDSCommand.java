@@ -7,10 +7,11 @@ import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -34,6 +35,23 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
         Map<String, String> returnValue = _result.convertToStatusList();
         setReturnValue(returnValue);
         logFailedStorageConnections(returnValue);
+    }
+
+    @Override
+    protected void ProceedProxyReturnValue() {
+        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        switch (returnStatus) {
+        case StorageServerConnectionRefIdAlreadyInUse:
+        case StorageServerConnectionRefIdDoesNotExist:
+            VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
+                    getCommandName(), getReturnStatus().mMessage));
+            InitializeVdsError(returnStatus);
+            getVDSReturnValue().setSucceeded(false);
+            throw outEx;
+        default:
+            super.ProceedProxyReturnValue();
+            break;
+        }
     }
 
     @SuppressWarnings("unchecked")

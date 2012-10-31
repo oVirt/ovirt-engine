@@ -29,6 +29,14 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
         case StoragePoolWrongMaster:
             super.ProceedProxyReturnValue();
             break;
+        case ReleaseLockFailure:
+        case AcquireHostIdFailure:
+        case ReleaseHostIdFailure:
+            VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
+                    getCommandName(), getReturnStatus().mMessage));
+            InitializeVdsError(returnStatus);
+            getVDSReturnValue().setSucceeded(false);
+            throw outEx;
         default:
             getVDSReturnValue().setSucceeded(false);
             InitializeVdsError(returnStatus);
