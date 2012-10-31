@@ -253,7 +253,6 @@ public abstract class VdsLoadBalancingAlgorithm {
                         Guid destinationVdsId = destinationVds.getId();
                         MigrateVmToServerParameters parameters =
                             new MigrateVmToServerParameters(false, vm.getId(), destinationVdsId);
-                        parameters.setShouldBeLogged(false);
                         Backend.getInstance().runInternalAction(VdcActionType.MigrateVmToServer,
                                 parameters,
                                 ExecutionHandler.createInternalJobContext());
