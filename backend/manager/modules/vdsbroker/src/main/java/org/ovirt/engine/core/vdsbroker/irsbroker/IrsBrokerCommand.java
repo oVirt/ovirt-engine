@@ -1608,14 +1608,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     throw new IRSProtocolException(ex);
                 }
             }
-            catch (IrsErrorIrsDbMissing ex) {
-                getVDSReturnValue().setExceptionString(ex.toString());
-                getVDSReturnValue().setExceptionObject(ex);
-                getVDSReturnValue().setVdsError(ex.getVdsError());
-                log.errorFormat("IrsBroker::Failed::{0}", getCommandName());
-                LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
-                failover();
-            }
             catch (IRSNoMasterDomainException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);

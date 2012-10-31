@@ -68,7 +68,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dal.dbbroker.generic.RepositoryException;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.GenericDao;
@@ -876,11 +875,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
             functionReturnValue = getSucceeded();
             exceptionOccurred = false;
-        } catch (RepositoryException e) {
-            log.error(String.format("Command %1$s throw Database exception", getClass().getName()), e);
-            processExceptionToClient(new VdcFault(e, VdcBllErrors.DB));
-        }
-        catch (VdcBLLException e) {
+        } catch (VdcBLLException e) {
             log.error(String.format("Command %1$s throw Vdc Bll exception. With error message %2$s",
                     getClass().getName(),
                     e.getMessage()));

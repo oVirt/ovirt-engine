@@ -52,7 +52,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dal.dbbroker.generic.RepositoryException;
 import org.ovirt.engine.core.dao.MassOperationsDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -860,11 +859,6 @@ public class VdsUpdateRunTimeInfo {
             } else if (command.getVDSReturnValue().getExceptionObject() instanceof VDSProtocolException) {
                 log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
                         _vds.getvds_name(), command.getVDSReturnValue().getExceptionString());
-            } else if (command.getVDSReturnValue().getExceptionObject() instanceof RepositoryException) {
-                log.errorFormat("Failed to update vms status in database,  vds = {0} : {1}, error = {2}",
-                        _vds.getId(), _vds.getvds_name(), command.getVDSReturnValue().getExceptionString());
-                log.error("Exception: ", command.getVDSReturnValue().getExceptionObject());
-                return;
             }
             throw command.getVDSReturnValue().getExceptionObject();
         } else {
@@ -1492,22 +1486,13 @@ public class VdsUpdateRunTimeInfo {
     private void MoveVDSToMaintenanceIfNeeded() {
         if ((_vds.getstatus() == VDSStatus.PreparingForMaintenance)
                 && monitoringStrategy.canMoveToMaintenance(_vds)) {
-            try {
-                _vdsManager.setStatus(VDSStatus.Maintenance, _vds);
-                _saveVdsDynamic = true;
-                _saveVdsStatistics = true;
-                log.infoFormat(
-                        "vds::Updated vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds = {0} : {1}",
-                        _vds.getId(),
-                        _vds.getvds_name());
-            } catch (RepositoryException ex) {
-                log.errorFormat(
-                        "vds::Failed to update vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds = {0} : {1}, error = {2}",
-                        _vds.getId(),
-                        _vds.getvds_name(),
-                        ExceptionUtils.getMessage(ex));
-                log.error("Exception: ", ex);
-            }
+            _vdsManager.setStatus(VDSStatus.Maintenance, _vds);
+            _saveVdsDynamic = true;
+            _saveVdsStatistics = true;
+            log.infoFormat(
+                    "vds::Updated vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds = {0} : {1}",
+                    _vds.getId(),
+                    _vds.getvds_name());
         }
     }
 

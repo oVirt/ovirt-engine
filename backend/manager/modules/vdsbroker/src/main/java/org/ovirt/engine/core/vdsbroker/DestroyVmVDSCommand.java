@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.generic.RepositoryException;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -47,28 +46,17 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                     @Override
                     public Void runInTransaction() {
 
-                        try {
-                            curVm.guestLogoutTimeTreatmentAfterDestroy();
-                            // SaveVmDynamicToDBThreaded(curVm);
-                            DbFacade.getInstance().getVmDynamicDao().update(curVm.getDynamicData());
-                            DbFacade.getInstance().getVmStatisticsDao().update(curVm.getStatisticsData());
-                            List<VmNetworkInterface> interfaces = curVm.getInterfaces();
-                            if (interfaces != null && interfaces.size() > 0) {
-                                for (VmNetworkInterface ifc : interfaces) {
-                                    VmNetworkStatistics stats = ifc.getStatistics();
-                                    DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
-                                }
+                        curVm.guestLogoutTimeTreatmentAfterDestroy();
+                        // SaveVmDynamicToDBThreaded(curVm);
+                        DbFacade.getInstance().getVmDynamicDao().update(curVm.getDynamicData());
+                        DbFacade.getInstance().getVmStatisticsDao().update(curVm.getStatisticsData());
+                        List<VmNetworkInterface> interfaces = curVm.getInterfaces();
+                        if (interfaces != null && interfaces.size() > 0) {
+                            for (VmNetworkInterface ifc : interfaces) {
+                                VmNetworkStatistics stats = ifc.getStatistics();
+                                DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
                             }
-                        } catch (RepositoryException ex) {
-                            log.errorFormat(
-                                    "VDS::destroy Failed to update vds status in database,  vds = {1} : {2}, error = {3}",
-                                    getVds().getId(),
-                                    getVds().getvds_name(),
-                                    ex.getMessage());
-                            log.error("Exception: ", ex);
-                            throw ex;
                         }
-
                         getVds().setmem_commited(getVds().getmem_commited() - curVm.getvm_mem_size_mb());
                         getVds().setmem_commited(getVds().getmem_commited() - getVds().getguest_overhead());
                         getVds().setvms_cores_count(getVds().getvms_cores_count() - curVm.getnum_of_cpus());
