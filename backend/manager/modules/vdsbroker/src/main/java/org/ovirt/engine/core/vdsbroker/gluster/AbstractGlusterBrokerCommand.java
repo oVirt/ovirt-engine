@@ -21,18 +21,20 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterVolumeCreateFailed:
         case GlusterVolumeStartFailed:
         case GlusterVolumeStopFailed:
+        case AddBricksToGlusterVolumeFailed:
         case GlusterVolumeSetOptionFailed:
-        case GlusterVolumeResetOptionsFailed:
         case GlusterVolumeRebalanceStartFailed:
         case GlusterVolumeDeleteFailed:
-        case AddBricksToGlusterVolumeFailed:
-        case GlusterVolumeRemoveBricksFailed:
         case GlusterVolumeReplaceBrickStartFailed:
-        case GlusterHostRemoveFailed:
-        case GlusterAddHostFailed:
-        case GlusterPeerListFailed:
+        case GlusterVolumeListFailed:
+        case GlusterVolumeOptionInfoFailed:
+        case GlusterVolumeResetOptionsFailed:
+        case GlusterVolumeRemoveBricksFailed:
         case GlusterVolumeProfileStartFailed:
         case GlusterVolumeProfileStopFailed:
+        case GlusterAddHostFailed:
+        case GlusterHostRemoveFailed:
+        case GlusterPeerListFailed:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
             getVDSReturnValue().setSucceeded(false);

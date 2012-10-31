@@ -329,20 +329,23 @@ public enum VdcBllErrors {
 
     // Gluster VDSM errors
     GlusterVolumeCreateFailed(4122),
-    GlusterVolumeSetOptionFailed(4131),
     GlusterVolumeStartFailed(4125),
     GlusterVolumeStopFailed(4127),
-    GlusterVolumeResetOptionsFailed(4155),
-    GlusterVolumeDeleteFailed(4139),
-    GlusterVolumeRemoveBricksFailed(4156),
     AddBricksToGlusterVolumeFailed(4128),
+    GlusterVolumeSetOptionFailed(4131),
     GlusterVolumeRebalanceStartFailed(4135),
+    GlusterVolumeDeleteFailed(4139),
     GlusterVolumeReplaceBrickStartFailed(4142),
+    GlusterVolumeListFailed(4149),
+    GlusterVolumeOptionInfoFailed(4154),
+    GlusterVolumeResetOptionsFailed(4155),
+    GlusterVolumeRemoveBricksFailed(4156),
     GlusterVolumeProfileStartFailed(4158),
     GlusterVolumeProfileStopFailed(4159),
-    GlusterHostRemoveFailed(4406),
     GlusterAddHostFailed(4404),
+    GlusterHostRemoveFailed(4406),
     GlusterPeerListFailed(4407),
+
 
     UnicodeArgumentException(4900),
 
