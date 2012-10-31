@@ -75,7 +75,11 @@ public class NetworkGeneralModel extends EntityModel
 
     public void setMtu(Integer value)
     {
-        if (privateMtu != value)
+        if (privateMtu == null && value == null)
+        {
+            return;
+        }
+        if (privateMtu == null || !privateMtu.equals(value))
         {
             privateMtu = value;
             OnPropertyChanged(new PropertyChangedEventArgs("Mtu")); //$NON-NLS-1$
