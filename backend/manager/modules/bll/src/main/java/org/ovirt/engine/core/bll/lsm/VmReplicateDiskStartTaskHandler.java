@@ -88,7 +88,7 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
                 getEnclosingCommand().getParameters().getImageGroupID(),
                 DbFacade.getInstance()
                         .getDiskImageDao()
-                        .get(getEnclosingCommand().getParameters().getImageGroupID())
+                        .get(getEnclosingCommand().getParameters().getDestinationImageId())
                         .isWipeAfterDelete(),
                 getEnclosingCommand().getParameters().getForceDelete(),
                 null);
