@@ -60,7 +60,6 @@ import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
-import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsParameters;
 import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
@@ -941,28 +940,6 @@ public final class DataProvider
         }
 
         return ""; //$NON-NLS-1$
-    }
-
-    /**
-     * Used to retrieve versions for editing cluster
-     *
-     * @param vdsGroupId
-     * @return
-     */
-    public static ArrayList<Version> GetClusterVersions(Guid vdsGroupId)
-    {
-        GetAvailableClusterVersionsParameters tempVar = new GetAvailableClusterVersionsParameters();
-        tempVar.setVdsGroupId(vdsGroupId);
-        VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetAvailableClusterVersions, tempVar);
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return (ArrayList<Version>) returnValue.getReturnValue();
-        }
-        else
-        {
-            return new ArrayList<Version>();
-        }
     }
 
     /**

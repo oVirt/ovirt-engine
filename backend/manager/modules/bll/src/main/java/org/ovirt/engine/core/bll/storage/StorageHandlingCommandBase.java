@@ -54,7 +54,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         super(commandId);
     }
 
-    public static final String UpVdssInCluster = "HOST: status = UP and CLUSTER = {0}";
     public static final String DesktopsInStoragePoolQuery = "VMS: DATACENTER = {0}";
 
     public static List<VDS> GetAllRunningVdssInPool(storage_pool pool) {
