@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -16,11 +15,7 @@ public class SPMGetAllTasksStatusesVDSCommand<P extends IrsBaseVDSCommandParamet
 
     @Override
     protected void ExecuteIrsBrokerCommand() {
-        if (getCurrentIrsProxyData().getCurrentVdsId().equals(Guid.Empty)) {
-            setReturnValue(null);
-        } else {
-            setVDSReturnValue(ResourceManager.getInstance().runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                    new VdsIdVDSCommandParametersBase(getCurrentIrsProxyData().getCurrentVdsId())));
-        }
+        setVDSReturnValue(ResourceManager.getInstance().runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
+                new VdsIdVDSCommandParametersBase(getCurrentIrsProxyData().getCurrentVdsId())));
     }
 }

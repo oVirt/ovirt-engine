@@ -12,14 +12,10 @@ public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> exte
 
     @Override
     protected void ExecuteIrsBrokerCommand() {
-        if (getCurrentIrsProxyData().getIsValid()) {
-            _isoList = getIrsProxy().getFloppyList(getParameters().getStoragePoolId().toString());
-            ProceedProxyReturnValue();
-            if (_isoList.mVMList != null && _isoList.mVMList.length > 0) {
-                setReturnValue(new java.util.ArrayList<String>(java.util.Arrays.asList(_isoList.mVMList)));
-            } else {
-                setReturnValue(new java.util.ArrayList<String>());
-            }
+        _isoList = getIrsProxy().getFloppyList(getParameters().getStoragePoolId().toString());
+        ProceedProxyReturnValue();
+        if (_isoList.mVMList != null && _isoList.mVMList.length > 0) {
+            setReturnValue(new java.util.ArrayList<String>(java.util.Arrays.asList(_isoList.mVMList)));
         } else {
             setReturnValue(new java.util.ArrayList<String>());
         }

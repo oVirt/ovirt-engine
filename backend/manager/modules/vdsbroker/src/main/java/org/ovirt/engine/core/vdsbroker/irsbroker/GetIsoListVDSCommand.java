@@ -10,17 +10,12 @@ public class GetIsoListVDSCommand<P extends IrsBaseVDSCommandParameters> extends
 
     @Override
     protected void ExecuteIrsBrokerCommand() {
-        if (getCurrentIrsProxyData().getIsValid()) {
-            setReturnValue(ResourceManager
-                    .getInstance()
-                    .runVdsCommand(
-                            VDSCommandType.HsmGetIsoList,
-                            new HSMGetIsoListParameters(getCurrentIrsProxyData().getCurrentVdsId(),
-                                    getParameters().getStoragePoolId()))
-                    .getReturnValue());
-        } else {
-            setReturnValue(new java.util.ArrayList<String>());
-            getVDSReturnValue().setSucceeded(false);
-        }
+        setReturnValue(ResourceManager
+                .getInstance()
+                .runVdsCommand(
+                        VDSCommandType.HsmGetIsoList,
+                        new HSMGetIsoListParameters(getCurrentIrsProxyData().getCurrentVdsId(),
+                                getParameters().getStoragePoolId()))
+                .getReturnValue());
     }
 }
