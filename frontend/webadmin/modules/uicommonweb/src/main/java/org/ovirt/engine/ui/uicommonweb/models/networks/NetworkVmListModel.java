@@ -1,13 +1,19 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -40,6 +46,27 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     @Override
+    public void setItems(Iterable value) {
+        if (value != null){
+            List<PairQueryable<VmNetworkInterface, VM>> itemList = (List<PairQueryable<VmNetworkInterface, VM>>) value;
+            Collections.sort(itemList, new Comparator<PairQueryable<VmNetworkInterface, VM>>() {
+
+                @Override
+                public int compare(PairQueryable<VmNetworkInterface, VM> paramT1, PairQueryable<VmNetworkInterface, VM> paramT2) {
+                   int compareValue = paramT1.getSecond().getvds_group_name().compareTo(paramT2.getSecond().getvds_group_name());
+
+                   if (compareValue!= 0){
+                       return compareValue;
+                   }
+
+                  return paramT1.getSecond().getvm_name().compareTo(paramT2.getSecond().getvm_name());
+                }
+            });
+        }
+        super.setItems(value);
+    }
+
+    @Override
     public void Search()
     {
         if (getEntity() != null)
@@ -62,14 +89,14 @@ public class NetworkVmListModel extends SearchableListModel
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
-                NetworkVmListModel.this.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                NetworkVmListModel.this.setItems((List<PairQueryable<VmNetworkInterface, VM>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
         NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
 
-     //   Frontend.RunQuery(VdcQueryType.GetVmsByNetworkId, networkIdParams, _asyncQuery);
+       Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId, networkIdParams, _asyncQuery);
     }
 
 

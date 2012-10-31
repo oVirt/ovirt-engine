@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface CommonApplicationConstants extends Constants {
 
@@ -1047,4 +1046,33 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Refresh Rate")
     String refreshRate();
 
+    // Network Host
+    @DefaultStringValue("Nic Status")
+    String statusNetworkHost();
+
+    @DefaultStringValue("Nic")
+    String nicNetworkHost();
+
+    @DefaultStringValue("Nic Rx")
+    String rxNetworkHost();
+
+    @DefaultStringValue("Nic Tx")
+    String txNetworkHost();
+
+    // Network VM
+    @DefaultStringValue("Vnic Status")
+    String vnicStatusNetworkVM();
+
+    @DefaultStringValue("Vnic")
+    String vnicNetworkVM();
+
+    @DefaultStringValue("Nic Rx")
+    String rxNetworkVM();
+
+    @DefaultStringValue("Nic Tx")
+    String txNetworkVM();
+
+    // Network Template
+    @DefaultStringValue("Vnic")
+    String vnicNetworkTemplate();
 }

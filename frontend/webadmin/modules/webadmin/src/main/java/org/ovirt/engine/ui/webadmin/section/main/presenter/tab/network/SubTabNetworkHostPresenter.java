@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 
 import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -42,7 +44,7 @@ public class SubTabNetworkHostPresenter extends AbstractSubTabPresenter<NetworkV
     @Inject
     public SubTabNetworkHostPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<VDS, NetworkListModel, NetworkHostListModel> modelProvider) {
+            SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

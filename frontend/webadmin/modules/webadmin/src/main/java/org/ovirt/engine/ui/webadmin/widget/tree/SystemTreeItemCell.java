@@ -67,12 +67,10 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
             imageResource = applicationResources.volumesImage();
             break;
         case Network:
-            // TODO fix the image
-            imageResource = applicationResources.nicIcon();
+            imageResource = applicationResources.networkTreeImage();
             break;
         case Networks:
-            // TODO fix the image
-            imageResource = applicationResources.nicIcon();
+            imageResource = applicationResources.networksTreeImage();
             break;
 
         default:

@@ -322,4 +322,10 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/multiple_volumes.png")
     ImageResource volumesImage();
+
+    @Source("images/icn_tree_network.png")
+    ImageResource networkTreeImage();
+
+    @Source("images/icn_tree_networks.png")
+    ImageResource networksTreeImage();
 }

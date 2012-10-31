@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
@@ -25,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
-import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -644,19 +645,19 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabNetworkClusterPresenter> getSubTabNetworkClusterPresenter();
 
-    SearchableDetailModelProvider<Pair<network_cluster, VDSGroup>, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
+    SearchableDetailModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
 
     AsyncProvider<SubTabNetworkHostPresenter> getSubTabNetworkHostPresenter();
 
-    SearchableDetailModelProvider<VDS, NetworkListModel, NetworkHostListModel> getSubTabNetworkHostModelProvider();
+    SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getSubTabNetworkHostModelProvider();
 
     AsyncProvider<SubTabNetworkVmPresenter> getSubTabNetworkVmPresenter();
 
-    SearchableDetailModelProvider<VM, NetworkListModel, NetworkVmListModel> getSubTabNetworkVmModelProvider();
+    SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> getSubTabNetworkVmModelProvider();
 
     AsyncProvider<SubTabNetworkTemplatePresenter> getSubTabNetworkTemplatePresenter();
 
-    SearchableDetailModelProvider<VmTemplate, NetworkListModel, NetworkTemplateListModel> getSubTabNetworkTemplateModelProvider();
+    SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> getSubTabNetworkTemplateModelProvider();
 
     AsyncProvider<SubTabNetworkPermissionPresenter> getSubTabNetworkPermissionPresenter();
 

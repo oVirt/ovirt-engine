@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -18,6 +22,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -27,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
@@ -37,6 +43,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFact
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCadidateEventArgs;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 /**
  * A Model for the Setup Networks Dialog<BR>
@@ -97,10 +105,6 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private Event privateNetworksChangedEvent;
 
-    private final UICommand okCommand;
-
-    private final UICommand cancelCommand;
-
     private List<VdsNetworkInterface> allNics;
 
     private Map<String, NetworkInterfaceModel> nicMap;
@@ -116,17 +120,22 @@ public class HostSetupNetworksModel extends EntityModel {
     private List<Network> allNetworks;
     private final Map<String, DcNetworkParams> netTodcParams;
     private final Map<String, NetworkParameters> netToBeforeSyncParams;
-    private final HostInterfaceListModel hostInterfaceListModel;
+    private final SearchableListModel sourceListModel;
     private List<VdsNetworkInterface> allBonds;
     private NetworkOperation currentCandidate;
     private NetworkItemModel<?> currentOp1;
     private NetworkItemModel<?> currentOp2;
 
+    private final UICommand okCommand;
     public static final String NIC = "nic"; //$NON-NLS-1$
     public static final String NETWORK = "network"; //$NON-NLS-1$
 
-    public HostSetupNetworksModel(HostInterfaceListModel hostInterfaceListModel) {
-        this.hostInterfaceListModel = hostInterfaceListModel;
+    public HostSetupNetworksModel(SearchableListModel listModel) {
+        this.sourceListModel = listModel;
+
+        setTitle(ConstantsManager.getInstance().getConstants().setupHostNetworksTitle());
+        setHashName("host_setup_networks"); //$NON-NLS-1$
+
         networkToLastDetachParams = new HashMap<String, NetworkParameters>();
         netTodcParams = new HashMap<String, DcNetworkParams>();
         netToBeforeSyncParams = new HashMap<String, NetworkParameters>();
@@ -143,12 +152,14 @@ public class HostSetupNetworksModel extends EntityModel {
         okCommand = new UICommand("OnSetupNetworks", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
+        getCommands().add(okCommand);
 
         // cancel command
+        UICommand cancelCommand;
         cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
-
+        getCommands().add(cancelCommand);
     }
 
     public boolean candidateOperation(String op1Key, String op1Type, String op2Key, String op2Type, boolean drop) {
@@ -201,11 +212,6 @@ public class HostSetupNetworksModel extends EntityModel {
         return allNics;
     }
 
-    @Override
-    public UICommand getCancelCommand() {
-        return cancelCommand;
-    }
-
     public List<LogicalNetworkModel> getNetworks() {
         return new ArrayList<LogicalNetworkModel>(networkMap.values());
     }
@@ -220,10 +226,6 @@ public class HostSetupNetworksModel extends EntityModel {
 
     public Event getNicsChangedEvent() {
         return privateNicsChangedEvent;
-    }
-
-    public UICommand getOkCommand() {
-        return okCommand;
     }
 
     public Event getOperationCandidateEvent() {
@@ -284,7 +286,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 @Override
                 public void ExecuteCommand(UICommand command) {
                     setBondOptions(entity, bondDialogModel);
-                    hostInterfaceListModel.CancelConfirm();
+                    sourceListModel.setConfirmWindow(null);
                 }
             };
         } else if (item instanceof LogicalNetworkModel){
@@ -329,7 +331,7 @@ public class HostSetupNetworksModel extends EntityModel {
                             HostSetupNetworksModel.this.networksToSync.remove(logicalNetwork.getName());
                         }
 
-                        hostInterfaceListModel.CancelConfirm();
+                        sourceListModel.setConfirmWindow(null);
                     }
                 };
             }else{
@@ -370,7 +372,7 @@ public class HostSetupNetworksModel extends EntityModel {
                             HostSetupNetworksModel.this.networksToSync.remove(logicalNetwork.getName());
                         }
 
-                        hostInterfaceListModel.CancelConfirm();
+                        sourceListModel.setConfirmWindow(null);
                     }
                 };
             }
@@ -385,7 +387,7 @@ public class HostSetupNetworksModel extends EntityModel {
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
             public void ExecuteCommand(UICommand command) {
-                hostInterfaceListModel.CancelConfirm();
+                sourceListModel.setConfirmWindow(null);
             }
         });
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -393,7 +395,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
         editPopup.getCommands().add(okCommand);
         editPopup.getCommands().add(cancelCommand);
-        hostInterfaceListModel.setConfirmWindow(editPopup);
+        sourceListModel.setConfirmWindow(editPopup);
     }
 
     public void onOperation(NetworkOperation operation, final NetworkCommand networkCommand) {
@@ -402,7 +404,7 @@ public class HostSetupNetworksModel extends EntityModel {
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
             public void ExecuteCommand(UICommand command) {
-                hostInterfaceListModel.CancelConfirm();
+                sourceListModel.setConfirmWindow(null);
             }
         });
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -426,7 +428,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 popupWindow.setTitle(ConstantsManager.getInstance().getConstants().errorTitle());
                 popupWindow.setMessage(ConstantsManager.getInstance().getConstants().thereAreNoAvailableBondsMsg());
                 popupWindow.getCommands().add(cancelCommand);
-                hostInterfaceListModel.setConfirmWindow(popupWindow);
+                sourceListModel.setConfirmWindow(popupWindow);
                 return;
             }
             bondPopup.getBond().setItems(freeBonds);
@@ -434,7 +436,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
                 @Override
                 public void ExecuteCommand(UICommand command) {
-                    hostInterfaceListModel.CancelConfirm();
+                    sourceListModel.setConfirmWindow(null);
                     VdsNetworkInterface bond = (VdsNetworkInterface) bondPopup.getBond().getSelectedItem();
                     setBondOptions(bond, bondPopup);
                     NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
@@ -467,7 +469,7 @@ public class HostSetupNetworksModel extends EntityModel {
         popupWindow.getCommands().add(cancelCommand);
 
         // set window
-        hostInterfaceListModel.setConfirmWindow(popupWindow);
+        sourceListModel.setConfirmWindow(popupWindow);
     }
 
     public void redraw() {
@@ -778,6 +780,100 @@ public class HostSetupNetworksModel extends EntityModel {
 
     public DcNetworkParams getNetDcParams(String networkName) {
         return netTodcParams.get(networkName);
+    }
+
+    public void onSetupNetworks() {
+        // Determines the connectivity timeout in seconds
+        AsyncDataProvider.GetNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                getConnectivityTimeout().setEntity(returnValue);
+                postOnSetupNetworks();
+            }
+        }));
+    }
+
+    public void postOnSetupNetworks() {
+        final HostSetupNetworksModel model = (HostSetupNetworksModel) sourceListModel.getWindow();
+
+        SetupNetworksParameters params = new SetupNetworksParameters();
+        params.setInterfaces(model.getAllNics());
+        params.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
+        params.setConectivityTimeout((Integer) model.getConnectivityTimeout().getEntity());
+        params.setVdsId(((VDS) getEntity()).getId());
+        params.setNetworksToSync(model.getNetworksToSync());
+
+        model.StartProgress(null);
+        Frontend.RunAction(VdcActionType.SetupNetworks, params, new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+                VdcReturnValueBase returnValueBase = result.getReturnValue();
+                if (returnValueBase != null && returnValueBase.getSucceeded())
+                {
+                    EntityModel commitChanges =model.getCommitChanges();
+                    if ((Boolean) commitChanges.getEntity())
+                    {
+                        new SaveNetworkConfigAction(sourceListModel, model);
+                    }
+                    else
+                    {
+                        model.StopProgress();
+                        sourceListModel.setWindow(null);
+                        sourceListModel.Search();
+                    }
+                }
+                else
+                {
+                    model.StopProgress();
+                }
+            }
+        });
+    }
+
+    private void SaveNetworkConfigInternalAction()
+    {
+        Frontend.RunAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(((VDS) getEntity()).getId()),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
+
+                        VdcReturnValueBase returnValueBase = result.getReturnValue();
+                        if (returnValueBase != null && returnValueBase.getSucceeded())
+                        {
+                            HostInterfaceListModel interfaceListModel = (HostInterfaceListModel) result.getState();
+                            if (interfaceListModel.getcurrentModel() != null)
+                            {
+                                interfaceListModel.getcurrentModel().StopProgress();
+                                interfaceListModel.Cancel();
+                                interfaceListModel.Search();
+                            }
+                        }
+
+                    }
+                }, this);
+    }
+
+
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
+
+        if (StringHelper.stringsEqual(command.getName(), "OnSetupNetworks")) //$NON-NLS-1$
+        {
+            onSetupNetworks();
+        } else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
+        {
+            cancel();
+        }
+
+
+    }
+
+    private void cancel() {
+        sourceListModel.setWindow(null);
+
     }
 
 }

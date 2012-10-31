@@ -4,10 +4,12 @@ import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -21,6 +23,10 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
@@ -32,6 +38,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -91,8 +101,8 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Pair<network_cluster, VDSGroup>, NetworkListModel, NetworkClusterListModel> getNetworkClusterListProvider(ClientGinjector ginjector, final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
-        return new SearchableDetailTabModelProvider<Pair<network_cluster, VDSGroup>, NetworkListModel, NetworkClusterListModel>(ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel> getNetworkClusterListProvider(ClientGinjector ginjector, final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
+        return new SearchableDetailTabModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel>(ginjector,
                 NetworkListModel.class,
                 NetworkClusterListModel.class){
             @Override
@@ -110,24 +120,51 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VDS, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VDS, NetworkListModel, NetworkHostListModel>(ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(ClientGinjector ginjector, final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
+            final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
+            final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
+            final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
+        return new SearchableDetailTabModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>(ginjector,
                 NetworkListModel.class,
-                NetworkHostListModel.class);
+                NetworkHostListModel.class){
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkHostListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (windowModel instanceof HostBondInterfaceModel) {
+                    return hostBondPopupProvider.get();
+                }
+
+                if (source.getWindow() instanceof HostSetupNetworksModel){
+                    // Resolve by dialog model
+                    if (windowModel instanceof HostInterfaceModel) {
+                        return setupNetworksInterfacePopupProvider.get();
+                    } else if (windowModel instanceof HostManagementNetworkModel) {
+                            return setupNetworksManagementPopupProvider.get();
+                    }
+                }
+
+                // Resolve by last executed command
+                if (lastExecutedCommand == getModel().getSetupNetworksCommand()) {
+                    return hostSetupNetworksPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+        };
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, NetworkListModel,NetworkVmListModel> getNetworkVmModelProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VM, NetworkListModel, NetworkVmListModel>(ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel,NetworkVmListModel> getNetworkVmModelProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel>(ginjector,
                 NetworkListModel.class,
                 NetworkVmListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VmTemplate, NetworkListModel, NetworkTemplateListModel> geNetworkTemplateModelProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VmTemplate, NetworkListModel, NetworkTemplateListModel>(ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> geNetworkTemplateModelProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel>(ginjector,
                 NetworkListModel.class,
                 NetworkTemplateListModel.class);
     }

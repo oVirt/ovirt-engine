@@ -10,11 +10,9 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.NetworkInterface;
@@ -1242,7 +1240,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                     ((HostManagementNetworkModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                             if ((Boolean) commitChanges.getEntity())
                             {
-                                SaveNetworkConfigInternalAction();
+                                new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel());
                             }
                             else
                             {
@@ -1604,7 +1602,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostBondInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    SaveNetworkConfigInternalAction();
+                                    new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel()).execute();
                                 }
                                 else
                                 {
@@ -1687,7 +1685,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostBondInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    SaveNetworkConfigInternalAction();
+                                    new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel());
                                 }
                                 else
                                 {
@@ -1773,7 +1771,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                             ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                     if ((Boolean) commitChanges.getEntity())
                                     {
-                                        SaveNetworkConfigInternalAction();
+                                        new SaveNetworkConfigAction(HostInterfaceListModel.this, getcurrentModel());
                                     }
                                     else
                                     {
@@ -1884,7 +1882,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                                     ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                             if ((Boolean) commitChanges.getEntity())
                                             {
-                                                SaveNetworkConfigInternalAction();
+                                                new SaveNetworkConfigAction(HostInterfaceListModel.this, getcurrentModel());
                                             }
                                             else
                                             {
@@ -2014,7 +2012,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    SaveNetworkConfigInternalAction();
+                                    new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel());
                                 }
                                 else
                                 {
@@ -2066,30 +2064,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         model.StartProgress(null);
         setcurrentModel(model);
-        SaveNetworkConfigInternalAction();
-    }
-
-    private void SaveNetworkConfigInternalAction()
-    {
-        Frontend.RunAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(getEntity().getId()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-
-                        VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded())
-                        {
-                            HostInterfaceListModel interfaceListModel = (HostInterfaceListModel) result.getState();
-                            if (interfaceListModel.getcurrentModel() != null)
-                            {
-                                interfaceListModel.getcurrentModel().StopProgress();
-                                interfaceListModel.Cancel();
-                                interfaceListModel.Search();
-                            }
-                        }
-
-                    }
-                }, this);
+        new SaveNetworkConfigAction(this, model);
     }
 
     public void OnConfirmManagementDetach()
@@ -2135,7 +2110,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                             ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                     if ((Boolean) commitChanges.getEntity())
                                     {
-                                        SaveNetworkConfigInternalAction();
+                                        new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel());
                                     }
                                     else
                                     {
@@ -2176,74 +2151,9 @@ public class HostInterfaceListModel extends SearchableListModel
 
         HostSetupNetworksModel setupNetworksWindowModel = new HostSetupNetworksModel(this);
         setWindow(setupNetworksWindowModel);
-        setupNetworksWindowModel.setTitle(ConstantsManager.getInstance().getConstants().setupHostNetworksTitle());
-        setupNetworksWindowModel.setHashName("host_setup_networks"); //$NON-NLS-1$
-
-        // ok command
-        UICommand okCommand = setupNetworksWindowModel.getOkCommand();
-        okCommand.setTarget(this);
-        setupNetworksWindowModel.getCommands().add(okCommand);
-
-        // cancel command
-        UICommand cancelCommand = setupNetworksWindowModel.getCancelCommand();
-        cancelCommand.setTarget(this);
-        setupNetworksWindowModel.getCommands().add(cancelCommand);
 
         // set entity
         setupNetworksWindowModel.setEntity(getEntity());
-    }
-
-    public void OnSetupNetworks() {
-        // Determines the connectivity timeout in seconds
-        AsyncDataProvider.GetNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                HostInterfaceListModel listModel = (HostInterfaceListModel) target;
-                HostSetupNetworksModel model = (HostSetupNetworksModel) listModel.getWindow();
-
-                model.getConnectivityTimeout().setEntity(returnValue);
-                listModel.PostOnSetupNetworks();
-            }
-        }));
-    }
-
-    public void PostOnSetupNetworks() {
-        final HostSetupNetworksModel model = (HostSetupNetworksModel) getWindow();
-
-        SetupNetworksParameters params = new SetupNetworksParameters();
-        params.setInterfaces(model.getAllNics());
-        params.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
-        params.setConectivityTimeout((Integer) model.getConnectivityTimeout().getEntity());
-        params.setVdsId(getEntity().getId());
-        params.setNetworksToSync(model.getNetworksToSync());
-        IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
-
-            @Override
-            public void Executed(FrontendActionAsyncResult result) {
-                VdcReturnValueBase returnValueBase = result.getReturnValue();
-                if (returnValueBase != null && returnValueBase.getSucceeded())
-                {
-                    EntityModel commitChanges =model.getCommitChanges();
-                    if ((Boolean) commitChanges.getEntity())
-                    {
-                        SaveNetworkConfigInternalAction();
-                    }
-                    else
-                    {
-                        model.StopProgress();
-                        Cancel();
-                        Search();
-                    }
-                }
-                else
-                {
-                    model.StopProgress();
-                }
-            }
-        };
-        setcurrentModel(model);
-        model.StartProgress(null);
-        Frontend.RunAction(VdcActionType.SetupNetworks, params, callback);
     }
 
     private void UpdateActionAvailability()
@@ -2415,10 +2325,6 @@ public class HostInterfaceListModel extends SearchableListModel
             CancelConfirm();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnSetupNetworks")) //$NON-NLS-1$
-        {
-            OnSetupNetworks();
-        }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveNetworkConfig")) //$NON-NLS-1$
         {
             OnSaveNetworkConfig();

@@ -68,8 +68,7 @@ class InterfaceElementPanel extends TogglePanel {
                     add(getCheckBox());
                 }
 
-                add(new InterfaceStatusImage(hostInterface.getStatus(),
-                        ClientGinjectorProvider.instance().getApplicationResources()));
+                add(new InterfaceStatusImage(hostInterface.getStatus()));
             }
         });
 
