@@ -59,6 +59,7 @@ WARN_SECOND_RUN="\nWARNING: %s setup has already been run on this host.\nTo remo
 INFO_RETRYING = "Retrying to clear system tasks. "
 INFO_STOPPING_TASKS = "System will try to clear tasks during the next %s minutes.\n"
 INFO_STOP_WITH_RUNNING_TASKS = "User decided not to stop running system tasks. Stopping upgrade.\n"
+INFO_RESTORING_NORMAL_CONFIGURATION = "Restoring engine from maintenance mode"
 
 #runFunction
 INFO_DONE="DONE"
@@ -254,6 +255,8 @@ ERR_FAILED_STATUS_JBOSS_SERVICE="Failed getting the status of the JBoss service"
 ERR_FAILED_START_SERVICE = "Error: Can't start the %s service"
 ERR_FAILED_STOP_SERVICE = "Error: Can't stop the %s service"
 ERR_FAILED_TO_RESTART_JBOSS_SERVICE = "Failed restarting JBoss service"
+ERR_FAILED_TO_CONFIGURE_ENGINE_MAINTENANCE = "Error: failed to configure the engine\
+for the maintenance"
 
 #START NFS SERVICE
 ERR_FAILED_TO_START_NFS_SERVICE="Failed to start the NFS services"

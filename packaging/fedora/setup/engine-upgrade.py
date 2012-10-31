@@ -21,6 +21,7 @@ from miniyum import MiniYum
 # The following constants are used in maintenance mode for
 # running things in a loop
 MAINTENANCE_TASKS_WAIT_PERIOD  = 180
+MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES = MAINTENANCE_TASKS_WAIT_PERIOD / 60
 MAINTENANCE_TASKS_CYCLES = 20
 
 #TODO: Work with a real list here
@@ -797,7 +798,7 @@ def getRunningTasks(dbName=basedefs.DB_NAME):
     if runningTasks and "RECORD" in runningTasks:
         return runningTasks
     else:
-        return None
+        return ""
 
 def getCompensations(dbName=basedefs.DB_NAME):
     # Get compensations
@@ -814,9 +815,9 @@ def getCompensations(dbName=basedefs.DB_NAME):
     # We only want to return anything if there are really compensations records
     if not compensations or \
        (compensations and "0 rows" in compensations):
-        return None
-    elif compensations:
-        return
+        return ""
+    else:
+        return compensations
 
 def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_NAME):
     # Find running tasks first
@@ -828,32 +829,45 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
     engineConfigExtended = basedefs.FILE_ENGINE_EXTENDED_CONF
     origTimeout = 0
 
+    # Define state
+    in_maintenance = False
+
     if runningTasks or compensations:
 
+        # TODO: update runningTasks names/presentation and compensations
+        timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
+        stopTasksQuestion = MSG_STOP_RUNNING_TASKS % (
+                                MSG_TASKS_COMPENSATIONS % (runningTasks, compensations),
+                                timestamp,
+                            )
+        answerYes = utils.askYesNo(stopTasksQuestion)
+        if not answerYes:
+            raise Exception(output_messages.INFO_STOP_WITH_RUNNING_TASKS)
+
+
+        timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
+        print timestamp + output_messages.INFO_STOPPING_TASKS % MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES
+
+        # restart jboss/engine in maintenace mode (i.e different port):
+        # Change AsyncTaskZombieTaskLifeInMinutes first
+        origTimeout = utils.configureTasksTimeout(timeout=0,
+                                                  engineConfigBin=engineConfigBinary,
+                                                  engineConfigExtended=engineConfigExtended)
+
+
         try:
-            # TODO: update runningTasks names/presentation and compensations
-            timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
-            stopTasksQuestion = MSG_STOP_RUNNING_TASKS % (
-                                 MSG_TASKS_COMPENSATIONS % (runningTasks, compensations),
-                                 timestamp,
-                                )
-            answerYes = utils.askYesNo(stopTasksQuestion)
-            if not answerYes:
-                raise Exception(output_messages.INFO_STOP_WITH_RUNNING_TASKS)
 
-            MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES = MAINTENANCE_TASKS_WAIT_PERIOD / 60
-            timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
-            print timestamp + output_messages.INFO_STOPPING_TASKS % MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES
-
-            # restart jboss/engine in maintenace mode (i.e different port):
+            # Enter maintenance mode
             utils.configureEngineForMaintenance()
-            origTimeout = utils.configureTasksTimeout(timeout=0,
-                                                      engineConfigBin=engineConfigBinary,
-                                                      engineConfigExtended=engineConfigExtended)
+
+            # Update engine state
+            in_maintenance = True
+
+            # Start the engine in maintenance mode
             startEngine(service)
 
             # Pull tasks in a loop for some time
-            # MAINTENANCE_TASKS_WAIT_PERIOD  = 120 (seconds, between trials)
+            # MAINTENANCE_TASKS_WAIT_PERIOD  = 180 (seconds, between trials)
             # MAINTENANCE_TASKS_CYCLES = 20 (how many times to try)
             while runningTasks or compensations:
                 time.sleep(MAINTENANCE_TASKS_WAIT_PERIOD)
@@ -882,15 +896,22 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
                     timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
                     print timestamp + output_messages.INFO_RETRYING + output_messages.INFO_STOPPING_TASKS % MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES
 
+        except:
+            logging.error(traceback.format_exc())
+            raise
+
         finally:
             # Stop the engine first
+            logging.debug(output_messages.INFO_STOP_ENGINE)
             stopEngine(service)
             # Restore previous engine configuration
-            utils.restoreEngineFromMaintenance()
-            if origTimeout != 0:
-                utils.configureTasksTimeout(timeout=origTimeout,
-                                            engineConfigBin=engineConfigBinary,
-                                            engineConfigExtended=engineConfigExtended)
+            logging.debug(output_messages.INFO_RESTORING_NORMAL_CONFIGURATION)
+            if in_maintenance:
+                utils.restoreEngineFromMaintenance()
+            # Restore previous zombie timeout
+            utils.configureTasksTimeout(timeout=origTimeout,
+                                        engineConfigBin=engineConfigBinary,
+                                        engineConfigExtended=engineConfigExtended)
 
 
 

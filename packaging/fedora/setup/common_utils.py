@@ -835,6 +835,7 @@ def getVDCOption(key, engineConfigBin=basedefs.FILE_ENGINE_CONFIG_BIN):
         "-g", key,
     ]
 
+    # Get the value and raise and Exception on failure
     out, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_FAILED_GET_VDC_OPTIONS % key)
     if out and 'version' in out:
         # The value is the second field in the output
@@ -1382,23 +1383,29 @@ def configureTasksTimeout(timeout,
     # First, get the originalTimeout value
     originalTimeout = getVDCOption("AsyncTaskZombieTaskLifeInMinutes", engineConfigBin)
 
-    # Now, set the value to timeout
+    # Now, set the value to timeout, it raises an Exception if it fails
     updateVDCOption(key="AsyncTaskZombieTaskLifeInMinutes",
                     value=timeout,
                     keyType='text',
                     engineConfigBin=engineConfigBin,
                     engineConfigExtended=engineConfigExtended)
 
-    # Return the original value
+    # If everything went fine, return the original value
     return originalTimeout
 
 def configureEngineForMaintenance():
-    if not os.path.exists(basedefs.DIR_ENGINE_SYSCONFIG):
-        os.mkdir(basedefs.DIR_ENGINE_SYSCONFIG)
-    with open(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE, "w") as configFile:
-        configFile.write("ENGINE_HTTP_ENABLED=false\n")
-        configFile.write("ENGINE_HTTPS_ENABLED=false\n")
-        configFile.write("ENGINE_AJP_ENABLED=false\n")
+    # Try to reconfigure the engine and raise an exception if it fails
+    try:
+        if not os.path.exists(basedefs.DIR_ENGINE_SYSCONFIG):
+            os.mkdir(basedefs.DIR_ENGINE_SYSCONFIG)
+        with open(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE, "w") as configFile:
+            configFile.write("ENGINE_HTTP_ENABLED=false\n")
+            configFile.write("ENGINE_HTTPS_ENABLED=false\n")
+            configFile.write("ENGINE_AJP_ENABLED=false\n")
+    except:
+        logging.error(traceback.format_exc())
+        restoreEngineFromMaintenance()
+        raise
 
 def restoreEngineFromMaintenance():
     if os.path.exists(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE):
