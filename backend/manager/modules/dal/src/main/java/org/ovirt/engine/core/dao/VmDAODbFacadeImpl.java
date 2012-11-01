@@ -10,7 +10,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.OperationMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.SessionState;
@@ -206,7 +205,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("dedicated_vm_for_vds", vm.getdedicated_vm_for_vds())
                 .addValue("fail_back", vm.getfail_back())
                 .addValue("vm_type", vm.getvm_type())
-                .addValue("operation_mode", vm.getoperation_mode())
                 .addValue("nice_level", vm.getnice_level())
                 .addValue("default_boot_sequence",
                         vm.getdefault_boot_sequence())
@@ -322,7 +320,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setvm_type(VmType.forValue(rs.getInt("vm_type")));
             entity.setstorage_pool_id(Guid.createGuidFromString(rs.getString("storage_pool_id")));
             entity.setstorage_pool_name(rs.getString("storage_pool_name"));
-            entity.setoperation_mode(OperationMode.forValue(rs.getInt("operation_mode")));
             entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs.getInt("selection_algorithm")));
             entity.setTransparentHugePages(rs.getBoolean("transparent_hugepages"));
             entity.setnice_level(rs.getInt("nice_level"));

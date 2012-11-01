@@ -361,7 +361,6 @@ public final class Cloner
         obj.setnum_of_monitors(instance.getnum_of_monitors());
         obj.setAllowConsoleReconnect(instance.getAllowConsoleReconnect());
         obj.setnum_of_sockets(instance.getnum_of_sockets());
-        obj.setoperation_mode(instance.getoperation_mode());
         obj.setstatus(instance.getstatus());
         obj.settime_zone(instance.gettime_zone());
         obj.setusb_policy(instance.getusb_policy());

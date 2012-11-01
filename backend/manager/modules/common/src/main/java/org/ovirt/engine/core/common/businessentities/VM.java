@@ -101,7 +101,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
             Integer display_type, Boolean kvm_enable, Integer boot_sequence, String vmt_time_zone,
             Integer display_secure_port, Integer utc_diff, boolean is_stateless, String vds_cpu_name,
             boolean fail_back, BootSequence default_boot_sequence, VmType vm_type,
-            OperationMode operation_mode, int minAllocatedMem) {
+            int minAllocatedMem) {
         mVmStatic = new VmStatic();
         mVmDynamic = new VmDynamic();
         mVmStatistics = new VmStatistics();
@@ -168,7 +168,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.setfail_back(fail_back);
         this.setdefault_boot_sequence(default_boot_sequence);
         this.setvm_type(vm_type);
-        this.setoperation_mode(operation_mode);
         this.setMinAllocatedMem(minAllocatedMem);
     }
 
@@ -999,14 +998,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvm_type(VmType value) {
         this.mVmStatic.setvm_type(value);
-    }
-
-    public OperationMode getoperation_mode() {
-        return this.mVmStatic.getoperation_mode();
-    }
-
-    public void setoperation_mode(OperationMode value) {
-        this.mVmStatic.setoperation_mode(value);
     }
 
     public String gethibernation_vol_handle() {

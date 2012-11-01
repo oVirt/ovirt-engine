@@ -76,7 +76,6 @@ public class VmStatic extends VmBase {
         setdefault_boot_sequence(BootSequence.C);
         defaultDisplayType = DisplayType.qxl;
         setvm_type(VmType.Desktop);
-        setoperation_mode(OperationMode.FullVirtualized);
     }
 
     public VmStatic(VmStatic vmStatic) {
@@ -95,7 +94,6 @@ public class VmStatic extends VmBase {
                 vmStatic.getusb_policy(),
                 vmStatic.getfail_back(),
                 vmStatic.getdefault_boot_sequence(),
-                vmStatic.getoperation_mode(),
                 vmStatic.getnice_level(),
                 vmStatic.getis_auto_suspend(),
                 vmStatic.getpriority(),
@@ -128,7 +126,7 @@ public class VmStatic extends VmBase {
             int numOfMonitors,
             UsbPolicy usb_policy, String time_zone, boolean auto_startup, boolean is_stateless, boolean fail_back,
             BootSequence default_boot_sequence, VmType vm_type,
-            OperationMode operation_mode, int minAllocatedMem, Guid quotaGuid, boolean smartcardEnabled) {
+            int minAllocatedMem, Guid quotaGuid, boolean smartcardEnabled) {
         super(vm_guid,
                 vds_group_id,
                 os,
@@ -144,7 +142,6 @@ public class VmStatic extends VmBase {
                 usb_policy,
                 fail_back,
                 default_boot_sequence,
-                operation_mode,
                 0,
                 is_auto_suspend,
                 0,

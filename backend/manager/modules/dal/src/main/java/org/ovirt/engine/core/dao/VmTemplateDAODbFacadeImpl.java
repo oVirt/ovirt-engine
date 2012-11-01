@@ -130,7 +130,6 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("fail_back", template.getfail_back())
                 .addValue("is_auto_suspend", template.getis_auto_suspend())
                 .addValue("vm_type", template.getvm_type())
-                .addValue("operation_mode", template.getoperation_mode())
                 .addValue("nice_level", template.getnice_level())
                 .addValue("default_boot_sequence",
                         template.getdefault_boot_sequence())

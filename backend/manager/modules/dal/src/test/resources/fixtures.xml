@@ -887,7 +887,6 @@
         <column>auto_startup</column>
         <column>vm_type</column>
         <column>hypervisor_type</column>
-        <column>operation_mode</column>
         <column>nice_level</column>
         <column>default_boot_sequence</column>
         <column>default_display_type</column>
@@ -930,7 +929,6 @@
             <null />
             <null />
             <value>1</value>
-            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -977,7 +975,6 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
-            <value>0</value>
             <value>12</value>
             <value>0</value>
             <value>0</value>
@@ -1018,7 +1015,6 @@
             <null />
             <null />
             <value>1</value>
-            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -1070,7 +1066,6 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
-            <value>0</value>
             <value></value>
             <value>0</value>
             <value></value>
@@ -1107,7 +1102,6 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
-            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -1158,7 +1152,6 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
-            <value>0</value>
             <value></value>
             <value>0</value>
             <value></value>
@@ -1202,7 +1195,6 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
-            <value>0</value>
             <value></value>
             <value>0</value>
             <value></value>
@@ -1239,7 +1231,6 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
-            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>

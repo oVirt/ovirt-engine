@@ -94,10 +94,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Enumerated
     private BootSequence defaultBootSequence = BootSequence.C;
 
-    @Column(name = "operation_mode", nullable = false)
-    @Enumerated
-    private OperationMode operationMode = OperationMode.FullVirtualized;
-
     @Column(name = "nice_level", nullable = false)
     private int niceLevel;
 
@@ -184,7 +180,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             UsbPolicy usbPolicy,
             boolean fail_back,
             BootSequence defaultBootSequence,
-            OperationMode operationMode,
             int niceLevel,
             boolean autosuspend,
             int priority,
@@ -213,7 +208,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.usbPolicy = usbPolicy;
         this.fail_back = fail_back;
         this.defaultBootSequence = defaultBootSequence;
-        this.operationMode = operationMode;
         this.niceLevel = niceLevel;
         this.autosuspend = autosuspend;
         this.priority = priority;
@@ -400,14 +394,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         defaultBootSequence = value;
     }
 
-    public OperationMode getoperation_mode() {
-        return operationMode;
-    }
-
-    public void setoperation_mode(OperationMode value) {
-        operationMode = value;
-    }
-
     public int getnice_level() {
         return niceLevel;
     }
@@ -534,7 +520,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         result = prime * result + niceLevel;
         result = prime * result + numOfSockets;
         result = prime * result + numOfMonitors;
-        result = prime * result + ((operationMode == null) ? 0 : operationMode.hashCode());
         result = prime * result + ((origin == null) ? 0 : origin.hashCode());
         result = prime * result + priority;
         result = prime * result + (stateless ? 1231 : 1237);
@@ -647,9 +632,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             return false;
         }
         if (numOfMonitors != other.numOfMonitors) {
-            return false;
-        }
-        if (operationMode != other.operationMode) {
             return false;
         }
         if (origin != other.origin) {

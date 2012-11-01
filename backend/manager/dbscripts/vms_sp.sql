@@ -292,7 +292,6 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000) ,
  v_dedicated_vm_for_vds UUID ,
     v_fail_back BOOLEAN ,
     v_vm_type INTEGER ,
-    v_operation_mode INTEGER ,
  v_nice_level INTEGER,
     v_default_boot_sequence INTEGER,
  v_default_display_type INTEGER,
@@ -311,8 +310,8 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors,allow_console_reconnect,is_initialized,is_auto_suspend,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, operation_mode, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id, cpu_pinning, is_smartcard_enabled)
-	VALUES(v_description,  v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors, v_allow_console_reconnect, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_operation_mode, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id, v_cpu_pinning, v_is_smartcard_enabled);
+INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors,allow_console_reconnect,is_initialized,is_auto_suspend,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id, cpu_pinning, is_smartcard_enabled)
+	VALUES(v_description,  v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors, v_allow_console_reconnect, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id, v_cpu_pinning, v_is_smartcard_enabled);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -343,7 +342,6 @@ Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
  v_dedicated_vm_for_vds UUID ,
     v_fail_back BOOLEAN ,
     v_vm_type INTEGER ,
-    v_operation_mode INTEGER ,
     v_nice_level INTEGER,
     v_default_boot_sequence INTEGER,
  v_default_display_type INTEGER,
@@ -374,7 +372,6 @@ BEGIN
       usb_policy = v_usb_policy,time_zone = v_time_zone,auto_startup = v_auto_startup,
       is_stateless = v_is_stateless,dedicated_vm_for_vds = v_dedicated_vm_for_vds,
       fail_back = v_fail_back,vm_type = v_vm_type,
-      nice_level = v_nice_level,operation_mode = v_operation_mode,
       _update_date = LOCALTIMESTAMP,default_boot_sequence = v_default_boot_sequence,
       default_display_type = v_default_display_type,
       priority = v_priority,iso_path = v_iso_path,origin = v_origin,
@@ -657,7 +654,6 @@ Create or replace FUNCTION InsertVm(v_description VARCHAR(4000) ,
  v_dedicated_vm_for_vds UUID ,
     v_fail_back BOOLEAN ,
     v_vm_type INTEGER ,
-    v_operation_mode INTEGER ,
     v_nice_level INTEGER,
     v_default_boot_sequence INTEGER,
  v_default_display_type INTEGER,
@@ -675,8 +671,8 @@ Create or replace FUNCTION InsertVm(v_description VARCHAR(4000) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid, num_of_monitors, allow_console_reconnect, is_initialized, is_auto_suspend, num_of_sockets, cpu_per_socket, usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds,fail_back,vm_type,operation_mode,nice_level,default_boot_sequence,default_display_type,priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem,cpu_pinning,is_smartcard_enabled)
-	VALUES(v_description, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_num_of_monitors, v_num_of_monitors, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone,v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back,v_vm_type,v_operation_mode,v_nice_level,v_default_boot_sequence,v_default_display_type,v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem,v_cpu_pinning,v_is_smartcard_enabled);
+INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid, num_of_monitors, allow_console_reconnect, is_initialized, is_auto_suspend, num_of_sockets, cpu_per_socket, usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds,fail_back,vm_type,nice_level,default_boot_sequence,default_display_type,priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem,cpu_pinning,is_smartcard_enabled)
+	VALUES(v_description, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_num_of_monitors, v_num_of_monitors, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone,v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back,v_vm_type,v_nice_level,v_default_boot_sequence,v_default_display_type,v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem,v_cpu_pinning,v_is_smartcard_enabled);
 
       INSERT INTO vm_dynamic(vm_guid, status) VALUES(v_vm_guid, 0);
 
