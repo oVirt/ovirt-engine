@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +55,6 @@ public class ManageDomains {
     private boolean reportAllErrors;
     private boolean addPermissions;
     private final static Logger log = Logger.getLogger(ManageDomains.class);
-    private final static String REMOTE_LOCATION = "remote";
 
     public enum Arguments {
         action,
@@ -238,7 +238,6 @@ public class ManageDomains {
             addDomain(parser.getArg(Arguments.domain.name()).toLowerCase(),
                     parser.getArg(Arguments.user.name()),
                     getPasswordInput(parser),
-                    REMOTE_LOCATION,
                     getLdapProviderType(parser));
         } else if (actionType.equals(ActionType.edit)) {
             editDomain(parser.getArg(Arguments.domain.name()).toLowerCase(),
@@ -381,26 +380,14 @@ public class ManageDomains {
 
             System.out.println("Domain: " + domain);
             System.out.println("\tUser name: " + userName);
-            if (authMode.equalsIgnoreCase(LdapAuthModeEnum.SIMPLE.name())) {
-                System.out.println("\tThis domain is a local domain.");
-            } else {
-                System.out.println("\tThis domain is a remote domain.");
-            }
         }
     }
 
     public void addDomain(String domainName,
             String userName,
             String password,
-            String mode,
             LdapProviderType ldapProviderType) throws ManageDomainsResult {
-        String authMode = DEFAULT_AUTH_MODE;
-        if (mode.equalsIgnoreCase(LdapModeEnum.LOCAL.name())) {
-            authMode = LdapAuthModeEnum.SIMPLE.name();
-        } else if (mode.equalsIgnoreCase(LdapModeEnum.REMOTE.name())) {
-            authMode = LdapAuthModeEnum.GSSAPI.name();
-        }
-
+        String authMode = LdapAuthModeEnum.GSSAPI.name();
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
@@ -893,17 +880,19 @@ public class ManageDomains {
                 if (actionType.equals(ActionType.add)) {
                     requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
                     requireAtLeastOneArg(parser, Arguments.passwordFile, Arguments.interactive);
+                    checkInvalidArgs(parser);
                 } else if (actionType.equals(ActionType.edit)) {
                     requireArgs(parser, Arguments.domain);
+                    checkInvalidArgs(parser);
                 } else if (actionType.equals(ActionType.delete)) {
                     requireArgs(parser, Arguments.domain);
+                    checkInvalidArgs(parser);
                 } else if (actionType.equals(ActionType.validate)) {
                     checkInvalidArgs(parser,
                             Arguments.domain,
                             Arguments.user,
                             Arguments.passwordFile,
                             Arguments.interactive);
-
                 } else if (actionType.equals(ActionType.list)) {
                     checkInvalidArgs(parser,
                             Arguments.domain,
@@ -944,6 +933,16 @@ public class ManageDomains {
             if (parser.hasArg(arg.name())) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND, arg.name());
             }
+        }
+
+        // check if the user has provided undefined arguments
+        Set<String> arguments = new TreeSet<String>(parser.getArgs());
+        for (Arguments arg : Arguments.values()) {
+            arguments.remove(arg.name().toLowerCase());
+        }
+        if (arguments.size() > 0){
+            throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
+                    arguments.toString().replaceAll("\\[", "").replaceAll("\\]",""));
         }
     }
 }
