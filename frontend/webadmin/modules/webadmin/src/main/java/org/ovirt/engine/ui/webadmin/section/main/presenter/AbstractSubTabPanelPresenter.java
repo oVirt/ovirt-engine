@@ -1,12 +1,15 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
-import com.gwtplatform.mvp.client.TabContainerPresenter;
 import com.gwtplatform.mvp.client.TabView;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**
  * Base class for sub tab panel presenters.
@@ -16,11 +19,12 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractSubTabPanelPresenter<V extends TabView, P extends Proxy<?>> extends TabContainerPresenter<V, P> {
+public abstract class AbstractSubTabPanelPresenter<V extends TabView & DynamicTabPanel, P extends Proxy<?>> extends DynamicTabContainerPresenter<V, P> {
 
     public AbstractSubTabPanelPresenter(EventBus eventBus, V view, P proxy,
-            Object tabContentSlot, Type<RequestTabsHandler> requestTabsEventType) {
-        super(eventBus, view, proxy, tabContentSlot, requestTabsEventType);
+            Type<RevealContentHandler<?>> revealContentEventType,
+            Type<RequestTabsHandler> requestTabsEventType) {
+        super(eventBus, view, proxy, revealContentEventType, requestTabsEventType);
     }
 
     @Override

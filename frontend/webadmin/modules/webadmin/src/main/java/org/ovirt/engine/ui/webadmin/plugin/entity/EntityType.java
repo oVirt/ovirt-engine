@@ -5,15 +5,15 @@ package org.ovirt.engine.ui.webadmin.plugin.entity;
  */
 public enum EntityType {
 
-    DataCenter,
     Cluster,
-    Host,
-    Storage,
+    DataCenter,
     Disk,
-    VirtualMachine,
-    // Pool missing - org.ovirt.engine.core.common.businessentities.vm_pools
+    Host,
+    // TODO(vszocs) Pool missing; org.ovirt.engine.core.common.businessentities.vm_pools
     // entity doesn't implement BusinessEntity interface (switch to using IVdcQueryable?)
+    Storage,
     Template,
+    VirtualMachine,
 
     Undefined; // Null object
 

@@ -12,6 +12,7 @@ import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 @GinModules({ SystemModule.class, PresenterModule.class, UiCommonModule.class, PluginModule.class })
 public interface ClientGinjector extends BaseClientGinjector, ManagedComponents {
 
+    @Override
     @DefaultGatekeeper
     LoggedInGatekeeper getDefaultGatekeeper();
 

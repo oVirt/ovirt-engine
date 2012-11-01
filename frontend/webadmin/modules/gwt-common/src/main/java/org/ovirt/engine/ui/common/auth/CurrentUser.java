@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.auth;
 
+import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.compat.Guid;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -8,10 +11,7 @@ import com.google.inject.Inject;
 /**
  * Holds data relevant for the current user.
  * <p>
- * Triggers following events upon certain actions:
- * <ul>
- * <li>{@link UserLoginChangeEvent} when the user logs in or out
- * </ul>
+ * Triggers {@link UserLoginChangeEvent} when the user logs in or out.
  */
 public class CurrentUser implements HasHandlers {
 
@@ -25,6 +25,7 @@ public class CurrentUser implements HasHandlers {
 
     private boolean loggedIn = false;
     private String userName;
+    private Guid userId;
 
     // Indicates that the user should be logged in automatically
     private boolean autoLogin = false;
@@ -62,6 +63,17 @@ public class CurrentUser implements HasHandlers {
         return autoLogin;
     }
 
+    /**
+     * Returns the user ID if the user is currently logged in, {@code null} otherwise.
+     */
+    public Guid getUserId() {
+        return userId;
+    }
+
+    void setUserId(Guid userId) {
+        this.userId = userId;
+    }
+
     public void setAutoLogin(boolean autoLogin) {
         this.autoLogin = autoLogin;
     }
@@ -84,8 +96,9 @@ public class CurrentUser implements HasHandlers {
     /**
      * User login callback, called after successful user authentication.
      */
-    public void onUserLogin(String userName) {
-        setUserName(userName);
+    public void onUserLogin(VdcUser loggedUser) {
+        setUserName(loggedUser.getUserName());
+        setUserId(loggedUser.getUserId());
         setLoggedIn(true);
         fireLoginChangeEvent();
     }
@@ -95,6 +108,7 @@ public class CurrentUser implements HasHandlers {
      */
     public void onUserLogout() {
         setUserName(null);
+        setUserId(null);
         setLoggedIn(false);
         fireLoginChangeEvent();
     }

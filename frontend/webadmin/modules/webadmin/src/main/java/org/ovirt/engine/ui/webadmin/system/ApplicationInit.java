@@ -4,26 +4,34 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class ApplicationInit extends BaseApplicationInit<LoginModel> {
+
+    private final RestApiSessionManager restApiSessionManager;
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
@@ -32,10 +40,18 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             CurrentUser user, EventBus eventBus,
             Provider<LoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
-            ApplicationConstants constants) {
-        super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, eventBus, loginModelProvider, lockInteractionManager);
+            ApplicationConstants constants,
+            RestApiSessionManager restApiSessionManager) {
+        super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
+                user, eventBus, loginModelProvider, lockInteractionManager);
+        this.restApiSessionManager = restApiSessionManager;
         Window.setTitle(constants.applicationTitle());
-        handleUiMode();
+
+        // Check for ApplicationMode configuration
+        UiModeData uiModeData = UiModeData.instance();
+        if (uiModeData != null) {
+            handleUiMode(uiModeData);
+        }
     }
 
     @Override
@@ -69,13 +85,48 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         });
     }
 
-    void handleUiMode() {
-        UiModeData uiModeData = UiModeData.instance();
+    @Override
+    protected void initFrontend() {
+        super.initFrontend();
 
-        if (uiModeData != null) {
-            ApplicationMode uiMode = uiModeData.getUiMode();
-            ApplicationModeHelper.setUiMode(uiMode);
-        }
+        // Configure REST API integration for UI plugin infrastructure
+        Frontend.setLoginHandler(new FrontendLoginHandler() {
+            @Override
+            public void onLoginSuccess(final String userName, final String password, final String domain) {
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        final String domainToken = "@"; //$NON-NLS-1$
+                        restApiSessionManager.acquireSession(
+                                userName.contains(domainToken) ? userName : userName + domainToken + domain,
+                                password);
+                    }
+                });
+            }
+
+            @Override
+            public void onLogout() {
+                restApiSessionManager.releaseSession();
+            }
+        });
+    }
+
+    @Override
+    protected void handleAutoLogin(AutoLoginData autoLoginData) {
+        super.handleAutoLogin(autoLoginData);
+
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                // Assume the REST API session has been acquired and is still active
+                restApiSessionManager.reuseCurrentSession();
+            }
+        });
+    }
+
+    void handleUiMode(UiModeData uiModeData) {
+        ApplicationMode uiMode = uiModeData.getUiMode();
+        ApplicationModeHelper.setUiMode(uiMode);
     }
 
 }

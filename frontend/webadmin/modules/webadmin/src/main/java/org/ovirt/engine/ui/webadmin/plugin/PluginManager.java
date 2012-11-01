@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.webadmin.plugin;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
-import org.ovirt.engine.ui.webadmin.plugin.ui.PluginUiFunctions;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -15,6 +17,7 @@ import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;
 
 /**
@@ -35,6 +38,9 @@ public class PluginManager {
 
     // Maps plugin names to corresponding object representations
     private final Map<String, Plugin> plugins = new HashMap<String, Plugin>();
+
+    // Maps plugin names to scheduled event handler functions invoked via Command interface
+    private final Map<String, List<Command>> scheduledFunctionCommands = new HashMap<String, List<Command>>();
 
     // Controls plugin invocation, allowing WebAdmin to call plugins only in a specific context
     private boolean canInvokePlugins = false;
@@ -58,6 +64,27 @@ public class PluginManager {
 
     void addPlugin(Plugin plugin) {
         plugins.put(plugin.getMetaData().getName(), plugin);
+    }
+
+    void scheduleFunctionCommand(String pluginName, Command command) {
+        if (!scheduledFunctionCommands.containsKey(pluginName)) {
+            scheduledFunctionCommands.put(pluginName, new ArrayList<Command>());
+        }
+        scheduledFunctionCommands.get(pluginName).add(command);
+    }
+
+    void invokeScheduledFunctionCommands(String pluginName) {
+        List<Command> commands = scheduledFunctionCommands.get(pluginName);
+        if (commands != null) {
+            for (Command c : commands) {
+                c.execute();
+            }
+        }
+        scheduledFunctionCommands.remove(pluginName);
+    }
+
+    void cancelScheduledFunctionCommands() {
+        scheduledFunctionCommands.clear();
     }
 
     /**
@@ -132,11 +159,9 @@ public class PluginManager {
     public void enablePluginInvocation() {
         canInvokePlugins = true;
 
-        // Try to initialize all plugins which are currently ready
+        // Try to initialize all plugins
         for (Plugin plugin : getPlugins()) {
-            if (plugin.isInState(PluginState.READY)) {
-                initPlugin(plugin.getMetaData().getName());
-            }
+            initPlugin(plugin);
         }
     }
 
@@ -145,25 +170,46 @@ public class PluginManager {
      */
     public void disablePluginInvocation() {
         canInvokePlugins = false;
+
+        // Clean up scheduled event handler functions for all plugins,
+        // since we are leaving the current plugin invocation context
+        cancelScheduledFunctionCommands();
     }
 
     /**
      * Invokes an event handler function on all plugins which are currently {@linkplain PluginState#IN_USE in use}.
      * <p>
      * {@code functionArgs} represents the argument list to use when calling given function (can be {@code null}).
-     * <p>
-     * If the function fails due to uncaught exception for the given plugin, that plugin will be
-     * {@linkplain PluginState#FAILED removed from service}.
      */
-    public void invokePlugins(String functionName, JsArray<?> functionArgs) {
+    public void invokePluginsNow(String functionName, JsArray<?> functionArgs) {
         if (canInvokePlugins) {
             for (Plugin plugin : getPlugins()) {
                 if (plugin.isInState(PluginState.IN_USE)) {
-                    if (!invokePlugin(plugin, functionName, functionArgs)) {
-                        logger.warning("Failed to invoke plugin [" + plugin.getMetaData().getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                        pluginFailed(plugin);
-                    }
+                    invokePlugin(plugin, functionName, functionArgs);
                 }
+            }
+        }
+    }
+
+    /**
+     * Invokes an event handler function on all plugins which are currently {@linkplain PluginState#IN_USE in use}, and
+     * schedules invocation of given function on all plugins that might be put in use later on.
+     * <p>
+     * {@code functionArgs} represents the argument list to use when calling given function (can be {@code null}).
+     */
+    public void invokePluginsNowOrLater(final String functionName, final JsArray<?> functionArgs) {
+        invokePluginsNow(functionName, functionArgs);
+
+        for (final Plugin plugin : getPlugins()) {
+            if (!canInvokePlugins || !plugin.isInState(PluginState.IN_USE)) {
+                scheduleFunctionCommand(plugin.getMetaData().getName(), new Command() {
+                    @Override
+                    public void execute() {
+                        if (canInvokePlugins && plugin.isInState(PluginState.IN_USE)) {
+                            invokePlugin(plugin, functionName, functionArgs);
+                        }
+                    }
+                });
             }
         }
     }
@@ -174,15 +220,27 @@ public class PluginManager {
      * No checks are performed here, make sure to call this method only in a context that fits the general plugin
      * lifecycle.
      * <p>
+     * If the function fails due to uncaught exception for the given plugin, that plugin will be automatically
+     * {@linkplain PluginState#FAILED removed from service}. Callers should therefore never call this method if the
+     * given plugin is already out of service.
+     * <p>
      * Returns {@code true} if the function completed successfully, or {@code false} if an exception escaped the
      * function call.
      */
     boolean invokePlugin(final Plugin plugin, final String functionName, JsArray<?> functionArgs) {
+        final String pluginName = plugin.getMetaData().getName();
+        logger.info("Invoking event handler function [" + functionName + "] for plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
         return plugin.getEventHandlerFunction(functionName).invoke(functionArgs, new ErrorHandler() {
             @Override
             public void onError(String message) {
                 logger.severe("Exception caught while invoking event handler function [" + functionName //$NON-NLS-1$
-                        + "] for plugin [" + plugin.getMetaData().getName() + "]: " + message); //$NON-NLS-1$ //$NON-NLS-2$
+                        + "] for plugin [" + pluginName + "]: " + message); //$NON-NLS-1$ //$NON-NLS-2$
+
+                // Remove the given plugin from service
+                Document.get().getBody().removeChild(plugin.getIFrameElement());
+                plugin.markAsFailed();
+                logger.warning("Plugin [" + pluginName + "] removed from service due to failure"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         });
     }
@@ -209,10 +267,16 @@ public class PluginManager {
      */
     void registerPluginEventHandlerObject(String pluginName, JavaScriptObject pluginEventHandlerObject) {
         Plugin plugin = getPlugin(pluginName);
+        if (plugin == null || pluginEventHandlerObject == null) {
+            return;
+        }
 
-        if (plugin != null && pluginEventHandlerObject != null) {
+        // Allow plugin event handler object to be set only once
+        if (plugin.getEventHandlerObject() == null) {
             plugin.setEventHandlerObject(pluginEventHandlerObject);
             logger.info("Plugin [" + pluginName + "] has registered the event handler object"); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+            logger.warning("Plugin [" + pluginName + "] has already registered the event handler object"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -234,7 +298,7 @@ public class PluginManager {
 
             // Try to initialize the plugin, since the plugin might report in as ready
             // after WebAdmin enters the state that allows plugins to be invoked
-            initPlugin(pluginName);
+            initPlugin(plugin);
         }
     }
 
@@ -245,38 +309,37 @@ public class PluginManager {
      * The UiInit function will be called just once during the lifetime of a plugin. More precisely, UiInit function
      * will be called:
      * <ul>
-     * <li>after the plugin reports in as {@linkplain PluginState#READY ready} <b>and</b> WebAdmin enters the state that
-     * allows plugins to be invoked
+     * <li>after the plugin reports in as {@linkplain PluginState#READY ready} <b>and</b> WebAdmin
+     * {@linkplain #enablePluginInvocation enters} the state that allows plugins to be invoked
      * <li>before any other event handler functions are invoked by the plugin infrastructure
      * </ul>
      * <p>
-     * If UiInit function fails due to uncaught exception, the plugin will be {@linkplain PluginState#FAILED removed
-     * from service}.
+     * As part of attempting to initialize the given plugin, all event handler functions that have been
+     * {@linkplain #invokePluginsNowOrLater scheduled} for such plugin will be invoked immediately after the UiInit
+     * function completes successfully.
      */
-    void initPlugin(String pluginName) {
-        Plugin plugin = getPlugin(pluginName);
+    void initPlugin(Plugin plugin) {
+        if (!canInvokePlugins) {
+            return;
+        }
 
-        if (canInvokePlugins && plugin != null && plugin.isInState(PluginState.READY)) {
+        String pluginName = plugin.getMetaData().getName();
+
+        // Try to invoke UiInit event handler function
+        if (plugin.isInState(PluginState.READY)) {
             logger.info("Initializing plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             plugin.markAsInitializing();
 
             if (invokePlugin(plugin, "UiInit", null)) { //$NON-NLS-1$
                 plugin.markAsInUse();
                 logger.info("Plugin [" + pluginName + "] is initialized and in use now"); //$NON-NLS-1$ //$NON-NLS-2$
-            } else {
-                logger.warning("Failed to initialize plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                pluginFailed(plugin);
             }
         }
-    }
 
-    /**
-     * Removes the given plugin from service due to plugin failure.
-     */
-    void pluginFailed(Plugin plugin) {
-        Document.get().getBody().removeChild(plugin.getIFrameElement());
-        plugin.markAsFailed();
-        logger.warning("Plugin [" + plugin.getMetaData().getName() + "] removed from service due to failure"); //$NON-NLS-1$ //$NON-NLS-2$
+        // Try to invoke all event handler functions scheduled for this plugin
+        if (plugin.isInState(PluginState.IN_USE)) {
+            invokeScheduledFunctionCommands(pluginName);
+        }
     }
 
     /**
@@ -330,17 +393,35 @@ public class PluginManager {
                 return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::getConfigObject(Ljava/lang/String;)(this.pluginName);
             },
 
-            // Adds new main tab that shows contents of the given URL
+            // TODO(vszocs) inject API functions into "pluginApi.fn" dynamically using EventBus
             addMainTab: function(label, historyToken, contentUrl) {
                 if (canDoPluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.ui.PluginUiFunctions::addMainTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(label,historyToken,contentUrl);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(label,historyToken,contentUrl);
                 }
             },
-
-            // Adds new main tab action button
+            addSubTab: function(entityTypeName, label, historyToken, contentUrl) {
+                if (canDoPluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSubTab(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(getEntityType(entityTypeName),label,historyToken,contentUrl);
+                }
+            },
+            setTabContentUrl: function(historyToken, contentUrl) {
+                if (canDoPluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setTabContentUrl(Ljava/lang/String;Ljava/lang/String;)(historyToken,contentUrl);
+                }
+            },
+            setTabAccessible: function(historyToken, tabAccessible) {
+                if (canDoPluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setTabAccessible(Ljava/lang/String;Z)(historyToken,tabAccessible);
+                }
+            },
             addMainTabActionButton: function(entityTypeName, label, actionButtonInterface) {
                 if (canDoPluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.ui.PluginUiFunctions::addMainTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/ui/ActionButtonInterface;)(getEntityType(entityTypeName),label,actionButtonInterface);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(entityTypeName),label,actionButtonInterface);
+                }
+            },
+            showDialog: function(title, contentUrl, width, height) {
+                if (canDoPluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::showDialog(Ljava/lang/String;Ljava/lang/String;II)(title,contentUrl,width,height);
                 }
             }
 

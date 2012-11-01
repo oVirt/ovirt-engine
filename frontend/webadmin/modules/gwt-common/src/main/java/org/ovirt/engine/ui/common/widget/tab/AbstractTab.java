@@ -79,15 +79,17 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
     @UiField
     public Style style;
 
+    // Tab widgets are accessible by default
+    public static final boolean DEFAULT_ACCESSIBLE = true;
+
     private final float priority;
     private final AbstractTabPanel tabPanel;
 
-    private boolean accessible;
+    private boolean accessible = DEFAULT_ACCESSIBLE;
 
     public AbstractTab(TabData tabData, AbstractTabPanel tabPanel) {
         this.priority = tabData.getPriority();
         this.tabPanel = tabPanel;
-        this.accessible = true;
     }
 
     @Override

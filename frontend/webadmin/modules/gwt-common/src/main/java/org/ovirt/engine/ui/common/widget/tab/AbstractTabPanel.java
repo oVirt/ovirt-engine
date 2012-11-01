@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.widget.tab;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -21,7 +21,7 @@ import com.gwtplatform.mvp.client.TabPanel;
  * <li>{@link #tabContentContainer} widget for displaying tab contents
  * </ul>
  */
-public abstract class AbstractTabPanel extends Composite implements TabPanel, DynamicTabContainerPresenter.DynamicTabPanel {
+public abstract class AbstractTabPanel extends Composite implements TabPanel, DynamicTabPanel {
 
     @UiField
     public Panel tabContentContainer;

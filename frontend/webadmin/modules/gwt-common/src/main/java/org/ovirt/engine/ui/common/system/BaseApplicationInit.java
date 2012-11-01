@@ -43,7 +43,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user,  EventBus eventBus,
+            CurrentUser user, EventBus eventBus,
             Provider<T> loginModelProvider,
             LockInteractionManager lockInteractionManager) {
         this.typeResolver = typeResolver;
@@ -63,7 +63,10 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
         initLoginModel();
 
         // Check if the user should be logged in automatically
-        handleAutoLogin();
+        AutoLoginData autoLoginData = AutoLoginData.instance();
+        if (autoLoginData != null) {
+            handleAutoLogin(autoLoginData);
+        }
     }
 
     protected T getLoginModel() {
@@ -102,13 +105,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
         UiCommonInitEvent.fire(eventBus);
 
         // UI login actions
-        user.onUserLogin(loggedUser.getUserName());
+        user.onUserLogin(loggedUser);
 
         // Post-login actions
-        clearPassword(loginModel);
-    }
-
-    void clearPassword(T loginModel) {
         loginModel.getPassword().setEntity(null);
     }
 
@@ -119,14 +118,14 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
      */
     protected abstract void beforeUiCommonInitEvent(T loginModel);
 
-    void initUiCommon() {
+    protected void initUiCommon() {
         // Set up UiCommon type resolver
         TypeResolver.Initialize(typeResolver);
     }
 
-    void initFrontend() {
+    protected void initFrontend() {
         // Set up Frontend event handlers
-        Frontend.initEventsHandler(frontendEventsHandler);
+        Frontend.setEventsHandler(frontendEventsHandler);
         Frontend.getFrontendFailureEvent().addListener(frontendFailureEventListener);
 
         Frontend.getFrontendNotLoggedInEvent().addListener(new IEventListener() {
@@ -150,25 +149,21 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
     /**
      * When a user is already logged in on the server, the server provides user data within the host page.
      */
-    void handleAutoLogin() {
-        AutoLoginData autoLoginData = AutoLoginData.instance();
+    protected void handleAutoLogin(AutoLoginData autoLoginData) {
+        final VdcUser vdcUser = autoLoginData.getVdcUser();
 
-        if (autoLoginData != null) {
-            final VdcUser vdcUser = autoLoginData.getVdcUser();
+        // Use deferred command because CommonModel change needs to happen
+        // after all model providers have been properly initialized
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                lockInteractionManager.showLoadingIndicator();
+                getLoginModel().AutoLogin(vdcUser);
+            }
+        });
 
-            // Use deferred command because CommonModel change needs to happen
-            // after all model providers have been properly initialized
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    lockInteractionManager.showLoadingIndicator();
-                    getLoginModel().AutoLogin(vdcUser);
-                }
-            });
-
-            // Indicate that the user should be logged in automatically
-            user.setAutoLogin(true);
-        }
+        // Indicate that the user should be logged in automatically
+        user.setAutoLogin(true);
     }
 
 }

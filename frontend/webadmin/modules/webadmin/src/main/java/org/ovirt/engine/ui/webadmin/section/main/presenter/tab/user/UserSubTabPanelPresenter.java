@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user;
 
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
 
 import com.google.gwt.event.shared.EventBus;
@@ -19,7 +20,7 @@ public class UserSubTabPanelPresenter extends AbstractSubTabPanelPresenter<UserS
     public interface ProxyDef extends Proxy<UserSubTabPanelPresenter> {
     }
 
-    public interface ViewDef extends TabView {
+    public interface ViewDef extends TabView, DynamicTabPanel {
     }
 
     @RequestTabs

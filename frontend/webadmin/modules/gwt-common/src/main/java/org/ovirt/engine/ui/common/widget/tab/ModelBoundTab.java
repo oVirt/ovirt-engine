@@ -21,7 +21,7 @@ public class ModelBoundTab extends SimpleTab {
         setAccessible(tabData.getModelProvider().getModel().getIsAvailable());
 
         // Tab widgets are created as part of the corresponding TabView,
-        // at this point CommonModelChangeEvent has already been fired
+        // at this point UiCommonInitEvent has already been fired
         registerModelEventListeners(tabData.getModelProvider());
 
         // Add handler to be notified when UiCommon models are (re)initialized

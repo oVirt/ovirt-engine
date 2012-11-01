@@ -1,13 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.login.presenter;
 
-import java.util.logging.Logger;
-
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
-import org.ovirt.engine.ui.webadmin.auth.SilentLoginData;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -16,7 +12,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
@@ -31,8 +26,6 @@ public class LoginSectionPresenter extends Presenter<LoginSectionPresenter.ViewD
 
     public interface ViewDef extends View {
     }
-
-    private static final Logger logger = Logger.getLogger(LoginSectionPresenter.class.getName());
 
     private final PlaceManager placeManager;
     private final CurrentUser user;
@@ -53,28 +46,6 @@ public class LoginSectionPresenter extends Presenter<LoginSectionPresenter.ViewD
     @Override
     protected void revealInParent() {
         RevealRootLayoutContentEvent.fire(this, this);
-    }
-
-    @Override
-    public void prepareFromRequest(PlaceRequest request) {
-        super.prepareFromRequest(request);
-
-        SilentLoginData silentLoginData = null;
-
-        // Activate silent login when running in development mode
-        if (!GWT.isProdMode() && "true".equalsIgnoreCase(request.getParameter("silentLogin", null))) { //$NON-NLS-1$ //$NON-NLS-2$
-            String adminUser = request.getParameter("user", null); //$NON-NLS-1$
-            String password = request.getParameter("password", null); //$NON-NLS-1$
-            String domain = request.getParameter("domain", null); //$NON-NLS-1$
-
-            if (adminUser != null && !adminUser.isEmpty()
-                    && password != null && !password.isEmpty()) {
-                logger.info("Silent login is enabled"); //$NON-NLS-1$
-                silentLoginData = new SilentLoginData(adminUser, password, domain);
-            }
-        }
-
-        loginPopup.setSilentLoginData(silentLoginData);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.plugin;
 
 /**
- * Enumerates possible states of a UI plugin during its runtime.
+ * Enumerates possible states of a UI plugin during the runtime.
  */
 public enum PluginState {
 

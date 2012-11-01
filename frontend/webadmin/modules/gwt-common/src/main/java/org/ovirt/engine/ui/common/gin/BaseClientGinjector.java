@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.Ginjector;
 import com.google.inject.Provider;
+import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 /**
@@ -18,6 +19,8 @@ public interface BaseClientGinjector extends Ginjector {
     EventBus getEventBus();
 
     PlaceManager getPlaceManager();
+
+    Gatekeeper getDefaultGatekeeper();
 
     // PresenterWidgets
 

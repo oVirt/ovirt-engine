@@ -14,18 +14,16 @@ import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
-import org.ovirt.engine.ui.genericapi.GenericApiService;
 
 public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements GenericApiGWTService {
+
+    private static final long serialVersionUID = 7395780289048030855L;
 
     static Random r = new Random();
     boolean noBackend = false;
@@ -34,8 +32,15 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements 
 
     private BackendLocal backend;
 
-    // @EJB(name = "engine/GenericApi/local")
-    private static GenericApiService genericApiService;
+    @EJB(beanInterface = BackendLocal.class,
+            mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
+    public void setBackend(BackendLocal backend) {
+        this.backend = backend;
+    }
+
+    public BackendLocal getBackend() {
+        return backend;
+    }
 
     @Override
     public void init() throws ServletException {
@@ -158,35 +163,6 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements 
         return returnValue;
     }
 
-    private static VMStatus getRandomStatus() {
-        VMStatus[] status_values = VMStatus.values();
-        VMStatus status = status_values[r.nextInt(status_values.length)];
-        return status;
-    }
-
-    private static VmOsType getRandomOSType() {
-        VmOsType[] os_types = VmOsType.values();
-        VmOsType os = os_types[r.nextInt(os_types.length)];
-        return os;
-    }
-
-    private static VmPoolType getRandomVmPoolType() {
-        VmPoolType[] pool_types = VmPoolType.values();
-        VmPoolType type = pool_types[r.nextInt(pool_types.length)];
-
-        return type;
-    }
-
-    public BackendLocal getBackend() {
-        return backend;
-    }
-
-    @EJB(beanInterface = BackendLocal.class,
-            mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
-    public void setBackend(BackendLocal backend) {
-        this.backend = backend;
-    }
-
     private String getSessionId() {
         HttpServletRequest request = this.getThreadLocalRequest();
         HttpSession session = request.getSession();
@@ -195,4 +171,5 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements 
 
         return session.getId();
     }
+
 }

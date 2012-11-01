@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,7 +26,7 @@ public class NetworkSubTabPanelPresenter extends AbstractSubTabPanelPresenter<Ne
     public interface ProxyDef extends Proxy<NetworkSubTabPanelPresenter> {
     }
 
-    public interface ViewDef extends TabView {
+    public interface ViewDef extends TabView, DynamicTabPanel {
     }
 
     @Inject

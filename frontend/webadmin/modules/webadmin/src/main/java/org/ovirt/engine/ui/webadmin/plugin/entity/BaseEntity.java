@@ -11,7 +11,9 @@ import com.google.gwt.core.client.JsArray;
 /**
  * Overlay type representing an entity passed through the plugin API as native JS object.
  */
-// TODO(vszocs) make this class abstract and create specific entity for each EntityType
+// TODO(vszocs) use restapi-types to map backend business entity types
+// into restapi-definition types, and export these types for use with
+// JavaScript (plugin API)
 public class BaseEntity extends JavaScriptObject {
 
     protected BaseEntity() {

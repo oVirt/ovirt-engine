@@ -39,7 +39,8 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             ConnectAutomaticallyManager connectAutomaticallyManager,
             CurrentUserRole userRole,
             ApplicationConstants constants) {
-        super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, eventBus, loginModelProvider, lockInteractionManager);
+        super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
+                user, eventBus, loginModelProvider, lockInteractionManager);
         this.userRole = userRole;
         this.connectAutomaticallyManager = connectAutomaticallyManager;
         Window.setTitle(constants.applicationTitle());

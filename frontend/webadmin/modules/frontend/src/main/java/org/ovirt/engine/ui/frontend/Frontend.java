@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -22,8 +20,6 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.core.compat.ObservableCollection;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -41,10 +37,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
 public class Frontend {
-    private static final String RPC_TIMEOUT_EXCEPTION_STATUS_CODE_PREFIX = "120"; //$NON-NLS-1$
 
     private static Logger logger = Logger.getLogger(Frontend.class.getName());
     private static IFrontendEventsHandler eventsHandler;
+    private static FrontendLoginHandler loginHandler;
     private static VdcUser loggedUser;
     private static ErrorTranslator canDoActionErrorsTranslator =
             new ErrorTranslator((AppErrors) GWT.create(AppErrors.class));
@@ -71,16 +67,20 @@ public class Frontend {
         return frontendNotLoggedInEvent;
     }
 
-    public static void initEventsHandler(IFrontendEventsHandler eventsHandler) {
-        Frontend.eventsHandler = eventsHandler;
-    }
-
     public static IFrontendEventsHandler getEventsHandler() {
         return eventsHandler;
     }
 
-    public static void setFrontendEventHandler(IFrontendEventsHandler eventHandler) {
-        Frontend.eventsHandler = eventHandler;
+    public static void setEventsHandler(IFrontendEventsHandler eventsHandler) {
+        Frontend.eventsHandler = eventsHandler;
+    }
+
+    public static FrontendLoginHandler getLoginHandler() {
+        return loginHandler;
+    }
+
+    public static void setLoginHandler(FrontendLoginHandler loginHandler) {
+        Frontend.loginHandler = loginHandler;
     }
 
     private static void translateErrors(List<VdcReturnValueBase> errors) {
@@ -108,10 +108,6 @@ public class Frontend {
     private static void failureEventHandler(String description, String errorMessage) {
         handleNotLoggedInEvent(errorMessage);
         frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(new Message(description, errorMessage)));
-    }
-
-    private static void failureEventHandler(ArrayList<Message> messages) {
-        frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(messages));
     }
 
     private static void handleNotLoggedInEvent(String errorMessage) {
@@ -496,7 +492,6 @@ public class Frontend {
                 }
                 logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
                 failureEventHandler(caught);
-                FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, null);
                 failureEventHandler(caught);
             }
 
@@ -610,18 +605,7 @@ public class Frontend {
         throw new NotImplementedException("UnregisterQuery is not implemented!"); //$NON-NLS-1$
     }
 
-    public static Guid RegisterSearch(String searchString,
-            SearchType cluster,
-            int searchPageSize,
-            RefObject<ObservableCollection<IVdcQueryable>> tempRefObject) {
-        throw new NotImplementedException("RegisterSearch is not implemented!"); //$NON-NLS-1$
-    }
-
-    public static VdcUser Login(String entity, String entity2, String selectedItem) {
-        throw new NotImplementedException("Login is not implemented!"); //$NON-NLS-1$
-    }
-
-    public static void LoginAsync(String userName, String password, String domain, final AsyncQuery callback) {
+    public static void LoginAsync(final String userName, final String password, final String domain, final AsyncQuery callback) {
         logger.finer("Frontend: Invoking async Login."); //$NON-NLS-1$
 
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
@@ -634,6 +618,9 @@ public class Frontend {
                 failed.add(result);
                 translateErrors(failed);
                 callback.asyncCallback.OnSuccess(callback.getModel(), result);
+                if (getLoginHandler() != null && result.getSucceeded()) {
+                    getLoginHandler().onLoginSuccess(userName, password, domain);
+                }
             }
 
             @Override
@@ -652,43 +639,6 @@ public class Frontend {
         });
     }
 
-    public static VdcReturnValueBase RunActionAsyncroniousely(VdcActionType addsanstoragedomain,
-            VdcActionParametersBase param) {
-        throw new NotImplementedException("RunActionAsyncroniousely is not implemented!"); //$NON-NLS-1$
-    }
-
-    public static Guid RegisterQuery(VdcQueryType getallbookmarks,
-            VdcQueryParametersBase vdcQueryParametersBase,
-            RefObject<ObservableCollection<IVdcQueryable>> tempRefObject) {
-        throw new NotImplementedException("RegisterQuery is not implemented!"); //$NON-NLS-1$
-    }
-
-    public static void Logoff(LogoutUserParameters tempVar) {
-        throw new NotImplementedException("Logoff is not implemented!"); //$NON-NLS-1$
-    }
-
-    public static void Logoff(VdcUser vdcUser, final AsyncCallback<VdcReturnValueBase> callback) {
-        GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
-
-        service.logOff(vdcUser, new AsyncCallback<VdcReturnValueBase>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                if (ignoreFailure(caught)) {
-                    return;
-                }
-                logger.log(Level.SEVERE, "Failed to execute Logoff: " + caught, caught); //$NON-NLS-1$
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(VdcReturnValueBase result) {
-                logger.finer("Frontend: sucessfully executed logOff, determining result!"); //$NON-NLS-1$
-                logger.finer("Result of logoff: succeeded? [" + result.getSucceeded() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-                callback.onSuccess(result);
-            }
-        });
-    }
-
     public static void LogoffAsync(VdcUser vdcUser, final AsyncQuery callback) {
         logger.finer("Frontend: Invoking async Logoff."); //$NON-NLS-1$
 
@@ -698,6 +648,9 @@ public class Frontend {
             public void onSuccess(VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from Logoff."); //$NON-NLS-1$
                 callback.asyncCallback.OnSuccess(callback.getModel(), result);
+                if (getLoginHandler() != null) {
+                    getLoginHandler().onLogout();
+                }
             }
 
             @Override
@@ -873,4 +826,5 @@ public class Frontend {
         }
         return false;
     }
+
 }

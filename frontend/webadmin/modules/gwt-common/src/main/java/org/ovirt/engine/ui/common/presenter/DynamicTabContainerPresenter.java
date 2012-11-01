@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.Presenter;
@@ -8,17 +10,24 @@ import com.gwtplatform.mvp.client.RequestTabsEvent;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabContainerPresenter;
 import com.gwtplatform.mvp.client.TabPanel;
-import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.TabView;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxy;
 
 /**
  * A {@link TabContainerPresenter} that handles tabs added dynamically during runtime.
  * <p>
- * To add new tab during runtime, create and bind its proxy instance so that it listens to GWTP {@link RequestTabsEvent}
- * for the given tab container presenter.
+ * To add new tab during runtime, create and bind its proxy to listen to GWTP {@link RequestTabsEvent} for the given tab
+ * container presenter.
+ *
+ * @param <V>
+ *            View type.
+ * @param <P>
+ *            Proxy type.
  */
-public abstract class DynamicTabContainerPresenter<V extends View & DynamicTabContainerPresenter.DynamicTabPanel, P extends Proxy<?>>
+public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTabContainerPresenter.DynamicTabPanel, P extends Proxy<?>>
         extends TabContainerPresenter<V, P> {
 
     /**
@@ -33,13 +42,14 @@ public abstract class DynamicTabContainerPresenter<V extends View & DynamicTabCo
 
     }
 
-    private final Object tabContentSlot;
+    private final Type<RevealContentHandler<?>> revealContentEventType;
     private final Type<RequestTabsHandler> requestTabsEventType;
 
     public DynamicTabContainerPresenter(EventBus eventBus, V view, P proxy,
-            Object tabContentSlot, Type<RequestTabsHandler> requestTabsEventType) {
-        super(eventBus, view, proxy, tabContentSlot, requestTabsEventType);
-        this.tabContentSlot = tabContentSlot;
+            Type<RevealContentHandler<?>> revealContentEventType,
+            Type<RequestTabsHandler> requestTabsEventType) {
+        super(eventBus, view, proxy, revealContentEventType, requestTabsEventType);
+        this.revealContentEventType = revealContentEventType;
         this.requestTabsEventType = requestTabsEventType;
     }
 
@@ -49,7 +59,7 @@ public abstract class DynamicTabContainerPresenter<V extends View & DynamicTabCo
 
         // Update the view with regard to current tab's history token
         // in order to retain "active" tab after refreshing all tabs
-        if (slot == tabContentSlot) {
+        if (slot == getTabContentSlot()) {
             try {
                 Presenter<?, ?> presenter = (Presenter<?, ?>) content;
                 TabContentProxy<?> proxy = (TabContentProxy<?>) presenter.getProxy();
@@ -60,15 +70,25 @@ public abstract class DynamicTabContainerPresenter<V extends View & DynamicTabCo
         }
     }
 
-    /**
-     * Removes and re-adds all related tabs to this tab container.
-     * <p>
-     * This method should be typically called using deferred command, since event bus handler registration (GWTP
-     * {@link RequestTabsEvent}) is enqueued for consequent handler registration calls.
-     */
-    public void refreshTabs() {
-        getView().removeTabs();
-        RequestTabsEvent.fire(this, requestTabsEventType, this);
+    Object getTabContentSlot() {
+        return revealContentEventType;
+    }
+
+    @ProxyEvent
+    public void onRedrawDynamicTabContainer(RedrawDynamicTabContainerEvent event) {
+        if (requestTabsEventType == event.getRequestTabsEventType()) {
+            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                @Override
+                public void execute() {
+                    // Remove all tabs
+                    getView().removeTabs();
+
+                    // Re-add tabs in response to RequestTabsEvent
+                    RequestTabsEvent.fire(DynamicTabContainerPresenter.this,
+                                requestTabsEventType, DynamicTabContainerPresenter.this);
+                }
+            });
+        }
     }
 
 }

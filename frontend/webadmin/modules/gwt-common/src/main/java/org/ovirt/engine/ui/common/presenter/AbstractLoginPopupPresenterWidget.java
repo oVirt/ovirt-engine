@@ -70,7 +70,7 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
             @Override
             protected void executeCommand(UICommand command) {
                 if (command == loginModel.getLoginCommand()) {
-                    lockInteractionManager.showLoadingIndicator();
+                    beforeLoginCommandExecuted(loginModel);
                 }
                 super.executeCommand(command);
             }
@@ -131,6 +131,14 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
                 }
             }
         });
+    }
+
+    /**
+     * Actions taken before executing 'Login' command that initiates UiCommon {@linkplain LoginModel#Login login
+     * operation}.
+     */
+    void beforeLoginCommandExecuted(T loginModel) {
+        lockInteractionManager.showLoadingIndicator();
     }
 
     /**

@@ -51,6 +51,17 @@ public class ClientStorage {
     }
 
     /**
+     * Removes the value associated with the given key from local (persistent) storage.
+     */
+    public void removeLocalItem(String key) {
+        if (localStorage != null) {
+            localStorage.removeItem(key);
+        } else {
+            Cookies.removeCookie(key);
+        }
+    }
+
+    /**
      * Returns the value for the given key from session (transient) storage, or {@code null} if there is no value for
      * such key.
      */
@@ -71,6 +82,17 @@ public class ClientStorage {
         } else {
             // Emulate transient storage using cookies which expire when the browser session ends
             Cookies.setCookie(key, value);
+        }
+    }
+
+    /**
+     * Removes the value associated with the given key from session (transient) storage.
+     */
+    public void removeSessionItem(String key) {
+        if (sessionStorage != null) {
+            sessionStorage.removeItem(key);
+        } else {
+            Cookies.removeCookie(key);
         }
     }
 

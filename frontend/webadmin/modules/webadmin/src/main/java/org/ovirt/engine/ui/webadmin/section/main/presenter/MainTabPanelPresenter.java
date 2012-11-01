@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
 
 import com.google.gwt.event.shared.EventBus;
@@ -21,7 +22,7 @@ public class MainTabPanelPresenter extends DynamicTabContainerPresenter<MainTabP
     public interface ProxyDef extends Proxy<MainTabPanelPresenter> {
     }
 
-    public interface ViewDef extends TabView, DynamicTabContainerPresenter.DynamicTabPanel {
+    public interface ViewDef extends TabView, DynamicTabPanel {
 
         void setTabWidgetHandler(TabWidgetHandler tabWidgetHandler);
 

@@ -6,6 +6,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
@@ -211,7 +212,7 @@ public abstract class Configurator {
      * @return Documentation base URL, including the trailing slash.
      */
     public String getDocumentationBaseURL() {
-        return getRootURL() + getDocumentationBasePath() + "/"; //$NON-NLS-1$
+        return FrontendUrlUtils.getRootURL() + getDocumentationBasePath() + "/"; //$NON-NLS-1$
     }
 
     /**
@@ -223,6 +224,13 @@ public abstract class Configurator {
      */
     public String getDocumentationLibURL() {
         return getDocumentationBaseURL() + documentationLangPath + DOCUMENTATION_LIB_PATH;
+    }
+
+    /**
+     * Returns the base URL for retrieving Spice-related resources.
+     */
+    public static String getSpiceBaseURL() {
+        return FrontendUrlUtils.getRootURL() + "spice/"; //$NON-NLS-1$
     }
 
     protected void setUsbFilter(String usbFilter) {
@@ -288,30 +296,6 @@ public abstract class Configurator {
         public FileFetchEventArgs(String fileContent) {
             setFileContent(fileContent);
         }
-    }
-
-    /**
-     * Calculates the root URL of the server from where the application was served.
-     * <p>
-     * For example, if the application was served from <code>http://www.example.com/foo/bar</code>, it will return
-     * <code>http://www.example.com/</code>.
-     *
-     * @return The root URL of the server, including the trailing slash.
-     */
-    public static String getRootURL() {
-        String moduleURL = GWT.getModuleBaseURL();
-        String separator = "://"; //$NON-NLS-1$
-        int index = moduleURL.indexOf(separator);
-        index = moduleURL.indexOf("/", index + separator.length()); //$NON-NLS-1$
-        String result = (index != -1) ? moduleURL.substring(0, index + 1) : moduleURL;
-        if (!result.endsWith("/")) { //$NON-NLS-1$
-            result += "/"; //$NON-NLS-1$
-        }
-        return result;
-    }
-
-    public static String getSpiceBaseURL() {
-        return getRootURL() + "spice/"; //$NON-NLS-1$
     }
 
     public void Configure(ISpice spice) {

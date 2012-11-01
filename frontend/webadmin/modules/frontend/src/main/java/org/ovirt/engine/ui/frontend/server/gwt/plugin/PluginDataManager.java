@@ -123,6 +123,16 @@ public class PluginDataManager {
             return;
         }
 
+        // Reload descriptor/configuration data
+        reloadData(descriptorFiles, currentDataMapCopy);
+
+        // Apply changes through reference assignment
+        if (!dataMapRef.compareAndSet(currentDataMapSnapshot, currentDataMapCopy)) {
+            logger.warn("It seems that UI plugin data has changed, please reload WebAdmin application"); //$NON-NLS-1$
+        }
+    }
+
+    void reloadData(File[] descriptorFiles, Map<String, PluginData> currentDataMapCopy) {
         for (final File df : descriptorFiles) {
             final File cf = new File(pluginConfigDir, getConfigurationFileName(df));
 
@@ -195,11 +205,6 @@ public class PluginDataManager {
                 // Update local data mapping
                 currentDataMapCopy.put(descriptorFileName, newData);
             }
-        }
-
-        // Apply changes through reference assignment
-        if (!dataMapRef.compareAndSet(currentDataMapSnapshot, currentDataMapCopy)) {
-            logger.warn("It seems that UI plugin data has changed, please reload WebAdmin application"); //$NON-NLS-1$
         }
     }
 

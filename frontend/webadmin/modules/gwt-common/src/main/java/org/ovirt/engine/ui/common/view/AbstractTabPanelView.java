@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.view;
 
-import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
+import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -13,7 +13,7 @@ import com.gwtplatform.mvp.client.TabView;
  *
  * @see AbstractTabPanel
  */
-public abstract class AbstractTabPanelView extends AbstractSingleSlotView implements TabView, DynamicTabContainerPresenter.DynamicTabPanel {
+public abstract class AbstractTabPanelView extends AbstractSingleSlotView implements TabView, DynamicTabPanel {
 
     @Override
     public Tab addTab(TabData tabData, String historyToken) {
