@@ -115,12 +115,31 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAllFromAuditLog() RETURNS SETOF audit_log
+Create or replace FUNCTION GetAllFromAuditLog(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
       FROM audit_log
-      where not deleted;
+      WHERE NOT deleted AND
+     (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vm_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = vm_id)
+                               OR EXISTS (SELECT 1
+                                        FROM user_vm_template_permissions_view
+                                        WHERE user_id = v_user_id AND entity_id = vm_template_id)
+                               OR EXISTS (SELECT 1
+                                        FROM user_vds_permissions_view
+                                        WHERE user_id = v_user_id AND entity_id = vds_id)
+                               OR EXISTS (SELECT 1
+                                        FROM user_storage_pool_permissions_view
+                                        WHERE user_id = v_user_id AND entity_id = storage_pool_id)
+                               OR EXISTS (SELECT 1
+                                        FROM user_storage_domain_permissions_view
+                                        WHERE user_id = v_user_id AND entity_id = storage_domain_id)
+                               OR EXISTS (SELECT 1
+                                        FROM user_vds_groups_permissions_view
+                                        WHERE user_id = v_user_id AND entity_id = vds_group_id)
+     );
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -113,10 +113,18 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<AuditLog> result = dao.getAll();
+        List<AuditLog> result = dao.getAll(null, false);
 
         assertEquals(TOTAL_COUNT, result.size());
     }
+
+    @Test
+    public void testGetAllFiltered() {
+        List<AuditLog> result = dao.getAll(PRIVILEGED_USER_ID, true);
+
+        assertEquals(FILTERED_COUNT, result.size());
+    }
+
 
     /**
      * Test date filtering
@@ -234,7 +242,8 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
             throws Exception {
         Date cutoff = EXPECTED_DATE_FORMAT.parse("2010-12-20 13:11:00");
         dao.removeAllBeforeDate(cutoff);
-        List<AuditLog> result = dao.getAll();
+        // show be 1 left that was in event_notification_hist
+        List<AuditLog> result = dao.getAll(PRIVILEGED_USER_ID, true);
         assertEquals(3, result.size());
     }
 
@@ -242,7 +251,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     public void testRemoveAllForVds()
             throws Exception {
         dao.removeAllForVds(VDS_ID, true);
-        List<AuditLog> result = dao.getAll();
+        List<AuditLog> result = dao.getAll(null, false);
         assertEquals(5, result.size());
     }
 
@@ -251,9 +260,9 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
             throws Exception {
         dao.removeAllOfTypeForVds(VDS_ID,
                 AuditLogType.IRS_DISK_SPACE_LOW_ERROR.getValue());
-
-        List<AuditLog> result = dao.getAll();
-        assertEquals(3, result.size());
+        // show be 1 left that was in event_notification_hist
+        List<AuditLog> result = dao.getAll(PRIVILEGED_USER_ID, true);
+        assertEquals(2, result.size());
     }
 
     /**

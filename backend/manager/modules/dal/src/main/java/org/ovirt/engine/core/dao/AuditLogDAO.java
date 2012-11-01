@@ -45,7 +45,7 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
      *
      * @return the list of entries
      */
-    List<AuditLog> getAll();
+    List<AuditLog> getAll(Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all audit log entries for the given VM name.

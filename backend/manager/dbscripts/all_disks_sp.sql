@@ -9,12 +9,15 @@
 
 
 
-Create or replace FUNCTION GetAllFromDisks() RETURNS SETOF all_disks
+Create or replace FUNCTION GetAllFromDisks(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF all_disks
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   all_disks;
+    FROM   all_disks
+    WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
+                                          FROM user_disk_permissions_view
+                                          WHERE user_id = v_user_id AND entity_id = disk_id));
 END; $procedure$
 LANGUAGE plpgsql;
 

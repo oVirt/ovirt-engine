@@ -60,8 +60,9 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
     }
 
     @Override
-    public List<AuditLog> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+    public List<AuditLog> getAll(Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetAllFromAuditLog", auditLogRowMapper, parameterSource);
     }
 

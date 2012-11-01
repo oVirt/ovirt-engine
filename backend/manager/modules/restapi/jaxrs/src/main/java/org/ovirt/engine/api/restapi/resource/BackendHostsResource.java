@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -43,10 +42,6 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     public Hosts list() {
-        // Filtered users are not allowed to view hosts
-        if (isFiltered()) {
-            throw new WebApplicationException(Response.Status.FORBIDDEN);
-        }
         ApplicationMode appMode = getCurrent().get(ApplicationMode.class);
         if (appMode == ApplicationMode.GlusterOnly)
         {

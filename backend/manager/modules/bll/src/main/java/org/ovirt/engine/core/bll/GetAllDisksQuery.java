@@ -11,6 +11,7 @@ public class GetAllDisksQuery<P extends VdcQueryParametersBase> extends QueriesC
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getDiskDao().getAll());
+        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getDiskDao().
+                getAll(getUserID(), getParameters().isFiltered()));
     }
 }

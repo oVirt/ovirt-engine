@@ -41,6 +41,11 @@ public class AuditLogDAOHibernateImpl extends BaseDAOHibernateImpl<AuditLog, Lon
     }
 
     @Override
+    public List<AuditLog> getAll(Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public List<AuditLog> getAllByVMTemplateName(String vmName) {
         throw new NotImplementedException();
     }

@@ -30,7 +30,7 @@ public class AuditLogDaoMocker implements AuditLogDAO {
     }
 
     @Override
-    public List<AuditLog> getAll() {
+    public List<AuditLog> getAll(Guid userID, boolean isFiltered) {
         return recoreds;
     }
 

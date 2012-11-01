@@ -14,6 +14,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendUsersResource extends BackendUsersResourceBase implements UsersResource {
 
@@ -33,7 +35,11 @@ public class BackendUsersResource extends BackendUsersResourceBase implements Us
 
     @Override
     public Users list() {
+        if (isFiltered()) {
+            return mapDbUserCollection(getBackendCollection(VdcQueryType.GetAllDbUsers, new VdcQueryParametersBase()));
+        } else {
           return mapDbUserCollection(getBackendCollection(SearchType.DBUser, getSearchPattern()));
+        }
     }
 
     @Override

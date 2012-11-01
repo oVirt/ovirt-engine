@@ -83,7 +83,11 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
 
     @Override
     public Disks list() {
-        return mapCollection(getBackendCollection(SearchType.Disk));
+        if (isFiltered()) {
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllDisks, new VdcQueryParametersBase()));
+        } else {
+            return mapCollection(getBackendCollection(SearchType.Disk));
+        }
     }
 
     @Override

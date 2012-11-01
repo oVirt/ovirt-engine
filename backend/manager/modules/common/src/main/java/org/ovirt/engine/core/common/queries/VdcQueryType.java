@@ -93,13 +93,14 @@ public enum VdcQueryType implements Serializable {
     GetAllDisksByVmId(VdcQueryAuthType.User),
     GetAllAttachableDisks(VdcQueryAuthType.User),
     GetAllDisksByStorageDomainId,
-    GetAllDisks,
+    GetAllDisks(VdcQueryAuthType.User),
     GetImageByImageId,
     GetDiskByDiskId,
 
     // Users queries
     GetUserVmsByUserIdAndGroups(VdcQueryAuthType.User),
     GetTimeLeasedUsersByVmPoolId,
+    GetAllDbUsers(VdcQueryAuthType.User),
     GetDbUserByUserId(VdcQueryAuthType.User),
     GetUsersByVmid,
     GetVmsByUserid,
@@ -163,6 +164,7 @@ public enum VdcQueryType implements Serializable {
     GetVmsMessages,
     GetUserMessages,
     GetEventMessages,
+    GetAllEventMessages(VdcQueryAuthType.User),
     GetTemplateMessages,
     GetAllAuditLogsByVMName(VdcQueryAuthType.User),
     GetAllAuditLogsByVMTemplateName(VdcQueryAuthType.User),
