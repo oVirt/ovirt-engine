@@ -284,6 +284,9 @@ public class ManageDomains {
             } catch (Exception e) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_READING_PASSWORD_FILE, e.getMessage());
             }
+            if (pass == null) {
+                throw new ManageDomainsResult(ManageDomainsResultEnum.EMPTY_PASSWORD_FILE);
+            }
         } else if (parser.hasArg(Arguments.interactive.name())) {
             pass = readPasswordInteractively();
         }

@@ -32,7 +32,8 @@ public enum ManageDomainsResultEnum {
     UNKNOWN_ERROR(
             "Operation failed due to exception. Details: %1$s",
             20),
-    FAILURE_READING_PASSWORD_FILE("failed reading password from password file", 21);
+    FAILURE_READING_PASSWORD_FILE("failed reading password from password file", 21),
+    EMPTY_PASSWORD_FILE("password file is empty", 22);
 
     private String detailedMessage;
     private final int exitCode;
