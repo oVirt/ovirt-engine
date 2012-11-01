@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,14 +10,16 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 
 /**
- * This class implements the logic of the query responsible for
- * getting a VM configuration by snapshot.
+ * This class implements the logic of the query responsible for getting a VM configuration by snapshot.
  *
  * @param <P>
  */
@@ -36,8 +39,11 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
         if (configuration != null) {
             result = getVmFromConfiguration(configuration);
             markImagesIllegalIfNotInDb(result);
-            VmHandler.updateDisksForVm(result, result.getImages());
+        } else {
+            result = getVmWithoutConfiguration();
         }
+
+        VmHandler.updateDisksForVm(result, result.getImages());
 
         getQueryReturnValue().setReturnValue(result);
     }
@@ -46,6 +52,30 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
         VM result = getVmDao().get(snapshot.getVmId());
         getSnapshotManager().updateVmFromConfiguration(result, configuration);
         return result;
+    }
+
+    /**
+     * Build a VM entity when configuration is not available, This method is required to create a VM entity for
+     * snapshots which were taken in old engine where full OVF snapshot metadata was not supported.
+     *
+     * See also {@link VmHandler#updateDisksForVm(VM, List)}
+     *
+     * @return a VM model
+     */
+    protected VM getVmWithoutConfiguration() {
+        VM vm = getVmDao().get(snapshot.getVmId());
+        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+        vm.setInterfaces(interfaces);
+        List<DiskImage> disks = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshot.getId());
+        vm.setImages(new ArrayList<DiskImage>(disks));
+
+        // OvfReader sets disks as active during import which is required by VmHandler.updateDisksForVm to prepare the
+        // VM disks.
+        for (DiskImage currDisk : disks) {
+            currDisk.setactive(true);
+        }
+
+        return vm;
     }
 
     /**
@@ -83,6 +113,14 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
 
     protected SnapshotDao getSnapshotDao() {
         return getDbFacade().getSnapshotDao();
+    }
+
+    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
+        return getDbFacade().getVmNetworkInterfaceDao();
+    }
+
+    protected DiskImageDAO getDiskImageDao() {
+        return getDbFacade().getDiskImageDao();
     }
 
     private String getConfigurationFromDb(Guid snapshotSourceId, Guid userId, boolean isFiltered) {
