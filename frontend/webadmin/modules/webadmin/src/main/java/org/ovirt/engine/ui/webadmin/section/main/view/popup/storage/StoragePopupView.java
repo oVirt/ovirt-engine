@@ -205,6 +205,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 storageView = new LocalStorageView();
             } else if (model.getType() == StorageType.POSIXFS) {
                 storageView = new PosixStorageView();
+            } else if (model.getType() == StorageType.GLUSTERFS) {
+                storageView = new GlusterStorageView();
             } else if (model.getType() == StorageType.FCP) {
                 storageView = new FcpStorageView(true);
             } else if (model.getType() == StorageType.ISCSI) {

@@ -317,6 +317,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         fcpExportModel.setRole(StorageDomainType.ImportExport);
         items.add(fcpExportModel);
 
+        GlusterStorageModel GlusterDataModel = new GlusterStorageModel();
+        GlusterDataModel.setRole(StorageDomainType.Data);
+        items.add(GlusterDataModel);
+
         model.setItems(items);
 
         model.Initialize();
@@ -383,6 +387,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             case POSIXFS:
                 item = PreparePosixStorageForEdit(storage);
+                break;
+
+            case GLUSTERFS:
+                item = prepareGlusterStorageForEdit(storage);
                 break;
         }
 
@@ -522,6 +530,29 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setRole(storage.getStorageDomainType());
 
         PrepareSanStorageForEdit(model);
+
+        return model;
+    }
+
+    private IStorageModel prepareGlusterStorageForEdit(StorageDomain storage) {
+
+        final GlusterStorageModel model = new GlusterStorageModel();
+        model.setRole(storage.getStorageDomainType());
+        model.getPath().setIsChangable(true);
+        model.getVfsType().setIsChangable(false);
+        model.getMountOptions().setIsChangable(false);
+
+        AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+
+                StorageServerConnections connection = (StorageServerConnections) returnValue;
+                model.getPath().setEntity(connection.getconnection());
+                model.getVfsType().setEntity(connection.getVfsType());
+                model.getMountOptions().setEntity(connection.getMountOptions());
+
+            }
+        }), storage.getStorage(), true);
 
         return model;
     }
@@ -867,6 +898,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         {
             SavePosixStorage();
         }
+        else if (model.getSelectedItem() instanceof GlusterStorageModel)
+        {
+            saveGlusterStorage();
+        }
         else
         {
             SaveSanStorage();
@@ -906,6 +941,17 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         getWindow().StartProgress(null);
 
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SavePosix"}))).Run(); //$NON-NLS-1$
+    }
+
+    private void saveGlusterStorage() {
+
+        if (getWindow().getProgress() != null) {
+            return;
+        }
+
+        getWindow().StartProgress(null);
+
+        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SaveGluster"}))).Run(); //$NON-NLS-1$
     }
 
     private void SaveSanStorage()
@@ -1215,6 +1261,130 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
                 storageListModel.connection.setid((String)vdcReturnValueBase.getActionReturnValue());
 
+            }
+        };
+
+        IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+
+                StorageListModel storageListModel = (StorageListModel) result.getState();
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                storageListModel.storageId = (NGuid) vdcReturnValueBase.getActionReturnValue();
+
+                // Attach storage to data center as necessary.
+                StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+                storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                    storageListModel.AttachStorageToDataCenter((Guid) storageListModel.storageId, dataCenter.getId());
+                }
+
+                storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
+            }
+        };
+
+        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+
+                StorageListModel storageListModel = (StorageListModel) result.getState();
+                storageListModel.CleanConnection(storageListModel.connection, storageListModel.hostId);
+                storageListModel.OnFinish(storageListModel.context, false, storageListModel.storageModel);
+            }
+        };
+
+        Frontend.RunMultipleActions(actionTypes,
+            parameters,
+            new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
+                        callback1, callback2 })),
+            failureCallback,
+            this);
+    }
+
+    private void saveGlusterStorage(TaskContext context) {
+
+        this.context = context;
+
+        StorageDomain selectedItem = (StorageDomain) getSelectedItem();
+        StorageModel model = (StorageModel) getWindow();
+        boolean isNew = model.getStorage() == null;
+        storageModel = model.getSelectedItem();
+        GlusterStorageModel glusterModel = (GlusterStorageModel) storageModel;
+        path = (String) glusterModel.getPath().getEntity();
+
+        storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
+        storageDomain.setStorageName((String) model.getName().getEntity());
+        storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
+
+        if (isNew) {
+            AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+
+                    StorageListModel storageListModel = (StorageListModel) target;
+                    ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
+
+                    if (storages != null && storages.size() > 0) {
+                        String storageName = storages.get(0).getStorageName();
+
+                        OnFinish(storageListModel.context,
+                            false,
+                            storageListModel.storageModel,
+                            ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
+                    } else {
+                        storageListModel.saveNewGlusterStorage();
+                    }
+                }
+            }), null, path);
+        } else {
+
+            Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
+                @Override
+                public void Executed(FrontendActionAsyncResult result) {
+
+                    StorageListModel storageListModel = (StorageListModel) result.getState();
+                    storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
+
+                }
+            }, this);
+        }
+    }
+
+    public void saveNewGlusterStorage() {
+
+        StorageModel model = (StorageModel) getWindow();
+        GlusterStorageModel glusterModel = (GlusterStorageModel) model.getSelectedItem();
+        VDS host = (VDS) model.getHost().getSelectedItem();
+        hostId = host.getId();
+
+        // Create storage connection.
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setconnection(path);
+        connection.setstorage_type(glusterModel.getType());
+        connection.setVfsType((String) glusterModel.getVfsType().getEntity());
+        connection.setMountOptions((String) glusterModel.getMountOptions().getEntity());
+        this.connection = connection;
+
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+
+        actionTypes.add(VdcActionType.AddStorageServerConnection);
+        actionTypes.add(VdcActionType.AddGlusterFsStorageDomain);
+
+        parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId()));
+        StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storageDomain);
+        parameter.setVdsId(host.getId());
+        parameters.add(parameter);
+
+        IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+
+                StorageListModel storageListModel = (StorageListModel) result.getState();
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
             }
         };
 
@@ -1870,6 +2040,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         else if (StringHelper.stringsEqual(key, "SavePosix")) //$NON-NLS-1$
         {
             SavePosixStorage(context);
+        }
+        else if (StringHelper.stringsEqual(key, "SaveGluster")) //$NON-NLS-1$
+        {
+            saveGlusterStorage(context);
         }
         else if (StringHelper.stringsEqual(key, "SaveSan")) //$NON-NLS-1$
         {

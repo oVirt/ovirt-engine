@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.GlusterStorageView.WidgetStyle">
+		.content {
+			margin-top: 40px;
+		}
+
+        .label {
+            color: #333333;
+            margin: 0px 5px;
+            font-family: Verdana, sans-serif;
+        }
+
+		.pathEditorContent {
+			width: 565px;
+		}
+
+		.pathHintLabel {
+            margin: -8px 0px 0px 5px;
+            font-size: 8pt;
+		}
+
+		.errorLabel {
+			color: #CD2127;
+			margin-top: 20px;
+			margin-left: 5px;
+		}
+
+	</ui:style>
+
+    <g:VerticalPanel addStyleNames="{style.content}">
+        <g:HTMLPanel>
+            <table>
+                <tr>
+                    <td nowrap="nowrap">
+                        <g:Label ui:field="pathLabel" addStyleNames="{style.label}"/>
+                    </td>
+                    <td>
+                        <e:EntityModelTextBoxOnlyEditor ui:field="pathEditor"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td nowrap="nowrap">
+                        <g:Label ui:field="pathHintLabel" addStyleNames="{style.pathHintLabel}, generalDialogComment"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td nowrap="nowrap">
+                        <g:Label ui:field="vfsTypeLabel" addStyleNames="{style.label}"/>
+                    </td>
+                    <td>
+                        <e:EntityModelTextBoxOnlyEditor ui:field="vfsTypeEditor"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td nowrap="nowrap">
+                        <g:Label ui:field="mountOptionsLabel" addStyleNames="{style.label}"/>
+                    </td>
+                    <td>
+                        <e:EntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor"/>
+                    </td>
+                </tr>
+            </table>
+        </g:HTMLPanel>
+        <g:Label ui:field="message" addStyleNames="{style.errorLabel}"/>
+    </g:VerticalPanel>
+
+</ui:UiBinder>
