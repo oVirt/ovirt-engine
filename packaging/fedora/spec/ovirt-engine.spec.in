@@ -894,6 +894,9 @@ fi
 
 
 %changelog
+* Fri Nov 02 2012 Juan Hernandez <juan.hernandez@redhat.com> - 3.2.0-1
+- Bump version to 3.2.0
+
 * Mon May 07 2012 Keith Robertson <kroberts@redhat.com> - 3.1.0-3
 - Removed image uploader, iso uploader, and log collector from this
   git repo.  The are now in their own respective ovirt.org git

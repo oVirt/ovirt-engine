@@ -617,7 +617,7 @@ select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.1');
 select fn_db_update_config_value('SupportedVDSMVersions','4.5,4.9,4.10','general');
 select fn_db_update_config_value('TruststoreUrl','.truststore','general');
 select fn_db_update_config_value('VdcVersion','3.2.0.0','general');
-select fn_db_update_config_value('ProductRPMVersion','3.1.0.0','general');
+select fn_db_update_config_value('ProductRPMVersion','3.2.0.0','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;ilo3:','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port','general');
