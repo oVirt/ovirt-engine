@@ -131,13 +131,11 @@ public class Tar {
             Tar.doTar(os, new File(args[1]));
         }
         finally {
-            try {
-                if (os != null) {
+            if (os != null) {
+                try {
                     os.close();
                 }
-            }
-            finally {
-                //ignore
+                catch(IOException e) {}
             }
         }
     }
