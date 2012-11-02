@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
+import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
@@ -79,6 +80,9 @@ public class HostMapper {
             if (model.getStorageManager().getPriority() != null) {
                 entity.setVdsSpmPriority(model.getStorageManager().getPriority());
             }
+        }
+        if (model.isSetDisplay() && model.getDisplay().isSetAddress()) {
+            entity.setConsoleAddress("".equals(model.getDisplay().getAddress()) ? null : model.getDisplay().getAddress());
         }
 
         return entity;
@@ -276,6 +280,11 @@ public class HostMapper {
             version.setBuild(entity.getlibvirt_version().getBuild());
             version.setFullVersion(entity.getlibvirt_version().getRpmName());
             model.setLibvirtVersion(version);
+        }
+
+        if (entity.getConsoleAddress() != null && !"".equals(entity.getConsoleAddress())) {
+            model.setDisplay(new Display());
+            model.getDisplay().setAddress(entity.getConsoleAddress());
         }
 
         return model;
