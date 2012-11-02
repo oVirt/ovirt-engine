@@ -521,7 +521,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected boolean getVdsToRunOn() {
         // use destination vds or default vds or none
-        setVdsId(getVdsSelector().getVdsToRunOn());
+        setVdsId(getVdsSelector().getVdsToRunOn(false));
         setVds(null);
         setVdsName(null);
         if (getVdsId().equals(Guid.Empty)) {

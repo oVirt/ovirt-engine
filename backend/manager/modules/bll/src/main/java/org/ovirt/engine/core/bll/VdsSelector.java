@@ -76,22 +76,22 @@ public class VdsSelector {
         this.memoryChecker = memoryChecker;
     }
 
-    public Guid getVdsToRunOn() {
+    public Guid getVdsToRunOn(boolean isMigrate) {
         Guid result = Guid.Empty;
         if (getDestinationVdsId() != null) {
             if (getCheckDestinationFirst()) {
-                result = getVdsRunOnDestination();
+                result = getVdsRunOnDestination(isMigrate);
                 if (result.equals(Guid.Empty) && privateVm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-                    result = getAnyVdsToRunOn();
+                    result = getAnyVdsToRunOn(isMigrate);
                 }
             } else {
-                result = getAnyVdsToRunOn();
+                result = getAnyVdsToRunOn(isMigrate);
                 if (result.equals(Guid.Empty)) {
-                    result = getVdsRunOnDestination();
+                    result = getVdsRunOnDestination(isMigrate);
                 }
             }
         } else {
-            result = getAnyVdsToRunOn();
+            result = getAnyVdsToRunOn(isMigrate);
         }
 
         return result;
@@ -126,7 +126,7 @@ public class VdsSelector {
      * getDestinationVdsId() must not be null.
      * @return
      */
-    private Guid getVdsRunOnDestination() {
+    private Guid getVdsRunOnDestination(boolean isMigrate) {
         Guid result = Guid.Empty;
         if (getDestinationVdsId() != null) {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
@@ -140,16 +140,16 @@ public class VdsSelector {
                         "VdcBLL.RunVmCommandBase.getVdsToRunOn - VM {0} has no tools - skipping power client check",
                         getVm().getId());
             } else {
-                result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })));
+                result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })), isMigrate);
             }
         }
         return result;
     }
 
-    private Guid getAnyVdsToRunOn() {
+    private Guid getAnyVdsToRunOn(boolean isMigrate) {
         return getVdsToRunOn(DbFacade.getInstance()
                 .getVdsDao()
-                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
+                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }), isMigrate);
     }
 
     private boolean canRunOnDestinationVds(List<String> messages, boolean isMigrate) {
@@ -187,13 +187,9 @@ public class VdsSelector {
         boolean noVDSs = true;
         StringBuilder sb = new StringBuilder();
         for (VDS curVds : vdss) {
-            if (isMigrate && getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(curVds.getId())) {
-                continue;
-            }
-
             noVDSs = false;
 
-            ValidationResult result = validateHostIsReadyToRun(curVds, sb);
+            ValidationResult result = validateHostIsReadyToRun(curVds, sb, isMigrate);
             if (result.isValid()) {
                 return true;
             } else {
@@ -229,7 +225,7 @@ public class VdsSelector {
     }
 
     interface HostValidator {
-        VdcBllMessages validate(VDS vds, StringBuilder sb);
+        VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate);
     }
 
     @SuppressWarnings("serial")
@@ -238,7 +234,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     if ((!vds.getvds_group_id().equals(getVm().getvds_group_id())) || (vds.getstatus() != VDSStatus.Up)) {
                         sb.append("is not in up status or belongs to the VM's cluster");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
@@ -249,12 +245,10 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     // If Vm in Paused mode - no additional memory allocation needed
                     if (getVm().getstatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
                         // not enough memory
-                        // In case we are using this function in migration we make sure we
-                        // don't allocate the same VDS
                         sb.append("has insufficient memory to run the VM");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY;
                     }
@@ -264,25 +258,10 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
-                    // If Vm in Paused mode - no additional memory allocation needed
-                    if (getVm().getstatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
-                        // not enough memory
-                        // In case we are using this function in migration we make sure we
-                        // don't allocate the same VDS
-                        sb.append("has insufficient memory to run the VM");
-                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY;
-                    }
-                    return null;
-                }
-            });
-            add(new HostValidator() {
-
-                @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     // In case we are using this function in migration we make sure we
                     // don't allocate the same VDS
-                    if ((getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(vds.getId()))) {
+                    if (isMigrate && (getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(vds.getId()))) {
                         sb.append("is the same host the VM is currently running on");
                         return VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST;
                     }
@@ -292,7 +271,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     // check capacity to run power clients
                     if (!RunVmCommandBase.hasCapacityToRunVM(vds)) {
                         sb.append("has insuffient capacity to run power client");
@@ -303,7 +282,7 @@ public class VdsSelector {
             });
             add(new HostValidator() {
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     if (vds.getcpu_cores() != null && getVm().getnum_of_cpus() > vds.getcpu_cores()) {
                         sb.append("has less cores(").append(vds.getcpu_cores()).append(") than ").append(getVm().getnum_of_cpus());
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;
@@ -314,7 +293,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     // if vm has more vCpus then vds physical cpus - dont allow to run
                     if (!isVMSwapValueLegal(vds)) {
                         sb.append("swap value is illegal");
@@ -326,7 +305,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     if (!areRequiredNetworksAvailable(vds)) {
                         sb.append("is missing networks required by VM nics ").append(Entities.interfacesByNetworkName(getVmNICs())
                                 .keySet());
@@ -338,7 +317,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     if (isVdsFailedToRunVm(vds.getId())) {
                         sb.append("have failed running this VM in the current selection cycle");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
@@ -349,12 +328,12 @@ public class VdsSelector {
         }
     });
 
-    private ValidationResult validateHostIsReadyToRun(final VDS vds, StringBuilder sb) {
+    private ValidationResult validateHostIsReadyToRun(final VDS vds, StringBuilder sb, boolean isMigrate) {
         // buffer the mismatches as we go
         sb.append(" VDS ").append(vds.getvds_name()).append(" ").append(vds.getId()).append(" ");
 
         for(HostValidator validator : this.hostValidators) {
-            VdcBllMessages result = validator.validate(vds, sb);
+            VdcBllMessages result = validator.validate(vds, sb, isMigrate);
             if(result != null) {
                 return new ValidationResult(result);
             }
@@ -405,11 +384,11 @@ public class VdsSelector {
                 .<Integer> GetValue(ConfigValues.BlockMigrationOnSwapUsagePercentage);
     }
 
-    private Guid getVdsToRunOn(Iterable<VDS> vdss) {
+    private Guid getVdsToRunOn(Iterable<VDS> vdss, boolean isMigrate) {
         StringBuilder sb = new StringBuilder();
         final List<VDS> readyToRun = new ArrayList<VDS>();
         for (VDS curVds : vdss) {
-            if (validateHostIsReadyToRun(curVds,sb) == ValidationResult.VALID) {
+            if (validateHostIsReadyToRun(curVds, sb, isMigrate) == ValidationResult.VALID) {
                 readyToRun.add(curVds);
             }
         }

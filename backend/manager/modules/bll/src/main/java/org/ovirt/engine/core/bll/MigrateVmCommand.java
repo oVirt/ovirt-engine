@@ -80,7 +80,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     protected void initVdss() {
         setVdsIdRef(new Guid(getVm().getrun_on_vds().toString()));
-        setVdsDestinationId(getVdsSelector().getVdsToRunOn());
+        setVdsDestinationId(getVdsSelector().getVdsToRunOn(true));
         // make _destinationVds null in order to refresh it from db in case it
         // changed.
         _destinationVds = null;
