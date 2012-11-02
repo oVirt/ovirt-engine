@@ -94,6 +94,8 @@ public class Tar {
         TarArchiveOutputStream archive = null;
         try {
             archive = new TarArchiveOutputStream(os);
+            // TODO: use LONGFILE_POSIX in newer version of commons-compress
+            archive.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
             _recurse(archive, base, "./");
         }
         finally {
