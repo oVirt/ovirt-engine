@@ -34,7 +34,6 @@
 		<include name="common/businessentities/DbUserBase.java" />
 		<include name="common/businessentities/custom_actions.java" />
 		<include name="common/businessentities/BootSequence.java" />
-		<include name="common/businessentities/HypervisorType.java" />
 		<include name="common/businessentities/IImage.java" />
 		<include name="common/businessentities/ImageStatus.java" />
 		<include name="common/businessentities/NetworkInterface.java" />

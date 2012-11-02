@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.HypervisorType;
 import org.ovirt.engine.core.common.businessentities.OperationMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -30,7 +29,6 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements Parameter
         entity.setusb_policy(UsbPolicy.forValue(rs.getInt("usb_policy")));
         entity.setfail_back(rs.getBoolean("fail_back"));
         entity.setdefault_boot_sequence(BootSequence.forValue(rs.getInt("default_boot_sequence")));
-        entity.sethypervisor_type(HypervisorType.forValue(rs.getInt("hypervisor_type")));
         entity.setoperation_mode(OperationMode.forValue(rs.getInt("operation_mode")));
         entity.setnice_level(rs.getInt("nice_level"));
         entity.setis_auto_suspend(rs.getBoolean("is_auto_suspend"));

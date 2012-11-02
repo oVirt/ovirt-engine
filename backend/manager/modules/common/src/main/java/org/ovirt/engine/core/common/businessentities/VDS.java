@@ -770,14 +770,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsDynamic.setcpu_over_commit_time_stamp(value);
     }
 
-    public HypervisorType gethypervisor_type() {
-        return mVdsDynamic.gethypervisor_type();
-    }
-
-    public void sethypervisor_type(HypervisorType value) {
-        mVdsDynamic.sethypervisor_type(value);
-    }
-
     public int getvds_strength() {
         return this.mVdsStatic.getvds_strength();
     }

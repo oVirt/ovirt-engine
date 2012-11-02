@@ -14,7 +14,6 @@ Create or replace FUNCTION InsertVdsGroups(v_description VARCHAR(4000) ,
 	v_high_utilization INTEGER,
 	v_low_utilization INTEGER,
 	v_cpu_over_commit_duration_minutes INTEGER,
-	v_hypervisor_type INTEGER,
 	v_storage_pool_id UUID ,
 	v_max_vds_memory_over_commit INTEGER,
 	v_compatibility_version VARCHAR(40),
@@ -27,10 +26,10 @@ Create or replace FUNCTION InsertVdsGroups(v_description VARCHAR(4000) ,
 BEGIN
       v_vds_group_id := uuid_generate_v1();
       INSERT INTO vds_groups(vds_group_id,description, name, cpu_name, selection_algorithm, high_utilization, low_utilization,
-	cpu_over_commit_duration_minutes, hypervisor_type, storage_pool_id,  max_vds_memory_over_commit, compatibility_version, transparent_hugepages, migrate_on_error,
+	cpu_over_commit_duration_minutes, storage_pool_id,  max_vds_memory_over_commit, compatibility_version, transparent_hugepages, migrate_on_error,
 	virt_service, gluster_service)
 	VALUES(v_vds_group_id,v_description, v_name, v_cpu_name, v_selection_algorithm, v_high_utilization, v_low_utilization,
-	v_cpu_over_commit_duration_minutes, v_hypervisor_type, v_storage_pool_id,  v_max_vds_memory_over_commit, v_compatibility_version, v_transparent_hugepages, v_migrate_on_error,
+	v_cpu_over_commit_duration_minutes, v_storage_pool_id,  v_max_vds_memory_over_commit, v_compatibility_version, v_transparent_hugepages, v_migrate_on_error,
 	v_virt_service, v_gluster_service);
 END; $procedure$
 LANGUAGE plpgsql;
@@ -47,7 +46,6 @@ Create or replace FUNCTION UpdateVdsGroup(v_description VARCHAR(4000) ,
 	v_high_utilization INTEGER,
 	v_low_utilization INTEGER,
 	v_cpu_over_commit_duration_minutes INTEGER,
-	v_hypervisor_type INTEGER,
 	v_storage_pool_id UUID ,
 	v_max_vds_memory_over_commit INTEGER,
 	v_compatibility_version VARCHAR(40),
@@ -64,7 +62,6 @@ BEGIN
       SET description = v_description,name = v_name,cpu_name = v_cpu_name,selection_algorithm = v_selection_algorithm,
       high_utilization = v_high_utilization,
       low_utilization = v_low_utilization,cpu_over_commit_duration_minutes = v_cpu_over_commit_duration_minutes,
-      hypervisor_type = v_hypervisor_type,
       storage_pool_id = v_storage_pool_id,_update_date = LOCALTIMESTAMP,
       max_vds_memory_over_commit = v_max_vds_memory_over_commit,
       compatibility_version = v_compatibility_version,transparent_hugepages = v_transparent_hugepages,

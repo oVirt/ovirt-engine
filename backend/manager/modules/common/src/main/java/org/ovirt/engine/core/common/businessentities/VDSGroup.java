@@ -78,9 +78,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "cpu_over_commit_duration_minutes")
     private int cpu_over_commit_duration_minutes = 0;
 
-    @Column(name = "hypervisor_type")
-    private HypervisorType hypervisor_type = HypervisorType.KVM;
-
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
     private NGuid storagePool;
@@ -114,7 +111,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         high_utilization = -1;
         low_utilization = -1;
         cpu_over_commit_duration_minutes = -1;
-        hypervisor_type = HypervisorType.KVM;
         migrateOnError = MigrateOnErrorOptions.YES;
     }
 
@@ -193,14 +189,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
 
     public void setcpu_over_commit_duration_minutes(int value) {
         this.cpu_over_commit_duration_minutes = value;
-    }
-
-    public HypervisorType gethypervisor_type() {
-        return this.hypervisor_type;
-    }
-
-    public void sethypervisor_type(HypervisorType value) {
-        this.hypervisor_type = value;
     }
 
     @Override
@@ -292,7 +280,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
             + cpu_over_commit_duration_minutes;
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + high_utilization;
-        result = prime * result + ((hypervisor_type == null) ? 0 : hypervisor_type.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + low_utilization;
         result = prime * result + max_vds_memory_over_commit;
@@ -337,11 +324,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
                 return false;
         } else if (!description.equals(other.description))
         if (high_utilization != other.high_utilization)
-            return false;
-        if (hypervisor_type == null) {
-            if (other.hypervisor_type != null)
-                return false;
-        } else if (!hypervisor_type.equals(other.hypervisor_type))
             return false;
         if (id == null) {
             if (other.id != null)

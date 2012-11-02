@@ -100,7 +100,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
             String run_on_vds_name, String time_zone, Boolean acpi_enable, Integer session, String display_ip,
             Integer display_type, Boolean kvm_enable, Integer boot_sequence, String vmt_time_zone,
             Integer display_secure_port, Integer utc_diff, boolean is_stateless, String vds_cpu_name,
-            boolean fail_back, BootSequence default_boot_sequence, VmType vm_type, HypervisorType hypervisor_type,
+            boolean fail_back, BootSequence default_boot_sequence, VmType vm_type,
             OperationMode operation_mode, int minAllocatedMem) {
         mVmStatic = new VmStatic();
         mVmDynamic = new VmDynamic();
@@ -168,7 +168,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.setfail_back(fail_back);
         this.setdefault_boot_sequence(default_boot_sequence);
         this.setvm_type(vm_type);
-        this.sethypervisor_type(hypervisor_type);
         this.setoperation_mode(operation_mode);
         this.setMinAllocatedMem(minAllocatedMem);
     }
@@ -1000,14 +999,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvm_type(VmType value) {
         this.mVmStatic.setvm_type(value);
-    }
-
-    public HypervisorType gethypervisor_type() {
-        return this.mVmStatic.gethypervisor_type();
-    }
-
-    public void sethypervisor_type(HypervisorType value) {
-        this.mVmStatic.sethypervisor_type(value);
     }
 
     public OperationMode getoperation_mode() {

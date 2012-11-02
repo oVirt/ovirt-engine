@@ -89,9 +89,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Column(name = "cpu_over_commit_time_stamp")
     private Date cpu_over_commit_time_stamp;
 
-    @Column(name = "hypervisor_type")
-    private HypervisorType hypervisor_type = HypervisorType.KVM;
-
     @Column(name = "vms_cores_count")
     private Integer vms_cores_count;
 
@@ -170,7 +167,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                       Boolean kvm_enabled, Integer mem_commited, Integer physical_mem_mb, int status, Guid vds_id,
                       Integer vm_active, int vm_count, Integer vm_migrating, Integer reserved_mem, Integer guest_overhead,
                       VDSStatus previous_status, String software_version, String version_name, String build_name,
-                      Date cpu_over_commit_time_stamp, HypervisorType hypervisor_type, Integer pending_vcpus_count,
+                      Date cpu_over_commit_time_stamp, Integer pending_vcpus_count,
                       Integer pending_vmem_sizeField, Boolean net_config_dirty) {
         rpmVersion = new RpmVersion();
         this.cpu_cores = cpu_cores;
@@ -191,7 +188,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.setsoftware_version(software_version);
         this.setversion_name(version_name);
         this.setcpu_over_commit_time_stamp(cpu_over_commit_time_stamp);
-        this.sethypervisor_type(hypervisor_type);
         this.pending_vcpus_count = pending_vcpus_count;
         this.pending_vmem_size = pending_vmem_sizeField;
         this.net_config_dirty = net_config_dirty;
@@ -366,14 +362,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     public void setcpu_over_commit_time_stamp(Date value) {
         this.cpu_over_commit_time_stamp = value;
-    }
-
-    public HypervisorType gethypervisor_type() {
-        return this.hypervisor_type;
-    }
-
-    public void sethypervisor_type(HypervisorType value) {
-        this.hypervisor_type = value;
     }
 
     public Integer getpending_vcpus_count() {
@@ -554,7 +542,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         result = prime * result + ((guest_overhead == null) ? 0 : guest_overhead.hashCode());
         result = prime * result + ((hooksStr == null) ? 0 : hooksStr.hashCode());
         result = prime * result + ((host_os == null) ? 0 : host_os.hashCode());
-        result = prime * result + ((hypervisor_type == null) ? 0 : hypervisor_type.hashCode());
         result = prime * result + ((iScsiInitiatorName == null) ? 0 : iScsiInitiatorName.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((if_total_speed == null) ? 0 : if_total_speed.hashCode());
@@ -654,8 +641,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
             if (other.host_os != null)
                 return false;
         } else if (!host_os.equals(other.host_os))
-            return false;
-        if (hypervisor_type != other.hypervisor_type)
             return false;
         if (iScsiInitiatorName == null) {
             if (other.iScsiInitiatorName != null)

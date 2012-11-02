@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.HypervisorType;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -264,8 +263,6 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                     .getObject("pending_vcpus_count"));
             entity.setcpu_over_commit_time_stamp(DbFacadeUtils.fromDate(rs
                     .getTimestamp("cpu_over_commit_time_stamp")));
-            entity.sethypervisor_type(HypervisorType.forValue(rs
-                    .getInt("hypervisor_type")));
             entity.sethigh_utilization(rs.getInt("high_utilization"));
             entity.setlow_utilization(rs.getInt("low_utilization"));
             entity.setcpu_over_commit_duration_minutes(rs

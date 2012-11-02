@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.HypervisorType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
@@ -129,7 +128,6 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("low_utilization", group.getlow_utilization())
                 .addValue("cpu_over_commit_duration_minutes",
                         group.getcpu_over_commit_duration_minutes())
-                .addValue("hypervisor_type", group.gethypervisor_type())
                 .addValue("storage_pool_id", group.getstorage_pool_id())
                 .addValue("max_vds_memory_over_commit",
                         group.getmax_vds_memory_over_commit())
@@ -161,8 +159,6 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setlow_utilization(rs.getInt("low_utilization"));
             entity.setcpu_over_commit_duration_minutes(rs
                     .getInt("cpu_over_commit_duration_minutes"));
-            entity.sethypervisor_type(HypervisorType.forValue(rs
-                    .getInt("hypervisor_type")));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
             entity.setmax_vds_memory_over_commit(rs

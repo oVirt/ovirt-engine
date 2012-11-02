@@ -29,7 +29,7 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
     private ArrayList<DiskImage> images;
-    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+    private final ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private List<VmNetworkInterface> interfaces;
     private Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<Guid, VmDevice>();
     private List<VmDevice> vmUnManagedDeviceList = new ArrayList<VmDevice>();
@@ -93,10 +93,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "default_boot_sequence", nullable = false)
     @Enumerated
     private BootSequence defaultBootSequence = BootSequence.C;
-
-    @Column(name = "hypervisor_type", nullable = false)
-    @Enumerated
-    private HypervisorType hypervisorType = HypervisorType.KVM;
 
     @Column(name = "operation_mode", nullable = false)
     @Enumerated
@@ -188,7 +184,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             UsbPolicy usbPolicy,
             boolean fail_back,
             BootSequence defaultBootSequence,
-            HypervisorType hypervisorType,
             OperationMode operationMode,
             int niceLevel,
             boolean autosuspend,
@@ -218,7 +213,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.usbPolicy = usbPolicy;
         this.fail_back = fail_back;
         this.defaultBootSequence = defaultBootSequence;
-        this.hypervisorType = hypervisorType;
         this.operationMode = operationMode;
         this.niceLevel = niceLevel;
         this.autosuspend = autosuspend;
@@ -406,14 +400,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         defaultBootSequence = value;
     }
 
-    public HypervisorType gethypervisor_type() {
-        return hypervisorType;
-    }
-
-    public void sethypervisor_type(HypervisorType value) {
-        hypervisorType = value;
-    }
-
     public OperationMode getoperation_mode() {
         return operationMode;
     }
@@ -538,7 +524,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + (fail_back ? 1231 : 1237);
-        result = prime * result + ((hypervisorType == null) ? 0 : hypervisorType.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((initrdUrl == null) ? 0 : initrdUrl.hashCode());
         result = prime * result + ((isoPath == null) ? 0 : isoPath.hashCode());
@@ -612,9 +597,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             return false;
         }
         if (fail_back != other.fail_back) {
-            return false;
-        }
-        if (hypervisorType != other.hypervisorType) {
             return false;
         }
         if (id == null) {

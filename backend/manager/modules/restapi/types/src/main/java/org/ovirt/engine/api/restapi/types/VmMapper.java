@@ -89,7 +89,6 @@ public class VmMapper {
         staticVm.setkernel_url(entity.getkernel_url());
         staticVm.setkernel_params(entity.getkernel_params());
         staticVm.setinitrd_url(entity.getinitrd_url());
-        staticVm.sethypervisor_type(entity.gethypervisor_type());
         staticVm.settime_zone(entity.gettime_zone());
         staticVm.setnum_of_monitors(entity.getnum_of_monitors());
         staticVm.setAllowConsoleReconnect(entity.getAllowConsoleReconnect());

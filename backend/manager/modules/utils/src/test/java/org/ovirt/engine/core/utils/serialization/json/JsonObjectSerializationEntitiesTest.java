@@ -12,9 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.HypervisorType;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -39,7 +37,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
  */
 @RunWith(Parameterized.class)
 public class JsonObjectSerializationEntitiesTest {
-    private BusinessEntity<?> entity;
+    private final BusinessEntity<?> entity;
 
     public JsonObjectSerializationEntitiesTest(BusinessEntity<?> entity) {
         this.entity = entity;
@@ -80,7 +78,6 @@ public class JsonObjectSerializationEntitiesTest {
                                 random.nextString(10),
                                 random.nextString(10),
                                 new Date(random.nextLong()),
-                                random.nextEnum(HypervisorType.class),
                                 random.nextInt(),
                                 random.nextInt(),
                                 random.nextBoolean()) },
@@ -150,6 +147,7 @@ public class JsonObjectSerializationEntitiesTest {
         /**
          * @return the id
          */
+        @Override
         public ID getId() {
             return id;
         }
@@ -158,6 +156,7 @@ public class JsonObjectSerializationEntitiesTest {
          * @param id
          *            the id to set
          */
+        @Override
         public void setId(ID id) {
             this.id = id;
         }

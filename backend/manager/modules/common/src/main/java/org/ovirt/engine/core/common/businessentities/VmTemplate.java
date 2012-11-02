@@ -95,7 +95,7 @@ public class VmTemplate extends VmBase {
     public VmTemplate(int child_count, Date creation_date, String description, int mem_size_mb, String name,
             int num_of_sockets, int cpu_per_socket, VmOsType os, Guid vds_group_id, Guid vmt_guid, String domain,
             int num_of_monitors, int status, int usb_policy, String time_zone, boolean is_auto_suspend, int nice_level,
-            boolean fail_back, BootSequence default_boot_sequence, VmType vm_type, HypervisorType hypervisor_type,
+            boolean fail_back, BootSequence default_boot_sequence, VmType vm_type,
             OperationMode operation_mode, boolean smartcardEnabled) {
         super(vmt_guid,
                 vds_group_id,
@@ -112,7 +112,6 @@ public class VmTemplate extends VmBase {
                 UsbPolicy.forValue(usb_policy),
                 fail_back,
                 default_boot_sequence,
-                hypervisor_type,
                 operation_mode,
                 nice_level,
                 is_auto_suspend,

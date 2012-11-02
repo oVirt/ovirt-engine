@@ -254,7 +254,6 @@ public final class Cloner
         obj.sethigh_utilization(instance.gethigh_utilization());
         obj.setlow_utilization(instance.getlow_utilization());
         obj.setcpu_over_commit_duration_minutes(instance.getcpu_over_commit_duration_minutes());
-        obj.sethypervisor_type(instance.gethypervisor_type());
         obj.setcompatibility_version(instance.getcompatibility_version());
         obj.setMigrateOnError(instance.getMigrateOnError());
         obj.setTransparentHugepages(instance.getTransparentHugepages());
@@ -354,7 +353,6 @@ public final class Cloner
         obj.setdescription(instance.getdescription());
         obj.setdomain(instance.getdomain());
         obj.setfail_back(instance.getfail_back());
-        obj.sethypervisor_type(instance.gethypervisor_type());
         obj.setis_auto_suspend(instance.getis_auto_suspend());
         obj.setis_stateless(instance.getis_stateless());
         obj.setmem_size_mb(instance.getmem_size_mb());

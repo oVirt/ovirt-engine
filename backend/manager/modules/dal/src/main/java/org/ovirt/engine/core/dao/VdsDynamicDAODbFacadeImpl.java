@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ovirt.engine.core.common.businessentities.HypervisorType;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -62,8 +61,6 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 entity.setcpu_flags(rs.getString("cpu_flags"));
                 entity.setcpu_over_commit_time_stamp(DbFacadeUtils.fromDate(rs
                         .getTimestamp("cpu_over_commit_time_stamp")));
-                entity.sethypervisor_type(HypervisorType.forValue(rs
-                        .getInt("hypervisor_type")));
                 entity.setpending_vcpus_count((Integer) rs
                         .getObject("pending_vcpus_count"));
                 entity.setpending_vmem_size(rs.getInt("pending_vmem_size"));
@@ -118,7 +115,6 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("cpu_flags", vds.getcpu_flags())
                 .addValue("cpu_over_commit_time_stamp",
                         vds.getcpu_over_commit_time_stamp())
-                .addValue("hypervisor_type", vds.gethypervisor_type())
                 .addValue("pending_vcpus_count", vds.getpending_vcpus_count())
                 .addValue("pending_vmem_size", vds.getpending_vmem_size())
                 .addValue("cpu_sockets", vds.getcpu_sockets())
@@ -167,7 +163,6 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("cpu_flags", vds.getcpu_flags())
                 .addValue("cpu_over_commit_time_stamp",
                         vds.getcpu_over_commit_time_stamp())
-                .addValue("hypervisor_type", vds.gethypervisor_type())
                 .addValue("pending_vcpus_count", vds.getpending_vcpus_count())
                 .addValue("pending_vmem_size", vds.getpending_vmem_size())
                 .addValue("cpu_sockets", vds.getcpu_sockets())
