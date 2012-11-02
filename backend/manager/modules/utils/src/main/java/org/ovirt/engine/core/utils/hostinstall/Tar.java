@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.hostinstall;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -91,6 +92,16 @@ public class Tar {
         OutputStream os,
         File base
     ) throws SecurityException, IOException {
+
+        if (!base.exists()) {
+            throw new FileNotFoundException(
+                String.format(
+                    "File or directory %1$s not found",
+                    base
+                )
+            );
+        }
+
         TarArchiveOutputStream archive = null;
         try {
             archive = new TarArchiveOutputStream(os);
