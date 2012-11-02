@@ -286,7 +286,7 @@ Setup and upgrade scripts for %{product_name_short}
 %package dbscripts
 Summary: Database scripts for %{product_name_short}
 Group: Virtualization/Management
-Requires: %{name}
+Requires: %{name} = %{version}-%{release}
 
 %description dbscripts
 Database scripts for %{product_name_short}
