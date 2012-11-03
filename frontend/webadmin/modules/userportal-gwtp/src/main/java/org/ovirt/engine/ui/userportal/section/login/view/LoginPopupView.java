@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.userportal.section.login.presenter.LoginPopupPresente
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -63,6 +64,18 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Path("domain.selectedItem")
     @WithElementId("domain")
     ListModelListBoxEditor<Object> domainEditor;
+
+    @UiField
+    @Ignore
+    Label userNameLabel;
+
+    @UiField
+    @Ignore
+    Label passwordLabel;
+
+    @UiField
+    @Ignore
+    Label domainLabel;
 
     @UiField
     @WithElementId
@@ -114,9 +127,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
     void localize(ApplicationConstants constants) {
         headerLabel.setText(constants.loginHeaderLabel());
-        userNameEditor.setLabel(constants.loginFormUserNameLabel());
-        passwordEditor.setLabel(constants.loginFormPasswordLabel());
-        domainEditor.setLabel(constants.loginFormDomainLabel());
+        userNameLabel.setText(constants.loginFormUserNameLabel());
+        passwordLabel.setText(constants.loginFormPasswordLabel());
+        domainLabel.setText(constants.loginFormDomainLabel());
         connectAutomatically.setLabel(constants.loginFormConnectAutomaticallyLabel());
         loginButton.setLabel(constants.loginButtonLabel());
     }

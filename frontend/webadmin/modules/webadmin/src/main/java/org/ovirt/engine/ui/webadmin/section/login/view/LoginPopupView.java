@@ -63,6 +63,18 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     ListModelListBoxEditor<Object> domainEditor;
 
     @UiField
+    @Ignore
+    Label userNameLabel;
+
+    @UiField
+    @Ignore
+    Label passwordLabel;
+
+    @UiField
+    @Ignore
+    Label domainLabel;
+
+    @UiField
     @WithElementId
     UiCommandButton loginButton;
 
@@ -114,9 +126,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
     private void localize(ApplicationConstants constants) {
         headerLabel.setText(constants.loginHeaderLabel());
-        userNameEditor.setLabel(constants.loginFormUserNameLabel());
-        passwordEditor.setLabel(constants.loginFormPasswordLabel());
-        domainEditor.setLabel(constants.loginFormDomainLabel());
+        userNameLabel.setText(constants.loginFormUserNameLabel());
+        passwordLabel.setText(constants.loginFormPasswordLabel());
+        domainLabel.setText(constants.loginFormDomainLabel());
         loginButton.setLabel(constants.loginButtonLabel());
     }
 

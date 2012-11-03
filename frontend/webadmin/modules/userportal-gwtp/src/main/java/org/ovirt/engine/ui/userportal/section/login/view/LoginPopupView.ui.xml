@@ -11,26 +11,23 @@
 			padding-top: 40px;
 			background-color: #FFFFFF;
 			height: 100%;
-			text-align: center;
 		}
 
 		.loginFormTable {
-			width: 88%;
 			margin: auto;
 		}
 
-		.formTextBox {
+		.formWidget {
 			color: #333333;
-			font-size: 11px;
+			font-size: 13px;
+			padding: 0 5px;
+			font-family: Verdana,sans-serif;
+			line-height: 30px;
+			text-align: left;
 		}
 
 		.localizationLabel {
 			font-size: 11px;
-		}
-
-		.formRow {
-			height: 40px;
-			color: #333333;
 		}
 
 		.errorMessagePanel {
@@ -47,7 +44,7 @@
 		}
 
 		.buttonBar {
-			padding-top: 10px;
+			padding-bottom: 10px;
 		}
 
 		.button {
@@ -126,28 +123,25 @@
 		<d:content>
 			<g:HTMLPanel addStyleNames="{style.loginForm}">
 				<table class="{style.loginFormTable}">
-					<tr class="formRow">
-						<td class="{style.formTextBox}">
-							<e:EntityModelTextBoxEditor ui:field="userNameEditor" />
+					<tr>
+                        <td>
+						     <g:Label ui:field="userNameLabel" addStyleNames="{style.formWidget}" />
+						     <g:Label ui:field="passwordLabel" addStyleNames="{style.formWidget}" />
+						     <g:Label ui:field="domainLabel" addStyleNames="{style.formWidget}" />
 						</td>
-					</tr>
-					<tr class="formRow">
-						<td class="{style.formTextBox}">
-							<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" />
-						</td>
-					</tr>
-					<tr class="formRow">
-						<td class="{style.formTextBox}">
-							<e:ListModelListBoxEditor ui:field="domainEditor" />
-						</td>
-					</tr>
-					<tr class="formRow">
 						<td>
+							<e:EntityModelTextBoxEditor ui:field="userNameEditor" addStyleNames="{style.formWidget}" />
+							<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.formWidget}" />
+							<e:ListModelListBoxEditor ui:field="domainEditor" addStyleNames="{style.formWidget}" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
 							<e:EntityModelCheckBoxEditor ui:field="connectAutomatically" />
 						</td>
 					</tr>
-					<tr class="formRow">
-						<td height="20">
+					<tr>
+						<td height="20" colspan="2">
 							<g:HTMLPanel addStyleNames="{style.buttonBar}">
 								<w:UiCommandButton ui:field="loginButton" addStyleNames="{style.button}" />
 								<div style="clear: both;" />
