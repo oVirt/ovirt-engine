@@ -57,15 +57,14 @@
 
 				<g:Label ui:field="bricksHeader" addStyleNames="{style.headerLabel}"/>
 
-				<g:HorizontalPanel>
+				<g:HorizontalPanel verticalAlignment="ALIGN_BOTTOM">
 					<g:VerticalPanel>
 						<e:ListModelListBoxEditor ui:field="serverEditor"/>
 						<e:EntityModelTextBoxEditor ui:field="exportDirEditor" />
 					</g:VerticalPanel>
-					<g:VerticalPanel spacing="5">
+					<g:HorizontalPanel spacing="5">
 						<w:UiCommandButton ui:field="addBrickButton" addStyleNames="{style.brickButton}"/>
-						<w:UiCommandButton ui:field="clearButton" addStyleNames="{style.brickButton}"/>
-					</g:VerticalPanel>
+					</g:HorizontalPanel>
 				</g:HorizontalPanel>
 
 				<g:HorizontalPanel spacing="5" verticalAlignment="ALIGN_MIDDLE">

@@ -32,7 +32,6 @@ public class VolumeBrickModel extends Model {
     ListModel bricks;
 
     private UICommand addBrickCommand;
-    private UICommand clearBrickDetailsCommand;
     private UICommand removeBricksCommand;
     private UICommand removeAllBricksCommand;
 
@@ -57,7 +56,6 @@ public class VolumeBrickModel extends Model {
         setBricks(new ListModel());
 
         setAddBrickCommand(new UICommand("AddBrick", this)); //$NON-NLS-1$
-        setClearBrickDetailsCommand(new UICommand("ClearBrickDetails", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("RemoveBricks", this)); //$NON-NLS-1$
         setRemoveAllBricksCommand(new UICommand("RemoveAllBricks", this)); //$NON-NLS-1$
         // getAddBrickCommand().setIsExecutionAllowed(false);
@@ -155,16 +153,6 @@ public class VolumeBrickModel extends Model {
     private void setRemoveBricksCommand(UICommand value)
     {
         removeBricksCommand = value;
-    }
-
-    public UICommand getClearBrickDetailsCommand()
-    {
-        return clearBrickDetailsCommand;
-    }
-
-    private void setClearBrickDetailsCommand(UICommand value)
-    {
-        clearBrickDetailsCommand = value;
     }
 
     public UICommand getRemoveAllBricksCommand()
@@ -601,10 +589,6 @@ public class VolumeBrickModel extends Model {
         if (command == getAddBrickCommand())
         {
             addBrick();
-        }
-        else if (command == getClearBrickDetailsCommand())
-        {
-            clearBrickDetails();
         }
         else if (command == getRemoveBricksCommand())
         {

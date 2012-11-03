@@ -80,10 +80,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     UiCommandButton addBrickButton;
 
     @UiField
-    @WithElementId
-    UiCommandButton clearButton;
-
-    @UiField
     @Ignore
     @WithElementId
     Label bricksHeader;
@@ -173,15 +169,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
             }
         });
 
-        clearButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                clearButton.getCommand().Execute();
-                clearSelections();
-            }
-        });
-
 
         removeBricksButton.addClickHandler(new ClickHandler() {
 
@@ -235,7 +222,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         serverEditor.setLabel(constants.serverBricks());
         exportDirEditor.setLabel(constants.brickDirectoryBricks());
         addBrickButton.setLabel(constants.addBricksButtonLabel());
-        clearButton.setLabel(constants.clearBricksButtonLabel());
         removeBricksButton.setLabel(constants.removeBricksButtonLabel());
         removeAllBricksButton.setLabel(constants.removeAllBricksButtonLabel());
         moveBricksUpButton.setLabel(constants.moveBricksUpButtonLabel());
@@ -248,7 +234,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         Driver.driver.edit(object);
 
         addBrickButton.setCommand(object.getAddBrickCommand());
-        clearButton.setCommand(object.getClearBrickDetailsCommand());
         removeBricksButton.setCommand(object.getRemoveBricksCommand());
         removeAllBricksButton.setCommand(object.getRemoveAllBricksCommand());
 
