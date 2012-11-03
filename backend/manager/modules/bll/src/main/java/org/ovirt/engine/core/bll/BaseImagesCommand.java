@@ -165,11 +165,11 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             Guid storagePoolId = diskImage.getStoragePoolId() != null ? diskImage.getStoragePoolId().getValue()
                     : Guid.Empty;
             Guid storageDomainId =
-                    getStorageDomainId() != null && !getStorageDomainId().getValue().equals(Guid.Empty) ? getStorageDomainId()
-                            .getValue()
-                            : diskImage.getStorageIds() != null && diskImage.getStorageIds().size() > 0 ? diskImage.getStorageIds()
-                                    .get(0)
-                                    : Guid.Empty;
+                    getStorageDomainId() != null && !getStorageDomainId().getValue().equals(Guid.Empty)
+                            ? getStorageDomainId().getValue()
+                            : (diskImage.getStorageIds() != null && diskImage.getStorageIds().size() > 0
+                                    ? diskImage.getStorageIds().get(0)
+                                    : Guid.Empty);
             Guid imageGroupId = diskImage.getId() != null ? diskImage.getId().getValue()
                     : Guid.Empty;
 
