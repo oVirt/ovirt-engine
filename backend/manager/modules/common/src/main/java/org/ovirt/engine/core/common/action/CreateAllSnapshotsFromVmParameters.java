@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.NotEmpty;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -12,6 +15,8 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     @NotEmpty(groups = { CreateEntity.class },
             message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_EMPTY")
     @ValidDescription(message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_ASCII", groups = { CreateEntity.class})
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = { CreateEntity.class},
+            message = "VALIDATION_DISK_IMAGE_DESCRIPTION_MAX")
     private String _description;
 
     private boolean needsLocking = true;

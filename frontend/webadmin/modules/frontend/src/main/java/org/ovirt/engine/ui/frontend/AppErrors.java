@@ -1534,6 +1534,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Snapshot description cannot be empty")
     String VALIDATION_DISK_IMAGE_DESCRIPTION_NOT_EMPTY();
 
+    @DefaultStringValue("Snapshot description must not exceed 4000 characters")
+    String VALIDATION_DISK_IMAGE_DESCRIPTION_MAX();
+
     @DefaultStringValue("MAC Address must be in the following format: XX:XX:XX:XX:XX:XX, (XX=0-9 or A-F)")
     String VALIDATION_VMINTERFACE_MACADDRESS();
 

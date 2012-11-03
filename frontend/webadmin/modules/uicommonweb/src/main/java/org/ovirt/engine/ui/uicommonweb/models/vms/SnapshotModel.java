@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -15,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
@@ -145,7 +147,7 @@ public class SnapshotModel extends EntityModel
 
     public boolean Validate()
     {
-        getDescription().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiOrNoneValidation()});
+        getDescription().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiOrNoneValidation(), new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)});
 
         return getDescription().getIsValid();
     }
