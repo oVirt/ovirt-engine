@@ -10,6 +10,8 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DisksResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -48,15 +50,21 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     }
 
     protected void validateDiskForCreation(Disk disk) {
-        validateParameters(disk, "format", "interface");
+        validateParameters(disk, 3, "format", "interface");
         if (DiskResourceUtils.isLunDisk(disk)) {
-            validateParameters(disk.getLunStorage(), "type"); // when creating a LUN disk, user must specify type.
+            validateParameters(disk.getLunStorage(), 3, "type"); // when creating a LUN disk, user must specify type.
             StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
-            if (storageType!=null && storageType==StorageType.ISCSI) {
-                    validateParameters(disk.getLunStorage().getLogicalUnits().get(0), "address", "target", "port");
+            if (storageType != null && storageType == StorageType.ISCSI) {
+                validateParameters(disk.getLunStorage().getLogicalUnits().get(0), 3, "address", "target", "port", "id");
             }
+        } else if (disk.isSetLunStorage() && disk.getLunStorage().getLogicalUnits().isEmpty()) {
+            // TODO: Implement nested entity existence validation infra for validateParameters()
+            throw new WebFaultException(null,
+                                        localize(Messages.INCOMPLETE_PARAMS_REASON),
+                                        localize(Messages.INCOMPLETE_PARAMS_DETAIL_TEMPLATE, "LogicalUnit", "", "add"),
+                                        Response.Status.BAD_REQUEST);
         } else {
-            validateParameters(disk, "provisionedSize|size"); // Non lun disks require size
+            validateParameters(disk, 3, "provisionedSize|size"); // Non lun disks require size
         }
         validateEnums(Disk.class, disk);
     }

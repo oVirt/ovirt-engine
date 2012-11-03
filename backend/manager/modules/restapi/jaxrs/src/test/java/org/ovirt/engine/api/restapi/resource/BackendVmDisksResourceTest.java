@@ -343,7 +343,8 @@ public class BackendVmDisksResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Disk", "validateDiskForCreation", "format", "interface");
+            // Because of extra frame offset used current method name in test, while in real world used "add" method name
+            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters", "format", "interface");
         }
     }
 
@@ -356,7 +357,8 @@ public class BackendVmDisksResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Disk", "validateDiskForCreation", "provisionedSize|size");
+            // Because of extra frame offset used current method name in test, while in real world used "add" method name
+            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters_2", "provisionedSize|size");
         }
     }
 
@@ -370,7 +372,23 @@ public class BackendVmDisksResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Storage", "validateDiskForCreation", "type");
+            // Because of extra frame offset used current method name in test, while in real world used "add" method name
+            verifyIncompleteException(wae, "Storage", "testAddLunDisk_MissingType", "type");
+        }
+    }
+
+    @Test
+    public void testAddLunDisk_MissingId() {
+        Disk model = createIscsiLunDisk();
+        model.getLunStorage().getLogicalUnits().get(0).setId(null);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            // Because of extra frame offset used current method name in test, while in real world used "add" method name
+            verifyIncompleteException(wae, "LogicalUnit", "testAddLunDisk_MissingId", "id");
         }
     }
 
@@ -384,7 +402,8 @@ public class BackendVmDisksResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "LogicalUnit", "validateDiskForCreation", "address");
+            // Because of extra frame offset used current method name in test, while in real world used "add" method name
+            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDisk_IncompleteParameters_ConnectionAddress", "address");
         }
     }
 
@@ -398,7 +417,8 @@ public class BackendVmDisksResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "LogicalUnit", "validateDiskForCreation", "target");
+            // Because of extra frame offset used current method name in test, while in real world used "add" method name
+            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDisk_IncompleteParameters_ConnectionTarget", "target");
         }
     }
 
@@ -412,7 +432,8 @@ public class BackendVmDisksResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "LogicalUnit", "validateDiskForCreation", "port");
+            // Because of extra frame offset used current method name in test, while in real world used "add" method name
+            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDisk_IncompleteParameters_ConnectionPort", "port");
         }
     }
 
@@ -421,6 +442,7 @@ public class BackendVmDisksResourceTest
         model.setLunStorage(new Storage());
         model.getLunStorage().setType("iscsi");
         model.getLunStorage().getLogicalUnits().add(new LogicalUnit());
+        model.getLunStorage().getLogicalUnits().get(0).setId(GUIDS[0].toString());
         model.getLunStorage().getLogicalUnits().get(0).setAddress(ISCSI_SERVER_ADDRESS);
         model.getLunStorage().getLogicalUnits().get(0).setTarget(ISCSI_SERVER_TARGET);
         model.getLunStorage().getLogicalUnits().get(0).setPort(ISCSI_SERVER_CONNECTION_PORT);
