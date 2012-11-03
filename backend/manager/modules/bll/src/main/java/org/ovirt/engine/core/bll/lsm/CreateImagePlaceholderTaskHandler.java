@@ -5,10 +5,12 @@ import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.TargetDomainImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandler<TaskHandlerCommand<? extends LiveMigrateDiskParameters>> {
 
@@ -57,19 +59,25 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
 
     @Override
     protected VDSCommandType getRevertVDSCommandType() {
-        // VDSM handles the failed cloneImageGroupStructure, so no action required here.
-        return null;
+        return VDSCommandType.DeleteImageGroup;
     }
 
     @Override
     public AsyncTaskType getRevertTaskType() {
-        // VDSM handles the failed cloneImageGroupStructure, so no action required here.
-        return null;
+        return AsyncTaskType.deleteImage;
     }
 
     @Override
     protected VDSParametersBase getRevertVDSParameters() {
-        // VDSM handles the failed cloneImageGroupStructure, so no action required here.
-        return null;
+        return new DeleteImageGroupVDSCommandParameters(
+                getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
+                getEnclosingCommand().getParameters().getTargetStorageDomainId(),
+                getEnclosingCommand().getParameters().getImageGroupID(),
+                DbFacade.getInstance()
+                        .getDiskImageDao()
+                        .get(getEnclosingCommand().getParameters().getDestinationImageId())
+                        .isWipeAfterDelete(),
+                getEnclosingCommand().getParameters().getForceDelete(),
+                null);
     }
 }

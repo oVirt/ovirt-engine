@@ -34,6 +34,12 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     public LiveMigrateDiskCommand(T parameters) {
         super(parameters);
 
+        if (VMStatus.Up != getVm().getstatus()) {
+            log.infoFormat("Rollback LiveMigrateDiskCommand - VM {0} is not UP", getVm().getvm_name());
+            handleVmNotUp();
+            return;
+        }
+
         setVdsId(getVm().getrun_on_vds().getValue());
         getParameters().setVdsId(getVdsId());
 
@@ -103,7 +109,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         return exclusiveLockMap;
     }
 
-
     @Override
     public VM getVm() {
         VM vm = super.getVm();
@@ -133,5 +138,13 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Override
     public VdcActionType getActionType() {
         return super.getActionType();
+    }
+
+    protected void handleVmNotUp() {
+        if (isEndSuccessfully()) {
+            getParameters().incrementExecutionIndex();
+        }
+        getParameters().setTaskGroupSuccess(false);
+        setSucceeded(true);
     }
 }

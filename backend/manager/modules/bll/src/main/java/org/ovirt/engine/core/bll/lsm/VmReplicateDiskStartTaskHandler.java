@@ -5,13 +5,11 @@ import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SyncImageGroupDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VmReplicateDiskParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler<TaskHandlerCommand<? extends LiveMigrateDiskParameters>> {
@@ -72,26 +70,20 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
 
     @Override
     protected VDSCommandType getRevertVDSCommandType() {
-        return VDSCommandType.DeleteImageGroup;
+        // VDSM handles the failure, so no action required here.
+        return null;
     }
 
     @Override
     public AsyncTaskType getRevertTaskType() {
-        return AsyncTaskType.deleteImage;
+        // VDSM handles the failure, so no action required here.
+        return null;
     }
 
     @Override
     protected VDSParametersBase getRevertVDSParameters() {
-        return new DeleteImageGroupVDSCommandParameters(
-                getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
-                getEnclosingCommand().getParameters().getTargetStorageDomainId(),
-                getEnclosingCommand().getParameters().getImageGroupID(),
-                DbFacade.getInstance()
-                        .getDiskImageDao()
-                        .get(getEnclosingCommand().getParameters().getDestinationImageId())
-                        .isWipeAfterDelete(),
-                getEnclosingCommand().getParameters().getForceDelete(),
-                null);
+        // VDSM handles the failure, so no action required here.
+        return null;
     }
 
     @Override

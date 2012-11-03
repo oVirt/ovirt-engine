@@ -73,6 +73,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
     public void compensate() {
         // Unlock the image we left locked
         ImagesHandler.updateImageStatus(enclosingCommand.getParameters().getImageId(), ImageStatus.OK);
+        ImagesHandler.updateImageStatus(enclosingCommand.getParameters().getDestinationImageId(), ImageStatus.OK);
     }
 
     @Override
