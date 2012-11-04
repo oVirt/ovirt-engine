@@ -189,4 +189,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Vnic {0} from Template {1}")
     String vnicFromTemplate(String vnic, String template);
+
+    @DefaultMessage("Non-VM networks are not supported for Cluster version {0}")
+    String bridlessNetworkNotSupported(String version);
+
+    @DefaultMessage("Overriding MTU configuration is not supported for Cluster version {0}")
+    String mtuOverrideNotSupported(String version);
 }

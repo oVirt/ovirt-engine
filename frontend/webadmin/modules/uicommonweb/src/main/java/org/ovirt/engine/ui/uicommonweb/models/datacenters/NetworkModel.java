@@ -233,6 +233,9 @@ public abstract class NetworkModel extends Model
         this.isSupportBridgesReportByVDSM = isSupportBridgesReportByVDSM;
         if (!isSupportBridgesReportByVDSM) {
             getIsVmNetwork().setEntity(true);
+            getIsVmNetwork().getChangeProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .bridlessNetworkNotSupported(getSelectedDc().getcompatibility_version().toString()));
             getIsVmNetwork().setIsChangable(false);
         }else{
             getIsVmNetwork().setIsChangable(true);
@@ -248,6 +251,9 @@ public abstract class NetworkModel extends Model
     public void setMTUOverrideSupported(boolean mtuOverrideSupported) {
         this.mtuOverrideSupported = mtuOverrideSupported;
         if (!mtuOverrideSupported) {
+            getHasMtu().getChangeProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .mtuOverrideNotSupported(getSelectedDc().getcompatibility_version().toString()));
             getHasMtu().setIsChangable(false);
             getMtu().setIsChangable(false);
             getHasMtu().setEntity(false);
