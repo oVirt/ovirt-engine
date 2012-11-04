@@ -66,7 +66,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
 
         getTable().ensureColumnPresent(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(),
                 advancedViewEnabled,
-                "60px"); //$NON-NLS-1$
+                "80px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.userColumn, constants.userEvent(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
