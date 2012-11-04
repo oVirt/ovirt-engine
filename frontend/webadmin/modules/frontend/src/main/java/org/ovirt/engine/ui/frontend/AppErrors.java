@@ -1945,11 +1945,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type} to a Snapshot that is not being previewed. Please select the correct Snapshot to restore to: Either the one being previewed, or the one before the preview.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW();
 
-    @DefaultStringValue("Cannot ${action} a floating ${type}. This opperation is not supported.")
+    @DefaultStringValue("Cannot ${action} a floating ${type}. This operation is not supported.")
     String ACTION_TYPE_FAILED_FLOATING_DISK_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} a shared ${type}. This opperation is not supported.")
-    String ACTION_TYPE_FAILED_SHARED_DISK_NOT_SUPPORTED();
+    @DefaultStringValue("Cannot ${action} a shareable ${type}. This operation is not supported.")
+    String ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The specified disk does not exist.")
     String ACTION_TYPE_FAILED_DISK_NOT_EXIST();

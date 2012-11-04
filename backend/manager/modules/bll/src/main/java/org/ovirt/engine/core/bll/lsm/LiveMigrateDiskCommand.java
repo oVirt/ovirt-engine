@@ -72,14 +72,13 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
 
-        List<VM> vmsForDisk = getVmDAO().getForDisk(getImageGroupId()).get(Boolean.TRUE);
-
-        if (vmsForDisk.size() == 0) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_FLOATING_DISK_NOT_SUPPORTED);
+        if (getDiskImage().isShareable()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED);
         }
 
-        if (vmsForDisk.size() > 1) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SHARED_DISK_NOT_SUPPORTED);
+        List<VM> vmsForDisk = getVmDAO().getForDisk(getImageGroupId()).get(Boolean.TRUE);
+        if (vmsForDisk.size() == 0) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_FLOATING_DISK_NOT_SUPPORTED);
         }
 
         // Cache for future use
