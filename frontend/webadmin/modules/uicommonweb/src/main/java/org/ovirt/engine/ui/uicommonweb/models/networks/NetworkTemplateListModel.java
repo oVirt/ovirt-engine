@@ -73,19 +73,22 @@ public class NetworkTemplateListModel extends SearchableListModel
 
     @Override
     public void setItems(Iterable value) {
-        if (value != null){
-            List<PairQueryable<VmNetworkInterface, VmTemplate>> itemList = (List<PairQueryable<VmNetworkInterface, VmTemplate>>) value;
+        if (value != null) {
+            List<PairQueryable<VmNetworkInterface, VmTemplate>> itemList =
+                    (List<PairQueryable<VmNetworkInterface, VmTemplate>>) value;
             Collections.sort(itemList, new Comparator<PairQueryable<VmNetworkInterface, VmTemplate>>() {
 
                 @Override
-                public int compare(PairQueryable<VmNetworkInterface, VmTemplate> paramT1, PairQueryable<VmNetworkInterface, VmTemplate> paramT2) {
-                   int compareValue = paramT1.getSecond().getvds_group_name().compareTo(paramT2.getSecond().getvds_group_name());
+                public int compare(PairQueryable<VmNetworkInterface, VmTemplate> paramT1,
+                        PairQueryable<VmNetworkInterface, VmTemplate> paramT2) {
+                    int compareValue =
+                            paramT1.getSecond().getvds_group_name().compareTo(paramT2.getSecond().getvds_group_name());
 
-                   if (compareValue!= 0){
-                       return compareValue;
-                   }
+                    if (compareValue != 0) {
+                        return compareValue;
+                    }
 
-                  return paramT1.getSecond().getname().compareTo(paramT2.getSecond().getname());
+                    return paramT1.getSecond().getname().compareTo(paramT2.getSecond().getname());
                 }
             });
         }
@@ -109,9 +112,9 @@ public class NetworkTemplateListModel extends SearchableListModel
             return;
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(this);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
@@ -122,9 +125,8 @@ public class NetworkTemplateListModel extends SearchableListModel
         NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
 
-         Frontend.RunQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, networkIdParams, _asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);
     }
-
 
     @Override
     protected void AsyncSearch()
@@ -137,7 +139,6 @@ public class NetworkTemplateListModel extends SearchableListModel
     {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && !getSelectedItems().isEmpty());
     }
-
 
     @Override
     protected void OnSelectedItemChanged()
@@ -187,4 +188,3 @@ public class NetworkTemplateListModel extends SearchableListModel
         return "NetworkTemplateListModel"; //$NON-NLS-1$
     }
 }
-

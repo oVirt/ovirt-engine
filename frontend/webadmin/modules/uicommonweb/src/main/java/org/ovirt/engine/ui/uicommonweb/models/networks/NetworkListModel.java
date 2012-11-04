@@ -35,46 +35,16 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
-    private static String ENGINE_NETWORK = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+    private static String ENGINE_NETWORK =
+            (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
-    private UICommand privateNewCommand;
+    private UICommand newCommand;
+    private UICommand editCommand;
+    private UICommand removeCommand;
 
-    public UICommand getNewCommand()
-    {
-        return privateNewCommand;
-    }
+    private SystemTreeItemModel systemTreeSelectedItem;
 
-    private void setNewCommand(UICommand value)
-    {
-        privateNewCommand = value;
-    }
-
-    private UICommand privateEditCommand;
-
-    public UICommand getEditCommand()
-    {
-        return privateEditCommand;
-    }
-
-    private void setEditCommand(UICommand value)
-    {
-        privateEditCommand = value;
-    }
-
-    private UICommand privateRemoveCommand;
-
-    public UICommand getRemoveCommand()
-    {
-        return privateRemoveCommand;
-    }
-
-    private void setRemoveCommand(UICommand value)
-    {
-        privateRemoveCommand = value;
-    }
-
-    public NetworkListModel()
-    {
+    public NetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
         setHashName("networks"); //$NON-NLS-1$
 
@@ -92,30 +62,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    @Override
-    public void setItems(Iterable value) {
-
-        if (value != null){
-            List<NetworkView> networksList = (List<NetworkView>) value;
-            Collections.sort(networksList, new Comparator<NetworkView>() {
-
-                @Override
-                public int compare(NetworkView paramT1, NetworkView paramT2) {
-                   int compareValue = paramT1.getStoragePoolName().compareTo(paramT2.getStoragePoolName());
-
-                   if (compareValue!= 0){
-                       return compareValue;
-                   }
-
-                  return paramT1.getNetwork().getName().compareTo(paramT2.getNetwork().getName());
-                }
-            });
-        }
-        super.setItems(value);
-    }
-
-    public void newNetwork()
-    {
+    public void newNetwork() {
         if (getWindow() != null)
         {
             return;
@@ -127,8 +74,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         initDcList(networkModel);
     }
 
-    public void edit()
-    {
+    public void edit() {
         final NetworkView networkView = (NetworkView) getSelectedItem();
 
         if (getWindow() != null)
@@ -143,17 +89,12 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     }
 
-
-    public void apply()
-    {
+    public void apply() {
         EditNetworkModel model = (EditNetworkModel) getWindow();
         model.apply();
     }
 
-    boolean firstFinished;
-
-    public void remove()
-    {
+    public void remove() {
         if (getConfirmWindow() != null)
         {
             return;
@@ -163,7 +104,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         setConfirmWindow(model);
     }
 
-    private void initDcList(final NetworkModel networkModel){
+    private void initDcList(final NetworkModel networkModel) {
         // Get all data centers
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
 
@@ -173,10 +114,11 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
                 ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
                 networkModel.getDataCenters().setItems(dataCenters);
 
-                if (networkModel instanceof EditNetworkModel){
-                    storage_pool currentDc = findDc(networkModel.getNetwork().getstorage_pool_id().getValue(), dataCenters);
+                if (networkModel instanceof EditNetworkModel) {
+                    storage_pool currentDc =
+                            findDc(networkModel.getNetwork().getstorage_pool_id().getValue(), dataCenters);
                     networkModel.getDataCenters().setSelectedItem(currentDc);
-                }else{
+                } else {
                     networkModel.getDataCenters().setSelectedItem(Linq.FirstOrDefault(dataCenters));
                 }
 
@@ -184,9 +126,9 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         }));
     }
 
-    private storage_pool findDc(Guid dcId, List<storage_pool> dataCenters){
-        for (storage_pool dc : dataCenters){
-            if (dcId.equals(dc.getId())){
+    private storage_pool findDc(Guid dcId, List<storage_pool> dataCenters) {
+        for (storage_pool dc : dataCenters) {
+            if (dcId.equals(dc.getId())) {
                 return dc;
             }
         }
@@ -194,8 +136,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    protected void InitDetailModels()
-    {
+    protected void InitDetailModels() {
         super.InitDetailModels();
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
@@ -211,47 +152,38 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
-    {
+    public boolean IsSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("network"); //$NON-NLS-1$
     }
 
     @Override
-    protected void SyncSearch()
-    {
+    protected void SyncSearch() {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Network);
         tempVar.setMaxCount(getSearchPageSize());
         super.SyncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override
-    protected void AsyncSearch()
-    {
+    protected void AsyncSearch() {
         super.AsyncSearch();
 
         setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.Network, getSearchPageSize()));
         setItems(getAsyncResult().getData());
     }
 
-
     @Override
-    protected void OnSelectedItemChanged()
-    {
+    protected void OnSelectedItemChanged() {
         super.OnSelectedItemChanged();
         UpdateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged()
-    {
+    protected void SelectedItemsChanged() {
         super.SelectedItemsChanged();
         UpdateActionAvailability();
     }
 
-
-
-    private void UpdateActionAvailability()
-    {
+    private void UpdateActionAvailability() {
         List tempVar = getSelectedItems();
         ArrayList selectedItems =
                 (ArrayList) ((tempVar != null) ? tempVar : new ArrayList());
@@ -272,8 +204,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
-    {
+    public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
 
         if (command == getNewCommand())
@@ -295,17 +226,13 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         }
     }
 
-    private SystemTreeItemModel systemTreeSelectedItem;
-
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
     @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
         if (systemTreeSelectedItem != value)
         {
             systemTreeSelectedItem = value;
@@ -313,14 +240,33 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         }
     }
 
-    private void OnSystemTreeSelectedItemChanged()
-    {
+    private void OnSystemTreeSelectedItemChanged() {
         UpdateActionAvailability();
     }
 
     @Override
-    public NetworkView getEntity()
-    {
+    public void setItems(Iterable value) {
+        if (value != null) {
+            List<NetworkView> networksList = (List<NetworkView>) value;
+            Collections.sort(networksList, new Comparator<NetworkView>() {
+
+                @Override
+                public int compare(NetworkView paramT1, NetworkView paramT2) {
+                    int compareValue = paramT1.getStoragePoolName().compareTo(paramT2.getStoragePoolName());
+
+                    if (compareValue != 0) {
+                        return compareValue;
+                    }
+
+                    return paramT1.getNetwork().getName().compareTo(paramT2.getNetwork().getName());
+                }
+            });
+        }
+        super.setItems(value);
+    }
+
+    @Override
+    public NetworkView getEntity() {
         return (NetworkView) super.getEntity();
     }
 
@@ -329,4 +275,27 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         return "NetworkListModel"; //$NON-NLS-1$
     }
 
+    public UICommand getNewCommand() {
+        return newCommand;
+    }
+
+    private void setNewCommand(UICommand value) {
+        newCommand = value;
+    }
+
+    public UICommand getEditCommand() {
+        return editCommand;
+    }
+
+    private void setEditCommand(UICommand value) {
+        editCommand = value;
+    }
+
+    public UICommand getRemoveCommand() {
+        return removeCommand;
+    }
+
+    private void setRemoveCommand(UICommand value) {
+        removeCommand = value;
+    }
 }

@@ -33,23 +33,21 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 @SuppressWarnings("unused")
 public class NetworkClusterListModel extends SearchableListModel
 {
+    private UICommand manageCommand;
+
+    private final Comparator<ClusterNetworkModel> manageModelComparator =
+            new Comparator<ClusterNetworkModel>() {
+                @Override
+                public int compare(ClusterNetworkModel o1, ClusterNetworkModel o2) {
+                    return o1.getCluster().getname().compareTo(o2.getCluster().getname());
+                }
+            };
+
     public NetworkClusterListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
         setHashName("clusters"); //$NON-NLS-1$
 
         setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
-    }
-
-    private UICommand privateManageCommand;
-
-    public UICommand getManageCommand()
-    {
-        return privateManageCommand;
-    }
-
-    private void setManageCommand(UICommand value)
-    {
-        privateManageCommand = value;
     }
 
     public void Manage()
@@ -65,24 +63,17 @@ public class NetworkClusterListModel extends SearchableListModel
         manageModel.setHashName("assign_network"); //$NON-NLS-1$
     }
 
-    private final Comparator<ClusterNetworkModel> manageModelComparator =
-            new Comparator<ClusterNetworkModel>() {
-                @Override
-                public int compare(ClusterNetworkModel o1, ClusterNetworkModel o2) {
-                    return o1.getCluster().getname().compareTo(o2.getCluster().getname());
-                }
-            };
-
     private ClusterNetworkManageModel createManageList() {
         List<ClusterNetworkModel> networkManageModelList = new ArrayList<ClusterNetworkModel>();
-        List<PairQueryable<VDSGroup, network_cluster>> items = (List<PairQueryable<VDSGroup, network_cluster>>) getItems();
+        List<PairQueryable<VDSGroup, network_cluster>> items =
+                (List<PairQueryable<VDSGroup, network_cluster>>) getItems();
 
         for (PairQueryable<VDSGroup, network_cluster> item : items) {
             Network network = (Network) Cloner.clone(getEntity().getNetwork());
-            if (item.getSecond() != null){
+            if (item.getSecond() != null) {
                 network.setCluster((network_cluster) Cloner.clone(item.getSecond()));
             }
-            ClusterNetworkModel networkManageModel = new ClusterNetworkModel(network){
+            ClusterNetworkModel networkManageModel = new ClusterNetworkModel(network) {
                 @Override
                 public String getDisplayedName() {
                     return getCluster().getname();
@@ -95,7 +86,7 @@ public class NetworkClusterListModel extends SearchableListModel
 
         Collections.sort(networkManageModelList, manageModelComparator);
 
-        ClusterNetworkManageModel listModel = new ClusterNetworkManageModel(){
+        ClusterNetworkManageModel listModel = new ClusterNetworkManageModel() {
             @Override
             public boolean isMultiDisplay() {
                 return true;
@@ -176,7 +167,7 @@ public class NetworkClusterListModel extends SearchableListModel
 
             private void doFinish() {
                 windowModel.StopProgress();
-                Cancel();
+                cancel();
                 ForceRefresh();
             }
         };
@@ -186,41 +177,37 @@ public class NetworkClusterListModel extends SearchableListModel
     }
 
     private PairQueryable<VDSGroup, network_cluster> getItem(String clusterName) {
-        List<PairQueryable<VDSGroup, network_cluster>> items = (List<PairQueryable<VDSGroup, network_cluster>>) getItems();
-        for (PairQueryable<VDSGroup, network_cluster> item : items){
-            if (item.getFirst().getname().equals(clusterName)){
+        List<PairQueryable<VDSGroup, network_cluster>> items =
+                (List<PairQueryable<VDSGroup, network_cluster>>) getItems();
+        for (PairQueryable<VDSGroup, network_cluster> item : items) {
+            if (item.getFirst().getname().equals(clusterName)) {
                 return item;
             }
         }
         return null;
     }
 
-    public void Cancel()
-    {
+    public void cancel() {
         setWindow(null);
     }
 
     @Override
-    public NetworkView getEntity()
-    {
+    public NetworkView getEntity() {
         return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
     }
 
-    public void setEntity(NetworkView value)
-    {
+    public void setEntity(NetworkView value) {
         super.setEntity(value);
     }
 
     @Override
-    protected void OnEntityChanged()
-    {
+    protected void OnEntityChanged() {
         super.OnEntityChanged();
         getSearchCommand().Execute();
     }
 
     @Override
-    public void Search()
-    {
+    public void Search() {
         if (getEntity() != null)
         {
             super.Search();
@@ -234,9 +221,9 @@ public class NetworkClusterListModel extends SearchableListModel
             return;
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(this);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
@@ -246,12 +233,11 @@ public class NetworkClusterListModel extends SearchableListModel
 
         NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, networkIdParams, _asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, networkIdParams, asyncQuery);
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.EntityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
@@ -261,8 +247,7 @@ public class NetworkClusterListModel extends SearchableListModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
-    {
+    public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
 
         if (command == getManageCommand())
@@ -275,8 +260,16 @@ public class NetworkClusterListModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
+    }
+
+    public UICommand getManageCommand() {
+        return manageCommand;
+    }
+
+    private void setManageCommand(UICommand value) {
+        manageCommand = value;
     }
 
     @Override
@@ -284,4 +277,3 @@ public class NetworkClusterListModel extends SearchableListModel
         return "NetworkClusterListModel"; //$NON-NLS-1$
     }
 }
-

@@ -29,7 +29,8 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final String ENGINE_NETWORK_NAME = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+    private final String ENGINE_NETWORK_NAME =
+            (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private final ApplicationConstants constants;
     private final ApplicationTemplates templates;
@@ -39,7 +40,10 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     private final SafeHtml emptyImage;
 
     @Inject
-    public MainTabNetworkView(MainModelProvider<NetworkView, NetworkListModel> modelProvider, ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
+    public MainTabNetworkView(MainModelProvider<NetworkView, NetworkListModel> modelProvider,
+            ApplicationConstants constants,
+            ApplicationTemplates templates,
+            ApplicationResources resources) {
         super(modelProvider);
         this.constants = constants;
         this.templates = templates;
@@ -50,7 +54,6 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         initTable();
         initWidget(getTable());
     }
-
 
     void initTable() {
 
@@ -80,55 +83,60 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         };
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork());
 
-        SafeHtmlWithSafeHtmlTooltipColumn<NetworkView> roleColumn = new SafeHtmlWithSafeHtmlTooltipColumn<NetworkView>(){
-            @Override
-            public SafeHtml getValue(NetworkView networkView) {
+        SafeHtmlWithSafeHtmlTooltipColumn<NetworkView> roleColumn =
+                new SafeHtmlWithSafeHtmlTooltipColumn<NetworkView>() {
+                    @Override
+                    public SafeHtml getValue(NetworkView networkView) {
 
-                String images = ""; //$NON-NLS-1$
+                        String images = ""; //$NON-NLS-1$
 
-                if (ENGINE_NETWORK_NAME.equals(networkView.getNetwork().getName())){
+                        if (ENGINE_NETWORK_NAME.equals(networkView.getNetwork().getName())) {
 
-                    images = images.concat(mgmtImage.asString());
-                }else{
-                    images = images.concat(emptyImage.asString());
-                }
+                            images = images.concat(mgmtImage.asString());
+                        } else {
+                            images = images.concat(emptyImage.asString());
+                        }
 
-                if (networkView.getNetwork().isVmNetwork()){
+                        if (networkView.getNetwork().isVmNetwork()) {
 
-                    images = images.concat(vmImage.asString());
-                }else{
-                    images = images.concat(emptyImage.asString());
-                }
+                            images = images.concat(vmImage.asString());
+                        } else {
+                            images = images.concat(emptyImage.asString());
+                        }
 
-                return templates.image(SafeHtmlUtils.fromTrustedString(images));
-            }
-
-            @Override
-            public SafeHtml getTooltip(NetworkView networkView) {
-                String tooltip = ""; //$NON-NLS-1$
-                if (ENGINE_NETWORK_NAME.equals(networkView.getNetwork().getName())){
-                    tooltip = tooltip.concat(templates.imageTextSetupNetwork(mgmtImage, constants.managementItemInfo()).asString());
-                }
-
-                if (networkView.getNetwork().isVmNetwork()){
-                    if (!"".equals(tooltip)) //$NON-NLS-1$
-                    {
-                        tooltip = tooltip.concat("<BR>"); //$NON-NLS-1$
+                        return templates.image(SafeHtmlUtils.fromTrustedString(images));
                     }
-                    tooltip = tooltip.concat(templates.imageTextSetupNetwork(vmImage, constants.vmItemInfo()).asString());
 
-                }
+                    @Override
+                    public SafeHtml getTooltip(NetworkView networkView) {
+                        String tooltip = ""; //$NON-NLS-1$
+                        if (ENGINE_NETWORK_NAME.equals(networkView.getNetwork().getName())) {
+                            tooltip =
+                                    tooltip.concat(templates.imageTextSetupNetwork(mgmtImage,
+                                            constants.managementItemInfo()).asString());
+                        }
 
-                return SafeHtmlUtils.fromTrustedString(tooltip);
-            }
-        };
+                        if (networkView.getNetwork().isVmNetwork()) {
+                            if (!"".equals(tooltip)) //$NON-NLS-1$
+                            {
+                                tooltip = tooltip.concat("<BR>"); //$NON-NLS-1$
+                            }
+                            tooltip =
+                                    tooltip.concat(templates.imageTextSetupNetwork(vmImage, constants.vmItemInfo())
+                                            .asString());
+
+                        }
+
+                        return SafeHtmlUtils.fromTrustedString(tooltip);
+                    }
+                };
 
         getTable().addColumn(roleColumn, constants.roleNetwork(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<NetworkView> vlanColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
-                return object.getNetwork().getvlan_id()== null ? "-" : object.getNetwork().getvlan_id().toString(); //$NON-NLS-1$
+                return object.getNetwork().getvlan_id() == null ? "-" : object.getNetwork().getvlan_id().toString(); //$NON-NLS-1$
             }
         };
         getTable().addColumn(vlanColumn, constants.vlanNetwork());
@@ -154,4 +162,3 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
     }
 }
-

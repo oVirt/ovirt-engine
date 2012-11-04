@@ -24,59 +24,26 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class NetworkHostListModel extends SearchableListModel
 {
+    private UICommand setupNetworksCommand;
+    private NetworkHostFilter viewFilterType;
+
     public NetworkHostListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
         setHashName("hosts"); //$NON-NLS-1$
 
         setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
-    }
-
-    private UICommand privateSetupNetworksCommand;
-
-    public UICommand getSetupNetworksCommand()
-    {
-        return privateSetupNetworksCommand;
-    }
-
-    private void setSetupNetworksCommand(UICommand value)
-    {
-        privateSetupNetworksCommand = value;
-    }
-
-    private NetworkHostFilter viewFilterType;
-
-    public NetworkHostFilter getViewFilterType() {
-        return viewFilterType;
-    }
-
-    public void setViewFilterType(NetworkHostFilter viewFilterType) {
-        this.viewFilterType = viewFilterType;
-        Search();
+        updateActionAvailability();
     }
 
     @Override
-    public NetworkView getEntity()
-    {
-        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
-    }
-
-    public void setEntity(NetworkView value)
-    {
-        super.setEntity(value);
-    }
-
-    @Override
-    protected void OnEntityChanged()
-    {
+    protected void OnEntityChanged() {
         super.OnEntityChanged();
         getSearchCommand().Execute();
     }
 
     @Override
-    public void Search()
-    {
+    public void Search() {
         if (getEntity() != null)
         {
             super.Search();
@@ -84,26 +51,26 @@ public class NetworkHostListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
-    {
+    protected void SyncSearch() {
         if (getEntity() == null)
         {
             return;
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(getViewFilterType());
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(getViewFilterType());
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
-                if (model.equals(getViewFilterType())){
+                if (model.equals(getViewFilterType())) {
                     Iterable returnList = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                    List<PairQueryable<VdsNetworkInterface, VDS>> items = new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
-                    for (Object obj : returnList){
-                        if (obj instanceof VDS){
-                            items.add(new PairQueryable<VdsNetworkInterface, VDS>(null, (VDS)obj));
-                        }else{
+                    List<PairQueryable<VdsNetworkInterface, VDS>> items =
+                            new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
+                    for (Object obj : returnList) {
+                        if (obj instanceof VDS) {
+                            items.add(new PairQueryable<VdsNetworkInterface, VDS>(null, (VDS) obj));
+                        } else {
                             items.add((PairQueryable<VdsNetworkInterface, VDS>) obj);
                         }
                     }
@@ -116,19 +83,20 @@ public class NetworkHostListModel extends SearchableListModel
         NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
 
-        if (NetworkHostFilter.unattached.equals(getViewFilterType())){
-            Frontend.RunQuery(VdcQueryType.GetVdsWithoutNetwork, networkIdParams, _asyncQuery);
-        }else if (NetworkHostFilter.attached.equals(getViewFilterType())){
-            Frontend.RunQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, networkIdParams, _asyncQuery);
-        }else if (NetworkHostFilter.all.equals(getViewFilterType())){
-            Frontend.RunQuery(VdcQueryType.GetAllVdsByStoragePool, new GetAllVdsByStoragePoolParameters(getEntity().getNetwork().getstorage_pool_id().getValue()), _asyncQuery);
+        if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
+            Frontend.RunQuery(VdcQueryType.GetVdsWithoutNetwork, networkIdParams, asyncQuery);
+        } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
+            Frontend.RunQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);
+        } else if (NetworkHostFilter.all.equals(getViewFilterType())) {
+            Frontend.RunQuery(VdcQueryType.GetAllVdsByStoragePool,
+                    new GetAllVdsByStoragePoolParameters(getEntity().getNetwork().getstorage_pool_id().getValue()),
+                    asyncQuery);
         }
 
         setIsQueryFirstTime(false);
     }
 
-    public void SetupNetworks() {
-
+    public void setupNetworks() {
         if (getWindow() != null) {
             return;
         }
@@ -142,8 +110,7 @@ public class NetworkHostListModel extends SearchableListModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.EntityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
@@ -153,40 +120,65 @@ public class NetworkHostListModel extends SearchableListModel
     }
 
     @Override
-    protected String getListName() {
-        return "NetworkHostListModel"; //$NON-NLS-1$
-    }
-
-    @Override
-    public void ExecuteCommand(UICommand command)
-    {
+    public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
 
         if (command == getSetupNetworksCommand())
         {
-            SetupNetworks();
+            setupNetworks();
         }
 
     }
 
-    private void UpdateActionAvailability()
-    {
-        List<PairQueryable<VdsNetworkInterface, VDS>> selectedItems = getSelectedItems() != null ? getSelectedItems() : new ArrayList();
+    private void updateActionAvailability() {
+        List<PairQueryable<VdsNetworkInterface, VDS>> selectedItems =
+                getSelectedItems() != null ? getSelectedItems() : new ArrayList();
 
-        getSetupNetworksCommand().setIsExecutionAllowed(selectedItems.size() == 1 && selectedItems.get(0).getSecond().getvds_group_compatibility_version().compareTo(Version.v3_1) >= 0);
+        getSetupNetworksCommand().setIsExecutionAllowed(selectedItems.size() == 1
+                && selectedItems.get(0).getSecond().getvds_group_compatibility_version().compareTo(Version.v3_1) >= 0);
     }
 
     @Override
-    protected void OnSelectedItemChanged()
-    {
+    protected void OnSelectedItemChanged() {
         super.OnSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged()
-    {
+    protected void SelectedItemsChanged() {
         super.SelectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
+    }
+
+    public UICommand getSetupNetworksCommand() {
+        return setupNetworksCommand;
+    }
+
+    private void setSetupNetworksCommand(UICommand value) {
+        setupNetworksCommand = value;
+    }
+
+    public NetworkHostFilter getViewFilterType() {
+        return viewFilterType;
+    }
+
+    public void setViewFilterType(NetworkHostFilter viewFilterType) {
+        this.viewFilterType = viewFilterType;
+        Search();
+    }
+
+    @Override
+    public NetworkView getEntity() {
+        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
+    }
+
+    public void setEntity(NetworkView value)
+    {
+        super.setEntity(value);
+    }
+
+    @Override
+    protected String getListName() {
+        return "NetworkHostListModel"; //$NON-NLS-1$
     }
 }

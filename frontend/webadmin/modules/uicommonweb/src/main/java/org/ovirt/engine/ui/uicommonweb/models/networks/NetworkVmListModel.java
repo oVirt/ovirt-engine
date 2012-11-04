@@ -28,18 +28,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class NetworkVmListModel extends SearchableListModel
 {
-
     private UICommand removeCommand;
-
-    public UICommand getRemoveCommand()
-    {
-        return removeCommand;
-    }
-
-    private void setRemoveCommand(UICommand value)
-    {
-        removeCommand = value;
-    }
 
     public NetworkVmListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
@@ -51,19 +40,16 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     @Override
-    public NetworkView getEntity()
-    {
+    public NetworkView getEntity() {
         return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
     }
 
-    public void setEntity(NetworkView value)
-    {
+    public void setEntity(NetworkView value) {
         super.setEntity(value);
     }
 
     @Override
-    protected void OnEntityChanged()
-    {
+    protected void OnEntityChanged() {
         super.OnEntityChanged();
         getSearchCommand().Execute();
     }
@@ -92,8 +78,7 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
-    {
+    public void Search() {
         if (getEntity() != null)
         {
             super.Search();
@@ -101,16 +86,15 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
-    {
+    protected void SyncSearch() {
         if (getEntity() == null)
         {
             return;
         }
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(this);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
@@ -121,12 +105,11 @@ public class NetworkVmListModel extends SearchableListModel
         NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId, networkIdParams, _asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.EntityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
@@ -135,14 +118,12 @@ public class NetworkVmListModel extends SearchableListModel
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && !getSelectedItems().isEmpty()
                 && canRemoveVnics());
     }
 
     private boolean canRemoveVnics() {
-
         List<PairQueryable<VmNetworkInterface, VM>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
         ArrayList<VmNetworkInterface> nics =
@@ -169,21 +150,18 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
-    {
+    protected void OnSelectedItemChanged() {
         super.OnSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged()
-    {
+    protected void SelectedItemsChanged() {
         super.SelectedItemsChanged();
         updateActionAvailability();
     }
 
-    private void remove()
-    {
+    private void remove() {
         if (getWindow() != null)
         {
             return;
@@ -200,14 +178,21 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
-    {
+    public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
 
         if (command == getRemoveCommand())
         {
             remove();
         }
+    }
+
+    public UICommand getRemoveCommand() {
+        return removeCommand;
+    }
+
+    private void setRemoveCommand(UICommand value) {
+        removeCommand = value;
     }
 
     @Override

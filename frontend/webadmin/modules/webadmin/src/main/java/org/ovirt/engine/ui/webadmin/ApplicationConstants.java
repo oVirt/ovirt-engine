@@ -130,9 +130,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable VLAN tagging")
     String clusterNewNetworkPopupVlanEnabledLabel();
 
-    @DefaultStringValue("VLAN tag")
-    String clusterNewNetworkPopupVlanTagLabel();
-
     @DefaultStringValue("Override MTU")
     String clusterNewNetworkPopupMtuEnabledLabel();
 
@@ -1503,7 +1500,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center")
     String dcNetwork();
 
-    @DefaultStringValue("VLAN tagging")
+    @DefaultStringValue("VLAN tag")
     String vlanNetwork();
 
     @DefaultStringValue("MTU")

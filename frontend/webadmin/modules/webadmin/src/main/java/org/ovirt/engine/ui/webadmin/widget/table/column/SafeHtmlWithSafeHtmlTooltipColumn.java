@@ -23,7 +23,6 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
                     SafeHtml value,
                     NativeEvent event,
                     ValueUpdater<SafeHtml> valueUpdater) {
-                // TODO Auto-generated method stub
                 super.onBrowserEvent(context, parent, value, event, valueUpdater);
             }
 

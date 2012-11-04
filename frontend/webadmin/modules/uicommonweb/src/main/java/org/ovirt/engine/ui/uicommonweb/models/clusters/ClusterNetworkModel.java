@@ -9,13 +9,13 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 public class ClusterNetworkModel extends EntityModel {
 
     private boolean management;
-    private boolean isAttached = true;
+    private boolean attached = true;
     private VDSGroup cluster = null;
 
     public ClusterNetworkModel(Network network) {
         setEntity(network);
         if (network.getCluster() == null){
-            isAttached = false;
+            attached = false;
             // Init with default values
             getEntity().setCluster(new network_cluster());
         }
@@ -47,7 +47,7 @@ public class ClusterNetworkModel extends EntityModel {
     }
 
     public boolean isAttached() {
-        return isAttached;
+        return attached;
     }
 
     public boolean isDisplayNetwork() {
@@ -67,7 +67,7 @@ public class ClusterNetworkModel extends EntityModel {
     }
 
     public void setAttached(boolean attached) {
-        isAttached = attached;
+        this.attached = attached;
     }
 
     public void setDisplayNetwork(boolean displayNetwork) {

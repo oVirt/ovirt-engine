@@ -15,6 +15,12 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class NetworkSubTabPanelPresenter extends AbstractSubTabPanelPresenter<NetworkSubTabPanelPresenter.ViewDef, NetworkSubTabPanelPresenter.ProxyDef> {
 
+    @RequestTabs
+    public static final Type<RequestTabsHandler> TYPE_RequestTabs = new Type<RequestTabsHandler>();
+
+    @ContentSlot
+    public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<RevealContentHandler<?>>();
+
     @ProxyCodeSplit
     public interface ProxyDef extends Proxy<NetworkSubTabPanelPresenter> {
     }
@@ -22,16 +28,9 @@ public class NetworkSubTabPanelPresenter extends AbstractSubTabPanelPresenter<Ne
     public interface ViewDef extends TabView {
     }
 
-    @RequestTabs
-    public static final Type<RequestTabsHandler> TYPE_RequestTabs = new Type<RequestTabsHandler>();
-
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<RevealContentHandler<?>>();
-
     @Inject
     public NetworkSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs);
     }
 
 }
-

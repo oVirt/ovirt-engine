@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -126,16 +127,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         privateClusterMap = value;
     }
 
-    private HashMap<Guid, List<Network>> privateNetworkMap;
+    private Map<Guid, List<Network>> networkMap;
 
-    public HashMap<Guid, List<Network>> getNetworkMap()
+    public Map<Guid, List<Network>> getNetworkMap()
     {
-        return privateNetworkMap;
+        return networkMap;
     }
 
-    public void setNetworkMap(HashMap<Guid, List<Network>> value)
+    public void setNetworkMap(Map<Guid, List<Network>> value)
     {
-        privateNetworkMap = value;
+        networkMap = value;
     }
 
     private HashMap<Guid, ArrayList<VDS>> privateHostMap;
@@ -287,8 +288,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                                 systemTreeModel.setNetworkMap(new HashMap<Guid, List<Network>>());
 
                                                 List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-                                                List<Network> dcNetworkList = null;
-                                                Guid dcId = null;
+                                                List<Network> dcNetworkList;
+                                                Guid dcId;
 
                                                 for (int i = 0; i < returnValueList.size(); i++)
                                                 {
@@ -443,7 +444,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             dataCenterItem.getChildren().add(networksItem);
 
             List<Network> dcNetworks = getNetworkMap().get(getDataCenters().get(count).getId());
-            if (dcNetworks != null && dcNetworks.size() > 0)
+            if (dcNetworks != null)
             {
                 for (Network network : dcNetworks)
                 {
