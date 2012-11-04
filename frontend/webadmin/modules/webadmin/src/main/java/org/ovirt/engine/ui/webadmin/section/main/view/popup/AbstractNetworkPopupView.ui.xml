@@ -70,11 +70,11 @@
 							<e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
 							<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-							<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
 							<g:HorizontalPanel>
 								<e:EntityModelCheckBoxEditor ui:field="vlanTagging"/>
 								<e:EntityModelTextBoxOnlyEditor ui:field="vlanTag" />
 							</g:HorizontalPanel>
+							<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
 							<g:HorizontalPanel>
 								<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 								<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
