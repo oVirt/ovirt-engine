@@ -236,11 +236,11 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         getView().setTitle(model.getTitle());
     }
 
-    void updateMessage(T model) {
+    protected void updateMessage(T model) {
         getView().setMessage(model.getMessage());
     }
 
-    void updateHashName(T model) {
+    protected void updateHashName(T model) {
         String hashName = model.getHashName();
         getView().setHashName(hashName);
 

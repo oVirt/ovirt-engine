@@ -11,11 +11,13 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 
@@ -66,6 +68,13 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
             }
         };
         getTable().addColumn(nameColumn, constants.vnicNetworkTemplate());
+
+        getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface, VmTemplate>>(constants.removeInterface()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

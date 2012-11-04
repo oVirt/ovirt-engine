@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
+import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -29,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -405,62 +403,8 @@ public class VmInterfaceListModel extends SearchableListModel
             return;
         }
 
-        ConfirmationModel model = new ConfirmationModel();
+        RemoveVmInterfaceModel model = new RemoveVmInterfaceModel(this, getSelectedItems(), false);
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().removeNetworkInterfacesTitle());
-        model.setHashName("remove_network_interface_vms"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().networkInterfacesMsg());
-
-        ArrayList<String> items = new ArrayList<String>();
-        for (Object item : getSelectedItems())
-        {
-            VmNetworkInterface a = (VmNetworkInterface) item;
-            items.add(a.getName());
-        }
-        model.setItems(items);
-
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
-    }
-
-    private void OnRemove()
-    {
-        VM vm = (VM) getEntity();
-        ConfirmationModel model = (ConfirmationModel) getWindow();
-
-        if (model.getProgress() != null)
-        {
-            return;
-        }
-
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
-            VmNetworkInterface a = (VmNetworkInterface) item;
-            RemoveVmInterfaceParameters parameters = new RemoveVmInterfaceParameters(vm.getId(), a.getId());
-            list.add(parameters);
-
-        }
-
-        model.StartProgress(null);
-
-        Frontend.RunMultipleAction(VdcActionType.RemoveVmInterface, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
-
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
-
-                    }
-                }, model);
     }
 
     private void activate(boolean activate){
@@ -607,10 +551,6 @@ public class VmInterfaceListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
-        {
-            OnRemove();
         }
     }
 

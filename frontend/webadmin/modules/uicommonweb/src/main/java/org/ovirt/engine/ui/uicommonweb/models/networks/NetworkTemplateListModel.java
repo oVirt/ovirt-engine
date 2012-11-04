@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -14,16 +15,33 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmTemplateInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class NetworkTemplateListModel extends SearchableListModel
 {
+    private UICommand removeCommand;
+
+    public UICommand getRemoveCommand()
+    {
+        return removeCommand;
+    }
+
+    private void setRemoveCommand(UICommand value)
+    {
+        removeCommand = value;
+    }
+
     public NetworkTemplateListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
         setHashName("templates"); //$NON-NLS-1$
+
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        updateActionAvailability();
     }
 
     @Override
@@ -113,6 +131,55 @@ public class NetworkTemplateListModel extends SearchableListModel
     {
         super.AsyncSearch();
         SyncSearch();
+    }
+
+    private void updateActionAvailability()
+    {
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && !getSelectedItems().isEmpty());
+    }
+
+
+    @Override
+    protected void OnSelectedItemChanged()
+    {
+        super.OnSelectedItemChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    protected void SelectedItemsChanged()
+    {
+        super.SelectedItemsChanged();
+        updateActionAvailability();
+    }
+
+    private void remove()
+    {
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        List<VmNetworkInterface> vnics = new ArrayList<VmNetworkInterface>();
+        for (Object item : getSelectedItems())
+        {
+            PairQueryable<VmNetworkInterface, VmTemplate> pair = (PairQueryable<VmNetworkInterface, VmTemplate>) item;
+            vnics.add(pair.getFirst());
+        }
+        RemoveVmTemplateInterfaceModel model = new RemoveVmTemplateInterfaceModel(this, vnics, true);
+        setWindow(model);
+
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        super.ExecuteCommand(command);
+
+        if (command == getRemoveCommand())
+        {
+            remove();
+        }
     }
 
     @Override

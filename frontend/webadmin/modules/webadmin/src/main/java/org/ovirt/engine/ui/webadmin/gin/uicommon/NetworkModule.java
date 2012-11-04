@@ -65,9 +65,9 @@ public class NetworkModule extends AbstractGinModule {
 
                 if (lastExecutedCommand == getModel().getNewCommand()) {
                     return newNetworkPopupProvider.get();
-                }else if (lastExecutedCommand == getModel().getEditCommand()) {
+                } else if (lastExecutedCommand == getModel().getEditCommand()) {
                     return editNetworkPopupProvider.get();
-                }else {
+                } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
@@ -101,10 +101,11 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel> getNetworkClusterListProvider(ClientGinjector ginjector, final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
+    public SearchableDetailModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel> getNetworkClusterListProvider(ClientGinjector ginjector,
+            final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
         return new SearchableDetailTabModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel>(ginjector,
                 NetworkListModel.class,
-                NetworkClusterListModel.class){
+                NetworkClusterListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkClusterListModel source,
                     UICommand lastExecutedCommand,
@@ -120,26 +121,28 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(ClientGinjector ginjector, final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
+    public SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(ClientGinjector ginjector,
+            final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
             final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
             final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
         return new SearchableDetailTabModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>(ginjector,
                 NetworkListModel.class,
-                NetworkHostListModel.class){
+                NetworkHostListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkHostListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
                 if (windowModel instanceof HostBondInterfaceModel) {
                     return hostBondPopupProvider.get();
                 }
 
-                if (source.getWindow() instanceof HostSetupNetworksModel){
+                if (source.getWindow() instanceof HostSetupNetworksModel) {
                     // Resolve by dialog model
                     if (windowModel instanceof HostInterfaceModel) {
                         return setupNetworksInterfacePopupProvider.get();
                     } else if (windowModel instanceof HostManagementNetworkModel) {
-                            return setupNetworksManagementPopupProvider.get();
+                        return setupNetworksManagementPopupProvider.get();
                     }
                 }
 
@@ -155,18 +158,40 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel,NetworkVmListModel> getNetworkVmModelProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> getNetworkVmModelProvider(ClientGinjector ginjector,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel>(ginjector,
                 NetworkListModel.class,
-                NetworkVmListModel.class);
+                NetworkVmListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(NetworkVmListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+        };
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> geNetworkTemplateModelProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> geNetworkTemplateModelProvider(ClientGinjector ginjector,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel>(ginjector,
                 NetworkListModel.class,
-                NetworkTemplateListModel.class);
+                NetworkTemplateListModel.class){
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(NetworkTemplateListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+        };
     }
 
     @Provides

@@ -183,4 +183,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("{0} in Data Center {1}")
     String networkDc(String networkName, String dcName);
+
+    @DefaultMessage("Vnic {0} from VM {1}")
+    String vnicFromVm(String vnic, String vm);
+
+    @DefaultMessage("Vnic {0} from Template {1}")
+    String vnicFromTemplate(String vnic, String template);
 }

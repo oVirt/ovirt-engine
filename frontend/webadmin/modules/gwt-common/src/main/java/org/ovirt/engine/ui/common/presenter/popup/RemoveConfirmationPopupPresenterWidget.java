@@ -16,4 +16,12 @@ public class RemoveConfirmationPopupPresenterWidget extends AbstractModelBoundPo
         super(eventBus, view);
     }
 
+    @Override
+    protected void updateHashName(ConfirmationModel model) {
+        super.updateHashName(model);
+
+        // The message depends on the hash name
+        updateMessage(model);
+    }
+
 }
