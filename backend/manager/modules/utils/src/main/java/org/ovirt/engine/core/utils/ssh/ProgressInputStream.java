@@ -21,9 +21,19 @@ public class ProgressInputStream extends FilterInputStream {
     @Override
     public int read(byte[] b, int off, int len)
     throws IOException {
-        int ret = super.read(b, off, len);
+        int ret = in.read(b, off, len);
         if (ret != -1) {
             this.index += ret;
+        }
+        return ret;
+    }
+
+    @Override
+    public int read()
+    throws IOException {
+        int ret = in.read();
+        if (ret != -1) {
+            this.index++;
         }
         return ret;
     }

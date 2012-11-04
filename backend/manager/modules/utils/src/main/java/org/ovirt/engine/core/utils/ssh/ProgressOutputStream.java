@@ -21,8 +21,15 @@ class ProgressOutputStream extends FilterOutputStream {
     @Override
     public void write(byte[] b, int off, int len)
     throws IOException {
-        super.write(b, off, len);
+        out.write(b, off, len);
         this.index += len;
+    }
+
+    @Override
+    public void write(int b)
+    throws IOException {
+        out.write(b);
+        this.index++;
     }
 
     public boolean wasProgress() {
