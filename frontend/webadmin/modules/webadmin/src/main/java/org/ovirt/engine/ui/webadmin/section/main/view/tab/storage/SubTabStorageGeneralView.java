@@ -87,7 +87,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
                         && !storageDomainType.equals(StorageDomainType.ImportExport);
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.empty(), new InlineLabel(""), 4, 0)); // empty cell //$NON-NLS-1$
+        formBuilder.addFormItem(new FormItem("", new InlineLabel(""), 4, 0)); // empty cell //$NON-NLS-1$ $NON-NLS-2$
         formBuilder.addFormItem(new FormItem(constants.nfsExportPathStorageGeneral(), nfsExportPath, 5, 0) {
             @Override
             public boolean isVisible() {
