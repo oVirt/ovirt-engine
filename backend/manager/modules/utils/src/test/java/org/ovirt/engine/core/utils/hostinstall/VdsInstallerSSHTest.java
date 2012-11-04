@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
 import org.ovirt.engine.core.utils.archivers.tar.Tar;
@@ -31,10 +30,10 @@ import org.ovirt.engine.core.utils.ssh.SSHD;
 
 /*
  * Test properties
- * $ mvn -Dssh-host=host1 -Dssh-test-port=22 -Dssh-test-user=root -Dssh-test-password=password -Dssh-test-p12=a.p12 -Dssh-test-p12-password=password
+ * $ mvn -Dssh-host=host1 -Dssh-test-port=22 -Dssh-test-user=root -Dssh-test-password=password -Dssh-test-p12=a.p12 -Dssh-test-p12-alias=alias -Dssh-test-p12-password=password
  *
  * Default SSH public key is:
- * ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCF7Rhlve8ikOono3zHN2kkyCqauNSdX9w6lwq3uLNFi7ryyENSpCsQADjCO5EzABUxU+0RHh6OG6TRFCRbI57NN77isfKyLqjsVOkhPB4D86GhmefmnYKPSAA2JxVB9s0BIA8jAgrEy4QFjmxt1EHAi2UAG3PjCC+qANF7CnR47Q==
+ * ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHU58znwGk/TGAWaswzpC6ZiMDGIpnjcxlcooCscaLsCcvmcFEfZ/CiXSeV1Zc0DpkxWU/oEDpbxQbDGs/1a0f0K88ym2MFeosrOXiFvQV0KsvHLZH3dUvzV46ULuT0NNY8q/dLKdJJp2I2TvekEGsbthxeSzjWLOqEPiKBvHpeTjWv8Q7DCJzoz2JvWGl1Ztgb42pZISrtGPsVcdvTVajYsneR8/QtRuj8F16ntf+kwGR+OjcITIRRBzXD6GoUufuZ+fvkKg40I1VK61c8om8Yfj3ShpiqvtiRNGTWfLSu7Hnn8G9NRTjzYZ457wCTeLoDaN53NZYf3oKrMtWBbGR test
  *
  * TODO
  *
@@ -98,6 +97,7 @@ public class VdsInstallerSSHTest {
     static String password;
     static String hostKstore;
     static String hostKstorePassword;
+    static String hostKstoreAlias;
     int port;
 
     SSHD sshd;
@@ -110,6 +110,7 @@ public class VdsInstallerSSHTest {
 
         hostKstore = System.getProperty("ssh-test-p12", "src/test/resources/key.p12");
         hostKstorePassword = System.getProperty("ssh-test-p12-password", "NoSoup4U");
+        hostKstoreAlias = System.getProperty("ssh-test-p12-alias", "1");
 
         host = System.getProperty("ssh-host");
 
@@ -125,11 +126,7 @@ public class VdsInstallerSSHTest {
                 sshd.setUser(
                     user,
                     password,
-                    ks.getCertificate(
-                        Config.<String>GetValue(
-                            ConfigValues.CertAlias
-                        )
-                    ).getPublicKey()
+                    ks.getCertificate(hostKstoreAlias).getPublicKey()
                 );
             }
             catch (Throwable e) {
