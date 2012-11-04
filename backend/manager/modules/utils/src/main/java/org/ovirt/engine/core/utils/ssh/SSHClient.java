@@ -439,6 +439,7 @@ public class SSHClient {
 
             boolean hardTimeout = false;
             int stat;
+            boolean activity;
             do {
                 stat = channel.waitFor(
                     (
@@ -450,14 +451,18 @@ public class SSHClient {
                 );
 
                 hardTimeout = (hardEnd != 0 && System.currentTimeMillis() >= hardEnd);
+
+                /*
+                 * Notice that we should visit all
+                 * so do not cascade statement.
+                 */
+                activity = iin.wasProgress();
+                activity = iout.wasProgress() || activity;
+                activity = ierr.wasProgress() || activity;
             } while(
                 !hardTimeout &&
                 (stat & ClientChannel.TIMEOUT) != 0 &&
-                (
-                    iin.wasProgress() ||
-                    iout.wasProgress() ||
-                    ierr.wasProgress()
-                )
+                activity
             );
 
             if (hardTimeout) {
