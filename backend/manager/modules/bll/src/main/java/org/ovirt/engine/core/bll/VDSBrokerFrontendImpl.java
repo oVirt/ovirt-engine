@@ -52,7 +52,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
             if (prevCommand != null && !prevCommand.equals(command)) {
                 prevCommand.reportCompleted();
             }
-        } else if (!result.getSucceeded()) {
+        } else {
             throw new VdcBLLException(result.getVdsError().getCode(), result.getExceptionString());
         }
 
