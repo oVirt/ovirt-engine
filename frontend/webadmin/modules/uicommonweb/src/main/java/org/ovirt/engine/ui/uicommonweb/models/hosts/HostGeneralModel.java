@@ -114,7 +114,7 @@ public class HostGeneralModel extends EntityModel
         privateGoToEventsCommand = value;
     }
 
-    private boolean isEntityChanged;
+    private boolean updateUpgradeAlert;
 
     @Override
     public VDS getEntity()
@@ -126,7 +126,9 @@ public class HostGeneralModel extends EntityModel
     public void setEntity(Object value)
     {
         VDS vds = (VDS) value;
-        isEntityChanged = vds == null || getEntity() == null || !vds.getId().equals(getEntity().getId());
+        updateUpgradeAlert = vds == null || getEntity() == null
+            || !vds.getId().equals(getEntity().getId())
+            || !vds.getstatus().equals(getEntity().getstatus());
 
         super.setEntity(value);
     }
@@ -809,6 +811,7 @@ public class HostGeneralModel extends EntityModel
         if (e.PropertyName.equals("net_config_dirty") || e.PropertyName.equals("status") //$NON-NLS-1$ //$NON-NLS-2$
                 || e.PropertyName.equals("spm_status") || e.PropertyName.equals("vm_active")) //$NON-NLS-1$ //$NON-NLS-2$
         {
+            updateUpgradeAlert = true;
             UpdateAlerts();
         }
 
@@ -848,7 +851,11 @@ public class HostGeneralModel extends EntityModel
     private void UpdateAlerts()
     {
         setHasAnyAlert(false);
-        setHasUpgradeAlert(false);
+
+        if (updateUpgradeAlert) {
+            setHasUpgradeAlert(false);
+        }
+
         setHasManualFenceAlert(false);
         setHasNoPowerManagementAlert(false);
         setHasReinstallAlertNonResponsive(false);
@@ -891,7 +898,7 @@ public class HostGeneralModel extends EntityModel
         // TODO: Need to come up with a logic to show the Upgrade action-item.
         // Currently, this action-item will be shown for all oVirts assuming there are
         // available oVirt ISOs that are returned by the backend's GetoVirtISOs query.
-        else if (getEntity().getvds_type() == VDSType.oVirtNode && isEntityChanged)
+        else if (getEntity().getvds_type() == VDSType.oVirtNode && updateUpgradeAlert)
         {
             AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(this,
                     new INewAsyncCallback() {
