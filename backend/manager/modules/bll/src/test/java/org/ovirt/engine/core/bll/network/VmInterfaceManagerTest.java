@@ -3,11 +3,10 @@ package org.ovirt.engine.core.bll.network;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,6 +27,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -63,37 +64,39 @@ public class VmInterfaceManagerTest {
         doReturn(vmNetworkStatisticsDAO).when(vmInterfaceManager).getVmNetworkStatisticsDAO();
         doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDAO();
         doReturn(vmDAO).when(vmInterfaceManager).getVmDAO();
+        doNothing().when(vmInterfaceManager).auditLogMacInUse(any(VmNetworkInterface.class));
 
         doNothing().when(vmInterfaceManager).log(any(AuditLogableBase.class), any(AuditLogType.class));
     }
 
     @Test
-    public void addReturnsTrueWithCallToMacPoolManager() {
-        runAddAndVerify(createNewInterface(), true, times(1), true);
+    public void add() {
+        runAddAndVerify(createNewInterface(), true, times(1));
     }
 
     @Test
-    public void addReturnsFalseWithCallToMacPoolManager() {
-        runAddAndVerify(createNewInterface(), false, times(1), false);
-    }
-
-    @Test
-    public void addLogsWhenMacAlreadyInUseAndReturnsFalse() {
+    public void addWithExistingMacAddress() {
         VmNetworkInterface iface = createNewInterface();
-        when(macPoolManager.IsMacInUse(iface.getMacAddress())).thenReturn(true);
 
-        runAddAndVerify(iface, true, never(), false);
-
-        verify(vmInterfaceManager).log(any(AuditLogableBase.class), eq(AuditLogType.MAC_ADDRESS_IS_IN_USE));
+        try {
+            runAddAndVerify(iface, false, times(1));
+            fail(String.format("Expected to catch %s, but didn't.", VdcBLLException.class.getSimpleName()));
+        } catch (VdcBLLException e) {
+            assertEquals(VdcBllErrors.MAC_ADDRESS_IS_IN_USE, e.getErrorCode());
+        } catch (Exception e) {
+            fail(String.format("Expected to catch %s, but caught %s instead.",
+                    VdcBLLException.class.getSimpleName(),
+                    e.getClass().getSimpleName()));
+        }
+        verify(vmInterfaceManager).auditLogMacInUse(iface);
     }
 
     protected void runAddAndVerify(VmNetworkInterface iface,
             boolean addMacResult,
-            VerificationMode addMacVerification,
-            boolean expectedResult) {
+            VerificationMode addMacVerification) {
         when(macPoolManager.AddMac(iface.getMacAddress())).thenReturn(addMacResult);
 
-        assertEquals(expectedResult, vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), false));
+        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), false);
         verifyAddDelegatedCorrectly(iface, addMacVerification);
     }
 
@@ -104,16 +107,6 @@ public class VmInterfaceManagerTest {
         when(macPoolManager.allocateNewMac()).thenReturn(newMac);
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), true);
         assertEquals(newMac, iface.getMacAddress());
-    }
-
-    @Test
-    public void removeAllRemovesFromMacPoolAlso() {
-        runRemoveAllAndVerify(true, times(1));
-    }
-
-    @Test
-    public void removeAllDoesntRemoveFromMacPoolWhenNotNeeded() {
-        runRemoveAllAndVerify(false, never());
     }
 
     @Test
@@ -158,22 +151,23 @@ public class VmInterfaceManagerTest {
         assertTrue(vmNames.isEmpty());
     }
 
-    private void mockDaos() {
-        VM vm = createVM(VM_NAME, NETWORK_NAME);
-        when(vmDAO.getAllRunningForVds(any(Guid.class))).thenReturn(Arrays.asList(vm));
-        when(vmNetworkInterfaceDAO.getAllForVm(vm.getId())).thenReturn(vm.getInterfaces());
-    }
-
-    protected void runRemoveAllAndVerify(boolean removeFromPool, VerificationMode freeMacVerification) {
+    @Test
+    public void removeAll() {
         List<VmNetworkInterface> interfaces = Arrays.asList(createNewInterface(), createNewInterface());
 
         when(vmNetworkInterfaceDAO.getAllForVm(any(Guid.class))).thenReturn(interfaces);
 
-        vmInterfaceManager.removeAll(removeFromPool, Guid.NewGuid());
+        vmInterfaceManager.removeAll(Guid.NewGuid());
 
         for (VmNetworkInterface iface : interfaces) {
-            verifyRemoveAllDelegatedCorrectly(iface, freeMacVerification);
+            verifyRemoveAllDelegatedCorrectly(iface);
         }
+    }
+
+    private void mockDaos() {
+        VM vm = createVM(VM_NAME, NETWORK_NAME);
+        when(vmDAO.getAllRunningForVds(any(Guid.class))).thenReturn(Arrays.asList(vm));
+        when(vmNetworkInterfaceDAO.getAllForVm(vm.getId())).thenReturn(vm.getInterfaces());
     }
 
     /**
@@ -195,11 +189,9 @@ public class VmInterfaceManagerTest {
      *
      * @param iface
      *            The interface to check for.
-     * @param freeMacVerification
-     *            Mode to check (times(1), never(), etc) for {@link MacPoolManager#freeMac(String)}.
      */
-    protected void verifyRemoveAllDelegatedCorrectly(VmNetworkInterface iface, VerificationMode freeMacVerification) {
-        verify(macPoolManager, freeMacVerification).freeMac(iface.getMacAddress());
+    protected void verifyRemoveAllDelegatedCorrectly(VmNetworkInterface iface) {
+        verify(macPoolManager, times(1)).freeMac(iface.getMacAddress());
         verify(vmNetworkInterfaceDAO).remove(iface.getId());
         verify(vmNetworkStatisticsDAO).remove(iface.getId());
     }

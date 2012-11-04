@@ -14,13 +14,13 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.bll.quota.StorageQuotaValidationParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.quota.Quotable;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -820,8 +820,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         AuditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
     }
 
-    protected boolean macAdded = false;
-
     protected void addVmInterfaces() {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
         List<String> invalidNetworkNames = new ArrayList<String>();
@@ -837,7 +835,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 iface.setNetworkName(StringUtils.EMPTY);
             }
 
-            macAdded = vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity());
+            vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity());
         }
 
         auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
@@ -894,7 +892,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     DbFacade.getInstance().getBaseDiskDao().remove(disk.getId());
                 }
             }
-            removeVmNetwork();
+            removeVmNetworkInterfaces();
             new SnapshotsManager().removeSnapshots(getVm().getId());
             DbFacade.getInstance().getVmDynamicDao().remove(getVmId());
             DbFacade.getInstance().getVmStatisticsDao().remove(getVmId());
@@ -909,8 +907,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         rollbackQuota();
     }
 
-    protected void removeVmNetwork() {
-        new VmInterfaceManager().removeAll(macAdded, getVmId());
+    protected void removeVmNetworkInterfaces() {
+        new VmInterfaceManager().removeAll(getVmId());
     }
 
     protected void endImportCommand() {

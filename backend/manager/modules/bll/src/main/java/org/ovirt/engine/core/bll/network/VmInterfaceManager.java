@@ -10,6 +10,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -19,6 +21,8 @@ import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * Helper class to use for adding/removing {@link VmNetworkInterface}s.
@@ -36,43 +40,46 @@ public class VmInterfaceManager {
      *            Used to snapshot the saved entities.
      * @return <code>true</code> if the MAC wasn't used, <code>false</code> if it was.
      */
-    public boolean add(VmNetworkInterface iface, CompensationContext compensationContext, boolean allocateMac) {
-        boolean macAdded = false;
+    public void add(final VmNetworkInterface iface, CompensationContext compensationContext, boolean allocateMac) {
         if (allocateMac) {
             iface.setMacAddress(getMacPoolManager().allocateNewMac());
-            macAdded = true;
-        } else if (getMacPoolManager().IsMacInUse(iface.getMacAddress())) {
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.AddCustomValue("MACAddr", iface.getMacAddress());
-            logable.AddCustomValue("VmName", iface.getVmName());
-            log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
-        } else {
-            macAdded = getMacPoolManager().AddMac(iface.getMacAddress());
+        } else if (!getMacPoolManager().AddMac(iface.getMacAddress())) {
+            auditLogMacInUse(iface);
+            log.errorFormat("VmInterfaceManager::Mac {0} is in use.", iface.getMacAddress());
+            throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
         }
+
         getVmNetworkInterfaceDAO().save(iface);
         getVmNetworkStatisticsDAO().save(iface.getStatistics());
         compensationContext.snapshotNewEntity(iface);
         compensationContext.snapshotNewEntity(iface.getStatistics());
+    }
 
-        return macAdded;
+    // This method is protected for test purposes
+    protected void auditLogMacInUse(final VmNetworkInterface iface) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                AuditLogableBase logable = new AuditLogableBase();
+                logable.AddCustomValue("MACAddr", iface.getMacAddress());
+                logable.AddCustomValue("VmName", iface.getVmName());
+                log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
+                return null;
+            }
+        });
     }
 
     /**
-     * Remove all {@link VmNetworkInterface}s from the VM, removing from {@link MacPoolManager} if required.
+     * Remove all {@link VmNetworkInterface}s from the VM, and remove the Mac addresses from {@link MacPoolManager}.
      *
-     * @param removeFromMacPool
-     *            Should the MAC be removed from {@link MacPoolManager}?
      * @param vmId
      *            The ID of the VM to remove from.
      */
-    public void removeAll(boolean removeFromMacPool, Guid vmId) {
+    public void removeAll(Guid vmId) {
         List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDAO().getAllForVm(vmId);
         if (interfaces != null) {
             for (VmNetworkInterface iface : interfaces) {
-                if (removeFromMacPool) {
-                    getMacPoolManager().freeMac(iface.getMacAddress());
-                }
-
+                getMacPoolManager().freeMac(iface.getMacAddress());
                 getVmNetworkInterfaceDAO().remove(iface.getId());
                 getVmNetworkStatisticsDAO().remove(iface.getId());
             }

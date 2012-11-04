@@ -1678,6 +1678,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} without active ISO domain.")
     String VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO();
 
+    @DefaultStringValue("MAC Address is in use.")
+    String MAC_ADDRESS_IS_IN_USE();
+
     @DefaultStringValue("General command validation failure.")
     String CAN_DO_ACTION_GENERAL_FAILURE();
 

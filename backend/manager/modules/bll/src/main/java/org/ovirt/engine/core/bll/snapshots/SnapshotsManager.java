@@ -308,7 +308,7 @@ public class SnapshotsManager {
     protected void synchronizeNics(Guid vmId, List<VmNetworkInterface> nics, CompensationContext compensationContext) {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
 
-        vmInterfaceManager.removeAll(true, vmId);
+        vmInterfaceManager.removeAll(vmId);
         for (VmNetworkInterface vmInterface : nics) {
             // These fields might not be saved in the OVF, so fill them with reasonable values.
             if (vmInterface.getId() == null) {
