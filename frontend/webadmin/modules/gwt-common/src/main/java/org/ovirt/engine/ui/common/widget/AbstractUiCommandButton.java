@@ -61,6 +61,10 @@ public abstract class AbstractUiCommandButton extends Composite implements HasUi
             for (String reason : command.getExecuteProhibitionReasons()) {
                 title += reason + ",";  //$NON-NLS-1$
             }
+            if (!title.equals("")) //$NON-NLS-1$
+            {
+                title = title.substring(0, title.length() -1);
+            }
         } else {
             title = command.getTitle();
         }
