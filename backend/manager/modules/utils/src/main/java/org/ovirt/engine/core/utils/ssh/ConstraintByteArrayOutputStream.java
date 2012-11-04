@@ -6,8 +6,8 @@ import java.io.ByteArrayOutputStream;
  * Soft constraint byte array output stream.
  */
 public class ConstraintByteArrayOutputStream extends ByteArrayOutputStream {
-    int max;
-    boolean truncated = false;
+    private int _max;
+    private boolean _truncated = false;
 
     /**
      * Constructor.
@@ -16,7 +16,7 @@ public class ConstraintByteArrayOutputStream extends ByteArrayOutputStream {
      */
     public ConstraintByteArrayOutputStream(int max) {
         super();
-        this.max = max;
+        _max = max;
     }
 
     /**
@@ -25,16 +25,16 @@ public class ConstraintByteArrayOutputStream extends ByteArrayOutputStream {
      * @return true if truncated.
      */
     public boolean wasTruncated() {
-        return this.truncated;
+        return _truncated;
     }
 
     @Override
     public void write(int b) {
-        if (count < this.max) {
+        if (count < _max) {
             super.write(b);
         }
         else {
-            this.truncated = true;
+            _truncated = true;
         }
     }
 
@@ -45,11 +45,11 @@ public class ConstraintByteArrayOutputStream extends ByteArrayOutputStream {
 
     @Override
     public void write(byte[] b, int off, int len) {
-        if (count < this.max) {
+        if (count < _max) {
             super.write(b, off, len);
         }
         else {
-            this.truncated = true;
+            _truncated = true;
         }
     }
 }

@@ -11,11 +11,11 @@ import java.io.InputStream;
  * any mean of monitoring progress.
  */
 public class ProgressInputStream extends FilterInputStream {
-    int index;
+    private int _index;
 
     public ProgressInputStream(InputStream in) {
         super(in);
-        this.index = 0;
+        _index = 0;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class ProgressInputStream extends FilterInputStream {
     throws IOException {
         int ret = in.read(b, off, len);
         if (ret != -1) {
-            this.index += ret;
+            _index += ret;
         }
         return ret;
     }
@@ -33,17 +33,17 @@ public class ProgressInputStream extends FilterInputStream {
     throws IOException {
         int ret = in.read();
         if (ret != -1) {
-            this.index++;
+            _index++;
         }
         return ret;
     }
 
     public boolean wasProgress() {
-        if (this.index == 0) {
+        if (_index == 0) {
             return false;
         }
         else {
-            this.index = 0;
+            _index = 0;
             return true;
         }
     }

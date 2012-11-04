@@ -42,16 +42,16 @@ public class SSHClient {
 
     private static Log log = LogFactory.getLog(SSHClient.class);
 
-    private SshClient client;
-    private ClientSession session;
-    private long softTimeout = 10000;
-    private long hardTimeout = 0;
-    private String user;
-    private String password;
-    private KeyPair keyPair;
-    private String host;
-    private int port = DEFAULT_SSH_PORT;
-    private PublicKey serverKey;
+    private SshClient _client;
+    private ClientSession _session;
+    private long _softTimeout = 10000;
+    private long _hardTimeout = 0;
+    private String _user;
+    private String _password;
+    private KeyPair _keyPair;
+    private String _host;
+    private int _port = DEFAULT_SSH_PORT;
+    private PublicKey _serverKey;
 
     /**
      * Create the client.
@@ -122,7 +122,7 @@ public class SSHClient {
      * default is 10 seconds.
      */
     public void setSoftTimeout(long softTimeout) {
-        this.softTimeout = softTimeout;
+        _softTimeout = softTimeout;
     }
 
     /**
@@ -134,7 +134,7 @@ public class SSHClient {
      * The timeout is evaluate at softTimeout intervals.
      */
     public void setHardTimeout(long hardTimeout) {
-        this.hardTimeout = hardTimeout;
+        _hardTimeout = hardTimeout;
     }
 
     /**
@@ -142,7 +142,7 @@ public class SSHClient {
      * @param user user.
      */
     public void setUser(String user) {
-        this.user = user;
+        _user = user;
     }
 
     /**
@@ -150,7 +150,7 @@ public class SSHClient {
      * @param password password.
      */
     public void setPassword(String password) {
-        this.password = password;
+        _password = password;
     }
 
     /**
@@ -158,7 +158,7 @@ public class SSHClient {
      * @param keyPair key pair.
      */
     public void setKeyPair(KeyPair keyPair) {
-        this.keyPair = keyPair;
+        _keyPair = keyPair;
     }
 
     /**
@@ -167,9 +167,9 @@ public class SSHClient {
      * @param port port.
      */
     public void setHost(String host, int port) {
-        this.host = host;
-        this.port = port;
-        this.serverKey = null;
+        _host = host;
+        _port = port;
+        _serverKey = null;
     }
 
     /**
@@ -185,7 +185,7 @@ public class SSHClient {
      * @return host as set by setHost()
      */
     public String getHost() {
-        return this.host;
+        return _host;
     }
 
     /**
@@ -193,7 +193,7 @@ public class SSHClient {
      * @return port.
      */
     public int getPort() {
-        return this.port;
+        return _port;
     }
 
     /**
@@ -201,7 +201,7 @@ public class SSHClient {
      * @return timeout.
      */
     public long getHardTimeout() {
-        return this.hardTimeout;
+        return _hardTimeout;
     }
 
     /**
@@ -209,7 +209,7 @@ public class SSHClient {
      * @return timeout.
      */
     public long getSoftTimeout() {
-        return this.softTimeout;
+        return _softTimeout;
     }
 
     /**
@@ -217,23 +217,23 @@ public class SSHClient {
      * @return user.
      */
     public String getUser() {
-        return this.user;
+        return _user;
     }
 
     public String getDisplayHost() {
         StringBuilder ret = new StringBuilder(100);
-        if (this.host == null) {
+        if (_host == null) {
             ret.append("N/A");
         }
         else {
-            if (this.user != null) {
-                ret.append(this.user);
+            if (_user != null) {
+                ret.append(_user);
                 ret.append("@");
             }
-            ret.append(this.host);
-            if (this.port != DEFAULT_SSH_PORT) {
+            ret.append(_host);
+            if (_port != DEFAULT_SSH_PORT) {
                 ret.append(":");
-                ret.append(this.port);
+                ret.append(_port);
             }
         }
         return ret.toString();
@@ -244,7 +244,7 @@ public class SSHClient {
      * @return server key.
      */
     public PublicKey getServerKey() {
-        return this.serverKey;
+        return _serverKey;
     }
 
     /**
@@ -255,9 +255,9 @@ public class SSHClient {
         log.debug(String.format("Connecting: '%1$s'", this.getDisplayHost()));
 
         try {
-            this.client = _createSshClient();
+            _client = _createSshClient();
 
-            this.client.setServerKeyVerifier(
+            _client.setServerKeyVerifier(
                 new ServerKeyVerifier() {
                     @Override
                     public boolean verifyServerKey(
@@ -265,16 +265,16 @@ public class SSHClient {
                         SocketAddress remoteAddress,
                         PublicKey serverKey
                     ) {
-                        SSHClient.this.serverKey = serverKey;
+                        _serverKey = serverKey;
                         return true;
                     }
                 }
             );
 
-            this.client.start();
+            _client.start();
 
-            ConnectFuture cfuture = this.client.connect(this.host, this.port);
-            if (!cfuture.await(this.softTimeout)) {
+            ConnectFuture cfuture = _client.connect(_host, _port);
+            if (!cfuture.await(_softTimeout)) {
                 throw new TimeLimitExceededException(
                     String.format(
                         "SSH connection timed out connecting to '%1$s'",
@@ -283,19 +283,19 @@ public class SSHClient {
                 );
             }
 
-            this.session = cfuture.getSession();
+            _session = cfuture.getSession();
 
             /*
              * Wait for authentication phase so
              * we have serverKey.
              */
-            int stat = this.session.waitFor(
+            int stat = _session.waitFor(
                 (
                     ClientSession.CLOSED |
                     ClientSession.WAIT_AUTH |
                     ClientSession.TIMEOUT
                 ),
-                this.softTimeout
+                _softTimeout
             );
             if ((stat & ClientSession.CLOSED) != 0) {
                 throw new IOException(
@@ -331,11 +331,11 @@ public class SSHClient {
 
         try {
             AuthFuture afuture;
-            if (this.keyPair != null) {
-                afuture = this.session.authPublicKey(this.user, this.keyPair);
+            if (_keyPair != null) {
+                afuture = _session.authPublicKey(_user, _keyPair);
             }
-            else if (this.password != null) {
-                afuture = this.session.authPassword(this.user, this.password);
+            else if (_password != null) {
+                afuture = _session.authPassword(_user, _password);
             }
             else {
                 throw new AuthenticationException(
@@ -345,7 +345,7 @@ public class SSHClient {
                     )
                 );
             }
-            if (!afuture.await(this.softTimeout)) {
+            if (!afuture.await(_softTimeout)) {
                 throw new TimeLimitExceededException(
                     String.format(
                         "SSH authentication timed out connecting to '%1$s'",
@@ -359,7 +359,7 @@ public class SSHClient {
                         "SSH authentication to '%1$s' failed%2$s",
                         this.getDisplayHost(),
                         (
-                            this.keyPair == null ?
+                            _keyPair == null ?
                             " make sure host is configured for password authentication" :
                             " make sure key is authorized at host"
                         )
@@ -381,13 +381,13 @@ public class SSHClient {
      * Must be called when done with client.
      */
     public void disconnect() {
-        if (this.session != null) {
-            this.session.close(true);
-            this.session = null;
+        if (_session != null) {
+            _session.close(true);
+            _session = null;
         }
-        if (this.client != null) {
-            this.client.stop();
-            this.client = null;
+        if (_client != null) {
+            _client.stop();
+            _client = null;
         }
     }
 
@@ -424,7 +424,7 @@ public class SSHClient {
         ProgressOutputStream iout = new ProgressOutputStream(out);
         ProgressOutputStream ierr = new ProgressOutputStream(err);
 
-        ClientChannel channel = this.session.createExecChannel(command);
+        ClientChannel channel = _session.createExecChannel(command);
 
         try {
             channel.setIn(iin);
@@ -433,8 +433,8 @@ public class SSHClient {
             channel.open();
 
             long hardEnd = 0;
-            if (this.hardTimeout != 0) {
-                hardEnd = System.currentTimeMillis() + this.hardTimeout;
+            if (_hardTimeout != 0) {
+                hardEnd = System.currentTimeMillis() + _hardTimeout;
             }
 
             boolean hardTimeout = false;
@@ -447,7 +447,7 @@ public class SSHClient {
                         ClientChannel.EOF |
                         ClientChannel.TIMEOUT
                     ),
-                    this.softTimeout
+                    _softTimeout
                 );
 
                 hardTimeout = (hardEnd != 0 && System.currentTimeMillis() >= hardEnd);
@@ -490,7 +490,7 @@ public class SSHClient {
                     ClientChannel.EXIT_SIGNAL |
                     ClientChannel.TIMEOUT
                 ),
-                this.softTimeout
+                _softTimeout
             );
 
             if ((stat & ClientChannel.EXIT_SIGNAL) != 0) {
