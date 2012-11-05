@@ -205,11 +205,9 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     private void resetIrs() {
         if (getStoragePool().getspm_vds_id() != null) {
-            VDS currentSPMVds =
-                    DbFacade.getInstance().getVdsDao().get(getStoragePool().getspm_vds_id());
             ResetIrsVDSCommandParameters tempVar =
                     new ResetIrsVDSCommandParameters(getStoragePool()
-                            .getId(), currentSPMVds.gethost_name(), currentSPMVds.getId());
+                            .getId(), getStoragePool().getspm_vds_id().getValue());
             tempVar.setIgnoreStopFailed(true);
             Backend.getInstance()
                     .getResourceManager()

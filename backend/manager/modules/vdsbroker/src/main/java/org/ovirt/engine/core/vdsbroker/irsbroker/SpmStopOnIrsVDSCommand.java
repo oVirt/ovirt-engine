@@ -13,6 +13,6 @@ public class SpmStopOnIrsVDSCommand<P extends IrsBaseVDSCommandParameters> exten
         ResourceManager.getInstance().runVdsCommand(
                 VDSCommandType.ResetIrs,
                 new ResetIrsVDSCommandParameters(getParameters().getStoragePoolId(),
-                        getCurrentIrsProxyData().getmCurrentIrsHost(), getCurrentIrsProxyData().getCurrentVdsId()));
+                        getCurrentIrsProxyData().getCurrentVdsId()));
     }
 }

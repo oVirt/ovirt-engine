@@ -3,14 +3,11 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.*;
 
 public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
-    public ResetIrsVDSCommandParameters(Guid storagePoolId, String hostName, Guid vdsId) {
+    public ResetIrsVDSCommandParameters(Guid storagePoolId, Guid vdsId) {
         super(storagePoolId);
         setVdsId(vdsId);
-        _hostName = hostName;
     }
-
-    private String _hostName;
-
+    
     private Guid privateVdsId;
 
     public Guid getVdsId() {
@@ -19,10 +16,6 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
 
     public void setVdsId(Guid value) {
         privateVdsId = value;
-    }
-
-    public String getHostName() {
-        return _hostName;
     }
 
     private boolean privateIgnoreStopFailed;
@@ -40,9 +33,8 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
 
     @Override
     public String toString() {
-        return String.format("%s, hostName = %s, vdsId = %s, ignoreStopFailed = %s",
+        return String.format("%s, vdsId = %s, ignoreStopFailed = %s",
                 super.toString(),
-                getHostName(),
                 getVdsId(),
                 getIgnoreStopFailed());
     }

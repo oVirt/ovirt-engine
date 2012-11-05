@@ -181,7 +181,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             }
             if (spm != null) {
                 ResetIrsVDSCommandParameters tempVar2 = new ResetIrsVDSCommandParameters(
-                        getStoragePool().getId(), spm.gethost_name(), spm.getId());
+                        getStoragePool().getId(), spm.getId());
                 tempVar2.setIgnoreStopFailed(true);
                 commandSucceeded = Backend.getInstance().getResourceManager()
                             .RunVdsCommand(VDSCommandType.ResetIrs, tempVar2).getSucceeded();
