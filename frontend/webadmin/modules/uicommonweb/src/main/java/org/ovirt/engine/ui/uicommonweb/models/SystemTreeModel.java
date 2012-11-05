@@ -318,7 +318,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                                             VdcQueryReturnValue value = new VdcQueryReturnValue();
                                                             value.setSucceeded(true);
                                                             dummyResult.getReturnValues().add(value);
-                                                            Executed(dummyResult);
+                                                            SystemTreeModel.this.Executed(dummyResult);
                                                         } else {
                                                             Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel);
                                                         }
