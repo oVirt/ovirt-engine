@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,11 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.CommunicationException;
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
@@ -393,6 +396,30 @@ public class LdapBrokerUtils {
     public static void addLdapConfigValues(Hashtable<String, String> env){
         env.put("com.sun.jndi.ldap.read.timeout", Long.toString(Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout) * 1000));
         env.put("com.sun.jndi.ldap.connect.timeout", Long.toString(Config.<Integer> GetValue(ConfigValues.LDAPConnectTimeout) * 1000));
+    }
+
+    /**
+     * Gets a string representing a friendly version for possible
+     * exceptions that are thrown during LDAP queries
+     * @param th throwable object to get friendly string representation for
+     * @return friendly version if possible, or the original exception message if not
+     */
+    public static String getFriendlyExceptionMessage(Throwable th) {
+        Throwable ex = ExceptionUtils.getRootCause(th);
+        //Root cause should return the real root cause of the exception
+        //in chain of Exception wrapping
+        //If it fails to return it, the friendly version should be
+        //checked for type of the passed throwable
+        if (ex == null) {
+            ex = th;
+        }
+        if (ex instanceof SocketTimeoutException) {
+            return "connection timeout";
+        }
+        if (ex instanceof CommunicationException) {
+            return "communication error";
+        }
+        return th.getMessage();
     }
 
 }

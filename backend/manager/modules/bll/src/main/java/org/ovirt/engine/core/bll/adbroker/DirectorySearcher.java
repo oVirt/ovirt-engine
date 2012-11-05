@@ -114,7 +114,7 @@ public class DirectorySearcher {
                 domain.scoreLdapServer(ldapURI, handlingResponse.getServerScore());
                 log.errorFormat("Failed ldap search server {0} due to {1}. We {2} try the next server",
                         ldapURI,
-                        translatedException.getMessage(),
+                        LdapBrokerUtils.getFriendlyExceptionMessage(translatedException),
                         handlingResponse.isTryNextServer() ? "should" : "should not");
                 log.debugFormat("Failed ldap search server {0} due to {1}. We {2} try the next server",
                         ldapURI,
