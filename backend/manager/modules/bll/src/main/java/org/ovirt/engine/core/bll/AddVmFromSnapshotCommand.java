@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -273,6 +274,10 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             return false;
         }
 
+        if (!ImagesHandler.checkImagesLocked(getSourceVmFromDb(), getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
+
         // Run all checks for AddVm, now that it is determined snapshot exists
         if (!super.canDoAction()) {
             return false;
@@ -360,7 +365,11 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getSourceSnapshotId().toString(), getClass().getName());
+        if (getSourceVmFromDb() == null) {
+            return null;
+        }
+
+        return Collections.singletonMap(getSourceVmFromDb().getId().toString(), LockingGroup.VM.name());
     }
 
 }
