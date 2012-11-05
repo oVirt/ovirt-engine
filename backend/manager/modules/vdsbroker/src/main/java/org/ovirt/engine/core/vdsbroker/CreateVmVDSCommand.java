@@ -166,6 +166,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                         command.getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setReturnValue(VMStatus.Down);
                 getVDSReturnValue().setSucceeded(false);
+                getVDSReturnValue().setExceptionString(command.getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setVdsError(command.getVDSReturnValue().getVdsError());
             } else {
                 throw command.getVDSReturnValue().getExceptionObject();

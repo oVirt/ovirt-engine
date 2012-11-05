@@ -201,6 +201,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     status = createVm();
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 }
+            } catch(VdcBLLException e) {
+                VdcBllErrors errorCode = e.getErrorCode();
+
+                // if the returned exception is such that shoudn't trigger the re-run process,
+                // re-throw it. otherwise, continue (the vm will be down and a re-run will be triggered)
+                switch (errorCode) {
+                case Done: // should never get here with errorCode = 'Done' though
+                case exist:
+                    throw e;
+                default:
+                }
+
             } finally {
                 freeLock();
                 decrementVdsPendingVmsCount();
