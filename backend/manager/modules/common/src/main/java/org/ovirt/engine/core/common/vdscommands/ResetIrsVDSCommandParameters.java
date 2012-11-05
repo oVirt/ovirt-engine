@@ -7,7 +7,7 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
         super(storagePoolId);
         setVdsId(vdsId);
     }
-    
+
     private Guid privateVdsId;
 
     public Guid getVdsId() {
