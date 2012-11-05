@@ -724,6 +724,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Brick")
     String VAR__TYPE__GLUSTER_BRICK();
 
+    @DefaultStringValue("$type Gluster Server")
+    String VAR__TYPE__GLUSTER_SERVER();
+
     @DefaultStringValue("Cannot ${action} ${type}. The chosen disk drive letter is already in use, please select a free one.")
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
 

@@ -236,7 +236,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String AuditLogType___GLUSTER_HOST_ADD_FAILED();
 
-	String AuditLogType___GLUSTER_HOST_REMOVE_FAILED();
+	String AuditLogType___GLUSTER_SERVER_REMOVE();
+
+	String AuditLogType___GLUSTER_SERVER_REMOVE_FAILED();
 
 	String AuditLogType___GLUSTER_VOLUME_PROFILE_START();
 

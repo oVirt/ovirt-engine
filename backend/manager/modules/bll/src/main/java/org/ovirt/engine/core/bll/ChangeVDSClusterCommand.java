@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostRemoveVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -189,14 +189,14 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                         : getVds().gethost_name();
         VDSReturnValue returnValue =
                 runVdsCommand(
-                        VDSCommandType.GlusterHostRemove,
-                        new GlusterHostRemoveVDSParameters((getClusterUtils().getUpServer(sourceClusterId)).getId(),
+                        VDSCommandType.RemoveGlusterServer,
+                        new RemoveGlusterServerVDSParameters((getClusterUtils().getUpServer(sourceClusterId)).getId(),
                                 hostName,
                                 false));
 
         if (!returnValue.getSucceeded()) {
             handleVdsError(returnValue);
-            errorType = AuditLogType.GLUSTER_HOST_REMOVE_FAILED;
+            errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
             return false;
         }
         return true;

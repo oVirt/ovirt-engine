@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostRemoveVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -196,15 +196,15 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
         if (isGlusterEnabled() && clusterHasMultipleHosts() && !hasVolumeOnServer()) {
             VDSReturnValue returnValue =
                     runVdsCommand(
-                            VDSCommandType.GlusterHostRemove,
-                            new GlusterHostRemoveVDSParameters(upServer.getId(),
+                            VDSCommandType.RemoveGlusterServer,
+                            new RemoveGlusterServerVDSParameters(upServer.getId(),
                                     getVds().gethost_name(),
                                     forceAction));
             setSucceeded(returnValue.getSucceeded());
             if (!getSucceeded()) {
                 getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
                 getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
-                errorType = AuditLogType.GLUSTER_HOST_REMOVE_FAILED;
+                errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
                 return;
             }
         }

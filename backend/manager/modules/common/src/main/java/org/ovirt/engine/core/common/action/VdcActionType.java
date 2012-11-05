@@ -260,6 +260,7 @@ public enum VdcActionType {
     AddBricksToGlusterVolume(1409, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     StartGlusterVolumeProfile(1410, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     StopGlusterVolumeProfile(1411, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    RemoveGlusterServer(1412, ActionGroup.DELETE_HOST, QuotaDependency.NONE),
     ;
 
     private int intValue;
