@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +32,8 @@ import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -491,6 +494,20 @@ public class VdsInstaller implements IVdsInstallerCallback {
 
     }
 
+    public static List<VDS> getVdssByUniqueId(final Guid vdsId, String uniqueIdToCheck) {
+        List<VDS> list = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(uniqueIdToCheck);
+        return LinqUtils.filter(list, new Predicate<VDS>() {
+            @Override
+            public boolean eval(VDS vds) {
+                return !vds.getId().equals(vdsId);
+            }
+        });
+    }
+
+    public static boolean isVdsUnique(final Guid vdsId, String uniqueIdToCheck) {
+        return getVdssByUniqueId(vdsId, uniqueIdToCheck).isEmpty();
+    }
+
     private boolean InsertUniqueId(String message) {
         String uniqueId = message == null ? "" : message.trim();
 
@@ -503,7 +520,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             return false;
         }
 
-        if (VdsInstallHelper.isVdsUnique(_vds.getId(), uniqueId)) {
+        if (isVdsUnique(_vds.getId(), uniqueId)) {
             log.infoFormat("Installation of {0}. Assigning unique id {1} to Host. (Stage: {2})", _serverName, uniqueId,
                     getCurrentInstallStage());
             _vds.setUniqueId(uniqueId);

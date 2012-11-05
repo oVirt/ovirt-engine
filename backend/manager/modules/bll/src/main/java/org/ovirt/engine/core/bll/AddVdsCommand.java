@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -49,9 +48,12 @@ import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.utils.ssh.SSHClient;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
+
+    private static final String USER_NAME = "root";
 
     private VDS upServer;
 
@@ -308,7 +310,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                             .getcompatibility_version().toString())) {
                     returnValue = false;
                 } else {
-                    returnValue = returnValue && validateHostUniqueness(vds);
+                    returnValue = returnValue && canConnect(vds);
                 }
             }
         }
@@ -333,45 +335,47 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return ClusterUtils.getInstance().hasServers(getVdsGroupId());
     }
 
-    public VdsInstallHelper getVdsInstallHelper() {
-        return new VdsInstallHelper();
+    public SSHClient getSSHClient() {
+        return new SSHClient();
     }
 
-    private boolean validateHostUniqueness(VDS vds) {
-        boolean retrunValue = true;
+    private boolean canConnect(VDS vds) {
+        boolean returnValue = true;
 
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (vds.getvds_type() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
-            VdsInstallHelper installHelper = getVdsInstallHelper();
+            SSHClient sshclient = null;
             try {
                 Long timeout =
                         TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
-                if (!installHelper.connectToServer(vds.gethost_name(), getParameters().getRootPassword(), timeout)) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CONNECT_TO_SERVER);
-                    retrunValue = false;
-                } else {
-                    String serverUniqueId = installHelper.getServerUniqueId();
-                    if (serverUniqueId != null) {
-                        serverUniqueId = serverUniqueId.trim();
-                    }
-                    retrunValue = retrunValue && validateHostUniqueId(vds, serverUniqueId);
-                    if(retrunValue) {
-                        vds.setUniqueId(serverUniqueId);
-                    }
-                }
-            } finally {
-                try {
-                    installHelper.shutdown();
-                } catch (Exception e) {
-                    log.errorFormat("Failed to terminate session with host {0} with message: {1}",
-                            vds.getvds_name(),
-                            ExceptionUtils.getMessage(e));
-                    log.debug(e);
+
+                sshclient = getSSHClient();
+                sshclient.setHardTimeout(timeout);
+                sshclient.setSoftTimeout(timeout);
+                sshclient.setHost(vds.gethost_name());
+                sshclient.setUser(USER_NAME);
+                sshclient.setPassword(getParameters().getRootPassword());
+                sshclient.connect();
+                sshclient.authenticate();
+            }
+            catch (Exception e) {
+                log.errorFormat(
+                    "Failed to establish session with host {0}",
+                    vds.getvds_name(),
+                    e
+                );
+
+                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CONNECT_TO_SERVER);
+                returnValue = false;
+            }
+            finally {
+                if (sshclient != null) {
+                    sshclient.disconnect();
                 }
             }
         }
 
-        return retrunValue && validateHostUniqueNameAndAddress(getParameters().getVdsStaticData());
+        return returnValue;
     }
 
     private boolean validateHostUniqueNameAndAddress(VdsStatic vdsStaticData) {
@@ -383,49 +387,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
         return !VdsHandler.isVdsExistForPendingOvirt(vdsStaticData,
                 getReturnValue().getCanDoActionMessages(), vdsForUniqueId);
-    }
-
-    /**
-     * Validate if same unique-id associated with the given host exists in other hosts.<br>
-     * There should be up to one host with the same unique-id besides the new host.<br>
-     * If host typed oVirt has the same unique id, in status PendingApproval, set that host-id<br>
-     * on the parameters member of the command.
-     *
-     * @param vds
-     *            a new host to be added
-     * @param serverUniqueId
-     *            a new host unique-id
-     * @return true - if no host is associated with the unique-id, or if there is a single oVirt node in PendingApproval
-     *         status, else - false.
-     */
-    private boolean validateHostUniqueId(VDS vds, String serverUniqueId) {
-        boolean retrunValue = true;
-        List<VDS> vdssByUniqueId = VdsInstallHelper.getVdssByUniqueId(vds.getId(), serverUniqueId);
-
-        if (!vdssByUniqueId.isEmpty()) {
-            if (vdssByUniqueId.size() > 1) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(vdssByUniqueId.get(0));
-                for (int i = 1; i < vdssByUniqueId.size(); i++) {
-                    sb.append(", ").append(vdssByUniqueId.get(i).getvds_name());
-                }
-                addCanDoActionMessage(VdcBllMessages.VDS_REGISTER_UNIQUE_ID_AMBIGUOUS);
-                addCanDoActionMessage(String.format("$HostNameList %1$s", sb.toString()));
-                retrunValue = false;
-            } else {
-                VDS existedVds = vdssByUniqueId.get(0);
-                if (vds.getvds_type() == VDSType.VDS
-                        && existedVds.getvds_type() == VDSType.oVirtNode
-                        && (existedVds.getstatus() == VDSStatus.PendingApproval)) {
-                    getParameters().setVdsForUniqueId(existedVds.getId());
-                } else {
-                    addCanDoActionMessage(VdcBllMessages.VDS_REGISTER_UNIQUE_ID_AMBIGUOUS);
-                    addCanDoActionMessage(String.format("$HostNameList %1$s", existedVds.getvds_name()));
-                    retrunValue = false;
-                }
-            }
-        }
-        return retrunValue;
     }
 
     private boolean validateSingleHostAttachedToLocalStorage() {

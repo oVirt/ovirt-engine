@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.itests;
 
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 import static org.ovirt.engine.core.itests.AbstractBackendTest.testSequence;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.AddVdsCommand;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
-import org.ovirt.engine.core.bll.VdsInstallHelper;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -76,6 +74,7 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.ssh.SSHClient;
 
 /**
  * This class will create basic virtualization "lab" composed from all basic entities, Host, Cluster, Storage,
@@ -101,7 +100,7 @@ public class BasicTestSetup {
     private final BackendInternal backend;
 
     @Mock
-    private VdsInstallHelper vdsInstallHelper;
+    private SSHClient sshclient;
 
     public BasicTestSetup(BackendInternal backend) {
         MockitoAnnotations.initMocks(this);
@@ -284,7 +283,7 @@ public class BasicTestSetup {
 
         Boolean isMLA = Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn);
         setIsMultiLevelAdministrationOn(Boolean.FALSE);
-        mockVdsInstallerHelper();
+        mockSSHClient();
         AddVdsCommand<AddVdsActionParameters> addVdsCommand = createAddVdsCommand(addHostParams);
         VdcReturnValueBase addHostAction = addVdsCommand.executeAction();
         setIsMultiLevelAdministrationOn(isMLA);
@@ -302,13 +301,18 @@ public class BasicTestSetup {
     private AddVdsCommand<AddVdsActionParameters> createAddVdsCommand(AddVdsActionParameters addHostParams) {
         AddVdsCommand<AddVdsActionParameters> spyVdsCommand =
                 spy(new AddVdsCommand<AddVdsActionParameters>(addHostParams));
-        when(spyVdsCommand.getVdsInstallHelper()).thenReturn(vdsInstallHelper);
+        when(spyVdsCommand.getSSHClient()).thenReturn(sshclient);
         return spyVdsCommand;
     }
 
-    private void mockVdsInstallerHelper() {
-        when(vdsInstallHelper.connectToServer(anyString(), anyString(), anyLong())).thenReturn(true);
-        when(vdsInstallHelper.getServerUniqueId()).thenReturn("");
+    private void mockSSHClient() {
+        try {
+            doNothing().when(sshclient).connect();
+            doNothing().when(sshclient).authenticate();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void setIsMultiLevelAdministrationOn(Boolean isMLA) {
