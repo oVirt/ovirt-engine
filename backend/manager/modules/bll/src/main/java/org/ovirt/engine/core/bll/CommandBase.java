@@ -521,6 +521,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (hasTaskHandlers()) {
             getCurrentTaskHandler().endWithFailure();
             revertPreviousHandlers();
+            startPollingAsyncTasks();
         } else {
             endWithFailure();
         }
