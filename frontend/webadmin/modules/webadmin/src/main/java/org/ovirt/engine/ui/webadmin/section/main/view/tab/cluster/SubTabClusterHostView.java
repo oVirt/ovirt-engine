@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS, ClusterListModel, ClusterHostListModel>
         implements SubTabClusterHostPresenter.ViewDef {
@@ -58,7 +59,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
             TextColumnWithTooltip<VDS> loadColumn = new TextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
-                    return object.getvm_active() + " " + constants.vmsClusterHost(); //$NON-NLS-1$
+                    return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(object.getvm_active());
                 }
             };
             getTable().addColumn(loadColumn, constants.loadClusterHost());

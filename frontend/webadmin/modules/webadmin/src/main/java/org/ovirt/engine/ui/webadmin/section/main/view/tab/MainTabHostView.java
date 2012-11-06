@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -137,7 +138,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 @Override
                 protected String getProgressText(VDS object) {
                     int numOfActiveVMs = object.getvm_active() != null ? object.getvm_active() : 0;
-                    return numOfActiveVMs + " VMs"; //$NON-NLS-1$
+                    return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(object.getvm_active());
                 }
 
                 @Override

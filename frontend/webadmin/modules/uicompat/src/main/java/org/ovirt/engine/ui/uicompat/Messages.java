@@ -195,4 +195,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Overriding MTU configuration is not supported for Cluster version {0}")
     String mtuOverrideNotSupported(String version);
+
+    @DefaultMessage("{0} VMs")
+    String numberOfVmsForHostsLoad(int numberOfVms);
 }
