@@ -9,7 +9,7 @@ public enum AuthenticationResult {
             "USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD",
             11),
     CLOCK_SKEW_TOO_GREAT(
-            "Authentication Failed. oVirt Engine clock is not synchronized with directory services (must be within 5 minutes difference). Please verify the clocks are synchronized",
+            "Authentication Failed. The Engine clock is not synchronized with directory services (must be within 5 minutes difference). Please verify the clocks are synchronized",
             "USER_FAILED_TO_AUTHENTICATE_CLOCK_SKEW_TOO_GREAT",
             12),
     NO_KDCS_FOUND(
@@ -17,7 +17,7 @@ public enum AuthenticationResult {
             "USER_FAILED_TO_AUTHENTICATE_NO_KDCS_FOUND",
             13),
     DNS_ERROR(
-            "Authentication Failed. Error in DNS configuration. Please verify the oVirt Engine host has a valid reverse DNS (PTR) record.",
+            "Authentication Failed. Error in DNS configuration. Please verify the Engine host has a valid reverse DNS (PTR) record.",
             "USER_FAILED_TO_AUTHENTICATE_DNS_ERROR",
             14),
     OTHER("Kerberos error. Please check log for further details.", "USER_FAILED_TO_AUTHENTICATE", 15),

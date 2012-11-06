@@ -226,7 +226,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot fence Host, Host fencing is disabled.")
     String VDS_FENCING_DISABLED();
 
-    @DefaultStringValue("Fencing is disabled due to oVirt Engine service start up sequence.")
+    @DefaultStringValue("Fencing is disabled due to the Engine Service start up sequence.")
     String VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL();
 
     @DefaultStringValue(" Power Management operation ${operation} is still running, please retry in ${seconds} Sec.")
@@ -784,7 +784,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot Login. User Account is Disabled or Locked, Please contact your system administrator.")
     String USER_ACCOUNT_DISABLED();
 
-    @DefaultStringValue("Permission denied. oVirt Engine Administrator permission is required.")
+    @DefaultStringValue("Permission denied. Engine Administrator permission is required.")
     String USER_PERMISSION_DENIED();
 
     @DefaultStringValue("Cannot Login. Session timeout.")
@@ -961,7 +961,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Invalid parameters.\n-Please check that bond name is formatted as <bondYYY>.\n-Bond consist of at least two network interfaces(NICs).")
     String NETWORK_BOND_PARAMETERS_INVALID();
 
-    @DefaultStringValue("Network engine is mandatory, it cannot be modified.")
+    @DefaultStringValue("Network '${NetworkName}' is mandatory, it cannot be modified.")
     String NETWORK_DEFAULT_UPDATE_NAME_INVALID();
 
     @DefaultStringValue("Network Interface already belongs to the bond.")
@@ -1186,7 +1186,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cluster ID is not valid.")
     String VM_CLUSTER_IS_NOT_VALID();
 
-    @DefaultStringValue("The management Network (engine) is mandatory and cannot be removed.")
+    @DefaultStringValue("The Management Network ('${NetworkName}') is mandatory and cannot be removed.")
     String NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK();
 
     @DefaultStringValue("Previous network name is required.")
@@ -1453,7 +1453,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Both low and high CPU utilization thresholds must be defined when using power saving policy.")
     String VDS_GROUP_BOTH_LOW_AND_HIGH_CPU_UTILIZATION_PERCENTAGE_MUST_BE_DEFINED_WHEN_USING_POWER_SAVING();
 
-    @DefaultStringValue("The default gateway should be set only on engine network")
+    @DefaultStringValue("The default gateway should be set only on the Management Network")
     String NETWORK_ATTACH_ILLEGAL_GATEWAY();
 
     @DefaultStringValue("User/group ID cannot be empty.")
@@ -1606,13 +1606,13 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Authentication failed. The user is either locked or disabled")
     String USER_FAILED_TO_AUTHENTICATE_ACCOUNT_IS_LOCKED_OR_DISABLED();
 
-    @DefaultStringValue("Authentication Failed. Error in DNS configuration. Please verify the oVirt Engine Host has a valid reverse DNS (PTR) record.")
+    @DefaultStringValue("Authentication Failed. Error in DNS configuration. Please verify the Engine Host has a valid reverse DNS (PTR) record.")
     String USER_FAILED_TO_AUTHENTICATE_DNS_ERROR();
 
     @DefaultStringValue("Authentication Failed. Please verify the fully qualified domain name that is used for authentication is correct.")
     String USER_FAILED_TO_AUTHENTICATE_NO_KDCS_FOUND();
 
-    @DefaultStringValue("Authentication Failed. oVirt Engine clock is not synchronized with directory services (must be within 5 minutes difference). Please verify the clocks are synchronized and restart the service.")
+    @DefaultStringValue("Authentication Failed. The Engine clock is not synchronized with directory services (must be within 5 minutes difference). Please verify the clocks are synchronized and restart the service.")
     String USER_FAILED_TO_AUTHENTICATE_CLOCK_SKEW_TOO_GREAT();
 
     @DefaultStringValue("Authentication Failed. Connection to Directory server has timed out. Please contact your system administrator")
@@ -1759,10 +1759,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("There is no valid license for oVirt Engine")
     String ERROR_LICENSE_NO_LICENSE();
 
-    @DefaultStringValue("Login failed, if the oVirt Engine Service was restarted please wait few seconds and try again, if the problem persists please check your oVirt Engine license.")
+    @DefaultStringValue("Login failed, if the Engine Service was restarted please wait few seconds and try again, if the problem persists please check your oVirt Engine license.")
     String ERROR_LICENSE_ILLEGAL();
 
-    @DefaultStringValue("oVirt Engine has detected that the system clock has been modified")
+    @DefaultStringValue("The Engine has detected that the system clock has been modified")
     String ERROR_LICENSE_SYSTEM_CLOCK_MODIFIED();
 
     @DefaultStringValue("oVirt Engine's evaluation period has expired")

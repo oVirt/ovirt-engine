@@ -202,6 +202,8 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 && !StringUtils.equals(getParameters().getNetwork().getname(), NetworkUtils.getEngineNetwork())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
+            getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
+                    Config.<String> GetValue(ConfigValues.ManagementNetwork)));
             return false;
         }
 

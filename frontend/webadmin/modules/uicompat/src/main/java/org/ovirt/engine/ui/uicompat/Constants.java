@@ -697,7 +697,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Name must be up to 126 characters and start with any word character.")
     String nameMustBeUpToAndStartWithMsg();
 
-    @DefaultStringValue("Could not connect to oVirt Engine Service, please try to refresh the page. If the problem persists contact your System Administrator.")
+    @DefaultStringValue("Could not connect to the Engine Service, please try to refresh the page. If the problem persists contact your System Administrator.")
     String couldNotConnectToOvirtEngineServiceMsg();
 
     @DefaultStringValue("Are you sure you want to detach selected Virtual Machine(s)?")
