@@ -293,11 +293,6 @@ public class VmMapper {
                     os.setType(osType.value());
                 }
             }
-            if (entity.getBootSequence() != null) {
-                for (Boot boot : map(entity.getDefaultBootSequence(), null)) {
-                    os.getBoot().add(boot);
-                }
-            }
             os.setKernel(entity.getKernelUrl());
             os.setInitrd(entity.getInitrdUrl());
             os.setCmdline(entity.getKernelParams());
@@ -323,22 +318,50 @@ public class VmMapper {
             pool.setId(entity.getVmPoolId().toString());
             model.setVmPool(pool);
         }
-        if (entity.getRunOnVds() != null) {
-            model.setHost(new Host());
-            model.getHost().setId(entity.getRunOnVds().toString());
-        }
-        if (entity.getDefaultDisplayType() != null) {
-            model.setDisplay(new Display());
-            if (getIsVmRunning(entity) && entity.getDynamicData() != null) {
-                model.getDisplay().setType(map(entity.getDynamicData().getdisplay_type(), null));
-            } else {
-                model.getDisplay().setType(map(entity.getDefaultDisplayType(), null));
+        if (getIsVmRunning(entity) && entity.getDynamicData() != null) {
+            if (model.getOs() != null && entity.getBootSequence() != null) {
+                for (Boot boot : map(entity.getBootSequence(), null)) {
+                    model.getOs().getBoot().add(boot);
+                }
             }
+            if(entity.getRunOnVds() != null) {
+                model.setHost(new Host());
+                model.getHost().setId(entity.getRunOnVds().toString());
+            }
+            if (entity.getVmIp()!=null && !entity.getVmIp().isEmpty()) {
+                model.setGuestInfo(new GuestInfo());
+                model.getGuestInfo().setIps(new IPs());
+                for (String item : entity.getVmIp().split(" ")) {
+                    if (!item.equals("")) {
+                        IP ip = new IP();
+                        ip.setAddress(item.trim());
+                        model.getGuestInfo().getIps().getIPs().add(ip);
+                    }
+                }
+            }
+            if (entity.getLastStartTime() != null) {
+                model.setStartTime(DateMapper.map(entity.getLastStartTime(), null));
+            }
+            model.setDisplay(new Display());
+            model.getDisplay().setType(map(entity.getDisplayType(), null));
             model.getDisplay().setAddress(entity.getDisplayIp());
             Integer displayPort = entity.getDisplay();
             model.getDisplay().setPort(displayPort==null || displayPort==-1 ? null : displayPort);
             Integer displaySecurePort = entity.getDisplaySecurePort();
             model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort==-1 ? null : displaySecurePort);
+            model.getDisplay().setMonitors(entity.getNumOfMonitors());
+        } else {
+            if (model.getOs() != null) {
+                for (Boot boot : map(entity.getDefaultBootSequence(), null)) {
+                    model.getOs().getBoot().add(boot);
+                }
+            }
+            if (entity.getDefaultDisplayType() != null) {
+                model.setDisplay(new Display());
+                model.getDisplay().setType(map(entity.getDefaultDisplayType(), null));
+            }
+        }
+        if (model.getDisplay() != null) {
             model.getDisplay().setMonitors(entity.getNumOfMonitors());
             model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
@@ -355,9 +378,6 @@ public class VmMapper {
         if (entity.getVmCreationDate() != null) {
             model.setCreationTime(DateMapper.map(entity.getVmCreationDate(), null));
         }
-        if (entity.getDynamicData() != null && entity.getDynamicData().getLastStartTime()!=null) {
-            model.setStartTime(DateMapper.map(entity.getDynamicData().getLastStartTime(), null));
-        }
         model.setPlacementPolicy(new VmPlacementPolicy());
         if(entity.getDedicatedVmForVds() !=null){
             model.getPlacementPolicy().setHost(new Host());
@@ -371,17 +391,6 @@ public class VmMapper {
             Domain domain = new Domain();
             domain.setName(entity.getVmDomain());
             model.setDomain(domain);
-        }
-        if (entity.getVmIp()!=null && !entity.getVmIp().isEmpty()) {
-            model.setGuestInfo(new GuestInfo());
-            model.getGuestInfo().setIps(new IPs());
-            for (String item : entity.getVmIp().split(" ")) {
-                if (!item.equals("")) {
-                    IP ip = new IP();
-                    ip.setAddress(item.trim());
-                    model.getGuestInfo().getIps().getIPs().add(ip);
-                }
-            }
         }
         MemoryPolicy policy = new MemoryPolicy();
         policy.setGuaranteed(new Long(entity.getMinAllocatedMem()) * BYTES_PER_MB);

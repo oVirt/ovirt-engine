@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -41,6 +42,8 @@ public class VmMapperTest extends
         statistics.setcpu_user(new Double(10L));
         statistics.setcpu_sys(new Double(20L));
         VmDynamic dynamic = new VmDynamic();
+        dynamic.setstatus(VMStatus.Up);
+        dynamic.setboot_sequence(to.getdefault_boot_sequence());
         dynamic.setdisplay_type(to.getdefault_display_type());
         org.ovirt.engine.core.common.businessentities.VM ret =
                 new org.ovirt.engine.core.common.businessentities.VM(to,
@@ -114,6 +117,7 @@ public class VmMapperTest extends
     public void testGustIp() {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setstatus(VMStatus.Up);
         vmDynamic.setvm_ip("2.2.2.2");
         vm.setDynamicData(vmDynamic);
 
@@ -126,6 +130,7 @@ public class VmMapperTest extends
     public void testGustIps() {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setstatus(VMStatus.Up);
         vmDynamic.setvm_ip("2.2.2.2 2.2.2.3 2.2.2.4");
         vm.setDynamicData(vmDynamic);
 
@@ -140,6 +145,7 @@ public class VmMapperTest extends
     public void testDisplayPort() {
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();
+        entity.setStatus(VMStatus.Up);
         entity.setDisplay(5900);
         entity.setDisplaySecurePort(9999);
         VM model = VmMapper.map(entity, null);
@@ -172,6 +178,7 @@ public class VmMapperTest extends
     public void testMapHostId() {
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();
+        entity.setStatus(VMStatus.Up);
         Guid guid = NGuid.NewGuid();
         entity.setRunOnVds(guid);
         VM model = VmMapper.map(entity, null);
