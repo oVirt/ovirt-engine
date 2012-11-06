@@ -336,10 +336,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         setImageStatus(ImageStatus.OK);
     }
 
-    protected void markImageAsIllegal() {
-        setImageStatus(ImageStatus.ILLEGAL);
-    }
-
     protected void setImageStatus(ImageStatus imageStatus) {
         DiskImage diskImage = getRelevantDiskImage();
         diskImage.setimageStatus(imageStatus);

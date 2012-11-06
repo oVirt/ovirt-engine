@@ -109,20 +109,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             sourceDomainId,
                             getParameters().getStorageDomainId()));
 
-            // change storage domain in db only if object moved
-            if (getParameters().getOperation() == ImageOperation.Move
-                    || getParameters().getParentCommand() == VdcActionType.ImportVm
-                    || getParameters().getParentCommand() == VdcActionType.ImportVmTemplate) {
-                List<DiskImage> snapshots = getDiskImageDao()
-                        .getAllSnapshotsForImageGroup(getParameters().getDestImageGroupId());
-                setSnapshotForShareableDisk(snapshots);
-                for (DiskImage snapshot : snapshots) {
-                    getImageStorageDomainMapDao().remove
-                            (new image_storage_domain_map_id(snapshot.getImageId(), snapshot.getstorage_ids().get(0)));
-                    getImageStorageDomainMapDao().save
-                            (new image_storage_domain_map(snapshot.getImageId(), getParameters().getStorageDomainId()));
-                }
-            } else if (getParameters().getAddImageDomainMapping()) {
+            // Add storage domain in db only if there is new entity in DB.
+            if (!shouldUpdateStorageDisk() && getParameters().getAddImageDomainMapping()) {
                 getImageStorageDomainMapDao().save
                         (new image_storage_domain_map(getParameters().getImageId(),
                                 getParameters().getStorageDomainId()));
@@ -158,9 +146,31 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     }
 
     @Override
+    protected void endSuccessfully() {
+        if (shouldUpdateStorageDisk()) {
+            List<DiskImage> snapshots = getDiskImageDao()
+                    .getAllSnapshotsForImageGroup(getParameters().getDestImageGroupId());
+            setSnapshotForShareableDisk(snapshots);
+            for (DiskImage snapshot : snapshots) {
+                getImageStorageDomainMapDao().remove
+                        (new image_storage_domain_map_id(snapshot.getImageId(), snapshot.getstorage_ids().get(0)));
+                getImageStorageDomainMapDao().save
+                        (new image_storage_domain_map(snapshot.getImageId(), getParameters().getStorageDomainId()));
+            }
+        }
+        super.endSuccessfully();
+    }
+
+    private boolean shouldUpdateStorageDisk() {
+        return getParameters().getOperation() == ImageOperation.Move ||
+                getParameters().getParentCommand() == VdcActionType.ImportVm ||
+                getParameters().getParentCommand() == VdcActionType.ImportVmTemplate;
+    }
+
+    @Override
     protected void endWithFailure() {
+        unLockImage();
         if (getMoveOrCopyImageOperation() == ImageOperation.Copy) {
-            unLockImage();
             if (getParameters().getAddImageDomainMapping()) {
                 // remove image-storage mapping
                 getImageStorageDomainMapDao().remove
@@ -169,11 +179,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             }
             revertTasks();
         }
-
-        else {
-            markImageAsIllegal();
-        }
-
         setSucceeded(true);
     }
 
