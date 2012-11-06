@@ -952,7 +952,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Attached")
     String attachedNetworkCluster();
 
-    @DefaultStringValue("Compatiblity Version")
+    @DefaultStringValue("Compatibility Version")
     String comptVersCluster();
 
     @DefaultStringValue("Network Required")
