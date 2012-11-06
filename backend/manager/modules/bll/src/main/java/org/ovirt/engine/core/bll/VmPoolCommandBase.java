@@ -214,7 +214,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
             if (!returnValue) {
                 if (messages != null) {
                     messages.add(VdcBllMessages.VAR__TYPE__DESKTOP_POOL.toString());
-                    messages.add(VdcBllMessages.VAR__ACTION__ATTACHE_DESKTOP_TO.toString());
+                    messages.add(VdcBllMessages.VAR__ACTION__ATTACH_DESKTOP_TO.toString());
                 }
             }
         }

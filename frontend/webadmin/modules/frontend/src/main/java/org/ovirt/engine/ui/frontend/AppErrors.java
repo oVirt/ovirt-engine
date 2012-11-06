@@ -598,8 +598,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action cancel migration")
     String VAR__ACTION__CANCEL_MIGRATE();
 
-    @DefaultStringValue("$action attache VM to")
-    String VAR__ACTION__ATTACHE_DESKTOP_TO();
+    @DefaultStringValue("$action attach VM to")
+    String VAR__ACTION__ATTACH_DESKTOP_TO();
 
     @DefaultStringValue("$action revert to")
     String VAR__ACTION__REVERT_TO();
