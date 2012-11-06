@@ -28,14 +28,12 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
     public void copyDetailsFrom(GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
         for (BrickDetails newBrickDetails : volumeAdvancedDetails.getBrickDetails()) {
             Guid newBrickId = newBrickDetails.getBrickProperties().getBrickId();
-            if (newBrickId == null) {
-                continue;
-            }
-
-            for (BrickDetails brickDetails : getBrickDetails()) {
-                if (newBrickId.equals(brickDetails.getBrickProperties().getBrickId())) {
-                    copyBrickProperties(newBrickDetails.getBrickProperties(), brickDetails.getBrickProperties());
-                    break;
+            if (newBrickId != null) {
+                for (BrickDetails brickDetails : getBrickDetails()) {
+                    if (newBrickId.equals(brickDetails.getBrickProperties().getBrickId())) {
+                        copyBrickProperties(newBrickDetails.getBrickProperties(), brickDetails.getBrickProperties());
+                        break;
+                    }
                 }
             }
         }
@@ -59,13 +57,12 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
     public void copyClientsFrom(GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
         for (BrickDetails newBrickDetails : volumeAdvancedDetails.getBrickDetails()) {
             Guid newBrickId = newBrickDetails.getBrickProperties().getBrickId();
-            if (newBrickId == null) {
-                continue;
-            }
-            for (BrickDetails brickDetails : getBrickDetails()) {
-                if (newBrickId.equals(brickDetails.getBrickProperties().getBrickId())) {
-                    brickDetails.setClients(newBrickDetails.getClients());
-                    break;
+            if (newBrickId != null) {
+                for (BrickDetails brickDetails : getBrickDetails()) {
+                    if (newBrickId.equals(brickDetails.getBrickProperties().getBrickId())) {
+                        brickDetails.setClients(newBrickDetails.getClients());
+                        break;
+                    }
                 }
             }
         }
@@ -74,13 +71,12 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
     public void copyMemoryFrom(GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
         for (BrickDetails newBrickDetails : volumeAdvancedDetails.getBrickDetails()) {
             Guid newBrickId = newBrickDetails.getBrickProperties().getBrickId();
-            if (newBrickId == null) {
-                continue;
-            }
-            for (BrickDetails brickDetails : getBrickDetails()) {
-                if (newBrickId.equals(brickDetails.getBrickProperties().getBrickId())) {
-                    brickDetails.setMemoryStatus(newBrickDetails.getMemoryStatus());
-                    break;
+            if (newBrickId != null) {
+                for (BrickDetails brickDetails : getBrickDetails()) {
+                    if (newBrickId.equals(brickDetails.getBrickProperties().getBrickId())) {
+                        brickDetails.setMemoryStatus(newBrickDetails.getMemoryStatus());
+                        break;
+                    }
                 }
             }
         }

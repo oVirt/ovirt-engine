@@ -134,7 +134,6 @@ public class GlusterManager {
                     log.errorFormat("Error while refreshing Gluster lightweight data of cluster {0}!",
                             cluster.getname(),
                             e);
-                    continue;
                 }
             }
         }
@@ -189,13 +188,11 @@ public class GlusterManager {
 
                 try {
                     removeServerFromDb(server);
+                    // remove the server from resource manager
+                    runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
                 } catch (Exception e) {
                     log.errorFormat("Error while removing server {0} from database!", server.getvds_name(), e);
-                    continue;
                 }
-
-                // remove the server from resource manager
-                runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
             }
         }
     }
@@ -441,7 +438,6 @@ public class GlusterManager {
                     createVolume(volume);
                 } catch (Exception e) {
                     log.errorFormat("Could not save volume {0} in database!", volume.getName(), e);
-                    continue;
                 }
             } else {
                 try {
@@ -450,7 +446,6 @@ public class GlusterManager {
                     updateVolume(existingVolume, volume);
                 } catch (Exception e) {
                     log.errorFormat("Error while updating Volume {0}!", volume.getName(), e);
-                    continue;
                 }
             }
         }
@@ -682,7 +677,6 @@ public class GlusterManager {
                             fetchedOption,
                             existingVolume.getName(),
                             e);
-                    continue;
                 }
             } else if (!existingOption.getValue().equals(fetchedOption.getValue())) {
                 logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
@@ -701,7 +695,6 @@ public class GlusterManager {
                             fetchedOption,
                             existingVolume.getName(),
                             e);
-                    continue;
                 }
             }
         }
@@ -769,7 +762,6 @@ public class GlusterManager {
                 log.errorFormat("Error while refreshing Gluster heavyweight data of cluster {0}!",
                         cluster.getname(),
                         e);
-                continue;
             }
         }
     }
@@ -793,7 +785,6 @@ public class GlusterManager {
                             volume.getName(),
                             cluster.getname(),
                             e);
-                    continue;
                 }
             }
         }
