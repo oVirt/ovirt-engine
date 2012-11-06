@@ -14,15 +14,17 @@ public class SaveNetworkConfigAction {
 
     private final SearchableListModel listModel;
     private final Model windowModel;
+    private final VDS host;
 
-    public SaveNetworkConfigAction(SearchableListModel listModel, Model windowModel )
+    public SaveNetworkConfigAction(SearchableListModel listModel, Model windowModel, VDS host)
     {
         this.listModel = listModel;
         this.windowModel = windowModel;
+        this.host = host;
     }
 
-    public void execute(){
-        Frontend.RunAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(((VDS)(listModel.getEntity())).getId()),
+    public void execute() {
+        Frontend.RunAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(host.getId()),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {

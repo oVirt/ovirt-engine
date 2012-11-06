@@ -10,7 +10,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -169,15 +168,15 @@ public class HostSetupNetworksModel extends EntityModel {
         NetworkInterfaceModel nic2 = null;
         LogicalNetworkModel network2 = null;
 
-        if (op1Type != null && op1Type.equals(NIC)){
+        if (op1Type != null && op1Type.equals(NIC)) {
             nic1 = nicMap.get(op1Key);
-        }else if (op1Type != null && op1Type.equals(NETWORK)){
+        } else if (op1Type != null && op1Type.equals(NETWORK)) {
             network1 = networkMap.get(op1Key);
         }
 
-        if (op2Type != null && op2Type.equals(NIC)){
+        if (op2Type != null && op2Type.equals(NIC)) {
             nic2 = nicMap.get(op2Key);
-        }else if (op2Type != null && op2Type.equals(NETWORK)){
+        } else if (op2Type != null && op2Type.equals(NETWORK)) {
             network2 = networkMap.get(op2Key);
         }
 
@@ -239,10 +238,12 @@ public class HostSetupNetworksModel extends EntityModel {
             /*****************
              * Bond Dialog
              *****************/
-            final VdsNetworkInterface entity = ((NetworkInterfaceModel)item).getEntity();
+            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getEntity();
             editPopup = new HostBondInterfaceModel(true);
             final HostBondInterfaceModel bondDialogModel = (HostBondInterfaceModel) editPopup;
-            bondDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editBondInterfaceTitle(entity.getName()));
+            bondDialogModel.setTitle(ConstantsManager.getInstance()
+                    .getMessages()
+                    .editBondInterfaceTitle(entity.getName()));
             bondDialogModel.getNetwork().setIsAvailable(false);
             bondDialogModel.getCheckConnectivity().setIsAvailable(false);
             bondDialogModel.getAddress().setIsAvailable(false);
@@ -252,7 +253,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
             // bond name
             bondDialogModel.getBond().setIsChangable(false);
-            List<VdsNetworkInterface> bondName  = Arrays.asList(entity);
+            List<VdsNetworkInterface> bondName = Arrays.asList(entity);
             bondDialogModel.getBond().setItems(bondName);
             bondDialogModel.getBond().setSelectedItem(entity);
 
@@ -289,9 +290,11 @@ public class HostSetupNetworksModel extends EntityModel {
                     sourceListModel.setConfirmWindow(null);
                 }
             };
-        } else if (item instanceof LogicalNetworkModel){
-            final LogicalNetworkModel logicalNetwork = (LogicalNetworkModel)item;
-            final VdsNetworkInterface entity = logicalNetwork.hasVlan() ? logicalNetwork.getVlanNic().getEntity() : logicalNetwork.getAttachedToNic().getEntity();
+        } else if (item instanceof LogicalNetworkModel) {
+            final LogicalNetworkModel logicalNetwork = (LogicalNetworkModel) item;
+            final VdsNetworkInterface entity =
+                    logicalNetwork.hasVlan() ? logicalNetwork.getVlanNic().getEntity()
+                            : logicalNetwork.getAttachedToNic().getEntity();
 
             if (logicalNetwork.isManagement()) {
                 /*****************
@@ -311,7 +314,8 @@ public class HostSetupNetworksModel extends EntityModel {
                 mgmntDialogModel.setBootProtocol(entity.getBootProtocol());
 
                 mgmntDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
-                mgmntDialogModel.getIsToSync().setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
+                mgmntDialogModel.getIsToSync()
+                        .setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
 
                 // OK Target
                 okTarget = new BaseCommandTarget() {
@@ -325,22 +329,24 @@ public class HostSetupNetworksModel extends EntityModel {
                         entity.setSubnet((String) mgmntDialogModel.getSubnet().getEntity());
                         entity.setGateway((String) mgmntDialogModel.getGateway().getEntity());
 
-                        if ((Boolean) mgmntDialogModel.getIsToSync().getEntity()){
+                        if ((Boolean) mgmntDialogModel.getIsToSync().getEntity()) {
                             HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());
-                        }else{
+                        } else {
                             HostSetupNetworksModel.this.networksToSync.remove(logicalNetwork.getName());
                         }
 
                         sourceListModel.setConfirmWindow(null);
                     }
                 };
-            }else{
+            } else {
                 /*****************
                  * Network Dialog
                  *****************/
                 editPopup = new HostInterfaceModel(true);
                 final HostInterfaceModel networkDialogModel = (HostInterfaceModel) editPopup;
-                networkDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editNetworkTitle(logicalNetwork.getName()));
+                networkDialogModel.setTitle(ConstantsManager.getInstance()
+                        .getMessages()
+                        .editNetworkTitle(logicalNetwork.getName()));
                 networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
                 networkDialogModel.getAddress().setEntity(entity.getAddress());
                 networkDialogModel.getSubnet().setEntity(entity.getSubnet());
@@ -353,7 +359,8 @@ public class HostSetupNetworksModel extends EntityModel {
                 networkDialogModel.setBootProtocol(entity.getBootProtocol());
 
                 networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
-                networkDialogModel.getIsToSync().setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
+                networkDialogModel.getIsToSync()
+                        .setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
 
                 // OK Target
                 okTarget = new BaseCommandTarget() {
@@ -366,9 +373,9 @@ public class HostSetupNetworksModel extends EntityModel {
                         entity.setAddress((String) networkDialogModel.getAddress().getEntity());
                         entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
 
-                        if ((Boolean) networkDialogModel.getIsToSync().getEntity()){
+                        if ((Boolean) networkDialogModel.getIsToSync().getEntity()) {
                             HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());
-                        }else{
+                        } else {
                             HostSetupNetworksModel.this.networksToSync.remove(logicalNetwork.getName());
                         }
 
@@ -385,11 +392,11 @@ public class HostSetupNetworksModel extends EntityModel {
 
         // cancel command
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
-            @Override
-            public void ExecuteCommand(UICommand command) {
-                sourceListModel.setConfirmWindow(null);
-            }
-        });
+                    @Override
+                    public void ExecuteCommand(UICommand command) {
+                        sourceListModel.setConfirmWindow(null);
+                    }
+                });
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
@@ -402,11 +409,11 @@ public class HostSetupNetworksModel extends EntityModel {
         Model popupWindow;
 
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
-            @Override
-            public void ExecuteCommand(UICommand command) {
-                sourceListModel.setConfirmWindow(null);
-            }
-        });
+                    @Override
+                    public void ExecuteCommand(UICommand command) {
+                        sourceListModel.setConfirmWindow(null);
+                    }
+                });
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
@@ -434,28 +441,30 @@ public class HostSetupNetworksModel extends EntityModel {
             bondPopup.getBond().setItems(freeBonds);
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
-                @Override
-                public void ExecuteCommand(UICommand command) {
-                    sourceListModel.setConfirmWindow(null);
-                    VdsNetworkInterface bond = (VdsNetworkInterface) bondPopup.getBond().getSelectedItem();
-                    setBondOptions(bond, bondPopup);
-                    NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
-                    NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
-                    List<LogicalNetworkModel> networks = nic1.getItems().size() != 0 ? new ArrayList<LogicalNetworkModel>(nic1.getItems()) : new ArrayList<LogicalNetworkModel>(nic2.getItems());
-                    networkCommand.Execute(bond);
-                    redraw();
-
-                    // Attach the previous networks
-                    for (NetworkInterfaceModel nic : getNics()){
-                        if (nic.getName().equals(bond.getName())){
-                            NetworkOperation.attachNetworks(nic, networks, allNics);
+                        @Override
+                        public void ExecuteCommand(UICommand command) {
+                            sourceListModel.setConfirmWindow(null);
+                            VdsNetworkInterface bond = (VdsNetworkInterface) bondPopup.getBond().getSelectedItem();
+                            setBondOptions(bond, bondPopup);
+                            NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
+                            NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
+                            List<LogicalNetworkModel> networks =
+                                    nic1.getItems().size() != 0 ? new ArrayList<LogicalNetworkModel>(nic1.getItems())
+                                            : new ArrayList<LogicalNetworkModel>(nic2.getItems());
+                            networkCommand.Execute(bond);
                             redraw();
-                            return;
-                        }
-                    }
 
-                }
-            }));
+                            // Attach the previous networks
+                            for (NetworkInterfaceModel nic : getNics()) {
+                                if (nic.getName().equals(bond.getName())) {
+                                    NetworkOperation.attachNetworks(nic, networks, allNics);
+                                    redraw();
+                                    return;
+                                }
+                            }
+
+                        }
+                    }));
 
             popupWindow = bondPopup;
         } else {
@@ -583,8 +592,9 @@ public class HostSetupNetworksModel extends EntityModel {
 
                 if (networkModel == null) {
                     networkModel = createUnmanagedNetworkModel(networkName, nic);
-                }else{
-                    // The real vlanId, isBridged and mtu configured on the host can be not synced with the values configured in the networks table (dc networks).
+                } else {
+                    // The real vlanId, isBridged and mtu configured on the host can be not synced with the values
+                    // configured in the networks table (dc networks).
                     // The real values configured on the host should be displayed.
                     networkModel.getEntity().setvlan_id(nic.getVlanId());
                     networkModel.getEntity().setMtu(nic.getMtu());
@@ -618,7 +628,7 @@ public class HostSetupNetworksModel extends EntityModel {
                     nicToNetwork.put(ifName, bridgedNetworks);
                 }
 
-                if (!networkModel.isInSync() && networkModel.isManaged()){
+                if (!networkModel.isInSync() && networkModel.isManaged()) {
                     netToBeforeSyncParams.put(networkName, new NetworkParameters(nic));
                 }
             }
@@ -723,11 +733,12 @@ public class HostSetupNetworksModel extends EntityModel {
         AsyncDataProvider.GetClusterNetworkList(asyncQuery, vds.getvds_group_id());
     }
 
-    private void initDcNetworkParams(){
-        for (Network network : allNetworks){
+    private void initDcNetworkParams() {
+        for (Network network : allNetworks) {
             netTodcParams.put(network.getname(), new DcNetworkParams(network));
         }
     }
+
     private void setBondOptions(VdsNetworkInterface entity, HostBondInterfaceModel bondDialogModel) {
         KeyValuePairCompat<String, EntityModel> BondPair =
                 (KeyValuePairCompat<String, EntityModel>) bondDialogModel.getBondingOptions()
@@ -763,7 +774,9 @@ public class HostSetupNetworksModel extends EntityModel {
         // check if management network is attached
         LogicalNetworkModel mgmtNetwork = networkMap.get(HostInterfaceListModel.ENGINE_NETWORK_NAME);
         if (!mgmtNetwork.isAttached()) {
-            okCommand.getExecuteProhibitionReasons().add(ConstantsManager.getInstance().getConstants().mgmtNotAttachedToolTip());
+            okCommand.getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .mgmtNotAttachedToolTip());
             okCommand.setIsExecutionAllowed(false);
         } else {
             okCommand.setIsExecutionAllowed(true);
@@ -784,13 +797,14 @@ public class HostSetupNetworksModel extends EntityModel {
 
     public void onSetupNetworks() {
         // Determines the connectivity timeout in seconds
-        AsyncDataProvider.GetNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                getConnectivityTimeout().setEntity(returnValue);
-                postOnSetupNetworks();
-            }
-        }));
+        AsyncDataProvider.GetNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        getConnectivityTimeout().setEntity(returnValue);
+                        postOnSetupNetworks();
+                    }
+                }));
     }
 
     public void postOnSetupNetworks() {
@@ -811,10 +825,10 @@ public class HostSetupNetworksModel extends EntityModel {
                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                 if (returnValueBase != null && returnValueBase.getSucceeded())
                 {
-                    EntityModel commitChanges =model.getCommitChanges();
+                    EntityModel commitChanges = model.getCommitChanges();
                     if ((Boolean) commitChanges.getEntity())
                     {
-                        new SaveNetworkConfigAction(sourceListModel, model);
+                        new SaveNetworkConfigAction(sourceListModel, model, (VDS) getEntity()).execute();
                     }
                     else
                     {
@@ -831,30 +845,6 @@ public class HostSetupNetworksModel extends EntityModel {
         });
     }
 
-    private void SaveNetworkConfigInternalAction()
-    {
-        Frontend.RunAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(((VDS) getEntity()).getId()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-
-                        VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        if (returnValueBase != null && returnValueBase.getSucceeded())
-                        {
-                            HostInterfaceListModel interfaceListModel = (HostInterfaceListModel) result.getState();
-                            if (interfaceListModel.getcurrentModel() != null)
-                            {
-                                interfaceListModel.getcurrentModel().StopProgress();
-                                interfaceListModel.Cancel();
-                                interfaceListModel.Search();
-                            }
-                        }
-
-                    }
-                }, this);
-    }
-
-
     @Override
     public void ExecuteCommand(UICommand command)
     {
@@ -867,7 +857,6 @@ public class HostSetupNetworksModel extends EntityModel {
         {
             cancel();
         }
-
 
     }
 

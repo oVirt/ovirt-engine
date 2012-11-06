@@ -1015,83 +1015,89 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 final StringBuilder tmpDefaultInterfaceName = new StringBuilder();
 
-                        AsyncDataProvider.GetInterfaceOptionsForEditNetwork(new AsyncQuery(this, new INewAsyncCallback() {
+                AsyncDataProvider.GetInterfaceOptionsForEditNetwork(new AsyncQuery(this, new INewAsyncCallback() {
 
-                            @Override
-                            public void OnSuccess(Object model, Object returnValue) {
-                                ArrayList<VdsNetworkInterface> interfaces = (ArrayList<VdsNetworkInterface>) returnValue;
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        ArrayList<VdsNetworkInterface> interfaces = (ArrayList<VdsNetworkInterface>) returnValue;
 
-                                String  defaultInterfaceName = tmpDefaultInterfaceName.toString();
-                                managementModel.getInterface().setItems(interfaces);
-                                managementModel.getInterface()
-                                        .setSelectedItem(Linq.FindInterfaceByName(Linq.VdsNetworkInterfaceListToBase(interfaces),
-                                                defaultInterfaceName));
-                                if (item.getBonded() != null && item.getBonded().equals(true))
+                        String defaultInterfaceName = tmpDefaultInterfaceName.toString();
+                        managementModel.getInterface().setItems(interfaces);
+                        managementModel.getInterface()
+                                .setSelectedItem(Linq.FindInterfaceByName(Linq.VdsNetworkInterfaceListToBase(interfaces),
+                                        defaultInterfaceName));
+                        if (item.getBonded() != null && item.getBonded().equals(true))
+                        {
+                            managementModel.getInterface().setTitle(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .interfaceListTitle());
+                            managementModel.getInterface()
+                                    .getSelectedItemChangedEvent()
+                                    .addListener(hostInterfaceListModel);
+                        }
+                        managementModel.getCheckConnectivity().setIsAvailable(true);
+                        managementModel.getCheckConnectivity().setIsChangable(true);
+                        managementModel.getCheckConnectivity().setEntity(item.getIsManagement()); // currently, always
+                                                                                                  // should be
+                                                                                                  // true
+
+                        managementModel.getBondingOptions().setIsAvailable(false);
+                        if (item.getBonded() != null && item.getBonded().equals(true))
+                        {
+                            managementModel.getBondingOptions().setIsAvailable(true);
+                            Map.Entry<String, EntityModel> defaultItem = null;
+                            RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
+                                    new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
+                            ArrayList<Map.Entry<String, EntityModel>> list =
+                                    DataProvider.GetBondingOptionList(tempRef_defaultItem);
+                            defaultItem = tempRef_defaultItem.argvalue;
+                            Map.Entry<String, EntityModel> selectBondingOpt =
+                                    new KeyValuePairCompat<String, EntityModel>();
+                            boolean containsSelectBondingOpt = false;
+                            managementModel.getBondingOptions().setItems(list);
+                            for (int i = 0; i < list.size(); i++)
+                            {
+                                if (StringHelper.stringsEqual(list.get(i).getKey(), item.getBondOptions()))
                                 {
-                                    managementModel.getInterface().setTitle(ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .interfaceListTitle());
-                                    managementModel.getInterface().getSelectedItemChangedEvent().addListener(hostInterfaceListModel);
+                                    selectBondingOpt = list.get(i);
+                                    containsSelectBondingOpt = true;
+                                    break;
                                 }
-                                managementModel.getCheckConnectivity().setIsAvailable(true);
-                                managementModel.getCheckConnectivity().setIsChangable(true);
-                                managementModel.getCheckConnectivity().setEntity(item.getIsManagement()); // currently, always should be
-                                                                                                          // true
-
-                                managementModel.getBondingOptions().setIsAvailable(false);
-                                if (item.getBonded() != null && item.getBonded().equals(true))
-                                {
-                                    managementModel.getBondingOptions().setIsAvailable(true);
-                                    Map.Entry<String, EntityModel> defaultItem = null;
-                                    RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
-                                            new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
-                                    ArrayList<Map.Entry<String, EntityModel>> list =
-                                            DataProvider.GetBondingOptionList(tempRef_defaultItem);
-                                    defaultItem = tempRef_defaultItem.argvalue;
-                                    Map.Entry<String, EntityModel> selectBondingOpt =
-                                            new KeyValuePairCompat<String, EntityModel>();
-                                    boolean containsSelectBondingOpt = false;
-                                    managementModel.getBondingOptions().setItems(list);
-                                    for (int i = 0; i < list.size(); i++)
-                                    {
-                                        if (StringHelper.stringsEqual(list.get(i).getKey(), item.getBondOptions()))
-                                        {
-                                            selectBondingOpt = list.get(i);
-                                            containsSelectBondingOpt = true;
-                                            break;
-                                        }
-                                    }
-                                    if (containsSelectBondingOpt == false)
-                                    {
-                                        if (StringHelper.stringsEqual(item.getBondOptions(), DataProvider.GetDefaultBondingOption()))
-                                        {
-                                            selectBondingOpt = defaultItem;
-                                        }
-                                        else
-                                        {
-                                            selectBondingOpt = list.get(list.size() - 1);
-                                            EntityModel entityModel = selectBondingOpt.getValue();
-                                            entityModel.setEntity(item.getBondOptions());
-                                        }
-                                    }
-                                    managementModel.getBondingOptions().setSelectedItem(selectBondingOpt);
-                                }
-
-                                UICommand tempVar = new UICommand("OnEditManagementNetworkConfirmation", hostInterfaceListModel); //$NON-NLS-1$
-                                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                                tempVar.setIsDefault(true);
-                                managementModel.getCommands().add(tempVar);
-                                UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
-                                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                                tempVar2.setIsCancel(true);
-                                managementModel.getCommands().add(tempVar2);
-
                             }
-                        }) ,getOriginalItems(),
-                                item,
-                                networkToEdit,
-                                getEntity().getId(),
-                                tmpDefaultInterfaceName);
+                            if (containsSelectBondingOpt == false)
+                            {
+                                if (StringHelper.stringsEqual(item.getBondOptions(),
+                                        DataProvider.GetDefaultBondingOption()))
+                                {
+                                    selectBondingOpt = defaultItem;
+                                }
+                                else
+                                {
+                                    selectBondingOpt = list.get(list.size() - 1);
+                                    EntityModel entityModel = selectBondingOpt.getValue();
+                                    entityModel.setEntity(item.getBondOptions());
+                                }
+                            }
+                            managementModel.getBondingOptions().setSelectedItem(selectBondingOpt);
+                        }
+
+                        UICommand tempVar =
+                                new UICommand("OnEditManagementNetworkConfirmation", hostInterfaceListModel); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                        tempVar.setIsDefault(true);
+                        managementModel.getCommands().add(tempVar);
+                        UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
+                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                        tempVar2.setIsCancel(true);
+                        managementModel.getCommands().add(tempVar2);
+
+                    }
+                }),
+                        getOriginalItems(),
+                        item,
+                        networkToEdit,
+                        getEntity().getId(),
+                        tmpDefaultInterfaceName);
 
             }
         };
@@ -1183,7 +1189,7 @@ public class HostInterfaceListModel extends SearchableListModel
         UpdateNetworkToVdsParameters parameters =
                 new UpdateNetworkToVdsParameters(getEntity().getId(),
                         network,
-                        new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] {nic})));
+                        new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] { nic })));
 
         Map.Entry<String, EntityModel> bondingOption;
         if (model.getBondingOptions().getSelectedItem() != null)
@@ -1240,7 +1246,8 @@ public class HostInterfaceListModel extends SearchableListModel
                                     ((HostManagementNetworkModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                             if ((Boolean) commitChanges.getEntity())
                             {
-                                new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel());
+                                new SaveNetworkConfigAction(HostInterfaceListModel.this,
+                                        hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
                             }
                             else
                             {
@@ -1602,7 +1609,8 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostBondInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel()).execute();
+                                    new SaveNetworkConfigAction(HostInterfaceListModel.this,
+                                            hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
                                 }
                                 else
                                 {
@@ -1685,7 +1693,8 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostBondInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel());
+                                    new SaveNetworkConfigAction(HostInterfaceListModel.this,
+                                            hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
                                 }
                                 else
                                 {
@@ -1763,7 +1772,8 @@ public class HostInterfaceListModel extends SearchableListModel
                             @Override
                             public void Executed(FrontendActionAsyncResult result) {
 
-                                HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) result.getState();
+                                HostInterfaceListModel hostInterfaceListModel =
+                                        (HostInterfaceListModel) result.getState();
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
@@ -1771,7 +1781,9 @@ public class HostInterfaceListModel extends SearchableListModel
                                             ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                     if ((Boolean) commitChanges.getEntity())
                                     {
-                                        new SaveNetworkConfigAction(HostInterfaceListModel.this, getcurrentModel());
+                                        new SaveNetworkConfigAction(HostInterfaceListModel.this,
+                                                getcurrentModel(),
+                                                getEntity()).execute();
                                     }
                                     else
                                     {
@@ -1882,7 +1894,8 @@ public class HostInterfaceListModel extends SearchableListModel
                                                     ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                             if ((Boolean) commitChanges.getEntity())
                                             {
-                                                new SaveNetworkConfigAction(HostInterfaceListModel.this, getcurrentModel());
+                                                new SaveNetworkConfigAction(HostInterfaceListModel.this,
+                                                        getcurrentModel(), getEntity()).execute();
                                             }
                                             else
                                             {
@@ -2012,7 +2025,8 @@ public class HostInterfaceListModel extends SearchableListModel
                                         ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                 if ((Boolean) commitChanges.getEntity())
                                 {
-                                    new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel());
+                                    new SaveNetworkConfigAction(HostInterfaceListModel.this,
+                                            hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
                                 }
                                 else
                                 {
@@ -2032,7 +2046,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
     }
 
-    public void SaveNetworkConfig(){
+    public void SaveNetworkConfig() {
         if (getWindow() != null)
         {
             return;
@@ -2054,7 +2068,7 @@ public class HostInterfaceListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnSaveNetworkConfig(){
+    public void OnSaveNetworkConfig() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
         if (model.getProgress() != null)
@@ -2064,7 +2078,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         model.StartProgress(null);
         setcurrentModel(model);
-        new SaveNetworkConfigAction(this, model);
+        new SaveNetworkConfigAction(this, model, getEntity()).execute();
     }
 
     public void OnConfirmManagementDetach()
@@ -2102,7 +2116,8 @@ public class HostInterfaceListModel extends SearchableListModel
                             @Override
                             public void Executed(FrontendActionAsyncResult result) {
 
-                                HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) result.getState();
+                                HostInterfaceListModel hostInterfaceListModel =
+                                        (HostInterfaceListModel) result.getState();
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
@@ -2110,7 +2125,8 @@ public class HostInterfaceListModel extends SearchableListModel
                                             ((HostInterfaceModel) hostInterfaceListModel.getcurrentModel()).getCommitChanges();
                                     if ((Boolean) commitChanges.getEntity())
                                     {
-                                        new SaveNetworkConfigAction(HostInterfaceListModel.this, hostInterfaceListModel.getcurrentModel());
+                                        new SaveNetworkConfigAction(HostInterfaceListModel.this,
+                                                hostInterfaceListModel.getcurrentModel(), getEntity()).execute();
                                     }
                                     else
                                     {
@@ -2214,7 +2230,8 @@ public class HostInterfaceListModel extends SearchableListModel
                 && host.getstatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
                 && selectedItem != null && selectedItem.getIsManagement());
 
-        // Setup Networks is only available on 3.1 Clusters, all the other commands (except save network configuration) available only on less than 3.1 Clusters
+        // Setup Networks is only available on 3.1 Clusters, all the other commands (except save network configuration)
+        // available only on less than 3.1 Clusters
         if (host != null) {
             Version v31 = new Version(3, 1);
             boolean isLessThan31 = host.getvds_group_compatibility_version().compareTo(v31) < 0;
@@ -2226,7 +2243,7 @@ public class HostInterfaceListModel extends SearchableListModel
             getEditCommand().setIsAvailable(isLessThan31);
             getBondCommand().setIsAvailable(isLessThan31);
             getDetachCommand().setIsAvailable(isLessThan31);
-            getEditManagementNetworkCommand().setIsAvailable(isLessThan31) ;
+            getEditManagementNetworkCommand().setIsAvailable(isLessThan31);
 
             setSelectionAvailable(isLessThan31);
         }
