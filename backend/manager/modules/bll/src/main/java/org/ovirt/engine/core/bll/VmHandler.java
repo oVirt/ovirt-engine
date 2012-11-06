@@ -208,7 +208,7 @@ public class VmHandler {
 
             @Override
             public Void runInTransaction() {
-                compensationContext.snapshotEntityStatus(vm, vm.getstatus());
+                compensationContext.snapshotEntityStatus(vm.getDynamicData(), vm.getstatus());
                 UnLockVm(vm);
                 compensationContext.stateChanged();
                 return null;
