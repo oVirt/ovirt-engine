@@ -596,7 +596,8 @@ public class CommonModel extends ListModel
 
         networkList.setIsAvailable(model.getType() == SystemTreeItemType.Network
                 || model.getType() == SystemTreeItemType.Networks
-                || model.getType() == SystemTreeItemType.System);
+                || model.getType() == SystemTreeItemType.System || model.getType() == SystemTreeItemType.DataCenter
+                || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host);
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
@@ -1066,6 +1067,11 @@ public class CommonModel extends ListModel
                 else if (quotaList.IsSearchStringMatch(source)) {
                     prefix.argvalue = StringFormat.format("Quota: storagepoolname = %1$s", model.getTitle()); //$NON-NLS-1$
                 }
+                else if (networkList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue =
+                            StringFormat.format("Network: datacenter = %1$s", model.getTitle()); //$NON-NLS-1$
+                }
             }
                 break;
             case Clusters: {
@@ -1107,6 +1113,11 @@ public class CommonModel extends ListModel
                 {
                     prefix.argvalue = StringFormat.format("Events: cluster = %1$s", model.getTitle()); //$NON-NLS-1$
                 }
+                else if (networkList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue =
+                            StringFormat.format("Network: Cluster_network.cluster_name = %1$s", model.getTitle()); //$NON-NLS-1$
+                }
             }
                 break;
             case Hosts: {
@@ -1136,6 +1147,11 @@ public class CommonModel extends ListModel
                 else if (eventList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue = StringFormat.format("Events: host.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                }
+                else if (networkList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue =
+                            StringFormat.format("Network: Host_network.host_name = %1$s", model.getTitle()); //$NON-NLS-1$
                 }
             }
                 break;
@@ -1238,31 +1254,26 @@ public class CommonModel extends ListModel
             case Network: {
                 if (networkList.IsSearchStringMatch(source))
                 {
-                    // TODO get dc name from treeItem!!!
                     prefix.argvalue =
                             StringFormat.format("Network: name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (clusterList.IsSearchStringMatch(source))
                 {
-                    // TODO get dc name from treeItem!!!
                     prefix.argvalue =
                             StringFormat.format("Cluster: Cluster_network.network_name = %1$s Datacenter.name = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (hostList.IsSearchStringMatch(source))
                 {
-                    // TODO get dc name from treeItem!!!
                     prefix.argvalue =
                             StringFormat.format("Host : Nic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (vmList.IsSearchStringMatch(source))
                 {
-                    // TODO get dc name from treeItem!!!
                     prefix.argvalue =
                             StringFormat.format("Vm : Vnic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
-                    // TODO get dc name from treeItem!!!
                     prefix.argvalue =
                             StringFormat.format("Template : Vnic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
                 }
