@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.utils.hostinstall;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -14,6 +17,48 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.FileUtil;
 
 public class OpenSslCAWrapper {
+
+    public static String SignCertificateRequest(String request, String label) throws IOException {
+
+        File pkicertdir = new File(Config.resolveCABasePath(), "certs");
+        File pkireqdir = new File(Config.resolveCABasePath(), "requests");
+        String reqFileName = String.format("%1$sreq.pem", label);
+        String certFileName = String.format("%1$scert.pem", label);
+
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(
+                new File(
+                    pkireqdir,
+                    reqFileName
+                )
+            );
+            os.write(request.getBytes("UTF-8"));
+        }
+        finally {
+            if (os != null) {
+                try {
+                    os.close();
+                }
+                catch (IOException e) {
+                    log.error("error during close", e);
+                }
+            }
+        }
+
+        if (
+            !new OpenSslCAWrapper().SignCertificateRequest(
+                reqFileName,
+                Config.<Integer> GetValue(ConfigValues.VdsCertificateValidityInYears) * 365,
+                certFileName
+            )
+        ) {
+            throw new RuntimeException("Certificate enrollment failed");
+        }
+
+        return FileUtil.readAllText(new File(pkicertdir, certFileName).getPath());
+    }
+
     public final boolean SignCertificateRequest(String requestFileName, int days, String signedCertificateFileName) {
         log.debug("Entered SignCertificateRequest");
         boolean returnValue = true;

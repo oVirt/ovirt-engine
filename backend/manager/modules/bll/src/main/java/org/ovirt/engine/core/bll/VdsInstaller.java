@@ -64,7 +64,6 @@ public class VdsInstaller implements IVdsInstallerCallback {
     private String _bootstrapCommand;
 
     protected final VdsInstallerSSH _wrapper = new VdsInstallerSSH();
-    private final OpenSslCAWrapper _caWrapper = new OpenSslCAWrapper();
     protected String _serverName;
     private boolean _rebootAfterInstallation;
     private final String _rootPassword;
@@ -73,6 +72,9 @@ public class VdsInstaller implements IVdsInstallerCallback {
     private boolean isAddOvirtFlow = false;
     private boolean supportVirt = false;
     private boolean supportGluster = false;
+
+    private String _request;
+    private String _certificate;
 
     protected static final java.util.HashMap<VdsInstallStages, String> _translatedMessages =
             new java.util.HashMap<VdsInstallStages, String>();
@@ -344,41 +346,58 @@ public class VdsInstaller implements IVdsInstallerCallback {
             break;
         }
         case DownloadCertificateRequest: {
-            // First parameter will always run on Linux, so use path.combine
-            // just for the second param.
-            Boolean fRes = _wrapper.receiveFile(_remoteDirectory + "/" + _certRequestFileName,
-                    buildCAPath(_requestsDirectory, _certRequestFileName));
-            log.infoFormat(" DownloadCertificateRequest ended:" + fRes.toString());
+            File req = null;
+            try {
+                req = File.createTempFile("req", ".pem");
+                _executionSucceded = _wrapper.receiveFile(
+                    _remoteDirectory + "/" + _certRequestFileName,
+                    req.getPath()
+                );
+                _request = FileUtil.readAllText(req.getPath());
+            }
+            catch (Exception e) {
+                _executionSucceded = false;
+            }
+            finally {
+                if (req != null) {
+                    req.delete();
+                }
+            }
+
+            log.infoFormat(" DownloadCertificateRequest ended:" + _executionSucceded);
             break;
         }
         case SignCertificateRequest: {
-            _executionSucceded = _caWrapper.SignCertificateRequest(_certRequestFileName,
-                    Config.<Integer> GetValue(ConfigValues.VdsCertificateValidityInYears) * 365, _certFileNameLocal);
-            log.infoFormat(" SignCertificateRequest ended:" + _executionSucceded);
-            if (_executionSucceded) {
-                String currRequest = buildCAPath(_requestsDirectory, _certRequestFileName);
-                try {
-                    FileUtil.deleteFile(currRequest);
-                } catch (RuntimeException exp) {
-                    log.errorFormat(
-                            "Installation of {0}. Could not delete certificate request file from: {1}. error: {2}. (Stage: {3}",
-                            _serverName,
-                            currRequest,
-                            exp.getMessage(),
-                            getCurrentInstallStage());
-                }
+            try {
+                _certificate = OpenSslCAWrapper.SignCertificateRequest(
+                    _request,
+                    _vds.gethost_name()
+                );
+
+                _executionSucceded = true;
                 _currentInstallStage = VdsInstallStages.forValue(_currentInstallStage.getValue() + 1);
-            } else {
-                log.error("Error signing certificate request");
             }
+            catch (Exception e) {
+                _executionSucceded = false;
+
+                log.errorFormat(
+                    "Installation of {0}. Could not issue certificate. error: {1}. (Stage: {2}",
+                    _serverName,
+                    e.getMessage(),
+                    getCurrentInstallStage()
+                );
+                log.error(e);
+            }
+
+            log.infoFormat(" SignCertificateRequest ended:" + _executionSucceded);
             break;
         }
         case UploadSignedCertificate: {
-            // Second parameter will always run on Linux, so use
-            // path.combine just for the first param.
-            Boolean fRes = _wrapper.sendFile(buildCAPath(_certificatesDirectory, _certFileNameLocal),
-                    _remoteDirectory + "/" + _certFileName);
-            log.infoFormat(" UploadSignedCertificate ended:" + fRes.toString());
+            _executionSucceded = uploadStringAsFile(_certificate, _remoteDirectory + "/" + _certFileName);
+            log.infoFormat(" UploadSignedCertificate ended:" + _executionSucceded);
+            if (_executionSucceded) {
+                _currentInstallStage = VdsInstallStages.forValue(_currentInstallStage.getValue() + 1);
+            }
             break;
         }
         case UploadCA: {
@@ -555,7 +574,6 @@ public class VdsInstaller implements IVdsInstallerCallback {
     public void endTransfer() {
         if (_currentInstallStage == VdsInstallStages.UploadScript //iso upload
                 || _currentInstallStage == VdsInstallStages.DownloadCertificateRequest
-                || _currentInstallStage == VdsInstallStages.UploadSignedCertificate
                 || _currentInstallStage == VdsInstallStages.UploadCA) {
             log.infoFormat("Installation of {0}. successfully done sftp operation ( Stage: {1})", _serverName,
                     _translatedMessages.get(_currentInstallStage));
