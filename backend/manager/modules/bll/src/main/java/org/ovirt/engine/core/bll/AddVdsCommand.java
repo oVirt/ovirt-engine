@@ -341,7 +341,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         boolean retrunValue = true;
 
         // execute the connectivity and id uniqueness validation for VDS type hosts
-        if (vds.getvds_type() == VDSType.VDS) {
+        if (vds.getvds_type() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
             VdsInstallHelper installHelper = getVdsInstallHelper();
             try {
                 Long timeout =
