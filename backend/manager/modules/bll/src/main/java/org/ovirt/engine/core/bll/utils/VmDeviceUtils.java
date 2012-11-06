@@ -277,6 +277,29 @@ public class VmDeviceUtils {
         return addManagedDevice(id, VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, Collections.<String, Object> emptyMap(), plugged, false);
     }
 
+    /**
+     * @param id
+     * @param type
+     * @param device
+     * @param specParams
+     * @param is_plugged
+     * @param isReadOnly
+     * @param address
+     * @return New created VmDevice instance
+     */
+    public static VmDevice addManagedDevice(VmDeviceId id,
+            VmDeviceType type,
+            VmDeviceType device,
+            Map<String, Object> specParams,
+            boolean plugged,
+            boolean readOnly,
+            String address) {
+        VmDevice managedDevice = addManagedDevice(id, type, device, specParams,plugged,readOnly);
+        if (StringUtils.isNotBlank(address)){
+            managedDevice.setAddress(address);
+        }
+        return managedDevice;
+    }
 
     /**
      * adds managed device to vm_device
@@ -517,7 +540,8 @@ public class VmDeviceUtils {
                             VmDeviceType.DISK,
                             null,
                             true,
-                            false);
+                            false,
+                            getAddress(entity, id));
             updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
         }
     }
@@ -562,9 +586,18 @@ public class VmDeviceUtils {
                             VmDeviceType.BRIDGE,
                             null,
                             true,
-                            false);
+                            false,
+                            getAddress(entity, id));
             updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
         }
+    }
+
+    private static <T extends VmBase> String getAddress(T entity, final Guid id) {
+        VmDevice device = entity.getManagedVmDeviceMap().get(id);
+        if (device != null)
+            return device.getAddress();
+        else
+            return StringUtils.EMPTY;
     }
 
     /**
