@@ -18,6 +18,7 @@ public class SessionUtils {
     public static String ENGINE_SESSION_ID_KEY = "engineSessionId";
     public static String PREFER_HEADER_FIELD = "Prefer";
     public static String PERSIST_FIELD_VALUE = "persistent-auth";
+    public static String JSESSIONID_HEADER = "JSESSIONID";
     private static final Log log = LogFactory.getLog(SessionUtils.class);
 
     /*

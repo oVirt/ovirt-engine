@@ -153,6 +153,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
 
     @Override
     public void postProcess(ServerResponse response) {
+        HttpSession httpSession = getCurrentSession(false);
         if (!current.get(MetaData.class).hasKey("async") ||
                 ((Boolean)current.get(MetaData.class).get("async")) != Boolean.TRUE) {
             VdcUser user = current.get(VdcUser.class);
@@ -160,10 +161,12 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
                 if (!persistentSession) {
                     backend.Logoff(
                             sessionHelper.sessionize(new LogoutUserParameters(user.getUserId())));
-                    HttpSession httpSession = getCurrentSession(false);
                     if (httpSession != null) {
                         httpSession.invalidate();
                     }
+                } else if (httpSession != null && httpSession.isNew()) {
+                    response.getMetadata().add(SessionUtils.JSESSIONID_HEADER,
+                                               httpSession.getId());
                 }
             }
         }
