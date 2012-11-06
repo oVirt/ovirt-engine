@@ -213,7 +213,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     @Override
-    protected void rerunInternal() {
+    public void rerun() {
         /**
          * make Vm property to null in order to refresh it from db.
          */
@@ -225,7 +225,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
          */
         if (getVm() != null && getVm().getstatus() == VMStatus.Up) {
             setVdsDestinationId(null);
-            super.rerunInternal();
+            super.rerun();
         } else {
             /**
              * vm went down on the destination and source, migration failed.

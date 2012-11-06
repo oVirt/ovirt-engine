@@ -331,9 +331,16 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void rerun(Guid vmId) {
-        IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmId);
+        final IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmId);
         if (command != null) {
-            command.rerun();
+            // The command will be invoked in a different VDS in its rerun method, so we're calling
+            // its rerun method from a new thread so that it won't be executed within our current VDSM lock
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    command.rerun();
+                }
+            });
         }
     }
 

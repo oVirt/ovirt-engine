@@ -206,26 +206,19 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         }
     }
 
-    /**
-     * This function called when vds failed to run vm. Vm will be run on another vds (if exist) that's why the function
-     * should be run at a new thread because of it will lock a new VDSM
-     */
     @Override
-    public final void rerun() {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                rerunInternal();
-            }
-        });
-    }
-
-    protected void rerunInternal() {
+    public void rerun() {
         Guid vdsId = getDestinationVds() != null ? getDestinationVds().getId() : getCurrentVdsId();
         decreasePendingVms(vdsId);
 
         setSucceeded(false);
         setVm(null);
+
+        // by default, if rerun is called then rerun process is about to start so log the result of the
+        //previous run as if rerun is about to begin (and change it later in case rerun isn't going to happen)
+        _isRerun = true;
+        log();
+
         /**
          * Rerun VM only if not exceeded maximum rerun attempts. for example if there are 10 hosts that can run VM and
          * predefine maximum 3 attempts to rerun VM - on 4th turn vm will stop to run despite there are still available
@@ -233,10 +226,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
          */
         if (getRunVdssList().size() < Config.<Integer> GetValue(ConfigValues.MaxRerunVmOnVdsCount)
                 && getVm().getstatus() != VMStatus.Paused) {
-            _isRerun = true;
             // restore CanDoAction value to false so CanDoAction checks will run again
             getReturnValue().setCanDoAction(false);
-            log();
             if (getExecutionContext() != null) {
                 Job job = getExecutionContext().getJob();
                 if (job != null) {
@@ -244,16 +235,25 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                     JobRepositoryFactory.getJobRepository().closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
                 }
             }
+            // set the _isRerun flag to false before calling executeAction so that we'll know if
+            // there is another rerun attempt within the method
+            _isRerun = false;
             executeAction();
-            if (!getReturnValue().getCanDoAction()) {
-                _isRerun = false;
+
+            // if there was no rerun attempt in the previous executeAction call and the command
+            // wasn't done because canDoAction check returned false..
+            if (!_isRerun && !getReturnValue().getCanDoAction()) {
                 log();
                 failedToRunVm();
             }
+
+            // signal the caller that a rerun was made
+            _isRerun = true;
         } else {
             Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
             failedToRunVm();
             _isRerun = false;
+            log();
         }
     }
 
