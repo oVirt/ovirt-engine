@@ -2,13 +2,19 @@ package org.ovirt.engine.core.utils.hostinstall;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import org.apache.commons.codec.binary.Base64;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -17,6 +23,37 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.FileUtil;
 
 public class OpenSslCAWrapper {
+
+    public static String getCACertificate() throws Exception {
+
+        InputStream in = null;
+
+        try {
+            in = new FileInputStream(Config.resolveCACertificatePath());
+
+            final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            final Certificate certificate = cf.generateCertificate(in);
+
+            return String.format(
+                (
+                    "-----BEGIN CERTIFICATE-----\n" +
+                    "%1$s" +
+                    "-----END CERTIFICATE-----\n"
+                ),
+                new Base64(
+                    76,
+                    new byte[] { (byte)'\n' }
+                ).encodeToString(
+                    certificate.getEncoded()
+                )
+            );
+        }
+        finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
 
     public static String SignCertificateRequest(
         String request,

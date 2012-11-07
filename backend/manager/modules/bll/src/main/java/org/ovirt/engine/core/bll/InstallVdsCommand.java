@@ -8,8 +8,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -124,77 +122,71 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         }
 
         if (getVds() != null) {
-            T parameters = getParameters();
-            VdsInstaller vdsInstaller = null;
-            if (getVds().getvds_type() == VDSType.VDS) {
-                vdsInstaller =
-                        new VdsInstaller(getVds(),
-                                parameters.getRootPassword(),
-                                parameters.getOverrideFirewall(),
-                                parameters.isRebootAfterInstallation());
-            } else if (getVds().getvds_type() == VDSType.PowerClient || getVds().getvds_type() == VDSType.oVirtNode) {
-                log.infoFormat("Before Installation {0}, Powerclient/oVirtNode case: setting status to installing",
-                               Thread.currentThread().getName());
-                if (parameters.getOverrideFirewall()) {
-                    log.warnFormat("Installation of Host {0} will ignore Firewall Override option, since it is not supported for Host type {1}",
-                            getVds().getvds_name(),
-                            getVds().getvds_type().name());
-                }
-                Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                               new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
-                vdsInstaller = new OVirtInstaller(getVds());
-            }
-
-            log.infoFormat("Before Installation {0}", Thread.currentThread().getName());
-            boolean installResult = false;
+            VdsDeploy installer = null;
             try {
-                installResult = vdsInstaller.Install();
-            } catch (Exception e) {
-                log.errorFormat("Host installation failed for host {0}, {1}.",
-                        getVds().getId(),
-                        getVds().getvds_name(),
-                        e);
-            }
-            setSucceeded(installResult);
-            log.infoFormat("After Installation {0}", Thread.currentThread().getName());
+                log.infoFormat(
+                    "Before Installation host {0}, {1}",
+                    getVds().getId(),
+                    getVds().getvds_name()
+                );
 
-            if (getSucceeded()) {
-                if (vdsInstaller.isAddOvirtFlow()) {
-                    log.debugFormat("Add manual oVirt flow ended successfully for {0}.", getVds().getvds_name());
-                    return;
-                }
-
+                T parameters = getParameters();
+                installer = new VdsDeploy(getVds());
+                installer.setReboot(parameters.isRebootAfterInstallation());
                 switch (getVds().getvds_type()) {
-                    case VDS:
-                        if (getParameters().isRebootAfterInstallation()) {
-                            setHostStatus(VDSStatus.Reboot);
-                            RunSleepOnReboot();
-                        }
-                        else {
-                            setHostStatus(VDSStatus.NonResponsive);
-                        }
-                        break;
-                    case oVirtNode:
-                        if (getParameters().getIsReinstallOrUpgrade()) {
-                            setHostStatus(VDSStatus.Reboot);
-                            RunSleepOnReboot();
-                        }
-                        else {
-                            setHostStatus(VDSStatus.NonResponsive);
-                        }
-                        break;
-                    case PowerClient:
-                        setHostStatus(VDSStatus.NonResponsive);
-                        break;
+                case VDS:
+                    installer.setUser("root");
+                    installer.setPassword(parameters.getRootPassword());
+                    installer.setFirewall(parameters.getOverrideFirewall());
+                    break;
+                case PowerClient:
+                case oVirtNode:
+                    if (parameters.getOverrideFirewall()) {
+                        log.warnFormat(
+                            "Installation of Host {0} will ignore Firewall Override option, since it is not supported for Host type {1}",
+                            getVds().getvds_name(),
+                            getVds().getvds_type().name()
+                        );
+                    }
+                    installer.setUser("root");
+                    installer.useDefaultKeyPair();
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Not handled VDS type: %1$s",
+                            getVds().getvds_type()
+                        )
+                    );
+                }
+                installer.execute();
+                if (getVds().getstatus() == VDSStatus.Reboot) {
+                    RunSleepOnReboot();
+                }
+                log.infoFormat(
+                    "After Installation host {0}, {1}",
+                    getVds().getvds_name(),
+                    getVds().getvds_type().name()
+                );
+                setSucceeded(true);
+            }
+            catch (Exception e) {
+                log.errorFormat(
+                    "Host installation failed for host {0}, {1}.",
+                    getVds().getId(),
+                    getVds().getvds_name(),
+                    e
+                );
+                setSucceeded(false);
+                _failureMessage = getErrorMessage(e.getMessage());
+                AddCustomValue("FailedInstallMessage", _failureMessage);
+            }
+            finally {
+                if (installer != null) {
+                    installer.close();
                 }
             }
-            else {
-                _failureMessage = getErrorMessage(vdsInstaller.getErrorMessage());
-                AddCustomValue("FailedInstallMessage", _failureMessage);
-                setHostStatus(VDSStatus.InstallFailed);
-            }
+            return;
         }
     }
 
@@ -229,13 +221,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
     private boolean isOvirtReInstallOrUpgrade() {
         return getParameters().getIsReinstallOrUpgrade() && getVds().getvds_type() == VDSType.oVirtNode;
-    }
-
-    private void setHostStatus(VDSStatus stat) {
-        Backend.getInstance()
-        .getResourceManager()
-        .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                       new SetVdsStatusVDSCommandParameters(getVdsId(), stat));
     }
 
     protected String getErrorMessage(String msg)

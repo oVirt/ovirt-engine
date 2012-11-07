@@ -148,6 +148,7 @@ BuildRequires: springframework-jdbc
 BuildRequires: spring-ldap
 BuildRequires: xmlrpc3-client
 BuildRequires: unzip
+BuildRequires: ovirt-host-deploy-java
 
 # Run time requirements (most of these requirements should be
 # moved to the subpackages):
@@ -172,7 +173,7 @@ Requires: policycoreutils-python
 Requires: postgresql-jdbc
 Requires: python-configobj
 Requires: python-cheetah
-Requires: vdsm-bootstrap >= 4.10.1
+Requires: ovirt-host-deploy-java
 Requires: yum-plugin-versionlock
 Requires: ovirt-engine-cli
 
@@ -377,7 +378,7 @@ make %{make_common_opts} install DESTDIR=%{buildroot}
 
 install -dm 755 %{buildroot}/%{engine_state}/deployments
 install -dm 755 %{buildroot}/%{engine_state}/content
-install -dm 755 %{buildroot}/%{engine_log}/{notifier,engine-manage-domains}
+install -dm 755 %{buildroot}/%{engine_log}/{host-deploy,notifier,engine-manage-domains}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 install -dm 755 %{buildroot}/%{engine_lock}
 
@@ -470,6 +471,8 @@ spring-ldap/spring-ldap-core spring-ldap-core
 ws-commons-util ws-commons-util
 xmlrpc3-client xmlrpc-client
 xmlrpc3-common xmlrpc-common
+otopi/otopi otopi
+ovirt-host-deploy/ovirt-host-deploy ovirt-host-deploy
 .
 
 # Replace jar files in the RESTAPI web application with links to ther
@@ -699,6 +702,9 @@ fi
 # the engine user because the application server needs to write to them:
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/deployments
+
+# Host deploy logs
+%attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 
 # The backend owns the directory of the ear and most of its contents,
 # but not all, as most of the web applications are owned by other

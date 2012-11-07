@@ -54,6 +54,18 @@
     </dependency>
 
     <dependency>
+      <groupId>org.ovirt.otopi</groupId>
+      <artifactId>otopi</artifactId>
+      <version>${otopi.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.ovirt-host-deploy</groupId>
+      <artifactId>ovirt-host-deploy</artifactId>
+      <version>${ovirt-host-deploy.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
     </dependency>

@@ -128,10 +128,12 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Scripts\\vds_installer.py")
     BootstrapInstallerFileName(35),
+    @Deprecated
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/vdsm-reg/ovirt-vdsm-gen-cert.py")
     CBCCertificateScriptName(36),
+    @Deprecated
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/vdsm-reg/ovirt-vdsm-complete.py")
@@ -1398,33 +1400,15 @@ public enum ConfigValues {
     @DefaultValueAttribute("{\"storage domains\":\"false\",\"hosts\":\"false\"}")
     AutoRecoveryAllowedTypes(371),
 
-    // <HW UUID>_<lowest MAC>
+    @Deprecated
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute(
-        "IDFILE=/etc/vdsm/vdsm.id; " +
-        "if [ -r \"${IDFILE}\" ]; then " +
-            "cat \"${IDFILE}\"; " +
-        "else " +
-            "UUID=\"$(" +
-                "dmidecode -s system-uuid 2> /dev/null | " +
-                "sed -e 's/.*Not.*//' " +
-            ")\"; " +
-            "if [ -z \"${UUID}\" ]; then " +
-                "UUID=\"$(uuidgen 2> /dev/null)\" && " +
-                "mkdir -p \"$(dirname \"${IDFILE}\")\" && " +
-                "echo \"${UUID}\" > \"${IDFILE}\" && " +
-                "chmod 0644 \"${IDFILE}\"; " +
-            "fi; " +
-            "[ -n \"${UUID}\" ] && echo \"${UUID}\"; " +
-        "fi"
-    )
+    @DefaultValueAttribute("")
     BootstrapNodeIDCommand(372),
 
     /*
      * umask is required to allow only self access
-     * --no-same-permissions is required to allow enforcing umask
-     * -o is required so files be owned by current user
+     * tar is missing from vanilla fedora-18 so we use python
      */
     @Reloadable
     @TypeConverterAttribute(String.class)
@@ -1434,14 +1418,8 @@ public enum ConfigValues {
         "trap \"chmod -R u+rwX \\\"${MYTMP}\\\" > /dev/null 2>&1; rm -fr \\\"${MYTMP}\\\" > /dev/null 2>&1\" 0; " +
         "rm -fr \"${MYTMP}\" && " +
         "mkdir \"${MYTMP}\" && " +
-        "tar -C \"${MYTMP}\" --no-same-permissions -o -x && " +
-        "\"${MYTMP}\"/setup " +
-                "-c 'ssl={server_SSL_enabled};management_port={management_port}' " +
-                "-O '{OrganizationName}' -t {utc_time} {OverrideFirewall} " +
-                "-S {SSHKey} {EnginePort} -b {virt-placeholder} " +
-                "-B {BridgeName} " +
-                "{gluster-placeholder} {URL1} {URL1} {vds-server} " +
-                "{GUID} {RunFlag}"
+        "python -c \"import sys, tarfile; tarfile.open(fileobj=sys.stdin, mode='r|').extractall(path='${MYTMP}')\" && " +
+        "@ENVIRONMENT@ \"${MYTMP}\"/setup DIALOG/dialect=str:machine DIALOG/customization=bool:True"
     )
     BootstrapCommand(373),
 
@@ -1449,10 +1427,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("10000")
     BootstrapCacheRefreshInterval(374),
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("/usr/share/vdsm-bootstrap/interface-2")
+    @DefaultValueAttribute("/usr/share/ovirt-host-deploy/interface-3")
     BootstrapPackageDirectory(375),
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("vdsm-bootstrap-2.tar")
+    @DefaultValueAttribute("ovirt-host-deploy.tar")
     BootstrapPackageName(376),
     @Reloadable
     @TypeConverterAttribute(String.class)
@@ -1558,6 +1536,11 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
     GlusterRefreshRateHeavy(396),
+
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    BootstrapMinimalVdsmVersion(397),
 
     Invalid(65535);
 

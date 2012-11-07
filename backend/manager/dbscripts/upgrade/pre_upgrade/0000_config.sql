@@ -22,6 +22,7 @@ PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
 --                  Add configuration values section
 ------------------------------------------------------------------------------------
 
+select fn_db_add_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_add_config_value('CpuPinMigrationEnabled','true','general');
 select fn_db_add_config_value('CpuPinningEnabled','false','2.2');
 select fn_db_add_config_value('CpuPinningEnabled','false','3.0');
@@ -63,9 +64,7 @@ select fn_db_add_config_value('CABaseDirectory','ca','general');
 select fn_db_add_config_value('CACertificatePath','ca/certs.pem','general');
 --Handling PEM File Name
 select fn_db_add_config_value('CAEngineKey','engine.pem','general');
-select fn_db_add_config_value('CBCCertificateScriptName','/usr/share/vdsm-reg/vdsm-gen-cert','general');
 select fn_db_add_config_value('CbcCheckOnVdsChange','false','general');
-select fn_db_add_config_value('CBCCloseCertificateScriptName','/usr/share/vdsm-reg/vdsm-complete','general');
 --Handling Certificate alias
 select fn_db_add_config_value('CertAlias','1','general');
 --Handling Certificate File Name
@@ -562,6 +561,7 @@ select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
 ------------------------------------------------------------------------------------
 
 select fn_db_update_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"true\"}','general');
+select fn_db_update_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_update_config_value('CertAlias','1','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DebugSearchLogging','false','general');
@@ -643,6 +643,8 @@ select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '100
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------
 
+select fn_db_delete_config_value('CBCCertificateScriptName','general');
+select fn_db_delete_config_value('CBCCloseCertificateScriptName','general');
 select fn_db_delete_config_value('ENMailEnableSsl','general');
 select fn_db_delete_config_value('ENMailHost','general');
 select fn_db_delete_config_value('ENMailPassword','general');
