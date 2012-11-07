@@ -23,8 +23,8 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
     private static Log log = LogFactory.getLog(InstallVdsCommand.class);
-    protected VdsInstaller _vdsInstaller;
     private static final String GENERIC_ERROR = "Please refer to enging.log on engine and log files under /tmp on host for further details.";
+    protected String _failureMessage = null;
 
     public InstallVdsCommand(T parameters) {
         super(parameters);
@@ -69,7 +69,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         } else {
             // In case of failure - add to audit log the error as achieved from
             // the host
-            AddCustomValue("FailedInstallMessage", getErrorMessage(_vdsInstaller.getErrorMessage()));
+            AddCustomValue("FailedInstallMessage", getErrorMessage(_failureMessage));
             result = AuditLogType.VDS_INSTALL_FAILED;
         }
         return result;
@@ -81,9 +81,10 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             getVds() != null &&
             isOvirtReInstallOrUpgrade()
         ) {
+            VdsInstaller vdsInstaller = null;
             try {
                 T parameters = getParameters();
-                _vdsInstaller = new OVirtUpgrader(getVds(), parameters.getoVirtIsoFile());
+                vdsInstaller = new OVirtUpgrader(getVds(), parameters.getoVirtIsoFile());
                 Backend.getInstance().getResourceManager().RunVdsCommand(
                     VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(
@@ -97,7 +98,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     getVds().getId(),
                     getVds().getvds_name()
                 );
-                if (!_vdsInstaller.Install()) {
+                if (!vdsInstaller.Install()) {
                     throw new Exception("Upgrade failed");
                 }
                 log.infoFormat(
@@ -118,7 +119,8 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     e
                 );
                 setSucceeded(false);
-                AddCustomValue("FailedInstallMessage", getErrorMessage(_vdsInstaller.getErrorMessage()));
+                _failureMessage = getErrorMessage(vdsInstaller.getErrorMessage());
+                AddCustomValue("FailedInstallMessage", _failureMessage);
                 setHostStatus(VDSStatus.InstallFailed);
             }
             return;
@@ -126,8 +128,9 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
         if (getVds() != null) {
             T parameters = getParameters();
+            VdsInstaller vdsInstaller = null;
             if (getVds().getvds_type() == VDSType.VDS) {
-                _vdsInstaller =
+                vdsInstaller =
                         new VdsInstaller(getVds(),
                                 parameters.getRootPassword(),
                                 parameters.getOverrideFirewall(),
@@ -144,13 +147,13 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVdsStatus,
                                new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
-                _vdsInstaller = new OVirtInstaller(getVds());
+                vdsInstaller = new OVirtInstaller(getVds());
             }
 
             log.infoFormat("Before Installation {0}", Thread.currentThread().getName());
             boolean installResult = false;
             try {
-                installResult = _vdsInstaller.Install();
+                installResult = vdsInstaller.Install();
             } catch (Exception e) {
                 log.errorFormat("Host installation failed for host {0}, {1}.",
                         getVds().getId(),
@@ -161,7 +164,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             log.infoFormat("After Installation {0}", Thread.currentThread().getName());
 
             if (getSucceeded()) {
-                if (_vdsInstaller.isAddOvirtFlow()) {
+                if (vdsInstaller.isAddOvirtFlow()) {
                     log.debugFormat("Add manual oVirt flow ended successfully for {0}.", getVds().getvds_name());
                     return;
                 }
@@ -191,7 +194,8 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 }
             }
             else {
-                AddCustomValue("FailedInstallMessage", getErrorMessage(_vdsInstaller.getErrorMessage()));
+                _failureMessage = getErrorMessage(vdsInstaller.getErrorMessage());
+                AddCustomValue("FailedInstallMessage", _failureMessage);
                 setHostStatus(VDSStatus.InstallFailed);
             }
         }
