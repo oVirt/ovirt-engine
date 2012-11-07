@@ -22,6 +22,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("&nbsp;")
     String htmlNonBreakingSpace();
 
+    @DefaultStringValue("&emsp;")
+    String htmlTab();
+
     @DefaultStringValue(", ")
     String commaBreak();
 

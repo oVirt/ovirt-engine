@@ -43,8 +43,14 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Attached to {0} VM(s)")
     String diskAttachedToVMs(int numberOfVms);
 
-    @DefaultMessage("Note: {0} is {1}")
-    String diskNote(String diskAlias, String formattedNote);
+    @DefaultMessage("Note that the disk is:")
+    String diskNote();
+
+    @DefaultMessage("Shareable")
+    String shareable();
+
+    @DefaultMessage("Bootable")
+    String bootable();
 
     @DefaultMessage("out of {0} VMs in pool")
     String outOfXVMsInPool(String numOfVms);
