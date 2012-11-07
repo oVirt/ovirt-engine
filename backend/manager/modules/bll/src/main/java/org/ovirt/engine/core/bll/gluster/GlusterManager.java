@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -614,7 +615,7 @@ public class GlusterManager {
                 }
             } else {
                 // brick found. update it if required. Only property that could be different is the brick order
-                if (existingBrick.getBrickOrder() != fetchedBrick.getBrickOrder()) {
+                if (!ObjectUtils.objectsEqual(existingBrick.getBrickOrder(), fetchedBrick.getBrickOrder())) {
                     log.infoFormat("Brick order for brick {0} changed from {1} to {2} because of direct CLI operations. Updating engine DB accordingly.",
                             existingBrick.getQualifiedName(),
                             existingBrick.getBrickOrder(),
@@ -720,14 +721,14 @@ public class GlusterManager {
         switch (existingVolume.getVolumeType()) {
         case REPLICATE:
         case DISTRIBUTED_REPLICATE:
-            if (existingVolume.getReplicaCount() != fetchedVolume.getReplicaCount()) {
+            if (!ObjectUtils.objectsEqual(existingVolume.getReplicaCount(), fetchedVolume.getReplicaCount())) {
                 existingVolume.setReplicaCount(fetchedVolume.getReplicaCount());
                 changed = true;
             }
             break;
         case STRIPE:
         case DISTRIBUTED_STRIPE:
-            if (existingVolume.getStripeCount() != fetchedVolume.getStripeCount()) {
+            if (!ObjectUtils.objectsEqual(existingVolume.getStripeCount(), fetchedVolume.getStripeCount())) {
                 existingVolume.setStripeCount(fetchedVolume.getStripeCount());
                 changed = true;
             }
