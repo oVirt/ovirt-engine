@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -449,14 +451,14 @@ public final class ImagesHandler {
             boolean checkStorageDomain,
             boolean checkIsValid, Collection diskImageList) {
 
-        boolean returnValue = true;
-        boolean isValid = checkIsValid
-                && ((Boolean) Backend.getInstance().getResourceManager()
-                        .RunVdsCommand(VDSCommandType.IsValid, new IrsBaseVDSCommandParameters(storagePoolId))
-                        .getReturnValue()).booleanValue();
-        if (checkIsValid && !isValid) {
-            returnValue = false;
-            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
+        boolean returnValue = true;;
+        if (checkIsValid) {
+            storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(
+                    storagePoolId);
+            if (pool == null || pool.getstatus() != StoragePoolStatus.Up) {
+                returnValue = false;
+                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
+            }
         }
 
         List<DiskImage> images = getImages(vm, diskImageList);
@@ -471,7 +473,7 @@ public final class ImagesHandler {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
         }
-        if (returnValue && isValid) {
+        if (returnValue && checkIsValid) {
             if (images.size() > 0) {
                 returnValue = returnValue &&
                         checkDiskImages(messages,

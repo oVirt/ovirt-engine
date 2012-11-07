@@ -499,7 +499,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             setmCurrentIrsHost(vds.gethost_name());
         }
 
-        public boolean Failover() {
+        public boolean failover() {
             setmIrsProxy(null);
             setmCurrentIrsHost(null);
             boolean performFailover = false;
@@ -518,17 +518,17 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     } else {
                         performFailover = true;
                     }
-                } catch (java.lang.Exception ex) {
+                } catch (Exception ex) {
                     // try to failover to another host if failed to get spm
                     // status or stop spm
                     // (in case mCurrentVdsId has wrong id for some reason)
-                    log.errorFormat("Could not get spm status on host {0} for spmStop.", getmCurrentIrsHost());
+                    log.errorFormat("Could not get spm status on host {0} for spmStop.", mCurrentVdsId);
                     performFailover = true;
                 }
             }
 
             if (performFailover) {
-                log.infoFormat("Irs placed on server {0} failed. Proceed Failover", getmCurrentIrsHost());
+                log.infoFormat("Irs placed on server {0} failed. Proceed Failover", mCurrentVdsId);
                 mTriedVdssList.add(mCurrentVdsId);
                 return true;
             } else {
@@ -1009,10 +1009,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         public String getIsoDirectory() {
             String tempVar = getmCurrentIrsHost();
             return String.format("\\\\%1$s\\CD", ((tempVar != null) ? tempVar : gethostFromVds()));
-        }
-
-        public boolean getIsValid() {
-            return getIrsProxy() != null;
         }
 
         public boolean getIsValidWithoutSpmStart() {
@@ -1550,7 +1546,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     private void failover() {
         if ((getParameters().getIgnoreFailoverLimit() || _failoverCounter < Config
                 .<Integer> GetValue(ConfigValues.SpmCommandFailOverRetries) - 1)
-                && getCurrentIrsProxyData().getHasVdssForSpmSelection() && getCurrentIrsProxyData().Failover()) {
+                && getCurrentIrsProxyData().getHasVdssForSpmSelection() && getCurrentIrsProxyData().failover()) {
             _failoverCounter++;
             ExecuteCommand();
         } else {

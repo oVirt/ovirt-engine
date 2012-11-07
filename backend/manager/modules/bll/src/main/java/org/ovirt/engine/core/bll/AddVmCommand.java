@@ -454,7 +454,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         boolean checkTemplateLock = getParameters().getParentCommand() == VdcActionType.AddVmPoolWithVms ? false : true;
 
-        returnValue = verifyAddVM(reasons, storagePoolId, vmPriority);
+        returnValue = verifyAddVM(reasons, vmPriority);
 
         if (returnValue && !getParameters().getDontCheckTemplateImages()) {
             for (storage_domains storage : destStorages.values()) {
@@ -468,11 +468,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return returnValue;
     }
 
-    protected boolean verifyAddVM(List<String> reasons, Guid storagePoolId, int vmPriority) {
+    protected boolean verifyAddVM(List<String> reasons, int vmPriority) {
         return VmHandler.VerifyAddVm(reasons,
                 getVmInterfaces().size(),
-                getVmTemplate(),
-                storagePoolId,
                 vmPriority);
     }
 

@@ -7,9 +7,9 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -57,12 +57,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         if (returnValue
                 && _storageDomainNameChanged
                 && getStoragePool() != null
-                && !((Boolean) Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.IsValid,
-                                new IrsBaseVDSCommandParameters(getStoragePool().getId())).getReturnValue())
-                        .booleanValue()) {
+                && getStoragePool().getstatus() != StoragePoolStatus.Up) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
             returnValue = false;
         }

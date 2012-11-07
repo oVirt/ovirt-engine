@@ -31,8 +31,6 @@ import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -79,14 +77,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         getVmStaticDAO().update(newVmStatic);
         updateVmPayload();
         VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
-        if (((Boolean) runVdsCommand(VDSCommandType.IsValid,
-                new IrsBaseVDSCommandParameters(getVm().getstorage_pool_id())).getReturnValue())) {
 
-            // Set the VM to null, to fetch it again from the DB ,instead from the cache.
-            // We want to get the VM current data that was updated to the DB.
-            setVm(null);
+        // Set the VM to null, to fetch it again from the DB ,instead from the cache.
+        // We want to get the VM current data that was updated to the DB.
+        setVm(null);
+        try {
             updateVmInSpm(getVm().getstorage_pool_id(),
-                    new ArrayList<VM>(Arrays.asList(new VM[] { getVm() })));
+                    Arrays.asList(getVm()));
+        } catch (Exception e) {
+            // DO nothing
         }
         setSucceeded(true);
     }

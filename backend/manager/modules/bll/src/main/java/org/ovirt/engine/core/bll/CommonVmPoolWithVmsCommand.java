@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -33,8 +34,6 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -182,10 +181,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     protected boolean canDoAction() {
-        if (!super.canDoAction()) {
-            return false;
-        }
-
         VDSGroup grp = getVdsGroupDAO().get(getParameters().getVmPool().getvds_group_id());
         if (grp == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
@@ -203,18 +198,15 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_CREATE_DUPLICATE_NAME);
             return false;
         }
-
-        if (!((Boolean) runVdsCommand(VDSCommandType.IsValid,
-                new IrsBaseVDSCommandParameters(grp.getstorage_pool_id().getValue())).getReturnValue())
-                .booleanValue()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
-            return false;
-        }
-
-        if (!verifyAddVM(grp.getstorage_pool_id().getValue())) {
-            return false;
-        }
         setStoragePoolId(grp.getstorage_pool_id().getValue());
+
+        if (getStoragePool() == null || getStoragePool().getstatus() != StoragePoolStatus.Up) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+        }
+
+        if (!verifyAddVM()) {
+            return false;
+        }
 
         if (!ensureDestinationImageMap()) {
             return false;
@@ -257,13 +249,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                         version.toString());
     }
 
-    protected boolean verifyAddVM(Guid storagePoolId) {
+    protected boolean verifyAddVM() {
         return VmHandler.VerifyAddVm
                 (getReturnValue().getCanDoActionMessages(),
                         getParameters().getVmsCount()
                                 * getVmNetworkInterfaceDao().getAllForTemplate(getVmTemplateId()).size(),
-                        getVmTemplate(),
-                        storagePoolId,
                         getParameters().getVmStaticData().getpriority());
     }
 

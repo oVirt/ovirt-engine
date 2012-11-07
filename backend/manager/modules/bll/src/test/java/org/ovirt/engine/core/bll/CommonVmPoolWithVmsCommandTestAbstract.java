@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -41,6 +43,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmPoolDAO;
@@ -72,6 +75,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     protected static int VM_COUNT = 5;
     protected static int DISK_SIZE = 100000;
     protected VmTemplate vmTemplate;
+    protected storage_pool storage_pool;
     protected List<storage_domains> storageDomainsList;
 
     @Mock
@@ -91,6 +95,9 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
 
     @Mock
     protected VmPoolDAO vmPoolDAO;
+
+    @Mock
+    protected StoragePoolDAO storagePoolDAO;
 
     @Mock
     protected VmTemplateDAO vmTemplateDAO;
@@ -121,11 +128,10 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         command = createCommand();
         doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
         doReturn(true).when(command).isMemorySizeLegal(any(Version.class));
-        doReturn(true).when(command).verifyAddVM(any(Guid.class));
+        doReturn(true).when(command).verifyAddVM();
     }
 
     private void mockVds() {
-        mockIsValidVdsCommand();
         mockGetImageDomainsListVdsCommand(100, 100);
     }
 
@@ -134,12 +140,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         vmPools = mockVmPools();
         vdsGroup = mockVdsGroup();
         vmTemplate = mockVmTemplate();
-    }
-
-    private void mockIsValidVdsCommand() {
-        VDSReturnValue returnValue = new VDSReturnValue();
-        returnValue.setReturnValue(Boolean.TRUE);
-        doReturn(returnValue).when(command).runVdsCommand(eq(VDSCommandType.IsValid), any(VDSParametersBase.class));
+        storage_pool = mockStoragePool();
     }
 
     protected void mockGetImageDomainsListVdsCommand(int availableDiskSizeFirstDomain,
@@ -164,6 +165,11 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
 
     private void mockVMPoolDAO() {
         doReturn(vmPoolDAO).when(command).getVmPoolDAO();
+    }
+
+    private void mockStoragePoolDAO() {
+        doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
+        when(storagePoolDAO.get(storagePoolId)).thenReturn(storage_pool);
     }
 
     private void mockVMTemplateDAO() {
@@ -261,6 +267,16 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         return template;
     }
 
+    /**
+     * Mock Storage Pool
+     */
+    private storage_pool mockStoragePool() {
+        storage_pool storage_pool = new storage_pool();
+        storage_pool.setstatus(StoragePoolStatus.Up);
+
+        return storage_pool;
+    }
+
     private static void setDiskList(VmTemplate vmTemplate) {
         for (DiskImage diskImage : getDiskImageList()) {
             vmTemplate.getDiskList().add(diskImage);
@@ -324,5 +340,6 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         mockVMPoolDAO();
         mockVMTemplateDAO();
         mockVmNetworkInterfaceDao();
+        mockStoragePoolDAO();
     }
 }

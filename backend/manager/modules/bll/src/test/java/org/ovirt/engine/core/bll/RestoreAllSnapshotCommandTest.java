@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -33,9 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
@@ -94,7 +90,6 @@ public class RestoreAllSnapshotCommandTest {
         mockBackend();
         mockDaos();
         mockVm();
-        mockIsValidVdsCommand();
     }
 
     protected void mockBackend() {
@@ -140,16 +135,6 @@ public class RestoreAllSnapshotCommandTest {
         mockSnapshot = new Snapshot();
         mockSnapshot.setType(SnapshotType.STATELESS);
         when(snapshotDao.get(any(Guid.class))).thenReturn(mockSnapshot);
-    }
-
-    /**
-     * Returns image is valid.
-     */
-    private void mockIsValidVdsCommand() {
-        VDSReturnValue returnValue = new VDSReturnValue();
-        returnValue.setReturnValue(Boolean.TRUE);
-        when(backend.getResourceManager().RunVdsCommand(eq(VDSCommandType.IsValid),
-                any(IrsBaseVDSCommandParameters.class))).thenReturn(returnValue);
     }
 
     private void initSpyCommand() {

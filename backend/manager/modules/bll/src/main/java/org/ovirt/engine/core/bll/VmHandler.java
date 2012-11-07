@@ -21,13 +21,11 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.VmValidationUtils;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -100,14 +98,10 @@ public class VmHandler {
      *            The reasons.
      * @param nicsCount
      *            How many vNICs need to be allocated.
-     * @param vmTemplate
-     *            The vm template id.
      * @return
      */
     public static boolean VerifyAddVm(List<String> reasons,
             int nicsCount,
-            VmTemplate vmTemplate,
-            Guid storagePoolId,
             int vmPriority) {
         boolean returnValue = true;
         if (MacPoolManager.getInstance().getavailableMacsCount() < nicsCount) {
@@ -115,20 +109,8 @@ public class VmHandler {
                 reasons.add(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
             }
             returnValue = false;
-        } else {
-            boolean isValid = ((Boolean) Backend.getInstance().getResourceManager()
-                    .RunVdsCommand(VDSCommandType.IsValid, new IrsBaseVDSCommandParameters(storagePoolId))
-                    .getReturnValue()).booleanValue();
-            if (isValid) {
-                if (!VmTemplateCommand.IsVmPriorityValueLegal(vmPriority, reasons)) {
-                    returnValue = false;
-                }
-            } else {
-                if (reasons != null) {
-                    reasons.add(VdcBllMessages.IMAGE_REPOSITORY_NOT_FOUND.toString());
-                }
-                returnValue = false;
-            }
+        } else if (!VmTemplateCommand.IsVmPriorityValueLegal(vmPriority, reasons)) {
+            returnValue = false;
         }
         return returnValue;
     }

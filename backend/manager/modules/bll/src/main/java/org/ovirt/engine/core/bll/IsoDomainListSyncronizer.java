@@ -237,27 +237,15 @@ public class IsoDomainListSyncronizer {
             Guid storagePoolId,
             FileTypeExtension fileTypeExt) {
         boolean refreshSucceeded = false;
-
-        // Check validation of storage pool and SPM.
-        Boolean isValid = (Boolean) (Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.IsValid,
-                        new IrsBaseVDSCommandParameters(storagePoolId)).getReturnValue());
-
-        log.debugFormat("Validation of Storage pool id {0} returned {1}.", storagePoolId, isValid ? "valid"
-                : "not valid");
         // Setting the indication to the indication whether the storage pool is valid.
-        boolean updateFromVDSMSucceeded = isValid;
+        boolean updateFromVDSMSucceeded = true;
 
         // If the SPM and the storage pool are valid, try to refresh the Iso list by fetching it from the SPM.
-        if (isValid) {
-            if (fileTypeExt == FileTypeExtension.ISO) {
-                updateFromVDSMSucceeded = updateIsoListFromVDSM(storagePoolId, storageDomainId);
-            } else if (fileTypeExt == FileTypeExtension.Floppy) {
-                updateFromVDSMSucceeded =
-                        updateFloppyListFromVDSM(storagePoolId, storageDomainId) && updateFromVDSMSucceeded;
-            }
+        if (fileTypeExt == FileTypeExtension.ISO) {
+            updateFromVDSMSucceeded = updateIsoListFromVDSM(storagePoolId, storageDomainId);
+        } else if (fileTypeExt == FileTypeExtension.Floppy) {
+            updateFromVDSMSucceeded =
+                    updateFloppyListFromVDSM(storagePoolId, storageDomainId) && updateFromVDSMSucceeded;
         }
 
         // Log if the refresh succeeded or add the storage domain to the problematic list.

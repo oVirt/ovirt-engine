@@ -468,7 +468,7 @@ public class AddVmCommandTest {
     }
 
     private static void mockVerifyAddVM(AddVmCommand<?> cmd) {
-        doReturn(true).when(cmd).verifyAddVM(anyListOf(String.class), any(Guid.class), anyInt());
+        doReturn(true).when(cmd).verifyAddVM(anyListOf(String.class), anyInt());
     }
 
     private void mockConfig() {

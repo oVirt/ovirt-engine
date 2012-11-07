@@ -17,12 +17,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -75,13 +74,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check storage pool valid
-        if (template.getstorage_pool_id() != null && !Guid.Empty.equals(template.getstorage_pool_id())
-                && !((Boolean) Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.IsValid,
-                                new IrsBaseVDSCommandParameters(template.getstorage_pool_id().getValue()))
-                        .getReturnValue()).booleanValue()) {
+        if (getStoragePool() == null || getStoragePool().getstatus() != StoragePoolStatus.Up) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
             return false;
         }
