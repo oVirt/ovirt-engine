@@ -81,35 +81,28 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             getVds() != null &&
             isOvirtReInstallOrUpgrade()
         ) {
-            VdsInstaller vdsInstaller = null;
+            OVirtNodeUpgrade upgrade = null;
             try {
                 T parameters = getParameters();
-                vdsInstaller = new OVirtUpgrader(getVds(), parameters.getoVirtIsoFile());
-                Backend.getInstance().getResourceManager().RunVdsCommand(
-                    VDSCommandType.SetVdsStatus,
-                    new SetVdsStatusVDSCommandParameters(
-                        getVdsId(),
-                        VDSStatus.Installing
-                    )
+                upgrade = new OVirtNodeUpgrade(
+                    getVds(),
+                    parameters.getoVirtIsoFile()
                 );
                 log.infoFormat(
-                    "Execute upgrade {0} host {0}, {1}",
-                    Thread.currentThread().getName(),
+                    "Execute upgrade host {0}, {1}",
                     getVds().getId(),
                     getVds().getvds_name()
                 );
-                if (!vdsInstaller.Install()) {
-                    throw new Exception("Upgrade failed");
-                }
+                upgrade.execute();
                 log.infoFormat(
-                    "After upgrade {0}, host {0}, {1}: success",
-                    Thread.currentThread().getName(),
+                    "After upgrade host {0}, {1}: success",
                     getVds().getId(),
                     getVds().getvds_name()
                 );
                 setSucceeded(true);
-                setHostStatus(VDSStatus.Reboot);
-                RunSleepOnReboot();
+                if (getVds().getstatus() == VDSStatus.Reboot) {
+                    RunSleepOnReboot();
+                }
             }
             catch (Exception e) {
                 log.errorFormat(
@@ -119,9 +112,13 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     e
                 );
                 setSucceeded(false);
-                _failureMessage = getErrorMessage(vdsInstaller.getErrorMessage());
+                _failureMessage = getErrorMessage(e.getMessage());
                 AddCustomValue("FailedInstallMessage", _failureMessage);
-                setHostStatus(VDSStatus.InstallFailed);
+            }
+            finally {
+                if (upgrade != null) {
+                    upgrade.close();
+                }
             }
             return;
         }

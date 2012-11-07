@@ -106,7 +106,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
         super();
         _vds = vds;
         this.overrideFirewall = overrideFirewall;
-        _messages = new InstallerMessages(vds.getId());
+        _messages = new InstallerMessages(vds);
         _rebootAfterInstallation = rebootAfterInstallation;
 
         _fileGuid = Guid.NewGuid();
@@ -463,14 +463,14 @@ public class VdsInstaller implements IVdsInstallerCallback {
             _executionSucceded = true;
             log.infoFormat("Installation of {0}. Received message: {1}. Stage completed. (Stage: {2})", _serverName,
                     message, getCurrentInstallStage());
-            _messages.AddMessage(message);
+            _messages.postOldXmlFormat(message);
             _currentInstallStage = VdsInstallStages.forValue(_currentInstallStage.getValue() + 1);
         } else if (message.toUpperCase().indexOf("<BSTRAP COMPONENT='RHEV_INSTALL' STATUS='FAIL'/>") != -1
                 && (_currentInstallStage == VdsInstallStages.RunScript || _currentInstallStage == VdsInstallStages.FinishCommand)) {
             _executionSucceded = false;
             log.errorFormat("Installation of {0}. Received message: {1}. Error occured. (Stage: {2})", _serverName,
                     message, getCurrentInstallStage());
-            _messages.AddMessage(message);
+            _messages.postOldXmlFormat(message);
         } else if (message.toUpperCase()
                 .indexOf("<BSTRAP COMPONENT='RHEV_INSTALL' STATUS='OK' MESSAGE='RHEV-H ACCESSIBLE'/>") != -1
                 && _currentInstallStage == VdsInstallStages.RunScript) {
@@ -478,7 +478,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
                     message, getCurrentInstallStage());
             // in case and RHEV-H installation was detected - update VDS entity
             updateOvirtHostEntity();
-            _messages.AddMessage(message);
+            _messages.postOldXmlFormat(message);
             // skip all steps - vds_installer should update vdsm-reg.conf, restart vdsm-reg and quit.
             _currentInstallStage = VdsInstallStages.End;
             _executionSucceded = true;
@@ -491,7 +491,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             {
                 _executionSucceded = InsertUniqueId(message);
                 if (!_executionSucceded) {
-                    _messages.AddMessage(
+                    _messages.postOldXmlFormat(
                         String.format(
                             "<BSTRAP component='RHEV_INSTALL' status='FAIL' message='Failed to install host %1$s, host already exists in oVirt'/>",
                             _serverName
@@ -500,7 +500,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
                 }
             }
             else {
-                _messages.AddMessage(message);
+                _messages.postOldXmlFormat(message);
             }
         }
     }
@@ -598,14 +598,14 @@ public class VdsInstaller implements IVdsInstallerCallback {
     @Override
     public void addError(String error) {
         log.errorFormat("Installation of {0}. Error: {1}. (Stage: {2})", _serverName, error, getCurrentInstallStage());
-        _messages.AddMessage(error);
+        _messages.postOldXmlFormat(error);
     }
 
     @Override
     public void failed(String error) {
         log.errorFormat("Installation of {0} has failed. Failure details: {1}. (Stage: {2})", _serverName, error,
                 getCurrentInstallStage());
-        _messages.AddMessage(error);
+        _messages.postOldXmlFormat(error);
         _currentInstallStage = VdsInstallStages.Error;
         _failedMessage = error;
     }

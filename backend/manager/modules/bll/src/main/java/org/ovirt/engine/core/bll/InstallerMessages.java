@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -11,13 +11,44 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class InstallerMessages {
-    private Guid _vdsId;
+    private VDS _vds;
+    private int _sequence = 0;
 
-    public InstallerMessages(Guid vdsId) {
-        _vdsId = vdsId;
+    public enum Severity {
+        INFO,
+        WARNING,
+        ERROR
+    };
+
+    public InstallerMessages(VDS vds) {
+        _vds = vds;
     }
 
-    public boolean AddMessage(String message) {
+    public void post(Severity severity, String text) {
+        AuditLogType logType;
+        AuditLogableBase logable = new AuditLogableBase(_vds.getId());
+        logable.AddCustomValue("Message", text);
+        switch (severity) {
+        case INFO:
+            logType = AuditLogType.VDS_INSTALL_IN_PROGRESS;
+            log.infoFormat("Installation {0}: {1}", _vds.gethost_name(), text);
+            break;
+        default:
+        case WARNING:
+            logable.setCustomId(_sequence++);
+            logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING;
+            log.warnFormat("Installation {0}: {1}", _vds.gethost_name(), text);
+            break;
+        case ERROR:
+            logable.setCustomId(_sequence++);
+            logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_ERROR;
+            log.errorFormat("Installation {0}: {1}", _vds.gethost_name(), text);
+            break;
+        }
+        AuditLogDirector.log(logable, logType);
+    }
+
+    public boolean postOldXmlFormat(String message) {
         boolean error = false;
         if (StringUtils.isEmpty(message)) {
             return error;
@@ -25,7 +56,7 @@ public class InstallerMessages {
         String[] msgs = message.split("[\\n]", -1);
         if (msgs.length > 1) {
             for (String msg : msgs) {
-                error = AddMessage(msg) || error;
+                error = postOldXmlFormat(msg) || error;
             }
             return error;
         }
@@ -33,7 +64,7 @@ public class InstallerMessages {
         if (StringUtils.isNotEmpty(message)) {
             if (message.charAt(0) == '<') {
                 try {
-                    error = parseMessage(message);
+                    error = _internalPostOldXmlFormat(message);
                 } catch (RuntimeException e) {
                     error = true;
                     log.errorFormat(
@@ -49,7 +80,7 @@ public class InstallerMessages {
         return error;
     }
 
-    private boolean parseMessage(String message) {
+    private boolean _internalPostOldXmlFormat(String message) {
         boolean error = false;
         XmlDocument doc = new XmlDocument();
         doc.LoadXml(message);
@@ -57,16 +88,16 @@ public class InstallerMessages {
         if (node != null) {
             StringBuilder sb = new StringBuilder();
             // check status
-            AuditLogType logType;
+            Severity severity;
             if (node.Attributes.get("status") == null) {
-                logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING;
+                severity = Severity.WARNING;
             } else if (node.Attributes.get("status").getValue().equals("OK")) {
-                logType = AuditLogType.VDS_INSTALL_IN_PROGRESS;
+                severity = Severity.INFO;
             } else if (node.Attributes.get("status").getValue().equals("WARN")) {
-                logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING;
+                severity = Severity.WARNING;
             } else {
                 error = true;
-                logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_ERROR;
+                severity = Severity.ERROR;
             }
 
             if ((node.Attributes.get("component") != null)
@@ -85,13 +116,11 @@ public class InstallerMessages {
                     && (StringUtils.isNotEmpty(node.Attributes.get("result").getValue()))) {
                 sb.append(" (" + node.Attributes.get("result").getValue() + ")");
             }
-            AuditLogableBase logable = new AuditLogableBase(_vdsId);
-            logable.AddCustomValue("Message", StringUtils.stripEnd(sb.toString(), " "));
-            AuditLogDirector.log(logable, logType);
+            post(severity, sb.toString());
         }
 
         return error;
     }
 
-    private static Log log = LogFactory.getLog(InstallerMessages.class);
+    private static final Log log = LogFactory.getLog(InstallerMessages.class);
 }
