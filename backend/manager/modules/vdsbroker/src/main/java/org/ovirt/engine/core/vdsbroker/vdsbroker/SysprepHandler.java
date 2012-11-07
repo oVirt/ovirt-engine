@@ -64,44 +64,44 @@ public final class SysprepHandler {
     }
 
     public static String GetSysPrep(VM vm, String hostName, String domain, SysPrepParams sysPrepParams) {
-        StringBuilder sysPrepContent = new StringBuilder();
+        String sysPrepContent = "";
         switch (vm.getStaticData().getos()) {
         case WindowsXP:
-            sysPrepContent.append(LoadFile(Config.<String> GetValue(ConfigValues.SysPrepXPPath)));
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepXPPath));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey));
             break;
 
         case Windows2003:
-            sysPrepContent.append(LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K3Path)));
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K3Path));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2003));
             break;
 
         case Windows2003x64:
-            sysPrepContent.append(LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K3Path)));
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K3Path));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2003x64));
             break;
 
         case Windows2008:
-            sysPrepContent.append(LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8Path)));
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8Path));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2008));
             break;
 
         case Windows2008x64:
-            sysPrepContent.append(LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8x64Path)));
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8x64Path));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2008x64));
             break;
         case Windows2008R2x64:
-            sysPrepContent.append(LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8R2Path)));
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8R2Path));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2008R2));
             break;
 
         case Windows7:
-            sysPrepContent.append(LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows7Path)));
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows7Path));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKeyWindow7));
             break;
 
         case Windows7x64:
-            sysPrepContent.append(LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows7x64Path)));
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows7x64Path));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKeyWindow7x64));
             break;
 
@@ -111,7 +111,7 @@ public final class SysprepHandler {
 
         if (sysPrepContent.length() > 0) {
 
-            populateSysPrepDomainProperties(sysPrepContent, domain, sysPrepParams);
+            sysPrepContent = populateSysPrepDomainProperties(sysPrepContent, domain, sysPrepParams);
             sysPrepContent = replace(sysPrepContent, "$ComputerName$", hostName != null ? hostName : "");
             sysPrepContent = replace(sysPrepContent, "$AdminPassword$", Config.<String> GetValue(ConfigValues.LocalAdminPassword));
 
@@ -121,10 +121,10 @@ public final class SysprepHandler {
             sysPrepContent = replace(sysPrepContent, "$OrgName$", Config.<String> GetValue(ConfigValues.OrganizationName));
         }
 
-        return sysPrepContent.toString();
+        return sysPrepContent;
     }
 
-    private static void populateSysPrepDomainProperties(StringBuilder sysPrepContent,
+    private static String populateSysPrepDomainProperties(String sysPrepContent,
             String domain,
             SysPrepParams sysPrepParams) {
 
@@ -154,10 +154,12 @@ public final class SysprepHandler {
         sysPrepContent = replace(sysPrepContent, "$JoinDomain$", domainName);
         sysPrepContent = replace(sysPrepContent, "$DomainAdmin$", adminUserName);
         sysPrepContent = replace(sysPrepContent, "$DomainAdminPassword$", adminPassword);
+
+        return sysPrepContent;
     }
 
-    static StringBuilder replace(StringBuilder sysPrepContent, String pattern, String value) {
-        return new StringBuilder(sysPrepContent.toString().replaceAll(Pattern.quote(pattern), Matcher.quoteReplacement(value)));
+    static String replace(String sysPrepContent, String pattern, String value) {
+        return sysPrepContent.replaceAll(Pattern.quote(pattern), Matcher.quoteReplacement(value));
     }
 
     private static String useDefaultIfNull(String key, String value, String defaultValue,

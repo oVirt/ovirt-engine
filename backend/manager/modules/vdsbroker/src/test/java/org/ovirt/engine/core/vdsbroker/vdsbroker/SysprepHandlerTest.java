@@ -26,27 +26,27 @@ public class SysprepHandlerTest {
 
     @Test
     public void replace_emptyBuilder() {
-        runAndCheck(new StringBuilder(), "a", "b", "");
+        runAndCheck(new String(), "a", "b", "");
     }
 
     @Test
     public void replace_patternNotPresent() {
-        runAndCheck(sb("abcd"), "X", "Y", "abcd");
+        runAndCheck("abcd", "X", "Y", "abcd");
     }
 
     @Test
     public void replace_valueNotContainsDollar() {
-        runAndCheck(sb("AdminPassword=$AdminPassword$"), "$AdminPassword$", "AAA", "AdminPassword=AAA");
+        runAndCheck("AdminPassword=$AdminPassword$", "$AdminPassword$", "AAA", "AdminPassword=AAA");
     }
 
     @Test
     public void replace_keyNotContainsDollar() {
-        runAndCheck(sb("AdminPassword=someKey"), "someKey", "AAA", "AdminPassword=AAA");
+        runAndCheck("AdminPassword=someKey", "someKey", "AAA", "AdminPassword=AAA");
     }
 
     @Test
     public void replace_valueContainsDollar() {
-        runAndCheck(sb("AdminPassword=$AdminPassword$"),
+        runAndCheck("AdminPassword=$AdminPassword$",
                 "$AdminPassword$",
                 "$A$AA$",
                 "AdminPassword=$A$AA$");
@@ -55,8 +55,8 @@ public class SysprepHandlerTest {
     @Test
     public void replace_callReplaceTwoTimes() {
         String text = "AdminName=$AdminName$ AdminPassword=$AdminPassword$";
-        StringBuilder firstPart =
-                runAndCheck(sb(text),
+        String firstPart =
+                runAndCheck(text,
                         "$AdminPassword$",
                         "$A$AA$",
                         "AdminName=$AdminName$ AdminPassword=$A$AA$");
@@ -65,22 +65,15 @@ public class SysprepHandlerTest {
 
     @Test
     public void replace_callReplaceTwoOccurrences() {
-        runAndCheck(sb("AdminName=$AdminName$ AdminPassword=$AdminName$"),
+        runAndCheck("AdminName=$AdminName$ AdminPassword=$AdminName$",
                 "$AdminName$",
                 "$B$BB$",
                 "AdminName=$B$BB$ AdminPassword=$B$BB$");
     }
 
-    // this is here just to simulate perfectly the way how the SysprepHandler creates the StringBuilder
-    private StringBuilder sb(String string) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(string);
-        return builder;
-    }
-
-    private StringBuilder runAndCheck(StringBuilder original, String pattern, String value, String expected) {
-        StringBuilder res = SysprepHandler.replace(original, pattern, value);
-        assertThat(res.toString(), is(equalTo(expected)));
+    private String runAndCheck(String original, String pattern, String value, String expected) {
+        String res = SysprepHandler.replace(original, pattern, value);
+        assertThat(res, is(equalTo(expected)));
         return res;
     }
 }
