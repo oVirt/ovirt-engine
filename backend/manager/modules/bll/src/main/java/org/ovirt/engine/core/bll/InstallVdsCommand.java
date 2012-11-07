@@ -77,6 +77,53 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
     @Override
     protected void executeCommand() {
+        if (
+            getVds() != null &&
+            isOvirtReInstallOrUpgrade()
+        ) {
+            try {
+                T parameters = getParameters();
+                _vdsInstaller = new OVirtUpgrader(getVds(), parameters.getoVirtIsoFile());
+                Backend.getInstance().getResourceManager().RunVdsCommand(
+                    VDSCommandType.SetVdsStatus,
+                    new SetVdsStatusVDSCommandParameters(
+                        getVdsId(),
+                        VDSStatus.Installing
+                    )
+                );
+                log.infoFormat(
+                    "Execute upgrade {0} host {0}, {1}",
+                    Thread.currentThread().getName(),
+                    getVds().getId(),
+                    getVds().getvds_name()
+                );
+                if (!_vdsInstaller.Install()) {
+                    throw new Exception("Upgrade failed");
+                }
+                log.infoFormat(
+                    "After upgrade {0}, host {0}, {1}: success",
+                    Thread.currentThread().getName(),
+                    getVds().getId(),
+                    getVds().getvds_name()
+                );
+                setSucceeded(true);
+                setHostStatus(VDSStatus.Reboot);
+                RunSleepOnReboot();
+            }
+            catch (Exception e) {
+                log.errorFormat(
+                    "Host installation failed for host {0}, {1}.",
+                    getVds().getId(),
+                    getVds().getvds_name(),
+                    e
+                );
+                setSucceeded(false);
+                AddCustomValue("FailedInstallMessage", getErrorMessage(_vdsInstaller.getErrorMessage()));
+                setHostStatus(VDSStatus.InstallFailed);
+            }
+            return;
+        }
+
         if (getVds() != null) {
             T parameters = getParameters();
             if (getVds().getvds_type() == VDSType.VDS) {
@@ -97,11 +144,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVdsStatus,
                                new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Installing));
-                if (isOvirtReInstallOrUpgrade()) {
-                    _vdsInstaller = new OVirtUpgrader(getVds(), parameters.getoVirtIsoFile());
-                } else {
-                    _vdsInstaller = new OVirtInstaller(getVds());
-                }
+                _vdsInstaller = new OVirtInstaller(getVds());
             }
 
             log.infoFormat("Before Installation {0}", Thread.currentThread().getName());
