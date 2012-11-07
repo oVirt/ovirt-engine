@@ -237,7 +237,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // if number of monitors has increased, check PCI and IDE limits are ok
         if (vmFromDB.getnum_of_monitors() < vmFromParams.getnum_of_monitors()) {
             List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
-            List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDAO().getAllForVm(getVmId());
+            List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
             if (!checkPciAndIdeLimit(vmFromParams.getnum_of_monitors(),
                     interfaces,
                     allDisks,

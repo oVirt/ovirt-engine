@@ -362,7 +362,7 @@ public class AddDiskToVmCommandTest {
         doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
         doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDao();
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
-        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDAO();
+        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDao();
         doReturn(diskLunMapDAO).when(command).getDiskLunMapDao();
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
         doNothing().when(command).updateDisksFromDb();

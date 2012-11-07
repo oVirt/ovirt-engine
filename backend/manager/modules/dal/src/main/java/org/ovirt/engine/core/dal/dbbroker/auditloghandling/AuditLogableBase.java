@@ -314,7 +314,7 @@ public class AuditLogableBase extends TimeoutBase {
                 // TODO: This is done for backwards compatibility with VMDAO.getById(Guid)
                 // It should probably be removed, but some research is required
                 if (mVm != null) {
-                    mVm.setInterfaces(getVmNetworkInterfaceDAO().getAllForVm(mVmId.getValue()));
+                    mVm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(mVmId.getValue()));
                 }
             } catch (final Exception e) {
                 log.infoFormat("Failed to get vm {0}", mVmId);
@@ -536,7 +536,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getAdGroupDao();
     }
 
-    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
+    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
         return getDbFacade().getVmNetworkInterfaceDao();
     }
 

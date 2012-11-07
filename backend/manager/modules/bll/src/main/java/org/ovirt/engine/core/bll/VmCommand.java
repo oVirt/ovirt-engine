@@ -211,7 +211,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmNetwork() {
-        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDAO().getAllForVm(getVmId());
+        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
         if (interfaces != null) {
             for (VmNetworkInterface iface : interfaces) {
                 MacPoolManager.getInstance().freeMac(iface.getMacAddress());
@@ -483,8 +483,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     /** Overriding to allow spying from this package */
     @Override
-    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
-        return super.getVmNetworkInterfaceDAO();
+    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
+        return super.getVmNetworkInterfaceDao();
     }
 
     protected VmDynamicDAO getVmDynamicDao() {

@@ -165,7 +165,7 @@ public class RestoreAllSnapshotCommandTest {
         mockStorageDomainDao();
         mockDynamicVmDao();
         doReturn(snapshotDao).when(spyCommand).getSnapshotDao();
-        doReturn(vmNetworkInterfaceDAO).when(spyCommand).getVmNetworkInterfaceDAO();
+        doReturn(vmNetworkInterfaceDAO).when(spyCommand).getVmNetworkInterfaceDao();
     }
 
     private void mockDynamicVmDao() {

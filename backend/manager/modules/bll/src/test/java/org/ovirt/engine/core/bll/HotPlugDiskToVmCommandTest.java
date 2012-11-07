@@ -134,7 +134,7 @@ public class HotPlugDiskToVmCommandTest {
         command = spy(createCommand());
         mockVds();
         when(command.getActionType()).thenReturn(getCommandActionType());
-        doReturn(mock(VmNetworkInterfaceDAO.class)).when(command).getVmNetworkInterfaceDAO();
+        doReturn(mock(VmNetworkInterfaceDAO.class)).when(command).getVmNetworkInterfaceDao();
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));

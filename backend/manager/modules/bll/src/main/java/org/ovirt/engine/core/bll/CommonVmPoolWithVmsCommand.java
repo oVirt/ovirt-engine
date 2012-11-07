@@ -261,7 +261,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return VmHandler.VerifyAddVm
                 (getReturnValue().getCanDoActionMessages(),
                         getParameters().getVmsCount()
-                                * getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplateId()).size(),
+                                * getVmNetworkInterfaceDao().getAllForTemplate(getVmTemplateId()).size(),
                         getVmTemplate(),
                         storagePoolId,
                         getParameters().getVmStaticData().getpriority());

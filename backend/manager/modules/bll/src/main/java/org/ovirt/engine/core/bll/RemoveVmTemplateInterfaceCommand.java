@@ -15,14 +15,14 @@ public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfac
 
     @Override
     protected void executeCommand() {
-        VmNetworkInterface iface = getVmNetworkInterfaceDAO().get(getParameters().getInterfaceId());
+        VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterfaceId());
         if (iface != null) {
             AddCustomValue("InterfaceName", iface.getName());
             AddCustomValue("InterfaceType", VmInterfaceType.forValue(iface.getType()).getInterfaceTranslation());
         }
         DbFacade.getInstance().getVmDeviceDao().remove(
                 new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmTemplateId()));
-        getVmNetworkInterfaceDAO().remove(getParameters().getInterfaceId());
+        getVmNetworkInterfaceDao().remove(getParameters().getInterfaceId());
         setSucceeded(true);
     }
 

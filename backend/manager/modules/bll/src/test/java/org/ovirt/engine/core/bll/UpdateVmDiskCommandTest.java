@@ -125,7 +125,7 @@ public class UpdateVmDiskCommandTest {
 
         });
         doReturn(true).when(command).acquireLockInternal();
-        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDAO();
+        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDao();
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDAO();

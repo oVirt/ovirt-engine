@@ -31,7 +31,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
 
         // return mac to pool
-        VmNetworkInterface iface = getVmNetworkInterfaceDAO().get(getParameters().getInterfaceId());
+        VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterfaceId());
 
         if (iface != null) {
             MacPoolManager.getInstance().freeMac(iface.getMacAddress());

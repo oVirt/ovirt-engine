@@ -17,7 +17,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.InterfaceDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -68,7 +67,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private String getNetworkName() {
-        VmNetworkInterface vmNetworkInterface = getVmNetworkInterfaceDAO().get(getParameters().getNicId());
+        VmNetworkInterface vmNetworkInterface = getVmNetworkInterfaceDao().get(getParameters().getNicId());
         return vmNetworkInterface == null ? null : vmNetworkInterface.getNetworkName();
     }
 
@@ -139,10 +138,6 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     protected InterfaceDAO getInterfaceDao() {
         return getDbFacade().getInterfaceDao();
-    }
-
-    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
-        return getDbFacade().getVmNetworkInterfaceDao();
     }
 
     private boolean hotPlugVmNicRequired(VMStatus vmStatus) {

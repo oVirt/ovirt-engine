@@ -69,7 +69,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
     }
 
     protected boolean isDiskPassPciAndIdeLimit(Disk diskInfo) {
-        List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDAO().getAllForVm(getVmId());
+        List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
         List<Disk> allVmDisks = new ArrayList<Disk>(getVm().getDiskMap().values());
         allVmDisks.add(diskInfo);
 
