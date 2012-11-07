@@ -1099,17 +1099,19 @@ public class VmDiskListModel extends VmDiskListModelBase
     protected void UpdateIsDiskHotPlugAvailable()
     {
         VM vm = getEntity();
-        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
-                ? vm.getvds_group_compatibility_version() : new Version();
-
-        AsyncDataProvider.IsHotPlugAvailable(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        VmDiskListModel model = (VmDiskListModel) target;
-                        model.setIsDiskHotPlugSupported((Boolean) returnValue);
-                    }
-                }), clusterCompatibilityVersion.toString());
+        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version();
+        if (clusterCompatibilityVersion == null) {
+            setIsDiskHotPlugSupported(false);
+        } else {
+            AsyncDataProvider.IsHotPlugAvailable(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            VmDiskListModel model = (VmDiskListModel) target;
+                            model.setIsDiskHotPlugSupported((Boolean) returnValue);
+                        }
+                    }), clusterCompatibilityVersion.toString());
+        }
     }
 
     protected void UpdateLiveStorageMigrationEnabled()
@@ -1120,7 +1122,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             @Override
             public void OnSuccess(Object target, Object returnValue) {
                 VmDiskListModel model = (VmDiskListModel) target;
-                VM vm = (VM) model.getEntity();
+                VM vm = model.getEntity();
 
                 storage_pool dataCenter = (storage_pool) returnValue;
                 Version dcCompatibilityVersion = dataCenter.getcompatibility_version() != null
