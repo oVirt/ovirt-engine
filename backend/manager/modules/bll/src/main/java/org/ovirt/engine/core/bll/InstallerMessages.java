@@ -17,34 +17,40 @@ public class InstallerMessages {
         _vdsId = vdsId;
     }
 
-    public void AddMessage(String message) {
+    public boolean AddMessage(String message) {
+        boolean error = false;
         if (StringUtils.isEmpty(message)) {
-            return;
+            return error;
         }
         String[] msgs = message.split("[\\n]", -1);
         if (msgs.length > 1) {
             for (String msg : msgs) {
-                AddMessage(msg);
+                error = AddMessage(msg) || error;
             }
-            return;
+            return error;
         }
 
         if (StringUtils.isNotEmpty(message)) {
             if (message.charAt(0) == '<') {
                 try {
-                    parseMessage(message);
+                    error = parseMessage(message);
                 } catch (RuntimeException e) {
+                    error = true;
                     log.errorFormat(
-                            "Installation of Host. Received illegal XML from Host. Message: {1}, Exception: {2}",
-                            message, e.toString());
+                        "Installation of Host. Received illegal XML from Host. Message: {0}",
+                        message,
+                        e
+                    );
                 }
             } else {
                 log.info("VDS message: " + message);
             }
         }
+        return error;
     }
 
-    private void parseMessage(String message) {
+    private boolean parseMessage(String message) {
+        boolean error = false;
         XmlDocument doc = new XmlDocument();
         doc.LoadXml(message);
         XmlNode node = doc.ChildNodes[0];
@@ -59,6 +65,7 @@ public class InstallerMessages {
             } else if (node.Attributes.get("status").getValue().equals("WARN")) {
                 logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING;
             } else {
+                error = true;
                 logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_ERROR;
             }
 
@@ -82,6 +89,8 @@ public class InstallerMessages {
             logable.AddCustomValue("Message", StringUtils.stripEnd(sb.toString(), " "));
             AuditLogDirector.log(logable, logType);
         }
+
+        return error;
     }
 
     private static Log log = LogFactory.getLog(InstallerMessages.class);
