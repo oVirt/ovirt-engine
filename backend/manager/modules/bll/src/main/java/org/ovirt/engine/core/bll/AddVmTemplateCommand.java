@@ -114,7 +114,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         VmHandler.LockVm(vmDynamic, getCompensationContext());
         setActionReturnValue(Guid.Empty);
         setVmTemplateId(Guid.NewGuid());
-        getParameters().setVmTemplateID(getVmTemplateId());
+        getParameters().setVmTemplateId(getVmTemplateId());
         getParameters().setEntityId(getVmTemplateId());
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -359,10 +359,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
     }
 
+
+    private Guid getVmIdFromImageParameters(){
+        return ((CreateImageTemplateParameters)getParameters().getImagesParameters().get(0)).getVmId();
+    }
+
     @Override
     protected void endSuccessfully() {
         setVmTemplateId(getParameters().getVmTemplateId());
-
+        setVmId(getVmIdFromImageParameters());
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().EndAction(VdcActionType.CreateImageTemplate, p);
         }
@@ -407,6 +412,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // statement.
         // (a template without images doesn't exist in the 'vm_template_view').
         setVmTemplateId(getParameters().getVmTemplateId());
+        setVmId(getVmIdFromImageParameters());
         rollbackQuota();
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().EndAction(VdcActionType.CreateImageTemplate, p);

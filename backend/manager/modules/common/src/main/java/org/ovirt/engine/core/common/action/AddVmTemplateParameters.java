@@ -64,7 +64,7 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
         return privateVmTemplateID;
     }
 
-    public void setVmTemplateID(Guid value) {
+    public void setVmTemplateId(Guid value) {
         privateVmTemplateID = value;
     }
 
