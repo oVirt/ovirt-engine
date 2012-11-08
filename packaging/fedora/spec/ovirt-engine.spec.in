@@ -303,7 +303,7 @@ The user portal interface to %{product_name_short}
 %package webadmin-portal
 Summary: Web Admin Portal of %{product_name_short}
 Group: Virtualization/Management
-Requires: %{name}
+Requires: %{name} = %{version}-%{release}
 
 %description webadmin-portal
 The web administration interface to %{product_name_short}
