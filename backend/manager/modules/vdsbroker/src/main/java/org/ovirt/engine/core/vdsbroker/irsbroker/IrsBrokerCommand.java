@@ -167,10 +167,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             return privatemIrsProxy;
         }
 
-        private void setmIrsProxy(IIrsServer value) {
-            privatemIrsProxy = value;
-        }
-
         private int privatemIrsPort;
 
         private int getmIrsPort() {
@@ -268,7 +264,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             }
                         }
                         if ((tasksList == null) || allTasksFinished) {
-                            setmIrsProxy(null);
+                            privatemIrsProxy = null;
                             setmCurrentIrsHost(null);
                         } else {
                             if (_errorAttempts < Config.<Integer> GetValue(ConfigValues.SPMFailOverAttempts)) {
@@ -276,7 +272,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 log.warnFormat("failed getting spm status for pool {0}:{1}, attempt number {2}",
                                         _storagePoolId, storagePool.getname(), _errorAttempts);
                             } else {
-                                setmIrsProxy(null);
+                                privatemIrsProxy = null;
                                 setmCurrentIrsHost(null);
                                 _errorAttempts = 0;
                             }
@@ -500,13 +496,13 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         public boolean failover() {
-            setmIrsProxy(null);
-            setmCurrentIrsHost(null);
+            Guid vdsId = mCurrentVdsId;
+            nullifyInternalProxies();
             boolean performFailover = false;
-            if (mCurrentVdsId != null) {
+            if (vdsId != null) {
                 try {
                     VDSReturnValue statusResult = ResourceManager.getInstance().runVdsCommand(VDSCommandType.SpmStatus,
-                            new SpmStatusVDSCommandParameters(mCurrentVdsId, _storagePoolId));
+                            new SpmStatusVDSCommandParameters(vdsId, _storagePoolId));
                     if (statusResult != null
                             && statusResult.getSucceeded()
                             && (((SpmStatusResult) statusResult.getReturnValue()).getSpmStatus() == SpmStatus.SPM || ((SpmStatusResult) statusResult
@@ -514,7 +510,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         performFailover = ResourceManager
                                 .getInstance()
                                 .runVdsCommand(VDSCommandType.SpmStop,
-                                        new SpmStopVDSCommandParameters(mCurrentVdsId, _storagePoolId)).getSucceeded();
+                                        new SpmStopVDSCommandParameters(vdsId, _storagePoolId)).getSucceeded();
                     } else {
                         performFailover = true;
                     }
@@ -522,14 +518,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     // try to failover to another host if failed to get spm
                     // status or stop spm
                     // (in case mCurrentVdsId has wrong id for some reason)
-                    log.errorFormat("Could not get spm status on host {0} for spmStop.", mCurrentVdsId);
+                    log.errorFormat("Could not get spm status on host {0} for spmStop.", vdsId);
                     performFailover = true;
                 }
             }
 
             if (performFailover) {
-                log.infoFormat("Irs placed on server {0} failed. Proceed Failover", mCurrentVdsId);
-                mTriedVdssList.add(mCurrentVdsId);
+                log.infoFormat("Irs placed on server {0} failed. Proceed Failover", vdsId);
+                mTriedVdssList.add(vdsId);
                 return true;
             } else {
                 log.errorFormat("IRS failover failed - cant allocate vds server");
@@ -557,7 +553,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                         clientTimeOut,
                                         IrsServerConnector.class,
                                         Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
-                        setmIrsProxy(new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond()));
+                        privatemIrsProxy = new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
                         Class[] inputTypes = new Class[] { storage_pool.class, boolean.class };
                         Object[] inputParams = new Object[] { storagePool, _isSpmStartCalled };
                         // TODO use thread pool
@@ -776,7 +772,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          * @param curVdsId
          */
         private void WaitForVdsIfIsInitializing(Guid curVdsId) {
-            if (curVdsId != Guid.Empty
+            if (!Guid.Empty.equals(curVdsId)
                     && DbFacade.getInstance().getVdsDao().get(curVdsId).getstatus() == VDSStatus.Initializing) {
                 final int DELAY = 5;// 5 Sec
                 int total = 0;
@@ -1015,19 +1011,22 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             return getmIrsProxy() != null;
         }
 
-        public Guid getCurrentVdsIdWithoutSpm() {
-            return mCurrentVdsId;
-        }
-
         public void ResetIrs() {
-            setmCurrentIrsHost(null);
-            setmIrsProxy(null);
-            mCurrentVdsId = null;
+            nullifyInternalProxies();
             storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
             if (storagePool != null) {
                 storagePool.setspm_vds_id(null);
                 DbFacade.getInstance().getStoragePoolDao().update(storagePool);
             }
+        }
+
+        private void nullifyInternalProxies() {
+            if (privatemIrsProxy != null) {
+                XmlRpcUtils.shutDownConnection(((IrsServerWrapper) privatemIrsProxy).getHttpClient());
+            }
+            setmCurrentIrsHost(null);
+            privatemIrsProxy = null;
+            mCurrentVdsId = null;
         }
 
         private final Map<Guid, HashSet<Guid>> _vdssInProblem = new HashMap<Guid, HashSet<Guid>>();
@@ -1482,9 +1481,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 log.info("IrsProxyData::disposing");
                 ResetIrs();
                 SchedulerUtilQuartzImpl.getInstance().deleteJob(storagePoolRefreshJobId);
-                if (privatemIrsProxy != null) {
-                    XmlRpcUtils.shutDownConnection(((IrsServerWrapper) privatemIrsProxy).getHttpClient());
-                }
                 _disposed = true;
             }
         }
