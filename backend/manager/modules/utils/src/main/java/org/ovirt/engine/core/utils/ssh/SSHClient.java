@@ -500,10 +500,9 @@ public class SSHClient {
             if ((stat & ClientChannel.EXIT_STATUS) != 0 && channel.getExitStatus() != 0) {
                 throw new IOException(
                     String.format(
-                        "Command returned failure code %2$d during SSH session '%1$s' '%3$s'",
+                        "Command returned failure code %2$d during SSH session '%1$s'",
                         this.getDisplayHost(),
-                        channel.getExitStatus(),
-                        command
+                        channel.getExitStatus()
                     )
                 );
             }
