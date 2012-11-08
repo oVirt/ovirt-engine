@@ -54,7 +54,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
     @Override
     protected void executeVmCommand() {
         AddCustomValue("InterfaceType",
-                (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
+                (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
         this.setVmName(DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId()).getvm_name());
         if (StringUtils.isEmpty(getMacAddress())) {
             getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());

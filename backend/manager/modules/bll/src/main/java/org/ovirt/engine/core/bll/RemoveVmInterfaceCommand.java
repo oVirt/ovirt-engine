@@ -38,7 +38,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
             _interfaceName = iface.getName();
 
             // Get Interface type.
-            String interType = VmInterfaceType.forValue(iface.getType()).getInterfaceTranslation();
+            String interType = VmInterfaceType.forValue(iface.getType()).getDescription();
             if (interType != null) {
                 AddCustomValue("InterfaceType", interType);
             }

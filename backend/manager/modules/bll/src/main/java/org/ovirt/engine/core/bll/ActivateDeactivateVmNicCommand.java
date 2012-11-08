@@ -74,7 +74,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected void executeVmCommand() {
         AddCustomValue("InterfaceName", vmNetworkInterface.getName());
         AddCustomValue("InterfaceType", VmInterfaceType.forValue(vmNetworkInterface.getType())
-                .getInterfaceTranslation());
+                .getDescription());
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getstatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),

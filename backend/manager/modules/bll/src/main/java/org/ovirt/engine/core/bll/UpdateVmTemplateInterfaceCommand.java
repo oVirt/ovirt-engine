@@ -27,7 +27,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
     @Override
     protected void executeCommand() {
-        AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
+        AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
         DbFacade.getInstance()
                 .getVmNetworkInterfaceDao()
                 .update(getParameters().getInterface());

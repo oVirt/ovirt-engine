@@ -1,16 +1,18 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VmInterfaceType {
-    rtl8139_pv(0,"Dual mode rtl8139, Red Hat VirtIO"),
-    rtl8139(1,"rtl8139"),
-    e1000(2,"e1000"),
-    pv(3,"Red Hat VirtIO");
+    rtl8139_pv(0, "Dual mode rtl8139, Red Hat VirtIO", 1000),
+    rtl8139(1, "rtl8139", 100),
+    e1000(2, "e1000", 1000),
+    pv(3, "Red Hat VirtIO", 1000);
 
-    private int intValue;
-    private String interfaceTranslation;
-    private static java.util.HashMap<Integer, VmInterfaceType> mappings = new HashMap<Integer, VmInterfaceType>();
+    private int value;
+    private String description;
+    private int speed;
+    private static Map<Integer, VmInterfaceType> mappings = new HashMap<Integer, VmInterfaceType>();
 
     static {
         for (VmInterfaceType vmInterfaceType : values()) {
@@ -18,32 +20,25 @@ public enum VmInterfaceType {
         }
     }
 
-    private VmInterfaceType(int value) {
-        this(value, null);
-    }
-
-    private VmInterfaceType(int value, String interfaceTranslationVal) {
-        intValue = value;
-        interfaceTranslation = interfaceTranslationVal;
-    }
-
-
-    public String getInterfaceTranslation() {
-        return interfaceTranslation;
-    }
-
-    public int getValue() {
-        return intValue;
+    private VmInterfaceType(int value, String description, int speed) {
+        this.value = value;
+        this.description = description;
+        this.speed = speed;
     }
 
     public static VmInterfaceType forValue(int value) {
         return mappings.get(value);
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public int getSpeed() {
-        if (this == VmInterfaceType.rtl8139) {
-            return 100;
-        }
-        return 1000;
+        return speed;
     }
 }

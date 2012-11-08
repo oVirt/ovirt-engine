@@ -48,7 +48,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     @Override
     protected void executeVmCommand() {
-        AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
+        AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
         this.setVmName(DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId()).getvm_name());
 
         getParameters().getInterface().setSpeed(

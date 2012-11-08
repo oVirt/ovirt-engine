@@ -18,7 +18,7 @@ public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfac
         VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterfaceId());
         if (iface != null) {
             AddCustomValue("InterfaceName", iface.getName());
-            AddCustomValue("InterfaceType", VmInterfaceType.forValue(iface.getType()).getInterfaceTranslation());
+            AddCustomValue("InterfaceType", VmInterfaceType.forValue(iface.getType()).getDescription());
         }
         DbFacade.getInstance().getVmDeviceDao().remove(
                 new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmTemplateId()));
