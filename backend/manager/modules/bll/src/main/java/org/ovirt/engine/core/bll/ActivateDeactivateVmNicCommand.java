@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.InterfaceDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -81,7 +80,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new HotPlugUnplgNicVDSParameters(getVdsId(),
                             getVm(),
-                            DbFacade.getInstance().getVmNetworkInterfaceDao().get(getParameters().getNicId()),
+                            getVmNetworkInterfaceDao().get(getParameters().getNicId()),
                             vmDevice));
         }
         // In any case, the device is updated
