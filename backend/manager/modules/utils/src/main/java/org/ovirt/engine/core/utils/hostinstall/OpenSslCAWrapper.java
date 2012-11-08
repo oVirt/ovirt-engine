@@ -18,8 +18,11 @@ import org.ovirt.engine.core.utils.FileUtil;
 
 public class OpenSslCAWrapper {
 
-    public static String SignCertificateRequest(String request, String label) throws IOException {
-
+    public static String SignCertificateRequest(
+        String request,
+        String label,
+        String hostname
+    ) throws IOException {
         File pkicertdir = new File(Config.resolveCABasePath(), "certs");
         File pkireqdir = new File(Config.resolveCABasePath(), "requests");
         String reqFileName = String.format("%1$sreq.pem", label);
@@ -49,6 +52,7 @@ public class OpenSslCAWrapper {
         if (
             !new OpenSslCAWrapper().SignCertificateRequest(
                 reqFileName,
+                hostname,
                 Config.<Integer> GetValue(ConfigValues.VdsCertificateValidityInYears) * 365,
                 certFileName
             )
@@ -59,14 +63,21 @@ public class OpenSslCAWrapper {
         return FileUtil.readAllText(new File(pkicertdir, certFileName).getPath());
     }
 
-    public final boolean SignCertificateRequest(String requestFileName, int days, String signedCertificateFileName) {
+    public final boolean SignCertificateRequest(
+        String requestFileName,
+        String hostname,
+        int days,
+        String signedCertificateFileName
+    ) {
         log.debug("Entered SignCertificateRequest");
         boolean returnValue = true;
         String signRequestBatch = Config.resolveSignScriptPath();
         if (FileUtil.fileExists(signRequestBatch)) {
+            String organization = Config.<String> GetValue(ConfigValues.OrganizationName);
             Integer signatureTimeout = Config.<Integer> GetValue(ConfigValues.SignCertTimeoutInSeconds);
             String[] command_array =
-                    createCommandArray(signatureTimeout, signRequestBatch, requestFileName, days,
+                    createCommandArray(signatureTimeout, signRequestBatch, requestFileName,
+                            hostname, organization, days,
                             signedCertificateFileName);
             returnValue = runCommandArray(command_array, signatureTimeout);
         } else {
@@ -172,6 +183,8 @@ public class OpenSslCAWrapper {
     private String[] createCommandArray(Integer signatureTimeout,
             String signRequestBatch,
             String requestFileName,
+            String hostname,
+            String organization,
             int days,
             String signedCertificateFileName) {
         log.debug("Building command array for Sign Certificate request script");
@@ -183,7 +196,9 @@ public class OpenSslCAWrapper {
         SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         String[] command_array = { signRequestBatch, requestFileName, signedCertificateFileName, "" + days,
-                baseDirectoryPath, format.format(yesterday.getTime()), keystorePass, lockfileName, "" + (signatureTimeout / 2) };
+                baseDirectoryPath, format.format(yesterday.getTime()), keystorePass,
+                hostname, organization,
+                lockfileName, "" + (signatureTimeout / 2) };
         log.debug("Finished building command array for Sign Certificate request script");
         return command_array;
     }

@@ -16,6 +16,8 @@ usage () {
         printf "\tCA Directory                = Full path to CA directory\n"
         printf "\tstartdate                   = in YYMMDDHHMMSSZ ANS1 format\n"
         printf "\tPass                        = Certificate password\n"
+        printf "\tHost                        = CN\n"
+        printf "\tOrganization                = O\n"
         printf "\tlock file                   = Name of file to be used for locking\n"
         printf "\tlocking timeout             = Amount of seconds to wait for locking\n"
         return 0
@@ -28,15 +30,15 @@ rollback () {
 sign () {
       cd $ca_dir
 
-      openssl x509 -text -in ca.pem | grep "Subject Key Identifier"
-      if [ "$?" -eq 0 ]; then
-            openssl ca -batch -policy policy_match -config openssl.conf -extfile cert.conf -extensions v3_ca -cert ca.pem \
-             -in requests/$req_file -keyfile private/ca.pem -passin pass:$cert_pass -days $exp_time -out certs/$out_file -startdate $start_time
-      else
-            openssl ca -batch -policy policy_match -config openssl.conf -cert ca.pem -in requests/$req_file -keyfile private/ca.pem \
-             -passin pass:$cert_pass -days $exp_time -out certs/$out_file -startdate $start_time
+      if openssl x509 -text -in ca.pem | grep "Subject Key Identifier" > /dev/null; then
+          EXTRA_COMMAND="-extfile cert.conf -extensions v3_ca"
       fi
-      return $?
+      openssl ca \
+        -batch -policy policy_match -config openssl.conf -cert ca.pem \
+        -in requests/$req_file -keyfile private/ca.pem -passin pass:$cert_pass \
+        -days $exp_time -out certs/$out_file -startdate $start_time \
+        ${req_name:+-subj "/O=$req_org/CN=$req_name"} \
+        ${EXTRA_COMMAND}
 }
 
 if [ "$#" -lt 6 ]; then
@@ -52,11 +54,16 @@ exp_time=$3
 ca_dir=$4
 start_time=$5
 cert_pass=$6
-lock_file=$7
+req_name=$7
+req_org=$8
+
+shift
+lock_file=$8
 if [ -z "$lock_file" ]; then
         lock_file=/var/lock/ovirt-engine/.openssl.exclusivelock
 fi
 
+shift
 timeout=$8
 if [ -z "$timeout" ]; then
         timeout=20

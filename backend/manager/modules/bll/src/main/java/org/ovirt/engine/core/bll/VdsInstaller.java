@@ -371,6 +371,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             try {
                 _certificate = OpenSslCAWrapper.SignCertificateRequest(
                     _request,
+                    _vds.gethost_name(),
                     _vds.gethost_name()
                 );
 
