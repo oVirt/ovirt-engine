@@ -34,21 +34,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     public LiveMigrateDiskCommand(T parameters) {
         super(parameters);
 
-        if (VMStatus.Up != getVm().getstatus()) {
-            log.infoFormat("Rollback LiveMigrateDiskCommand - VM {0} is not UP", getVm().getvm_name());
-            handleVmNotUp();
-            return;
-        }
-
-        setVdsId(getVm().getrun_on_vds().getValue());
-        getParameters().setVdsId(getVdsId());
-
         setStoragePoolId(getVm().getstorage_pool_id());
         getParameters().setStoragePoolId(getStoragePoolId().getValue());
 
+        getParameters().setVdsId(getVdsId());
         getParameters().setDiskAlias(getDiskAlias());
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setCommandType(getActionType());
+        getParameters().setTaskGroupSuccess(VMStatus.Up == getVm().getstatus() && getParameters().getTaskGroupSuccess());
     }
 
     /* Overridden CommandBase Methods */
@@ -119,6 +112,11 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         return vm;
     }
 
+    @Override
+    public Guid getVdsId() {
+        return getVm().getrun_on_vds() != null ? getVm().getrun_on_vds().getValue() : Guid.Empty;
+    }
+
     /* Overridden stubs declared as public in order to implement ITaskHandlerCommand */
 
     @Override
@@ -137,13 +135,5 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Override
     public VdcActionType getActionType() {
         return super.getActionType();
-    }
-
-    protected void handleVmNotUp() {
-        if (isEndSuccessfully()) {
-            getParameters().incrementExecutionIndex();
-        }
-        getParameters().setTaskGroupSuccess(false);
-        setSucceeded(true);
     }
 }

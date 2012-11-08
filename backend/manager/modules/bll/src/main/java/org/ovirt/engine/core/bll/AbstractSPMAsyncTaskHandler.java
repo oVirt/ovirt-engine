@@ -28,10 +28,13 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
 
     @Override
     public void execute() {
-        getEnclosingCommand().getReturnValue().setSucceeded(false);
-        beforeTask();
-        addTask(Backend.getInstance().getResourceManager()
-                .RunVdsCommand(getVDSCommandType(), getVDSParameters()));
+        if (getEnclosingCommand().getParameters().getTaskGroupSuccess()) {
+            getReturnValue().setSucceeded(false);
+            beforeTask();
+            addTask(Backend.getInstance().getResourceManager()
+                    .RunVdsCommand(getVDSCommandType(), getVDSParameters()));
+        }
+
         getReturnValue().setSucceeded(true);
     }
 

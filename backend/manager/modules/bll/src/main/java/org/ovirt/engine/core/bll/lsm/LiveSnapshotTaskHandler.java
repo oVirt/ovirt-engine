@@ -28,11 +28,14 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void execute() {
-        VdcReturnValueBase vdcReturnValue =
-                Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
-                        getCreateSnapshotParameters(),
-                        ExecutionHandler.createDefaultContexForTasks(enclosingCommand.getExecutionContext()));
-        enclosingCommand.getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+        if (enclosingCommand.getParameters().getTaskGroupSuccess()) {
+            VdcReturnValueBase vdcReturnValue =
+                    Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
+                            getCreateSnapshotParameters(),
+                            ExecutionHandler.createDefaultContexForTasks(enclosingCommand.getExecutionContext()));
+            enclosingCommand.getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+        }
+
         enclosingCommand.getReturnValue().setSucceeded(true);
     }
 
@@ -67,6 +70,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
     public void endWithFailure() {
         updateDestinitationImageId();
         endCreateAllSnapshots();
+        enclosingCommand.getReturnValue().setSucceeded(true);
     }
 
     @Override
@@ -98,6 +102,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
         params.setSnapshotType(SnapshotType.REGULAR);
         params.setParentParameters(enclosingCommand.getParameters());
         params.setImagesParameters(enclosingCommand.getParameters().getImagesParameters());
+        params.setTaskGroupSuccess(enclosingCommand.getParameters().getTaskGroupSuccess());
         params.setNeedsLocking(false);
 
         return params;
