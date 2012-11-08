@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
@@ -160,8 +161,13 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
 
     private BrickProperties getBrickProperties(GlusterVolumeEntity volume, Map<String, Object> brick) {
         BrickProperties brickProperties = new BrickProperties();
-        brickProperties.setBrickId(GlusterCoreUtil.getBrickByQualifiedName(volume.getBricks(),
-                (String) brick.get(BRICK)).getId());
+
+        GlusterBrickEntity brickEntity =
+                GlusterCoreUtil.getBrickByQualifiedName(volume.getBricks(), (String) brick.get(BRICK));
+        if (brickEntity != null) {
+            brickProperties.setBrickId(brickEntity.getId());
+        }
+
         if (brick.containsKey(PORT)) {
             brickProperties.setPort(Integer.valueOf((String) brick.get(PORT)));
         }
