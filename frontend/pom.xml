@@ -9,8 +9,8 @@
   <artifactId>frontend-all</artifactId>
   <groupId>org.ovirt.engine.ui</groupId>
   <packaging>pom</packaging>
-  <name>oVirt Modules - frontend</name>
-  <description>parent POM for all oVirt modules</description>
+  <name>oVirt Modules :: Frontend</name>
+  <description>An aggregator module for all frontend modules.</description>
   <modules>
     <module>webadmin</module>
     <module>api</module>
@@ -51,11 +51,4 @@
       </plugins>
     </pluginManagement>
   </build>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>gwt-plugin-repo</id>
-      <url>http://google-web-toolkit.googlecode.com/svn/2.1.0.M3/gwt/maven</url>
-      <name>Google Web Toolkit Plugin Repository</name>
-    </pluginRepository>
-  </pluginRepositories>
 </project>

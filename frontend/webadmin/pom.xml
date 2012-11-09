@@ -8,8 +8,8 @@
   </parent>
   <artifactId>webadmin-all</artifactId>
   <packaging>pom</packaging>
-  <name>oVirt Modules - webadmin</name>
-  <description>parent POM for all oVirt modules</description>
+  <name>oVirt Modules :: Webadmin</name>
+  <description>An Aggregator module for all UI modules</description>
   <modules>
     <module>modules</module>
   </modules>

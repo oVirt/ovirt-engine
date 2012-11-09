@@ -5,22 +5,27 @@
   <artifactId>root</artifactId>
   <version>3.2.0</version>
   <packaging>pom</packaging>
-  <name>oVirt Engine Root Project</name>
+  <name>ovirt-root</name>
+  <description>oVirt Engine Root Project</description>
+
+  <!--Project Sub Modules-->
   <modules>
     <module>build-tools-root</module>
     <module>backend</module>
     <module>frontend</module>
     <module>ear</module>
   </modules>
+
   <properties>
     <!--  Version Info -->
     <engine.version>3.2.0</engine.version>
     <engine.groupId>org.ovirt.engine</engine.groupId>
-    <!-- project file encoding -->
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--  <jbossHome>${env.JBOSS_HOME}</jbossHome> -->
     <jbossServer>${jbossHome}/standalone</jbossServer>
-    <!-- dependency versions -->
+
+    <!-- Dependencies Versions -->
     <commons-logging.version>1.1</commons-logging.version>
     <junit.version>4.10</junit.version>
     <commons-codec.version>1.4</commons-codec.version>
@@ -50,8 +55,7 @@
     <otopi.version>0.0.0-master-SNAPSHOT</otopi.version>
     <ovirt-host-deploy.version>0.0.0-master-SNAPSHOT</ovirt-host-deploy.version>
     <slf4j-jdk14.version>1.5.11</slf4j-jdk14.version>
-    <gwt.version>2.2.0</gwt.version>
-    <gwt.plugin.version>1.3.2.google</gwt.plugin.version>
+    <gwt.version>2.3.0</gwt.version>
     <findbugs.version>2.5.1</findbugs.version>
     <test-jar.plugin.version>2.2</test-jar.plugin.version>
     <mockito.version>1.9.0</mockito.version>
@@ -67,7 +71,11 @@
     <jaxb-impl.version>2.2</jaxb-impl.version>
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
     <log4j.version>1.2.16</log4j.version>
+
+    <!-- Plugin Versions -->
     <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+    <gwt.plugin.version>1.3.2.google</gwt.plugin.version>
+    <test-jar.plugin.version>2.2</test-jar.plugin.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -330,6 +338,11 @@
       <releases>
         <enabled>true</enabled>
       </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>gwt-plugin-repo</id>
+      <url>http://google-web-toolkit.googlecode.com/svn/2.1.0.M3/gwt/maven</url>
+      <name>Google Web Toolkit Plugin Repository</name>
     </pluginRepository>
   </pluginRepositories>
   <build>
