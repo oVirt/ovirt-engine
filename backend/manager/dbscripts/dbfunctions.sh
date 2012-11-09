@@ -255,13 +255,20 @@ run_upgrade_files() {
             if [ "$ver" -gt "$current" ] ; then
                 # we should remove leading zero in order not to treat number as octal
                 xver="${ver:1:7}"
+                # taking major revision , i.e 03010000=>301
+                xverMajor="${xver:0:3}"
+                lastMajor="${last:0:3}"
+
                 # check for gaps in upgrade
                 if [ "$ver" -gt "$disable_gaps_from" ]; then
-                    if [ $(($xver - $last)) -gt 10 ]; then
-                        set_last_version
-                        echo "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}"
-                        echo "Please fix numbering to interval 0$(( $last + 1)) to 0$(( $last + 10)) and run the upgrade script."
-                    exit 1
+                    # check gaps only for identical major revisions
+                    if [ ${xverMajor} -eq ${lastMajor} ]; then
+                        if [ $(($xver - $last)) -gt 10 ]; then
+                           set_last_version
+                           echo "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}"
+                           echo "Please fix numbering to interval 0$(( $last + 1)) to 0$(( $last + 10)) and run the upgrade script."
+                           exit 1
+                        fi
                     fi
                 fi
                 # check if script was already installed with other version name.
