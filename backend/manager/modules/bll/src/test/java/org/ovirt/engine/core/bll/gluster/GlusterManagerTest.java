@@ -13,10 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.transaction.Status;
 import javax.transaction.Transaction;
@@ -509,8 +507,8 @@ public class GlusterManagerTest {
         addedBrickIds.add(brick.getId());
     }
 
-    private Set<GlusterServerInfo> getFetchedServersList() {
-        Set<GlusterServerInfo> servers = new HashSet<GlusterServerInfo>();
+    private List<GlusterServerInfo> getFetchedServersList() {
+        List<GlusterServerInfo> servers = new ArrayList<GlusterServerInfo>();
         servers.add(new GlusterServerInfo(SERVER_ID_1, SERVER_NAME_1, PeerStatus.CONNECTED));
         servers.add(new GlusterServerInfo(SERVER_ID_2, SERVER_NAME_2, PeerStatus.CONNECTED));
         return servers;

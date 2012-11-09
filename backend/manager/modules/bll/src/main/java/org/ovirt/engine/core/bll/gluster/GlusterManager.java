@@ -174,13 +174,13 @@ public class GlusterManager {
             return;
         }
 
-        Set<GlusterServerInfo> fetchedServers = fetchServers(cluster, upServer, existingServers);
+        List<GlusterServerInfo> fetchedServers = fetchServers(cluster, upServer, existingServers);
         if (fetchedServers != null) {
             removeDetachedServers(existingServers, fetchedServers);
         }
     }
 
-    private void removeDetachedServers(List<VDS> existingServers, Set<GlusterServerInfo> fetchedServers) {
+    private void removeDetachedServers(List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
         for (VDS server : existingServers) {
             if (isRemovableStatus(server.getstatus()) && serverDetached(server, fetchedServers)) {
                 log.debugFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
@@ -242,7 +242,7 @@ public class GlusterManager {
      * @param fetchedServers
      * @return
      */
-    private boolean serverDetached(VDS server, Set<GlusterServerInfo> fetchedServers) {
+    private boolean serverDetached(VDS server, List<GlusterServerInfo> fetchedServers) {
         List<String> vdsIps = getVdsIps(server);
         for (GlusterServerInfo fetchedServer : fetchedServers) {
             if (fetchedServer.getHostnameOrIp().equals(server.gethost_name())
@@ -263,10 +263,10 @@ public class GlusterManager {
         return vdsIps;
     }
 
-    private Set<GlusterServerInfo> fetchServers(VDSGroup cluster, VDS upServer, List<VDS> existingServers) {
+    private List<GlusterServerInfo> fetchServers(VDSGroup cluster, VDS upServer, List<VDS> existingServers) {
         // Create a copy of the existing servers as the fetchServer method can potentially remove elements from it
         List<VDS> tempServers = new ArrayList<VDS>(existingServers);
-        Set<GlusterServerInfo> fetchedServers = fetchServers(upServer, tempServers);
+        List<GlusterServerInfo> fetchedServers = fetchServers(upServer, tempServers);
 
         if (fetchedServers == null) {
             log.errorFormat("gluster peer status command failed on all servers of the cluster {0}."
@@ -311,8 +311,8 @@ public class GlusterManager {
      * @param existingServers
      * @return
      */
-    private Set<GlusterServerInfo> fetchServers(VDS upServer, List<VDS> existingServers) {
-        Set<GlusterServerInfo> fetchedServers = null;
+    private List<GlusterServerInfo> fetchServers(VDS upServer, List<VDS> existingServers) {
+        List<GlusterServerInfo> fetchedServers = null;
         while (fetchedServers == null && !existingServers.isEmpty()) {
             fetchedServers = fetchServers(upServer);
             if (fetchedServers == null) {
@@ -336,14 +336,14 @@ public class GlusterManager {
     }
 
     @SuppressWarnings("unchecked")
-    protected Set<GlusterServerInfo> fetchServers(VDS upServer) {
+    protected List<GlusterServerInfo> fetchServers(VDS upServer) {
         VDSReturnValue result =
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.GlusterServersList,
                                 new VdsIdVDSCommandParametersBase(upServer.getId()));
 
-        return result.getSucceeded() ? (Set<GlusterServerInfo>) result.getReturnValue() : null;
+        return result.getSucceeded() ? (List<GlusterServerInfo>) result.getReturnValue() : null;
     }
 
     /**
