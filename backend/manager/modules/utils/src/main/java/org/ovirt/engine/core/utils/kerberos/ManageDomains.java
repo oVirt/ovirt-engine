@@ -411,9 +411,8 @@ public class ManageDomains {
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
-        Set<Entry<String, String>> domainValues = domainNameEntry.getValues();
-        for (Entry<String, String> currDomain : domainValues) {
-            String domain = currDomain.getKey();
+        Set<String> domainNames = new TreeSet<String>(domainNameEntry.getDomainNames());
+        for (String domain : domainNames) {
             String authMode = getDomainAuthMode(domain);
             String userName = adUserNameEntry.getValueForDomain(domain);
 

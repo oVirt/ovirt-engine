@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
@@ -19,6 +20,7 @@ public class GetDomainListQuery<P extends VdcQueryParametersBase> extends Querie
             filterInternalDomain = ((GetDomainListParameters)getParameters()).getFilterInternalDomain();
         }
         List<String> domains = LdapBrokerUtils.getDomainsList(filterInternalDomain);
+        Collections.sort(domains);
         getQueryReturnValue().setReturnValue(domains);
     }
 }

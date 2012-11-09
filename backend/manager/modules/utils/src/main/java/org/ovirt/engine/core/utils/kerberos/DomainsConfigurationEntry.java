@@ -85,4 +85,7 @@ public class DomainsConfigurationEntry {
         return valuePerDomain.entrySet();
     }
 
+    public Set<String> getDomainNames() {
+        return valuePerDomain.keySet();
+    }
 }
