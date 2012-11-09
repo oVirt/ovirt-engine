@@ -333,10 +333,10 @@ select fn_db_add_config_value('MTUOverrideSupported','true','3.2');
 select fn_db_add_config_value('OrganizationName','oVirt','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');
 select fn_db_add_config_value('OvfVirtualSystemType','ENGINE','general');
-select fn_db_add_config_value('OvirtInitialSupportedIsoVersion','5.8','general');
-select fn_db_add_config_value('OvirtIsoPrefix','rhevh','general');
---Handling The RHEV-H installation files path
-select fn_db_add_config_value('oVirtISOsRepositoryPath','ovirt-isos','general');
+--Handling The ovirt-node installation files path
+select fn_db_add_config_value('OvirtInitialSupportedIsoVersion','2.5.5','general');
+select fn_db_add_config_value('OvirtIsoPrefix','ovirt-node','general');
+select fn_db_add_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso','general');
 select fn_db_add_config_value('oVirtUpgradeScriptName','/usr/share/vdsm-reg/vdsm-upgrade','general');
 select fn_db_add_config_value('oVirtUploadPath','/data/updates/ovirt-node-image.iso','general');
 select fn_db_add_config_value('PayloadSize','8192','general');
@@ -596,9 +596,12 @@ COMMIT
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_update_config_value('keystoreUrl','keys/engine.p12','general');
 select fn_db_update_config_value('MinimalETLVersion','3.1.0','general');
+select fn_db_update_config_value('OvirtInitialSupportedIsoVersion','2.5.5','general');
+select fn_db_update_config_value('OvirtIsoPrefix','ovirt-node','general');
+select fn_db_update_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso','general');
 select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
-select fn_db_update_config_value('RhevhLocalFSPath','/data/images/rhev','general');
+select fn_db_update_config_value('RhevhLocalFSPath','/data/images/','general');
 select fn_db_update_config_value('ServerCPUList','2:Intel Xeon w/o XD/NX:vmx,sse2:qemu64,-nx,+sse2; 3:Intel Xeon:vmx,sse2,nx:qemu64,+sse2; 4:Intel Conroe Family:vmx,sse2,nx,cx16,ssse3:qemu64,+sse2,+cx16,+ssse3; 5:Intel Penryn Family:vmx,sse2,nx,cx16,ssse3,sse4_1:qemu64,+sse2,+cx16,+ssse3,+sse4.1; 6:Intel Nehalem Family:vmx,sse2,nx,cx16,ssse3,sse4_1,sse4_2,popcnt:qemu64,+sse2,+cx16,+ssse3,+sse4.1,+sse4.2,+popcnt; 2:AMD Opteron G1 w/o NX:svm,sse2:qemu64,-nx,+sse2; 3:AMD Opteron G1:svm,sse2,nx:qemu64,+sse2; 4:AMD Opteron G2:svm,sse2,nx,cx16:qemu64,+sse2,+cx16; 5:AMD Opteron G3:svm,sse2,nx,cx16,sse4a,misalignsse,popcnt,abm:qemu64,+sse2,+cx16,+sse4a,+misalignsse,+popcnt,+abm;','2.2');
 select fn_db_update_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3;','3.0');
 select fn_db_update_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3;','3.1');
@@ -636,7 +639,6 @@ select fn_db_update_default_config_value('DomainName','example.com','','general'
 select fn_db_update_default_config_value('EmulatedMachine','rhel6.0.0', 'pc-0.14','3.0',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','GSSAPI','default:GSSAPI','general',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','SIMPLE','default:SIMPLE','general',false);
-select fn_db_update_default_config_value('oVirtISOsRepositoryPath','ovirt-isos', '/usr/share/rhev-hypervisor','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '1000','general',false);
 ------------------------------------------------------------------------------------
