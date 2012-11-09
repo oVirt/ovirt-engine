@@ -7,13 +7,14 @@
 
 
 
-Create or replace FUNCTION InsertBookmark(v_bookmark_name VARCHAR(40),
+Create or replace FUNCTION InsertBookmark(v_bookmark_id UUID,
+	v_bookmark_name VARCHAR(40),
 	v_bookmark_value VARCHAR(300))
 RETURNS VOID
    AS $procedure$
 BEGIN
 INSERT INTO bookmarks(bookmark_Id,bookmark_name, bookmark_value)
-	VALUES(uuid_generate_v1(),v_bookmark_name, v_bookmark_value);
+	VALUES(v_bookmark_id, v_bookmark_name, v_bookmark_value);
 END; $procedure$
 LANGUAGE plpgsql;
 

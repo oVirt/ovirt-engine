@@ -75,11 +75,11 @@ public class BusinessEntitySnapshot {
     private SnapshotType snapshotType;
     private int insertionOrder;
 
-    protected Guid getId() {
+    public Guid getId() {
         return Id;
     }
 
-    protected void setId(Guid id) {
+    public void setId(Guid id) {
         Id = id;
     }
 

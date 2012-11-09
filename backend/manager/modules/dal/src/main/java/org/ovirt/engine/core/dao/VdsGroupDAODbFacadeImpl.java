@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -88,10 +87,12 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
 
     @Override
     public void save(VDSGroup group) {
-        Map<String, Object> dbResults =
-                getCallsHandler().executeModification("InsertVdsGroups", getVdsGroupParamSource(group));
-
-        group.setvds_group_id(new Guid(dbResults.get("vds_group_id").toString()));
+        Guid id = group.getId();
+        if (Guid.isNullOrEmpty(id)) {
+            id = Guid.NewGuid();
+            group.setId(id);
+        }
+        getCallsHandler().executeModification("InsertVdsGroups", getVdsGroupParamSource(group));
     }
 
     @Override

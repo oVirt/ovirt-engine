@@ -8,14 +8,14 @@
 
 
 Create or replace FUNCTION Inserttags(v_description VARCHAR(4000) ,
-	INOUT v_tag_id UUID ,
+	v_tag_id UUID ,
 	v_tag_name VARCHAR(50),
 	v_parent_id UUID,
 	v_readonly BOOLEAN ,
     v_type INTEGER)
+RETURNS VOID
    AS $procedure$
 BEGIN
-      v_tag_id := uuid_generate_v1();
       INSERT INTO tags(tag_id,description, tag_name,parent_id,readonly,type)
 	VALUES(v_tag_id,v_description, v_tag_name,v_parent_id,v_readonly,v_type);
 END; $procedure$

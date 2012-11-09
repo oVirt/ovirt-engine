@@ -1642,7 +1642,8 @@ def setMaxSharedMemory():
 
 def _addIsoDomaintoDB(uuid, description):
     logging.debug("Adding iso domain into DB")
-    sqlQuery = "select inst_add_iso_storage_domain ('%s', '%s', '%s:%s', %s, %s)" % (uuid, description, controller.CONF["HOST_FQDN"], controller.CONF["NFS_MP"], 0, 0)
+    connectionId = nfsutils.generateUUID()
+    sqlQuery = "select inst_add_iso_storage_domain ('%s', '%s', '%s', '%s:%s', %s, %s)" % (uuid, description, connectionId, controller.CONF["HOST_FQDN"], controller.CONF["NFS_MP"], 0, 0)
     utils.execRemoteSqlCommand(getDbUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_FAILED_INSERT_ISO_DOMAIN%(basedefs.DB_NAME))
 
 def _startNfsServices():

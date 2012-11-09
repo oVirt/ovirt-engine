@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.kerberos;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -12,7 +13,7 @@ import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 public class ManageDomainsDAOImpl implements ManageDomainsDAO {
 
     private DataSource ds;
-    private String actionQuery = "select attach_user_to_su_role(?,?,?)";
+    private String actionQuery = "select attach_user_to_su_role(?,?,?,?)";
     private final static Logger log = Logger.getLogger(ManageDomainsDAOImpl.class);
 
     public ManageDomainsDAOImpl() throws SQLException {
@@ -20,17 +21,19 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
     }
 
     @Override
-    public boolean updatePermissionsTable(String uuid, String username, String domain) throws SQLException {
+    public boolean updatePermissionsTable(String userId, String userName, String domain) throws SQLException {
         Connection connection = null;
         PreparedStatement prepareStatement = null;
         boolean result = false;
         try {
-            log.info("uuid: " + uuid + " username: " + username + " domain: " + domain);
+            log.info("uuid: " + userId + " username: " + userName + " domain: " + domain);
             connection = ds.getConnection();
             prepareStatement = connection.prepareStatement(actionQuery);
-            prepareStatement.setString(1, uuid);
-            prepareStatement.setString(2, username);
-            prepareStatement.setString(3, domain);
+            String permissionId = UUID.randomUUID().toString();
+            prepareStatement.setString(1, permissionId);
+            prepareStatement.setString(2, userId);
+            prepareStatement.setString(3, userName);
+            prepareStatement.setString(4, domain);
             result = prepareStatement.execute();
         } finally {
             if (prepareStatement != null) {

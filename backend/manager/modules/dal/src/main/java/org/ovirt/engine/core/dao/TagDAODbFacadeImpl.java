@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.tags;
@@ -182,6 +181,12 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @Override
     public void save(tags tag) {
+        Guid id = tag.gettag_id();
+        if (Guid.isNullOrEmpty(id)) {
+            id = Guid.NewGuid();
+            tag.settag_id(id);
+        }
+
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", tag.getdescription())
                 .addValue("tag_id", tag.gettag_id())
@@ -190,10 +195,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("readonly", tag.getIsReadonly())
                 .addValue("type", tag.gettype());
 
-        Map<String, Object> dbResults = getCallsHandler()
-                .executeModification("Inserttags", parameterSource);
-
-        tag.settag_id(new Guid(dbResults.get("tag_id").toString()));
+        getCallsHandler().executeModification("Inserttags", parameterSource);
     }
 
     @Override

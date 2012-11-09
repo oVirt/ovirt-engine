@@ -7,7 +7,9 @@
 
 
 
-Create or replace FUNCTION InsertVdsGroups(v_description VARCHAR(4000) ,
+Create or replace FUNCTION InsertVdsGroups(
+	v_vds_group_id UUID,
+	v_description VARCHAR(4000),
 	v_name VARCHAR(40),
 	v_cpu_name VARCHAR(255),
 	v_selection_algorithm INTEGER,
@@ -19,12 +21,11 @@ Create or replace FUNCTION InsertVdsGroups(v_description VARCHAR(4000) ,
 	v_compatibility_version VARCHAR(40),
 	v_transparent_hugepages BOOLEAN ,
 	v_migrate_on_error INTEGER,
-	INOUT v_vds_group_id UUID,
 	v_virt_service BOOLEAN,
 	v_gluster_service BOOLEAN)
+RETURNS VOID
    AS $procedure$
 BEGIN
-      v_vds_group_id := uuid_generate_v1();
       INSERT INTO vds_groups(vds_group_id,description, name, cpu_name, selection_algorithm, high_utilization, low_utilization,
 	cpu_over_commit_duration_minutes, storage_pool_id,  max_vds_memory_over_commit, compatibility_version, transparent_hugepages, migrate_on_error,
 	virt_service, gluster_service)

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -62,10 +61,12 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
 
     @Override
     public void save(VdsStatic vds) {
-        Map<String, Object> dbResults = new SimpleJdbcCall(jdbcTemplate)
-                .withProcedureName("InsertVdsStatic").execute(getInsertOrUpdateParams(vds));
-
-        vds.setId(new Guid(dbResults.get("vds_id").toString()));
+        Guid id = vds.getId();
+        if (Guid.isNullOrEmpty(id)) {
+            id = Guid.NewGuid();
+            vds.setId(id);
+        }
+        new SimpleJdbcCall(jdbcTemplate).withProcedureName("InsertVdsStatic").execute(getInsertOrUpdateParams(vds));
     }
 
     @Override

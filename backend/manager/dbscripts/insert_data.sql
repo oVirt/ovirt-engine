@@ -8,7 +8,7 @@ RETURNS VOID
    v_id_0009 UUID;
 BEGIN
    v_id_0000 := '00000000-0000-0000-0000-000000000000';
-   v_storage_pool_id := uuid_generate_v1();
+   v_storage_pool_id := '5849B030-626E-47CB-AD90-3CE782D831B3';
    v_cluster_id := '99408929-82CF-4DC7-A532-9D998063FA95';
    v_id_0009 := '00000000-0000-0000-0000-000000000009';
 

@@ -23,6 +23,10 @@ public class NGuid implements Serializable, Comparable<NGuid> {
         return new Guid(UUID.randomUUID());
     }
 
+    public static boolean isNullOrEmpty(NGuid id) {
+        return id == null || id.equals(Empty);
+    }
+
     protected UUID uuid;
     protected Guid guid;
 

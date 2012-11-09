@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -73,6 +72,11 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
 
     @Override
     public void save(vm_pools pool) {
+        Guid id = pool.getvm_pool_id();
+        if (Guid.isNullOrEmpty(id)) {
+            id = Guid.NewGuid();
+            pool.setvm_pool_id(id);
+        }
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_description", pool.getvm_pool_description())
                 .addValue("vm_pool_id", pool.getvm_pool_id())
@@ -82,8 +86,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("vds_group_id", pool.getvds_group_id());
 
-        Map<String, Object> result = getCallsHandler().executeModification("InsertVm_pools", parameterSource);
-        pool.setvm_pool_id(new Guid(result.get("vm_pool_id").toString()));
+        getCallsHandler().executeModification("InsertVm_pools", parameterSource);
     }
 
     @Override

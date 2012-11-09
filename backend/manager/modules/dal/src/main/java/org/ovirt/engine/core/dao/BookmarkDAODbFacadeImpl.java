@@ -77,6 +77,11 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
 
     @Override
     public void save(bookmarks bookmark) {
+        Guid id = bookmark.getbookmark_id();
+        if (Guid.isNullOrEmpty(id)) {
+            id = Guid.NewGuid();
+            bookmark.setbookmark_id(id);
+        }
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
                 bookmark);
 
