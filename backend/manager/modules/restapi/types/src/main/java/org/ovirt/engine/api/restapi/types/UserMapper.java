@@ -22,7 +22,7 @@ public class UserMapper {
         model.setLastName(entity.getsurname());
         model.setEmail(entity.getemail());
         model.setDepartment(entity.getdepartment());
-        if (entity.getgroups() != null) {
+        if (entity.getgroups() != null && entity.getgroups().trim().length() > 0) {
             model.setGroups(new Groups());
             for (String name : entity.getgroups().split(",")) {
                 Group group = new Group();
