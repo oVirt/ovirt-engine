@@ -18,7 +18,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     // Login section
 
-    @DefaultStringValue("oVirt Engine")
+    @DefaultStringValue("Open Virtualization User Portal")
     String loginHeaderLabel();
 
     @DefaultStringValue("User Name")
