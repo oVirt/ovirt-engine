@@ -66,6 +66,7 @@ public class AuditLogableBase extends TimeoutBase {
     private NGuid glusterVolumeId;
     private String glusterVolumeName;
     private GlusterVolumeEntity glusterVolume;
+    private Integer customId = null;
 
     public AuditLogableBase() {
     }
@@ -550,6 +551,14 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected DbFacade getDbFacade() {
         return DbFacade.getInstance();
+    }
+
+    public Integer getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(Integer customId) {
+        this.customId = customId;
     }
 
     private static final Log log = LogFactory.getLog(AuditLogableBase.class);

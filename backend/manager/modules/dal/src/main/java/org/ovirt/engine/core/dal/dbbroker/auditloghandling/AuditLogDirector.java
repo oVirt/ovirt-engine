@@ -853,6 +853,9 @@ public final class AuditLogDirector {
         sb.append("template=");
         sb.append(logable.getVmTemplateId().equals(Guid.Empty) ? "" : logable.getVmTemplateId().toString());
         sb.append(DELIMITER);
+        sb.append("customId=");
+        sb.append(logable.getCustomId() == null ? "" : logable.getCustomId().toString());
+        sb.append(DELIMITER);
 
         return sb.toString();
     }
