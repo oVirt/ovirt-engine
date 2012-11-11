@@ -138,7 +138,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 @Override
                 protected String getProgressText(VDS object) {
                     int numOfActiveVMs = object.getvm_active() != null ? object.getvm_active() : 0;
-                    return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(object.getvm_active());
+                    return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(numOfActiveVMs);
                 }
 
                 @Override
