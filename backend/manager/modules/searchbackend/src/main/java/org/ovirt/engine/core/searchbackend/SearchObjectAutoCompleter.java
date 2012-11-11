@@ -112,6 +112,12 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 SearchObjects.NETWORK_CLUSTER_OBJ_NAME,
                 "cluster_id");
 
+        // network - cluster
+        addJoin(SearchObjects.NETWORK_OBJ_NAME,
+                "id",
+                SearchObjects.NETWORK_CLUSTER_OBJ_NAME,
+                "network_id");
+
         // audit - gluster volume
         addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, "id", SearchObjects.AUDIT_OBJ_NAME, "gluster_volume_id");
 
@@ -236,7 +242,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vm_pools_full_view",
                             "vm_pool_id",
                             "vm_pool_name ASC "));
-                    put(SearchObjects.NETWORK_OBJ_NAME, new EntitySearchInfo(null,
+                    put(SearchObjects.NETWORK_OBJ_NAME, new EntitySearchInfo(new NetworkCrossRefAutoCompleter(),
                             new NetworkConditionFieldAutoCompleter(),
                             "network_view",
                             "network_view",
@@ -254,7 +260,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vm_interface",
                             "name",
                             "vm_id ASC"));
-                    put(SearchObjects.NETWORK_CLUSTER_OBJ_NAME, new EntitySearchInfo(null,
+                    put(SearchObjects.NETWORK_CLUSTER_OBJ_NAME,
+                            new EntitySearchInfo(null,
                             new NetworkClusterConditionFieldAutoCompleter(),
                             "network_cluster_view",
                             "network_cluster_view",
