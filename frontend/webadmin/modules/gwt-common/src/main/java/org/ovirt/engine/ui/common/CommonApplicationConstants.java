@@ -523,6 +523,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Until")
     String untilEndTime();
 
+    @DefaultStringValue("until")
+    String until();
+
     // Snapshot
     @DefaultStringValue("Date")
     String dateSnapshot();
