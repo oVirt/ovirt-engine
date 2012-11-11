@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -42,8 +39,14 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class DataCenterListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -661,22 +664,34 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         model.StartProgress(null);
 
-        ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
-        params.add(new StoragePoolManagementParameter(dataCenter));
 
-        Frontend.RunMultipleAction(model.getIsNew() ? VdcActionType.AddEmptyStoragePool
-                : VdcActionType.UpdateStoragePool,
-                params,
-                new IFrontendMultipleActionAsyncCallback() {
+        if (model.getIsNew()) {
+            // When adding a data center use sync action to be able present a Guide Me dialog afterwards.
+            Frontend.RunAction(VdcActionType.AddEmptyStoragePool,
+                new StoragePoolManagementParameter(dataCenter),
+                new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
-
+                    public void Executed(FrontendActionAsyncResult result) {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
-                        localModel.PostOnSaveInternal(result.getReturnValue().get(0));
-
+                        localModel.PostOnSaveInternal(result.getReturnValue());
                     }
                 },
                 this);
+        } else {
+            // Otherwise use async action in order to close dialog immediately.
+            Frontend.RunMultipleAction(VdcActionType.UpdateStoragePool,
+                new ArrayList<VdcActionParametersBase>(Arrays.asList(
+                    new StoragePoolManagementParameter(dataCenter))
+                ),
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        DataCenterListModel localModel = (DataCenterListModel) result.getState();
+                        localModel.PostOnSaveInternal(result.getReturnValue().get(0));
+                    }
+                },
+                this);
+        }
     }
 
     public void PostOnSaveInternal(VdcReturnValueBase returnValue)
@@ -687,8 +702,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         Cancel();
 
-        if (model.getIsNew())
-        {
+        if (model.getIsNew() && returnValue != null && returnValue.getSucceeded()) {
+
             setGuideContext(returnValue.getActionReturnValue());
             UpdateActionAvailability();
             getGuideCommand().Execute();
