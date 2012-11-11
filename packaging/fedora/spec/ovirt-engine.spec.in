@@ -24,7 +24,7 @@
 
 Name: ovirt-engine
 Version: 3.1.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Management server for Open Virtualization
 Group: Virtualization/Management
 License: ASL 2.0
@@ -288,7 +288,7 @@ The configuration tool for oVirt Engine
 Summary: All-in-one plugin for oVirt Engine's setup
 Group: Virtualization/Management
 Requires: %{name}-setup
-Requires: %{name}-sdk
+Requires: %{name}-sdk >= 3.2
 Requires: vdsm
 
 %description setup-plugin-allinone
@@ -769,6 +769,10 @@ fi
 
 
 %changelog
+* Sun Nov 11 2012 Juan Hernandez <juan.hernandez@redhat.com> - 3.1.0-4
+- Make the all in one plugin compatible with version 3.2 of the
+  SDK in order to fix bug BZ#869457.
+
 * Mon May 07 2012 Keith Robertson <kroberts@redhat.com> - 3.1.0-3
 - Removed image uploader, iso uploader, and log collector from this
   git repo.  The are now in their own respective ovirt.org git

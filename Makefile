@@ -34,7 +34,7 @@ RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
 
 # Release Version; used to create y in <x.x.x-y> numbering.
 # Should be used to create releases.
-RELEASE_VERSION=3
+RELEASE_VERSION=4
 
 SPEC_FILE_IN=packaging/fedora/spec/ovirt-engine.spec.in
 SPEC_FILE=ovirt-engine.spec
