@@ -1061,6 +1061,9 @@ public class SyntaxChecker implements ISyntaxChecker {
             String objName,
             ConditionType conditionType) {
         final String tableName = mSearchObjectAC.getRelatedTableName(objName);
+        // Since '_' is treated in Postgres as '?' when using like, (i.e. match any single character)
+        // we have to escape this character in the value to make it treated as a regular character.
+        customizedValue = customizedValue.replace("_", "\\_");
         switch (conditionType) {
         case FreeText:
         case FreeTextSpecificObj:
