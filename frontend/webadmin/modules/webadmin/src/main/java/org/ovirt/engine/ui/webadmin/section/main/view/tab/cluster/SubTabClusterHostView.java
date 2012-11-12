@@ -59,7 +59,8 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
             TextColumnWithTooltip<VDS> loadColumn = new TextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
-                    return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(object.getvm_active());
+                    int numOfActiveVMs = object.getvm_active() != null ? object.getvm_active() : 0;
+                    return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(numOfActiveVMs);
                 }
             };
             getTable().addColumn(loadColumn, constants.loadClusterHost());
