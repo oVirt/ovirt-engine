@@ -27,9 +27,24 @@ public class ExtendSANStorageDomainParameters extends StorageDomainParametersBas
         privateLunsList = value;
     }
 
-    public ExtendSANStorageDomainParameters(Guid storageDomainId, java.util.ArrayList<String> lunIds) {
+    private boolean force;
+
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
+    }
+
+    public ExtendSANStorageDomainParameters(Guid storageDomainId, ArrayList<String> lunIds) {
         super(storageDomainId);
         setLunIds(lunIds);
+    }
+
+    public ExtendSANStorageDomainParameters(Guid storageDomainId, ArrayList<String> lunIds, boolean force) {
+        this(storageDomainId, lunIds);
+        setForce(force);
     }
 
     public ExtendSANStorageDomainParameters() {

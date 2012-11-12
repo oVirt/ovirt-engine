@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.errors.*;
 
 import org.ovirt.engine.core.common.vdscommands.*;
@@ -12,9 +14,16 @@ public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSComma
 
     @Override
     protected void ExecuteIrsBrokerCommand() {
-        status = getIrsProxy().extendStorageDomain(getParameters().getStorageDomainId().toString(),
-                getParameters().getStoragePoolId().toString(),
-                getParameters().getDeviceList().toArray(new String[] {}));
+        String storageDomainId = getParameters().getStorageDomainId().toString();
+        String storagePoolId = getParameters().getStoragePoolId().toString();
+        List<String> deviceList = getParameters().getDeviceList();
+        String[] deviceArray = deviceList.toArray(new String[deviceList.size()]);
+        boolean isForce = getParameters().isForce();
+
+        status = getParameters().isSupportForceExtendVG() ?
+                getIrsProxy().extendStorageDomain(storageDomainId, storagePoolId, deviceArray, isForce) :
+                getIrsProxy().extendStorageDomain(storageDomainId, storagePoolId, deviceArray);
+
         ProceedProxyReturnValue();
     }
 

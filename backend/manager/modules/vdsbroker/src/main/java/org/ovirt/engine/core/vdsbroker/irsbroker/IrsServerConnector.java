@@ -64,6 +64,8 @@ public interface IrsServerConnector {
 
     public Map<String, Object> extendStorageDomain(String sdUUID, String spUUID, String[] devlist);
 
+    public Map<String, Object> extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force);
+
     public Map<String, Object> setStoragePoolDescription(String spUUID, String description);
 
     public Map<String, Object> getStoragePoolInfo(String spUUID);

@@ -10,6 +10,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.ExtendStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -27,13 +29,18 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         for (LUNs lun : getParameters().getLunsList()) {
             proceedLUNInDb(lun, getStorageDomain().getstorage_type());
         }
+
+        boolean supportForceExtendVG = Config.<Boolean> GetValue(
+                ConfigValues.SupportForceExtendVG,  getStoragePool().getcompatibility_version().toString());
+
         if (Backend
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.ExtendStorageDomain,
                         new ExtendStorageDomainVDSCommandParameters(getStoragePoolId().getValue(), getStorageDomain()
-                                .getId(), getParameters().getLunIds())).getSucceeded()) {
+                                .getId(), getParameters().getLunIds(), getParameters().isForce(), supportForceExtendVG))
+                .getSucceeded()) {
             setStorageDomainStatus(StorageDomainStatus.Active, null);
             setSucceeded(true);
         }

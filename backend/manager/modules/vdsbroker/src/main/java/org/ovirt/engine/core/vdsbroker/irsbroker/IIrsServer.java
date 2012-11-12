@@ -57,6 +57,8 @@ public interface IIrsServer {
 
     StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist);
 
+    StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force);
+
     StatusOnlyReturnForXmlRpc setStoragePoolDescription(String spUUID, String description);
 
     StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID);

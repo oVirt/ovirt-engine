@@ -1622,6 +1622,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     StorageModel storageModel = (StorageModel) getWindow();
                     SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
+                    boolean force = sanStorageModel.isForce();
                     storage_domains storageDomain1 = (storage_domains) storageListModel.getSelectedItem();
                     ArrayList<String> lunIds = new ArrayList<String>();
 
@@ -1631,7 +1632,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                     if (lunIds.size() > 0) {
                         Frontend.RunAction(VdcActionType.ExtendSANStorageDomain,
-                            new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunIds),
+                            new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunIds, force),
                             new IFrontendActionAsyncCallback() {
                                 @Override
                                 public void Executed(FrontendActionAsyncResult result1) {

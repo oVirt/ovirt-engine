@@ -1542,6 +1542,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     BootstrapMinimalVdsmVersion(397),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    SupportForceExtendVG(398),
+
     Invalid(65535);
 
     private int intValue;

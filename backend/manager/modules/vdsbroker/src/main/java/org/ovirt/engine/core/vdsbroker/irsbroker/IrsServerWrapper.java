@@ -160,6 +160,12 @@ public class IrsServerWrapper implements IIrsServer {
         return wrapper;
     }
 
+    public StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.extendStorageDomain(sdUUID, spUUID, devlist, force);
+        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
     public StatusOnlyReturnForXmlRpc setStoragePoolDescription(String spUUID, String description) {
         Map<String, Object> xmlRpcReturnValue = irsServer.setStoragePoolDescription(spUUID, description);
         StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
