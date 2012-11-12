@@ -47,11 +47,20 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
         NetworkParameters netParams = getSetupModel().getNetworkToLastDetachParams().get(getName());
 
-        if (netParams != null && !hasVlan()){
-            targetNic.getEntity().setBootProtocol(netParams.getBootProtocol());
-            targetNic.getEntity().setAddress(netParams.getAddress());
-            targetNic.getEntity().setSubnet(netParams.getSubnet());
-            targetNic.getEntity().setGateway(netParams.getGateway());
+        if (!hasVlan()) {
+            if (netParams != null) {
+                targetNic.getEntity().setBootProtocol(netParams.getBootProtocol());
+                targetNic.getEntity().setAddress(netParams.getAddress());
+                targetNic.getEntity().setSubnet(netParams.getSubnet());
+                targetNic.getEntity().setGateway(netParams.getGateway());
+            } else {
+                if (!isManagement()) {
+                    targetNic.getEntity().setBootProtocol(NetworkBootProtocol.None);
+                } else {
+                    targetNic.getEntity().setBootProtocol(NetworkBootProtocol.Dhcp);
+                }
+
+            }
         }
 
         if (isManagement()) {
@@ -73,13 +82,17 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             bridge.setVdsId(targetNicEntity.getVdsId());
             bridge.setVdsName(targetNicEntity.getVdsName());
             bridge.setBridged(getEntity().isVmNetwork());
-            if (netParams != null){
+            if (netParams != null) {
                 bridge.setBootProtocol(netParams.getBootProtocol());
                 bridge.setAddress(netParams.getAddress());
                 bridge.setSubnet(netParams.getSubnet());
                 bridge.setGateway(netParams.getGateway());
-            }else{
-                bridge.setBootProtocol(NetworkBootProtocol.None);
+            } else {
+                if (!isManagement()) {
+                    bridge.setBootProtocol(NetworkBootProtocol.None);
+                } else {
+                    bridge.setBootProtocol(NetworkBootProtocol.Dhcp);
+                }
             }
             return bridge;
         } else {
@@ -92,7 +105,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     public void detach() {
         boolean syncNetworkValues = false;
-        if (!isInSync() && isManaged()){
+        if (!isInSync() && isManaged()) {
             getSetupModel().getNetworksToSync().add(getName());
             syncNetworkValues = true;
         }
@@ -107,17 +120,17 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         VdsNetworkInterface nicEntity = attachingNic.getEntity();
 
         NetworkParameters netParams = new NetworkParameters();
-        if (!hasVlan()){
+        if (!hasVlan()) {
             netParams.setBootProtocol(nicEntity.getBootProtocol());
             netParams.setAddress(nicEntity.getAddress());
             netParams.setSubnet(nicEntity.getSubnet());
-        }else{
+        } else {
             netParams.setBootProtocol(vlanNic.getEntity().getBootProtocol());
             netParams.setAddress(vlanNic.getEntity().getAddress());
             netParams.setSubnet(vlanNic.getEntity().getSubnet());
         }
 
-        if (isManagement()){
+        if (isManagement()) {
             netParams.setGateway(nicEntity.getGateway());
         }
 
@@ -137,7 +150,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nicEntity.setType(0);
         }
 
-        if (syncNetworkValues){
+        if (syncNetworkValues) {
             syncNetworkValues();
         }
 
@@ -146,7 +159,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     private void syncNetworkValues() {
         DcNetworkParams dcNetParams = getSetupModel().getNetDcParams(getName());
 
-        if (dcNetParams != null){
+        if (dcNetParams != null) {
             getEntity().setvlan_id(dcNetParams.getVlanId());
             getEntity().setMtu(dcNetParams.getMtu());
             getEntity().setVmNetwork(dcNetParams.isVmNetwork());
@@ -210,19 +223,18 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         this.selected = selected;
     }
 
-
     public boolean isInSync() {
         NetworkImplementationDetails details = getNetworkImplementationDetails();
         return details != null ? details.isInSync() : true;
     }
 
-    public boolean isManaged(){
+    public boolean isManaged() {
         NetworkImplementationDetails details = getNetworkImplementationDetails();
-        return details != null? details.isManaged() : true;
+        return details != null ? details.isManaged() : true;
     }
 
-    public NetworkImplementationDetails getNetworkImplementationDetails(){
-        if (!isAttached()){
+    public NetworkImplementationDetails getNetworkImplementationDetails() {
+        if (!isAttached()) {
             return null;
         }
 
