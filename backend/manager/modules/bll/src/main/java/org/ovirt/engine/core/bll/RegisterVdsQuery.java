@@ -479,10 +479,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     break;
                 }
             }
-        } else {
-            log.debugFormat(
-                    "No Change required for VDS {0}. Since it has the same unique Id",
-                    hostToRegister.getId());
         }
         log.debugFormat("Leaving with value {0}", returnValue);
         return returnValue;
