@@ -64,14 +64,14 @@
 			font-weight: bold;
 		}
 
-		.specificStorageTypePanel {
-			width: 100%;
-			margin-top: 10px;
-		}
+        .specificStorageTypePanel {
+            width: 100%;
+            margin-top: 10px;
+        }
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="750px" height="625px">
+	<d:SimpleDialogPanel width="760px" height="625px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>

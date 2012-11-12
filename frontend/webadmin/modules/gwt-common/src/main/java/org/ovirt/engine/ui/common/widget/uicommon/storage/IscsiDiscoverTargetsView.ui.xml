@@ -16,8 +16,6 @@
 		
 		.discoverTargetAuthPanel {
 			border-left: 1px grey solid;
-			margin-left: 5px;
-			padding-left: 5px;
 		}
 		
 		.textBox {
@@ -25,7 +23,7 @@
 		}
 		
 		.chapBox {
-			width: 80px;
+			width: 60px;
 		}
 		
 		.chapLabel {
@@ -93,9 +91,14 @@
 			padding-top: 1px;
 			padding-bottom: 2px;
 		}
-		
+
 		.textBoxEditor {
-        	width: 210px;
+			width: 220px;
+		}
+
+		.textBoxEditorChap {
+			width: 230px;
+			text-align: right;
 		}
 	</ui:style>	
 
@@ -113,8 +116,8 @@
 					<g:VerticalPanel addStyleNames="{style.discoverTargetAuthPanel}">
 						<e:EntityModelCheckBoxEditor ui:field="useUserAuthEditor" addStyleNames="{style.userAuthLabel}" />
 						<g:HorizontalPanel>
-							<e:EntityModelTextBoxEditor ui:field="chapUserEditor" addStyleNames="{style.textBoxEditor}" />
-							<e:EntityModelTextBoxEditor ui:field="chapPassEditor" addStyleNames="{style.textBoxEditor}" />
+							<e:EntityModelTextBoxEditor ui:field="chapUserEditor" addStyleNames="{style.textBoxEditorChap}" />
+							<e:EntityModelTextBoxEditor ui:field="chapPassEditor" addStyleNames="{style.textBoxEditorChap}" />
 						</g:HorizontalPanel>
 					</g:VerticalPanel>										
 				</g:HorizontalPanel>
