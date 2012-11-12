@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -357,6 +358,16 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 sshclient.setPassword(getParameters().getRootPassword());
                 sshclient.connect();
                 sshclient.authenticate();
+            }
+            catch (AuthenticationException e) {
+                log.errorFormat(
+                    "Failed to authenticate session with host {0}",
+                    vds.getvds_name(),
+                    e
+                );
+
+                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
+                returnValue = false;
             }
             catch (Exception e) {
                 log.errorFormat(
