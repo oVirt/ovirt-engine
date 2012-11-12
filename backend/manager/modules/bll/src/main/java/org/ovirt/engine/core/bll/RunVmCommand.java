@@ -445,13 +445,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             } else if (getParameters() != null && getParameters().getIsInternal()) {
                 return getSucceeded() ? AuditLogType.VDS_INITIATED_RUN_VM : AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
             } else {
-                return getSucceeded() ? (VMStatus) getActionReturnValue() == VMStatus.Up ? (getParameters() != null
-                        && getParameters().getDestinationVdsId() == null && getVm().getdedicated_vm_for_vds() != null && !getVm()
-                        .getrun_on_vds().equals(getVm().getdedicated_vm_for_vds())) ? AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
-                        : AuditLogType.USER_RUN_VM
-                        : _isRerun ? AuditLogType.VDS_INITIATED_RUN_VM
-                                : getTaskIdList().size() > 0 ? AuditLogType.USER_INITIATED_RUN_VM
-                                        : AuditLogType.USER_STARTED_VM
+                return getSucceeded() ?
+                        (VMStatus) getActionReturnValue() == VMStatus.Up ?
+                                getParameters() != null && getParameters().getDestinationVdsId() == null
+                                        && getVm().getdedicated_vm_for_vds() != null
+                                        && !getVm().getrun_on_vds().equals(getVm().getdedicated_vm_for_vds()) ?
+                                        AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
+                                        : AuditLogType.USER_RUN_VM
+                                : _isRerun ?
+                                        AuditLogType.VDS_INITIATED_RUN_VM
+                                        : getTaskIdList().size() > 0 ?
+                                                AuditLogType.USER_INITIATED_RUN_VM
+                                                : AuditLogType.USER_STARTED_VM
                         : _isRerun ? AuditLogType.USER_INITIATED_RUN_VM_FAILED : AuditLogType.USER_FAILED_RUN_VM;
             }
 
