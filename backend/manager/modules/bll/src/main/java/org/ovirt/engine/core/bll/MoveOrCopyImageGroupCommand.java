@@ -79,7 +79,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             getParameters().getVolumeFormat(),
                             getParameters()
                                     .getVolumeType(),
-                            getImage().isWipeAfterDelete(),
+                            getDestinationDiskImage().isWipeAfterDelete(),
                             getParameters()
                                     .getForceOverride(),
                             getStoragePool().getcompatibility_version().toString()));
@@ -94,7 +94,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             getParameters().getStorageDomainId(),
                             getParameters().getContainerId(),
                             getParameters().getOperation(),
-                            getImage().isWipeAfterDelete(),
+                            getDestinationDiskImage().isWipeAfterDelete(),
                             getParameters().getForceOverride(),
                             getStoragePool()
                                     .getcompatibility_version().toString()));
@@ -117,7 +117,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             }
             //update qutoa
             if (getParameters().getQuotaId() != null) {
-                getImage().setQuotaId(getParameters().getQuotaId());
+                getDestinationDiskImage().setQuotaId(getParameters().getQuotaId());
                 getImageDao().updateQuotaForImageAndSnapshots(getParameters().getDestImageGroupId(),
                         getParameters().getQuotaId());
             }
