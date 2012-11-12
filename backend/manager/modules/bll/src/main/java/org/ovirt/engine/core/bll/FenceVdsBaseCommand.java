@@ -100,8 +100,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                             .AddSeconds((Integer) Config.GetValue(ConfigValues.DisableFenceAtStartupInSec));
             java.util.Date now = new java.util.Date();
             if (waitTo.before(now) || waitTo.equals(now)) {
-                // Check Quiet time between PM operations, this is done only if parent command is not <Restart>
-                int secondsLeftToNextPmOp = ((getParameters().getParentCommand() == VdcActionType.RestartVds))
+                // Check Quiet time between PM operations, this is done only if command is not internal and parent command is not <Restart>
+                int secondsLeftToNextPmOp = (isInternalExecution() || (getParameters().getParentCommand() == VdcActionType.RestartVds))
                         ?
                         0
                         :
