@@ -1130,19 +1130,12 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void HandleVmOnDown(VM cacheVm, VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        // Get the exit status and message:
         VmExitStatus exitStatus = vmDynamic.getExitStatus();
-        String exitMessage = vmDynamic.getExitMessage();
-
-        // Generate an error or information event according to the exit status:
-        AuditLogType type = exitStatus == VmExitStatus.Normal ? AuditLogType.VM_DOWN : AuditLogType.VM_DOWN_ERROR;
-        AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmStatistics.getId());
-        if (exitMessage != null) {
-            logable.AddCustomValue("ExitMessage", "Exit message: " + exitMessage);
-        }
-        auditLog(logable, type);
 
         if (exitStatus != VmExitStatus.Normal) {
+
+            auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmStatistics.getId());
+
             /**
              * Vm failed to run - try to rerun it on other Vds
              */
@@ -1161,11 +1154,29 @@ public class VdsUpdateRunTimeInfo {
                 AddVmDynamicToList(vmDynamic);
             }
         } else {
+            // if went down normally during migration process (either on source or on destination)
+            // don't generate an event
+            if (cacheVm != null) {
+                auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmStatistics.getId());
+            }
+
             /**
              * Vm moved safely to down status. May be migration - just remove it from Async Running command.
              */
             ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
         }
+    }
+
+    /**
+     * Generate an error or information event according to the exit status of a VM in status 'down'
+     */
+    private void auditVmOnDownEvent(VmExitStatus exitStatus, String exitMessage, Guid vmStatisticsId) {
+        AuditLogType type = exitStatus == VmExitStatus.Normal ? AuditLogType.VM_DOWN : AuditLogType.VM_DOWN_ERROR;
+        AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmStatisticsId);
+        if (exitMessage != null) {
+            logable.AddCustomValue("ExitMessage", "Exit message: " + exitMessage);
+        }
+        auditLog(logable, type);
     }
 
     private void AfterSuspendTreatment(VmDynamic vm) {
@@ -1182,7 +1193,10 @@ public class VdsUpdateRunTimeInfo {
         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), curVm.getId());
         switch (curVm.getstatus()) {
         case MigratingFrom: {
-                if (vmDynamic != null && vmDynamic.getExitStatus() != VmExitStatus.Normal && curVm.getmigrating_to_vds() != null) {
+            // if a VM that was a source host in migration process is now down with normal
+            // exit status that's OK, otherwise..
+            if (vmDynamic != null && vmDynamic.getExitStatus() != VmExitStatus.Normal) {
+                if (curVm.getmigrating_to_vds() != null) {
                     DestroyVmVDSCommand<DestroyVmVDSCommandParameters> destroyCmd =
                             new DestroyVmVDSCommand<DestroyVmVDSCommandParameters>
                             (new DestroyVmVDSCommandParameters(new Guid(curVm.getmigrating_to_vds().toString()),
@@ -1210,6 +1224,7 @@ public class VdsUpdateRunTimeInfo {
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
             }
             break;
+        }
         case PoweredDown: {
             logable.AddCustomValue("VmStatus", "PoweredDown");
             type = AuditLogType.VM_DOWN;
