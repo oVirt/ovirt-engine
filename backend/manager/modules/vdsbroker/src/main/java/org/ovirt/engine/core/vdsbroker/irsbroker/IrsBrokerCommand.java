@@ -177,7 +177,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             privatemIrsPort = value;
         }
 
-        private Guid _storagePoolId = new Guid();
+        private Guid _storagePoolId = Guid.Empty;
         private String mIsoPrefix = "";
 
         public IrsProxyData(Guid storagePoolId) {
@@ -249,8 +249,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     // PROBLEM
                     // then cause failover with attempts
                     if (result != null && !(result.getExceptionObject() instanceof VDSNetworkException)) {
-                        java.util.HashMap<Guid, AsyncTaskStatus> tasksList =
-                                (java.util.HashMap<Guid, AsyncTaskStatus>) ResourceManager
+                        HashMap<Guid, AsyncTaskStatus> tasksList =
+                                (HashMap<Guid, AsyncTaskStatus>) ResourceManager
                                         .getInstance()
                                         .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
                                                 new VdsIdVDSCommandParametersBase(mCurrentVdsId)).getReturnValue();
@@ -264,16 +264,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             }
                         }
                         if ((tasksList == null) || allTasksFinished) {
-                            privatemIrsProxy = null;
-                            setmCurrentIrsHost(null);
+                            nullifyInternalProxies();
                         } else {
                             if (_errorAttempts < Config.<Integer> GetValue(ConfigValues.SPMFailOverAttempts)) {
                                 _errorAttempts++;
                                 log.warnFormat("failed getting spm status for pool {0}:{1}, attempt number {2}",
                                         _storagePoolId, storagePool.getname(), _errorAttempts);
                             } else {
-                                privatemIrsProxy = null;
-                                setmCurrentIrsHost(null);
+                               nullifyInternalProxies();
                                 _errorAttempts = 0;
                             }
                         }
@@ -598,6 +596,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             _isSpmStartCalled = false;
             String returnValue = null;
             Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
+            mCurrentVdsId = null;
             storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
 
             if (storagePool == null) {
@@ -629,7 +628,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
             if (prioritizedVdsInPool != null && prioritizedVdsInPool.size() > 0) {
                 selectedVds = prioritizedVdsInPool.get(0);
-            } else if (!curVdsId.equals(Guid.Empty) && !getTriedVdssList().contains(curVdsId)) {
+            } else if (!Guid.Empty.equals(curVdsId) && !getTriedVdssList().contains(curVdsId)) {
                 selectedVds = DbFacade.getInstance().getVdsDao().get(curVdsId);
                 if (selectedVds.getstatus() != VDSStatus.Up
                         || selectedVds.getVdsSpmPriority() == BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY) {
@@ -638,7 +637,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
 
             if (selectedVds != null) {
-                mCurrentVdsId = selectedVds.getId();
                 // Stores origin host id in case and will be needed to disconnect from storage pool
                 Guid selectedVdsId = selectedVds.getId();
                 Integer selectedVdsSpmId = selectedVds.getvds_spm_id();
@@ -648,6 +646,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         new SpmStatusVDSCommandParameters(selectedVds.getId(), _storagePoolId));
                 spmStatus = (SpmStatusResult) returnValueFromVds.getReturnValue();
                 if (spmStatus != null) {
+                    mCurrentVdsId = selectedVds.getId();
                     boolean performedPoolConnect = false;
                     log.infoFormat("hostFromVds::selectedVds - {0}, spmStatus {1}, storage pool {2}",
                             selectedVds.getvds_name(), spmStatus.getSpmStatus().toString(), storagePool.getname());
@@ -793,7 +792,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private static void MovePoolToProblematicInDB(storage_pool storagePool, boolean resetSpmInDB) {
+        private void MovePoolToProblematicInDB(storage_pool storagePool, boolean resetSpmInDB) {
             ResourceManager
                     .getInstance()
                     .getEventListener()
@@ -895,7 +894,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     storagePool.getname(), spmStatus.getSpmId());
                             vdsSpmIdToFence = spmStatus.getSpmId();
                         }
-                    } catch (java.lang.Exception ex) {
+                    } catch (Exception ex) {
                         vdsSpmIdToFence = spmStatus.getSpmId();
                     }
                 }
@@ -1005,10 +1004,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         public String getIsoDirectory() {
             String tempVar = getmCurrentIrsHost();
             return String.format("\\\\%1$s\\CD", ((tempVar != null) ? tempVar : gethostFromVds()));
-        }
-
-        public boolean getIsValidWithoutSpmStart() {
-            return getmIrsProxy() != null;
         }
 
         public void ResetIrs() {
@@ -1669,9 +1664,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             } finally {
                 if (_irsProxyData.containsKey(getParameters().getStoragePoolId())) {
                     getCurrentIrsProxyData().getTriedVdssList().clear();
-                }
-                if (!getCurrentIrsProxyData().getIsValidWithoutSpmStart()) {
-                    getCurrentIrsProxyData().setCurrentVdsId(Guid.Empty);
                 }
             }
         }
