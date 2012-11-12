@@ -13,8 +13,8 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
@@ -306,10 +306,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     returnValue = false;
                 } else if (!IsPowerManagementLegal(getParameters().getVdsStaticData(), getVdsGroup()
                             .getcompatibility_version().toString())) {
-                    returnValue = false;
-                } else if (getParameters().getVdsStaticData().getport() < 1
-                            || getParameters().getVdsStaticData().getport() > 65536) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_PORT_IS_NOT_LEGAL);
                     returnValue = false;
                 } else {
                     returnValue = returnValue && validateHostUniqueness(vds);

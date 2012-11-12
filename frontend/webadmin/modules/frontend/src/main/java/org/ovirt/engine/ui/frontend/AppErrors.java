@@ -220,9 +220,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The Host Port number cannot be changed without reinstalling the Host.")
     String VDS_PORT_CHANGE_REQUIRE_INSTALL();
 
-    @DefaultStringValue("The Port number must be between 1 and 65536.")
-    String VDS_PORT_IS_NOT_LEGAL();
-
     @DefaultStringValue("Cannot add new Host using a secured connection, Certificate file could not be found.")
     String VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND();
 
@@ -1581,6 +1578,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Invalid list of interfaces, two or more network interfaces have the same IP.")
     String VALIDATION_REPETITIVE_IP_IN_VDS();
+
+    @DefaultStringValue("The Port number must be between 1 and 65535.")
+    String VALIDATION_VDS_PORT_RANGE();
 
     @DefaultStringValue("Invalid ISO image path")
     String ERROR_CANNOT_FIND_ISO_IMAGE_PATH();

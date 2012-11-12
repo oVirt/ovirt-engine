@@ -20,6 +20,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -76,6 +77,9 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     @Column(name = "host_name", length = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     private String hostname;
 
+    @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
+            max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
+            message = "VALIDATION.VDS.PORT.RANGE")
     @Column(name = "port")
     private int port;
 

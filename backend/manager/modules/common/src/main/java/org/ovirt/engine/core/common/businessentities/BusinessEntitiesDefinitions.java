@@ -32,8 +32,10 @@ public final class BusinessEntitiesDefinitions {
     public static final int HOST_MAX_SPM_PRIORITY = 10;
     public static final int SSH_KEY_FINGERPRINT_SIZE = 128;
 
-    // Network Interface (vm_interface)
-    public static final int NETWORK_NAME_SIZE = 50;
+    // Network Interface
+    public static final int NETWORK_NAME_SIZE = 50; // vm_interface
+    public static final int NETWORK_MIN_LEGAL_PORT = 1;
+    public static final int NETWORK_MAX_LEGAL_PORT = 65535;
 
     // Bookmark (bookmarks)
     public static final int BOOKMARK_NAME_SIZE = 40;
