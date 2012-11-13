@@ -37,6 +37,7 @@ public final class SearchObjects {
     public static final String VDS_NETWORK_INTERFACE_OBJ_NAME = "NIC";
     public static final String VM_NETWORK_INTERFACE_OBJ_NAME = "VNIC";
     public static final String NETWORK_CLUSTER_OBJ_NAME = "CLUSTER_NETWORK";
+    public static final String NETWORK_HOST_OBJ_NAME = "HOST_NETWORK";
 
     //special searches
     private static final String ALERT = "EVENTS: severity=alert";

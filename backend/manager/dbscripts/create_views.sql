@@ -1047,6 +1047,19 @@ FROM network_cluster
 INNER JOIN network ON network_cluster.network_id = network.id
 INNER JOIN vds_groups ON network_cluster.cluster_id = vds_groups.vds_group_id;
 
+
+CREATE OR REPLACE VIEW network_vds_view
+AS
+SELECT network.id AS network_id,
+    network.name as network_name,
+    vds_static.vds_name as vds_name
+FROM vds_interface
+INNER JOIN vds_static ON vds_interface.vds_id = vds_static.vds_id
+INNER JOIN network ON vds_interface.network_name = network.name
+INNER JOIN network_cluster ON network_cluster.network_id = network.id
+WHERE network_cluster.cluster_id = vds_static.vds_group_id;
+
+
 CREATE OR REPLACE VIEW network_view
 AS
 SELECT network.id AS id,

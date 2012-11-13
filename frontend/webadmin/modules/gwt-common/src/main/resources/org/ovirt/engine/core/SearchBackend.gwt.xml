@@ -60,6 +60,7 @@
 		<include name="searchbackend/SqlInjectionChecker.java" />
 		<include name="searchbackend/PostgresSqlInjectionChecker.java" />
 		<include name="searchbackend/ValueValidationFunction.java" />
+		<include name="searchbackend/NetworkHostConditionFieldAutoCompleter.java" />
 		<!--======================SEARCHBACKEND/GLUSTER====================== -->
 		<include name="searchbackend/gluster/GlusterVolumeConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/gluster/GlusterVolumeCrossRefAutoCompleter.java" />

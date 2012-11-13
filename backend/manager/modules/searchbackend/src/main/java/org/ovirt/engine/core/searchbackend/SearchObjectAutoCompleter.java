@@ -118,6 +118,12 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 SearchObjects.NETWORK_CLUSTER_OBJ_NAME,
                 "network_id");
 
+        // network - host
+        addJoin(SearchObjects.NETWORK_OBJ_NAME,
+                "id",
+                SearchObjects.NETWORK_HOST_OBJ_NAME,
+                "network_id");
+
         // audit - gluster volume
         addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, "id", SearchObjects.AUDIT_OBJ_NAME, "gluster_volume_id");
 
@@ -267,6 +273,12 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "network_cluster_view",
                             "vds_group_id",
                             "vds_group_name ASC"));
+                    put(SearchObjects.NETWORK_HOST_OBJ_NAME, new EntitySearchInfo(null,
+                            new NetworkHostConditionFieldAutoCompleter(),
+                            "network_vds_view",
+                            "network_vds_view",
+                            "vds_name",
+                            "network_name ASC"));
                 }
             });
 
