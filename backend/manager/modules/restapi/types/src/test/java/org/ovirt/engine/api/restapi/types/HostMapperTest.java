@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RpmVersion;
 
 public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStatic, VDS> {
 
@@ -101,5 +102,33 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
 
         assertTrue(vdsValue > 0 && hostValue > 0 && vdsValue == hostValue);
 
+    }
+
+    @Test
+    public void testHostOs() {
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        vds.sethost_os("Fedora - 17 - 1");
+        Host host = HostMapper.map(vds, (Host) null);
+        assertNotNull(host.getOs());
+        assertTrue(host.getOs().isSetVersion());
+        assertEquals(host.getOs().getType(), "Fedora");
+        assertEquals(host.getOs().getVersion().getFullVersion(), "17 - 1");
+        assertEquals(new Long(host.getOs().getVersion().getMajor()), new Long(17));
+        assertEquals(new Long(host.getOs().getVersion().getMinor()), new Long(1));
+    }
+
+    @Test
+    public void testVersion() {
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        vds.setVersion(new RpmVersion("vdsm-4.10.0-10.fc17", "vdsm-", true));
+        Host host = HostMapper.map(vds, (Host) null);
+        assertNotNull(host.getVersion());
+        assertEquals(new Long(host.getVersion().getMajor()), new Long(4));
+        assertEquals(new Long(host.getVersion().getMinor()), new Long(10));
+        assertEquals(new Long(host.getVersion().getRevision()), new Long(0));
+        assertEquals(new Long(host.getVersion().getBuild()), new Long(0));
+        assertEquals(host.getVersion().getFullVersion(), "vdsm-4.10.0-10.fc17");
     }
 }

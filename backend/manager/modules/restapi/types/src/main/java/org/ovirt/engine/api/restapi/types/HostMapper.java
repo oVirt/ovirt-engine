@@ -11,11 +11,13 @@ import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.KSM;
+import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
+import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VmSummary;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -32,6 +34,8 @@ public class HostMapper {
     public static Long BYTES_IN_MEGABYTE = 1024L * 1024L;
     // REVISIT retrieve from configuration
     private static final int DEFAULT_VDSM_PORT = 54321;
+
+    private static final String HOST_OS_DELEIMITER = " - ";
 
     @Mapping(from = Host.class, to = VdsStatic.class)
     public static VdsStatic map(Host model, VdsStatic template) {
@@ -136,6 +140,16 @@ public class HostMapper {
         sm.setPriority(entity.getVdsSpmPriority());
         sm.setValue(entity.getspm_status() == VdsSpmStatus.SPM);
         model.setStorageManager(sm);
+        if (entity.getVersion() != null) {
+            Version version = new Version();
+            version.setMajor(entity.getVersion().getMajor());
+            version.setMinor(entity.getVersion().getMinor());
+            version.setRevision(entity.getVersion().getRevision());
+            version.setBuild(entity.getVersion().getBuild());
+            version.setFullVersion(entity.getVersion().getRpmName());
+            model.setVersion(version);
+        }
+        model.setOs(getHostOs(entity.gethost_os()));
         model.setKsm(new KSM());
         model.getKsm().setEnabled(Boolean.TRUE.equals(entity.getksm_state()));
         model.setTransparentHugepages(new TransparentHugePages());
@@ -173,6 +187,43 @@ public class HostMapper {
                 * BYTES_IN_MEGABYTE));
         model.setMaxSchedulingMemory((int) entity.getMaxSchedulingMemory() * BYTES_IN_MEGABYTE);
         return model;
+    }
+
+    private static OperatingSystem getHostOs(String hostOs) {
+        if (hostOs == null || hostOs.trim().length() == 0) {
+            return null;
+        }
+        String[] hostOsInfo = hostOs.split(HOST_OS_DELEIMITER);
+        Version version = new Version();
+        version.setMajor(getIntegerValue(hostOsInfo, 1));
+        version.setMinor(getIntegerValue(hostOsInfo, 2));
+        version.setFullVersion(getFullHostOsVersion(hostOsInfo));
+        OperatingSystem os = new OperatingSystem();
+        os.setType(hostOsInfo[0]);
+        os.setVersion(version);
+        return os;
+    }
+
+    private static Integer getIntegerValue(String[] hostOsInfo, int indx) {
+        if (hostOsInfo.length <= indx) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(hostOsInfo[indx]);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private static String getFullHostOsVersion(String[] hostOsInfo) {
+        StringBuilder buf = new StringBuilder("");
+        for(int i = 1; i < hostOsInfo.length; i++) {
+            if(i > 1) {
+                buf.append(HOST_OS_DELEIMITER);
+            }
+            buf.append(hostOsInfo[i]);
+        }
+        return buf.toString();
     }
 
     @Mapping(from = VDS.class, to = PowerManagement.class)
