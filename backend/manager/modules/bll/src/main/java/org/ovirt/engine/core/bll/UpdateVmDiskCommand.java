@@ -167,7 +167,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
-        // If user want to update the disk to be shareable then update the vm snapshot id to be null.
         if (!isDiskShareable && isDiskUpdatedToShareable) {
             List<DiskImage> diskImageList =
                     getDiskImageDao().getAllSnapshotsForImageGroup(_oldDisk.getId());
@@ -191,7 +190,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return false;
             }
 
-            diskImage.setvm_snapshot_id(null);
+            // If user want to update the disk to be shareable then update the vm snapshot id to be null.
+            ((DiskImage) _oldDisk).setvm_snapshot_id(null);
         } else if (isDiskShareable && !isDiskUpdatedToShareable) {
             if (getVmDAO().getVmsListForDisk(_oldDisk.getId()).size() > 1) {
                 addCanDoActionMessage(VdcBllMessages.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);

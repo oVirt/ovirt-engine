@@ -86,7 +86,7 @@ public class UpdateVmDiskCommandTest {
     @Test
     public void canDoActionFailedVMHasNotDisk() throws Exception {
         initializeCommand();
-        mockVmStatusUp();
+        mockVmStatusDown();
         createNullDisk();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -97,17 +97,34 @@ public class UpdateVmDiskCommandTest {
     @Test
     public void canDoActionFailedShareableDiskVolumeFormatUnsupported() throws Exception {
         UpdateVmDiskParameters parameters = createParameters();
-        parameters.setDiskInfo(createShareableCowDisk());
+        parameters.setDiskInfo(createShareableDisk(VolumeFormat.COW));
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         initializeCommand(parameters);
 
-        mockVmStatusUp();
+        mockVmStatusDown();
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT.toString()));
+    }
+
+    @Test
+    public void nullifiedSnapshotOnUpdateDiskToShareable() {
+        UpdateVmDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(createShareableDisk(VolumeFormat.RAW));
+
+        DiskImage oldDisk = createDiskImage();
+        oldDisk.setvm_snapshot_id(Guid.NewGuid());
+
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
+        initializeCommand(parameters);
+
+        mockVmStatusDown();
+
+        assertTrue(command.canDoAction());
+        assertTrue(oldDisk.getvm_snapshot_id() == null);
     }
 
     private void initializeCommand() {
@@ -142,7 +159,7 @@ public class UpdateVmDiskCommandTest {
     /**
      * Mock a VM in status Up
      */
-    protected VM mockVmStatusUp() {
+    protected VM mockVmStatusDown() {
         VM vm = new VM();
         vm.setstatus(VMStatus.Down);
         vm.setguest_os("rhel6");
@@ -222,12 +239,11 @@ public class UpdateVmDiskCommandTest {
     }
 
     /**
-     * The following method will create a Shareable DiskImage that is COW formatted
+     * The following method will create a Shareable DiskImage with a specified format
      */
-    private DiskImage createShareableCowDisk() {
-        DiskImage disk = new DiskImage();
-        disk.setId(diskImageGuid);
-        disk.setvolume_format(VolumeFormat.COW);
+    private DiskImage createShareableDisk(VolumeFormat volumeFormat) {
+        DiskImage disk = createDiskImage();
+        disk.setvolume_format(volumeFormat);
         disk.setShareable(true);
         return disk;
     }
