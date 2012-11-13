@@ -38,6 +38,7 @@ public class BackendStorageDomainTemplateResource
                                                                            getClusterId(action),
                                                                            getEntity());
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
+        params.setForceOverride(action.isSetExclusive() ? action.isExclusive() : false);
 
         if (action.isSetClone()){
             params.setImportAsNewEntity(action.isClone());

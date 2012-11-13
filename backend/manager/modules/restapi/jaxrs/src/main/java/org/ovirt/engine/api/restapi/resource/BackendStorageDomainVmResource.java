@@ -38,6 +38,7 @@ public class BackendStorageDomainVmResource
                                                            parent.getDataCenterId(destStorageDomainId),
                                                            getClusterId(action));
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
+        params.setForceOverride(action.isSetExclusive() ? action.isExclusive() : false);
 
         if (action.isSetVm() && action.getVm().isSetSnapshots()
                 && action.getVm().getSnapshots().isSetCollapseSnapshots()) {
