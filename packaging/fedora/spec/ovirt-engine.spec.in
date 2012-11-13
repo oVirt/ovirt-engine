@@ -691,7 +691,7 @@ fi
 # Directories for the backup, deployments and contents files need to be
 # owned by the engine user because the setup/upgrade wizard or applications
 # server need to write to them:
-%attr(-, %{engine_user}, %{engine_group}) %{engine_state}
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
 
 # The backend owns the directory of the ear and most of its contents,
 # but not all, as most of the web applications are owned by other
