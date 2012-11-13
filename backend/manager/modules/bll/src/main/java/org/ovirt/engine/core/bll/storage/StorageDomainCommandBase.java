@@ -32,6 +32,7 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
@@ -230,9 +231,20 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType) {
-        if (DbFacade.getInstance().getLunDao().get(lun.getLUN_id()) == null) {
-            DbFacade.getInstance().getLunDao().save(lun);
+        proceedLUNInDb(lun,storageType,"");
+    }
+
+    protected static LunDAO getLunDao() {
+        return DbFacade.getInstance().getLunDao();
+    }
+
+    public static void proceedLUNInDb(final LUNs lun, StorageType storageType, String volumeGroupId) {
+        if (getLunDao().get(lun.getLUN_id()) == null) {
+            getLunDao().save(lun);
+        } else if (!volumeGroupId.isEmpty()){
+            getLunDao().updateLUNsVolumeGroupId(lun.getLUN_id(), volumeGroupId);
         }
+
         for (storage_server_connections connection : lun.getLunConnections()) {
             List<storage_server_connections> connections = DbFacade.getInstance()
                     .getStorageServerConnectionDao().getAllForConnection(connection);

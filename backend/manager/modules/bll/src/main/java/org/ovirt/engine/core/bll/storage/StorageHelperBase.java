@@ -20,6 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.utils.log.Log;
 
 public abstract class StorageHelperBase implements IStorageHelper {
@@ -92,8 +93,8 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public void removeLun(LUNs lun) {
-        List<LUNs> lunsList = DbFacade.getInstance().getLunDao().getAllForVolumeGroup(lun.getvolume_group_id());
-        if (lunsList.size() == 1) {
+        if (lun.getvolume_group_id().isEmpty()) {
+            DbFacade.getInstance().getLunDao().remove(lun.getLUN_id());
             for (storage_server_connections connection : filterConnectionsUsedByOthers(lun.getLunConnections(),
                     "",
                     lun.getLUN_id())) {
@@ -123,6 +124,24 @@ public abstract class StorageHelperBase implements IStorageHelper {
     public boolean IsConnectSucceeded(Map<String, String> returnValue,
             List<storage_server_connections> connections) {
         return true;
+    }
+
+    protected static LunDAO getLunDao() {
+        return DbFacade.getInstance().getLunDao();
+    }
+
+    protected int removeStorageDomainLuns(storage_domain_static storageDomain) {
+        final List<LUNs> lunsList = getLunDao().getAllForVolumeGroup(storageDomain.getstorage());
+        int numOfRemovedLuns = 0;
+        for (LUNs lun : lunsList) {
+            if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUN_id()) == null) {
+                getLunDao().remove(lun.getLUN_id());
+                numOfRemovedLuns++;
+            } else {
+                getLunDao().updateLUNsVolumeGroupId(lun.getLUN_id(), "");
+            }
+        }
+        return numOfRemovedLuns;
     }
 
     protected String addToAuditLogErrorMessage(String connection, String errorCode,

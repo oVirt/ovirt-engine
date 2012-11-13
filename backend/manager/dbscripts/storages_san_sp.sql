@@ -23,6 +23,19 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION UpdateLUNsVolumeGroupId(v_LUN_id VARCHAR(50),
+v_volume_group_id VARCHAR(50))
+RETURNS VOID
+   AS $procedure$
+BEGIN
+UPDATE LUNs set volume_group_id = v_volume_group_id where LUN_id = v_LUN_ID;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
 
 Create or replace FUNCTION DeleteLUN(v_LUN_id VARCHAR(50))
 RETURNS VOID

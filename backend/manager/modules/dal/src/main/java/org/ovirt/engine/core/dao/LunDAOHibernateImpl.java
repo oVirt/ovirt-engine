@@ -26,4 +26,10 @@ public class LunDAOHibernateImpl extends BaseDAOHibernateImpl<LUNs, String> impl
     public List<LUNs> getAllForVolumeGroup(String id) {
         return findByCriteria(Restrictions.eq("volumeGroupId", id));
     }
+
+    @Override
+    public void updateLUNsVolumeGroupId(String id, String volumeGroupId) {
+        // TODO Auto-generated method stub
+
+    }
 }

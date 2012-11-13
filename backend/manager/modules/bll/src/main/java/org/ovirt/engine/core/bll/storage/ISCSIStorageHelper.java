@@ -188,17 +188,10 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
-        final List<storage_server_connections> list = DbFacade.getInstance()
-                .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
-        final List<LUNs> lunsList = DbFacade.getInstance().getLunDao().getAllForVolumeGroup(storageDomain.getstorage());
-        int numOfRemovedLuns = 0;
-        for (LUNs lun : lunsList) {
-            if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUN_id()) == null) {
-                DbFacade.getInstance().getLunDao().remove(lun.getLUN_id());
-                numOfRemovedLuns++;
-            }
-        }
+        int numOfRemovedLuns = removeStorageDomainLuns(storageDomain);
         if (numOfRemovedLuns > 0) {
+            List<storage_server_connections> list = DbFacade.getInstance()
+                    .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
             for (storage_server_connections connection : FilterConnectionsUsedByOthers(list, storageDomain.getstorage())) {
                 DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
             }

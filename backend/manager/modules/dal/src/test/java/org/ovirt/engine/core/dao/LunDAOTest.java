@@ -70,6 +70,17 @@ public class LunDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that LUNs are returned for the connection.
+     */
+    @Test
+    public void testUpdateLUNsVolumeGroupId() {
+        String testGroupId = "testvolgroupId";
+        dao.updateLUNsVolumeGroupId(existingLUN.getLUN_id(), testGroupId);
+        LUNs dbLun = dao.get(existingLUN.getLUN_id());
+        assertEquals("LUNs volume group id wasn't updated", testGroupId, dbLun.getvolume_group_id());
+    }
+
+    /**
      * Ensures that an empty collection is returned.
      */
     @Test

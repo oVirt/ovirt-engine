@@ -73,6 +73,14 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
     }
 
     @Override
+    public void updateLUNsVolumeGroupId(String id, String volumeGroupId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("LUN_id", id)
+                .addValue("volume_group_id", volumeGroupId);
+
+        getCallsHandler().executeModification("UpdateLUNsVolumeGroupId", parameterSource);
+    }
+
+    @Override
     public void save(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("LUN_id", lun.getLUN_id())
