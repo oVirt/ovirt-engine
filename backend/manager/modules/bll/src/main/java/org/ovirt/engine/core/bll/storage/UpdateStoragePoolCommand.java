@@ -98,7 +98,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         // when everyone can utilize it.
         if (spVersion.compareTo(Version.v3_0) == 0) {
             targetFormat = StorageFormatType.V2;
-        } else if (spVersion.compareTo(Version.v3_1) == 0) {
+        } else if (spVersion.compareTo(Version.v3_1) >= 0) {
             targetFormat = StorageFormatType.V3;
         } else {
             targetFormat = StorageFormatType.V1;
