@@ -31,7 +31,7 @@
    </appender>
 
    <!-- ============================== -->
-   <!-- REVM Appender                  -->
+   <!-- oVirt Appender                  -->
    <!-- ============================== -->
 
    <appender name="ENGINE_LOG" class="org.jboss.logging.appender.RollingFileAppender">
@@ -262,58 +262,58 @@
    -->
 
    <!-- ======================= -->
-   <!-- REVM categories 	-->
+   <!-- oVirt categories 	-->
    <!-- ======================= -->
 
-   <!--TOP configuration for all REVM categories -->
-   <category name="com.redhat.engine" additivity="false">
+   <!--TOP configuration for all oVirt categories -->
+   <category name="org.ovirt.engine.core" additivity="false">
 	<priority value="INFO"/>
 	<appender-ref ref="ENGINE_LOG"/>
    </category>
 
    <!--Buisness Logic -->
-   <category name="com.redhat.engine.bll">
+   <category name="org.ovirt.engine.core.bll">
      <priority value="INFO"/>
    </category>
 
    <!--Vdsbroker -->
-   <category name="com.redhat.engine.vdsbroker">
+   <category name="org.ovirt.engine.core.vdsbroker">
      <priority value="INFO"/>
    </category>
 
    <!--utils -->
-   <category name="com.redhat.engine.utils">
+   <category name="org.ovirt.engine.core.utils">
      <priority value="INFO"/>
    </category>
 
    <!--Search backend -->
-   <category name="com.redhat.engine.searchbackend">
+   <category name="org.ovirt.engine.core.searchbackend">
      <priority value="INFO"/>
    </category>
 
    <!--Common -->
-   <category name="com.redhat.engine.common">
+   <category name="org.ovirt.engine.core.common">
      <priority value="INFO"/>
    </category>
 
    <!--Compact -->
-   <category name="com.redhat.engine.compact">
+   <category name="org.ovirt.engine.core.compact">
      <priority value="INFO"/>
    </category>
 
    <!--Encrypt utils-->
-   <category name="com.redhat.engine.engineencryptutils">
+   <category name="org.ovirt.engine.core.engineencryptutils">
      <priority value="INFO"/>
    </category>
 
    <!--REST API-->
-   <category name="com.redhat.engine.restapi">
+   <category name="org.ovirt.engine.core.restapi">
      <priority value="INFO"/>
    </category>
 
    <!--Postgres causes lots of verboe messages in INFO level:
         "Added default SqlReturnResultSet parameter named #result-set-1"-->
-   <category name="com.redhat.engine.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
+   <category name="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
         <priority value="WARN"/>
    </category>
 
