@@ -51,7 +51,7 @@ public class SSHClient {
     private KeyPair _keyPair;
     private String _host;
     private int _port = DEFAULT_SSH_PORT;
-    private PublicKey _serverKey;
+    private PublicKey _hostKey;
 
     /**
      * Create the client.
@@ -169,7 +169,7 @@ public class SSHClient {
     public void setHost(String host, int port) {
         _host = host;
         _port = port;
-        _serverKey = null;
+        _hostKey = null;
     }
 
     /**
@@ -240,11 +240,11 @@ public class SSHClient {
     }
 
     /**
-     * Get server key
-     * @return server key.
+     * Get host key
+     * @return host key.
      */
-    public PublicKey getServerKey() {
-        return _serverKey;
+    public PublicKey getHostKey() {
+        return _hostKey;
     }
 
     /**
@@ -265,7 +265,7 @@ public class SSHClient {
                         SocketAddress remoteAddress,
                         PublicKey serverKey
                     ) {
-                        _serverKey = serverKey;
+                        _hostKey = serverKey;
                         return true;
                     }
                 }
@@ -287,7 +287,7 @@ public class SSHClient {
 
             /*
              * Wait for authentication phase so
-             * we have serverKey.
+             * we have host key.
              */
             int stat = _session.waitFor(
                 (

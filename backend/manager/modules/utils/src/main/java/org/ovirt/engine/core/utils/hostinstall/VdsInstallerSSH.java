@@ -219,7 +219,7 @@ public class VdsInstallerSSH {
                 );
             }
 
-            PublicKey serverKey = this.client.getServerKey();
+            PublicKey serverKey = this.client.getHostKey();
             String fingerprint = "Unknown";
 
             if (serverKey == null) {
@@ -613,7 +613,7 @@ public class VdsInstallerSSH {
 
         _openSession(server, timeout, timeout);
 
-        PublicKey serverKey = this.client.getServerKey();
+        PublicKey serverKey = this.client.getHostKey();
         if (serverKey != null) {
             fingerprint = OpenSSHUtils.getKeyFingerprintString(serverKey);
         }

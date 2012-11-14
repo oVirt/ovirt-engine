@@ -147,12 +147,12 @@ public class GetGlusterServersQuery<P extends GlusterServersQueryParameters> ext
     }
 
     private String getFingerprint(SSHClient client) {
-        PublicKey serverKey = client.getServerKey();
-        if (serverKey == null) {
+        PublicKey hostKey = client.getHostKey();
+        if (hostKey == null) {
             log.error("Could not get server key");
             return null;
         }
 
-        return OpenSSHUtils.getKeyFingerprintString(serverKey);
+        return OpenSSHUtils.getKeyFingerprintString(hostKey);
     }
 }

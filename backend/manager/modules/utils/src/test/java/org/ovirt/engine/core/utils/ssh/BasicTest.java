@@ -90,9 +90,9 @@ public class BasicTest {
     }
 
     @Test
-    public void testServerKey() throws Exception {
+    public void testHostKey() throws Exception {
         Assume.assumeNotNull(TestCommon.sshd);
         client.connect();
-        assertEquals(TestCommon.sshd.getKey(), client.getServerKey());
+        assertEquals(TestCommon.sshd.getKey(), client.getHostKey());
     }
 }
