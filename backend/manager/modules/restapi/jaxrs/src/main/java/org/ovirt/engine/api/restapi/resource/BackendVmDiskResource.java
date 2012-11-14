@@ -6,13 +6,17 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 
-import static org.ovirt.engine.api.restapi.resource.BackendNicsResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.api.restapi.resource.BackendVmDisksResource.SUB_COLLECTIONS;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 
 public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> implements VmDiskResource {
@@ -80,6 +84,15 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
     @Override
     public Disk get() {
         return super.get();//explicit call solves REST-Easy confusion
+    }
+
+    @Override
+    public AssignedPermissionsResource getPermissionsResource() {
+        return inject(new BackendAssignedPermissionsResource(guid,
+                                                             VdcQueryType.GetPermissionsForObject,
+                                                             new GetPermissionsForObjectParameters(guid),
+                                                             Disk.class,
+                                                             VdcObjectType.Disk));
     }
 
     @Override

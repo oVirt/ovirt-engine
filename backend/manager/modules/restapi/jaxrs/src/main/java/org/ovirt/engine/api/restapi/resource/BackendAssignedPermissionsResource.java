@@ -1,8 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ws.rs.core.Response;
 
@@ -27,6 +30,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
+import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -63,7 +67,35 @@ public class BackendAssignedPermissionsResource
 
     @Override
     public Permissions list() {
-        return mapCollection(getBackendCollection(queryType, queryParams));
+        Set<permissions> permissions = new TreeSet<permissions>(new PermissionsComparator());
+        List<permissions> directPermissions = getBackendCollection(queryType, queryParams);
+        permissions.addAll(directPermissions);
+        if (queryType.equals(VdcQueryType.GetPermissionsForObject)) {
+            permissions.addAll(getInheritedPermissions());
+        }
+        return mapCollection(permissions);
+    }
+
+    private List<permissions> getInheritedPermissions() {
+        ((GetPermissionsForObjectParameters)queryParams).setVdcObjectType(objectType);
+        ((GetPermissionsForObjectParameters)queryParams).setDirectOnly(false);
+        List<permissions> inheritedPermissions = getBackendCollection(queryType, queryParams);
+        for (permissions entity : inheritedPermissions) {
+            if (objectType != null) {
+                entity.setObjectType(objectType);
+                entity.setObjectId(targetId);
+            }
+        }
+        return inheritedPermissions;
+    }
+
+    static class PermissionsComparator implements Comparator<permissions> {
+        @Override
+        public int compare(permissions o1, permissions o2) {
+            String id1 = o1.getId().toString();
+            String id2 = o2.getId().toString();
+            return id1.compareTo(id2);
+        }
     }
 
     @Override
@@ -90,13 +122,11 @@ public class BackendAssignedPermissionsResource
         return inject(new BackendPermissionResource(id, this, suggestedParentType));
     }
 
-    protected Permissions mapCollection(List<permissions> entities) {
+    protected Permissions mapCollection(Set<permissions> entities) {
         Permissions collection = new Permissions();
         for (permissions entity : entities) {
-            if (entity.getObjectType() != VdcObjectType.System) {
-                Permission permission = map(entity, getUserById(entity.getad_element_id()));
-                collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? suggestedParentType : Group.class));
-            }
+            Permission permission = map(entity, getUserById(entity.getad_element_id()));
+            collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? suggestedParentType : Group.class));
         }
         return collection;
     }

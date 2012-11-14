@@ -222,6 +222,7 @@ public class LinkHelper {
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Group.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Role.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, VM.class);
+        map.add(PermissionResource.class, AssignedPermissionsResource.class, Disk.class);
         TYPES.put(Permission.class, map);
 
         map = new ParentToCollectionMap(NetworkResource.class, NetworksResource.class);

@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetJobByJobIdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -205,10 +206,17 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 expect(queryResult.getExceptionString()).andThrow((Exception) failure).anyTimes();
             }
         }
-        expect(backend.RunQuery(eq(query),
+        if(queryClass == GetPermissionsForObjectParameters.class) {
+            expect(backend.RunQuery(eq(query),
+                eqQueryParams(queryClass,
+                        addSession(queryNames),
+                        addSession(queryValues)))).andReturn(queryResult).anyTimes();
+        } else {
+            expect(backend.RunQuery(eq(query),
                 eqQueryParams(queryClass,
                         addSession(queryNames),
                         addSession(queryValues)))).andReturn(queryResult);
+        }
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,

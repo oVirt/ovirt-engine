@@ -16,6 +16,7 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
@@ -28,4 +29,7 @@ public interface DiskResource extends ReadOnlyDeviceResource<Disk>, MeasurableRe
     @Formatted
     @Override
     public Disk get();
+
+    @Path("permissions")
+    public AssignedPermissionsResource getPermissionsResource();
 }

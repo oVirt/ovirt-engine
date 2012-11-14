@@ -1475,6 +1475,7 @@
           <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="disk" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

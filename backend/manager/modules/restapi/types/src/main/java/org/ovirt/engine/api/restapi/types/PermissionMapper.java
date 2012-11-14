@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
@@ -132,6 +133,10 @@ public class PermissionMapper {
         case VmTemplate :
             model.setTemplate(new Template());
             model.getTemplate().setId(id);
+            break;
+        case Disk :
+            model.setDisk(new Disk());
+            model.getDisk().setId(id);
             break;
         default:
             assert false;
