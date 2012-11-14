@@ -127,6 +127,22 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     @Override
+    public void saveOrUpdate(async_tasks task) {
+        saveOrUpdate(task, null, EMPTY_GUIDS_ARRAY);
+    }
+
+    @Override
+    public void saveOrUpdate(async_tasks task, VdcObjectType entityType, Guid... entityIds) {
+        AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
+        parameterSource.addValue("entity_type", (entityType != null) ? entityType.toString() : null);
+        parameterSource.addValue("started_at", task.getStartTime());
+        parameterSource.addValue("storage_pool_id",task.getStoragePoolId());
+        parameterSource.addValue("async_task_type", task.getTaskType());
+        parameterSource.addValue("entity_ids", StringUtils.join(entityIds, ","));
+        getCallsHandler().executeModification("InsertOrUpdateAsyncTasks", parameterSource);
+    }
+
+    @Override
     public void save(async_tasks task) {
         save(task, null, EMPTY_GUIDS_ARRAY);
     }

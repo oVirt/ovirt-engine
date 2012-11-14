@@ -18,13 +18,7 @@ public class AsyncTaskUtils {
     public static void addOrUpdateTaskInDB(SPMAsyncTask asyncTask) {
         try {
             if (asyncTask.getParameters().getDbAsyncTask() != null) {
-                if (DbFacade.getInstance().getAsyncTaskDao().get(asyncTask.getTaskID()) == null) {
-                    log.infoFormat("Adding task {0} to DataBase",
-                            asyncTask.getTaskID());
-                    saveAsyncTaskInDB(asyncTask);
-                } else {
-                    updateAsyncTaskInDB(asyncTask);
-                }
+                DbFacade.getInstance().getAsyncTaskDao().saveOrUpdate(asyncTask.getParameters().getDbAsyncTask());
             }
         } catch (RuntimeException e) {
             log.error(String.format(

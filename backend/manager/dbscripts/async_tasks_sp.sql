@@ -50,6 +50,32 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION InsertOrUpdateAsyncTasks(v_action_type INTEGER,
+	v_result INTEGER,
+	v_status INTEGER,
+	v_task_id UUID,
+	v_action_parameters text,
+	v_action_params_class varchar(256),
+	v_step_id UUID,
+	v_command_id UUID,
+        v_entity_type varchar(128),
+        v_started_at timestamp,
+	v_storage_pool_id UUID,
+	v_async_task_type INTEGER,
+        v_entity_ids text)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      IF NOT EXISTS (SELECT 1 from async_tasks where async_tasks.task_id = v_task_id) THEN
+            PERFORM Insertasync_tasks(v_action_type, v_result, v_status, v_task_id, v_action_parameters,
+            v_action_params_class, v_step_id, v_command_id, v_entity_type, v_started_at, v_storage_pool_id, v_async_task_type, v_entity_ids);
+      ELSE
+            PERFORM Updateasync_tasks(v_action_type, v_result, v_status, v_task_id, v_action_parameters,  v_action_params_class, v_step_id, v_command_id);
+      END IF;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION GetAsyncTasksByEntityId(v_entity_id UUID)
 RETURNS SETOF idUuidType
    AS $procedure$

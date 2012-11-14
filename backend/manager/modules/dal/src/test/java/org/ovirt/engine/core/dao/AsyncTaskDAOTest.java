@@ -188,4 +188,30 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         assertNotNull(taskIds);
         assertTrue(taskIds.isEmpty());
     }
+
+    @Test
+    public void testSaveOrUpdate() {
+        existingAsyncTask.setstatus(AsyncTaskStatusEnum.aborting);
+        existingAsyncTask.setresult(AsyncTaskResultEnum.failure);
+        existingAsyncTask.setaction_type(VdcActionType.AddDisk);
+        AddDiskParameters addDiskToVmParams = new AddDiskParameters();
+        addDiskToVmParams.setSessionId("SESSION_ID");
+        existingAsyncTask.setaction_parameters(addDiskToVmParams);
+        List<async_tasks> tasks = dao.getAll();
+        assertNotNull(tasks);
+        int tasksNumber = tasks.size();
+        dao.saveOrUpdate(existingAsyncTask);
+        tasks = dao.getAll();
+        assertEquals(tasksNumber, tasks.size());
+        async_tasks taskFromDb = dao.get(existingAsyncTask.gettask_id());
+        assertNotNull(taskFromDb);
+        assertEquals(taskFromDb,existingAsyncTask);
+        dao.saveOrUpdate(newAsyncTask);
+        tasks = dao.getAll();
+        assertNotNull(tasks);
+        assertEquals(tasksNumber+1, tasks.size());
+        taskFromDb = dao.get(newAsyncTask.gettask_id());
+        assertEquals(taskFromDb, newAsyncTask);
+
+    }
 }
