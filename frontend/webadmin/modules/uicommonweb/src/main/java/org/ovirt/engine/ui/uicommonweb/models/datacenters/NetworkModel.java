@@ -35,10 +35,31 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public abstract class NetworkModel extends Model
 {
+    protected static String ENGINE_NETWORK =
+            (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+
+    private EntityModel privateName;
+    private EntityModel privateDescription;
+    private EntityModel privateVLanTag;
+    private EntityModel privateIsStpEnabled;
+    private EntityModel privateHasVLanTag;
+    private EntityModel privateHasMtu;
+    private EntityModel privateMtu;
+    private EntityModel privateIsVmNetwork;
+    private EntityModel privateIsEnabled;
+    private ListModel privateNetworkClusterList;
+    private ArrayList<VDSGroup> privateOriginalClusters;
+    private boolean isSupportBridgesReportByVDSM = false;
+    private boolean mtuOverrideSupported = false;
+    private ListModel privateDataCenters;
+    private final Network network;
+    private final ListModel sourceListModel;
+
     public NetworkModel(ListModel sourceListModel)
     {
         this(new Network(), sourceListModel);
     }
+
     public NetworkModel(Network network, ListModel sourceListModel)
     {
         this.network = network;
@@ -54,19 +75,19 @@ public abstract class NetworkModel extends Model
             }
         });
         setVLanTag(new EntityModel());
-        EntityModel tempVar = new EntityModel();
-        tempVar.setEntity(false);
-        setIsStpEnabled(tempVar);
-        EntityModel tempVar2 = new EntityModel();
-        tempVar2.setEntity(false);
-        setHasVLanTag(tempVar2);
+        EntityModel stpEnabled = new EntityModel();
+        stpEnabled.setEntity(false);
+        setIsStpEnabled(stpEnabled);
+        EntityModel hasVlanTag = new EntityModel();
+        hasVlanTag.setEntity(false);
+        setHasVLanTag(hasVlanTag);
         setMtu(new EntityModel());
-        EntityModel tempVar3 = new EntityModel();
-        tempVar3.setEntity(false);
-        setHasMtu(tempVar3);
-        EntityModel tempVar4 = new EntityModel();
-        tempVar4.setEntity(true);
-        setIsVmNetwork(tempVar4);
+        EntityModel hasMtu = new EntityModel();
+        hasMtu.setEntity(false);
+        setHasMtu(hasMtu);
+        EntityModel isVmNetwork = new EntityModel();
+        isVmNetwork.setEntity(true);
+        setIsVmNetwork(isVmNetwork);
 
         setNetworkClusterList(new ListModel());
         setOriginalClusters(new ArrayList<VDSGroup>());
@@ -78,20 +99,15 @@ public abstract class NetworkModel extends Model
                 getDescription().setIsChangable((Boolean) value);
                 getIsVmNetwork().setIsChangable(isSupportBridgesReportByVDSM() && (Boolean) value);
                 getHasVLanTag().setIsChangable((Boolean) value);
-                getVLanTag().setIsChangable((Boolean)getHasVLanTag().getEntity() && (Boolean) value);
+                getVLanTag().setIsChangable((Boolean) getHasVLanTag().getEntity() && (Boolean) value);
                 getHasMtu().setIsChangable((Boolean) value && isMTUOverrideSupported());
                 getMtu().setIsChangable((Boolean) getHasMtu().getEntity() && (Boolean) value
                         && isMTUOverrideSupported());
+                onIsEnableChange();
             }
-
         });
         init();
-        syncWithBackend();
     }
-
-    protected static String ENGINE_NETWORK = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
-
-    private EntityModel privateName;
 
     public EntityModel getName()
     {
@@ -103,8 +119,6 @@ public abstract class NetworkModel extends Model
         privateName = value;
     }
 
-    private EntityModel privateDescription;
-
     public EntityModel getDescription()
     {
         return privateDescription;
@@ -114,8 +128,6 @@ public abstract class NetworkModel extends Model
     {
         privateDescription = value;
     }
-
-    private EntityModel privateVLanTag;
 
     public EntityModel getVLanTag()
     {
@@ -127,8 +139,6 @@ public abstract class NetworkModel extends Model
         privateVLanTag = value;
     }
 
-    private EntityModel privateIsStpEnabled;
-
     public EntityModel getIsStpEnabled()
     {
         return privateIsStpEnabled;
@@ -138,8 +148,6 @@ public abstract class NetworkModel extends Model
     {
         privateIsStpEnabled = value;
     }
-
-    private EntityModel privateHasVLanTag;
 
     public EntityModel getHasVLanTag()
     {
@@ -151,8 +159,6 @@ public abstract class NetworkModel extends Model
         privateHasVLanTag = value;
     }
 
-    private EntityModel privateHasMtu;
-
     public EntityModel getHasMtu()
     {
         return privateHasMtu;
@@ -162,8 +168,6 @@ public abstract class NetworkModel extends Model
     {
         privateHasMtu = value;
     }
-
-    private EntityModel privateMtu;
 
     public EntityModel getMtu()
     {
@@ -175,8 +179,6 @@ public abstract class NetworkModel extends Model
         privateMtu = value;
     }
 
-    private EntityModel privateIsVmNetwork;
-
     public EntityModel getIsVmNetwork()
     {
         return privateIsVmNetwork;
@@ -186,8 +188,6 @@ public abstract class NetworkModel extends Model
     {
         privateIsVmNetwork = value;
     }
-
-    private EntityModel privateIsEnabled;
 
     public EntityModel getIsEnabled()
     {
@@ -199,8 +199,6 @@ public abstract class NetworkModel extends Model
         privateIsEnabled = value;
     }
 
-    private ListModel privateNetworkClusterList;
-
     public ListModel getNetworkClusterList()
     {
         return privateNetworkClusterList;
@@ -210,8 +208,6 @@ public abstract class NetworkModel extends Model
     {
         privateNetworkClusterList = value;
     }
-
-    private ArrayList<VDSGroup> privateOriginalClusters;
 
     public ArrayList<VDSGroup> getOriginalClusters()
     {
@@ -223,33 +219,31 @@ public abstract class NetworkModel extends Model
         privateOriginalClusters = value;
     }
 
-    private boolean isSupportBridgesReportByVDSM = true;
-
     public boolean isSupportBridgesReportByVDSM() {
         return isSupportBridgesReportByVDSM;
     }
 
     public void setSupportBridgesReportByVDSM(boolean isSupportBridgesReportByVDSM) {
-        this.isSupportBridgesReportByVDSM = isSupportBridgesReportByVDSM;
         if (!isSupportBridgesReportByVDSM) {
             getIsVmNetwork().setEntity(true);
             getIsVmNetwork().getChangeProhibitionReasons().add(ConstantsManager.getInstance()
                     .getMessages()
                     .bridlessNetworkNotSupported(getSelectedDc().getcompatibility_version().toString()));
             getIsVmNetwork().setIsChangable(false);
-        }else{
+        } else {
+            if (this.isSupportBridgesReportByVDSM != isSupportBridgesReportByVDSM) {
+                initIsVm();
+            }
             getIsVmNetwork().setIsChangable(true);
         }
+        this.isSupportBridgesReportByVDSM = isSupportBridgesReportByVDSM;
     }
-
-    private boolean mtuOverrideSupported;
 
     public boolean isMTUOverrideSupported() {
         return mtuOverrideSupported;
     }
 
     public void setMTUOverrideSupported(boolean mtuOverrideSupported) {
-        this.mtuOverrideSupported = mtuOverrideSupported;
         if (!mtuOverrideSupported) {
             getHasMtu().getChangeProhibitionReasons().add(ConstantsManager.getInstance()
                     .getMessages()
@@ -258,13 +252,14 @@ public abstract class NetworkModel extends Model
             getMtu().setIsChangable(false);
             getHasMtu().setEntity(false);
             getMtu().setEntity(null);
-        }else{
+        } else {
+            if (this.mtuOverrideSupported != mtuOverrideSupported) {
+                initMtu();
+            }
             getHasMtu().setIsChangable(true);
-            getMtu().setIsChangable(true);
         }
+        this.mtuOverrideSupported = mtuOverrideSupported;
     }
-
-    private ListModel privateDataCenters;
 
     public ListModel getDataCenters()
     {
@@ -276,15 +271,11 @@ public abstract class NetworkModel extends Model
         privateDataCenters = value;
     }
 
-    private final Network network;
-
-    public Network getNetwork(){
+    public Network getNetwork() {
         return network;
     }
 
-    private final ListModel sourceListModel;
-
-    public ListModel getSourceListModel(){
+    public ListModel getSourceListModel() {
         return sourceListModel;
     }
 
@@ -327,52 +318,45 @@ public abstract class NetworkModel extends Model
 
     protected boolean firstInit = true;
 
-    public void syncWithBackend(){
+    public void syncWithBackend() {
         final storage_pool dc = getSelectedDc();
-        if (dc == null){
+        if (dc == null) {
             return;
         }
 
         // Get IsSupportBridgesReportByVDSM
-        AsyncDataProvider.IsSupportBridgesReportByVDSM(new AsyncQuery(this,
+        boolean isSupportBridgesReportByVDSM =
+                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SupportBridgesReportByVDSM,
+                        dc.getcompatibility_version().toString());
+        setSupportBridgesReportByVDSM(isSupportBridgesReportByVDSM);
+
+        // Get IsMTUOverrideSupported
+        boolean isMTUOverrideSupported =
+                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MTUOverrideSupported,
+                        dc.getcompatibility_version().toString());
+
+        setMTUOverrideSupported(isMTUOverrideSupported);
+
+        // Get dc- cluster list
+        AsyncDataProvider.GetClusterList(new AsyncQuery(NetworkModel.this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        boolean isSupportBridgesReportByVDSM = (Boolean) returnValue;
-                        setSupportBridgesReportByVDSM(isSupportBridgesReportByVDSM);
-
-                        // Get IsMTUOverrideSupported
-                        AsyncDataProvider.IsMTUOverrideSupported(new AsyncQuery(NetworkModel.this,
-                                new INewAsyncCallback() {
-                                    @Override
-                                    public void OnSuccess(Object model, Object returnValue) {
-                                        boolean isMTUOverrideSupported = (Boolean) returnValue;
-
-                                        setMTUOverrideSupported(isMTUOverrideSupported);
-
-                                        // Get dc- cluster list
-                                        AsyncDataProvider.GetClusterList(new AsyncQuery(NetworkModel.this, new INewAsyncCallback() {
-                                            @Override
-                                            public void OnSuccess(Object model, Object ReturnValue)
-                                            {
-                                                onGetClusterList((ArrayList<VDSGroup>) ReturnValue);
-                                            }
-                                        }), dc.getId());
-                                    }
-                                }),
-                                dc.getcompatibility_version().toString());
+                    public void OnSuccess(Object model, Object ReturnValue)
+                    {
+                        onGetClusterList((ArrayList<VDSGroup>) ReturnValue);
                     }
-                }),
-                dc.getcompatibility_version().toString());
+                }), dc.getId());
     }
 
     protected abstract void onGetClusterList(ArrayList<VDSGroup> clusterList);
+
     protected abstract void addCommands();
 
-    public storage_pool getSelectedDc(){
+    public storage_pool getSelectedDc() {
         return (storage_pool) getDataCenters().getSelectedItem();
     }
-    public void flush(){
+
+    public void flush() {
         network.setstorage_pool_id(getSelectedDc().getId());
         network.setname((String) getName().getEntity());
         network.setstp((Boolean) getIsStpEnabled().getEntity());
@@ -392,10 +376,9 @@ public abstract class NetworkModel extends Model
         }
     }
 
-
     public ArrayList<VDSGroup> getnewClusters()
     {
-        ArrayList<VDSGroup> newClusters =new ArrayList<VDSGroup>();
+        ArrayList<VDSGroup> newClusters = new ArrayList<VDSGroup>();
 
         for (Object item : getNetworkClusterList().getItems())
         {
@@ -408,7 +391,7 @@ public abstract class NetworkModel extends Model
         return newClusters;
     }
 
-    protected void executeSave(){
+    protected void executeSave() {
         ArrayList<VDSGroup> detachNetworkFromClusters =
                 Linq.Except(getOriginalClusters(), getnewClusters());
         ArrayList<VdcActionParametersBase> actionParameters =
@@ -422,16 +405,16 @@ public abstract class NetworkModel extends Model
 
         StartProgress(null);
 
-        if (!actionParameters.isEmpty()){
+        if (!actionParameters.isEmpty()) {
             Frontend.RunMultipleAction(VdcActionType.DetachNetworkToVdsGroup, actionParameters,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendMultipleActionAsyncResult result) {
-                           postExecuteSave();
+                            postExecuteSave();
                         }
                     },
                     null);
-        }else{
+        } else {
             postExecuteSave();
         }
     }
@@ -469,9 +452,9 @@ public abstract class NetworkModel extends Model
         Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
     }
 
-    private void cancel(){
-            sourceListModel.setWindow(null);
-            sourceListModel.setConfirmWindow(null);
+    private void cancel() {
+        sourceListModel.setWindow(null);
+        sourceListModel.setConfirmWindow(null);
     }
 
     protected abstract void init();
@@ -516,9 +499,21 @@ public abstract class NetworkModel extends Model
         return null;
     }
 
-    protected void refreshClustersTable(){
+    protected void refreshClustersTable() {
         getNetworkClusterList()
-        .getItemsChangedEvent()
-        .raise(getNetworkClusterList(), EventArgs.Empty);
+                .getItemsChangedEvent()
+                .raise(getNetworkClusterList(), EventArgs.Empty);
     }
+
+    public boolean isManagemet() {
+        return StringHelper.stringsEqual(getNetwork().getname(), ENGINE_NETWORK);
+    }
+
+    protected void onIsEnableChange() {
+        // Do nothing
+    }
+
+    protected abstract void initMtu();
+
+    protected abstract void initIsVm();
 }

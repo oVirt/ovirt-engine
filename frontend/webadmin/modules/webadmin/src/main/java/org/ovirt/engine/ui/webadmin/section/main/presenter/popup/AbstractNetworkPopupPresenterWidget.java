@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -80,8 +81,20 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
             }
         });
 
-        // Listen to Properties
         getView().setNetworkClusterList(model.getNetworkClusterList());
+
+        // Listen to Properties
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                NetworkModel model = (NetworkModel) sender;
+                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+
+                if ("Message".equals(propertyName)) { //$NON-NLS-1$
+                    getView().setMessageLabel(model.getMessage());
+                }
+            }
+        });
 
         // Listen to "IsEnabled" property
         model.getIsEnabled().getEntityChangedEvent().addListener(new IEventListener() {

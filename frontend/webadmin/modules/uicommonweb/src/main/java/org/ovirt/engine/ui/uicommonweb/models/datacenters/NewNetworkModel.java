@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-public class NewNetworkModel extends NetworkModel{
+public class NewNetworkModel extends NetworkModel {
 
     public NewNetworkModel(ListModel sourceListModel) {
         super(sourceListModel);
@@ -30,24 +30,24 @@ public class NewNetworkModel extends NetworkModel{
     @Override
     public void postExecuteSave() {
         // New network
-            Frontend.RunAction(VdcActionType.AddNetwork,
-                    new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendActionAsyncResult result1) {
-                            VdcReturnValueBase retVal = result1.getReturnValue();
-                            boolean succeeded = false;
-                            if (retVal != null && retVal.getSucceeded())
-                            {
-                                succeeded = true;
-                            }
-                            postSaveAction(succeeded ? (Guid) retVal.getActionReturnValue()
-                                    : null,
-                                    succeeded);
-
+        Frontend.RunAction(VdcActionType.AddNetwork,
+                new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result1) {
+                        VdcReturnValueBase retVal = result1.getReturnValue();
+                        boolean succeeded = false;
+                        if (retVal != null && retVal.getSucceeded())
+                        {
+                            succeeded = true;
                         }
-                    },
-                    null);
+                        postSaveAction(succeeded ? (Guid) retVal.getActionReturnValue()
+                                : null,
+                                succeeded);
+
+                    }
+                },
+                null);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class NewNetworkModel extends NetworkModel{
         }
         getNetworkClusterList().setItems(items);
 
-        if (firstInit){
+        if (firstInit) {
             firstInit = false;
             addCommands();
         }
@@ -85,5 +85,16 @@ public class NewNetworkModel extends NetworkModel{
         networkClusterModel.setAttached(false);
 
         return networkClusterModel;
+    }
+
+    @Override
+    protected void initMtu() {
+        getHasMtu().setEntity(false);
+        getMtu().setEntity(null);
+    }
+
+    @Override
+    protected void initIsVm() {
+        getIsVmNetwork().setEntity(true);
     }
 }

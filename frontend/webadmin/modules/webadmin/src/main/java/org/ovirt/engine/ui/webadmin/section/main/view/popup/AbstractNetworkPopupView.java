@@ -167,8 +167,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @Override
     public void postModelEnabled(boolean enabled) {
-          messageLabel.setVisible(!enabled);
-          setApplyEnabled(!enabled);
+        messageLabel.setVisible(!enabled);
     }
 
     @Override
@@ -179,7 +178,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @SuppressWarnings("unchecked")
     Iterable<EntityModel> getClustersTableItems() {
         ListModel tableModel = clustersTable.flush();
-        return tableModel != null && tableModel.getItems() != null ? tableModel.getItems() : new ArrayList<EntityModel>();
+        return tableModel != null && tableModel.getItems() != null ? tableModel.getItems()
+                : new ArrayList<EntityModel>();
     }
 
     void refreshClustersTable() {

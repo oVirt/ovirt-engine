@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 
@@ -27,17 +26,10 @@ public class NewClusterNetworkPopupPresenterWidget extends NewNetworkPopupPresen
         // Let the parent do its work
         super.init(model);
 
-        // Listen for changes in the properties of the model in order
-        // to update the view accordingly
         model.getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (args instanceof PropertyChangedEventArgs) {
-                    PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                    if ("DataCenterName".equals(changedArgs.PropertyName)) { //$NON-NLS-1$
-                        ((ViewDef) getView()).setDataCenterName(((storage_pool)model.getDataCenters().getSelectedItem()).getname());
-                    }
-                }
+                ((ViewDef) getView()).setDataCenterName(((storage_pool) model.getDataCenters().getSelectedItem()).getname());
             }
         });
     }

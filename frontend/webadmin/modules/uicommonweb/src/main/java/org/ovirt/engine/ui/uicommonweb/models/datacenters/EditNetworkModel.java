@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class EditNetworkModel extends NetworkModel {
 
-    public static String APPLY_COMMAND_NAME = "Apply";  //$NON-NLS-1$
+    public static String APPLY_COMMAND_NAME = "Apply"; //$NON-NLS-1$
 
     public EditNetworkModel(Network network, ListModel sourceListModel) {
         super(network, sourceListModel);
@@ -61,6 +61,17 @@ public class EditNetworkModel extends NetworkModel {
         getIsStpEnabled().setEntity(getNetwork().getstp());
         getHasVLanTag().setEntity(getNetwork().getvlan_id() != null);
         getVLanTag().setEntity((getNetwork().getvlan_id() == null ? 0 : getNetwork().getvlan_id()));
+        initMtu();
+        initIsVm();
+    }
+
+    @Override
+    protected void initIsVm() {
+        getIsVmNetwork().setEntity(getNetwork().isVmNetwork());
+    }
+
+    @Override
+    protected void initMtu() {
         getHasMtu().setEntity(getNetwork().getMtu() != 0);
         getMtu().setEntity(getNetwork().getMtu() != 0 ? String.valueOf(getNetwork().getMtu()) : null);
     }
@@ -68,26 +79,26 @@ public class EditNetworkModel extends NetworkModel {
     @Override
     public void postExecuteSave() {
 
-            if ((Boolean) getIsEnabled().getEntity())
-            {
-                Frontend.RunAction(VdcActionType.UpdateNetwork,
-                        new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void Executed(FrontendActionAsyncResult result1) {
-                                VdcReturnValueBase retVal = result1.getReturnValue();
-                                postSaveAction(null,
-                                        retVal != null && retVal.getSucceeded());
+        if ((Boolean) getIsEnabled().getEntity())
+        {
+            Frontend.RunAction(VdcActionType.UpdateNetwork,
+                    new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result1) {
+                            VdcReturnValueBase retVal = result1.getReturnValue();
+                            postSaveAction(null,
+                                    retVal != null && retVal.getSucceeded());
 
-                            }
-                        },
-                        null);
-            }
-            else
-            {
-                postSaveAction(null, true);
-            }
+                        }
+                    },
+                    null);
         }
+        else
+        {
+            postSaveAction(null, true);
+        }
+    }
 
     @Override
     public void onGetClusterList(ArrayList<VDSGroup> clusterList) {
@@ -106,7 +117,7 @@ public class EditNetworkModel extends NetworkModel {
         getNetworkClusterList().setItems(items);
         Frontend.RunMultipleQueries(queryTypeList,
                 parametersList,
-                new IFrontendMultipleQueryAsyncCallback(){
+                new IFrontendMultipleQueryAsyncCallback() {
 
                     @Override
                     public void Executed(FrontendMultipleQueryAsyncResult result) {
@@ -114,22 +125,7 @@ public class EditNetworkModel extends NetworkModel {
 
                     }
 
-        });
-
-        // cannot detach engine networks from clusters
-        if (StringHelper.stringsEqual(getNetwork().getname(), ENGINE_NETWORK))
-        {
-            for (Object item : getNetworkClusterList()
-                    .getItems())
-            {
-                ((NetworkClusterModel) item).setIsChangable(false);
-            }
-            getApplyCommand().setIsExecutionAllowed(false);
-            getName().setIsChangable(false);
-            setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .cannotDetachManagementNetworkFromClustersMsg());
-        }
+                });
     }
 
     public void onGetAllNetworksByClusterId(FrontendMultipleQueryAsyncResult result)
@@ -163,14 +159,29 @@ public class EditNetworkModel extends NetworkModel {
             getIsEnabled().setEntity(false);
         } else {
             getIsEnabled().setEntity(true);
-            if (StringHelper.stringsEqual(getNetwork().getname(), ENGINE_NETWORK)) {
+            if (isManagemet()) {
                 getName().setIsChangable(false);
             }
         }
 
+        if (isManagemet())
+        {
+            // cannot detach engine networks from clusters
+            for (Object item : getNetworkClusterList()
+                    .getItems())
+            {
+                ((NetworkClusterModel) item).setIsChangable(false);
+            }
+            getApplyCommand().setIsExecutionAllowed(false);
+            getName().setIsChangable(false);
+            setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .cannotDetachManagementNetworkFromClustersMsg());
+        }
+
         refreshClustersTable();
 
-        if (firstInit){
+        if (firstInit) {
             firstInit = false;
             addCommands();
         }
@@ -178,8 +189,8 @@ public class EditNetworkModel extends NetworkModel {
 
     @Override
     protected void addCommands() {
-        if (StringHelper.stringsEqual(getNetwork().getname(), ENGINE_NETWORK)
-                && ((List<NetworkClusterModel>)getNetworkClusterList().getItems()).size() > 0)
+        if (isManagemet()
+                && ((List<NetworkClusterModel>) getNetworkClusterList().getItems()).size() > 0)
         {
             UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
@@ -189,11 +200,11 @@ public class EditNetworkModel extends NetworkModel {
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnSave",  this); //$NON-NLS-1$
+            UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
             tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel",  this); //$NON-NLS-1$
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
             tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar3.setIsCancel(true);
             getCommands().add(tempVar3);
@@ -366,8 +377,16 @@ public class EditNetworkModel extends NetworkModel {
         }
     }
 
-    private void cancelConfirmation(){
+    private void cancelConfirmation() {
         getSourceListModel().setConfirmWindow(null);
+    }
+
+    @Override
+    protected void onIsEnableChange() {
+        super.onIsEnableChange();
+        if (!isManagemet()) {
+            getApplyCommand().setIsExecutionAllowed(!(Boolean) (getIsEnabled().getEntity()));
+        }
     }
 
     @Override

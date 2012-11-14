@@ -215,7 +215,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             if (index >= 0) {
                 Network clusterNetwork = clusterNetworks.get(index);
                 networkManageModel = new ClusterNetworkModel((Network) Cloner.clone(clusterNetwork));
-            }else{
+            } else {
                 networkManageModel = new ClusterNetworkModel((Network) Cloner.clone(network));
             }
             networkManageModel.setCluster((VDSGroup) Cloner.clone(getEntity()));

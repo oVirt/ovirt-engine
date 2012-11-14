@@ -26,13 +26,14 @@ public class NewClusterNetworkPopupView extends NewNetworkPopupView implements N
 
     @Override
     public void setDataCenterName(String name) {
-        mainLabel.setText(messages.theNetworkWillBeAddedToTheDataCenterAsWell(name));
+        messageLabel.setText(messages.theNetworkWillBeAddedToTheDataCenterAsWell(name));
 
     }
 
     @Override
     public void updateVisibility() {
         super.updateVisibility();
+        messageLabel.setVisible(true);
         dataCenterEditor.setVisible(false);
     }
 
