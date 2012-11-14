@@ -39,6 +39,14 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     }
 
     @Override
+    public VmTemplate getByName(String name, Guid userID, boolean isFiltered) {
+        return getCallsHandler().executeRead("GetVmTemplateByVmtName",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("vmt_name", name).addValue("user_id", userID).addValue("is_filtered", isFiltered));
+    }
+
+    @Override
     public List<VmTemplate> getAll() {
         return getAll(null, false);
     }

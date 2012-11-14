@@ -136,6 +136,22 @@ LANGUAGE plpgsql;
 
 
 
+
+Create or replace FUNCTION GetVdsGroupForUserByVdsGroupName(v_vds_group_name VARCHAR(40), v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vds_groups.*
+      FROM vds_groups
+      WHERE name = v_vds_group_name
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vds_groups_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = vds_group_id));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 Create or replace FUNCTION GetVdsGroupsByStoragePoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups
    AS $procedure$
 BEGIN

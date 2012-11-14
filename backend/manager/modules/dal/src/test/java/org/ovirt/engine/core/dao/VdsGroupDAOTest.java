@@ -151,6 +151,18 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         assertCorrectVDSGroup(result);
     }
 
+    @Test
+    public void testGetByNameForPrivilegedUser() {
+        VDSGroup result = dao.getByName(existingVdsGroup.getname(), PRIVILEGED_USER_ID, false);
+        assertCorrectVDSGroup(result);
+    }
+
+    @Test
+    public void testGetByNameForUnprivilegedUser() {
+        VDSGroup result = dao.getByName(existingVdsGroup.getname(), UNPRIVILEGED_USER_ID, true);
+        assertNull(result);
+    }
+
     /**
      * Ensures that an empty collection is returned.
      */

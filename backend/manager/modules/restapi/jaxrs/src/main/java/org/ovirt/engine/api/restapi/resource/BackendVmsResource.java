@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByNameParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
@@ -409,9 +410,17 @@ public class BackendVmsResource extends
     }
 
     protected Guid getTemplateId(VM vm) {
-        return vm.getTemplate().isSetId() ? asGuid(vm.getTemplate().getId()) : getEntity(
+        return vm.getTemplate().isSetId() ? asGuid(vm.getTemplate().getId()) : getTemplateByName(vm).getId();
+    }
+
+    private VmTemplate getTemplateByName(VM vm) {
+        return isFiltered() ? lookupTemplateByName(vm.getTemplate().getName()) : getEntity(
                 VmTemplate.class, SearchType.VmTemplate,
-                "Template: name=" + vm.getTemplate().getName()).getId();
+                "Template: name=" + vm.getTemplate().getName());
+    }
+
+    public VmTemplate lookupTemplateByName(String name) {
+        return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(name), "GetVmTemplate");
     }
 
     public VmTemplate lookupTemplate(Guid id) {
@@ -427,8 +436,13 @@ public class BackendVmsResource extends
     }
 
     protected Guid getClusterId(VM vm) {
-        return getEntity(VDSGroup.class, SearchType.Cluster,
+        return isFiltered() ? lookupClusterByName(vm.getCluster().getName()).getId() : getEntity(
+                VDSGroup.class, SearchType.Cluster,
                 "Cluster: name=" + vm.getCluster().getName()).getId();
+    }
+
+    public VDSGroup lookupClusterByName(String name) {
+        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByName, new GetVdsGroupByNameParameters(name), "GetVdsGroupByName");
     }
 
     @Override

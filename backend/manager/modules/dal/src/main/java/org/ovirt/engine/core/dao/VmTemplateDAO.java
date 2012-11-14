@@ -27,6 +27,19 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
     public VmTemplate get(Guid id, Guid userID, boolean isFiltered);
 
     /**
+    * Retrieves the template with the given id with optional filtering.
+    *
+    * @param name
+    *            The name to look by (can't be <code>null</code>).
+    * @param userID
+    *            the ID of the user requesting the information
+    * @param isFiltered
+    *            Whether the results should be filtered according to the user's permissions
+    * @return The entity instance, or <code>null</code> if not found.
+    */
+    public VmTemplate getByName(String name, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all templates with optional filtering.
      *
      * @param userID

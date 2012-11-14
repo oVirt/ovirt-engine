@@ -52,6 +52,18 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     VDSGroup getByName(String name);
 
     /**
+     * Retrieves the group with the specified name for the user
+     *
+     * @param name
+     *            the group name
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the group
+     */
+    VDSGroup getByName(String name, Guid userID, boolean isFiltered);
+    /**
      * Retrieves the list of groups associated with the given storage pool.
      *
      * @param id

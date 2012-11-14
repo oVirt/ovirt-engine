@@ -24,6 +24,11 @@ public class VdsGroupDAOHibernateImpl extends BaseDAOHibernateImpl<VDSGroup, Gui
     }
 
     @Override
+    public VDSGroup getByName(final String name, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public VDSGroup getWithRunningVms(Guid id) {
         Query query = getSession().getNamedQuery("vdsgroup_with_running_vms");
 
