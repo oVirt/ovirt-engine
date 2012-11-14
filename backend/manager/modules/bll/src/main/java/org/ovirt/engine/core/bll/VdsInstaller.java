@@ -26,7 +26,7 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.VdcException;
-import org.ovirt.engine.core.utils.hostinstall.CachedTar;
+import org.ovirt.engine.core.utils.archivers.tar.CachedTar;
 import org.ovirt.engine.core.utils.hostinstall.IVdsInstallerCallback;
 import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;

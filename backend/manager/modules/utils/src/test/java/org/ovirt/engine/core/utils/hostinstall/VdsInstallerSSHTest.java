@@ -21,10 +21,12 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
+import org.ovirt.engine.core.utils.archivers.tar.Tar;
 import org.ovirt.engine.core.utils.ssh.SSHD;
 
 /*
