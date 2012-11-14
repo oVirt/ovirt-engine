@@ -114,13 +114,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     protected void executeVmCommand() {
 
         final Guid newActiveSnapshotId = Guid.NewGuid();
-        final List<DiskImage> images = DbFacade
-                .getInstance()
-                .getDiskImageDao()
-                .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        Guid previousActiveSnapshotId = TransactionSupport.executeInNewTransaction(new TransactionMethod<Guid>() {
             @Override
-            public Void runInTransaction() {
+            public Guid runInTransaction() {
                 Snapshot previousActiveSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
                 getCompensationContext().snapshotEntity(previousActiveSnapshot);
                 Guid previousActiveSnapshotId = previousActiveSnapshot.getId();
@@ -132,17 +128,15 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                         getCompensationContext());
                 snapshotsManager.addActiveSnapshot(newActiveSnapshotId, getVm(), getCompensationContext());
                 snapshotsManager.removeAllIllegalDisks(previousActiveSnapshotId, getVm().getId());
-                //if there are no images there's no reason the save the compensation data to DB as
-                //the update is being executed in the same transaction so we can restore the vm config and end the command.
-                if (!images.isEmpty()) {
-                    getCompensationContext().stateChanged();
-                } else {
-                    restoreVmConfigFromSnapshot();
-                }
-                return null;
+                getCompensationContext().stateChanged();
+                return previousActiveSnapshotId;
             }
         });
 
+        final List<DiskImage> images = DbFacade
+                .getInstance()
+                .getDiskImageDao()
+                .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
         if (images.size() > 0) {
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
             freeLock();
@@ -177,7 +171,11 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     return null;
                 }
             });
+        } else {
+            restoreVmConfigFromSnapshot();
+            freeLock();
         }
+
         setSucceeded(true);
     }
 

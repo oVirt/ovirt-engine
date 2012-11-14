@@ -233,8 +233,6 @@ public class VmHandler {
 
     public static void updateDisksFromDb(VM vm) {
         List<Disk> imageList = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
-        vm.getDiskList().clear();
-        vm.getDiskMap().clear();
         updateDisksForVm(vm, imageList);
     }
 
