@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -40,17 +44,28 @@ public class FencingExecutor {
         int delayInMs = 1000 * Config.<Integer> GetValue(ConfigValues.FindFenceProxyDelayBetweenRetriesInSec);
         _vdsToRunId = NO_VDS;
         VDS vdsToRun = null;
+        List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
         // check if this is a new host, no need to retry , only status is
         // available on new host.
         if (_vds.getId().equals(NO_VDS)) {
-            vdsToRun = LinqUtils.firstOrNull(DbFacade.getInstance().getVdsDao().getAll(), new Predicate<VDS>() {
+            // try first to find a Host in UP status
+            vdsToRun = LinqUtils.firstOrNull(hosts, new Predicate<VDS>() {
                 @Override
                 public boolean eval(VDS vds) {
                     return vds.getstatus() == VDSStatus.Up
                             && vds.getstorage_pool_id().equals(_vds.getstorage_pool_id());
-
                 }
             });
+            // trying other Hosts that are not in UP since they can be a proxy for fencing operations
+            if (vdsToRun == null) {
+                vdsToRun = LinqUtils.firstOrNull(hosts, new Predicate<VDS>() {
+                    @Override
+                    public boolean eval(VDS vds) {
+                        return !isHostNetworkUnreacable(vds) &&
+                                vds.getstorage_pool_id().equals(_vds.getstorage_pool_id());
+                    }
+                });
+            }
             if (vdsToRun != null) {
                 _vdsToRunId = vdsToRun.getId();
                 _vdsToRunName = vdsToRun.getvds_name();
@@ -60,7 +75,7 @@ public class FencingExecutor {
             // as configured.
             while (count < retries) {
 
-                vdsToRun = LinqUtils.firstOrNull(DbFacade.getInstance().getVdsDao().getAll(), new Predicate<VDS>() {
+                vdsToRun = LinqUtils.firstOrNull(hosts, new Predicate<VDS>() {
                     @Override
                     public boolean eval(VDS vds) {
                         return !vds.getId().equals(_vds.getId())
@@ -68,6 +83,15 @@ public class FencingExecutor {
                                 && vds.getstatus() == VDSStatus.Up;
                     }
                 });
+                if (vdsToRun == null) {
+                    vdsToRun = LinqUtils.firstOrNull(hosts, new Predicate<VDS>() {
+                        @Override
+                        public boolean eval(VDS vds) {
+                            return !isHostNetworkUnreacable(vds) &&
+                                    !vds.getId().equals(_vds.getId()) && vds.getstorage_pool_id().equals(_vds.getstorage_pool_id());
+                        }
+                    });
+                }
                 if (vdsToRun != null) {
                     _vdsToRunId = vdsToRun.getId();
                     _vdsToRunName = vdsToRun.getvds_name();
@@ -151,6 +175,12 @@ public class FencingExecutor {
                         new FenceVdsVDSCommandParameters(_vdsToRunId, _vds.getId(), _vds.getManagmentIp(),
                                     managementPort, agent, _vds.getpm_user(), _vds.getpm_password(),
                                     managementOptions, actionType));
+    }
+
+    private boolean isHostNetworkUnreacable(VDS vds) {
+        VdsDynamic vdsDynamic = vds.getDynamicData();
+        return (vdsDynamic.getstatus() == VDSStatus.NonOperational &&
+            vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE);
     }
 
     private static Log log = LogFactory.getLog(FencingExecutor.class);
