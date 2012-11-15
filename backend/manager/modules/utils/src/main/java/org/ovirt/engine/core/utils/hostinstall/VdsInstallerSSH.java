@@ -604,31 +604,4 @@ public class VdsInstallerSSH {
 
         return fingerprint;
     }
-
-    public String getServerKeyFingerprint(
-        String server,
-        long timeout
-    ) throws Exception {
-        String fingerprint = null;
-
-        _openSession(server, timeout, timeout);
-
-        PublicKey serverKey = this.client.getHostKey();
-        if (serverKey != null) {
-            fingerprint = OpenSSHUtils.getKeyFingerprintString(serverKey);
-        }
-
-        return fingerprint;
-    }
-
-    public String getServerKeyFingerprint(
-        String server
-    ) throws Exception {
-        return getServerKeyFingerprint(
-            server,
-            Config.<Integer>GetValue(
-                ConfigValues.SSHInactivityTimoutSeconds
-            ) * 1000
-        );
-    }
 }

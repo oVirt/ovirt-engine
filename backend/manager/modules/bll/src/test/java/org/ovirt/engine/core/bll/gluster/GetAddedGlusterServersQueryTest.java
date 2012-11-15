@@ -4,10 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
+import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlusterServersParameters, GetAddedGlusterServersQuery<AddedGlusterServersParameters>> {
 
@@ -41,8 +43,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private Guid server_id3 = new Guid("7a797a38-cb32-4399-b6fb-21c79c03a1d6");
     private String serverKeyFingerprint = "b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31";
     VDSBrokerFrontend vdsBrokerFrontend;
-    VdsInstallerSSH vdsInstallerSSHMock;
     VdsDAO vdsDaoMock;
+    EngineSSHDialog mockEngineSSHDialog;
 
     ClusterUtils clusterUtils;
 
@@ -96,7 +98,6 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
         clusterUtils = mock(ClusterUtils.class);
         vdsDaoMock = mock(VdsDAO.class);
-        vdsInstallerSSHMock = mock(VdsInstallerSSH.class);
 
         doReturn(vdsBrokerFrontend).when(getQuery()).getBackendInstance();
         doReturn(clusterUtils).when(getQuery()).getClusterUtils();
@@ -111,8 +112,10 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         doReturn(vdsDaoMock).when(clusterUtils).getVdsDao();
         doReturn(serversList).when(vdsDaoMock).getAllForVdsGroup(CLUSTER_ID);
 
-        doReturn(vdsInstallerSSHMock).when(getQuery()).getVdsInstallerSSHInstance();
-        doReturn(serverKeyFingerprint).when(vdsInstallerSSHMock).getServerKeyFingerprint("test_server3");
+        mockEngineSSHDialog = mock(EngineSSHDialog.class);
+        doNothing().when(mockEngineSSHDialog).connect();
+        doNothing().when(mockEngineSSHDialog).authenticate();
+        doReturn(mockEngineSSHDialog).when(getQuery()).getEngineSSHDialog();
     }
 
     private VDSReturnValue getVDSReturnValue() {
@@ -140,7 +143,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testExecuteQueryCommand() {
+    public void testExecuteQueryCommand() throws IOException {
+        doReturn(serverKeyFingerprint).when(mockEngineSSHDialog).getHostFingerprint();
         getQuery().executeQueryCommand();
         Map<String, String> servers =
                 (Map<String, String>) getQuery().getQueryReturnValue().getReturnValue();

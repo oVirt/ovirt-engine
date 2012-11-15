@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +23,6 @@ import org.junit.Test;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
-import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
 import org.ovirt.engine.core.utils.archivers.tar.Tar;
 import org.ovirt.engine.core.utils.ssh.SSHD;
 
@@ -516,23 +514,6 @@ public class VdsInstallerSSHTest {
 
             vssh.shutdown();
             vssh = null;
-        }
-    }
-
-    @Test
-    public void testFingerprint() throws Exception {
-        assumeNotNull(sshd);
-        VdsInstallerSSH vdsi = new VdsInstallerSSH();
-        vdsi.setPort(port);
-        try {
-            assertEquals(
-                OpenSSHUtils.getKeyFingerprintString(sshd.getKey()),
-                vdsi.getServerKeyFingerprint(host, 5000)
-            );
-        }
-        finally {
-            vdsi.shutdown();
-            vdsi = null;
         }
     }
 }

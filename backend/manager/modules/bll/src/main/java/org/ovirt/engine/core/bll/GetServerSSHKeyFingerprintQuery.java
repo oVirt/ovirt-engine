@@ -1,36 +1,39 @@
 package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+
 import org.ovirt.engine.core.common.queries.ServerParameters;
-import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
+import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 /**
  * Query to fetch fingerprint of the given server name
  */
 public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends QueriesCommandBase<P> {
-    public VdsInstallerSSH wrapper;
+
+    protected EngineSSHDialog getEngineSSHDialog() {
+        return new EngineSSHDialog();
+    }
 
     public GetServerSSHKeyFingerprintQuery(P parameters) {
         super(parameters);
     }
 
     public String getServerFingerprint(String serverName) {
-        wrapper = getVdsInstallerSSHInstance();
         String fingerPrint = null;
+        EngineSSHDialog dialog = getEngineSSHDialog();
         try {
-            fingerPrint = wrapper.getServerKeyFingerprint(getParameters().getServer());
+            dialog.setHost(serverName);
+            dialog.connect();
+            fingerPrint = dialog.getHostFingerprint();
         } catch (Throwable e) {
             log.errorFormat("Could not fetch fingerprint of host {0} with message: {1}",
-                    getParameters().getServer(),
-                    ExceptionUtils.getMessage(e));
+                serverName,
+                ExceptionUtils.getMessage(e)
+            );
         } finally {
-            wrapper.shutdown();
+            dialog.disconnect();
         }
         return fingerPrint;
-    }
-
-    public VdsInstallerSSH getVdsInstallerSSHInstance() {
-        return new VdsInstallerSSH();
     }
 
     @Override

@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.utils.hostinstall.VdsInstallerSSH;
+import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 /**
  * Query to get Added Gluster Servers with/without server ssh key fingerprint
@@ -25,6 +25,10 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
     public GetAddedGlusterServersQuery(P params) {
         super(params);
+    }
+
+    protected EngineSSHDialog getEngineSSHDialog() {
+        return new EngineSSHDialog();
     }
 
     @Override
@@ -47,7 +51,14 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
         for (GlusterServerInfo server : glusterServers) {
             if (server.getStatus() == PeerStatus.CONNECTED && (!serverExists(serversList, server))) {
-                serversAndFingerprint.put(server.getHostnameOrIp(), getServerFingerprint(server.getHostnameOrIp()));
+                String fingerprint = null;
+                if (getParameters().isServerKeyFingerprintRequired()) {
+                    fingerprint = getServerFingerprint(server.getHostnameOrIp());
+                }
+                serversAndFingerprint.put(
+                    server.getHostnameOrIp(),
+                    fingerprint == null ? "" : fingerprint
+                );
             }
         }
         return serversAndFingerprint;
@@ -64,25 +75,22 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         return false;
     }
 
-    private String getServerFingerprint(String hostnameOrIp) {
-        String serverKeyFingerprint = "";
-        if (getParameters().isServerKeyFingerprintRequired()) {
-            VdsInstallerSSH sshWrapper = getVdsInstallerSSHInstance();
-            try {
-                serverKeyFingerprint = sshWrapper.getServerKeyFingerprint(hostnameOrIp);
-            } catch (Throwable e) {
-                log.errorFormat("Could not fetch fingerprint of host {0} with message: {1}",
-                        hostnameOrIp,
-                        ExceptionUtils.getMessage(e));
-            } finally {
-                sshWrapper.shutdown();
-            }
+    public String getServerFingerprint(String serverName) {
+        String fingerPrint = null;
+        EngineSSHDialog dialog = getEngineSSHDialog();
+        try {
+            dialog.setHost(serverName);
+            dialog.connect();
+            fingerPrint = dialog.getHostFingerprint();
+        } catch (Throwable e) {
+            log.errorFormat("Could not fetch fingerprint of host {0} with message: {1}",
+                serverName,
+                ExceptionUtils.getMessage(e)
+            );
+        } finally {
+            dialog.disconnect();
         }
-        return serverKeyFingerprint;
-    }
-
-    public VdsInstallerSSH getVdsInstallerSSHInstance() {
-        return new VdsInstallerSSH();
+        return fingerPrint;
     }
 
     public ClusterUtils getClusterUtils() {
