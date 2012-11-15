@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.GetStoragePoolInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetStorageDomainStatsVDSCommand;
@@ -31,7 +29,7 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     protected void ExecuteIrsBrokerCommand() {
         _result = getIrsProxy().getStoragePoolInfo(getParameters().getStoragePoolId().toString());
         ProceedProxyReturnValue();
-        storage_pool sp = ParseStoragePoolInfoResult(_result.mStoragePoolInfo);
+        storage_pool sp = VdsBrokerObjectsBuilder.buildStoragePool(_result.mStoragePoolInfo);
         Guid masterId = Guid.Empty;
         if (_result.mStoragePoolInfo.containsKey("master_uuid")) {
             masterId = new Guid(_result.mStoragePoolInfo.getItem("master_uuid").toString());
@@ -65,25 +63,8 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
         return domainsList;
     }
 
-    private storage_pool ParseStoragePoolInfoResult(XmlRpcStruct xmlRpcStruct) {
-        try {
-
-            return VdsBrokerObjectsBuilder.buildStoragePool(xmlRpcStruct);
-
-        } catch (RuntimeException ex) {
-            log.errorFormat(
-                    "irsBroker::BuildStorageDynamicFromXmlRpcStruct::Failed building Storage dynamic, xmlRpcStruct = {0}",
-                    xmlRpcStruct.toString());
-            IRSErrorException outEx = new IRSErrorException(ex);
-            log.error(outEx);
-            throw outEx;
-        }
-    }
-
     @Override
     protected StatusForXmlRpc getReturnStatus() {
         return _result.mStatus;
     }
-
-    private static Log log = LogFactory.getLog(GetStoragePoolInfoVDSCommand.class);
 }

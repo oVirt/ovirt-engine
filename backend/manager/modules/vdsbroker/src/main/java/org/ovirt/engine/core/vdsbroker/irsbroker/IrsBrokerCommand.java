@@ -309,17 +309,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 && domainInDb.getstatus() != StorageDomainStatus.Locked
                                 && !domainsInVds.contains(domainInDb.getId())) {
                             // domain not attached to pool anymore
-                            TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
-                                    new TransactionMethod<Object>() {
-                                        @Override
-                                        public Object runInTransaction() {
-                                            DbFacade.getInstance()
-                                                    .getStoragePoolIsoMapDao()
-                                                    .remove(new StoragePoolIsoMapId(domainInDb.getId(),
-                                                            _storagePoolId));
-                                            return null;
-                                        }
-                                    });
+                            DbFacade.getInstance()
+                                    .getStoragePoolIsoMapDao()
+                                    .remove(new StoragePoolIsoMapId(domainInDb.getId(),
+                                            _storagePoolId));
                         }
                     }
                 }
@@ -989,7 +982,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         if (returnValue.mStoragePoolInfo.contains(IrsProperties.isoPrefix)) {
                             mIsoPrefix = returnValue.mStoragePoolInfo.getItem(IrsProperties.isoPrefix).toString();
                         }
-                    } catch (java.lang.Exception ex) {
+                    } catch (Exception ex) {
                         log.errorFormat("IrsBroker::IsoPrefix Failed to get IRS statistics.");
                     }
                 }
@@ -1455,7 +1448,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
             synchronized (_lockObject) {
                 if (_vdssInProblem.containsKey(vdsId)) {
-                    for (Guid domainId : new HashSet<Guid>(_vdssInProblem.get(vdsId))) {
+                    for (Guid domainId : _vdssInProblem.get(vdsId)) {
                         DomainRecoveredFromProblem(domainId, vdsId, vdsName);
                     }
                 }
@@ -1607,20 +1600,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 } else {
                     isStartReconstruct = true;
                 }
-            } catch (IRSNetworkException ex) {
-                getVDSReturnValue().setExceptionString(ex.toString());
-                getVDSReturnValue().setExceptionObject(ex);
-                getVDSReturnValue().setVdsError(ex.getVdsError());
-                throw new IRSGenericException("Storage Domain server not found", ex);
             } catch (IRSUnicodeArgumentException ex) {
-                getVDSReturnValue().setExceptionString(ex.toString());
-                getVDSReturnValue().setExceptionObject(ex);
-                getVDSReturnValue().setVdsError(ex.getVdsError());
                 throw new IRSGenericException("UNICODE characters are not supported.", ex);
             } catch (IRSStoragePoolStatusException ex) {
-                getVDSReturnValue().setExceptionString(ex.toString());
-                getVDSReturnValue().setExceptionObject(ex);
-                getVDSReturnValue().setVdsError(ex.getVdsError());
+                throw ex;
+            } catch (IrsOperationFailedNoFailoverException ex) {
                 throw ex;
             } catch (IRSNonOperationalException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
@@ -1631,12 +1615,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     getCurrentIrsProxyData().setCurrentVdsId(Guid.Empty);
                 }
                 failover();
-            } catch (IrsOperationFailedNoFailoverException ex) {
-                getVDSReturnValue().setExceptionString(ex.toString());
-                getVDSReturnValue().setExceptionObject(ex);
-                getVDSReturnValue().setVdsError(ex.getVdsError());
-                logException(ex);
-                getVDSReturnValue().setSucceeded(false);
             } catch (IRSErrorException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
@@ -1650,7 +1628,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
                 if (ex instanceof VDSExceptionBase) {
-                    getVDSReturnValue().setVdsError(((VDSExceptionBase)ex).getVdsError());
+                    getVDSReturnValue().setVdsError(((VDSExceptionBase) ex).getVdsError());
                 }
                 if (ExceptionUtils.getRootCause(ex) != null &&
                         ExceptionUtils.getRootCause(ex) instanceof SocketException) {
@@ -1662,9 +1640,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 // realize what to do in each case:
                 failover();
             } finally {
-                if (_irsProxyData.containsKey(getParameters().getStoragePoolId())) {
-                    getCurrentIrsProxyData().getTriedVdssList().clear();
-                }
+                getCurrentIrsProxyData().getTriedVdssList().clear();
             }
         }
         if (isStartReconstruct) {
@@ -1715,14 +1691,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
      */
     private void logException(Throwable ex) {
         log.errorFormat("IrsBroker::Failed::{0} due to: {1}", getCommandName(), ExceptionUtils.getMessage(ex));
-    }
-
-    protected static Guid[] convertStringGuidArray(String[] idArray) {
-        Guid[] guidArray = new Guid[idArray.length];
-        for (int idx = 0; idx < idArray.length; idx++) {
-            guidArray[idx] = new Guid(idArray[idx]);
-        }
-        return guidArray;
     }
 
     public static Long AssignLongValue(XmlRpcStruct input, String name) {
