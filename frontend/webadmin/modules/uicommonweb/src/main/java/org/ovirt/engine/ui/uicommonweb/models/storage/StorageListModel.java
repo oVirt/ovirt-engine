@@ -1425,6 +1425,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 public void Executed(FrontendActionAsyncResult result) {
                         StorageListModel storageListModel = (StorageListModel) result.getState();
                         StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+                        storageListModel.storageModel = storageModel.getSelectedItem();
                         if (!result.getReturnValue().getSucceeded()) {
                             storageListModel.OnFinish(storageListModel.context, false, storageListModel.storageModel);
                             return;
