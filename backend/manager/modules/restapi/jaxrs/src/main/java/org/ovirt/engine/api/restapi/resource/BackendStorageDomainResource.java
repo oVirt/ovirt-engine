@@ -123,18 +123,20 @@ public class BackendStorageDomainResource extends
         List<LogicalUnit> existingLuns = storageDomain.getStorage().getVolumeGroup().getLogicalUnits();
         List<LogicalUnit> incomingLuns = getIncomingLuns(incoming.getStorage());
         List<LogicalUnit> newLuns = findNewLuns(existingLuns, incomingLuns);
+        boolean overrideLuns = incoming.getStorage().isSetOverrideLuns() ?
+                incoming.getStorage().isOverrideLuns() : false;
         if (!newLuns.isEmpty()) {
             //If there are new LUNs, this means the user wants to extend the storage domain.
             //Supplying a host is necessary for this operation, but not for regular update
             //of storage-domain. So only now is the time for this validation.
             validateParameters(incoming, "host.id|name");
-            addLunsToStorageDomain(incoming, storageType, newLuns);
+            addLunsToStorageDomain(incoming, storageType, newLuns, overrideLuns);
             //Remove the new LUNs from the incoming LUns before update, since they have already been dealt with.
             incomingLuns.removeAll(newLuns);
         }
     }
 
-    private void addLunsToStorageDomain(StorageDomain incoming, StorageType storageType, List<LogicalUnit> newLuns) {
+    private void addLunsToStorageDomain(StorageDomain incoming, StorageType storageType, List<LogicalUnit> newLuns, boolean overrideLuns) {
         for (LogicalUnit lun : newLuns) {
             if (lun.isSetAddress() && lun.isSetTarget()) {
                 storage_server_connections connection = StorageDomainHelper.getConnection(storageType, lun.getAddress(), lun.getTarget(), lun.getUsername(), lun.getPassword(), lun.getPort());
@@ -145,7 +147,7 @@ public class BackendStorageDomainResource extends
 
         refreshVDSM(incoming);
 
-        ExtendSANStorageDomainParameters params = createParameters(guid, newLuns);
+        ExtendSANStorageDomainParameters params = createParameters(guid, newLuns, overrideLuns);
 
         performAction(VdcActionType.ExtendSANStorageDomain, params);
     }
@@ -197,7 +199,7 @@ public class BackendStorageDomainResource extends
                  : null;
     }
 
-    private ExtendSANStorageDomainParameters createParameters(Guid storageDomainId, List<LogicalUnit> newLuns) {
+    private ExtendSANStorageDomainParameters createParameters(Guid storageDomainId, List<LogicalUnit> newLuns, boolean force) {
         ExtendSANStorageDomainParameters params = new ExtendSANStorageDomainParameters();
         params.setStorageDomainId(storageDomainId);
         ArrayList<String> lunIds = new ArrayList<String>();
@@ -205,6 +207,7 @@ public class BackendStorageDomainResource extends
             lunIds.add(newLun.getId());
         }
         params.setLunIds(lunIds);
+        params.setForce(force);
         return params;
     }
 
