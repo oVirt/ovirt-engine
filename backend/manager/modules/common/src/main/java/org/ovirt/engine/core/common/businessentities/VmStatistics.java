@@ -7,21 +7,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatistics> {
     private static final long serialVersionUID = -7480866662740734452L;
 
-    public VmStatistics() {
-    }
-
-    public VmStatistics(Double cpu_sys, Double cpu_user, Double elapsed_time,
-            Integer usage_cpu_percent, Integer usage_mem_percent, Integer usage_network_percent, String disksUsage, Guid vm_guid) {
-        this.cpu_sysField = cpu_sys;
-        this.cpu_userField = cpu_user;
-        this.elapsed_timeField = elapsed_time;
-        this.usage_cpu_percentField = usage_cpu_percent;
-        this.usage_mem_percentField = usage_mem_percent;
-        this.usage_network_percentField = usage_network_percent;
-        this.disksUsage = disksUsage;
-        this.vm_guidField = vm_guid;
-    }
-
     private Double cpu_sysField = 0.0;
 
     @Override
@@ -256,5 +241,4 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     public int compareTo(VmStatistics o) {
         return BusinessEntityGuidComparator.<VmStatistics>newInstance().compare(this,o);
     }
-
 }
