@@ -12,7 +12,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
 @Entity
 @Table(name = "disk_image_dynamic")
@@ -89,10 +88,6 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
 
     public void setactual_size(long size) {
         this.actualSize = size;
-        OnPropertyChanged(new PropertyChangedEventArgs("actual_size"));
-    }
-
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
     }
 
     @Override
