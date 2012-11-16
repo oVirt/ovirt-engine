@@ -196,39 +196,46 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     }
 
     void searchByDiskViewType(Object diskViewType) {
-        String diskTypePostfix = diskViewType != null ?
-                ((DiskStorageType) diskViewType).name().toLowerCase() + constants.space() : null;
-        String diskType = diskTypePostfix != null ?
-                constants.diskTypeSearchPrefix() + diskTypePostfix : constants.empty();
+        final String disksSearchPrefix = "Disks:"; //$NON-NLS-1$
+        final String diskTypeSearchPrefix = "disk_type = "; //$NON-NLS-1$
+        final String searchConjunctionAnd = " all "; //$NON-NLS-1$
+        final String searchRegexAll = "(.)*"; //$NON-NLS-1$
+        final String space = " "; //$NON-NLS-1$
+        final String empty = ""; //$NON-NLS-1$
 
-        String searchConjunction = !diskType.equals(constants.empty()) ?
-                constants.searchConjunctionAnd() : constants.empty();
+        String diskTypePostfix = diskViewType != null ?
+                ((DiskStorageType) diskViewType).name().toLowerCase() + space : null;
+        String diskType = diskTypePostfix != null ?
+                diskTypeSearchPrefix + diskTypePostfix : empty;
+
+        String searchConjunction = !diskType.equals(empty) ?
+                searchConjunctionAnd : empty;
 
         String searchStringPrefixRaw = commonModel.getSearchStringPrefix().replaceAll(
-                constants.diskTypeSearchPrefix() + constants.searchRegexAll(), constants.empty()).replaceAll(
-                constants.searchConjunctionAnd() + constants.searchRegexAll(), constants.empty()).trim();
+                diskTypeSearchPrefix + searchRegexAll, empty).replaceAll(
+                searchConjunctionAnd + searchRegexAll, empty).trim();
 
         String searchStringPrefix;
-        if (diskType.equals(constants.empty())) {
+        if (diskType.equals(empty)) {
             searchStringPrefix = searchStringPrefixRaw;
         }
-        else if (searchStringPrefixRaw.equals(constants.disksSearchPrefix())) {
-            searchStringPrefix = constants.disksSearchPrefix() + constants.space() + diskType;
+        else if (searchStringPrefixRaw.equals(disksSearchPrefix)) {
+            searchStringPrefix = disksSearchPrefix + space + diskType;
         }
         else {
             searchStringPrefix = searchStringPrefixRaw.isEmpty() ?
-                    constants.disksSearchPrefix() + constants.space() + diskType :
+                    disksSearchPrefix + space + diskType :
                     searchStringPrefixRaw + searchConjunction + diskType;
         }
 
         String searchString;
         if (!commonModel.getSearchString().contains(":")) { //$NON-NLS-1$
             searchString = searchStringPrefix.isEmpty() ?
-                    constants.disksSearchPrefix() + constants.space() + commonModel.getSearchString() :
-                    commonModel.getSearchString().replace(constants.disksSearchPrefix(), constants.empty());
+                    disksSearchPrefix + space + commonModel.getSearchString() :
+                    commonModel.getSearchString().replace(disksSearchPrefix, empty);
         }
         else {
-            searchString = searchStringPrefix.isEmpty() ? constants.disksSearchPrefix() : constants.empty();
+            searchString = searchStringPrefix.isEmpty() ? disksSearchPrefix : empty;
         }
 
         commonModel.setSearchStringPrefix(searchStringPrefix);

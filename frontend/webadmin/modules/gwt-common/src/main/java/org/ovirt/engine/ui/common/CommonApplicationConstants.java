@@ -1004,18 +1004,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("* It is recommended to keep the default values in the fields below unchanged.")
     String advancedOptionsLabel();
 
-    @DefaultStringValue("disk_type = ")
-    String diskTypeSearchPrefix();
-
-    @DefaultStringValue("Disks:")
-    String disksSearchPrefix();
-
-    @DefaultStringValue("(.)*")
-    String searchRegexAll();
-
-    @DefaultStringValue(" and ")
-    String searchConjunctionAnd();
-
     @DefaultStringValue("Bootable")
     String bootableDisk();
 
