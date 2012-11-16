@@ -195,9 +195,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public void setvm_name(String value) {
-        if (!StringHelper.EqOp(this.mVmStatic.getvm_name(), value)) {
-            this.mVmStatic.setvm_name(value);
-        }
+        this.mVmStatic.setvm_name(value);
     }
 
     public int getmem_size_mb() {
@@ -424,9 +422,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public void setiso_path(String value) {
-        if (!StringHelper.EqOp(mVmStatic.getiso_path(), value)) {
-            mVmStatic.setiso_path(value);
-        }
+        mVmStatic.setiso_path(value);
     }
 
     public OriginType getorigin() {
@@ -469,9 +465,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public void setstatus(VMStatus value) {
-        if (this.mVmDynamic.getstatus() != value) {
-            this.mVmDynamic.setstatus(value);
-        }
+        this.mVmDynamic.setstatus(value);
     }
 
     public String getvm_ip() {
