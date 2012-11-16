@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
@@ -198,7 +197,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     public void setvm_name(String value) {
         if (!StringHelper.EqOp(this.mVmStatic.getvm_name(), value)) {
             this.mVmStatic.setvm_name(value);
-            OnPropertyChanged(new PropertyChangedEventArgs("vm_name"));
         }
     }
 
@@ -212,7 +210,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvm_mem_size_mb(int value) {
         this.mVmStatic.setmem_size_mb(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vm_mem_size_mb"));
     }
 
     public String getvm_domain() {
@@ -221,7 +218,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvm_domain(String value) {
         this.mVmStatic.setdomain(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vm_domain"));
     }
 
     public VmOsType getos() {
@@ -234,7 +230,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvm_os(VmOsType value) {
         this.mVmStatic.setos(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vm_os"));
     }
 
     public Date getvm_creation_date() {
@@ -287,7 +282,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvm_description(String value) {
         this.mVmStatic.setdescription(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vm_description"));
     }
 
     public int getnum_of_monitors() {
@@ -296,7 +290,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setnum_of_monitors(int value) {
         this.mVmStatic.setnum_of_monitors(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("num_of_monitors"));
     }
 
     public boolean getAllowConsoleReconnect() {
@@ -305,7 +298,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setAllowConsoleReconnect(boolean value) {
         this.mVmStatic.setAllowConsoleReconnect(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("allowConsoleReconnect"));
     }
 
     public boolean getis_initialized() {
@@ -314,7 +306,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setis_initialized(boolean value) {
         this.mVmStatic.setis_initialized(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("is_initialized"));
     }
 
     public boolean getis_auto_suspend() {
@@ -323,7 +314,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setis_auto_suspend(boolean value) {
         this.mVmStatic.setis_auto_suspend(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("is_auto_suspend"));
     }
 
     public int getnum_of_cpus() {
@@ -347,8 +337,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setnum_of_sockets(int value) {
         this.mVmStatic.setnum_of_sockets(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("num_of_sockets"));
-        OnPropertyChanged(new PropertyChangedEventArgs("num_of_cpus"));
     }
 
     public int getcpu_per_socket() {
@@ -357,8 +345,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setcpu_per_socket(int value) {
         this.mVmStatic.setcpu_per_socket(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("cpu_per_socket"));
-        OnPropertyChanged(new PropertyChangedEventArgs("num_of_cpus"));
     }
 
     public UsbPolicy getusb_policy() {
@@ -367,7 +353,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setusb_policy(UsbPolicy value) {
         mVmStatic.setusb_policy(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("usb_policy"));
     }
 
     public boolean getauto_startup() {
@@ -376,7 +361,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setauto_startup(boolean value) {
         mVmStatic.setauto_startup(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("auto_startup"));
     }
 
     public NGuid getdedicated_vm_for_vds() {
@@ -385,7 +369,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setdedicated_vm_for_vds(NGuid value) {
         mVmStatic.setdedicated_vm_for_vds(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("dedicated_vm_for_vds"));
     }
 
     public Guid getvds_group_id() {
@@ -394,7 +377,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvds_group_id(Guid value) {
         this.mVmStatic.setvds_group_id(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vds_group_id"));
     }
 
     public String gettime_zone() {
@@ -415,12 +397,10 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setSmartcardEnabled(boolean isSmartcardEnabled) {
         mVmStatic.setSmartcardEnabled(isSmartcardEnabled);
-        OnPropertyChanged(new PropertyChangedEventArgs("smartcardEnabled"));
     }
 
     public void setis_stateless(boolean value) {
         mVmStatic.setis_stateless(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("is_stateless"));
     }
 
     public DisplayType getdefault_display_type() {
@@ -429,7 +409,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setdefault_display_type(DisplayType value) {
         mVmStatic.setdefault_display_type(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("default_display_type"));
     }
 
     public int getpriority() {
@@ -438,8 +417,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setpriority(int value) {
         mVmStatic.setpriority(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("priority"));
-
     }
 
     public String getiso_path() {
@@ -449,7 +426,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     public void setiso_path(String value) {
         if (!StringHelper.EqOp(mVmStatic.getiso_path(), value)) {
             mVmStatic.setiso_path(value);
-            OnPropertyChanged(new PropertyChangedEventArgs("iso_path"));
         }
     }
 
@@ -495,7 +471,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     public void setstatus(VMStatus value) {
         if (this.mVmDynamic.getstatus() != value) {
             this.mVmDynamic.setstatus(value);
-            OnPropertyChanged(new PropertyChangedEventArgs("status"));
         }
     }
 
@@ -505,7 +480,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvm_ip(String value) {
         this.mVmDynamic.setvm_ip(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vm_ip"));
     }
 
     public String getvm_host() {
@@ -555,7 +529,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setguest_cur_user_name(String value) {
         this.mVmDynamic.setguest_cur_user_name(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("guest_cur_user_name"));
     }
 
     public Date getguest_last_login_time() {
@@ -604,7 +577,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setrun_on_vds(NGuid value) {
         this.mVmDynamic.setrun_on_vds(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("run_on_vds"));
     }
 
     public NGuid getmigrating_to_vds() {
@@ -621,7 +593,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setapp_list(String value) {
         this.mVmDynamic.setapp_list(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("app_list"));
     }
 
     public Integer getdisplay() {
@@ -654,7 +625,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setdisplay_type(DisplayType value) {
         this.mVmDynamic.setdisplay_type(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("display_type"));
     }
 
     public Boolean getkvm_enable() {
@@ -735,7 +705,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setguest_requested_memory(Integer value) {
         this.mVmDynamic.setguest_requested_memory(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("guest_requested_memory"));
     }
 
     public String getHash() {
@@ -776,7 +745,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setRoundedElapsedTime(Double value) {
         this.mVmStatistics.setRoundedElapsedTime(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("roundedElapsedTime"));
     }
 
     public Integer getusage_network_percent() {
@@ -785,7 +753,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setusage_network_percent(Integer value) {
         this.mVmStatistics.setusage_network_percent(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("usage_network_percent"));
     }
 
     public Integer getusage_mem_percent() {
@@ -794,7 +761,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setusage_mem_percent(Integer value) {
         this.mVmStatistics.setusage_mem_percent(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("usage_mem_percent"));
     }
 
     public Integer getusage_cpu_percent() {
@@ -803,7 +769,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setusage_cpu_percent(Integer value) {
         this.mVmStatistics.setusage_cpu_percent(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("usage_cpu_percent"));
     }
 
     public Guid getvmt_guid() {
@@ -812,7 +777,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvmt_guid(Guid value) {
         this.mVmStatic.setvmt_guid(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("vmt_guid"));
     }
 
     private String vmt_nameField;
@@ -823,7 +787,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvmt_name(String value) {
         this.vmt_nameField = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("vmt_name"));
     }
 
     private int vmt_mem_size_mbField;
@@ -925,7 +888,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     public void setvds_group_compatibility_version(Version value) {
         if (Version.OpInequality(getvds_group_compatibility_version(), value)) {
             this.vds_group_compatibility_versionField = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("vds_group_compatibility_version"));
         }
     }
 
@@ -937,7 +899,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setvds_group_name(String value) {
         this.vds_group_nameField = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("vds_group_name"));
     }
 
     private String vds_group_descriptionField;
@@ -1064,10 +1025,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.setImages(value);
     }
 
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        // Purposely empty
-    }
-
     private Map<Guid, Disk> mDiskMap = new HashMap<Guid, Disk>();
 
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanizm
@@ -1170,7 +1127,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public void setDiskSize(double value) {
-        OnPropertyChanged(new PropertyChangedEventArgs("DiskSize"));
         _diskSize = value;
     }
 
@@ -1229,7 +1185,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setrun_on_vds_name(String value) {
         run_on_vds_nameField = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("run_on_vds_name"));
     }
 
     public Map<Guid, Disk> getDiskMap() {
@@ -1388,7 +1343,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setVmPoolId(NGuid value) {
         mVmPoolId = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("VmPoolId"));
     }
 
     /**
@@ -1490,7 +1444,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setIsConfigured(boolean value) {
         _IsConfigured = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("IsConfigured"));
     }
 
     public ArrayList<DiskImage> getDiskList() {
@@ -1551,6 +1504,5 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setBalloonEnabled(boolean isBallonEnabled) {
         balloonEnabled = isBallonEnabled;
-        OnPropertyChanged(new PropertyChangedEventArgs("is_balloon_enabled"));
     }
 }
