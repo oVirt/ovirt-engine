@@ -229,7 +229,7 @@ public class VdsInstaller implements IVdsInstallerCallback {
             }
         }
 
-        log.infoFormat("Script ended, result is {1}", fRes ? "Success" : "Failed");
+        log.infoFormat("Script ended, result is {0}", fRes ? "Success" : "Failed");
         return fRes;
     }
 
