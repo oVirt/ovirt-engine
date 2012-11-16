@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
 
 @Entity
@@ -281,13 +280,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
 
     public void setvds_group_name(String value) {
         vdsGroupName = value;
-    }
-
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        /* if (PropertyChanged != null) */
-        {
-            /* PropertyChanged(this, e); */
-        }
     }
 
     /**
