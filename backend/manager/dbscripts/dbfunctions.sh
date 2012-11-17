@@ -140,6 +140,27 @@ execute_commands_in_dir() {
     done
 }
 
+run_required_scripts() {
+local script=${1}
+# check for helper functions that the script needs
+# source scripts must be defined in the first lines of the script
+while read line; do
+expr=$(echo $line | cut -d " " -f1 |grep "\-\-#source")
+if [[ -z "${expr}" ]] ; then
+   break;
+else
+   sql=$(echo $line | cut -d " " -f2)
+   valid=$(echo $sql | grep "_sp.sql")
+   if [[ -z "${valid}" ]]; then
+      echo "invalid source file $sql in $file , source files must end with '_sp.sql'"
+      exit 1
+   fi
+   echo "Running helper functions from $sql for $file "
+   execute_file $sql ${DATABASE} ${SERVERNAME} ${PORT}  > /dev/null
+fi
+done < "$script"
+}
+
 run_file() {
    local execFile=${1}
    isShellScript=$(file $execFile | grep "shell" | wc -l)
@@ -286,6 +307,7 @@ run_upgrade_files() {
                        run_pre_upgrade
                        updated=1
                     fi
+                    run_required_scripts $file
                     run_file $file
                     code=$?
                     if [ $code -eq 0 ]; then

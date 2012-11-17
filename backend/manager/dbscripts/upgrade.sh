@@ -14,6 +14,16 @@
 #   When using -f <version> all scripts with version greater than the given one will
 #   be re-executed , for example -f 0300100 will execute all scripts from 03000110
 #   and forth
+# Since all views $ SP are dropped before upgrade and restored after all upgrade
+# script were executed. We may have cases in which we need to run some helper
+# functions before the upgrade script runs.
+# In such a case and when those functions can not be put in the common_sp.sql
+# because they are dependant on objects created by an upgrade script, we can put
+# one or several lines at the begining of our upgrade file:
+# --#source <sql_file_name>_sp.sql
+# for example , putting in an upgrade script
+# --#source myfunctions_sp.sql
+# will run myfunctions_sp.sql before the upgrade script is executed.
 #
 # Each script must be re-entrant (i.e. each script checks if each step is needed
 # to be executed or not, so we can run the same script many times without any
