@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
@@ -109,14 +108,14 @@ public abstract class OvfReader implements IOvfBuilder {
                 image.setvm_snapshot_id(new Guid(node.Attributes.get("ovf:vm_snapshot_id").getValue()));
             }
 
-            if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:size").getValue())) {
+            if (!StringUtils.isEmpty(node.Attributes.get("ovf:size").getValue())) {
                 image.setsize(GigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:size").getValue())));
             }
-            if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:actual_size").getValue())) {
+            if (!StringUtils.isEmpty(node.Attributes.get("ovf:actual_size").getValue())) {
                 image.setactual_size(GigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:actual_size").getValue())));
             }
             if (node.Attributes.get("ovf:volume-format") != null) {
-                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:volume-format").getValue())) {
+                if (!StringUtils.isEmpty(node.Attributes.get("ovf:volume-format").getValue())) {
                     image.setvolume_format(VolumeFormat.valueOf(node.Attributes.get("ovf:volume-format").getValue()));
                 } else {
                     image.setvolume_format(VolumeFormat.Unassigned);
@@ -126,7 +125,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 image.setvolume_format(VolumeFormat.Unassigned);
             }
             if (node.Attributes.get("ovf:volume-type") != null) {
-                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:volume-type").getValue())) {
+                if (!StringUtils.isEmpty(node.Attributes.get("ovf:volume-type").getValue())) {
                     image.setvolume_type(VolumeType.valueOf(node.Attributes.get("ovf:volume-type").getValue()));
                 } else {
                     image.setvolume_type(VolumeType.Unassigned);
@@ -136,7 +135,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 image.setvolume_type(VolumeType.Unassigned);
             }
             if (node.Attributes.get("ovf:disk-interface") != null) {
-                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:disk-interface").getValue())) {
+                if (!StringUtils.isEmpty(node.Attributes.get("ovf:disk-interface").getValue())) {
                     image.setDiskInterface(DiskInterface.valueOf(node.Attributes.get("ovf:disk-interface").getValue()));
                 }
             }
@@ -144,24 +143,24 @@ public abstract class OvfReader implements IOvfBuilder {
                 image.setDiskInterface(DiskInterface.IDE);
             }
             if (node.Attributes.get("ovf:boot") != null) {
-                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:boot").getValue())) {
+                if (!StringUtils.isEmpty(node.Attributes.get("ovf:boot").getValue())) {
                     image.setBoot(Boolean.parseBoolean(node.Attributes.get("ovf:boot").getValue()));
                 }
             }
             if (node.Attributes.get("ovf:wipe-after-delete") != null) {
-                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:wipe-after-delete").getValue())) {
+                if (!StringUtils.isEmpty(node.Attributes.get("ovf:wipe-after-delete").getValue())) {
                     image.setWipeAfterDelete(Boolean.parseBoolean(node.Attributes.get("ovf:wipe-after-delete")
                             .getValue()));
                 }
             }
             if (node.Attributes.get("ovf:disk-alias") != null) {
-                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:disk-alias").getValue())) {
+                if (!StringUtils.isEmpty(node.Attributes.get("ovf:disk-alias").getValue())) {
                     image.setDiskAlias(String.valueOf(node.Attributes.get("ovf:disk-alias")
                             .getValue()));
                 }
             }
             if (node.Attributes.get("ovf:disk-description") != null) {
-                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:disk-description").getValue())) {
+                if (!StringUtils.isEmpty(node.Attributes.get("ovf:disk-description").getValue())) {
                     image.setDiskDescription(String.valueOf(node.Attributes.get("ovf:disk-description")
                             .getValue()));
                 }
@@ -185,52 +184,52 @@ public abstract class OvfReader implements IOvfBuilder {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId(deviceId, vmBase.getId()));
         if (node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS) != null
-                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS).InnerText)) {
+                && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS).InnerText)) {
             vmDevice.setAddress(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS).InnerText));
         } else {
             vmDevice.setAddress("");
         }
         if (node.SelectSingleNode(OvfProperties.VMD_ALIAS, _xmlNS) != null
-                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_ALIAS, _xmlNS).InnerText)) {
+                && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_ALIAS, _xmlNS).InnerText)) {
             vmDevice.setAlias(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_ALIAS, _xmlNS).InnerText));
         } else {
             vmDevice.setAlias("");
         }
         XmlNode specParamsNode = node.SelectSingleNode(OvfProperties.VMD_SPEC_PARAMS, _xmlNS);
         if (specParamsNode != null
-                && !StringHelper.isNullOrEmpty(specParamsNode.InnerText)) {
+                && !StringUtils.isEmpty(specParamsNode.InnerText)) {
             vmDevice.setSpecParams(getMapNode(specParamsNode));
         } else {
             // Empty map
             vmDevice.setSpecParams(Collections.<String,Object>emptyMap());
         }
         if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
-                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
+                && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
             vmDevice.setType(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText));
         } else {
             int resourceType = getResourceType(node, vmDevice, OvfProperties.VMD_RESOURCE_TYPE);
             vmDevice.setType(VmDeviceType.getoVirtDevice(resourceType).getName());
         }
         if (node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS) != null
-                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText)) {
+                && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText)) {
             vmDevice.setDevice(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText));
         } else {
             setDeviceByResource(node, vmDevice);
         }
         if (node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS) != null
-                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText)) {
+                && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText)) {
             vmDevice.setBootOrder(Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_BOOT_ORDER, _xmlNS).InnerText));
         } else {
             vmDevice.setBootOrder(0);
         }
         if (node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS) != null
-                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS).InnerText)) {
+                && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS).InnerText)) {
             vmDevice.setIsPlugged(Boolean.valueOf(node.SelectSingleNode(OvfProperties.VMD_IS_PLUGGED, _xmlNS).InnerText));
         } else {
             vmDevice.setIsPlugged(Boolean.TRUE);
         }
         if (node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS) != null
-                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText)) {
+                && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText)) {
             vmDevice.setIsReadOnly(Boolean.valueOf(node.SelectSingleNode(OvfProperties.VMD_IS_READONLY, _xmlNS).InnerText));
         } else {
             vmDevice.setIsReadOnly(Boolean.FALSE);
@@ -318,28 +317,28 @@ public abstract class OvfReader implements IOvfBuilder {
 
         node = content.SelectSingleNode("default_boot_sequence");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
                 vmBase.setdefault_boot_sequence(BootSequence.forValue(Integer.parseInt(node.InnerText)));
             }
         }
 
         node = content.SelectSingleNode("initrd_url");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
                 vmBase.setinitrd_url((node.InnerText));
             }
         }
 
         node = content.SelectSingleNode("kernel_url");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
                 vmBase.setkernel_url((node.InnerText));
             }
         }
 
         node = content.SelectSingleNode("kernel_params");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
                 vmBase.setkernel_params((node.InnerText));
             }
         }
@@ -348,34 +347,34 @@ public abstract class OvfReader implements IOvfBuilder {
         for (XmlNode section : list) {
             String value = section.Attributes.get("xsi:type").getValue();
 
-            if (StringHelper.EqOp(value, "ovf:OperatingSystemSection_Type")) {
+            if ("ovf:OperatingSystemSection_Type".equals(value)) {
                 ReadOsSection(section);
 
             }
-            else if (StringHelper.EqOp(value, "ovf:VirtualHardwareSection_Type")) {
+            else if ("ovf:VirtualHardwareSection_Type".equals(value)) {
                 ReadHardwareSection(section);
-            } else if (StringUtils.equals(value, "ovf:SnapshotsSection_Type")) {
+            } else if ("ovf:SnapshotsSection_Type".equals(value)) {
                 readSnapshotsSection(section);
             }
         }
 
         node = content.SelectSingleNode("Origin");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
                 vmBase.setorigin(OriginType.forValue(Integer.parseInt(node.InnerText)));
             }
         }
 
         node = content.SelectSingleNode("VmType");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
                 vmBase.setvm_type(VmType.forValue(Integer.parseInt(node.InnerText)));
             }
         }
 
         node = content.SelectSingleNode("IsSmartcardEnabled");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
                 vmBase.setSmartcardEnabled(Boolean.parseBoolean(node.InnerText));
             }
         }
@@ -447,7 +446,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
     private int getResourceType(XmlNode node, VmDevice vmDevice, String resource) {
         if (node.SelectSingleNode(resource, _xmlNS) != null
-                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(resource, _xmlNS).InnerText)) {
+                && !StringUtils.isEmpty(node.SelectSingleNode(resource, _xmlNS).InnerText)) {
             return Integer.valueOf(node.SelectSingleNode(resource, _xmlNS).InnerText);
         }
         return -1;
@@ -461,7 +460,7 @@ public abstract class OvfReader implements IOvfBuilder {
             if (Integer.valueOf(OvfHardware.Monitor) == resourceType) {
                 // get number of monitors from VirtualQuantity in OVF
                 if (node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS) != null
-                        && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY,
+                        && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY,
                                 _xmlNS).InnerText)) {
                     int virtualQuantity =
                             Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).InnerText);
