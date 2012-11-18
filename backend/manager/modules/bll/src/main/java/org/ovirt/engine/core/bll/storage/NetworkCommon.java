@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.NotImplementedException;
@@ -8,6 +11,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 @CustomLogFields({ @CustomLogField("NetworkName") })
 public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends StorageHandlingCommandBase<T> {
@@ -60,5 +65,35 @@ public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends St
             }
         }
         return mtuSupported;
+    }
+
+    protected boolean validateVlanId(List<Network> networks) {
+        if (getParameters().getNetwork().getvlan_id() != null) {
+            if (!isVlanInRange(getParameters().getNetwork().getvlan_id())) {
+                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_OUT_OF_RANGE);
+                return false;
+            }
+
+            else if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
+                @Override
+                public boolean eval(Network n) {
+                    if (n.getvlan_id() != null) {
+                        return n.getvlan_id().equals(getParameters().getNetwork().getvlan_id())
+                                && n.getstorage_pool_id().equals(getParameters().getNetwork().getstorage_pool_id())
+                                && !n.getId().equals(getParameters().getNetwork().getId());
+                    }
+                    return false;
+                }
+            })) {
+                addCanDoActionMessage(String.format("$vlanId %d", getParameters().getNetwork().getvlan_id()));
+                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isVlanInRange(int vlanId) {
+        return (vlanId >= 0 && vlanId <= 4095);
     }
 }

@@ -69,32 +69,11 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             return false;
         }
 
-        if (getParameters().getNetwork().getvlan_id() != null) {
-            if (!IsVlanInRange(getParameters().getNetwork().getvlan_id())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_OUT_OF_RANGE);
-                return false;
-            }
-            else if (null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
-                @Override
-                public boolean eval(Network n) {
-                    if (n.getvlan_id() != null) {
-                        return n.getvlan_id().equals(getParameters().getNetwork().getvlan_id())
-                                && n.getstorage_pool_id().equals(getParameters().getNetwork().getstorage_pool_id());
-                    }
-                    return false;
-                }
-            })) {
-                addCanDoActionMessage(String.format("$vlanId %d", getParameters().getNetwork().getvlan_id()));
-                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
-                return false;
-            }
+        if (!validateVlanId(all)) {
+            return false;
         }
 
         return true;
-    }
-
-    public static boolean IsVlanInRange(int vlanId) {
-        return (vlanId >= 0 && vlanId <= 4095);
     }
 
     @Override
