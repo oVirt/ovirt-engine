@@ -207,7 +207,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
             vmDevice.setType(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText));
         } else {
-            int resourceType = getResourceType(node, vmDevice, OvfProperties.VMD_RESOURCE_TYPE);
+            int resourceType = getResourceType(node, OvfProperties.VMD_RESOURCE_TYPE);
             vmDevice.setType(VmDeviceType.getoVirtDevice(resourceType).getName());
         }
         if (node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS) != null
@@ -444,7 +444,7 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
-    private int getResourceType(XmlNode node, VmDevice vmDevice, String resource) {
+    private int getResourceType(XmlNode node, String resource) {
         if (node.SelectSingleNode(resource, _xmlNS) != null
                 && !StringUtils.isEmpty(node.SelectSingleNode(resource, _xmlNS).InnerText)) {
             return Integer.valueOf(node.SelectSingleNode(resource, _xmlNS).InnerText);
@@ -453,8 +453,8 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void setDeviceByResource(XmlNode node, VmDevice vmDevice) {
-        int resourceType = getResourceType(node, vmDevice, OvfProperties.VMD_RESOURCE_TYPE);
-        int resourceSubType = getResourceType(node, vmDevice, OvfProperties.VMD_SUB_RESOURCE_TYPE);
+        int resourceType = getResourceType(node, OvfProperties.VMD_RESOURCE_TYPE);
+        int resourceSubType = getResourceType(node, OvfProperties.VMD_SUB_RESOURCE_TYPE);
         if (resourceSubType == -1) {
             // we need special handling for Monitor to define it as vnc or spice
             if (Integer.valueOf(OvfHardware.Monitor) == resourceType) {
