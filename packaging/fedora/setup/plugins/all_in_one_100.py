@@ -269,7 +269,8 @@ def createHost():
         raise Exception(ERROR_CREATE_LOCAL_HOST)
 
 def waitForHostUp():
-    utils.retry(isHostUp, tries=20, timeout=150, sleep=5)
+    # We will wait for 10 minutes for host to start. We sample the status each 5 seconds.
+    utils.retry(isHostUp, tries=120, timeout=600, sleep=5)
 
 def isHostUp():
     logging.debug("Waiting for host to become operational")
