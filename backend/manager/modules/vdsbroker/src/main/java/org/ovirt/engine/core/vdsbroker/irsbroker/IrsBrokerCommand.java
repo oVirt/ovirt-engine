@@ -550,7 +550,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             _isSpmStartCalled = false;
             String returnValue = null;
             Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
-            mCurrentVdsId = null;
             storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
 
             if (storagePool == null) {
@@ -559,6 +558,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
 
             List<VDS> prioritizedVdsInPool = GetPrioritizedVdsInPool();
+            mCurrentVdsId = null;
 
             // If VDS is in initialize status, wait for it to be up (or until
             // configurable timeout is reached)
