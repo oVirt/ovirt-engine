@@ -435,7 +435,7 @@ public abstract class OvfReader implements IOvfBuilder {
         for (XmlNode node : list) {
             DiskImage image = new DiskImage();
             image.setImageId(new Guid(node.Attributes.get("ovf:id").getValue()));
-            image.setimage_group_id(OvfParser.GetImageGrupIdFromImageFile(node.Attributes.get("ovf:href").getValue()));
+            image.setId(OvfParser.GetImageGrupIdFromImageFile(node.Attributes.get("ovf:href").getValue()));
             // Default values:
             image.setactive(true);
             image.setimageStatus(ImageStatus.OK);
