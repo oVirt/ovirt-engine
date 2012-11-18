@@ -85,6 +85,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
     @Override
     public void BuildNetwork() {
+        // No implementation - networks aren't read from the OVF.
     }
 
     protected long GigabyteToBytes(long gb) {
@@ -382,8 +383,8 @@ public abstract class OvfReader implements IOvfBuilder {
         readGeneralData(content);
     }
 
-    protected void readSnapshotsSection(XmlNode section) {
-
+    protected void readSnapshotsSection(@SuppressWarnings("unused") XmlNode section) {
+        // The snapshot section only has meaning for VMs, and is overridden in OvfVmReader.
     }
 
     protected abstract void readGeneralData(XmlNode content);
