@@ -10,9 +10,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -430,7 +430,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             jobProperties = super.getJobMessageProperties();
             jobProperties.put("sourcesd", sourceSDName);
             jobProperties.put("targetsd", getStorageDomainName());
-            jobProperties.put("action", getParameters().getOperation().name());
+            if (ImageOperation.Move == getParameters().getOperation()) {
+                jobProperties.put("action", "Moving");
+            } else {
+                jobProperties.put("action", "Copying");
+            }
         }
         return jobProperties;
     }
