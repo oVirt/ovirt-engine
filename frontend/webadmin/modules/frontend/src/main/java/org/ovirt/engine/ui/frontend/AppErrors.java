@@ -1009,7 +1009,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("In order to complete the operation a new master Storage Domain needs to be elected, which requires at least one active Host in the Data Center.\n-Please make sure one of the Hosts is active in the Data Center first.")
     String ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE();
 
-    @DefaultStringValue("VLAN ID must be a number between 2 and 4905")
+    @DefaultStringValue("VLAN ID must be a number between 0 and 4905")
     String NETWORK_VLAN_OUT_OF_RANGE();
 
     @DefaultStringValue("Cannot attach Storage Domain.\n-Please attach Data Domain to the Data Center first.")
@@ -1129,7 +1129,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot add a Network Interface when VM is not Down, Up or Image-Locked.")
     String NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED();
 
-    @DefaultStringValue("The specified VLAN ID is already in use.")
+    @DefaultStringValue("The specified VLAN ID (${vlanId}) is already in use.")
     String NETWORK_VLAN_IN_USE();
 
     @DefaultStringValue("Cluster has Networks that doesn't exist in the Data Center.\n-Please remove those Networks first.")

@@ -84,6 +84,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
                     return false;
                 }
             })) {
+                addCanDoActionMessage(String.format("$vlanId %d", getParameters().getNetwork().getvlan_id()));
                 addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
                 return false;
             }
