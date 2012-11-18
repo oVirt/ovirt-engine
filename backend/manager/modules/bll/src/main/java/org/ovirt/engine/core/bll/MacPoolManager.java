@@ -207,5 +207,11 @@ public class MacPoolManager {
         }
     }
 
+    public void freeMacs(List<String> macs) {
+        for (String mac : macs) {
+            freeMac(mac);
+        }
+    }
+
     private static Log log = LogFactory.getLog(MacPoolManager.class);
 }

@@ -91,6 +91,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private List<DiskImage> imageList;
     private List<Guid> diskGuidList = new ArrayList<Guid>();
     private List<Guid> imageGuidList = new ArrayList<Guid>();
+    private List<String> macsAdded = new ArrayList<String>();
 
     public ImportVmCommand(ImportVmParameters parameters) {
         super(parameters);
@@ -485,15 +486,21 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void executeCommand() {
-        addVmToDb();
-        VM vm = getVm();
-        // if there aren't any images- we can just perform the end
-        // vm related ops
-        if (!hasSnappableDisks(vm)) {
-            endVmRelatedOps();
-        } else {
-            processImages();
+        try {
+            addVmToDb();
+            VM vm = getVm();
+            // if there aren't any images- we can just perform the end
+            // vm related ops
+            if (!hasSnappableDisks(vm)) {
+                endVmRelatedOps();
+            } else {
+                processImages();
+            }
+        } catch (RuntimeException e) {
+            MacPoolManager.getInstance().freeMacs(macsAdded);
+            throw e;
         }
+
         setSucceeded(true);
     }
 
@@ -836,6 +843,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
 
             vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity());
+            macsAdded.add(iface.getMacAddress());
         }
 
         auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
