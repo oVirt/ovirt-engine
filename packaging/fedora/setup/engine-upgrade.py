@@ -70,8 +70,8 @@ UNSUPPORTED_VERSION = "2.2"
 
 #MSGS
 MSG_TASKS_COMPENSATIONS = "\n\nSystem Tasks:\n%s\n%s\n\n"
-MSG_STOP_RUNNING_TASKS = "\nInfo: There are following running system tasks \
-found in the manager: %s%sWould you like to proceed and try to stop tasks automatically?\
+MSG_STOP_RUNNING_TASKS = "\nInfo: The following tasks have been found running \
+in the system: %s%sWould you like to proceed and try to stop tasks automatically?\
 \n(Answering 'no' will stop the upgrade)"
 MSG_RUNNING_TASKS = "Checking active system tasks"
 MSG_TASKS_STILL_RUNNING = "\nThere are still running tasks: %sPlease make sure \
