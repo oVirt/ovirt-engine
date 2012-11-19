@@ -261,6 +261,8 @@ public class VmDeviceUtils {
             specParams.put(VdsProperties.Path, isoPath);
         } else if (!StringUtils.isEmpty(srcCdPath)) { // get the path from the source device spec params
             specParams.put(VdsProperties.Path, srcCdPath);
+        } else {
+            specParams.put(VdsProperties.Path, "");
         }
     }
 
@@ -411,7 +413,8 @@ public class VmDeviceUtils {
         List<VmDevice> cdList = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(oldVmBase.getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName());
         if (cdList.size() > 0){ // this is done only for safety, each VM must have at least an Empty CD
             VmDevice cd = cdList.get(0); // only one managed CD is currently supported.
-            cd.getSpecParams().put(VdsProperties.Path, newVmBase.getiso_path());
+            cd.getSpecParams()
+                    .put(VdsProperties.Path, (newVmBase.getiso_path() == null) ? "" : newVmBase.getiso_path());
             dao.update(cd);
         }
     }
