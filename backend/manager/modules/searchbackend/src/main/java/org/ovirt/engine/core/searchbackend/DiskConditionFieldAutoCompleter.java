@@ -83,6 +83,9 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
             return new EnumValueAutoCompleter(ImageStatus.class);
         } else if ("DISK_TYPE".equals(fieldName)) {
             return new EnumValueAutoCompleter(DiskStorageType.class);
+        } else if ("BOOTABLE".equals(fieldName) ||
+                   "SHAREABLE".equals(fieldName) ) {
+            return new BitValueAutoCompleter();
         }
         return null;
     }
