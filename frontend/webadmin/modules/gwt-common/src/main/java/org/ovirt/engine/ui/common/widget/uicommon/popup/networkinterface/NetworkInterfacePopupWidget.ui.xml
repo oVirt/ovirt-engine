@@ -12,13 +12,21 @@
 			float: right;
 		}
 
+        .expanderContent {
+            padding-left: 10px;
+			float: left;
+        }
+
+        .expander {
+            margin-top:15px;
+        }
+
 	</ui:style>
 
 	<g:FlowPanel>
 		<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 		<e:ListModelListBoxEditor ui:field="networkEditor" />
 		<e:ListModelListBoxEditor ui:field="nicTypeEditor" />
-        <e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
 		<g:HorizontalPanel>
 			<g:CheckBox ui:field="enableManualMacCheckbox"
 				addStyleNames="isTemplatePrivateEditor" />
@@ -26,6 +34,10 @@
 		</g:HorizontalPanel>
 		<e:EntityModelTextBoxEditor ui:field="MACEditor" />
 		<g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
-		<e:EntityModelCheckBoxEditor ui:field="activateCheckBox"/>
+		<d:AdvancedParametersExpander ui:field="expander" addStyleNames="{style.expander}"/>
+		<g:FlowPanel ui:field="expanderContent" addStyleNames="{style.expanderContent}">
+			<e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
+			<e:EntityModelCheckBoxEditor ui:field="activateCheckBox"/>
+		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>

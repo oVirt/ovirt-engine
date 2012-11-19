@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -23,6 +24,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 
 public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<VmInterfaceModel> {
 
@@ -76,14 +78,23 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Ignore
     Label macExample;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     @Path("Active.entity")
     @WithElementId("activate")
     protected EntityModelCheckBoxEditor activateCheckBox;
 
+    @UiField
+    @Ignore
+    AdvancedParametersExpander expander;
+
+    @UiField
+    @Ignore
+    Panel expanderContent;
+
     public NetworkInterfacePopupWidget(EventBus eventBus, CommonApplicationConstants constants) {
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        expander.initWithContent(expanderContent.getElement());
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         Driver.driver.initialize(this);
