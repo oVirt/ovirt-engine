@@ -946,6 +946,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove Storage Domain. Data storage must be formatted after remove.\n-Please verify that Format option is enabled on the Data Domain.")
     String ERROR_CANNOT_REMOVE_STORAGE_DOMAIN_DO_FORMAT();
 
+    @DefaultStringValue("Cannot ${action} ${type} while there are Hosts that are not in Maintenance mode.")
+    String ERROR_CANNOT_FORCE_REMOVE_STORAGE_POOL_WITH_VDS_NOT_IN_MAINTENANCE();
+
     @DefaultStringValue("Cannot ${action} ${type}. Unknown Data Center status.")
     String ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL();
 

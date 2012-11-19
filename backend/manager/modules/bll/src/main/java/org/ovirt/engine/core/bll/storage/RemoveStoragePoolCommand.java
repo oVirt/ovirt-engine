@@ -3,7 +3,9 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -13,16 +15,18 @@ import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -38,6 +42,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
+
+    private Map<String, String> sharedLocks;
 
     public RemoveStoragePoolCommand(T parameters) {
         super(parameters);
@@ -325,6 +331,22 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS);
             }
         }
+        else {
+            List<VDS> poolHosts = getVdsDAO().getAllForStoragePool(getParameters().getStoragePoolId());
+
+            sharedLocks = new HashMap<String, String>();
+            for (VDS host : poolHosts) {
+                sharedLocks.put(host.getId().toString(), LockingGroup.VDS.name());
+            }
+
+            if (poolHosts != null && !poolHosts.isEmpty() && acquireLockInternal()) {
+                for (VDS host : poolHosts) {
+                    if (host.getstatus() != VDSStatus.Maintenance) {
+                        return failCanDoAction(VdcBllMessages.ERROR_CANNOT_FORCE_REMOVE_STORAGE_POOL_WITH_VDS_NOT_IN_MAINTENANCE);
+                    }
+                }
+            }
+        }
 
         return true;
     }
@@ -366,5 +388,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     }
                 });
         sync.Execute();
+    }
+
+    @Override
+    protected Map<String, String> getSharedLocks() {
+        return sharedLocks;
     }
 }
