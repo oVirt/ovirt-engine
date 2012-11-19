@@ -30,13 +30,14 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     @Override
     @SuppressWarnings("unchecked")
     protected void executeQueryCommand() {
-        VDSReturnValue returnValue = getBackendInstance().RunVdsCommand(VDSCommandType.GlusterServersList,
-                new VdsIdVDSCommandParametersBase(getClusterUtils()
-                        .getUpServer(getParameters().getClusterId())
-                        .getId()));
+        Map<String, String> glusterServers = new HashMap<String, String>();
+        VDS upServer = getClusterUtils().getUpServer(getParameters().getClusterId());
 
-        Map<String, String> glusterServers =
-                getAddedGlusterServers((List<GlusterServerInfo>) returnValue.getReturnValue());
+        if(upServer != null ) {
+            VDSReturnValue returnValue = getBackendInstance().RunVdsCommand(VDSCommandType.GlusterServersList,
+                            new VdsIdVDSCommandParametersBase(upServer.getId()));
+            glusterServers = getAddedGlusterServers((List<GlusterServerInfo>) returnValue.getReturnValue());
+        }
         getQueryReturnValue().setReturnValue(glusterServers);
     }
 
