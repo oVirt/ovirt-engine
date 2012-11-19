@@ -1,11 +1,17 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
+import org.ovirt.engine.api.model.Hook;
+import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
@@ -28,12 +34,15 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.ValueObjectPair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 
 public class HostMapper {
 
     public static Long BYTES_IN_MEGABYTE = 1024L * 1024L;
     // REVISIT retrieve from configuration
     private static final int DEFAULT_VDSM_PORT = 54321;
+    private static final String MD5_FILE_SIGNATURE = "md5";
+    private static final String MD5_SECURITY_ALGORITHM = "MD5";
 
     private static final String HOST_OS_DELEIMITER = " - ";
 
@@ -304,4 +313,47 @@ public class HostMapper {
         }
     }
 
+    @Mapping(from = HashMap.class, to = Hooks.class)
+    public static Hooks map(HashMap<String, HashMap<String, HashMap<String, String>>> dictionary, Hooks hooks) {
+        if (hooks == null) {
+            hooks = new Hooks();
+        }
+        for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet()) { // events
+            for (Map.Entry<String, HashMap<String, String>> keyValuePair1 : keyValuePair.getValue() // hooks
+                    .entrySet()) {
+                Hook hook = createHook(keyValuePair, keyValuePair1);
+                hooks.getHooks().add(hook);
+            }
+        }
+        return hooks;
+    }
+
+    private static Hook createHook(Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair,
+            Map.Entry<String, HashMap<String, String>> keyValuePair1) {
+        String hookName = keyValuePair1.getKey();
+        String eventName = keyValuePair.getKey();
+        String md5 = keyValuePair1.getValue().get(MD5_FILE_SIGNATURE);
+        Hook hook = new Hook();
+        hook.setName(hookName);
+        hook.setEventName(eventName);
+        hook.setMd5(md5);
+        setHookId(hook, hookName, eventName, md5);
+        return hook;
+    }
+
+    private static void setHookId(Hook hook, String hookName, String eventName, String md5) {
+        NGuid guid = generateHookId(eventName, hookName, md5);
+        hook.setId(guid != null ? guid.toString() : null);
+    }
+
+    public static NGuid generateHookId(String eventName, String hookName, String md5) {
+        String idString = eventName + hookName + md5;
+        try {
+            byte[] hash = MessageDigest.getInstance(MD5_SECURITY_ALGORITHM).digest(idString.getBytes());
+            NGuid guid = new NGuid(hash, true);
+            return guid;
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e); // never happens, MD5 algorithm exists
+        }
+    }
 }

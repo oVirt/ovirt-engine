@@ -91,6 +91,9 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Path("tags")
     public AssignedTagsResource getTagsResource();
 
+    @Path("hooks")
+    public HostHooksResource getHooksResource();
+
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();
 }

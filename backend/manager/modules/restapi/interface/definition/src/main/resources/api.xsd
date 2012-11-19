@@ -1155,6 +1155,7 @@
           <!-- when installing a host, optionally reboot the host -->
           <xs:element name="reboot_after_installation" type="xs:boolean" minOccurs="0"/>
           <xs:element name="os" type="OperatingSystem" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="hooks" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1506,6 +1507,36 @@
             </xs:appinfo>
           </xs:annotation>
           <xs:element ref="file" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="hook" type="Hook"/>
+
+  <xs:element name="hooks" type="Hooks"/>
+
+  <xs:complexType name="Hook">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="event_name" type="xs:string" minOccurs="0"/>
+          <xs:element name="md5" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Hooks">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="Hooks"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="hook" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -335,5 +336,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     public BackendHostsResource getParent() {
         return this.parent;
+    }
+
+    @Override
+    @Path("hooks")
+    public BackendHostHooksResource getHooksResource() {
+        return inject(new BackendHostHooksResource(id));
     }
 }
