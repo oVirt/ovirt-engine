@@ -1468,7 +1468,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Shareable Disk is not supported by the selected configuration")
     String shareableDiskNotSupportedByConfiguration();
 
-    @DefaultStringValue("Warning, moving disk while VM is running is in tech-preview mode")
+    @DefaultStringValue("Note: Moving the disk while the VM is running")
     String liveStorageMigrationWarning();
 
     @DefaultStringValue("Cannot remove more than one brick from a Replicate volume at a time")
