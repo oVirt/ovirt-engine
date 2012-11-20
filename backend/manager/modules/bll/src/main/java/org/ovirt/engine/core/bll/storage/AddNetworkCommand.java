@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -85,5 +88,12 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateEntity.class);
         return super.getValidationGroups();
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null
+                : getStoragePoolId().getValue(),
+                VdcObjectType.StoragePool, getActionType().getActionGroup()));
     }
 }

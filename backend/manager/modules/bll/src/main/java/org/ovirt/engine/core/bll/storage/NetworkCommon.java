@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -95,5 +99,15 @@ public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends St
 
     private boolean isVlanInRange(int vlanId) {
         return (vlanId >= 0 && vlanId <= 4095);
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        Network network = getParameters().getNetwork();
+        Guid networkId = network == null ? null : network.getId();
+
+        return Collections.singletonList(new PermissionSubject(networkId,
+                VdcObjectType.Network,
+                getActionType().getActionGroup()));
     }
 }
