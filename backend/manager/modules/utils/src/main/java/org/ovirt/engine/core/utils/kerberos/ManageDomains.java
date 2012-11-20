@@ -22,8 +22,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.ldap.LdapProviderType;
+import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.utils.CLIParser;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.dns.DnsSRVLocator;
+import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.utils.ipa.ReturnStatus;
 import org.ovirt.engine.core.utils.ipa.SimpleAuthenticationCheck;
 
@@ -54,6 +57,7 @@ public class ManageDomains {
     private ManageDomainsDAOImpl daoImpl;
     private boolean reportAllErrors;
     private boolean addPermissions;
+    private DnsSRVResult ldapDnsResult;
     private final static Logger log = Logger.getLogger(ManageDomains.class);
 
     public enum Arguments {
@@ -188,13 +192,15 @@ public class ManageDomains {
         try {
             String engineConfigExecutable = utilityConfiguration.getEngineConfigExecutablePath();
             String adUserName = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserName);
-            String adUserPassword =
-                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserPassword);
+            String domainName = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.DomainName);
             String ldapSecurityAuthentication =
                     getConfigValue(engineConfigExecutable,
                             engineConfigProperties,
                             ConfigValues.LDAPSecurityAuthentication);
-            String domainName = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.DomainName);
+            ldapDnsResult = validateLdapServers(domainName);
+            validateKdcServers(ldapSecurityAuthentication,domainName);
+            String adUserPassword =
+                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserPassword);
             String adUserId = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserId);
             String ldapServers =
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LdapServers);
@@ -215,6 +221,53 @@ public class ManageDomains {
         } catch (Throwable e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CURRENT_CONFIGURATION, e.getMessage());
         }
+    }
+
+    private void validateKdcServers(String ldapSecurityAuthentication, String domainName) throws ManageDomainsResult {
+        KDCLocator locator = new KDCLocator();
+        DnsSRVResult result = null;
+        boolean foundServers = true;
+        try
+        {
+            result = locator.getKdc(DnsSRVLocator.TCP, domainName);
+            if (!foundSrvRecords(result)) {
+                result = locator.getKdc(DnsSRVLocator.UDP,domainName);
+                if (!foundSrvRecords(result)) {
+                    foundServers =false;
+                }
+            }
+        } catch (Exception ex) {
+            foundServers = false;
+        }
+        if (!foundServers) {
+            throw new ManageDomainsResult("Could not locate KDC servers to be used to validate the input of the utility",
+                    ManageDomainsResultEnum.NO_KDC_SERVERS_FOR_DOMAIN, domainName);
+        }
+
+    }
+
+    private boolean foundSrvRecords(DnsSRVResult result) {
+        return result != null && result.getNumOfValidAddresses() > 0;
+    }
+
+    private DnsSRVResult validateLdapServers(String domainName) throws ManageDomainsResult {
+        LdapSRVLocator locator = new LdapSRVLocator();
+        DnsSRVResult ldapDnsResult = null;
+        boolean foundServers = true;
+        try {
+            ldapDnsResult = locator.getLdapServers(domainName);
+            if (!foundSrvRecords(ldapDnsResult)) {
+                foundServers = false;
+            }
+        } catch (Exception ex) {
+            foundServers = false;
+        }
+        if (!foundServers) {
+            throw new ManageDomainsResult("Could not locate LDAP servers to be used to validate the input of the utility",
+                    ManageDomainsResultEnum.NO_LDAP_SERVERS_FOR_DOMAIN, domainName);
+
+        }
+        return ldapDnsResult;
     }
 
     private void runCommand(CLIParser parser) throws ManageDomainsResult {
@@ -606,7 +659,7 @@ public class ManageDomains {
             users.setValueForDomain(domain, constructUPN(currUserName, domain));
             try {
                 log.info("Testing kerberos configuration for domain: " + domain);
-                KerberosConfigCheck kerberosConfigCheck = new KerberosConfigCheck();
+                KerberosConfigCheck kerberosConfigCheck = new KerberosConfigCheck(ldapDnsResult);
                 StringBuffer userGuid = new StringBuffer();
                 kerberosConfigCheck.checkInstallation(domain,
                         users.getValueForDomain(domain),

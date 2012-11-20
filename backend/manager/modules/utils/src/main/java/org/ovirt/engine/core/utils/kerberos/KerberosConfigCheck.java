@@ -14,6 +14,7 @@ import javax.security.auth.login.LoginException;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.CLIParser;
+import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 
 /**
  * Utility to verify Kerberos installation
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.utils.CLIParser;
  */
 public class KerberosConfigCheck {
     private LoginContext lc;
+    private final DnsSRVResult ldapDnsResult;
     private final static Logger log = Logger.getLogger(KerberosConfigCheck.class);
 
     public enum Arguments {
@@ -31,6 +33,14 @@ public class KerberosConfigCheck {
         jboss_dir,
         krb5_conf_path,
         ldapProviderType;
+    }
+
+    public KerberosConfigCheck(DnsSRVResult ldapDnsResult) {
+        this.ldapDnsResult = ldapDnsResult;
+    }
+
+    public KerberosConfigCheck() {
+        this(null);
     }
 
     // This function gets the username and adjusts it doing the following:
@@ -183,7 +193,7 @@ public class KerberosConfigCheck {
             authResult =
                     (AuthenticationResult) Subject.doAs(lc.getSubject(), new JndiAction(username,
                             realm.toLowerCase(),
-                            userGuid, ldapProviderType));
+                            userGuid, ldapProviderType,ldapDnsResult));
 
         } finally {
             if (lc != null) {

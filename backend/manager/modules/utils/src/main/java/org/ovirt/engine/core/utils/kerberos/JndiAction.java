@@ -32,13 +32,15 @@ public class JndiAction implements PrivilegedAction {
     private final String domainName;
     private final LdapProviderType ldapProviderType;
     private final StringBuffer userGuid;
+    private DnsSRVResult ldapDnsResult;
     private final static Logger log = Logger.getLogger(JndiAction.class);
 
-    public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType) {
+    public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType, DnsSRVResult ldapDnsResult) {
         this.userName = userName;
         this.domainName = domainName;
         this.ldapProviderType = ldapProviderType;
         this.userGuid = userGuid;
+        this.ldapDnsResult = ldapDnsResult;
     }
 
     @Override
@@ -51,11 +53,12 @@ public class JndiAction implements PrivilegedAction {
 
         // Send an SRV record DNS query to retrieve all the LDAP servers in the domain
         LdapSRVLocator locator = new LdapSRVLocator();
-        DnsSRVResult ldapDnsResult;
-        try {
-            ldapDnsResult = locator.getLdapServers(domainName);
-        } catch (Exception ex) {
-            return KerberosUtils.convertDNSException(ex);
+        if (ldapDnsResult == null) {
+            try {
+                ldapDnsResult = locator.getLdapServers(domainName);
+            } catch (Exception ex) {
+                return KerberosUtils.convertDNSException(ex);
+            }
         }
 
         DirContext ctx = null;
