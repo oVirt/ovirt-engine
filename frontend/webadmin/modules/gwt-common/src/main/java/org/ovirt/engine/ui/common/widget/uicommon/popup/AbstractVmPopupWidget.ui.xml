@@ -172,32 +172,30 @@
         	padding-right: 10px;
         }
         
-        .newPoolPrestartedVmsIcon {
-        	float: right;
+        .prestartedVmsIcon {
+        	float: left;
         	padding-top: 5px;
+            padding-left: 2px;
         }
         
         .prestartedLabelWithHelp {
-            width: 85px;
         	float: left;
+        	width: 251px;
         }
-        
-        .editPrestartedLabelWithHelp {
-            width: 110px;
+
+        .increasePrestartedLabel {
         	float: left;
-        }
-        
-        .incrasePrestartedLabel {
-        	float: left;
+        	width: 251px;
         }
         
         .eidtPrestartedVms {
         	float: left;
-        	padding-left: 140px;
+        	width: 230px;
         }
         
         .eidtIncreaseVms {
-        	float: right;
+        	float: left;
+        	width: 230px;
         }
         
         .prestartedLabel {
@@ -205,13 +203,8 @@
         	color: #333333;
         }
         
-        .outOfxInPool {
-        	float: right;
-        }
-        
-        .incrasteVmsInPoolVms {
-        	float: right;
-        	padding-right: 163px;
+        .increaseVmsInPoolVms {
+        	float: left;
         }
         
 	</ui:style>
@@ -235,28 +228,28 @@
                             <g:FlowPanel ui:field="newPoolEditVmsPanel" addStyleNames="{style.poolEditVms}">
                             	<g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">
 									<g:Label ui:field="prestartedLabel" addStyleNames="{style.prestartedLabel}" />
-									<d:InfoIcon ui:field="newPoolPrestartedVmsIcon" addStyleNames="{style.newPoolPrestartedVmsIcon}" />
+									<d:InfoIcon ui:field="newPoolPrestartedVmsIcon" addStyleNames="{style.prestartedVmsIcon}" />
 								</g:FlowPanel>
 								<e:EntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" addStyleNames="{style.prestartedVmsEditor}" contentWidgetStyleName="{style.prestartedVmsEditorContent}" />
                             </g:FlowPanel>
                             
 <!--                             Edit VM Pool -->
                             <g:FlowPanel addStyleNames="{style.poolEditVms}" ui:field="editPoolEditVmsPanel">
-								<g:FlowPanel addStyleNames="{style.editPrestartedLabelWithHelp}">
+								<g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">
 									<g:Label ui:field="editPrestartedVmsLabel" addStyleNames="{style.prestartedLabel}" />
-									<d:InfoIcon ui:field="editPoolPrestartedVmsIcon" addStyleNames="{style.newPoolPrestartedVmsIcon}" />
+									<d:InfoIcon ui:field="editPoolPrestartedVmsIcon" addStyleNames="{style.prestartedVmsIcon}" />
 								</g:FlowPanel>
 								<g:FlowPanel addStyleNames="{style.eidtPrestartedVms}">
 									<e:EntityModelTextBoxOnlyEditor ui:field="editPrestartedVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
-									<g:ValueLabel ui:field="outOfxInPool" addStyleNames="{style.outOfxInPool}" />
+									<g:ValueLabel ui:field="outOfxInPool" />
 								</g:FlowPanel>
                             </g:FlowPanel>
                             
                             <g:FlowPanel ui:field="editPoolIncraseNumOfVmsPanel" addStyleNames="{style.poolEditVms}">
-								<g:Label text="{constants.increaseNumberOfVMsInPoolBy}" addStyleNames="{style.incrasePrestartedLabel}" />
+								<g:Label text="{constants.increaseNumberOfVMsInPoolBy}" addStyleNames="{style.increasePrestartedLabel}" />
 								<g:FlowPanel addStyleNames="{style.eidtIncreaseVms}">
 									<e:EntityModelTextBoxOnlyEditor ui:field="incraseNumOfVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
-									<g:Label text="{constants.vms}" addStyleNames="{style.incrasteVmsInPoolVms}" />
+									<g:Label text="{constants.vms}" addStyleNames="{style.increaseVmsInPoolVms}" />
 								</g:FlowPanel>
                             </g:FlowPanel>
                             <e:ListModelListBoxEditor ui:field="templateEditor"/>
