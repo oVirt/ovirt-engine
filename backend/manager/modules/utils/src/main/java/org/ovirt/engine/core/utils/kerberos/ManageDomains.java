@@ -78,13 +78,6 @@ public class ManageDomains {
         list;
     }
 
-    public enum OptionNames {
-        AdUserName,
-        AdUserPassword,
-        DomainName,
-        LDAPSecurityAuthentication;
-    }
-
     // This function gets the user name and the domain, and constructs the UPN as follows:
     // If the user already contains the domain (contains @), it just makes it upper-case.
     // Otherwise, it returns a concatenation of the user name + @ + the upper-case domain.
