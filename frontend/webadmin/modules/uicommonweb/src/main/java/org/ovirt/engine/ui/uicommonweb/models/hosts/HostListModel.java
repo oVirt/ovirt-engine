@@ -53,7 +53,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -695,7 +694,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (!((Boolean) model.getIsPm().getEntity()))
         {
-            if(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly)
+            if (((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService())
             {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);
