@@ -688,10 +688,15 @@ fi
 %{_mavenpomdir}/JPP.%{name}-vdsbroker.pom
 %endif
 
-# Directories for the backup, deployments and contents files need to be
-# owned by the engine user because the setup/upgrade wizard or applications
-# server need to write to them:
+# The state directory is owned by the backend, but not recursively, as
+# some of its subdirectories are owned by other packages (backups, for
+# example, has to be owned by the setup package):
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
+
+# Directories for the deployments and content files need to be owned by
+# the engine user because the application server needs to write to them:
+%attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
+%attr(-, %{engine_user}, %{engine_group}) %{engine_state}/deployments
 
 # The backend owns the directory of the ear and most of its contents,
 # but not all, as most of the web applications are owned by other
