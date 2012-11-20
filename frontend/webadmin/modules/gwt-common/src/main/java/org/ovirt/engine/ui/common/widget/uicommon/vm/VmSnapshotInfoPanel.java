@@ -16,6 +16,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
@@ -38,8 +39,9 @@ import com.google.gwt.view.client.NoSelectionModel;
 
 public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
-    private CommonApplicationConstants constants;
-    private CommonApplicationTemplates templates;
+    private final CommonApplicationConstants constants;
+    private final CommonApplicationMessages messages;
+    private final CommonApplicationTemplates templates;
 
     private VmSnapshotListModel vmSnapshotListModel;
 
@@ -49,11 +51,14 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     private EntityModelCellTable<ListModel> appsTable;
 
     public VmSnapshotInfoPanel(VmSnapshotListModel vmSnapshotListModel,
-            CommonApplicationConstants constants, CommonApplicationTemplates templates) {
+            CommonApplicationConstants constants,
+            CommonApplicationMessages messages,
+            CommonApplicationTemplates templates) {
         super(20, Unit.PX);
 
         this.vmSnapshotListModel = vmSnapshotListModel;
         this.constants = constants;
+        this.messages = messages;
         this.templates = templates;
 
         initPanel();
@@ -105,7 +110,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     }
 
     private void initGeneralForm() {
-        generalForm = new VmSnapshotInfoGeneral(constants);
+        generalForm = new VmSnapshotInfoGeneral(constants, messages);
     }
 
     private void initDisksTable() {

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -43,7 +42,7 @@ public class QuotaEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Events: quota=%1$s", getEntity().getQuotaName())); //$NON-NLS-1$
+            setSearchString("Events: quota=" + getEntity().getQuotaName()); //$NON-NLS-1$
             super.Search();
         }
     }

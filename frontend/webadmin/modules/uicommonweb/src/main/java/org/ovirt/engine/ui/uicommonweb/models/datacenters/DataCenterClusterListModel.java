@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 
 @SuppressWarnings("unused")
@@ -32,7 +31,7 @@ public class DataCenterClusterListModel extends ClusterListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("clusters: datacenter.name=%1$s", getEntity().getname())); //$NON-NLS-1$
+            setSearchString("clusters: datacenter.name=" + getEntity().getname()); //$NON-NLS-1$
             super.Search();
         }
     }

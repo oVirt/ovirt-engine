@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
@@ -50,17 +50,19 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     @UiField
     SimplePanel snapshotInfoContainer;
 
-    CommonApplicationConstants constants;
-    CommonApplicationTemplates templates;
+    private final CommonApplicationMessages messages;
+    private final CommonApplicationTemplates templates;
 
     VmSnapshotInfoPanel vmSnapshotInfoPanel;
 
     public VmSnapshotListModelTable(DataBoundTabModelProvider<Snapshot, L> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
-            CommonApplicationConstants constants, CommonApplicationTemplates templates) {
+            CommonApplicationConstants constants,
+            CommonApplicationMessages messages,
+            CommonApplicationTemplates templates) {
         super(modelProvider, eventBus, clientStorage, false);
 
-        this.constants = constants;
+        this.messages = messages;
         this.templates = templates;
 
         // Create Snapshots table
@@ -68,7 +70,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
         snapshotsTableContainer.add(table);
 
         // Create Snapshot information tab panel
-        vmSnapshotInfoPanel = new VmSnapshotInfoPanel((VmSnapshotListModel) getModel(), constants, templates);
+        vmSnapshotInfoPanel = new VmSnapshotInfoPanel(getModel(), constants, messages, templates);
         snapshotInfoContainer.add(vmSnapshotInfoPanel);
     }
 
@@ -183,7 +185,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                             AsyncDataProvider.GetCommandVersionsInfo(VdcActionType.AddVmFromSnapshot);
                     String minimalClusterVersion = commandVersionsInfo != null ?
                             commandVersionsInfo.getClusterVersion().toString(2) : ""; //$NON-NLS-1$
-                    return StringFormat.format(constants.cloneVmNotSupported(), minimalClusterVersion);
+                    return messages.cloneVmNotSupported(minimalClusterVersion);
                 }
                 else {
                     return this.getTitle();

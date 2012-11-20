@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -428,10 +427,7 @@ public class VmBackupModel extends ManageBackupModel {
                                         .importVirtualMachinesTitle());
                                 confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
                                 importedVms = StringHelper.trimEnd(importedVms.trim(), ',');
-                                confirmModel.setMessage(StringFormat
-                                        .format(ConstantsManager.getInstance()
-                                                .getMessages()
-                                                .importProcessHasBegunForVms(importedVms)));
+                                confirmModel.setMessage(ConstantsManager.getInstance().getMessages().importProcessHasBegunForVms(importedVms));
                                 UICommand tempVar2 = new UICommand("CancelConfirm", //$NON-NLS-1$
                                         vmBackupModel);
                                 tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());

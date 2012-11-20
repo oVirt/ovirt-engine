@@ -178,9 +178,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Preview Mode")
     String previewModelLabel();
 
-    @DefaultStringValue("%1$s (%2$s Socket(s), %3$s Core(s) per Socket)")
-    String cpuInfoLabel();
-
     @DefaultStringValue("Read-Only")
     String readonlyLabel();
 
@@ -189,9 +186,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Current (Previous)")
     String previousCurrentSnapshotLabel();
-
-    @DefaultStringValue("Clone VM from Snapshot is supported only for Clusters of version %1$s and above")
-    String cloneVmNotSupported();
 
     @DefaultStringValue("Approve operation")
     String latchApproveOperationLabel();

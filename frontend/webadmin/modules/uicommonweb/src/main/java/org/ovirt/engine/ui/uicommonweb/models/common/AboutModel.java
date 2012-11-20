@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -258,10 +257,9 @@ public class AboutModel extends Model
             {
                 for (HostInfo item : getHosts())
                 {
-                    sb.append(StringFormat.format("\t%1$s\t%2$s\t%3$s", //$NON-NLS-1$
-                            item.getHostName(),
-                            item.getOSVersion(),
-                            item.getVDSMVersion()));
+                    sb.append("\t" + item.getHostName() //$NON-NLS-1$
+                            + "\t" + item.getOSVersion() //$NON-NLS-1$
+                            + "\t" + item.getVDSMVersion()); //$NON-NLS-1$
                     sb.append("\n"); //$NON-NLS-1$
                 }
             }

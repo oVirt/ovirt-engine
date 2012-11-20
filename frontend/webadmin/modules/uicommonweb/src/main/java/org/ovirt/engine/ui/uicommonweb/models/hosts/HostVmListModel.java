@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 
 @SuppressWarnings("unused")
@@ -32,7 +31,7 @@ public class HostVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Vms: host.name=%1$s", getEntity().getvds_name())); //$NON-NLS-1$
+            setSearchString("Vms: host.name=" + getEntity().getvds_name()); //$NON-NLS-1$
             super.Search();
         }
     }

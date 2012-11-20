@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -29,9 +30,10 @@ public class SubTabExtendedVmSnapshotView extends AbstractSubTabTableWidgetView<
             EventBus eventBus,
             ClientStorage clientStorage,
             CommonApplicationConstants constants,
+            CommonApplicationMessages messages,
             CommonApplicationTemplates templates) {
         super(new VmSnapshotListModelTable<UserPortalVmSnapshotListModel>(
-                modelProvider, eventBus, clientStorage, constants, templates));
+                modelProvider, eventBus, clientStorage, constants, messages, templates));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getModelBoundTableWidget());

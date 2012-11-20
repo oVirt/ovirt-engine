@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.login.view;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.view.AbstractLoginPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
@@ -94,10 +95,11 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
     @Inject
     public LoginPopupView(EventBus eventBus,
+            ClientAgentType clientAgentType,
             ApplicationResources resources,
             ApplicationConstants constants,
             ApplicationMessages messages) {
-        super(eventBus, resources);
+        super(eventBus, resources, clientAgentType);
 
         // We need this code because resetAndFocus is called when userNameEditor is Disabled
         userNameEditor = new EntityModelTextBoxEditor() {

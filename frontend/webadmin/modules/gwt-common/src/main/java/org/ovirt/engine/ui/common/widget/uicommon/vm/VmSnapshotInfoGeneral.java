@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
@@ -11,16 +11,19 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 public class VmSnapshotInfoGeneral extends GeneralFormPanel {
 
-    private CommonApplicationConstants constants;
-    private FormBuilder generalForm;
+    private final CommonApplicationConstants constants;
+    private final CommonApplicationMessages messages;
+
+    private final FormBuilder generalForm;
 
     private TextBoxLabel definedMemory;
     private TextBoxLabel minAllocatedMemory;
     private TextBoxLabel cpuInfo;
 
-    public VmSnapshotInfoGeneral(CommonApplicationConstants constants) {
+    public VmSnapshotInfoGeneral(CommonApplicationConstants constants,
+            CommonApplicationMessages messages) {
         this.constants = constants;
-
+        this.messages = messages;
         generalForm = new FormBuilder(this, 1, 3);
     }
 
@@ -50,8 +53,7 @@ public class VmSnapshotInfoGeneral extends GeneralFormPanel {
 
         definedMemory.setValue(vm.getVmMemSizeMb() + constants.mb());
         minAllocatedMemory.setValue(vm.getMinAllocatedMem() + constants.mb());
-        cpuInfo.setValue(StringFormat.format(
-                constants.cpuInfoLabel(), vm.getNumOfCpus(), vm.getNumOfSockets(), vm.getCpuPerSocket()));
+        cpuInfo.setValue(messages.cpuInfoLabel(vm.getNumOfCpus(), vm.getNumOfSockets(), vm.getCpuPerSocket()));
     }
 
     private void clearForm() {

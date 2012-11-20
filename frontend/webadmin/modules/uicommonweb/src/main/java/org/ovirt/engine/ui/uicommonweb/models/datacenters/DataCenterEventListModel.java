@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
 public class DataCenterEventListModel extends SubTabEventListModel
@@ -39,7 +38,7 @@ public class DataCenterEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Events: event_datacenter=%1$s", getEntity().getname())); //$NON-NLS-1$
+            setSearchString("Events: event_datacenter=" + getEntity().getname()); //$NON-NLS-1$
             super.Search();
         }
     }

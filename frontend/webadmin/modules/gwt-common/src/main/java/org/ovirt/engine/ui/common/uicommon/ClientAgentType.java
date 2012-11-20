@@ -7,14 +7,20 @@ public class ClientAgentType {
     public Float version;
     private String versionSearchString;
     public String platform;
-    public boolean isIE;
 
     public ClientAgentType() {
         browser = getBrowser();
         version = Float.parseFloat(getVersion());
         os = getOS();
         platform = getPlatform();
-        isIE = "explorer".equalsIgnoreCase(browser); //$NON-NLS-1$
+    }
+
+    public boolean isIE() {
+        return "explorer".equalsIgnoreCase(browser); //$NON-NLS-1$
+    }
+
+    public boolean isIE8OrBelow() {
+        return isIE() && version <= 8.0f;
     }
 
     public native String getBrowser() /*-{

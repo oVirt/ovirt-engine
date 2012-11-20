@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -461,7 +460,7 @@ public class TemplateGeneralModel extends EntityModel
         setPriority(PriorityToString(template.getpriority()));
         setMonitorCount(template.getnum_of_monitors());
         setAllowConsoleReconnect(template.getAllowConsoleReconnect());
-        setCpuInfo(StringFormat.format("%1$s (%2$s Socket(s), %3$s Core(s) per Socket)", //$NON-NLS-1$
+        setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
                 template.getnum_of_cpus(),
                 template.getnum_of_sockets(),
                 template.getcpu_per_socket()));

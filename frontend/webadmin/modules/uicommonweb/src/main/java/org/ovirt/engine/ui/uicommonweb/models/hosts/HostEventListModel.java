@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
 public class HostEventListModel extends SubTabEventListModel
@@ -39,7 +38,7 @@ public class HostEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("events: host.name=%1$s", getEntity().getvds_name())); //$NON-NLS-1$
+            setSearchString("events: host.name=" + getEntity().getvds_name()); //$NON-NLS-1$
             super.Search();
         }
     }

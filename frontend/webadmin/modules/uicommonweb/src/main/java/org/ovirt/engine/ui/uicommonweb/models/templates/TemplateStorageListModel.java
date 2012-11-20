@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQuery
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -172,7 +171,7 @@ public class TemplateStorageListModel extends SearchableListModel
         ArrayList<String> items = new ArrayList<String>();
         for (DiskModel diskModel : disks)
         {
-            items.add(StringFormat.format("%1$s (from Stroage Domain %2$s)", //$NON-NLS-1$
+            items.add(ConstantsManager.getInstance().getMessages().templateDiskDescription(
                     diskModel.getDisk().getDiskAlias(),
                     ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getstorage_name()));
         }

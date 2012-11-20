@@ -110,7 +110,6 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -1491,8 +1490,7 @@ public final class AsyncDataProvider {
                 return null;
             }
         };
-        SearchParameters sp =
-                new SearchParameters(StringFormat.format("hosts: datacenter=%1$s", dataCenterName), SearchType.VDS); //$NON-NLS-1$
+        SearchParameters sp = new SearchParameters("hosts: datacenter=" + dataCenterName, SearchType.VDS); //$NON-NLS-1$
         Frontend.RunQuery(VdcQueryType.Search, sp, aQuery);
     }
 
@@ -1572,7 +1570,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters(StringFormat.format("Storage: name=%1$s", name), //$NON-NLS-1$
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Storage: name=" + name, //$NON-NLS-1$
                 SearchType.StorageDomain), aQuery);
     }
 

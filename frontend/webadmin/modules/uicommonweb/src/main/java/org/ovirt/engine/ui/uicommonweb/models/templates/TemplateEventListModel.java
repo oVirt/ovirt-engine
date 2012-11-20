@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
 public class TemplateEventListModel extends SubTabEventListModel
@@ -45,7 +44,7 @@ public class TemplateEventListModel extends SubTabEventListModel
     }
 
     protected void preSearchCalled(VmTemplate template) {
-        setSearchString(StringFormat.format("Events:event_template=%1$s", template.getname())); //$NON-NLS-1$
+        setSearchString("Events:event_template=" + template.getname()); //$NON-NLS-1$
     }
 
     @Override

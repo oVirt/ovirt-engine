@@ -29,7 +29,7 @@ public class ApplicationFocusManager implements HasHandlers {
     @Inject
     public ApplicationFocusManager(EventBus eventBus, ClientAgentType clientAgentType) {
         this.eventBus = eventBus;
-        this.isIE = clientAgentType.isIE;
+        this.isIE = clientAgentType.isIE();
         attachWindowFocusEvents();
     }
 

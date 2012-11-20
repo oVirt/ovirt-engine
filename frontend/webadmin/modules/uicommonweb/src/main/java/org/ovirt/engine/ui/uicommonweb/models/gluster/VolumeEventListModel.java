@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
 public class VolumeEventListModel extends SubTabEventListModel
@@ -39,7 +38,7 @@ public class VolumeEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Events: volume.name=%1$s", getEntity().getName())); //$NON-NLS-1$
+            setSearchString("Events: volume.name=" + getEntity().getName()); //$NON-NLS-1$
             super.Search();
         }
     }

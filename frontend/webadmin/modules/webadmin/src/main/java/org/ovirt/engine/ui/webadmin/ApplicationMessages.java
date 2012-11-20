@@ -4,8 +4,6 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 
 public interface ApplicationMessages extends CommonApplicationMessages {
 
-    // Host alert messages (not that the <a> and </a> tags are used to indicate the
-    // place where the link to actions should be introduced:
     @DefaultMessage("A new version is available; an upgrade option will appear once the Host is moved to maintenance mode.")
     String hostHasUpgradeAlert();
 

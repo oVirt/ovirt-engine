@@ -19,7 +19,6 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -896,7 +895,7 @@ public class HostModel extends Model
 
     private void setPmOptionsMapInternal(Map<String,String> value, EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
 
-        String pmOptions = ""; //$NON-NLS-1$
+        StringBuilder pmOptions = new StringBuilder();
 
         for (Map.Entry<String, String> pair : value.entrySet()) {
             String k = pair.getKey();
@@ -914,15 +913,15 @@ public class HostModel extends Model
             } else {
                 // Compose custom string from unknown pm options.
                 if (StringHelper.isNullOrEmpty(v)) {
-                    pmOptions += StringFormat.format("%1$s,", k); //$NON-NLS-1$
+                    pmOptions.append(k).append(","); //$NON-NLS-1$
                 } else {
-                    pmOptions += StringFormat.format("%1$s=%2$s,", k, v); //$NON-NLS-1$
+                    pmOptions.append(k).append("=").append(v).append(","); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
-
-        if (!StringHelper.isNullOrEmpty(pmOptions)) {
-            options.setEntity(pmOptions.substring(0, pmOptions.length() - 1));
+        String pmOptionsValue = pmOptions.toString();
+        if (!StringHelper.isNullOrEmpty(pmOptionsValue)) {
+            options.setEntity(pmOptionsValue.substring(0, pmOptionsValue.length() - 1));
         }
     }
 

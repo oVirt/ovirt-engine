@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 
 @SuppressWarnings("unused")
@@ -35,7 +34,7 @@ public class ClusterHostListModel extends HostListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("hosts: cluster=%1$s", getEntity().getname())); //$NON-NLS-1$
+            setSearchString("hosts: cluster=" + getEntity().getname()); //$NON-NLS-1$
             super.Search();
         }
     }

@@ -32,8 +32,13 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
     @Ignore
     public Label selectedLocale;
 
-    public AbstractLoginPopupView(EventBus eventBus, CommonApplicationResources resources) {
+    private final ClientAgentType clientAgentType;
+
+    public AbstractLoginPopupView(EventBus eventBus,
+            CommonApplicationResources resources,
+            ClientAgentType clientAgentType) {
         super(eventBus, resources);
+        this.clientAgentType = clientAgentType;
         initLocalizationEditor();
     }
 
@@ -64,8 +69,7 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
             }
         }
 
-        ClientAgentType clientAgentType = new ClientAgentType();
-        if (clientAgentType.isIE && clientAgentType.version <= 8) {
+        if (clientAgentType.isIE8OrBelow()) {
             selectedLocale.getElement().getStyle().setOpacity(0);
         }
 

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -1022,8 +1021,7 @@ public class CommonModel extends ListModel
                 }
             }
 
-            prefix.argvalue = StringFormat.format("%1$s: %2$s ", entityClause, tagsClause); //$NON-NLS-1$
-
+            prefix.argvalue = entityClause + ": " + tagsClause; //$NON-NLS-1$
             search.argvalue = regex.replace(searchClause, "").trim(); //$NON-NLS-1$
         }
         // Split for system tree.
@@ -1036,52 +1034,50 @@ public class CommonModel extends ListModel
             case DataCenter: {
                 if (dataCenterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("DataCenter: name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "DataCenter: name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (clusterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Cluster: datacenter.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Cluster: datacenter.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (hostList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Host: datacenter = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Host: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (storageList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Storage: datacenter = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Storage: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (vmList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Vms: datacenter = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Vms: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Template: datacenter = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Template: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (eventList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Events: event_datacenter = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Events: event_datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (diskList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Disk: datacenter.name = %1$s and disk_type = image", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Disk: datacenter.name = " + model.getTitle() + " and disk_type = image"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                else if (quotaList.IsSearchStringMatch(source)) {
-                    prefix.argvalue = StringFormat.format("Quota: storagepoolname = %1$s", model.getTitle()); //$NON-NLS-1$
+                else if (quotaList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = "Quota: storagepoolname = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (networkList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Network: datacenter = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Network: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Clusters: {
                 if (clusterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Cluster: datacenter.name = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Cluster: datacenter.name = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
@@ -1090,71 +1086,69 @@ public class CommonModel extends ListModel
             case Cluster_Gluster: {
                 if (clusterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Cluster: name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Cluster: name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (hostList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Host: cluster = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Host: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (volumeList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Volume: cluster = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Volume: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (storageList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Storage: cluster.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Storage: cluster.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (vmList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Vms: cluster = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Vms: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Template: cluster = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Template: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (eventList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Events: cluster = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Events: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (networkList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Network: Cluster_network.cluster_name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Network: Cluster_network.cluster_name = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Hosts: {
                 if (hostList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Host: cluster = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Host: cluster = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Host: {
                 if (hostList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Host: name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Host: name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (storageList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Storage: host.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Storage: host.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (vmList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Vms: Hosts.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Vms: Hosts.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Template: Hosts.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Template: Hosts.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (eventList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Events: host.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Events: host.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (networkList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Network: Host_network.host_name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Network: Host_network.host_name = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
@@ -1162,7 +1156,7 @@ public class CommonModel extends ListModel
             case Volumes: {
                 if (volumeList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Volume: cluster = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Volume: cluster = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
@@ -1170,115 +1164,109 @@ public class CommonModel extends ListModel
             case Volume: {
                 if (volumeList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Volume: name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Volume: name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (clusterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Cluster: volume.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Cluster: volume.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (dataCenterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("DataCenter: volume.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "DataCenter: volume.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Template: Volumes.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Template: Volumes.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (eventList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Events: volume.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Events: volume.name = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Storages: {
                 if (storageList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Storage: datacenter = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Storage: datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Storage: {
                 if (dataCenterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("DataCenter: storage.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "DataCenter: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (clusterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Cluster: storage.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Cluster: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (hostList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Host: storage.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Host: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (storageList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Storage: name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Storage: name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (vmList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Vms: storage.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Vms: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Templates: storage.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Templates: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (eventList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Events: event_storage = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Events: event_storage = " + model.getTitle(); //$NON-NLS-1$
                 }
                 else if (diskList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Disk: storages.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Disk: storages.name = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Templates: {
                 if (templateList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Template: datacenter = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Template: datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case VMs: {
                 if (vmList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Vms: cluster = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Vms: cluster = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Networks: {
                 if (networkList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Network: datacenter = %1$s", model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Network: datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Network: {
                 if (networkList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Network: name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Network: name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 else if (clusterList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Cluster: Cluster_network.network_name = %1$s Datacenter.name = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Cluster: Cluster_network.network_name = " + model.getTitle() + " Datacenter.name = " +  model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 else if (hostList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Host : Nic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Host : Nic.network_name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 else if (vmList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Vm : Vnic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Vm : Vnic.network_name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 else if (templateList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue =
-                            StringFormat.format("Template : Vnic.network_name = %1$s datacenter = %2$s", model.getTitle(), model.getParent().getTitle()); //$NON-NLS-1$
+                    prefix.argvalue = "Template : Vnic.network_name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
                 break;

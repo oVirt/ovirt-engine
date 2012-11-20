@@ -23,7 +23,6 @@ import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -615,11 +614,11 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         {
             setSearchString(Regex.replace(getSearchString(),
                     PAGE_STRING_REGEX,
-                    StringFormat.format(" page %1$s", newSearchPageNumber))); //$NON-NLS-1$
+                    " page " + newSearchPageNumber)); //$NON-NLS-1$
         }
         else
         {
-            setSearchString(StringFormat.format("%1$s page %2$s", getSearchString(), newSearchPageNumber)); //$NON-NLS-1$
+            setSearchString(getSearchString() + " page " + newSearchPageNumber); //$NON-NLS-1$
         }
     }
 

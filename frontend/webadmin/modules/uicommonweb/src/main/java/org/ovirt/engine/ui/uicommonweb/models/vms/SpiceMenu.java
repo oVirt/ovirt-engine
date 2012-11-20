@@ -1,11 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.compat.StringFormat;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("unused")
 public class SpiceMenu
 {
     private List<SpiceMenuItem> items;
@@ -63,7 +60,7 @@ public class SpiceMenu
         if (item instanceof SpiceMenuCommandItem)
         {
             SpiceMenuCommandItem commandItem = (SpiceMenuCommandItem) item;
-            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r%4$s\n", //$NON-NLS-1$
+            builder.append(formatSpiceMenuItem(
                     parentID,
                     commandItem.getId(),
                     commandItem.getText(),
@@ -73,10 +70,11 @@ public class SpiceMenu
         if (item instanceof SpiceMenuContainerItem)
         {
             SpiceMenuContainerItem containerItem = (SpiceMenuContainerItem) item;
-            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r4\n", //$NON-NLS-1$
+            builder.append(formatSpiceMenuItem(
                     parentID,
                     containerItem.getId(),
-                    containerItem.getText()));
+                    containerItem.getText(),
+                    4));
 
             if (containerItem.getItems().size() > 0)
             {
@@ -89,9 +87,22 @@ public class SpiceMenu
 
         if (item instanceof SpiceMenuSeparatorItem)
         {
-            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r1\n", parentID, item.getId(), "-")); //$NON-NLS-1$ //$NON-NLS-2$
+            builder.append(formatSpiceMenuItem(
+                    parentID,
+                    item.getId(),
+                    "-", //$NON-NLS-1$
+                    1));
         }
 
         return builder.toString();
     }
+
+    private String formatSpiceMenuItem(int parentId, int itemId, String itemText, int itemCode) {
+        return new StringBuilder(parentId)
+            .append("\r").append(itemId) //$NON-NLS-1$
+            .append("\r").append(itemText) //$NON-NLS-1$
+            .append("\r").append(itemCode) //$NON-NLS-1$
+            .append("\n").toString(); //$NON-NLS-1$
+    }
+
 }

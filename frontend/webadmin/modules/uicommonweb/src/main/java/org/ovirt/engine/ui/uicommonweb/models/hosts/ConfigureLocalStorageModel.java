@@ -19,7 +19,6 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -222,7 +221,7 @@ public class ConfigureLocalStorageModel extends Model {
         ArrayList<storage_pool> dataCenters = context.dataCenterList;
         ArrayList<VDSGroup> clusters = context.clusterList;
 
-        setCommonName(StringFormat.format("%1$s-Local", host.getvds_name().replace('.', '-'))); //$NON-NLS-1$
+        setCommonName(host.getvds_name().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
         storage_pool candidate = null;
 
@@ -569,7 +568,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         context.host = host;
 
-        setCommonName(StringFormat.format("%1$s-Local", host.getvds_name().replace('.', '-'))); //$NON-NLS-1$
+        setCommonName(host.getvds_name().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
         SetDefaultNames1();
 

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
 public class StorageEventListModel extends SubTabEventListModel
@@ -40,7 +39,7 @@ public class StorageEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("events: event_storage=%1$s", getEntity().getstorage_name())); //$NON-NLS-1$
+            setSearchString("events: event_storage=" + getEntity().getstorage_name()); //$NON-NLS-1$
             super.Search();
         }
     }

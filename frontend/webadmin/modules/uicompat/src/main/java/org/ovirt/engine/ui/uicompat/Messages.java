@@ -141,7 +141,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Remove Network {0}")
     String removeNetwork(String networkName);
 
-
     @DefaultMessage("Attach {0} to")
     String attachTo(String name);
 
@@ -202,10 +201,17 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} VMs")
     String numberOfVmsForHostsLoad(int numberOfVms);
 
+    @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
+    String cpuInfoLabel(int numberOfCpus, int numberOfSockets, int numberOfCpusPerSocket);
+
+    @DefaultMessage("{0} (from Stroage Domain {1})")
+    String templateDiskDescription(String diskAlias, String storageDomainName);
+
     // Vnic
     @DefaultMessage("Hot Plug is not supported on cluster version {0}")
     String hotPlugNotSupported(String clusterVersion);
 
     @DefaultMessage("Updating 'network' on a running virtual machine while the NIC is plugged is not supported on cluster version {0}")
     String hotNetworkUpdateNotSupported(String clusterVersion);
+
 }

@@ -6,6 +6,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -28,6 +29,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
     private final CurrentUserRole userRole;
     private final ConnectAutomaticallyManager connectAutomaticallyManager;
+    private final ClientAgentType clientAgentType;
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
@@ -38,11 +40,13 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             LockInteractionManager lockInteractionManager,
             ConnectAutomaticallyManager connectAutomaticallyManager,
             CurrentUserRole userRole,
-            ApplicationConstants constants) {
+            ApplicationConstants constants,
+            ClientAgentType clientAgentType) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager);
         this.userRole = userRole;
         this.connectAutomaticallyManager = connectAutomaticallyManager;
+        this.clientAgentType = clientAgentType;
         Window.setTitle(constants.applicationTitle());
     }
 
@@ -93,6 +97,11 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
         query.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object ReturnValue) {
+                // IE optimization: reload entire application on user logout
+                if (clientAgentType.isIE8OrBelow()) {
+                    Window.Location.reload();
+                }
+
                 Frontend.setLoggedInUser(null);
                 getLoginModel().resetAfterLogout();
                 AsyncDataProvider.clearCache();

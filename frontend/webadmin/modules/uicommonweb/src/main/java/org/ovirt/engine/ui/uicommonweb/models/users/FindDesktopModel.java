@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -53,7 +52,7 @@ public class FindDesktopModel extends SearchableListModel
 
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search,
-                        new SearchParameters(StringFormat.format("Vms: pool=null type=desktop %1$s", getSearchString()), //$NON-NLS-1$
+                        new SearchParameters("Vms: pool=null type=desktop " + getSearchString(), //$NON-NLS-1$
                                 SearchType.VM));
         if (returnValue != null && returnValue.getSucceeded())
         {

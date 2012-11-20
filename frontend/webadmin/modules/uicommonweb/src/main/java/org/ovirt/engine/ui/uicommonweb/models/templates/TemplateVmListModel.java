@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -38,7 +37,7 @@ public class TemplateVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Vms: template.name=%1$s", getEntity().getname())); //$NON-NLS-1$
+            setSearchString("Vms: template.name=" + getEntity().getname()); //$NON-NLS-1$
             super.Search();
         }
     }

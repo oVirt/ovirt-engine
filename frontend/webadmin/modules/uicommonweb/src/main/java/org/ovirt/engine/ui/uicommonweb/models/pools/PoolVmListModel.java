@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -69,7 +68,7 @@ public class PoolVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Vms: pool=%1$s", getEntity().getvm_pool_name())); //$NON-NLS-1$
+            setSearchString("Vms: pool=" + getEntity().getvm_pool_name()); //$NON-NLS-1$
             super.Search();
         }
     }

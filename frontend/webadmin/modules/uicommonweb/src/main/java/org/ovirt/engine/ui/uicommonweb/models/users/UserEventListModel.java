@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
 public class UserEventListModel extends SubTabEventListModel
@@ -39,7 +38,7 @@ public class UserEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("events: usrname=%1$s", getEntity().getusername())); //$NON-NLS-1$
+            setSearchString("events: usrname=" + getEntity().getusername()); //$NON-NLS-1$
             super.Search();
         }
     }
