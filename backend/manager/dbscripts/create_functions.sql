@@ -159,7 +159,7 @@ $function$
 		Quota = 17,
 		GlusterVolume = 18,
         Disk = 19,
-        VmInterface = 20
+        Network = 20
 */
 DECLARE
 	v_entity_type int4 := v_object_type;
@@ -169,7 +169,6 @@ DECLARE
 	v_image_id uuid;
 	v_storage_id uuid;
     v_vm_id uuid;
-    v_vm_interface_id uuid;
     v_storage_pool_id uuid;
 
 BEGIN
@@ -304,18 +303,19 @@ BEGIN
             UNION
             SELECT v_entity_id AS id;
 
-	WHEN v_entity_type = 20 THEN -- VmInterface
+	WHEN v_entity_type = 20 THEN -- Network
 
-        select into v_vm_interface_id, v_storage_pool_id
-               vm_interface.id, network.storage_pool_id
-               from vm_interface inner join network on vm_interface.network_name=network.name;
+        SELECT INTO v_storage_pool_id
+                    network.storage_pool_id
+        FROM network
+        WHERE network.id = v_entity_id;
 
         RETURN QUERY
             SELECT system_root_id AS id
             UNION
-            SELECT v_vm_interface_id AS id
+            SELECT v_storage_pool_id AS id
             UNION
-            SELECT v_storage_pool_id AS id;
+            SELECT v_entity_id AS id;
 	ELSE
 		IF v_entity_type IN ( 1,14,15,16 ) THEN -- Data Center, users and roles are under system
 			RETURN QUERY
@@ -464,7 +464,7 @@ $function$
         Quota = 17,
         GlusterVolume = 18,
         Disk = 19,
-        VmInterface = 20
+        Network = 20
 */
 DECLARE
     v_entity_type int4 := v_object_type;
@@ -502,7 +502,7 @@ BEGIN
     WHEN v_entity_type = 19 THEN
         result := ( SELECT disk_alias FROM base_disks WHERE disk_id = v_entity_id );
     WHEN v_entity_type = 20 THEN
-        result := ( SELECT name FROM vm_interface WHERE id = v_entity_id );
+        result := ( SELECT name FROM network WHERE id = v_entity_id );
     ELSE
         result := 'Unknown type ' ||  v_entity_type;
     END CASE;

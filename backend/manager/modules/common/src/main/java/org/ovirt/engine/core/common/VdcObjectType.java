@@ -27,7 +27,7 @@ public enum VdcObjectType {
     Quota(17, "Quota"),
     GlusterVolume(18, "Gluster Volume"),
     Disk(19, "Disk"),
-    VmInterface(20, "VmInterface"),
+    Network(20, "Network"),
     Snapshot(21, "Snapshot");
 
     private int value;

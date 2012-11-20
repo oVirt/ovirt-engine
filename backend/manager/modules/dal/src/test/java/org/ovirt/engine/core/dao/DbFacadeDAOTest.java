@@ -22,19 +22,19 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
@@ -64,7 +64,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     private static final Guid ROLE_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
     private static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
-    private static final Guid VM_INTERFACE_ID = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
+    private static final Guid NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
 
     private static final Guid ADMIN_ROLE_TYPE_FROM_FIXTURE_ID = new Guid("F5972BFA-7102-4D33-AD22-9DD421BFBA78");
     private static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
@@ -104,7 +104,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void restoreFixtures() {
         Iterator<VmStatic> vmStaticIterator = vmStatics.iterator();
         while (vmStaticIterator.hasNext()) {
-            dbFacade.getVmStaticDao().update((VmStatic) vmStaticIterator.next());
+            dbFacade.getVmStaticDao().update(vmStaticIterator.next());
         }
     }
 
@@ -255,7 +255,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     private VmStatic[] initVmStaticsOrderedByMigrationSupport(List<VmStatic> vmStatics) {
         VmStatic[] vmStaticArray = new VmStatic[NUM_OF_VM_STATIC_IN_FIXTURES];
 
-        vmStaticArray = (VmStatic[]) vmStatics.toArray(vmStaticArray);
+        vmStaticArray = vmStatics.toArray(vmStaticArray);
 
         // initialize the VMs with equal settings: non HA, priority 1 and MIGRATABLE
         for (int i = 0; i < vmStaticArray.length; i++) {
@@ -496,11 +496,11 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetEntityNameByIdAndTypeForVmInterface() {
-        VmNetworkInterface vmInterface = dbFacade.getVmNetworkInterfaceDao().get(VM_INTERFACE_ID);
-        assertNotNull(vmInterface);
-        String name = vmInterface.getName();
-        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_INTERFACE_ID, VdcObjectType.VmInterface)));
+    public void testGetEntityNameByIdAndTypeForNetwork() {
+        Network network = dbFacade.getNetworkDao().get(NETWORK_ID);
+        assertNotNull(network);
+        String name = network.getName();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network)));
     }
 
     @Test
