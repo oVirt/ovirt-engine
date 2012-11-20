@@ -66,6 +66,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String ActionGroup___CONFIGURE_CLUSTER_NETWORK();
 
+    String ActionGroup___ASSIGN_CLUSTER_NETWORK();
+
 	String ActionGroup___CREATE_HOST();
 
 	String ActionGroup___DELETE_HOST();
@@ -120,7 +122,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String ActionGroup___MANIPULATE_ROLES();
 
-	String ActionGroup___CONFIGURE_STORAGE_POOL_NETWORK();
+    String ActionGroup___CONFIGURE_STORAGE_POOL_NETWORK();
+
+    String ActionGroup___CREATE_STORAGE_POOL_NETWORK();
+
+    String ActionGroup___DELETE_STORAGE_POOL_NETWORK();
 
 	String ActionGroup___CONFIGURE_ENGINE();
 

@@ -964,8 +964,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to modify Data Center properties")
     String allowToModifyDataCenterPropertiesRoleTreeTooltip();
 
-    @DefaultStringValue("Allow to configure Logical Network per Data Center")
-    String allowToConfigureLogicalNetworkPerDataCenterRoleTreeTooltip();
+    @DefaultStringValue("Allow to edit Logical Network's properties")
+    String allowToEditLogicalNetworkRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to create Logical Network per Data Center")
+    String allowToCreateLogicalNetworkPerDataCenterRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to delete Logical Network")
+    String allowToDeleteLogicalNetworkRoleTreeTooltip();
 
     @DefaultStringValue("Allow to create Storage Domain")
     String allowToCreateStorageDomainRoleTreeTooltip();
@@ -990,6 +996,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Allow to add/remove Logical Networks for the Cluster (from the list of Networks defined by the Data Center)")
     String allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to edit Logical Networks properties within the Cluster (e.g. non-required or display network)")
+    String allowToEditLogicalNetworksForTheClusterRoleTreeTooltip();
 
     @DefaultStringValue("Allow to add new Host to the Cluster")
     String allowToAddNewHostToTheClusterRoleTreeTooltip();
@@ -1065,6 +1074,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("note: Permissions containing these operations should be associated with Data Center Object (or equivalent)")
     String notePermissionsContainigTheseOperationsShuoldAssociatDcOrEqualRoleTreeTooltip();
+
+    @DefaultStringValue("note: Permissions containing these operations should be associated with Network Object (or equivalent)")
+    String notePermissionsContainingTheseOperationsShouldAssociateNetworkOrEqualRoleTreeTooltip();
 
     @DefaultStringValue("Allow to move VM image to another Storage Domain")
     String allowToMoveVmImageToAnotherStorageDomainRoleTreeTooltip();
@@ -1226,6 +1238,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Configure Data Center")
     String configureDataCenterRoleTree();
+
+    @DefaultStringValue("Network")
+    String networkRoleTree();
+
+    @DefaultStringValue("Configure Network")
+    String configureNetworkRoleTree();
 
     @DefaultStringValue("Storage Domain")
     String storageDomainRoleTree();

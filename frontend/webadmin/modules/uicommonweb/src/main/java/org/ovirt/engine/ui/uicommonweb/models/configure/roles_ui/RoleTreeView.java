@@ -158,11 +158,48 @@ public class RoleTreeView
                                                         new RoleNode(ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION,
                                                                 ConstantsManager.getInstance()
                                                                         .getConstants()
-                                                                        .allowToModifyDataCenterPropertiesRoleTreeTooltip()),
-                                                        new RoleNode(ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK,
-                                                                ConstantsManager.getInstance()
-                                                                        .getConstants()
-                                                                        .allowToConfigureLogicalNetworkPerDataCenterRoleTreeTooltip()) })),
+                                                                        .allowToModifyDataCenterPropertiesRoleTreeTooltip()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().networkRoleTree(),
+                                        new RoleNode[] {
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .configureNetworkRoleTree(),
+                                                        new RoleNode[] {
+                                                                new RoleNode(ActionGroup.CREATE_STORAGE_POOL_NETWORK,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToCreateLogicalNetworkPerDataCenterRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                        .allowToEditLogicalNetworkRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.DELETE_STORAGE_POOL_NETWORK,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToDeleteLogicalNetworkRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.ASSIGN_CLUSTER_NETWORK,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.CONFIGURE_VM_NETWORK,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToConfigureVMsNetworkRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.CONFIGURE_TEMPLATE_NETWORK,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToConfigureTemlateNetworkRoleTreeTooltip()) }),
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .administrationOperationsRoleTree(),
+                                                        ConstantsManager.getInstance()
+                                                                .getConstants()
+                                                                .notePermissionsContainingTheseOperationsShouldAssociateNetworkOrEqualRoleTreeTooltip(),
+                                                        new RoleNode[] {
+                                                                new RoleNode(ActionGroup.PORT_MIRRORING,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowVmNetworkPortMirroringRoleTreeTooltip()) }) }),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().storageDomainRoleTree(),
                                         new RoleNode(ConstantsManager.getInstance()
                                                 .getConstants()
@@ -204,7 +241,7 @@ public class RoleTreeView
                                                         new RoleNode(ActionGroup.CONFIGURE_CLUSTER_NETWORK,
                                                                 ConstantsManager.getInstance()
                                                                         .getConstants()
-                                                                        .allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip()) })),
+                                                                        .allowToEditLogicalNetworksForTheClusterRoleTreeTooltip()) })),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().glusterRoleTree(),
                                         new RoleNode(ConstantsManager.getInstance()
                                                 .getConstants()
@@ -252,11 +289,7 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.EDIT_TEMPLATE_PROPERTIES,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
-                                                                                .allowToChangeTemplatePropertiesRoleTreeTooltip()),
-                                                                new RoleNode(ActionGroup.CONFIGURE_TEMPLATE_NETWORK,
-                                                                        ConstantsManager.getInstance()
-                                                                                .getConstants()
-                                                                                .allowToConfigureTemlateNetworkRoleTreeTooltip()) }),
+                                                                                .allowToChangeTemplatePropertiesRoleTreeTooltip()) }),
                                                 new RoleNode(ConstantsManager.getInstance()
                                                         .getConstants()
                                                         .provisioningOperationsRoleTree(),
@@ -321,10 +354,6 @@ public class RoleTreeView
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
                                                                                 .allowImportExportOperationsRoleTreeTooltip()),
-                                                                new RoleNode(ActionGroup.CONFIGURE_VM_NETWORK,
-                                                                        ConstantsManager.getInstance()
-                                                                                .getConstants()
-                                                                                .allowToConfigureVMsNetworkRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.CONFIGURE_VM_STORAGE,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
@@ -352,10 +381,6 @@ public class RoleTreeView
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
                                                                                 .allowToChangeVmCustomPropertiesRoleTreeTooltip()),
-                                                                new RoleNode(ActionGroup.PORT_MIRRORING,
-                                                                        ConstantsManager.getInstance()
-                                                                                .getConstants()
-                                                                                .allowVmNetworkPortMirroringRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.RECONNECT_TO_VM,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
