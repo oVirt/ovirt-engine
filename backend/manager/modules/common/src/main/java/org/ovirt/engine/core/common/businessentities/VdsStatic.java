@@ -118,6 +118,9 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     @Column(name = "pm_enabled")
     private boolean pmEnabled;
 
+    @Column(name = "pm_proxy_preferences")
+    private String pmProxyPreferences;
+
     @Transient
     private ValueObjectMap pmOptionsMap;
 
@@ -307,6 +310,14 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
 
     public void setpm_enabled(boolean value) {
         pmEnabled = value;
+    }
+
+    public String getPmProxyPreferences() {
+        return pmProxyPreferences;
+    }
+
+    public void setPmProxyPreferences(String pmProxyPreferences) {
+        this.pmProxyPreferences = pmProxyPreferences;
     }
 
     public long getOtpValidity() {

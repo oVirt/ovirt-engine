@@ -92,6 +92,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("pm_port", vds.getpm_port())
                 .addValue("pm_options", vds.getpm_options())
                 .addValue("pm_enabled", vds.getpm_enabled())
+                .addValue("pm_proxy_preferences", vds.getPmProxyPreferences())
                 .addValue("otp_validity", vds.getOtpValidity())
                 .addValue("vds_spm_priority", vds.getVdsSpmPriority())
                 .addValue("sshKeyFingerprint", vds.getSSHKeyFingerprint());
@@ -134,6 +135,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setpm_port((Integer) rs.getObject("pm_port"));
             entity.setpm_options(rs.getString("pm_options"));
             entity.setpm_enabled(rs.getBoolean("pm_enabled"));
+            entity.setPmProxyPreferences(rs.getString("pm_proxy_preferences"));
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setSSHKeyFingerprint(rs.getString("sshKeyFingerprint"));
 

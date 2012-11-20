@@ -283,6 +283,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setpm_port((Integer) rs.getObject("pm_port"));
             entity.setpm_options(rs.getString("pm_options"));
             entity.setpm_enabled(rs.getBoolean("pm_enabled"));
+            entity.setPmProxyPreferences(rs.getString("pm_proxy_preferences"));
             entity.setspm_status(VdsSpmStatus.forValue(rs
                     .getInt("spm_status")));
             entity.setswap_free(rs.getLong("swap_free"));

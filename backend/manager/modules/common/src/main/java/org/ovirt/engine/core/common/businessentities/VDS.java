@@ -941,6 +941,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatic.setpm_enabled(value);
     }
 
+    public String getPmProxyPreferences() {
+        return mVdsStatic.getPmProxyPreferences();
+    }
+
+    public void setPmProxyPreferences(String pmProxyPreferences) {
+        mVdsStatic.setPmProxyPreferences(pmProxyPreferences);
+    }
+
     public String gethost_os() {
         return this.mVdsDynamic.gethost_os();
     }

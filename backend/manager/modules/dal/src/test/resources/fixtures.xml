@@ -766,6 +766,7 @@
         <column>pm_port</column>
         <column>pm_options</column>
         <column>pm_enabled</column>
+        <column>pm_proxy_preferences</column>
         <column>_create_date</column>
         <column>_update_date</column>
         <column>vds_spm_priority</column>
@@ -787,6 +788,7 @@
             <null />
             <value></value>
             <value>0</value>
+            <value>cluster,dc</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>8</value>
@@ -809,6 +811,7 @@
             <null />
             <value></value>
             <value>0</value>
+            <value>cluster,dc</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>6</value>
@@ -831,6 +834,7 @@
             <null />
             <value></value>
             <value>0</value>
+            <value>cluster,dc</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>4</value>
@@ -852,6 +856,7 @@
             <null />
             <value></value>
             <value>0</value>
+            <value>cluster,dc</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>4</value>

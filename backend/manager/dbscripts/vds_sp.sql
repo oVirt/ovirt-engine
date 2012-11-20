@@ -337,6 +337,7 @@ Create or replace FUNCTION InsertVdsStatic(
     v_pm_port INTEGER ,
     v_pm_options VARCHAR(4000) ,
     v_pm_enabled BOOLEAN,
+    v_pm_proxy_preferences VARCHAR(255),
     v_vds_spm_priority INTEGER,
     v_sshKeyFingerprint VARCHAR(128))
 RETURNS VOID
@@ -344,8 +345,8 @@ RETURNS VOID
 BEGIN
    IF v_vds_unique_id IS NULL OR NOT EXISTS(SELECT vds_name FROM vds_static WHERE vds_unique_id = v_vds_unique_id) then
       BEGIN
-         INSERT INTO vds_static(vds_id,host_name, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,vds_type,vds_strength,pm_type,pm_user,pm_password,pm_port,pm_options,pm_enabled, vds_spm_priority, sshKeyFingerprint)
-			VALUES(v_vds_id,v_host_name, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,v_vds_type,v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port,v_pm_options,v_pm_enabled, v_vds_spm_priority, v_sshKeyFingerprint);
+         INSERT INTO vds_static(vds_id,host_name, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,vds_type,vds_strength,pm_type,pm_user,pm_password,pm_port,pm_options,pm_enabled, pm_proxy_preferences, vds_spm_priority, sshKeyFingerprint)
+			VALUES(v_vds_id,v_host_name, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,v_vds_type,v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port,v_pm_options,v_pm_enabled, v_pm_proxy_preferences, v_vds_spm_priority, v_sshKeyFingerprint);
       END;
    end if;
    RETURN;
@@ -372,6 +373,7 @@ Create or replace FUNCTION UpdateVdsStatic(v_host_name VARCHAR(255),
     v_pm_port INTEGER ,
     v_pm_options VARCHAR(4000) ,
     v_pm_enabled BOOLEAN,
+    v_pm_proxy_preferences VARCHAR(255),
     v_otp_validity BIGINT,
     v_vds_spm_priority INTEGER,
     v_sshKeyFingerprint VARCHAR(128))
@@ -388,7 +390,7 @@ BEGIN
       vds_type = v_vds_type,
       _update_date = LOCALTIMESTAMP,vds_strength = v_vds_strength,
       pm_type = v_pm_type,pm_user = v_pm_user,pm_password = v_pm_password,
-      pm_port = v_pm_port,pm_options = v_pm_options,pm_enabled = v_pm_enabled, otp_validity = v_otp_validity, vds_spm_priority = v_vds_spm_priority, sshKeyFingerprint = v_sshKeyFingerprint
+      pm_port = v_pm_port,pm_options = v_pm_options,pm_enabled = v_pm_enabled, pm_proxy_preferences = v_pm_proxy_preferences, otp_validity = v_otp_validity, vds_spm_priority = v_vds_spm_priority, sshKeyFingerprint = v_sshKeyFingerprint
       WHERE vds_id = v_vds_id;
    END;
 
@@ -658,14 +660,15 @@ Create or replace FUNCTION InsertVds(
  v_pm_port INTEGER ,
     v_pm_options VARCHAR(4000) ,
     v_pm_enabled BOOLEAN,
+    v_pm_proxy_preferences VARCHAR(255),
     v_vds_spm_priority INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
 
    BEGIN
-      INSERT INTO vds_static(vds_id,host_name, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,vds_type,vds_strength,pm_type,pm_user,pm_password, pm_port, pm_options, pm_enabled, vds_spm_priority)
-	VALUES(v_vds_id,v_host_name, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,v_vds_type, v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port, v_pm_options, v_pm_enabled, v_vds_spm_priority);
+      INSERT INTO vds_static(vds_id,host_name, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,vds_type,vds_strength,pm_type,pm_user,pm_password, pm_port, pm_options, pm_enabled, pm_proxy_preferences, vds_spm_priority)
+	VALUES(v_vds_id,v_host_name, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,v_vds_type, v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port, v_pm_options, v_pm_enabled, v_pm_proxy_preferences, v_vds_spm_priority);
 
       INSERT INTO vds_dynamic(vds_id, status) VALUES(v_vds_id, 0);
 

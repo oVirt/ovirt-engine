@@ -9,8 +9,8 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _storagePoolId = Guid.Empty;
     }
 
-    public GetNewVdsFenceStatusParameters(Guid vds_id, Guid storagePolId, String managementIp,
-            ValueObjectMap fencinOptions, String pmType, String user, String password) {
+    public GetNewVdsFenceStatusParameters(Guid vds_id, Guid vdsGroupId, Guid storagePolId, String managementIp,
+            ValueObjectMap fencinOptions, String pmType, String user, String password, String pmProxyPreferences) {
         _vds_id = vds_id;
         _storagePoolId = storagePolId;
         _managementIp = managementIp;
@@ -18,6 +18,8 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _pmType = pmType;
         _user = user;
         _password = password;
+        this.vdsGrouoId = vdsGroupId;
+        this.PmProxyPreferences = pmProxyPreferences;
     }
 
     private Guid _vds_id;
@@ -94,5 +96,25 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
 
     public boolean getIsNewHost() {
         return _isNewHost;
+    }
+
+    private Guid vdsGrouoId;
+
+    public Guid getVdsGrouoId() {
+        return vdsGrouoId;
+    }
+
+    public void setVdsGrouoId(Guid vdsGrouoId) {
+        this.vdsGrouoId = vdsGrouoId;
+    }
+
+    private String PmProxyPreferences;
+
+    public String getPmProxyPreferences() {
+        return PmProxyPreferences;
+    }
+
+    public void setPmProxyPreferences(String pmProxyPreferences) {
+        PmProxyPreferences = pmProxyPreferences;
     }
 }

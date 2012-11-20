@@ -45,6 +45,7 @@ public class VdsHandler extends BaseHandler {
         mUpdateVdsStatic.AddPermittedField("pm_port");
         mUpdateVdsStatic.AddPermittedField("pm_options");
         mUpdateVdsStatic.AddPermittedField("pm_enabled");
+        mUpdateVdsStatic.AddPermittedField("pmProxyPreferences");
         mUpdateVdsStatic.AddPermittedField("PmOptionsMap");
         mUpdateVdsStatic.AddPermittedField("vdsSpmPriority");
         mUpdateVdsStatic.AddPermittedField("otpValidity");

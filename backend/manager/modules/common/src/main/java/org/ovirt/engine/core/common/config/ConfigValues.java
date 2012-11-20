@@ -91,6 +91,10 @@ public enum ConfigValues {
     FenceQuietTimeBetweenOperationsInSec(30),
     @Reloadable
     @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("cluster,dc")
+    FenceProxyDefaultPreferences(31),
+    @Reloadable
+    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/updates/ovirt-node-image.iso")
     oVirtUploadPath(32),
     @Reloadable

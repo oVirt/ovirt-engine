@@ -104,6 +104,7 @@ select fn_db_add_config_value('EngineMode','Active','general');
 select fn_db_add_config_value('FailedJobCleanupTimeInMinutes','60','general');
 select fn_db_add_config_value('FenceAgentDefaultParams','ilo3:lanplus,power_wait=4;ilo4:lanplus,power_wait=4','general');
 select fn_db_add_config_value('FenceAgentMapping','ilo2=ilo,ilo3=ipmilan,ilo4=ipmilan','general');
+select fn_db_add_config_value('FenceProxyDefaultPreferences','cluster,dc','general');
 select fn_db_add_config_value('FenceQuietTimeBetweenOperationsInSec','180','general');
 select fn_db_add_config_value('FenceStartStatusDelayBetweenRetriesInSec','60','general');
 select fn_db_add_config_value('FenceStartStatusRetries','3','general');
