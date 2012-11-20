@@ -24,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.LocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.VdcException;
 import org.ovirt.engine.core.utils.archivers.tar.CachedTar;
@@ -170,20 +171,27 @@ public class VdsInstaller implements IVdsInstallerCallback {
 
     protected String InitInitialCommand(VDS vds, String initialCommand) {
         initialCommand = initialCommand.replace("{vds-server}", vds.gethost_name());
-        initialCommand = initialCommand.replace("{URL1}", Config.<String> GetValue(ConfigValues.VdcBootStrapUrl));
+        initialCommand = initialCommand.replace(
+            "{URL1}",
+            String.format(
+                "http://%1$s:%2$s/Components/vds/",
+                LocalConfig.getInstance().getHost(),
+                LocalConfig.getInstance().getExternalHttpPort()
+            )
+        );
         initialCommand = initialCommand.replace("{GUID}", _fileGuid.toString());
         initialCommand = initialCommand.replace("{server_SSL_enabled}",
                 Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers).toString());
         initialCommand = initialCommand.replace("{OrganizationName}",
                 HandleOrganizationNameString(Config.<String> GetValue(ConfigValues.OrganizationName)));
         initialCommand = initialCommand.replace("{management_port}", (Integer.toString(vds.getport())));
-
-        String publicUrlPort = Config.<String> GetValue(ConfigValues.PublicURLPort);
-        if (StringUtils.isEmpty(publicUrlPort)) {
-            initialCommand = initialCommand.replace("{EnginePort}", "");
-        } else {
-            initialCommand = initialCommand.replace("{EnginePort}", String.format("-p %1$s", publicUrlPort));
-        }
+        initialCommand = initialCommand.replace(
+            "{EnginePort}",
+            String.format(
+                "-p %1$s",
+                LocalConfig.getInstance().getExternalHttpsPort()
+            )
+        );
 
         initialCommand = initialCommand.replace("{SSHKey}", _remoteSSHKey);
         initialCommand = initialCommand.replace("{OverrideFirewall}", isOverrideFirewallAllowed() ?

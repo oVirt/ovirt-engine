@@ -1075,7 +1075,6 @@ def _updateVDCOptions():
             "SSLEnabled":[ "true", 'text'],
             "UseSecureConnectionWithServers":[ "true", 'text'],
             "ScriptsPath":["/usr/share/ovirt-engine", 'text'],
-            "VdcBootStrapUrl":["http://" + controller.CONF["HOST_FQDN"] + ":" + controller.CONF["HTTP_PORT"] + "/Components/vds/", 'text'],
             "AsyncPollingCyclesBeforeCallbackCleanup":["30", 'text'],
             "SysPrepXPPath":["/etc/ovirt-engine/sysprep/sysprep.xp", 'text'],
             "SysPrep2K3Path":["/etc/ovirt-engine/sysprep/sysprep.2k3", 'text'],
@@ -1089,7 +1088,6 @@ def _updateVDCOptions():
             "ConfigDir":["/etc/ovirt-engine", 'text'],
             "DataDir":["/usr/share/ovirt-engine", 'text'],
             "SignScriptName":["SignReq.sh", 'text'],
-            "PublicURLPort":[controller.CONF["HTTP_PORT"], 'text'],
             "OrganizationName":[controller.CONF["ORG_NAME"], 'text'],
             "ProductRPMVersion":[utils.getRpmVersion(basedefs.ENGINE_RPM_NAME), 'text'],
             "AdminPassword":[controller.CONF["AUTH_PASS"], 'pass']

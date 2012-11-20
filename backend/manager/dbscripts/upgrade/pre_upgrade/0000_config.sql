@@ -392,7 +392,6 @@ select fn_db_add_config_value('ProductKey','','general');
 select fn_db_add_config_value('ProductKeyWindow7','','general');
 select fn_db_add_config_value('ProductKeyWindow7x64','','general');
 select fn_db_add_config_value('ProductRPMVersion','3.0.0.0','general');
-select fn_db_add_config_value('PublicURLPort','8700','general');
 select fn_db_add_config_value('QuotaGraceStorage','20','general');
 select fn_db_add_config_value('QuotaGraceVdsGroup','20','general');
 select fn_db_add_config_value('QuotaThresholdStorage','80','general');
@@ -512,7 +511,6 @@ select fn_db_add_config_value('UtilizationThresholdInPercent','80','general');
 select fn_db_add_config_value('ValidNumOfMonitors','1,2,4','general');
 select fn_db_add_config_value('VcpuConsumptionPercentage','10','general');
 --Handling Host Installation Bootstrap Script URL
-select fn_db_add_config_value('VdcBootStrapUrl','http://example.com/engine/vds_scripts','general');
 select fn_db_add_config_value('VdcVersion','3.0.0.0','general');
 select fn_db_add_config_value('VDSAttemptsToResetCount','2','general');
 select fn_db_add_config_value('VdsCertificateValidityInYears','5','general');
@@ -655,10 +653,12 @@ select fn_db_delete_config_value('ImagesSyncronizationTimeout','general');
 select fn_db_delete_config_value('LdapServers','3.0');
 select fn_db_delete_config_value('NetConsolePort','general');
 select fn_db_delete_config_value('PredefinedVMProperties','general');
+select fn_db_delete_config_value('PublicURLPort','general');
 select fn_db_delete_config_value('RpmsRepositoryUrl','general');
 select fn_db_delete_config_value('SysPrep3.0Path','general');
 select fn_db_delete_config_value('UseENGINERepositoryRPMs','general');
 select fn_db_delete_config_value('HotPlugSupportedOsList','general');
+select fn_db_delete_config_value('VdcBootStrapUrl','general');
 select fn_db_delete_config_value('VdsErrorsFileName','general');
 select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
 select fn_db_delete_config_value('LogVdsRegistration','general');
@@ -679,11 +679,6 @@ select fn_db_split_config_value('SpiceSecureChannels','smain,sinputs','smain,sin
 
 -- update keys from internal version 2.3 to official 3.0`
 update vdc_options set version = '3.0' where version = '2.3';
-
--- update bootstrap path
-
-update vdc_options set option_value = replace (option_value , '/4/6', '')
-where option_name = 'VdcBootStrapUrl';
 
 ------------------------------------------------------------------------------------
 --                 complex updates using a temporary function section

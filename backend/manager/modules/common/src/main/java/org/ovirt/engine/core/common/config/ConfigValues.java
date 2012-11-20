@@ -373,6 +373,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     LicenseCertificateFingerPrint(105),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     VdcBootStrapUrl(106),
@@ -870,6 +871,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("1")
     CertAlias(265),
 
+    @Deprecated
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("8700")
