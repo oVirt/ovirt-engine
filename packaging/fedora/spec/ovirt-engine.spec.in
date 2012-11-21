@@ -182,7 +182,7 @@ Requires: ovirt-engine-cli
 Requires: postgresql-server >= 8.4.7
 
 # Require JBoss AS 7:
-Requires: jboss-as >= 7.1.1
+Requires: jboss-as >= 7.1.1-9.3
 
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independely as part
@@ -514,58 +514,6 @@ install -dm 755 %{buildroot}%{engine_jboss_modules}
 cp -r deployment/modules/* %{buildroot}%{engine_jboss_modules}
 find %{buildroot}%{engine_jboss_modules} -type d -exec chmod 755 {} \;
 find %{buildroot}%{engine_jboss_modules} -type f -exec chmod 644 {} \;
-
-# Apache commons-codec module:
-ln -s `build-classpath commons-codec` %{buildroot}%{engine_jboss_modules}/org/apache/commons/codec/main/.
-
-# Apache HTTP components module:
-ln -s `build-classpath httpcomponents/httpcore` %{buildroot}%{engine_jboss_modules}/org/apache/httpcomponents/main/.
-ln -s `build-classpath httpcomponents/httpclient` %{buildroot}%{engine_jboss_modules}/org/apache/httpcomponents/main/.
-ln -s `build-classpath httpcomponents/httpmime` %{buildroot}%{engine_jboss_modules}/org/apache/httpcomponents/main/.
-
-# Scannotation module:
-ln -s `build-classpath scannotation` %{buildroot}%{engine_jboss_modules}/org/scannotation/scannotation/main/.
-
-# JAXB module:
-ln -s `build-classpath glassfish-jaxb/jaxb-impl` %{buildroot}%{engine_jboss_modules}/com/sun/xml/bind/main/.
-ln -s `build-classpath glassfish-jaxb/jaxb-xjc` %{buildroot}%{engine_jboss_modules}/com/sun/xml/bind/main/.
-ln -s `build-classpath istack-commons-runtime` %{buildroot}%{engine_jboss_modules}/com/sun/xml/bind/main/.
-
-# JAX-RS API modules:
-ln -s `build-classpath resteasy/jaxrs-api` %{buildroot}%{engine_jboss_modules}/javax/ws/rs/api/main/.
-
-# Resteasy modules:
-ln -s `build-classpath resteasy/resteasy-cdi` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-cdi/main/.
-ln -s `build-classpath resteasy/resteasy-jettison-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jettison-provider/main/.
-ln -s `build-classpath resteasy/resteasy-atom-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-atom-provider/main/.
-ln -s `build-classpath resteasy/resteasy-yaml-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-yaml-provider/main/.
-ln -s `build-classpath resteasy/resteasy-multipart-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-multipart-provider/main/.
-ln -s `build-classpath resteasy/resteasy-jackson-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jackson-provider/main/.
-ln -s `build-classpath resteasy/resteasy-jaxb-provider` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jaxb-provider/main/.
-ln -s `build-classpath resteasy/resteasy-jaxrs` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jaxrs/main/.
-ln -s `build-classpath resteasy/async-http-servlet-3.0` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jaxrs/main/.
-ln -s `build-classpath resteasy/resteasy-jsapi` %{buildroot}%{engine_jboss_modules}/org/jboss/resteasy/resteasy-jsapi/main/.
-
-# Jackson modules:
-ln -s `build-classpath jackson/jackson-jaxrs` %{buildroot}%{engine_jboss_modules}/org/codehaus/jackson/jackson-jaxrs/main/.
-ln -s `build-classpath jackson/jackson-core-asl` %{buildroot}%{engine_jboss_modules}/org/codehaus/jackson/jackson-core-asl/main/.
-ln -s `build-classpath jackson/jackson-mapper-asl` %{buildroot}%{engine_jboss_modules}/org/codehaus/jackson/jackson-mapper-asl/main/.
-ln -s `build-classpath jackson/jackson-xc` %{buildroot}%{engine_jboss_modules}/org/codehaus/jackson/jackson-xc/main/.
-
-# Hibernate validator module:
-ln -s `build-classpath hibernate-validator` %{buildroot}%{engine_jboss_modules}/org/hibernate/validator/main/.
-ln -s `build-classpath jtype` %{buildroot}%{engine_jboss_modules}/org/hibernate/validator/main/.
-
-# Jettison:
-ln -s `build-classpath jettison` %{buildroot}%{engine_jboss_modules}/org/codehaus/jettison/main
-
-# Apache MIME4J:
-ln -s `build-classpath apache-mime4j/core` %{buildroot}%{engine_jboss_modules}/org/apache/james/mime4j/main/.
-ln -s `build-classpath apache-mime4j/dom` %{buildroot}%{engine_jboss_modules}/org/apache/james/mime4j/main/.
-ln -s `build-classpath apache-mime4j/storage` %{buildroot}%{engine_jboss_modules}/org/apache/james/mime4j/main/.
-
-# Snakeyaml:
-ln -s `build-classpath snakeyaml` %{buildroot}%{engine_jboss_modules}/org/yaml/snakeyaml/main/.
 
 
 %preun
