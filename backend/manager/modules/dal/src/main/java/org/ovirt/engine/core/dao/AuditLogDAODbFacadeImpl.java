@@ -88,13 +88,12 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
 
     @Override
     public void save(AuditLog event) {
-        getCallsHandler().executeModification("InsertAuditLog",
-                getSqlMapper(event).addValue("log_type_name", event.getlog_type_name()));
+        getCallsHandler().executeModification("InsertAuditLog", getSqlMapper(event));
     }
 
     @Override
     public void update(AuditLog event) {
-        getCallsHandler().executeModification("UpdateAuditLog", getSqlMapper(event));
+        throw new UnsupportedOperationException();
     }
 
     private MapSqlParameterSource getSqlMapper(AuditLog event) {
@@ -102,6 +101,7 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("audit_log_id", event.getaudit_log_id())
                 .addValue("log_time", event.getlog_time())
                 .addValue("log_type", event.getlog_type())
+                .addValue("log_type_name", event.getlog_type_name())
                 .addValue("severity", event.getseverity())
                 .addValue("message", event.getmessage())
                 .addValue("user_id", event.getuser_id())

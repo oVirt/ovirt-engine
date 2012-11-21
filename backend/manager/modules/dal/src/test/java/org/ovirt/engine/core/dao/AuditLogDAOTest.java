@@ -282,21 +282,6 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that update a AuditLog works as expected.
-     */
-    @Test
-    public void testUpdate() {
-        existingAuditLog.setmessage(existingAuditLog.getmessage().toUpperCase());
-        existingAuditLog.setseverity(AuditLogSeverity.ERROR);
-
-        dao.update(existingAuditLog);
-        AuditLog result = dao.get(existingAuditLog.getaudit_log_id());
-
-        assertNotNull(result);
-        assertEquals(existingAuditLog, result);
-    }
-
-    /**
      * Ensures that removing an AuditLog works as expected.
      */
     @Test

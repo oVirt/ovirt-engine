@@ -1,14 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -18,50 +12,56 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 
-
-@Entity
-@Table(name = "audit_log")
 @TypeDef(name = "guid", typeClass = GuidType.class)
 public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
     private static final long serialVersionUID = -2808392095455280186L;
 
-    @Column(name = "processed")
+    private long auditLogId;
+    private Date logTime = new Date(0);
+    private String message;
+    private NGuid userId;
+    private String userName;
+    private NGuid quotaId;
+    private String quotaName;
+    private NGuid vdsId;
+    private String vdsName;
+    private NGuid vmTemplateId;
+    private String vmTemplateName;
+    private NGuid vmId;
+    private String vmName;
+    private NGuid storagePoolId;
+    private String storagePoolName;
+    private NGuid storageDomainId;
+    private String storageDomainName;
+    private NGuid vdsGroupId;
+    private String vdsGroupName;
+    private int logType = AuditLogType.UNASSIGNED.getValue();
+    private int severity = AuditLogSeverity.NORMAL.getValue();
     private boolean processed = false;
-
     private String correlationId;
     private NGuid jobId;
-
     private NGuid glusterVolumeId;
     private String glusterVolumeName;
 
     public AuditLog() {
     }
 
-    public AuditLog(long audit_log_id, java.util.Date log_time, int log_type, int severity, String message,
-            NGuid user_id, String user_name, NGuid vds_id, String vds_name, NGuid vm_id, String vm_name,
-            NGuid vm_template_id, String vm_template_name, String correlationId, NGuid jobId, NGuid quotaId, String quotaName) {
-        this.auditLogId = audit_log_id;
-        this.logTime = log_time;
-        this.logType = log_type;
-        this.severity = severity;
-        this.message = message;
-        this.userId = user_id;
-        this.userName = user_name;
-        this.vdsId = vds_id;
-        this.vdsName = vds_name;
-        this.vmId = vm_id;
-        this.vmName = vm_name;
-        this.vmTemplateId = vm_template_id;
-        this.vmTemplateName = vm_template_name;
-        this.correlationId = correlationId;
-        this.jobId = jobId;
-        this.quotaId = quotaId;
-        this.quotaName = quotaName;
+    public AuditLog(AuditLogType al_type, AuditLogSeverity al_severity, String al_msg, NGuid al_user_id,
+            String al_user_name, NGuid al_vm_id, String al_vm_name, NGuid al_vds_id, String al_vds_name,
+            NGuid al_vmt_id, String al_vmt_name) {
+        logTime = new Date();
+        logType = al_type.getValue();
+        severity = al_severity.getValue();
+        message = al_msg;
+        userId = al_user_id;
+        userName = al_user_name;
+        vmId = al_vm_id;
+        vmName = al_vm_name;
+        vdsId = al_vds_id;
+        vdsName = al_vds_name;
+        vmTemplateId = al_vmt_id;
+        vmTemplateName = al_vmt_name;
     }
-
-    @Id
-    @Column(name = "audit_log_id")
-    private long auditLogId;
 
     public long getaudit_log_id() {
         return this.auditLogId;
@@ -71,9 +71,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.auditLogId = value;
     }
 
-    @Column(name = "log_time", nullable = false)
-    private java.util.Date logTime = new java.util.Date(0);
-
     public java.util.Date getlog_time() {
         return this.logTime;
     }
@@ -81,9 +78,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setlog_time(java.util.Date value) {
         this.logTime = value;
     }
-
-    @Column(name = "message", nullable = false)
-    private String message;
 
     public String getmessage() {
         return this.message;
@@ -101,10 +95,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.message = value;
     }
 
-    @Column(name = "user_id")
-    @Type(type = "guid")
-    private NGuid userId;
-
     public NGuid getuser_id() {
         return this.userId;
     }
@@ -112,9 +102,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setuser_id(NGuid value) {
         this.userId = value;
     }
-
-    @Column(name = "user_name", length = 255)
-    private String userName;
 
     public String getuser_name() {
         return this.userName;
@@ -124,8 +111,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.userName = value;
     }
 
-    private NGuid quotaId;
-
     public NGuid getQuotaId() {
         return this.quotaId;
     }
@@ -133,8 +118,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setQuotaId(NGuid value) {
         this.quotaId = value;
     }
-
-    private String quotaName;
 
     public String getQuotaName() {
         return this.quotaName;
@@ -144,10 +127,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.quotaName = value;
     }
 
-    @Column(name = "vds_id")
-    @Type(type = "guid")
-    private NGuid vdsId;
-
     public NGuid getvds_id() {
         return this.vdsId;
     }
@@ -155,9 +134,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setvds_id(NGuid value) {
         this.vdsId = value;
     }
-
-    @Column(name = "vds_name", length = 255)
-    private String vdsName;
 
     public String getvds_name() {
         return this.vdsName;
@@ -167,10 +143,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.vdsName = value;
     }
 
-    @Column(name = "vm_template_id")
-    @Type(type = "guid")
-    private NGuid vmTemplateId;
-
     public NGuid getvm_template_id() {
         return this.vmTemplateId;
     }
@@ -178,9 +150,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setvm_template_id(NGuid value) {
         this.vmTemplateId = value;
     }
-
-    @Column(name = "vm_template_name", length = 40)
-    private String vmTemplateName;
 
     public String getvm_template_name() {
         return this.vmTemplateName;
@@ -190,10 +159,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.vmTemplateName = value;
     }
 
-    @Column(name = "vm_id")
-    @Type(type = "guid")
-    private NGuid vmId;
-
     public NGuid getvm_id() {
         return this.vmId;
     }
@@ -201,9 +166,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setvm_id(NGuid value) {
         this.vmId = value;
     }
-
-    @Column(name = "vm_name", length = 255)
-    private String vmName;
 
     public String getvm_name() {
         return this.vmName;
@@ -213,10 +175,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.vmName = value;
     }
 
-    @Column(name = "storage_pool_id")
-    @Type(type = "guid")
-    private NGuid storagePoolId;
-
     public NGuid getstorage_pool_id() {
         return storagePoolId;
     }
@@ -224,9 +182,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setstorage_pool_id(NGuid value) {
         storagePoolId = value;
     }
-
-    @Column(name = "storage_pool_name", length = 40)
-    private String storagePoolName;
 
     public String getstorage_pool_name() {
         return storagePoolName;
@@ -236,10 +191,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storagePoolName = value;
     }
 
-    @Column(name = "storage_domain_id")
-    @Type(type = "guid")
-    private NGuid storageDomainId;
-
     public NGuid getstorage_domain_id() {
         return storageDomainId;
     }
@@ -248,8 +199,7 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storageDomainId = value;
     }
 
-    @Column(name = "storage_domain_name", length = 250)
-    private String storageDomainName;
+
 
     public String getstorage_domain_name() {
         return storageDomainName;
@@ -259,9 +209,7 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storageDomainName = value;
     }
 
-    @Column(name = "vds_group_id")
-    @Type(type = "guid")
-    private NGuid vdsGroupId;
+
 
     public NGuid getvds_group_id() {
         return vdsGroupId;
@@ -271,9 +219,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         vdsGroupId = value;
     }
 
-    @Column(name = "vds_group_name", length = 255)
-    private String vdsGroupName;
-
     public String getvds_group_name() {
         return vdsGroupName;
     }
@@ -281,30 +226,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public void setvds_group_name(String value) {
         vdsGroupName = value;
     }
-
-    /**
-     * Vitaly add
-     */
-    public AuditLog(AuditLogType al_type, AuditLogSeverity al_severity, String al_msg, NGuid al_user_id,
-            String al_user_name, NGuid al_vm_id, String al_vm_name, NGuid al_vds_id, String al_vds_name,
-            NGuid al_vmt_id, String al_vmt_name) {
-        logTime = new java.util.Date();
-        logType = al_type.getValue();
-        severity = al_severity.getValue();
-        message = al_msg;
-        userId = al_user_id;
-        userName = al_user_name;
-        vmId = al_vm_id;
-        vmName = al_vm_name;
-        vdsId = al_vds_id;
-        vdsName = al_vds_name;
-        vmTemplateId = al_vmt_id;
-        vmTemplateName = al_vmt_name;
-    }
-
-    @Column(name = "log_type", nullable = false)
-    @Enumerated
-    private int logType = AuditLogType.UNASSIGNED.getValue();
 
     public AuditLogType getlog_type() {
         return AuditLogType.forValue(logType);
@@ -329,9 +250,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     public String getlog_type_name() {
         return getlog_type().name();
     }
-
-    @Column(name = "severity", nullable = false)
-    private int severity = AuditLogSeverity.NORMAL.getValue();
 
     public AuditLogSeverity getseverity() {
         return AuditLogSeverity.forValue(severity);
@@ -373,6 +291,22 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
 
     public NGuid getJobId() {
         return jobId;
+    }
+
+    public NGuid getGlusterVolumeId() {
+        return glusterVolumeId;
+    }
+
+    public void setGlusterVolumeId(NGuid value) {
+        glusterVolumeId = value;
+    }
+
+    public String getGlusterVolumeName() {
+        return glusterVolumeName;
+    }
+
+    public void setGlusterVolumeName(String value) {
+        glusterVolumeName = value;
     }
 
     @Override
@@ -470,21 +404,5 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         } else if (!jobId.equals(other.jobId))
             return false;
         return true;
-    }
-
-    public NGuid getGlusterVolumeId() {
-        return glusterVolumeId;
-    }
-
-    public void setGlusterVolumeId(NGuid value) {
-        glusterVolumeId = value;
-    }
-
-    public String getGlusterVolumeName() {
-        return glusterVolumeName;
-    }
-
-    public void setGlusterVolumeName(String value) {
-        glusterVolumeName = value;
     }
 }
