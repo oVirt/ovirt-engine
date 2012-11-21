@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -184,12 +183,6 @@ public class VdsManager {
     }
 
     public void UpdateVmDynamic(VmDynamic vmDynamic) {
-        if (_vdsUpdater != null) {
-            VM vm = _vdsUpdater.GetVmFromDictionary(vmDynamic.getId());
-            if (vm != null) {
-                vm.setDynamicData(vmDynamic);
-            }
-        }
         DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
     }
 

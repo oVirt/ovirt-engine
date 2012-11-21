@@ -106,12 +106,6 @@ public class VdsUpdateRunTimeInfo {
     private static Map<Guid, Long> hostDownTimes = new HashMap<Guid, Long>();
     private int runningVmsInTransition = 0;
 
-    public VM GetVmFromDictionary(Guid id) {
-        VM vm = null;
-        vm = _vmDict.get(id);
-        return vm;
-    }
-
     private void SaveDataToDb() {
         if (_saveVdsDynamic) {
             _vdsManager.UpdateDynamicData(_vds.getDynamicData());
