@@ -13,9 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -31,34 +28,19 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
-import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
-import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.ejb.EngineEJBUtilsStrategy;
 
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest {
     @Rule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.IsMultilevelAdministrationOn, false));
 
+    @Rule
+    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
+
     /** The session to use */
     private String session = "";
-
-    @Before
-    public void setUp() throws Exception {
-        EJBUtilsStrategy ejbStrategy = mock(EJBUtilsStrategy.class);
-        TransactionManager tm = mock(TransactionManager.class);
-        Transaction trans = mock(Transaction.class);
-        when(tm.getTransaction()).thenReturn(trans);
-        when(ejbStrategy.<TransactionManager> findResource(ContainerManagedResourceType.TRANSACTION_MANAGER)).thenReturn(tm);
-        EjbUtils.setStrategy(ejbStrategy);
-    }
-
-    @After
-    public void tearDown() {
-        EjbUtils.setStrategy(new EngineEJBUtilsStrategy());
-    }
 
     /** A dummy class for testing CommandBase's functionality */
     @SuppressWarnings("serial")

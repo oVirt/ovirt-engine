@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -17,9 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -52,7 +49,7 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveStorageDomainTest {
@@ -65,6 +62,9 @@ public class RemoveStorageDomainTest {
                             VDS_COMPATIBILITY_VERSION.getValue(),
                             true)
             );
+
+    @Rule
+    public MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     private final Guid STORAGE_DOMAIN_ID = Guid.NewGuid();
     private final Guid STORAGE_POOL_ID = Guid.NewGuid();
@@ -81,14 +81,6 @@ public class RemoveStorageDomainTest {
                 spy(new RemoveStorageDomainCommand<RemoveStorageDomainParameters>(getParams(format)));
         doReturn(db).when(cmd).getDbFacade();
         doReturn(backend).when(cmd).getBackend();
-        doAnswer(new Answer<Object>() {
-
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                return ((TransactionMethod<?>) invocation.getArguments()[0]).runInTransaction();
-            }
-
-        }).when(cmd).executeInNewTransaction(any(TransactionMethod.class));
         return cmd;
     }
 

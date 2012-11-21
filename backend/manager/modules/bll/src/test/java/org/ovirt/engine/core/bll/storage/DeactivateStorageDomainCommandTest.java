@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -10,11 +9,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.ExecuteTransactionAnswer;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -30,14 +29,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeactivateStorageDomainCommandTest {
@@ -62,6 +60,9 @@ public class DeactivateStorageDomainCommandTest {
     private VDS vds;
     storage_pool_iso_map map = new storage_pool_iso_map();
 
+    @Rule
+    public MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
+
     @Test
     public void statusSetInMap() {
         StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.NewGuid(), Guid.NewGuid());
@@ -79,10 +80,6 @@ public class DeactivateStorageDomainCommandTest {
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(new storage_pool());
         when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
         when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new storage_domains());
-
-        doAnswer(new ExecuteTransactionAnswer(0)).when(cmd).executeInNewTransaction(any(TransactionMethod.class));
-        doAnswer(new ExecuteTransactionAnswer(1)).when(cmd).executeInScope(any(TransactionScopeOption.class),
-                any(TransactionMethod.class));
 
         doReturn(backendInternal).when(cmd).getBackend();
         when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(new ArrayList<VDS>());

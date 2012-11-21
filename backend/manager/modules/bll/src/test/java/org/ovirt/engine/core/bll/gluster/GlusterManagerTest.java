@@ -16,10 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
@@ -67,9 +63,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
-import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterManagerTest {
@@ -79,21 +73,15 @@ public class GlusterManagerTest {
     private static final String DIST_VOL_NAME = "dist-vol";
 
     @Mock
-    private EJBUtilsStrategy mockLookupStrategy;
-
-    @Mock
-    private TransactionManager mockTxnManager;
-
-    @Mock
-    private Transaction mockTxn;
-
-    @Mock
     private ClusterUtils clusterUtils;
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterRefreshRateLight, 5),
             mockConfig(ConfigValues.GlusterRefreshRateHeavy, 300));
+
+    @Rule
+    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     private GlusterManager glusterManager;
 
@@ -218,8 +206,6 @@ public class GlusterManagerTest {
 
     private void setupMocks() throws Exception {
         glusterManager = Mockito.spy(GlusterManager.getInstance());
-
-        mockTransactionManager();
         mockDaos();
 
         doReturn(clusterUtils).when(glusterManager).getClusterUtils();
@@ -421,17 +407,6 @@ public class GlusterManagerTest {
                 return addedBrickIds.contains(((GlusterBrickEntity) argument).getId());
             }
         };
-    }
-
-    private void mockTransactionManager() throws Exception {
-        EjbUtils.setStrategy(mockLookupStrategy);
-        doReturn(mockTxnManager).when(mockLookupStrategy)
-                .findResource(ContainerManagedResourceType.TRANSACTION_MANAGER);
-        doReturn(null).when(mockTxnManager).getTransaction();
-        doNothing().when(mockTxnManager).begin();
-        doReturn(mockTxn).when(mockTxnManager).getTransaction();
-        doReturn(Status.STATUS_COMMITTED).when(mockTxn).getStatus();
-        doNothing().when(mockTxnManager).commit();
     }
 
     private GlusterVolumeAdvancedDetails getVolumeAdvancedDetails(GlusterVolumeEntity volume) {

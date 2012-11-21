@@ -3,11 +3,8 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -35,13 +32,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.ejb.EngineEJBUtilsStrategy;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 
 /**
@@ -60,6 +54,9 @@ public class BackwardCompatibilityTaskCreationTest {
             mockConfig(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds, 10),
             mockConfig(ConfigValues.AsyncTaskStatusCachingTimeInMinutes, 10)
             );
+
+    @Rule
+    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.SCHEDULER, mock(SchedulerUtil.class));
 
     @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
     @DataPoints
@@ -126,19 +123,6 @@ public class BackwardCompatibilityTaskCreationTest {
                     }
                 }
         };
-    }
-
-    @Before
-    public void setUp() {
-        EJBUtilsStrategy ejbStrategy = mock(EJBUtilsStrategy.class);
-        SchedulerUtil sched = mock(SchedulerUtil.class);
-        when(ejbStrategy.<SchedulerUtil> findBean(BeanType.SCHEDULER, BeanProxyType.LOCAL)).thenReturn(sched);
-        EjbUtils.setStrategy(ejbStrategy);
-    }
-
-    @After
-    public void tearDown() {
-        EjbUtils.setStrategy(new EngineEJBUtilsStrategy());
     }
 
     @Theory

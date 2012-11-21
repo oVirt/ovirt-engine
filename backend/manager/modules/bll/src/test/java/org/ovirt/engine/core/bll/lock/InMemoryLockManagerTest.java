@@ -2,21 +2,17 @@ package org.ovirt.engine.core.bll.lock;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 
 public class InMemoryLockManagerTest {
@@ -28,11 +24,13 @@ public class InMemoryLockManagerTest {
     private EngineLock updateAndLockLock;
     private String updateGuid;
     private String lockGuid;
-    private InMemoryLockManager lockMager;
+    private InMemoryLockManager lockMager = new InMemoryLockManager();
+
+    @Rule
+    public MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule(BeanType.LOCK_MANAGER, lockMager);
 
     @Before
     public void setup() {
-        mockLockManager();
         updateGuid = Guid.NewGuid().toString();
         lockGuid = Guid.NewGuid().toString();
         Map<String, String> updateRegionsMap = new HashMap<String, String>();
@@ -50,14 +48,6 @@ public class InMemoryLockManagerTest {
         updateAndLockLock = new EngineLock();
         updateAndLockLock.setSharedLocks(updateRegionsMap);
         updateAndLockLock.setExclusiveLocks(lockedRegionsMap);
-    }
-
-    private void mockLockManager() {
-        lockMager = new InMemoryLockManager();
-        EJBUtilsStrategy ejbStrategy = mock(EJBUtilsStrategy.class);
-        when(ejbStrategy.<LockManager> findBean(BeanType.LOCK_MANAGER, BeanProxyType.LOCAL))
-                .thenReturn(lockMager);
-        EjbUtils.setStrategy(ejbStrategy);
     }
 
     @Test

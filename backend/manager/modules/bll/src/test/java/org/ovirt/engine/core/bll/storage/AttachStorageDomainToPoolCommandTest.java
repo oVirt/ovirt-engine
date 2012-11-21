@@ -11,13 +11,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.ovirt.engine.core.bll.ExecuteTransactionAnswer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -39,14 +39,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AttachStorageDomainToPoolCommandTest {
@@ -69,6 +68,9 @@ public class AttachStorageDomainToPoolCommandTest {
     @Mock
     private VDS vds;
     storage_pool_iso_map map = null;
+
+    @Rule
+    public MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     @Test
     public void statusSetInMap() {
@@ -110,10 +112,6 @@ public class AttachStorageDomainToPoolCommandTest {
                 return null;
             }
         }).when(isoMapDAO).save(any(storage_pool_iso_map.class));
-
-        doAnswer(new ExecuteTransactionAnswer(0)).when(cmd).executeInNewTransaction(any(TransactionMethod.class));
-        doAnswer(new ExecuteTransactionAnswer(1)).when(cmd).executeInScope(any(TransactionScopeOption.class),
-                any(TransactionMethod.class));
 
         cmd.setCompensationContext(mock(CompensationContext.class));
         cmd.executeCommand();
