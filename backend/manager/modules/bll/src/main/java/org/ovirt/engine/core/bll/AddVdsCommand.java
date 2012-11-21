@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
@@ -389,17 +388,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
 
         return returnValue;
-    }
-
-    private boolean validateHostUniqueNameAndAddress(VdsStatic vdsStaticData) {
-        // having oVirt in pending approval state allows having a host with same name and address
-        Guid vdsForUniqueId = getParameters().getVdsForUniqueId();
-        if (vdsForUniqueId == null) {
-            return !VdsHandler.isVdsExist(vdsStaticData,
-                    getReturnValue().getCanDoActionMessages());
-        }
-        return !VdsHandler.isVdsExistForPendingOvirt(vdsStaticData,
-                getReturnValue().getCanDoActionMessages(), vdsForUniqueId);
     }
 
     private boolean validateSingleHostAttachedToLocalStorage() {
