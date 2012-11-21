@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -12,7 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 @SuppressWarnings("serial")
-public class MoveDiskCommand<T extends MoveDiskParameters> extends BaseImagesCommand<T> {
+public class MoveDiskCommand<T extends MoveDiskParameters> extends BaseImagesCommand<T>
+        implements QuotaStorageDependent {
     public MoveDiskCommand(Guid commandId) {
         super(commandId);
     }
@@ -108,5 +112,13 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends BaseImagesCom
 
         vmForDisk = pluggedVms.get(0);
         return vmForDisk;
+    }
+
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        if (cmd instanceof QuotaStorageDependent) {
+            return ((QuotaStorageDependent) cmd).getQuotaStorageConsumptionParameters();
+        }
+        return new ArrayList<QuotaConsumptionParameter>();
     }
 }
