@@ -1,11 +1,6 @@
-
-
 ----------------------------------------------------------------
 -- [audit_log] Table
 --
-
-
-
 
 Create or replace FUNCTION InsertAuditLog(INOUT v_audit_log_id INTEGER ,
  v_log_time TIMESTAMP WITH TIME ZONE,
@@ -59,35 +54,64 @@ INSERT INTO audit_log(LOG_TIME, log_type, log_type_name, severity,message, user_
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION DeleteAuditLog(v_audit_log_id INTEGER)
-RETURNS VOID
-   AS $procedure$
-   DECLARE
-   v_val  INTEGER;
+-- External Event/Alert
+Create or replace FUNCTION InsertExternalAuditLog(INOUT v_audit_log_id INTEGER ,
+    v_log_time TIMESTAMP WITH TIME ZONE,
+    v_log_type INTEGER,
+    v_log_type_name VARCHAR(100),
+    v_severity INTEGER,
+    v_message VARCHAR(4000),
+    v_user_id UUID ,
+    v_user_name VARCHAR(255) ,
+    v_vds_id UUID ,
+    v_vds_name VARCHAR(255) ,
+    v_vm_id UUID ,
+    v_vm_name VARCHAR(255) ,
+    v_vm_template_id UUID ,
+    v_vm_template_name VARCHAR(40) ,
+    v_storage_pool_id UUID ,
+    v_storage_pool_name VARCHAR(40) ,
+    v_storage_domain_id UUID ,
+    v_storage_domain_name VARCHAR(250) ,
+    v_vds_group_id UUID ,
+    v_vds_group_name VARCHAR(255),
+    v_quota_id UUID,
+    v_quota_name VARCHAR(60),
+    v_correlation_id VARCHAR(50),
+    v_job_id UUID,
+    v_gluster_volume_id UUID,
+    v_gluster_volume_name VARCHAR(1000),
+    v_origin VARCHAR(25),
+    v_custom_event_id INTEGER,
+    v_event_flood_in_sec INTEGER,
+    v_custom_data text)
+AS $procedure$
 BEGIN
-		-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-		-- in order to force locking parent before children
-      select   audit_log_id INTO v_val FROM audit_log  WHERE audit_log_id = v_audit_log_id     FOR UPDATE;
-      DELETE FROM audit_log
-      WHERE audit_log_id = v_audit_log_id;
+
+   INSERT INTO audit_log(LOG_TIME, log_type, log_type_name, severity,message, user_id, USER_NAME, vds_id, VDS_NAME, vm_id, VM_NAME,vm_template_id,VM_TEMPLATE_NAME,storage_pool_id,STORAGE_POOL_NAME,storage_domain_id,STORAGE_DOMAIN_NAME,vds_group_id,vds_group_name, correlation_id, job_id, quota_id, quota_name, gluster_volume_id, gluster_volume_name,origin, custom_event_id, event_flood_in_sec, custom_data )
+		VALUES(v_log_time, v_log_type, v_log_type_name, v_severity, v_message, v_user_id, v_user_name, v_vds_id, v_vds_name, v_vm_id, v_vm_name,v_vm_template_id,v_vm_template_name,v_storage_pool_id,v_storage_pool_name,v_storage_domain_id,v_storage_domain_name,v_vds_group_id,v_vds_group_name, v_correlation_id, v_job_id, v_quota_id, v_quota_name, v_gluster_volume_id, v_gluster_volume_name,v_origin, v_custom_event_id, v_event_flood_in_sec, v_custom_data);
+
+   v_audit_log_id := CURRVAL('audit_log_seq');
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
+Create or replace FUNCTION DeleteAuditLog(v_audit_log_id INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE audit_log SET deleted = true
+      WHERE audit_log_id = v_audit_log_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetAllFromAuditLog() RETURNS SETOF audit_log
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
-      FROM audit_log;
+      FROM audit_log
+      where not deleted;
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-
-
 
 Create or replace FUNCTION GetAuditLogByAuditLogId(v_audit_log_id INTEGER) RETURNS SETOF audit_log
    AS $procedure$
@@ -98,15 +122,12 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
 Create or replace FUNCTION GetAuditLogByVMName(v_vm_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
       FROM   audit_log
-      WHERE  vm_name = v_vm_name
+      WHERE  not deleted and vm_name = v_vm_name
       AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_vm_permissions_view
                                         WHERE  user_id = v_user_id AND entity_id = vm_id));
@@ -115,17 +136,12 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
-
-
 Create or replace FUNCTION GetAuditLogByVMTemplateName(v_vm_template_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
       FROM   audit_log
-      WHERE  vm_template_name = v_vm_template_name
+      WHERE  not deleted and vm_template_name = v_vm_template_name
       AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_vm_template_permissions_view
                                         WHERE  user_id = v_user_id AND entity_id = vm_template_id));
@@ -134,24 +150,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
-
-
 Create or replace FUNCTION GetAuditLogLaterThenDate(v_date TIMESTAMP WITH TIME ZONE)
 RETURNS SETOF audit_log
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
       FROM audit_log
-      WHERE LOG_TIME >= v_date;
+      WHERE not deleted and LOG_TIME >= v_date;
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-
-
 
 Create or replace FUNCTION DeleteAuditLogOlderThenDate(v_date TIMESTAMP WITH TIME ZONE)
 RETURNS VOID
@@ -172,22 +179,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
-
-
 Create or replace FUNCTION DeleteAuditAlertLogByVdsIDAndType(v_vds_id UUID,
     v_log_type INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-      delete from audit_log where vds_id = v_vds_id and log_type = v_log_type;
+      UPDATE audit_log set deleted = true
+      where vds_id = v_vds_id and log_type = v_log_type;
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-
 
 Create or replace FUNCTION DeleteAuditLogAlertsByVdsID(v_vds_id UUID,
     v_delete_config_alerts BOOLEAN=true)
@@ -196,16 +196,19 @@ RETURNS VOID
    DECLARE
    v_min_alret_severity  INTEGER;
    v_no_config_alret_type  INTEGER;
+   v_no_max_alret_type  INTEGER;
 BEGIN
       v_min_alret_severity := 10;
       v_no_config_alret_type := 9000;
       v_no_max_alret_type := 9005;
       if (v_delete_config_alerts = true) then
-         delete from audit_log where vds_id = v_vds_id and severity >= v_min_alret_severity and
-         and log_type  between v_no_config_alret_type and v_no_max_alret_type;
+         UPDATE audit_log set deleted = true
+         where vds_id = v_vds_id and severity >= v_min_alret_severity and
+         log_type  between v_no_config_alret_type and v_no_max_alret_type;
       else
-         delete from audit_log where vds_id = v_vds_id and severity >= v_min_alret_severity and
-         and log_type  between v_no_config_alret_type + 1 and v_no_max_alret_type;
+         UPDATE audit_log set deleted = true
+         where vds_id = v_vds_id and severity >= v_min_alret_severity and
+         log_type  between v_no_config_alret_type + 1 and v_no_max_alret_type;
       end if;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -236,3 +239,13 @@ BEGIN
      end if;
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetAuditLogByOriginAndCustomEventId(v_origin varchar(255), v_custom_event_id INTEGER) RETURNS SETOF audit_log
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT *
+      FROM audit_log
+      WHERE origin = v_origin and custom_event_id = v_custom_event_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
