@@ -741,7 +741,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to Shut down the following Virtual Machines?")
     String areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg();
 
-    @DefaultStringValue("Are you sure you want to Stop the following Virtual Machines?")
+    @DefaultStringValue("Are you sure you want to Power Off the following Virtual Machines?")
     String areYouSureYouWantToStopTheFollowingVirtualMachinesMsg();
 
     @DefaultStringValue("This field must contain an IP address in format xxx.xxx.xxx.xxx")
