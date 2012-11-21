@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -13,11 +12,8 @@ import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVDSCommand;
@@ -55,7 +51,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                             command.Execute();
                             if (command.getVDSReturnValue().getSucceeded()) {
                                 vm.setis_initialized(true);
-                                saveSetInitializedToDbThreaded();
+                                saveSetInitializedToDb(vm.getId());
                             } else {
                                 HandleCommandResult(command);
                             }
@@ -65,7 +61,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                             command.Execute();
                             HandleCommandResult(command);
                             vm.setis_initialized(true);
-                            saveSetInitializedToDbThreaded();
+                            saveSetInitializedToDb(vm.getId());
                         }
 
                         if (command.getVDSReturnValue().getSucceeded()) {
@@ -149,12 +145,6 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 return false;
             }
         }
-        // if (_vdsManager.VmDict.ContainsKey(CreateVmParameters.Vm.vm_guid))
-        // {
-        // VDSReturnValue.ReturnValue =
-        // _vdsManager.VmDict[CreateVmParameters.Vm.vm_guid].status;
-        // return false;
-        // }
         return true;
     }
 
@@ -174,29 +164,15 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         }
     }
 
-    private void saveSetInitializedToDbThreaded() {
-        // TODO use thread pool
-        SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "saveSetInitializedToDbOnTimer", new Class[0],
-                new Object[0], 0, TimeUnit.MILLISECONDS);
-    }
-
-    @OnTimerMethodAnnotation("saveSetInitializedToDbOnTimer")
-    public void saveSetInitializedToDbOnTimer() {
-        for (int i = 1; i < 6; i++) {
-            try {
-                DbFacade.getInstance().SaveIsInitialized(getParameters().getVm().getStaticData().getId(),
-                        getParameters().getVm().getStaticData().getis_initialized());
-                return;
-            } catch (RuntimeException ex) {
-                log.infoFormat(
-                        "VDS::Failed save vm static to DB, try number {4}. vm: {0} in vds = {1} : {2} error = {3}",
-                        getParameters().getVm().getvm_name(), getVds().getId(), getVds().getvds_name(),
-                        ex.getMessage(), i);
-                ThreadUtils.sleep(1000);
-            }
-        }
-        log.errorFormat("VDS::Failed save vm static to DB. vm: {0} in vds = {1} : {2}.", getParameters()
-                .getVm().getvm_name(), getVds().getId(), getVds().getvds_name());
+    private void saveSetInitializedToDb(final Guid vmId) {
+        TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
+                new TransactionMethod<Void>() {
+                    @Override
+                    public Void runInTransaction() {
+                        DbFacade.getInstance().SaveIsInitialized(vmId, true);
+                        return null;
+                    }
+                });
     }
 
     private static Log log = LogFactory.getLog(CreateVmVDSCommand.class);
