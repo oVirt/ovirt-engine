@@ -9,8 +9,8 @@ import java.util.Map;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -38,6 +38,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -189,15 +190,19 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 }
             });
         } catch (VdcBLLException e) {
-            if (e.getErrorCode() == VdcBllErrors.SNAPSHOT_FAILED) {
-                getParameters().setTaskGroupSuccess(false);
-                log.errorFormat("Wasn't able to live snpashot due to error: {0}, rolling back.",
-                        ExceptionUtils.getMessage(e));
-                revertToActiveSnapshot(createdSnapshotId);
-            } else {
+            if (e.getErrorCode() != VdcBllErrors.SNAPSHOT_FAILED) {
                 throw e;
             }
+            handleVdsLiveSnapshotFailure(e);
         }
+    }
+
+    private void handleVdsLiveSnapshotFailure(VdcBLLException e) {
+        log.warnFormat("Wasn't able to live snpashot due to error: {0}. VM will still be configured to the new created snapshot",
+                ExceptionUtils.getMessage(e));
+        AddCustomValue("SnapshotName", getSnapshotName());
+        AddCustomValue("VmName", getVmName());
+        AuditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE);
     }
 
     /**

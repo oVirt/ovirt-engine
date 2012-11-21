@@ -506,6 +506,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_CREATE_SNAPSHOT, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_FAILURE, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_FAILED_CREATE_SNAPSHOT, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_REMOVE_SNAPSHOT, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
