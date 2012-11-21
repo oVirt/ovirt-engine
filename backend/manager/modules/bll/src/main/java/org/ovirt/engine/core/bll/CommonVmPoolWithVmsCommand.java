@@ -368,10 +368,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return Integer.toString(getParameters().getVmsCount());
     }
 
-    private Guid getQuotaId() {
-        return getParameters().getVmStaticData().getQuotaId();
-    }
-
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
