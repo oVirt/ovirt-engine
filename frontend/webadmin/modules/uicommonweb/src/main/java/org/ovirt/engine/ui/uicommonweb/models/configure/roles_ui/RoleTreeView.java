@@ -106,7 +106,6 @@ public class RoleTreeView
         array.add(ActionGroup.EDIT_DISK_PROPERTIES);
         array.add(ActionGroup.LOGIN);
         array.add(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES);
-        array.add(ActionGroup.PORT_MIRRORING);
         array.add(ActionGroup.RECONNECT_TO_VM);
         return array;
 
