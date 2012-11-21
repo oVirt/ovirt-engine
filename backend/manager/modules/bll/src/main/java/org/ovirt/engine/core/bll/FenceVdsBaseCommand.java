@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
     private final int SLEEP_BEFORE_FIRST_ATTEMPT = 5000;
+    private static final String INTERNAL_FENCING_USER = "Engine";
     private static Log log = LogFactory.getLog(FenceVdsBaseCommand.class);
     protected FencingExecutor _executor;
     protected List<VM> mVmList = null;
@@ -257,6 +259,14 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     protected void HandleError() {
     }
+
+    @Override
+    public String getUserName() {
+        String userName = super.getUserName();
+        return StringUtils.isEmpty(userName)? INTERNAL_FENCING_USER: userName;
+    }
+
+
 
     protected boolean waitForStatus(String vdsName, FenceActionType actionType) {
         final String FENCE_CMD = (actionType == FenceActionType.Start) ? "on" : "off";
