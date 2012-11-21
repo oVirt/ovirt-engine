@@ -58,6 +58,8 @@ public enum ActionGroup {
     EDIT_CLUSTER_CONFIGURATION(401, RoleType.ADMIN, VdcObjectType.VdsGroups, true),
     DELETE_CLUSTER(402, RoleType.ADMIN, VdcObjectType.VdsGroups, true),
     CONFIGURE_CLUSTER_NETWORK(403, RoleType.ADMIN, VdcObjectType.VdsGroups, true),
+    ASSIGN_CLUSTER_NETWORK(404, RoleType.ADMIN, VdcObjectType.Network, true),
+
     // users and MLA actions groups
     MANIPULATE_USERS(500, RoleType.ADMIN, VdcObjectType.User, true),
     MANIPULATE_ROLES(501, RoleType.ADMIN, VdcObjectType.User, true),
@@ -71,7 +73,9 @@ public enum ActionGroup {
     CREATE_STORAGE_POOL(700, RoleType.ADMIN, VdcObjectType.StoragePool, true, ApplicationMode.VirtOnly),
     DELETE_STORAGE_POOL(701, RoleType.ADMIN, VdcObjectType.StoragePool, true, ApplicationMode.VirtOnly),
     EDIT_STORAGE_POOL_CONFIGURATION(702, RoleType.ADMIN, VdcObjectType.StoragePool, true, ApplicationMode.VirtOnly),
-    CONFIGURE_STORAGE_POOL_NETWORK(703, RoleType.ADMIN, VdcObjectType.StoragePool, true, ApplicationMode.VirtOnly),
+    CONFIGURE_STORAGE_POOL_NETWORK(703, RoleType.ADMIN, VdcObjectType.Network, true),
+    CREATE_STORAGE_POOL_NETWORK(704, RoleType.ADMIN, VdcObjectType.StoragePool, true),
+    DELETE_STORAGE_POOL_NETWORK(705, RoleType.ADMIN, VdcObjectType.Network, true),
 
     // engine generic
     CONFIGURE_ENGINE(800, RoleType.ADMIN, VdcObjectType.System, true),
