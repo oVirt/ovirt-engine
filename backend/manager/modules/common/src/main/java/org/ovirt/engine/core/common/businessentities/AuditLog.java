@@ -42,6 +42,12 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     private NGuid jobId;
     private NGuid glusterVolumeId;
     private String glusterVolumeName;
+    private String origin = "oVirt";
+    private int customEventId = -1;
+    private int eventFloodInSec = 30;
+    private String customData = "";
+    private boolean external = false;
+    private boolean deleted = false;
 
     public AuditLog() {
     }
@@ -63,6 +69,38 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         vmTemplateName = al_vmt_name;
     }
 
+    public AuditLog(AuditLogType al_type,
+            AuditLogSeverity al_severity,
+            String al_msg,
+            NGuid al_user_id,
+            String al_user_name,
+            NGuid al_vm_id,
+            String al_vm_name,
+            NGuid al_vds_id,
+            String al_vds_name,
+            NGuid al_vmt_id,
+            String al_vmt_name,
+            String origin,
+            int customEventId,
+            int eventFloogInSec,
+            String customData) {
+        logTime = new Date();
+        logType = al_type.getValue();
+        severity = al_severity.getValue();
+        message = al_msg;
+        userId = al_user_id;
+        userName = al_user_name;
+        vmId = al_vm_id;
+        vmName = al_vm_name;
+        vdsId = al_vds_id;
+        vdsName = al_vds_name;
+        vmTemplateId = al_vmt_id;
+        vmTemplateName = al_vmt_name;
+        this.origin = origin;
+        this.customEventId = customEventId;
+        this.eventFloodInSec = eventFloogInSec;
+        this.customData = customData;
+    }
     public long getaudit_log_id() {
         return this.auditLogId;
     }
@@ -309,6 +347,54 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         glusterVolumeName = value;
     }
 
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public int getCustomEventId() {
+        return customEventId;
+    }
+
+    public void setCustomEventId(int customEventId) {
+        this.customEventId = customEventId;
+    }
+
+    public int getEventFloodInSec() {
+        return eventFloodInSec;
+    }
+
+    public void setEventFloodInSec(int eventFloodInSec) {
+        this.eventFloodInSec = eventFloodInSec;
+    }
+
+    public String getCustomData() {
+        return customData;
+    }
+
+    public void setCustomData(String customData) {
+        this.customData = customData;
+    }
+
+    public boolean isExternal() {
+        return external;
+    }
+
+    public void setExternal(boolean external) {
+        this.external = external;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -328,6 +414,12 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         result = prime * result + (processed ? prime : 0);
         result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
         result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
+        result = prime * result + ((origin == null) ? 0 : origin.hashCode());
+        result = prime * result + (customEventId * prime);
+        result = prime * result + (eventFloodInSec * prime);
+        result = prime * result + ((customData == null) ? 0 : customData.hashCode());
+        result = prime * result + ((external) ? 1 : 0);
+        result = prime * result + ((deleted) ? 1 : 0);
         return result;
     }
 
@@ -402,6 +494,24 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
             if (other.jobId != null)
                 return false;
         } else if (!jobId.equals(other.jobId))
+            return false;
+        if (origin == null) {
+            if (other.origin != null)
+                return false;
+        } else if (!origin.equals(other.origin))
+            return false;
+        if (customEventId != other.customEventId)
+            return false;
+        if (eventFloodInSec != other.eventFloodInSec)
+            return false;
+        if (customData == null) {
+            if (other.customData != null)
+                return false;
+        } else if (!customData.equals(other.customData))
+            return false;
+        if (external != other.external)
+            return false;
+        if (deleted != other.deleted)
             return false;
         return true;
     }

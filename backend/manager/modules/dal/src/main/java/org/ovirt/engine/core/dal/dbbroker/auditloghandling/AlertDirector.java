@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
@@ -18,6 +18,10 @@ public final class AlertDirector {
      */
     public static void Alert(AuditLogableBase auditLogable, AuditLogType logType) {
         AuditLogDirector.log(auditLogable, logType);
+    }
+
+    public static void Alert(AuditLogableBase auditLogable, AuditLogType logType, String message) {
+        AuditLogDirector.log(auditLogable, logType, message);
     }
 
     /**

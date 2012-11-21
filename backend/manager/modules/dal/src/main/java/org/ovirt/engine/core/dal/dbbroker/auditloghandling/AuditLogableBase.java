@@ -8,6 +8,7 @@ import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -46,7 +47,7 @@ public class AuditLogableBase extends TimeoutBase {
     private static final long serialVersionUID = -4764813076922800727L;
     private NGuid mVmId = Guid.Empty;
     private IVdcUser mVdcUser;
-    private Guid mUserId = Guid.Empty;
+    private NGuid mUserId = Guid.Empty;
     private String mUserName;
     private String mVmName;
     private final Map<String, String> customValues = new HashMap<String, String>();
@@ -68,6 +69,11 @@ public class AuditLogableBase extends TimeoutBase {
     private String glusterVolumeName;
     private GlusterVolumeEntity glusterVolume;
     private Integer customId = null;
+    private String origin = "oVirt";
+    private int customEventId = -1;
+    private int eventFloodInSec = 30;
+    private String customData = "";
+    private boolean external = false;
 
     public AuditLogableBase() {
     }
@@ -81,8 +87,30 @@ public class AuditLogableBase extends TimeoutBase {
         mVmId = vmId;
     }
 
+    public AuditLogableBase(final AuditLog auditLog) {
+        this._storageDomainId = auditLog.getstorage_domain_id();
+        this._storagePoolId = auditLog.getstorage_pool_id();
+        this.correlationId = auditLog.getCorrelationId();
+        this.customData = auditLog.getCustomData();
+        this.customEventId = auditLog.getCustomEventId();
+        this.eventFloodInSec = auditLog.getEventFloodInSec();
+        this.glusterVolumeId = auditLog.getGlusterVolumeId();
+        this.glusterVolumeName = auditLog.getGlusterVolumeName();
+        this.jobId = auditLog.getJobId();
+        this.mUserId = (NGuid) auditLog.getuser_id();
+        this.mUserName = auditLog.getuser_name();
+        this.mVdsGroupId = (Guid) auditLog.getvds_group_id();
+        this.mVdsId = auditLog.getvds_id();
+        this.mVdsName = auditLog.getvds_name();
+        this.mVmId = auditLog.getvm_id();
+        this.mVmName = auditLog.getvm_name();
+        this.mVmTemplateId = auditLog.getvm_template_id();
+        this.mVmTemplateName = auditLog.getvm_template_name();
+        this.origin = auditLog.getOrigin();
+        this.external = auditLog.isExternal();
+    }
     public NGuid getUserId() {
-        if (mUserId.equals(Guid.Empty) && getCurrentUser() != null) {
+        if (mUserId != null && mUserId.equals(Guid.Empty) && getCurrentUser() != null) {
             mUserId = getCurrentUser().getUserId();
         }
         return mUserId;
@@ -569,6 +597,45 @@ public class AuditLogableBase extends TimeoutBase {
         this.customId = customId;
     }
 
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public int getCustomEventId() {
+        return customEventId;
+    }
+
+    public void setCustomEventId(int customEventId) {
+        this.customEventId = customEventId;
+    }
+
+    public int getEventFloodInSec() {
+        return eventFloodInSec;
+    }
+
+    public void setEventFloodInSec(int eventFloodInSec) {
+        this.eventFloodInSec = eventFloodInSec;
+    }
+
+    public String getCustomData() {
+        return customData;
+    }
+
+    public void setCustomData(String customData) {
+        this.customData = customData;
+    }
+
+    public boolean isExternal() {
+        return external;
+    }
+
+    public void setExternal(boolean external) {
+        this.external = external;
+    }
     private static final Log log = LogFactory.getLog(AuditLogableBase.class);
 
 }

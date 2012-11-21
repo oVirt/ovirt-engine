@@ -32,12 +32,15 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     private static final String VM_TEMPLATE_NAME = "1";
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final long EXISTING_ENTRY_ID = 44291;
+    private static final long EXTERNAL_ENTRY_ID = 44296;
     private static final SimpleDateFormat EXPECTED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static final int EXISTING_COUNT = 5;
+    private static final int FILTERED_COUNT = 5;
+    private static final int TOTAL_COUNT = 6;
 
     private AuditLogDAO dao;
     private AuditLog newAuditLog;
     private AuditLog existingAuditLog;
+    private AuditLog externalAuditLog;
 
     @Override
     @Before
@@ -70,6 +73,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         newAuditLog.setGlusterVolumeName("gluster_volume_name-1");
 
         existingAuditLog = dao.get(EXISTING_ENTRY_ID);
+        externalAuditLog = dao.get(EXTERNAL_ENTRY_ID);
     }
 
     /**
@@ -94,13 +98,24 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that, for External Events, then retrieving a AuditLog works as expected.
+     */
+    @Test
+    public void testGetByOriginAndCustomEventId() {
+        AuditLog result = dao.getByOriginAndCustomEventId("EMC", 1);
+
+        assertNotNull(result);
+        assertEquals(externalAuditLog, result);
+    }
+
+    /**
      * Ensures that finding all AuditLog works as expected.
      */
     @Test
     public void testGetAll() {
         List<AuditLog> result = dao.getAll();
 
-        assertEquals(EXISTING_COUNT, result.size());
+        assertEquals(TOTAL_COUNT, result.size());
     }
 
     /**
@@ -116,7 +131,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         List<AuditLog> result = dao.getAllAfterDate(cutoff);
 
         assertNotNull(result);
-        assertEquals(EXISTING_COUNT, result.size());
+        assertEquals(FILTERED_COUNT, result.size());
 
         cutoff = EXPECTED_DATE_FORMAT.parse("2010-12-20 14:00:00");
 
@@ -187,7 +202,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     }
 
     private static void assertGetByNameValidResults(List<AuditLog> results) {
-        assertGetByNameResults(results, EXISTING_COUNT);
+        assertGetByNameResults(results, FILTERED_COUNT);
     }
 
     private static void assertGetByNameInvalidResults(List<AuditLog> results) {
@@ -211,19 +226,15 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     public void testGetAllWithQuery() {
         List<AuditLog> result = dao.getAllWithQuery("SELECT * FROM audit_log WHERE vds_name = 'magenta-vdsc'");
 
-        assertEquals(EXISTING_COUNT, result.size());
+        assertEquals(FILTERED_COUNT, result.size());
     }
 
     @Test
     public void testRemoveAllBeforeDate()
             throws Exception {
         Date cutoff = EXPECTED_DATE_FORMAT.parse("2010-12-20 13:11:00");
-
         dao.removeAllBeforeDate(cutoff);
-
-        // show be 1 left that was in event_notification_hist
         List<AuditLog> result = dao.getAll();
-
         assertEquals(3, result.size());
     }
 
@@ -231,11 +242,8 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     public void testRemoveAllForVds()
             throws Exception {
         dao.removeAllForVds(VDS_ID, true);
-
-        // show be 1 left that was in event_notification_hist
         List<AuditLog> result = dao.getAll();
-
-        assertEquals(3, result.size());
+        assertEquals(5, result.size());
     }
 
     @Test
@@ -244,10 +252,8 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         dao.removeAllOfTypeForVds(VDS_ID,
                 AuditLogType.IRS_DISK_SPACE_LOW_ERROR.getValue());
 
-        // show be 1 left that was in event_notification_hist
         List<AuditLog> result = dao.getAll();
-
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
     }
 
     /**
@@ -290,6 +296,6 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
 
         AuditLog result = dao.get(existingAuditLog.getaudit_log_id());
 
-        assertNull(result);
+        assertTrue(result.isDeleted());
     }
 }

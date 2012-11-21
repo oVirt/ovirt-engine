@@ -22,6 +22,16 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     AuditLog get(long id);
 
     /**
+     * Get External Event injected by a plug-in
+     * @param origin
+     *            the event origin
+     * @param customEventId
+     *            the unique ide per origin associated with the event instance
+     * @return
+     */
+    AuditLog getByOriginAndCustomEventId(String origin, int customEventId);
+
+    /**
      * Finds all entries created after the specified cutoff date
      *
      * @param cutoff

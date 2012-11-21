@@ -98,4 +98,10 @@ public class AuditLogDaoMocker implements AuditLogDAO {
         return 0;
     }
 
+    @Override
+    public AuditLog getByOriginAndCustomEventId(String origin, int customEventId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

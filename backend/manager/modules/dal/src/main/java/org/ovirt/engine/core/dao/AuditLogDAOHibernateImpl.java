@@ -108,4 +108,9 @@ public class AuditLogDAOHibernateImpl extends BaseDAOHibernateImpl<AuditLog, Lon
     public int getTimeToWaitForNextPmOp(String vdsName, String event) {
         throw new NotImplementedException();
     }
+
+    @Override
+    public AuditLog getByOriginAndCustomEventId(String origin, int customEventId) {
+        throw new NotImplementedException();
+    }
 }

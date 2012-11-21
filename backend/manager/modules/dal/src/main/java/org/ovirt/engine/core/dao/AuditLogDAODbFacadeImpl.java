@@ -38,6 +38,15 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
     }
 
     @Override
+    public AuditLog getByOriginAndCustomEventId(String origin, int customEventId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("origin", origin)
+                .addValue("custom_event_id", customEventId);
+
+        return getCallsHandler().executeRead("GetAuditLogByOriginAndCustomEventId", auditLogRowMapper, parameterSource);
+    }
+
+    @Override
     public List<AuditLog> getAllAfterDate(Date cutoff) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("date", cutoff);
@@ -88,7 +97,12 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
 
     @Override
     public void save(AuditLog event) {
-        getCallsHandler().executeModification("InsertAuditLog", getSqlMapper(event));
+        if (event.isExternal()) {
+            getCallsHandler().executeModification("InsertExternalAuditLog", getExternalEventSqlMapper(event));
+        }
+        else {
+            getCallsHandler().executeModification("InsertAuditLog", getSqlMapper(event));
+        }
     }
 
     @Override
@@ -124,6 +138,14 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("quota_name", event.getQuotaName())
                 .addValue("gluster_volume_id", event.getGlusterVolumeId())
                 .addValue("gluster_volume_name", event.getGlusterVolumeName());
+    }
+
+    private MapSqlParameterSource getExternalEventSqlMapper(AuditLog event) {
+        return getSqlMapper(event)
+                .addValue("origin", event.getOrigin())
+                .addValue("custom_event_id", event.getCustomEventId())
+                .addValue("event_flood_in_sec", event.getEventFloodInSec())
+                .addValue("custom_data", event.getCustomData());
     }
 
     @Override
@@ -216,6 +238,11 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setGlusterVolumeId(NGuid.createGuidFromString(rs.getString("gluster_volume_id")));
             entity.setGlusterVolumeName(rs.getString("gluster_volume_name"));
+            entity.setOrigin(rs.getString("origin"));
+            entity.setCustomEventId(rs.getInt("custom_event_id"));
+            entity.setEventFloodInSec(rs.getInt("event_flood_in_sec"));
+            entity.setCustomData(rs.getString("custom_data"));
+            entity.setDeleted(rs.getBoolean("deleted"));
             return entity;
         }
     }

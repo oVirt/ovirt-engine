@@ -669,7 +669,11 @@ public enum AuditLogType {
     DWH_STARTED(9700),
     DWH_ERROR(9704),
 
-    ;
+    // External Events/Alerts
+    EXTERNAL_EVENT_NORMAL(9801),
+    EXTERNAL_EVENT_WARNING(9802),
+    EXTERNAL_EVENT_ERROR(9803),
+    EXTERNAL_ALERT(9804);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are supressed.

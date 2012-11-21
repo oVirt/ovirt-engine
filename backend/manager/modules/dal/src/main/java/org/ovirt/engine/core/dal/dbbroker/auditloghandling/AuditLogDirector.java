@@ -681,6 +681,11 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.NETWORK_ACTIVATE_VM_INTERFACE_FAILURE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_SUCCESS, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_FAILURE, AuditLogSeverity.ERROR);
+        // External Events/Alerts
+        mSeverities.put(AuditLogType.EXTERNAL_EVENT_NORMAL, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.EXTERNAL_EVENT_WARNING, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.EXTERNAL_EVENT_ERROR, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.EXTERNAL_ALERT, AuditLogSeverity.ALERT);
     }
 
     private static void initConfigSeverities() {
@@ -768,19 +773,43 @@ public final class AuditLogDirector {
 
         if (auditLogable == null || auditLogable.getLegal()) {
             String message = null;
-            if ((message = mMessages.get(logType)) != null) {
-                String resolvedMessage = resolveMessage(message, auditLogable);
-                AuditLogSeverity severity = AuditLogSeverity.forValue(0);
-                if (!((severity = mSeverities.get(logType)) != null)) {
-                    severity = AuditLogSeverity.NORMAL;
-                    log.infoFormat("No severity for {0} type", logType);
+            String resolvedMessage = null;
+            AuditLogSeverity severity = AuditLogSeverity.forValue(0);
+            if (!((severity = mSeverities.get(logType)) != null)) {
+                severity = AuditLogSeverity.NORMAL;
+                log.infoFormat("No severity for {0} type", logType);
+            }
+            AuditLog auditLog = null;
+            if (auditLogable != null) {
+                AuditLog tempVar = null;
+                // handle external log messages invoked by plugins via the API
+                if (auditLogable.isExternal()) {
+                    resolvedMessage = message = loggerString; // message is sent as an argument, no need to resolve.
+                    tempVar =
+                            new AuditLog(logType,
+                                    severity,
+                                    resolvedMessage,
+                                    auditLogable.getUserId(),
+                                    auditLogable.getUserName(),
+                                    auditLogable.getVmIdRef(),
+                                    auditLogable.getVmName(),
+                                    auditLogable.getVdsIdRef(),
+                                    auditLogable.getVdsName(),
+                                    auditLogable.getVmTemplateIdRef(),
+                                    auditLogable.getVmTemplateName(),
+                                    auditLogable.getOrigin(),
+                                    auditLogable.getCustomEventId(),
+                                    auditLogable.getEventFloodInSec(),
+                                    auditLogable.getCustomData());
                 }
-                AuditLog auditLog;
-                if (auditLogable != null) {
-                    AuditLog tempVar = new AuditLog(logType, severity, resolvedMessage, auditLogable.getUserId(),
+                else if ((message = mMessages.get(logType)) != null) { // Application log message from AuditLogMessages
+                    resolvedMessage = resolveMessage(message, auditLogable);
+                    tempVar = new AuditLog(logType, severity, resolvedMessage, auditLogable.getUserId(),
                             auditLogable.getUserName(), auditLogable.getVmIdRef(), auditLogable.getVmName(),
                             auditLogable.getVdsIdRef(), auditLogable.getVdsName(), auditLogable.getVmTemplateIdRef(),
                             auditLogable.getVmTemplateName());
+                }
+                if (tempVar != null) {
                     tempVar.setstorage_domain_id(auditLogable.getStorageDomainId());
                     tempVar.setstorage_domain_name(auditLogable.getStorageDomainName());
                     tempVar.setstorage_pool_id(auditLogable.getStoragePoolId());
@@ -791,19 +820,22 @@ public final class AuditLogDirector {
                     tempVar.setJobId(auditLogable.getJobId());
                     tempVar.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
                     tempVar.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
+                    tempVar.setExternal(auditLogable.isExternal());
                     auditLog = tempVar;
-                } else {
-                    auditLog = new AuditLog(logType, severity, resolvedMessage, null, null, null, null, null, null,
-                            null, null);
                 }
+            } else {
+                auditLog = new AuditLog(logType, severity, resolvedMessage, null, null, null, null, null, null,
+                        null, null);
+            }
+            if (auditLog != null) {
                 getDbFacadeInstance().getAuditLogDao().save(auditLog);
                 if (!"".equals(loggerString)) {
                     log.infoFormat(loggerString, resolvedMessage);
                 }
-            } else if (auditLogable != null) {
-                log.infoFormat("No string for {0} type. Use default Log", auditLogable.getAuditLogTypeValue());
-                defaultLog(auditLogable);
             }
+        } else if (auditLogable != null) {
+            log.infoFormat("No string for {0} type. Use default Log", auditLogable.getAuditLogTypeValue());
+            defaultLog(auditLogable);
         }
     }
 
@@ -815,7 +847,12 @@ public final class AuditLogDirector {
      *            the log type which determine if timeout is used for it
      */
     private static void updateTimeoutLogableObject(AuditLogableBase auditLogable, AuditLogType logType) {
-        if (logType.getDuplicateEventsIntervalValue() > 0) {
+        int duplicateEventsIntrvalValue = (auditLogable.isExternal())
+                ?
+                Math.max(auditLogable.getEventFloodInSec(), 30) // Min duration for External Events is 30 sec
+                :
+                logType.getDuplicateEventsIntervalValue();
+        if (duplicateEventsIntrvalValue > 0) {
             auditLogable.setEndTime(DateTime.getNow().AddSeconds(logType.getDuplicateEventsIntervalValue()));
             auditLogable.setTimeoutObjectId(ComposeObjectId(auditLogable, logType));
         }
