@@ -202,6 +202,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("auto_startup", vm.getauto_startup())
                 .addValue("is_stateless", vm.getis_stateless())
                 .addValue("is_smartcard_enabled", vm.isSmartcardEnabled())
+                .addValue("is_delete_protected", vm.isDeleteProtected())
                 .addValue("dedicated_vm_for_vds", vm.getdedicated_vm_for_vds())
                 .addValue("fail_back", vm.getfail_back())
                 .addValue("vm_type", vm.getvm_type())
@@ -311,6 +312,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setauto_startup(rs.getBoolean("auto_startup"));
             entity.setis_stateless(rs.getBoolean("is_stateless"));
             entity.setSmartcardEnabled(rs.getBoolean("is_smartcard_enabled"));
+            entity.setDeleteProtected(rs.getBoolean("is_delete_protected"));
             entity.setdedicated_vm_for_vds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
             entity.setfail_back(rs.getBoolean("fail_back"));
             entity.setlast_vds_run_on(NGuid.createGuidFromString(rs.getString("last_vds_run_on")));

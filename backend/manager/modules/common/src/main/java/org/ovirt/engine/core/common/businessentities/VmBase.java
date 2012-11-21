@@ -29,7 +29,7 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
     private ArrayList<DiskImage> images;
-    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+    private final ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private List<VmNetworkInterface> interfaces;
     private Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<Guid, VmDevice>();
     private List<VmDevice> vmUnManagedDeviceList = new ArrayList<VmDevice>();
@@ -108,6 +108,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     @Column(name = "is_stateless")
     private boolean stateless;
+
+    @Column(name = "is_delete_protected")
+    private boolean deleteProtected;
 
     @Column(name = "is_smartcard_enabled")
     private boolean smartcardEnabled;
@@ -191,7 +194,8 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             String kernelParams,
             String initrdUrl,
             Guid quotaId,
-            boolean smartcardEnabled) {
+            boolean smartcardEnabled,
+            boolean deleteProtected) {
         super();
         this.id = id;
         this.vds_group_id = vds_group_id;
@@ -219,6 +223,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.kernelParams = kernelParams;
         this.initrdUrl = initrdUrl;
         this.smartcardEnabled = smartcardEnabled;
+        this.deleteProtected = deleteProtected;
         setQuotaId(quotaId);
     }
 
@@ -498,6 +503,14 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.smartcardEnabled = smartcardEnabled;
     }
 
+    public boolean isDeleteProtected() {
+        return deleteProtected;
+    }
+
+    public void setDeleteProtected(boolean deleteProtected) {
+        this.deleteProtected = deleteProtected;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -644,6 +657,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
             return false;
         }
         if (smartcardEnabled != other.smartcardEnabled) {
+            return false;
+        }
+        if (deleteProtected != other.deleteProtected) {
             return false;
         }
         if (timezone == null) {

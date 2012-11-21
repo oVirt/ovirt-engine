@@ -361,6 +361,7 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.auto_startup as auto_startup,
        vm_templates.is_stateless as is_stateless,
        vm_templates.is_smartcard_enabled as is_smartcard_enabled,
+       vm_templates.is_delete_protected as is_delete_protected,
        vm_templates.iso_path as iso_path,
        vm_templates.origin as origin,
        vm_templates.initrd_url as initrd_url,
@@ -519,7 +520,7 @@ CREATE OR REPLACE VIEW vms
 AS
 SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb, vm_static.nice_level as nice_level,
                       vm_static.vmt_guid as vmt_guid, vm_static.os as vm_os, vm_static.description as vm_description, vm_static.vds_group_id as vds_group_id,
-                      vm_static.domain as vm_domain, vm_static.creation_date as vm_creation_date, vm_static.auto_startup as auto_startup, vm_static.is_stateless as is_stateless, vm_static.is_smartcard_enabled as is_smartcard_enabled, vm_static.dedicated_vm_for_vds as dedicated_vm_for_vds,
+                      vm_static.domain as vm_domain, vm_static.creation_date as vm_creation_date, vm_static.auto_startup as auto_startup, vm_static.is_stateless as is_stateless, vm_static.is_smartcard_enabled as is_smartcard_enabled, vm_static.is_delete_protected as is_delete_protected, vm_static.dedicated_vm_for_vds as dedicated_vm_for_vds,
                       vm_static.fail_back as fail_back, vm_static.default_boot_sequence as default_boot_sequence, vm_static.vm_type as vm_type,
 					  vds_groups.name as vds_group_name, vds_groups.selection_algorithm as selection_algorithm, vds_groups.transparent_hugepages as transparent_hugepages,
 					  storage_pool.id as storage_pool_id, storage_pool.name as storage_pool_name,
@@ -560,7 +561,7 @@ WHERE vm_static.entity_type = 'VM';
 CREATE OR REPLACE VIEW vms_with_tags
 AS
 SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.vmt_guid, vms.vm_os, vms.vm_description,
-            vms.vds_group_id, vms.vm_domain, vms.vm_creation_date, vms.auto_startup, vms.is_stateless, vms.is_smartcard_enabled,
+            vms.vds_group_id, vms.vm_domain, vms.vm_creation_date, vms.auto_startup, vms.is_stateless, vms.is_smartcard_enabled, vms.is_delete_protected,
             vms.dedicated_vm_for_vds, vms.fail_back, vms.default_boot_sequence, vms.vm_type,
             vms.vds_group_name, vms.selection_algorithm, vms.storage_pool_id, vms.storage_pool_name,
             vms.vds_group_description, vms.vmt_name, vms.vmt_mem_size_mb, vms.vmt_os, vms.vmt_creation_date,

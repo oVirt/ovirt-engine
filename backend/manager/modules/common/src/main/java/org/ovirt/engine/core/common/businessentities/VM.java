@@ -401,6 +401,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.setis_stateless(value);
     }
 
+    public void setDeleteProtected(boolean deleteProtected) {
+        mVmStatic.setDeleteProtected(deleteProtected);
+    }
+
+    public boolean isDeleteProtected() {
+        return mVmStatic.isDeleteProtected();
+    }
+
     public DisplayType getdefault_display_type() {
         return mVmStatic.getdefault_display_type();
     }

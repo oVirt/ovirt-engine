@@ -42,7 +42,7 @@ public class VmTemplate extends VmBase {
                     "default_display_type", "mem_size_mb", "vds_group_name", "status", "time_zone", "num_of_monitors",
                     "vds_group_id", "usb_policy", "num_of_sockets", "cpu_per_socket", "os", "is_auto_suspend",
                     "auto_startup", "priority", "default_boot_sequence", "is_stateless", "iso_path", "initrd_url",
-                    "kernel_url", "kernel_params", "smartcardEnabled" }));
+                    "kernel_url", "kernel_params", "smartcardEnabled", "deleteProtected" }));
 
     @Transient
     private List<VmNetworkInterface> _Interfaces = new ArrayList<VmNetworkInterface>();
@@ -96,7 +96,7 @@ public class VmTemplate extends VmBase {
             int num_of_sockets, int cpu_per_socket, VmOsType os, Guid vds_group_id, Guid vmt_guid, String domain,
             int num_of_monitors, int status, int usb_policy, String time_zone, boolean is_auto_suspend, int nice_level,
             boolean fail_back, BootSequence default_boot_sequence, VmType vm_type,
-            boolean smartcardEnabled) {
+            boolean smartcardEnabled, boolean deleteProtected) {
         super(vmt_guid,
                 vds_group_id,
                 os,
@@ -123,7 +123,8 @@ public class VmTemplate extends VmBase {
                 null,
                 null,
                 null,
-                smartcardEnabled);
+                smartcardEnabled,
+                deleteProtected);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
 

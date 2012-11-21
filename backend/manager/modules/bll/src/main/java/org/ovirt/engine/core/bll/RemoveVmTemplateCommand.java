@@ -80,6 +80,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
         }
 
+        // check if delete protected
+        if (template.isDeleteProtected()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
+            return false;
+        }
+
         imageTemplates =
                 ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId()),
                         false,
@@ -153,6 +159,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             addCanDoActionMessage(String.format("$vmsList %1$s", StringUtils.join(problematicVmNames, ",")));
             return false;
         }
+
         return true;
     }
 

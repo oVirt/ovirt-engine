@@ -379,6 +379,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode("DeleteProtected");
+        if (node != null) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
+                vmBase.setDeleteProtected(Boolean.parseBoolean(node.InnerText));
+            }
+        }
+
         readGeneralData(content);
     }
 

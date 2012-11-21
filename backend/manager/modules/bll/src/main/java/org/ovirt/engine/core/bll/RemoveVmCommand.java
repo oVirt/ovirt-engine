@@ -36,7 +36,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     private static final long serialVersionUID = -3202434016040084728L;
     private boolean hasImages;
-    private List<String> disksLeftInVm = new ArrayList<String>();
+    private final List<String> disksLeftInVm = new ArrayList<String>();
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -93,6 +93,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         if (getVm() == null) {
             retVal = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        } else if (getVm().isDeleteProtected()) {
+            retVal = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
         } else {
             retVal = super.canDoAction() && canRemoveVm();
             setDescription(getVmName());

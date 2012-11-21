@@ -80,7 +80,7 @@ public class VmHandler {
                 "dedicated_vm_for_vds", "default_display_type", "priority", "default_boot_sequence", "initrd_url",
                 "kernel_url", "kernel_params", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
                 "quotaEnforcementType", "cpuPinning",
-                "vmPayload", "balloonEnabled", "smartcardEnabled",
+                "vmPayload", "balloonEnabled", "smartcardEnabled","deleteProtected",
                 "images", // images list is relational entity - ignore value changes
                 "interfaces" // interfaces is relational entity - ignore value changes
         });

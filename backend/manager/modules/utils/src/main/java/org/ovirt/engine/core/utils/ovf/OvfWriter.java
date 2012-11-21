@@ -206,6 +206,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(String.valueOf(vmBase.getis_auto_suspend()));
         _writer.WriteEndElement();
 
+        _writer.WriteStartElement("DeleteProtected");
+        _writer.WriteRaw(String.valueOf(vmBase.isDeleteProtected()));
+        _writer.WriteEndElement();
+
         _writer.WriteStartElement("IsSmartcardEnabled");
         _writer.WriteRaw(String.valueOf(vmBase.isSmartcardEnabled()));
         _writer.WriteEndElement();
