@@ -43,7 +43,7 @@ PKG_EAR_DIR=$(DATA_DIR)/engine.ear
 PKG_JBOSS_MODULES=$(DATA_DIR)/modules
 RPMBUILD=rpmbuild
 PYTHON=python
-PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print f()")
+PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 
 # RPM version
 APP_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
