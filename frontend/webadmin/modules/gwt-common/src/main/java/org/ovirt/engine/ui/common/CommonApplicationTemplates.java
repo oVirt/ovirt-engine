@@ -13,12 +13,15 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
             "<span style='position: relative; margin-left: 3px; white-space: nowrap;'>{1}</span></span>")
     SafeHtml textImageButton(String text, SafeHtml image);
 
-    @Template("<span><span style='position: relative; height: 22px; vertical-align: bottom; display: table-cell;'>{0}</span>" +
+    @Template("<span><span style='position: relative; height: 22px; vertical-align: bottom; display: table-cell;'>{0}</span>"
+            +
             "<span style='position: relative; padding-left: 3px; vertical-align: middle; display: table-cell;'>{1}</span></span>")
     SafeHtml dualImage(SafeHtml image1, SafeHtml image2);
 
-    @Template("<span><span style='position: relative; height: 22px; vertical-align: bottom; display: table-cell;'>{0}</span>" +
-            "<span style='position: relative; padding-left: 3px; vertical-align: middle; display: table-cell; width: 19px;'>{1}</span>" +
+    @Template("<span><span style='position: relative; height: 22px; vertical-align: bottom; display: table-cell;'>{0}</span>"
+            +
+            "<span style='position: relative; padding-left: 3px; vertical-align: middle; display: table-cell; width: 19px;'>{1}</span>"
+            +
             "<span style='position: relative; padding-left: 3px; vertical-align: middle; display: table-cell;'>{2}</span></span>")
     SafeHtml tripleImage(SafeHtml image1, SafeHtml image2, SafeHtml image3);
 
@@ -47,5 +50,9 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<b><font style='{0}'>{1}</font></b>")
     SafeHtml snapshotDescription(String style, String description);
+
+    @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
+            + "<span style='position: relative; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
+    SafeHtml imageTextCardStatus(SafeHtml image, String text);
 
 }

@@ -88,16 +88,40 @@ public class VmInterfaceModel extends Model
         privateMAC = value;
     }
 
-    private EntityModel privateActive;
+    private EntityModel plugged;
 
-    public EntityModel getActive()
+    public EntityModel getPlugged()
     {
-        return privateActive;
+        return plugged;
     }
 
-    private void setActive(EntityModel value)
+    private void setPlugged(EntityModel value)
     {
-        privateActive = value;
+        plugged = value;
+    }
+
+    private EntityModel plugged_IsSelected;
+
+    public EntityModel getPlugged_IsSelected()
+    {
+        return plugged_IsSelected;
+    }
+
+    public void setPlugged_IsSelected(EntityModel value)
+    {
+        plugged_IsSelected = value;
+    }
+
+    private EntityModel unplugged_IsSelected;
+
+    public EntityModel getUnplugged_IsSelected()
+    {
+        return unplugged_IsSelected;
+    }
+
+    public void setUnplugged_IsSelected(EntityModel value)
+    {
+        unplugged_IsSelected = value;
     }
 
     public VmInterfaceModel()
@@ -108,7 +132,15 @@ public class VmInterfaceModel extends Model
         setMAC(new EntityModel());
         setPortMirroring(new EntityModel());
         getMAC().getPropertyChangedEvent().addListener(this);
-        setActive(new EntityModel());
+
+        setPlugged(new EntityModel());
+        getPlugged().getEntityChangedEvent().addListener(this);
+
+        setPlugged_IsSelected(new EntityModel());
+        getPlugged_IsSelected().getEntityChangedEvent().addListener(this);
+
+        setUnplugged_IsSelected(new EntityModel());
+        getUnplugged_IsSelected().getEntityChangedEvent().addListener(this);
     }
 
     @Override
@@ -119,6 +151,25 @@ public class VmInterfaceModel extends Model
         if (sender == getMAC())
         {
             MAC_PropertyChanged((PropertyChangedEventArgs) args);
+        }
+
+        else if (sender == getPlugged())
+        {
+            boolean plugged = (Boolean) getPlugged().getEntity();
+            getPlugged_IsSelected().setEntity(plugged);
+            getUnplugged_IsSelected().setEntity(!plugged);
+        }
+        else if (sender == getPlugged_IsSelected())
+        {
+            if ((Boolean) getPlugged_IsSelected().getEntity()) {
+                getPlugged().setEntity(true);
+            }
+        }
+        else if (sender == getUnplugged_IsSelected())
+        {
+            if ((Boolean) getUnplugged_IsSelected().getEntity()) {
+                getPlugged().setEntity(false);
+            }
         }
     }
 

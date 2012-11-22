@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -61,7 +62,7 @@ public class VmGuideModel extends GuideModel
     private ArrayList<Network> networks;
     private storage_domains storage;
     private VDSGroup cluster;
-    private boolean isActivateSupported;
+    private boolean isHotPlugSupported;
 
     @Override
     public VM getEntity()
@@ -79,13 +80,9 @@ public class VmGuideModel extends GuideModel
         Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
                 ? vm.getvds_group_compatibility_version() : new Version();
 
-        AsyncDataProvider.IsHotPlugAvailable(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        isActivateSupported = (Boolean) returnValue;
-                    }
-                }), clusterCompatibilityVersion.toString());
+        isHotPlugSupported =
+                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
+                        clusterCompatibilityVersion.toString());
     }
 
     @Override
@@ -253,8 +250,8 @@ public class VmGuideModel extends GuideModel
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 
-        model.getActive().setIsChangable(isActivateSupported);
-        model.getActive().setEntity(true);
+        model.getPlugged().setIsChangable(isHotPlugSupported);
+        model.getPlugged().setEntity(true);
 
         Version v31 = new Version(3, 1);
         boolean isLessThan31 = getEntity().getvds_group_compatibility_version().compareTo(v31) < 0;
@@ -319,8 +316,8 @@ public class VmGuideModel extends GuideModel
                     : ((String) (model.getMAC().getEntity())).toLowerCase())
                     : ""); //$NON-NLS-1$
 
-            vmNetworkInterface.setActive((Boolean) model.getActive().getEntity());
-            vmNetworkInterface.setPortMirroring((Boolean)model.getPortMirroring().getEntity());
+            vmNetworkInterface.setActive((Boolean) model.getPlugged().getEntity());
+            vmNetworkInterface.setPortMirroring((Boolean) model.getPortMirroring().getEntity());
 
             AddVmInterfaceParameters parameters =
                     new AddVmInterfaceParameters(getEntity().getId(), vmNetworkInterface);

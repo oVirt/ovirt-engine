@@ -16,8 +16,9 @@ public class TemplateNetworkInterfacePopupWidget extends NetworkInterfacePopupWi
     @Override
     public void edit(VmInterfaceModel iface) {
         super.edit(iface);
-        activateCheckBox.setVisible(false);
+        cardStatusSelectionPanel.setVisible(false);
         portMirroringEditor.setVisible(false);
+        expander.setVisible(false);
     }
 
 }

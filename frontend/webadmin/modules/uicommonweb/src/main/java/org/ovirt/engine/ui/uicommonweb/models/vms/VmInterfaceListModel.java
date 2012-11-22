@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -39,7 +40,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 public class VmInterfaceListModel extends SearchableListModel
 {
 
-    private boolean isActivateSupported;
+    private boolean isHotPlugSupported;
 
     private UICommand privateNewCommand;
 
@@ -100,7 +101,6 @@ public class VmInterfaceListModel extends SearchableListModel
     {
         privateDactivateCommand = value;
     }
-
 
     public VmInterfaceListModel()
     {
@@ -174,8 +174,8 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 
-        model.getActive().setIsChangable(isActivateSupported);
-        model.getActive().setEntity(true);
+        model.getPlugged().setIsChangable(isHotPlugSupported);
+        model.getPlugged().setEntity(true);
 
         Version v31 = new Version(3, 1);
         boolean isLessThan31 = vm.getvds_group_compatibility_version().compareTo(v31) < 0;
@@ -270,7 +270,7 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getName().setEntity(nic.getName());
         model.getMAC().setIsChangable(false);
         model.getMAC().setEntity(nic.getMacAddress());
-        model.getActive().setIsAvailable(false);
+        model.getPlugged().setIsAvailable(false);
 
         Version v31 = new Version(3, 1);
         boolean isLessThan31 = vm.getvds_group_compatibility_version().compareTo(v31) < 0;
@@ -351,7 +351,7 @@ public class VmInterfaceListModel extends SearchableListModel
         // Save changes.
         nic.setName((String) model.getName().getEntity());
         nic.setNetworkName(((Network) model.getNetwork().getSelectedItem()).getname());
-        nic.setPortMirroring((Boolean)model.getPortMirroring().getEntity());
+        nic.setPortMirroring((Boolean) model.getPortMirroring().getEntity());
         if (model.getNicType().getSelectedItem() == null)
         {
             nic.setType(null);
@@ -365,7 +365,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
         if (model.getIsNew())
         {
-            nic.setActive((Boolean) model.getActive().getEntity());
+            nic.setActive((Boolean) model.getPlugged().getEntity());
         }
 
         model.StartProgress(null);
@@ -407,15 +407,16 @@ public class VmInterfaceListModel extends SearchableListModel
         setWindow(model);
     }
 
-    private void activate(boolean activate){
+    private void activate(boolean activate) {
         VM vm = (VM) getEntity();
 
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems()) {
-            VmNetworkInterface nic = (VmNetworkInterface)item;
+            VmNetworkInterface nic = (VmNetworkInterface) item;
             nic.setActive(activate);
 
-            ActivateDeactivateVmNicParameters params = new ActivateDeactivateVmNicParameters(nic.getId(), activate?PlugAction.PLUG:PlugAction.UNPLUG);
+            ActivateDeactivateVmNicParameters params =
+                    new ActivateDeactivateVmNicParameters(nic.getId(), activate ? PlugAction.PLUG : PlugAction.UNPLUG);
             params.setVmId(vm.getId());
             paramerterList.add(params);
         }
@@ -477,17 +478,18 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     private boolean canRemoveNics() {
-        VM vm = (VM)getEntity();
-        if (VMStatus.Down.equals(vm.getstatus())){
+        VM vm = (VM) getEntity();
+        if (VMStatus.Down.equals(vm.getstatus())) {
             return true;
         }
 
-        if (!isActivateSupported){
+        if (!isHotPlugSupported) {
             return false;
         }
 
         ArrayList<VmNetworkInterface> nics =
-                getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems()) : new ArrayList<VmNetworkInterface>();
+                getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems())
+                        : new ArrayList<VmNetworkInterface>();
 
         for (VmNetworkInterface nic : nics)
         {
@@ -501,12 +503,13 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     private boolean isActivateCommandAvailable(boolean active) {
-        if (!isActivateSupported){
+        if (!isHotPlugSupported) {
             return false;
         }
 
         ArrayList<VmNetworkInterface> nics =
-                getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems()) : new ArrayList<VmNetworkInterface>();
+                getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems())
+                        : new ArrayList<VmNetworkInterface>();
 
         for (VmNetworkInterface nic : nics)
         {
@@ -576,13 +579,9 @@ public class VmInterfaceListModel extends SearchableListModel
         Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
                 ? vm.getvds_group_compatibility_version() : new Version();
 
-        AsyncDataProvider.IsHotPlugAvailable(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                       isActivateSupported = (Boolean) returnValue;
-                    }
-                }), clusterCompatibilityVersion.toString());
+        isHotPlugSupported =
+                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
+                        clusterCompatibilityVersion.toString());
     }
 
     @Override

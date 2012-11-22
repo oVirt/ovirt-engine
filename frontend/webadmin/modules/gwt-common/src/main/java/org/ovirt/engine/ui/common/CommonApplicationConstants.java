@@ -498,6 +498,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Port Mirroring")
     String portMirroring();
 
+    @DefaultStringValue("Plugged")
+    String plugged();
+
     @DefaultStringValue("Enabled")
     String portMirroringEnabled();
 
@@ -724,8 +727,14 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Specify custom MAC address")
     String specipyCustMacNetworkIntefacePopup();
 
-    @DefaultStringValue("Activate")
-    String activateNetworkIntefacePopup();
+    @DefaultStringValue("Card Status")
+    String cardStatusNetworkIntefacePopup();
+
+    @DefaultStringValue("Plugged")
+    String pluggedNetworkIntefacePopup();
+
+    @DefaultStringValue("Unplugged")
+    String unpluggedNetworkIntefacePopup();
 
     // Pool popup
     @DefaultStringValue("Do not migrate VM")

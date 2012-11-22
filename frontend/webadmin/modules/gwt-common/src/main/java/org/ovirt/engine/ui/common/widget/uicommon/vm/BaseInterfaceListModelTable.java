@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
@@ -29,7 +30,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
 
     @Override
     public void initTable(final CommonApplicationConstants constants) {
-        getTable().addColumn(new NicActivateStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(new NicActivateStatusColumn<VmNetworkInterface>(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -38,6 +39,20 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
             }
         };
         getTable().addColumn(nameColumn, constants.nameInterface());
+
+        CheckboxColumn<VmNetworkInterface> pluggedColumn = new CheckboxColumn<VmNetworkInterface>() {
+            @Override
+            public Boolean getValue(VmNetworkInterface object) {
+                return object.isActive();
+            }
+
+            @Override
+            protected boolean canEdit(VmNetworkInterface object) {
+                return false;
+            }
+        };
+
+        getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -73,7 +88,8 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumnWithHtmlHeader(speedColumn, templates.sub(constants.speedInterface(), constants.mbps()).asString());
+        getTable().addColumnWithHtmlHeader(speedColumn,
+                templates.sub(constants.speedInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -90,7 +106,8 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumnWithHtmlHeader(rxColumn, templates.sub(constants.rxInterface(), constants.mbps()).asString());
+        getTable().addColumnWithHtmlHeader(rxColumn,
+                templates.sub(constants.rxInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -107,7 +124,8 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumnWithHtmlHeader(txColumn, templates.sub(constants.txInterface(), constants.mbps()).asString());
+        getTable().addColumnWithHtmlHeader(txColumn,
+                templates.sub(constants.txInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
@@ -116,7 +134,8 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                         object.getStatistics().getTransmitDropRate() };
             }
         };
-        getTable().addColumnWithHtmlHeader(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()).asString());
+        getTable().addColumnWithHtmlHeader(dropsColumn,
+                templates.sub(constants.dropsInterface(), constants.pkts()).asString());
     }
 
 }

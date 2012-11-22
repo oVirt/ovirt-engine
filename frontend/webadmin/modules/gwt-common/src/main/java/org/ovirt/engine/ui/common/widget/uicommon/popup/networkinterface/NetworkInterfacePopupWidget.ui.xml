@@ -6,10 +6,23 @@
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
-	<ui:style>
+	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface.NetworkInterfacePopupWidget.Style">
 		.macExample {
 			color: gray;
 			float: right;
+		}
+
+		.cardStatusEditor {
+			padding-right: 14px;
+		}
+
+		.cardStatusEditorContent  {
+			display: none;
+		}
+
+		.cardStatusRadioContent  {
+			padding-top: 3px;
+			width: 100%;
 		}
 
         .expanderContent {
@@ -37,7 +50,11 @@
 		<d:AdvancedParametersExpander ui:field="expander" addStyleNames="{style.expander}"/>
 		<g:FlowPanel ui:field="expanderContent" addStyleNames="{style.expanderContent}">
 			<e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
-			<e:EntityModelCheckBoxEditor ui:field="activateCheckBox"/>
+			<g:HorizontalPanel ui:field="cardStatusSelectionPanel">
+				<e:ListModelListBoxEditor ui:field="cardStatusEditor" addStyleNames="{style.cardStatusEditor}" />
+				<e:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
+				<e:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
+			</g:HorizontalPanel>
 		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>

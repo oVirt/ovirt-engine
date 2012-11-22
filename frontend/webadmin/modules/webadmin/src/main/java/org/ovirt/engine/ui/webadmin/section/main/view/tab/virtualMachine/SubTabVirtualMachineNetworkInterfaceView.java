@@ -28,19 +28,23 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
     @Inject
     public SubTabVirtualMachineNetworkInterfaceView(
             SearchableDetailModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants, ApplicationTemplates templates) {
+            EventBus eventBus,
+            ClientStorage clientStorage,
+            ApplicationConstants constants,
+            ApplicationTemplates templates) {
         super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage, templates) {
             @Override
-            public void initTable(final CommonApplicationConstants constants){
+            public void initTable(final CommonApplicationConstants constants) {
                 super.initTable(constants);
 
-                BooleanColumn<VmNetworkInterface> portMirroringColumn = new BooleanColumn<VmNetworkInterface>(constants.portMirroringEnabled()) {
-                    @Override
-                    public Boolean getRawValue(VmNetworkInterface object) {
-                        return object.isPortMirroring();
-                    }
-                };
-                getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroring(), "60px"); //$NON-NLS-1$
+                BooleanColumn<VmNetworkInterface> portMirroringColumn =
+                        new BooleanColumn<VmNetworkInterface>(constants.portMirroringEnabled()) {
+                            @Override
+                            public Boolean getRawValue(VmNetworkInterface object) {
+                                return object.isPortMirroring();
+                            }
+                        };
+                getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroring(), "85px"); //$NON-NLS-1$
             }
         });
         ViewIdHandler.idHandler.generateAndSetIds(this);
