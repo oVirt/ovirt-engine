@@ -636,18 +636,26 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             return true;
         }
 
-        if (getStoragePool() == null) {
-            throw new InvalidQuotaParametersException("Command: " + this.getClass().getName()
-                    + ". Storage pool is not available for quota calculation. ");
-        }
-
         QuotaConsumptionParametersWrapper quotaConsumptionParametersWrapper = new QuotaConsumptionParametersWrapper(this,
                 getReturnValue().getCanDoActionMessages());
         quotaConsumptionParametersWrapper.setParameters(getQuotaConsumptionParameters());
 
-        if (quotaConsumptionParametersWrapper.getParameters() == null) {
+        List<QuotaConsumptionParameter> quotaParams = quotaConsumptionParametersWrapper.getParameters();
+        if (quotaParams == null) {
             throw new InvalidQuotaParametersException("Command: " + this.getClass().getName()
                     + ". No Quota parameters available.");
+        }
+
+        // Some commands are not quotable, given the values of their parameters.
+        // e.g AddDisk is storage-quotable but when the disk type is external LUN there is no storage pool to it.
+        // scenarios like this must set its QuotaConsumptionParameter to an empty list.
+        if (quotaParams.isEmpty()) {
+            return true;
+        }
+
+        if (getStoragePool() == null) {
+            throw new InvalidQuotaParametersException("Command: " + this.getClass().getName()
+                    + ". Storage pool is not available for quota calculation. ");
         }
 
         boolean result = getQuotaManager().consume(quotaConsumptionParametersWrapper);

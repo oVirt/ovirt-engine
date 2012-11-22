@@ -55,9 +55,9 @@ public class QuotaConsumptionParametersWrapper {
     public QuotaConsumptionParametersWrapper clone() throws CloneNotSupportedException {
         QuotaConsumptionParametersWrapper cloneWrapper = new QuotaConsumptionParametersWrapper(getAuditLogable(),
                 canDoActionMessages);
-        cloneWrapper.setParameters(new ArrayList<QuotaConsumptionParameter>());
 
         if (getParameters() != null) {
+            cloneWrapper.setParameters(new ArrayList<QuotaConsumptionParameter>());
             for (QuotaConsumptionParameter parameter : getParameters()) {
                 cloneWrapper.getParameters().add(parameter.clone());
             }
