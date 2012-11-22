@@ -27,6 +27,9 @@ public enum VdcBllMessages {
     VAR__TYPE__GLUSTER_BRICK,
     VAR__TYPE__GLUSTER_SERVER,
 
+    // External Event
+    VAR__TYPE__EXTERNAL_EVENT,
+
     VAR__ACTION__RUN,
     VAR__ACTION__REMOVE,
     VAR__ACTION__ADD,
@@ -689,7 +692,12 @@ public enum VdcBllMessages {
     // Engine maintenance mode
     ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE,
     // Engine prepare mode
-    ENGINE_IS_RUNNING_IN_PREPARE_MODE;
+    ENGINE_IS_RUNNING_IN_PREPARE_MODE,
+
+    // External Events
+    ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN,
+    ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND,
+    ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION;
 
     public int getValue() {
         return this.ordinal();

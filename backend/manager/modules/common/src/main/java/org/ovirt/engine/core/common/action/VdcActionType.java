@@ -262,7 +262,10 @@ public enum VdcActionType {
     StartGlusterVolumeProfile(1410, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     StopGlusterVolumeProfile(1411, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     RemoveGlusterServer(1412, ActionGroup.DELETE_HOST, QuotaDependency.NONE),
-    ;
+
+    // External events
+    AddExternalEvent(1500, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),
+    RemoveExternalEvent(1501, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

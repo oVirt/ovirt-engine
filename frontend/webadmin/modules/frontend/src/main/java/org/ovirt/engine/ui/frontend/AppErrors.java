@@ -2144,4 +2144,16 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("This action is not allowed when Engine is preparing for maintenance.")
     String ENGINE_IS_RUNNING_IN_PREPARE_MODE();
+
+    @DefaultStringValue("$type Exteral Event.")
+    String VAR__TYPE__EXTERNAL_EVENT();
+
+    @DefaultStringValue(".Cannot ${action} ${type}. Illegal Origin for External Event : oVirt")
+    String ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN();
+
+    @DefaultStringValue(".Cannot ${action} ${type}.External Event does not exist.")
+    String ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND();
+
+    @DefaultStringValue("Cannot ${action} ${type}.Only Alerts can be removed.")
+    String ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION();
 }
