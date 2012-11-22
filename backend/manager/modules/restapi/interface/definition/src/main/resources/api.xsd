@@ -1775,6 +1775,7 @@
           <xs:element name="high_availability" type="HighAvailability" minOccurs="0"/>
           <xs:element name="display" type="Display" minOccurs="0" maxOccurs="1"/>
           <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
@@ -1962,6 +1963,7 @@
           <xs:element name="creation_time" type="xs:dateTime" minOccurs="0"/>
           <xs:element name="origin" type="xs:string" minOccurs="0"/>
           <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0"/>

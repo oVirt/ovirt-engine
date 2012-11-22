@@ -78,6 +78,7 @@ public class VmMapper {
         staticVm.setfail_back(entity.getfail_back());
         staticVm.setauto_startup(entity.getauto_startup());
         staticVm.setis_stateless(entity.getis_stateless());
+        staticVm.setDeleteProtected(entity.isDeleteProtected());
         staticVm.setSmartcardEnabled(entity.isSmartcardEnabled());
         staticVm.setauto_startup(entity.getauto_startup());
         staticVm.setdefault_boot_sequence(entity.getdefault_boot_sequence());
@@ -161,6 +162,9 @@ public class VmMapper {
         }
         if (vm.isSetStateless()) {
             staticVm.setis_stateless(vm.isStateless());
+        }
+        if (vm.isDeleteProtected()) {
+            staticVm.setDeleteProtected(vm.isDeleteProtected());
         }
         if (vm.isSetHighAvailability()) {
             HighAvailability ha = vm.getHighAvailability();
@@ -334,6 +338,7 @@ public class VmMapper {
         }
         model.setType(map(entity.getvm_type(), null));
         model.setStateless(entity.getis_stateless());
+        model.setDeleteProtected(entity.isDeleteProtected());
         model.setHighAvailability(new HighAvailability());
         model.getHighAvailability().setEnabled(entity.getauto_startup());
         model.getHighAvailability().setPriority(entity.getpriority());

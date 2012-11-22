@@ -55,6 +55,9 @@ public class TemplateMapper {
         if (model.isSetStateless()) {
             entity.setis_stateless(model.isStateless());
         }
+        if (model.isSetDeleteProtected()) {
+            entity.setDeleteProtected(model.isDeleteProtected());
+        }
         if (model.isSetType()) {
             VmType vmType = VmType.fromValue(model.getType());
             if (vmType != null) {
@@ -150,6 +153,9 @@ public class TemplateMapper {
         if (model.isSetStateless()) {
             staticVm.setis_stateless(model.isStateless());
         }
+        if (model.isSetDeleteProtected()) {
+            staticVm.setDeleteProtected(model.isDeleteProtected());
+        }
         if (model.isSetType()) {
             VmType vmType = VmType.fromValue(model.getType());
             if (vmType != null) {
@@ -227,6 +233,7 @@ public class TemplateMapper {
         model.getHighAvailability().setEnabled(entity.getauto_startup());
         model.getHighAvailability().setPriority(entity.getpriority());
         model.setStateless(entity.getis_stateless());
+        model.setDeleteProtected(entity.isDeleteProtected());
         if (entity.getvm_type() != null) {
             model.setType(VmMapper.map(entity.getvm_type(), null));
         }

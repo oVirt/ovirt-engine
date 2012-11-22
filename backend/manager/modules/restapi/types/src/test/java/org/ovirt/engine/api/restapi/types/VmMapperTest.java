@@ -104,6 +104,7 @@ public class VmMapperTest extends
         assertEquals(model.getTimezone(), transform.getTimezone());
         assertEquals(model.getUsb().isEnabled(), transform.getUsb().isEnabled());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
+        assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
     }
 
     @Test
