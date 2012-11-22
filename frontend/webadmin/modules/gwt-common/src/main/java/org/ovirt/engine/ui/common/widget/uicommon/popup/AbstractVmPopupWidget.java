@@ -161,6 +161,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @WithElementId("osType")
     public ListModelListBoxEditor<Object> oSTypeEditor;
 
+    @UiField(provided = true)
+    @Path(value = "isDeleteProtected.entity")
+    @WithElementId("isDeleteProtected")
+    public EntityModelCheckBoxEditor isDeleteProtectedEditor;
+
     @UiField
     @Ignore
     Label generalWarningMessage;
@@ -456,6 +461,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         dontMigrateVMEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT);
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -670,6 +676,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         oSTypeEditor.setLabel(constants.osVmPopup());
         isStatelessEditor.setLabel(constants.statelessVmPopup());
+        isDeleteProtectedEditor.setLabel(constants.deleteProtectionPopup());
         isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
 
         // Pools Tab

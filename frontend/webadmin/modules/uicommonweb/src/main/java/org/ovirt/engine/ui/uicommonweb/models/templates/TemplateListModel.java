@@ -520,6 +520,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         template.setis_auto_suspend(false);
         template.setis_stateless((Boolean) model.getIsStateless().getEntity());
+        template.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
         template.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         template.setdefault_boot_sequence(model.getBootSequence());
         template.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$

@@ -118,6 +118,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getUsbPolicy().setSelectedItem(vmBase.getusb_policy());
             getModel().setBootSequence(vmBase.getdefault_boot_sequence());
             getModel().getIsHighlyAvailable().setEntity(vmBase.getauto_startup());
+            getModel().getIsDeleteProtected().setEntity(vmBase.isDeleteProtected());
             getModel().getIsSmartcardEnabled().setEntity(vmBase.isSmartcardEnabled());
 
             boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getiso_path());

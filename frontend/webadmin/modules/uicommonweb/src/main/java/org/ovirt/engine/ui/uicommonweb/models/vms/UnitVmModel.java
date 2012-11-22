@@ -535,6 +535,16 @@ public class UnitVmModel extends Model {
         privateIsStateless = value;
     }
 
+    private EntityModel privateIsDeleteProtected;
+
+    public EntityModel getIsDeleteProtected() {
+        return privateIsDeleteProtected;
+    }
+
+    public void setIsDeleteProtected(EntityModel deleteProtected) {
+        this.privateIsDeleteProtected = deleteProtected;
+    }
+
     private ListModel privateDisplayProtocol;
 
     public ListModel getDisplayProtocol()
@@ -969,6 +979,7 @@ public class UnitVmModel extends Model {
         setUsbPolicy(new ListModel());
         setIsStateless(new EntityModel());
         setIsSmartcardEnabled(new EntityModel());
+        setIsDeleteProtected(new EntityModel());
 
         setCdImage(new ListModel());
         getCdImage().setIsChangable(false);

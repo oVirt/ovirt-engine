@@ -644,6 +644,7 @@ public class PoolListModel extends ListWithDetailsModel
                         desktop.setvmt_guid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
                         desktop.setvm_name(name);
                         desktop.setvm_os((VmOsType) model.getOSType().getSelectedItem());
+                        desktop.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
                         desktop.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
                         desktop.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
                         desktop.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain()

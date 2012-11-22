@@ -88,6 +88,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Highly Available Virtual servers can not be run as stateless.")
     String VM_CANNOT_RUN_STATELESS_HA();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Delete protection is enabled. In order to delete, disable Delete protection first.")
+    String ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED();
+
+
     @DefaultStringValue("Failed to attach VM to User.")
     String RESOURCE_MANAGER_FAILED_ATTACHING_VM_TO_USERS();
 

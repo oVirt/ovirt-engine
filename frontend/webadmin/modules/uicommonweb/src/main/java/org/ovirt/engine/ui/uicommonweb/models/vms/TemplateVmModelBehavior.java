@@ -147,6 +147,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getTotalCPUCores().setEntity(Integer.toString(this.template.getnum_of_cpus()));
         getModel().getNumOfSockets().setSelectedItem(this.template.getnum_of_sockets());
         getModel().getIsStateless().setEntity(this.template.getis_stateless());
+        getModel().getIsDeleteProtected().setEntity(this.template.isDeleteProtected());
         getModel().getIsSmartcardEnabled().setEntity(this.template.isSmartcardEnabled());
 
         getModel().getKernel_parameters().setEntity(this.template.getkernel_params());

@@ -98,6 +98,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             doChangeDefautlHost(template.getdedicated_vm_for_vds());
 
             getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
+            getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
 
             if (getModel().getVmType() == VmType.Desktop) {
                 getModel().getIsStateless().setEntity(template.getis_stateless());
