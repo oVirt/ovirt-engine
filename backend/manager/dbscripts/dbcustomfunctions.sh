@@ -15,7 +15,16 @@ set_defaults() {
     USERNAME=""
     VERBOSE=false
     LOGFILE="$ME.log"
-    export PGPASSFILE="/etc/ovirt-engine/.pgpass"
+
+    # When running in development environments the .pgpass file may not
+    # exist or might not be readable, so we should try to use the file
+    # stored in the home directory of the user instead:
+    PGPASSFILE="/etc/ovirt-engine/.pgpass"
+    if [ ! -r "${PGPASSFILE}" ]
+    then
+        PGPASSFILE="${HOME}/.pgpass"
+    fi
+    export PGPASSFILE
 }
 
 #refreshes views
