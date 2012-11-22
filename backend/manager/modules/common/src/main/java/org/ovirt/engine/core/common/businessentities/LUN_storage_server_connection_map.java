@@ -29,7 +29,7 @@ public class LUN_storage_server_connection_map implements Serializable, Business
 
     @EmbeddedId
     @AttributeOverrides({
-            @AttributeOverride(name = "lunId", column = @Column(name = "lun_id", length = 50)),
+            @AttributeOverride(name = "lunId", column = @Column(name = "lun_id", length = 255)),
             @AttributeOverride(name = "storageServerConnection", column = @Column(name = "storage_server_connection",
                     length = 50)) })
     private LUN_storage_server_connection_map_id id = new LUN_storage_server_connection_map_id();

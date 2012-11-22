@@ -47,7 +47,7 @@ public final class BusinessEntitiesDefinitions {
 
     // LUNS (luns)
     public static final int LUN_PHYSICAL_VOLUME_ID = 50;
-    public static final int LUN_ID = 50;
+    public static final int LUN_ID = 255;
     public static final int LUN_VOLUME_GROUP_ID = 50;
     public static final int LUN_VENDOR_ID = 50;
     public static final int LUN_PRODUCT_ID = 50;
