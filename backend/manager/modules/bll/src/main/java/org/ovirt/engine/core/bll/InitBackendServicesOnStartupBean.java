@@ -11,9 +11,11 @@ import org.ovirt.engine.core.bll.gluster.GlusterManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 /**
@@ -55,6 +57,14 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         StoragePoolStatusHandler.Init();
 
         GlusterManager.getInstance().init();
+        try {
+            log.infoFormat("Init VM Custom Properties utilities: {0}", new Date());
+            VmPropertiesUtils.getInstance().init();
+        } catch (InitializationException e) {
+            log.errorFormat("Initialization failed. Exception message is {0} ",e.getMessage());
+            log.debug("Initialization failed ",e);
+            throw new RuntimeException(e);
+        }
     }
 
 }

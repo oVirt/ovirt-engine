@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.exceptions.InitializationException;
 
 /**
  * Helper methods to help parse and validate predefined and UserDefined(user defined) properties. These methods are used
@@ -54,6 +55,11 @@ public class VmPropertiesUtils {
     private Map<Version, Map<String, Pattern>> predefinedProperties;
     private Map<Version, Map<String, Pattern>> userdefinedProperties;
     private Map<Version, String> allVmProperties;
+
+    static {
+     vmPropertiesUtils = new VmPropertiesUtils();
+
+    }
 
     // Defines why validation failed
     public enum ValidationFailureReason {
@@ -106,37 +112,35 @@ public class VmPropertiesUtils {
     }
 
     public static VmPropertiesUtils getInstance() {
-        if (vmPropertiesUtils == null) {
-            vmPropertiesUtils = new VmPropertiesUtils();
-            vmPropertiesUtils.init();
-        }
         return vmPropertiesUtils;
     }
 
-    private void init() {
-        if (allVmProperties != null)
-            return;
-        predefinedProperties = new HashMap<Version, Map<String, Pattern>>();
-        userdefinedProperties = new HashMap<Version, Map<String, Pattern>>();
-        allVmProperties = new HashMap<Version, String>();
-        Set<Version> versions = getSupportedClusterLevels();
-        String predefinedVMPropertiesStr, userDefinedVMPropertiesStr;
-        StringBuilder sb;
-        for (Version version : versions) {
-            predefinedVMPropertiesStr = getPredefinedVMProperties(version);
-            userDefinedVMPropertiesStr = getUserdefinedVMProperties(version);
-            sb = new StringBuilder("");
-            sb.append(predefinedVMPropertiesStr);
-            if (!predefinedVMPropertiesStr.isEmpty() && !userDefinedVMPropertiesStr.isEmpty()) {
-                sb.append(";");
-            }
-            sb.append(userDefinedVMPropertiesStr);
-            allVmProperties.put(version, sb.toString());
+    public void init() throws InitializationException {
+        try {
+            predefinedProperties = new HashMap<Version, Map<String, Pattern>>();
+            userdefinedProperties = new HashMap<Version, Map<String, Pattern>>();
+            allVmProperties = new HashMap<Version, String>();
+            Set<Version> versions = getSupportedClusterLevels();
+            String predefinedVMPropertiesStr, userDefinedVMPropertiesStr;
+            StringBuilder sb;
+            for (Version version : versions) {
+                predefinedVMPropertiesStr = getPredefinedVMProperties(version);
+                userDefinedVMPropertiesStr = getUserdefinedVMProperties(version);
+                sb = new StringBuilder("");
+                sb.append(predefinedVMPropertiesStr);
+                if (!predefinedVMPropertiesStr.isEmpty() && !userDefinedVMPropertiesStr.isEmpty()) {
+                    sb.append(";");
+                }
+                sb.append(userDefinedVMPropertiesStr);
+                allVmProperties.put(version, sb.toString());
 
-            predefinedProperties.put(version, new HashMap<String, Pattern>());
-            userdefinedProperties.put(version, new HashMap<String, Pattern>());
-            parseVMPropertiesRegex(predefinedVMPropertiesStr, predefinedProperties.get(version));
-            parseVMPropertiesRegex(userDefinedVMPropertiesStr, userdefinedProperties.get(version));
+                predefinedProperties.put(version, new HashMap<String, Pattern>());
+                userdefinedProperties.put(version, new HashMap<String, Pattern>());
+                parseVMPropertiesRegex(predefinedVMPropertiesStr, predefinedProperties.get(version));
+                parseVMPropertiesRegex(userDefinedVMPropertiesStr, userdefinedProperties.get(version));
+            }
+        } catch (Throwable ex) {
+            throw new InitializationException(ex);
         }
     }
 
