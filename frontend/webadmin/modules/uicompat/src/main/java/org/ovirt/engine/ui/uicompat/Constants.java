@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicompat;
 
 
 
+
+
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("OK")
@@ -1290,6 +1292,24 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     // Volume
     @DefaultStringValue("Add Bricks")
     String addBricksVolume();
+
+    @DefaultStringValue("Add")
+    String addBricksButtonLabel();
+
+    @DefaultStringValue("Remove")
+    String removeBricksButtonLabel();
+
+    @DefaultStringValue("Clear")
+    String clearBricksButtonLabel();
+
+    @DefaultStringValue("Remove All")
+    String removeAllBricksButtonLabel();
+
+    @DefaultStringValue("Move Up")
+    String moveBricksUpButtonLabel();
+
+    @DefaultStringValue("Move Down")
+    String moveBricksDownButtonLabel();
 
     @DefaultStringValue("Add")
     String AddVolume();

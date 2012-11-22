@@ -74,6 +74,7 @@ public class VolumeModel extends Model {
 
         setAddBricksCommand(new UICommand("AddBricks", this)); //$NON-NLS-1$
         getAddBricksCommand().setIsExecutionAllowed(false);
+        getAddBricksCommand().setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
 
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {

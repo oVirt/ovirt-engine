@@ -58,13 +58,16 @@ public class VolumeBrickModel extends Model {
         setAddBrickCommand(new UICommand("AddBrick", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("RemoveBricks", this)); //$NON-NLS-1$
         setRemoveAllBricksCommand(new UICommand("RemoveAllBricks", this)); //$NON-NLS-1$
-        // getAddBrickCommand().setIsExecutionAllowed(false);
-        // getClearBrickDetailsCommand().setIsExecutionAllowed(false);
+        getAddBrickCommand().setTitle(ConstantsManager.getInstance().getConstants().addBricksButtonLabel());
+        getRemoveBricksCommand().setTitle(ConstantsManager.getInstance().getConstants().removeBricksButtonLabel());
+        getRemoveAllBricksCommand().setTitle(ConstantsManager.getInstance().getConstants().removeAllBricksButtonLabel());
         getRemoveBricksCommand().setIsExecutionAllowed(false);
         getRemoveAllBricksCommand().setIsExecutionAllowed(false);
 
         setMoveBricksUpCommand(new UICommand("MoveBricksUp", this)); //$NON-NLS-1$
         setMoveBricksDownCommand(new UICommand("MoveBricksDown", this)); //$NON-NLS-1$
+        getMoveBricksUpCommand().setTitle(ConstantsManager.getInstance().getConstants().moveBricksUpButtonLabel());
+        getMoveBricksDownCommand().setTitle(ConstantsManager.getInstance().getConstants().moveBricksDownButtonLabel());
         getMoveBricksUpCommand().setIsExecutionAllowed(false);
         getMoveBricksDownCommand().setIsExecutionAllowed(false);
 
