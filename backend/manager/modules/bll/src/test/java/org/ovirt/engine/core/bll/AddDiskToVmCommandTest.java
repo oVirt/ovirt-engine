@@ -13,6 +13,8 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -598,6 +601,53 @@ public class AddDiskToVmCommandTest {
         disk.getLun().getLunConnections().get(0).setport("");
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port",command.checkIfLunDiskCanBeAdded());
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+    }
+
+    @Test
+    public void testAddingIDELunExeedsSlotLimit() {
+        LunDisk disk = createISCSILunDisk();
+        disk.setDiskInterface(DiskInterface.IDE);
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        initializeCommand(Guid.NewGuid(), parameters);
+        when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        VM vm = mockVm();
+
+        // use maximum slots for IDE - canDo expected to succeed.
+        fillDiskMap(disk, vm, VmCommand.MAX_IDE_SLOTS - 1);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+
+        vm.getDiskMap().put(Guid.NewGuid(), disk);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS);
+    }
+
+    @Test
+    public void testAddingPCILunExeedsSlotLimit() {
+        LunDisk disk = createISCSILunDisk();
+        disk.setDiskInterface(DiskInterface.VirtIO);
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        initializeCommand(Guid.NewGuid(), parameters);
+        when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
+        VM vm = mockVm();
+
+        // use maximum slots for PCI. canDo expected to succeed.
+        fillDiskMap(disk, vm, VmCommand.MAX_PCI_SLOTS - 2);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+
+        vm.getDiskMap().put(Guid.NewGuid(), disk);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS);
+
+    }
+
+    private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {
+        Map<Guid, Disk> diskMap = new HashMap<Guid, Disk>();
+        for (int i = 0; i < expectedMapSize; i++) {
+            diskMap.put(Guid.NewGuid(), disk);
+        }
+        vm.setDiskMap(diskMap);
     }
 
     private boolean verifyCanDoActionMessagesContainMessage(VdcBllMessages message) {

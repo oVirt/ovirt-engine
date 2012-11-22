@@ -83,11 +83,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         boolean returnValue = isVmExist() && acquireLockInternal();
         VM vm = getVm();
 
-        // if user sent drive check that its not in use
-        returnValue = returnValue && (vm == null || isDiskCanBeAddedToVm(getParameters().getDiskInfo()));
+        if (returnValue && vm != null) {
+            // if user sent drive check that its not in use
+            returnValue = isDiskCanBeAddedToVm(getParameters().getDiskInfo()) &&
+                    isDiskPassPciAndIdeLimit(getParameters().getDiskInfo());
+        }
+
         if (returnValue && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             returnValue = checkIfImageDiskCanBeAdded(vm);
         }
+
         if (returnValue && DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
             returnValue = checkIfLunDiskCanBeAdded();
         }
@@ -117,46 +122,66 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getDiskLunMapDao().getDiskIdByLunId(lun.getLUN_id()) != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
         }
+
         return true;
     }
 
     private boolean checkIfImageDiskCanBeAdded(VM vm) {
         boolean returnValue;
-        StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
-        returnValue = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
-        if (returnValue && vm != null && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-                getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
-        }
-        returnValue = returnValue
-                && checkImageConfiguration()
-                && (vm == null || isDiskPassPciAndIdeLimit(getParameters().getDiskInfo()));
-        returnValue = returnValue && (vm == null || performImagesChecks(vm));
 
-        if (returnValue && !hasFreeSpace(getStorageDomain())) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+        // vm agnostic checks
+        returnValue =
+                new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
+                        &&
+                checkImageConfiguration() &&
+                checkFreeSpace() &&
+                checkExceedingMaxBlockDiskSize() &&
+                canAddShareableDisk();
+
+        if (returnValue && vm != null) {
+            returnValue = isStoragePoolMatching(vm) &&
+                    performImagesChecks(vm) &&
+                    validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()));
         }
-        if (returnValue && isExceedMaxBlockDiskSize()) {
+
+        return returnValue;
+    }
+
+    private boolean canAddShareableDisk() {
+        if (getParameters().getDiskInfo().isShareable()) {
+            if (!Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled,
+                    getStoragePool().getcompatibility_version().getValue())) {
+                return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            } else if (!isVolumeFormatSupportedForShareable(((DiskImage) getParameters().getDiskInfo()).getvolume_format())) {
+                return failCanDoAction(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
+            }
+        }
+        return true;
+    }
+
+    private boolean checkExceedingMaxBlockDiskSize() {
+        if (isExceedMaxBlockDiskSize()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
             getReturnValue().getCanDoActionMessages().add(
                     String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize)));
-            returnValue = false;
+            return false;
         }
-        if (returnValue && getParameters().getDiskInfo().isShareable()) {
-            if (!Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled,
-                            getStoragePool().getcompatibility_version().getValue())) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-            }
-            else if (!isVolumeFormatSupportedForShareable(
-                    ((DiskImage) getParameters().getDiskInfo()).getvolume_format())) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
-            }
+        return true;
+    }
+
+    private boolean isStoragePoolMatching(VM vm) {
+        if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
+            getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
         }
-        return returnValue && (vm == null || validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())));
+        return true;
+    }
+
+    private boolean checkFreeSpace() {
+        if (!hasFreeSpace(getStorageDomain())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+        }
+        return true;
     }
 
     protected SnapshotsValidator getSnapshotValidator() {

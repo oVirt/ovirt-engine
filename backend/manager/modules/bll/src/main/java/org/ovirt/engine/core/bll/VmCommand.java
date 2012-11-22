@@ -107,9 +107,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     // 26 PCI slots: 31 total minus 5 saved for qemu (Host Bridge, ISA Bridge,
     // IDE, Agent, ACPI)
-    private final static int MAX_PCI_SLOTS = 26;
+    public final static int MAX_PCI_SLOTS = 26;
     // 3 IDE slots: 4 total minus 1 for CD
-    private final static int MAX_IDE_SLOTS = 3;
+    public final static int MAX_IDE_SLOTS = 3;
 
     /**
      * This method checks that with the given parameters, the max PCI and IDE limits defined are not passed.
