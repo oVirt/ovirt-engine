@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -28,7 +32,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @LockIdNameAttribute
-public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T> {
+public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T>
+        implements QuotaStorageDependent {
 
     private static final long serialVersionUID = 3162100352844371734L;
     private List<DiskImage> _sourceImages = null;
@@ -121,6 +126,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             if (vdcReturnValue != null && vdcReturnValue.getInternalTaskIdList() != null) {
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
             }
+
+            List<Guid> quotasToRemoveFromCache = new ArrayList<Guid>();
+            quotasToRemoveFromCache.add(source.getQuotaId());
+            quotasToRemoveFromCache.add(dest.getQuotaId());
+            QuotaManager.getInstance().removeQuotaFromCache(getStoragePoolId().getValue(), quotasToRemoveFromCache);
         }
         setSucceeded(true);
     }
@@ -254,5 +264,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     protected SnapshotDao getSnapshotDao() {
         return getDbFacade().getSnapshotDao();
+    }
+
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        //return empty list - the command only release quota so it could never fail the quota check
+        return new ArrayList<QuotaConsumptionParameter>();
     }
 }

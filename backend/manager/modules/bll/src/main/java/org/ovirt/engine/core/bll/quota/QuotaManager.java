@@ -45,7 +45,7 @@ public class QuotaManager {
         return DbFacade.getInstance().getQuotaDao();
     }
 
-    public void rollbackQuota(Guid storagePoolId, List<Guid> quotaList) {
+    public void removeQuotaFromCache(Guid storagePoolId, List<Guid> quotaList) {
         lock.writeLock().lock();
         try {
             if (!storagePoolQuotaMap.containsKey(storagePoolId)) {
@@ -57,6 +57,19 @@ public class QuotaManager {
                     map.remove(quotaId);
                 }
             }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    public void removeQuotaFromCache(Guid storagePoolId, Guid quotaId) {
+        removeQuotaFromCache(storagePoolId, Arrays.asList(quotaId));
+    }
+
+    public void removeStoragePoolFromCache(Guid storagePoolId) {
+        lock.writeLock().lock();
+        try {
+            storagePoolQuotaMap.remove(storagePoolId);
         } finally {
             lock.writeLock().unlock();
         }
@@ -413,29 +426,6 @@ public class QuotaManager {
         return result;
     }
 
-    public void removeQuotaFromCache(Guid storagePoolId, Guid quotaId) {
-        lock.readLock().lock();
-        try {
-            if (!storagePoolQuotaMap.containsKey(storagePoolId)) {
-                return;
-            }
-            synchronized (storagePoolQuotaMap.get(storagePoolId)) {
-                storagePoolQuotaMap.get(storagePoolId).remove(quotaId);
-            }
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
-
-    public void removeStoragePoolFromCache(Guid storagePoolId) {
-        lock.writeLock().lock();
-        try {
-            storagePoolQuotaMap.remove(storagePoolId);
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
-
     /**
      * Roll back quota by VM id. the VM is fetched from DB and the quota is rolled back
      * @param vmId - id for the vm
@@ -443,7 +433,7 @@ public class QuotaManager {
     public void rollbackQuotaByVmId(Guid vmId) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm != null) {
-            rollbackQuota(vm.getstorage_pool_id(), Arrays.asList(vm.getQuotaId()));
+            removeQuotaFromCache(vm.getstorage_pool_id(), vm.getQuotaId());
         }
     }
 

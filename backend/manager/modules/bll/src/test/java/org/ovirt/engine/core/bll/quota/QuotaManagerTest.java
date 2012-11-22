@@ -401,7 +401,7 @@ public class QuotaManagerTest {
     }
 
     @Test
-    public void testRollbackQuota() throws Exception {
+    public void testRemoveFromCache() throws Exception {
         QuotaConsumptionParametersWrapper parameters = parametersWrapper.clone();
         parameters.getParameters().add(new QuotaStorageConsumptionParameter(
                 STORAGE_QUOTA_GLOBAL_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
@@ -416,12 +416,7 @@ public class QuotaManagerTest {
         quotaManager.consume(parameters);
 
         // roll back the consumption
-        List<Guid> quotaList = new ArrayList<Guid>();
-        quotaList.add(STORAGE_QUOTA_GLOBAL_IN_GRACE);
-        quotaList.add(STORAGE_QUOTA_SPECIFIC_IN_GRACE);
-        quotaList.add(VCPU_QUOTA_GLOBAL_IN_GRACE);
-        quotaList.add(MEM_QUOTA_SPECIFIC_IN_GRACE);
-        quotaManager.rollbackQuota(storage_pool.getId(), quotaList);
+        quotaManager.removeStoragePoolFromCache(storage_pool.getId());
 
         // reset db
         when(quotaDAO.getById(STORAGE_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockStorageQuotaGlobalInGrace());
