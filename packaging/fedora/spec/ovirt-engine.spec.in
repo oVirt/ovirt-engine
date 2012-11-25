@@ -59,6 +59,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global make_common_opts \\\
 	-j1 \\\
 	PACKAGE_NAME=%{name} \\\
+	RPM_VERSION=%{version} \\\
+	RPM_RELEASE_VERSION=%{release} \\\
 	ENGINE_NAME=%{engine_name} \\\
 	LOCALSTATE_DIR=%{_localstatedir} \\\
 	ENGINE_STATE=%{engine_state} \\\
@@ -81,7 +83,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 
 Name: ovirt-engine
 Version: @PACKAGE_VERSION@
-Release: @PACKAGE_RELEASE@%{?dist}
+Release: @PACKAGE_RELEASE@%{?release_suffix}%{?dist}
 Summary: Management server for Open Virtualization
 Group: Virtualization/Management
 License: ASL 2.0
