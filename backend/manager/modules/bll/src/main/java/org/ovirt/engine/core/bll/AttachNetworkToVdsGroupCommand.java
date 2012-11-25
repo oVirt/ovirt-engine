@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
@@ -47,10 +51,10 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     @Override
     protected void executeCommand() {
         if (networkExists()) {
-            getNetworkClusterDAO().update(getParameters().getNetworkCluster());
+            getNetworkClusterDAO().update(getNetworkCluster());
         } else {
             getNetworkClusterDAO().save(new network_cluster(getVdsGroupId(), getNetwork().getId(),
-                    NetworkStatus.Operational, false, getParameters().getNetworkCluster().isRequired()));
+                    NetworkStatus.Operational, false, getNetworkCluster().isRequired()));
         }
         if (getNetwork().getCluster().getis_display()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
@@ -108,7 +112,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean logicalNetworkExists() {
-        if (getNetworkDAO().get(getParameters().getNetworkCluster().getnetwork_id()) != null) {
+        if (getNetworkDAO().get(getNetworkCluster().getnetwork_id()) != null) {
             return true;
         }
 
@@ -131,7 +135,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         List<network_cluster> networks = getNetworkClusterDAO().getAllForCluster(getVdsGroupId());
         for (network_cluster network_cluster : networks) {
             if (network_cluster.getnetwork_id().equals(
-                    getParameters().getNetworkCluster().getnetwork_id())) {
+                    getNetworkCluster().getnetwork_id())) {
                 return true;
             }
         }
@@ -151,9 +155,50 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return getVdsGroup() != null;
     }
 
+    private network_cluster getNetworkCluster() {
+        return getParameters().getNetworkCluster();
+    }
+
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP
                 : AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP_FAILED;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissions = new ArrayList<PermissionSubject>();
+
+        Guid networkId = getNetworkCluster() == null ? null : getNetworkCluster().getnetwork_id();
+        // require permissions on network
+        permissions.add(new PermissionSubject(networkId,
+                VdcObjectType.Network,
+                getActionType().getActionGroup()));
+
+        // require permissions on cluster the network is attached to
+        if (networkExists()) {
+            permissions.add(new PermissionSubject(getParameters().getVdsGroupId(),
+                    VdcObjectType.VdsGroups,
+                    ActionGroup.CONFIGURE_CLUSTER_NETWORK));
+        }
+        return permissions;
+    }
+
+    /**
+     * Checks the user has permissions either on Network or on Cluster for this action.
+     */
+    @Override
+    protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
+        List<String> messages = new ArrayList<String>();
+
+        for (PermissionSubject permSubject : permSubjects) {
+            messages.clear();
+            if (checkSinglePermission(permSubject, messages)) {
+                return true;
+            }
+        }
+
+        getReturnValue().getCanDoActionMessages().addAll(messages);
+        return false;
     }
 }

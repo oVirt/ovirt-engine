@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -16,6 +19,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -129,5 +133,13 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DETACH);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        Guid networkId = getParameters().getNetwork() == null ? null : getParameters().getNetwork().getId();
+        return Collections.singletonList(new PermissionSubject(networkId,
+                VdcObjectType.Network,
+                getActionType().getActionGroup()));
     }
 }
