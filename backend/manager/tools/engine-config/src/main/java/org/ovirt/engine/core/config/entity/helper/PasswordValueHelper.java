@@ -114,20 +114,21 @@ public class PasswordValueHelper implements ValueHelper {
     }
 
     @Override
-    public boolean validate(ConfigKey key, String value) {
+    public ValidationResult validate(ConfigKey key, String value) {
         // check if value is file path
         if (StringUtils.isNotBlank(value) && new File(value).exists()) {
-            return true;
+            return new ValidationResult(true);
         }
         // The only valid value is "Interactive"
         if (StringUtils.isNotBlank(value) && value.equalsIgnoreCase(INTERACTIVE_MODE)) {
-            return true;
+            return new ValidationResult(true);
         }
         // or if we have the password in --admin-pass-file
         if (StringUtils.isNotBlank(parser.getAdminPassFile()) && new File(parser.getAdminPassFile()).exists()) {
-            return true;
+            return new ValidationResult(true);
         }
-        return false;
+        return new ValidationResult(false);
+
     }
 
     @Override

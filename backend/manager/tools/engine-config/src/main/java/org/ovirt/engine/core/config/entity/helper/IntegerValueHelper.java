@@ -18,7 +18,7 @@ public class IntegerValueHelper implements ValueHelper {
     }
 
     @Override
-    public boolean validate(ConfigKey key, String value) {
+    public ValidationResult validate(ConfigKey key, String value) {
         try {
             int intValue = Integer.parseInt(value);
 
@@ -46,10 +46,10 @@ public class IntegerValueHelper implements ValueHelper {
                     }
                 }
             }
-            return isValid;
+            return new ValidationResult(isValid);
         } catch (NumberFormatException e) {
             // invalid number
-            return false;
+            return new ValidationResult(false);
         }
     }
 

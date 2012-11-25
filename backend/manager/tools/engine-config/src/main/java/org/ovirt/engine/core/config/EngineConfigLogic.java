@@ -389,10 +389,13 @@ public class EngineConfigLogic {
             configKey.safeSetValue(value);
             res = (getConfigDAO().updateKey(configKey) == 1);
         } catch (InvalidParameterException ipe) {
-            message = (
-                    "'" + value + "' is not a valid value for type " + configKey.getType() + ". " +
-                    (configKey.getValidValues().isEmpty() ? "" : "Valid values are " + configKey.getValidValues())
-                    );
+            message = ipe.getMessage();
+            if (message == null) {
+                message = (
+                        "'" + value + "' is not a valid value for type " + configKey.getType() + ". " +
+                                (configKey.getValidValues().isEmpty() ? "" : "Valid values are " + configKey.getValidValues())
+                        );
+            }
         } catch (Exception e) {
             message = "Error setting " + key + "'s value. " + e.getMessage();
             log.debug("Error details: ", e);

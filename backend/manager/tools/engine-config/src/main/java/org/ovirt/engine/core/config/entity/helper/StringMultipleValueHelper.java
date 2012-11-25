@@ -25,7 +25,7 @@ public class StringMultipleValueHelper implements ValueHelper {
     }
 
     @Override
-    public boolean validate(ConfigKey key, String value) {
+    public ValidationResult validate(ConfigKey key, String value) {
 
         Collection<String> validValues = key.getValidValues();
 
@@ -35,7 +35,7 @@ public class StringMultipleValueHelper implements ValueHelper {
         } else {
             isValid = CollectionUtils.isSubCollection(Arrays.asList(value.split(",")), validValues);
         }
-        return isValid;
+        return new ValidationResult(isValid);
     }
 
     @Override

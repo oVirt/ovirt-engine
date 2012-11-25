@@ -18,7 +18,7 @@ public class StringValueHelper implements ValueHelper {
     }
 
     @Override
-    public boolean validate(ConfigKey key, String value) {
+    public ValidationResult validate(ConfigKey key, String value) {
         List<String> validValues = key.getValidValues();
 
         boolean isValid = false;
@@ -27,7 +27,7 @@ public class StringValueHelper implements ValueHelper {
         } else {
             isValid = validValues.contains(value);
         }
-        return isValid;
+        return new ValidationResult(isValid);
     }
 
     @Override

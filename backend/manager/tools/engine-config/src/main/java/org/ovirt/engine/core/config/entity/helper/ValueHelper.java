@@ -9,7 +9,7 @@ public interface ValueHelper {
 
     String setValue(String value) throws Exception;
 
-    boolean validate(ConfigKey key, String value);
+    ValidationResult validate(ConfigKey key, String value);
 
     void setParser(EngineConfigCLIParser parser);
 }

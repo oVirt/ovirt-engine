@@ -62,19 +62,18 @@ public class CompositePasswordValueHelper implements ValueHelper {
     }
 
     @Override
-    public boolean validate(ConfigKey key, String value) {
-        boolean returnValue = true;
+    public ValidationResult validate(ConfigKey key, String value) {
         StringTokenizer tokenizer = new StringTokenizer(value, ",");
         while (tokenizer.hasMoreElements()) {
             String token = (String) tokenizer.nextElement();
             String[] pair = token.split(":", -1);
             String password = pair[1];
-            if (!pwdValueHelper.validate(null, password)) {
-                returnValue = false;
-                break;
+            ValidationResult validationResult = pwdValueHelper.validate(null, password);
+            if (!validationResult.isOk()) {
+                return validationResult;
             }
         }
-        return returnValue;
+        return new ValidationResult(true);
     }
 
     @Override

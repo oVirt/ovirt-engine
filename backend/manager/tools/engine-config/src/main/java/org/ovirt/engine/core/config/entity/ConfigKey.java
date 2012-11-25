@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
+import org.ovirt.engine.core.config.entity.helper.ValidationResult;
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
 
 public class ConfigKey {
@@ -97,8 +99,16 @@ public class ConfigKey {
      * @throws Exception
      */
     public void safeSetValue(String value) throws InvalidParameterException, Exception {
-        if (!valueHelper.validate(this, value)) {
-            throw new InvalidParameterException("Cannot set value " + value + "to key " + keyName);
+        ValidationResult validationResult = valueHelper.validate(this, value);
+        if (!validationResult.isOk()) {
+            StringBuilder invalidParamMsg = new StringBuilder();
+            invalidParamMsg.append("Cannot set value ")
+            .append(value)
+            .append(" to key ")
+            .append(keyName)
+            .append(". ")
+            .append(StringUtils.isNotEmpty(validationResult.getDetails()) ? validationResult.getDetails() : "");
+            throw new InvalidParameterException(invalidParamMsg.toString());
         }
         this.value = valueHelper.setValue(value);
     }
