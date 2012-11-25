@@ -3,11 +3,14 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
+import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -24,6 +27,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     protected void executeCommand() {
         getParameters().getNetwork().setId(Guid.NewGuid());
         DbFacade.getInstance().getNetworkDao().save(getParameters().getNetwork());
+        addPermissions();
         getReturnValue().setActionReturnValue(getParameters().getNetwork().getId());
         setSucceeded(true);
     }
@@ -95,5 +99,23 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null
                 : getStoragePoolId().getValue(),
                 VdcObjectType.StoragePool, getActionType().getActionGroup()));
+    }
+
+    private void addPermissions() {
+        addPermissionOnNetwork(getCurrentUser().getUserId(), PredefinedRoles.NETWORK_ADMIN);
+
+        // if the Network is for public use, set EVERYONE as a NETWORK_USER.
+        if (getParameters().isPublicUse()) {
+            addPermissionOnNetwork(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.NETWORK_USER);
+        }
+    }
+
+    private void addPermissionOnNetwork(Guid userId, PredefinedRoles role) {
+        permissions perms = new permissions();
+        perms.setad_element_id(userId);
+        perms.setObjectType(VdcObjectType.Network);
+        perms.setObjectId(getParameters().getNetwork().getId());
+        perms.setrole_id(role.getId());
+        MultiLevelAdministrationHandler.addPermission(perms);
     }
 }

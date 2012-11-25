@@ -11,6 +11,8 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
     @Valid
     private Network _network;
 
+    private boolean publicUse;
+
     public AddNetworkStoragePoolParameters(Guid storagePoolId, Network net) {
         super(storagePoolId);
         _network = net;
@@ -18,6 +20,14 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     public Network getNetwork() {
         return _network;
+    }
+
+    public void setPublicUse(boolean publicUse) {
+        this.publicUse = publicUse;
+    }
+
+    public boolean isPublicUse() {
+        return publicUse;
     }
 
     public AddNetworkStoragePoolParameters() {
