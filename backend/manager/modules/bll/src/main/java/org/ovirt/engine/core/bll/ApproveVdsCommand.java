@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
@@ -16,12 +15,6 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
 
     public ApproveVdsCommand(T parameters) {
         super(parameters);
-    }
-
-    @Override
-    protected void executeCommand() {
-        ApproveVds(getVds());
-        setSucceeded(true);
     }
 
     @Override
@@ -58,8 +51,8 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
         }
     }
 
-    public void ApproveVds(VDS vds) {
-
+    @Override
+    protected void executeCommand() {
         _failureLogTypeValue = AuditLogType.VDS_INSTALL_FAILED;
         if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoInstallCertificateOnApprove)) {
             super.executeCommand();
@@ -71,14 +64,13 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
             Backend.getInstance()
             .getResourceManager()
             .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Unassigned));
+                            new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.Unassigned));
         } else if (getParameters().isApprovedByRegister()) {
             // In case of Approval of oVirt host process, the status of the host is re-initialized to PendingApproval
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.PendingApproval));
+                            new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.PendingApproval));
         }
     }
-
 }
