@@ -30,8 +30,11 @@ public class NewNetworkModel extends NetworkModel {
     @Override
     public void postExecuteSave() {
         // New network
+        final AddNetworkStoragePoolParameters parameters =
+                new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
+        parameters.setPublicUse((Boolean) getPublicUse().getEntity());
         Frontend.RunAction(VdcActionType.AddNetwork,
-                new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
+                parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result1) {

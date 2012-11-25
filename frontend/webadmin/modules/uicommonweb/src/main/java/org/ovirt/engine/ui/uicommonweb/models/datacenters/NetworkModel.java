@@ -47,6 +47,7 @@ public abstract class NetworkModel extends Model
     private EntityModel privateMtu;
     private EntityModel privateIsVmNetwork;
     private EntityModel privateIsEnabled;
+    private EntityModel publicUse;
     private ListModel privateNetworkClusterList;
     private ArrayList<VDSGroup> privateOriginalClusters;
     private boolean isSupportBridgesReportByVDSM = false;
@@ -88,6 +89,9 @@ public abstract class NetworkModel extends Model
         EntityModel isVmNetwork = new EntityModel();
         isVmNetwork.setEntity(true);
         setIsVmNetwork(isVmNetwork);
+        EntityModel publicUse = new EntityModel();
+        publicUse.setEntity(true);
+        setPublicUse(publicUse);
 
         setNetworkClusterList(new ListModel());
         setOriginalClusters(new ArrayList<VDSGroup>());
@@ -197,6 +201,14 @@ public abstract class NetworkModel extends Model
     public void setIsEnabled(EntityModel value)
     {
         privateIsEnabled = value;
+    }
+
+    public EntityModel getPublicUse() {
+        return publicUse;
+    }
+
+    public void setPublicUse(EntityModel publicUse) {
+        this.publicUse = publicUse;
     }
 
     public ListModel getNetworkClusterList()

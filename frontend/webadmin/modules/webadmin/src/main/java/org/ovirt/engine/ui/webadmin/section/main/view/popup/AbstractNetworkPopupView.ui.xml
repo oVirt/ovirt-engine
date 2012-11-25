@@ -57,6 +57,11 @@
 			padding-left: 20px;
 		}
 
+		.publicUseEditor {
+			padding: 0px;
+			width: 100%;
+		}
+
 	</ui:style>
 
 	<d:SimpleDialogPanel width="435px" height="520px">
@@ -91,6 +96,7 @@
 								<e:EntityModelCellTable ui:field="clustersTable" />
 							</g:ScrollPanel>
 						</g:HTMLPanel>
+						<e:EntityModelCheckBoxEditor ui:field="publicUseEditor"/>
 					</g:VerticalPanel>
 				</g:south>
 			</g:DockLayoutPanel>

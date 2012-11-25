@@ -2438,4 +2438,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Detach the hosts forcefully")
     String detachGlusterHostsForcefully();
+
+    @DefaultStringValue("Allow all users to use this Network")
+    String networkPublicUseLabel();
 }
