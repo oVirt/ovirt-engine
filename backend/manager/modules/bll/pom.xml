@@ -227,9 +227,7 @@
             <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
           </additionalClasspathElements>
           <excludes>
-            <exclude>**/itests/*Test.java</exclude>
 	    <exclude>**/TestHelper*.java</exclude>
-	    <exclude>**/AbstractLdapTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -250,20 +248,4 @@
         </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>enable-bll-itests</id>
-      <properties>
-        <test>**/itests/*Test.java</test>
-      </properties>
-    </profile>
-    <profile>
-      <id>mssql</id>
-      <properties>
-        <engine.db>mssql</engine.db>
-      </properties>
-    </profile>
-  </profiles>
-
 </project>
