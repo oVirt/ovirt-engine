@@ -41,13 +41,10 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (!getSucceeded()) {
-            if (_failureLogTypeValue == AuditLogType.VDS_INSTALL_FAILED) {
-                AddCustomValue("FailedInstallMessage", getErrorMessage(_failureMessage));
-            }
-            return _failureLogTypeValue;
-        } else {
+        if (getSucceeded()) {
             return AuditLogType.VDS_APPROVE;
+        } else {
+            return super.getAuditLogTypeValue();
         }
     }
 
