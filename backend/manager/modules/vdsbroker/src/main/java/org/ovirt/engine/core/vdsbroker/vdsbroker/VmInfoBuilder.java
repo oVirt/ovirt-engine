@@ -290,11 +290,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmNetworkInterfaces() {
-        Boolean useRtl8139_pv = Config.<Boolean> GetValue(
-                ConfigValues.UseRtl8139_pv, vm
-                        .getVdsGroupCompatibilityVersion()
-                        .toString());
-
         Map<VmDeviceId, VmDevice> devicesByDeviceId =
                 Entities.businessEntitiesById(DbFacade.getInstance()
                         .getVmDeviceDao()
@@ -316,21 +311,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     ifaceType = VmInterfaceType.forValue(vmInterface.getType());
                 }
                 if (ifaceType == VmInterfaceType.rtl8139_pv) {
-                    if (!useRtl8139_pv) {
-                        if (vm.getHasAgent()) {
-                            addNetworkInterfaceProperties(struct,
-                                    vmInterface,
-                                    vmDevice,
-                                    VmInterfaceType.pv.name(),
-                                    vm.getVdsGroupCompatibilityVersion());
-                        } else {
-                            addNetworkInterfaceProperties(struct,
-                                    vmInterface,
-                                    vmDevice,
-                                    VmInterfaceType.rtl8139.name(),
-                                    vm.getVdsGroupCompatibilityVersion());
-                        }
-                    } else {
+                    if (vm.getHasAgent()) {
                         addNetworkInterfaceProperties(struct,
                                 vmInterface,
                                 vmDevice,
@@ -341,8 +322,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         addNetworkInterfaceProperties(rtl8139Struct,
                                 vmInterface,
                                 vmDevice,
-                                VmInterfaceType.rtl8139.name(), vm.getVdsGroupCompatibilityVersion());
-                        devices.add(rtl8139Struct);
+                                VmInterfaceType.rtl8139.name(),
+                                vm.getVdsGroupCompatibilityVersion());
+                    } else {
+                        addNetworkInterfaceProperties(struct,
+                                vmInterface,
+                                vmDevice,
+                                VmInterfaceType.rtl8139.name(),
+                                vm.getVdsGroupCompatibilityVersion());
                     }
                 } else {
                     addNetworkInterfaceProperties(struct,

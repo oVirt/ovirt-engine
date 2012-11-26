@@ -183,6 +183,12 @@ public interface Enums extends LocalizedEnums {
 
     String OriginType___OVIRT();
 
+    /**
+     * This needs to cleaned up. We are leaving it in place to support import of
+     * VMs created using previous versions.
+     * @deprecated
+     */
+    @Deprecated
     String VmInterfaceType___rtl8139_pv();
 
     String VmInterfaceType___rtl8139();

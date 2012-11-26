@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum VmInterfaceType {
+    /**
+     * This needs to cleaned up. We are leaving it in place to support import of
+     * VMs created using previous versions.
+     * @deprecated
+     */
+    @Deprecated
     rtl8139_pv(0, "Dual mode rtl8139, Red Hat VirtIO", 1000),
     rtl8139(1, "rtl8139", 100),
     e1000(2, "e1000", 1000),

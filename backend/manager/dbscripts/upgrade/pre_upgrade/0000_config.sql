@@ -481,10 +481,6 @@ select fn_db_add_config_value('UserDefinedVMProperties','','3.1');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.2');
 select fn_db_add_config_value('UserRefreshRate','3600','general');
 select fn_db_add_config_value('UserSessionTimeOutInterval','30','general');
-select fn_db_add_config_value('UseRtl8139_pv','true','2.2');
-select fn_db_add_config_value('UseRtl8139_pv','false','3.0');
-select fn_db_add_config_value('UseRtl8139_pv','false','3.1');
-select fn_db_add_config_value('UseRtl8139_pv','false','3.2');
 --Handling Use Secure Connection with Hosts
 select fn_db_add_config_value('UseSecureConnectionWithServers','true','general');
 select fn_db_add_config_value('UseVdsBrokerInProc','true','general');
@@ -668,6 +664,10 @@ select fn_db_delete_config_value('SupportStorageFormat','2.2');
 select fn_db_delete_config_value('SupportStorageFormat','3.0');
 select fn_db_delete_config_value('SupportStorageFormat','3.1');
 select fn_db_delete_config_value('SupportStorageFormat','3.2');
+select fn_db_delete_config_value('UseRtl8139_pv','2.2');
+select fn_db_delete_config_value('UseRtl8139_pv','3.0');
+select fn_db_delete_config_value('UseRtl8139_pv','3.1');
+select fn_db_delete_config_value('UseRtl8139_pv','3.2');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

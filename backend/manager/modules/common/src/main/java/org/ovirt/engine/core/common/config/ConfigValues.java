@@ -1009,11 +1009,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("0")
     SupportedStorageFormats(296),
 
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    UseRtl8139_pv(297),
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,

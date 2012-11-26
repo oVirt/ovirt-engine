@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -155,28 +153,13 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             }
 
             if (ifaceType == VmInterfaceType.rtl8139_pv) {
-                Boolean useRtl8139_pv = Config.<Boolean> GetValue(
-                        ConfigValues.UseRtl8139_pv, vm
-                                .getVdsGroupCompatibilityVersion()
-                                .toString());
-
-                if (!useRtl8139_pv) {
-                    if (vm.getHasAgent()) {
-                        nics.append("pv");
-                    } else {
-                        nics.append("rtl8139");
-                    }
+                if (vm.getHasAgent()) {
+                    nics.append("pv");
                 } else {
-                    nics.append("rtl8139,pv");
-                    macs.append(",");
-                    macs.append(vm.getInterfaces().get(i).getMacAddress());
-                    networks.append(",");
-                    networks.append(vm.getInterfaces().get(i).getNetworkName());
+                    nics.append("rtl8139");
                 }
             } else {
-
                 nics.append(ifaceType.toString());
-
             }
 
             if (i < vm.getInterfaces().size() - 1) {
