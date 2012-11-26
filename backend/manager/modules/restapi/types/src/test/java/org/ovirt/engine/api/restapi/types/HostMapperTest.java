@@ -131,4 +131,15 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(new Long(host.getVersion().getBuild()), new Long(0));
         assertEquals(host.getVersion().getFullVersion(), "vdsm-4.10.0-10.fc17");
     }
+
+    @Test
+    public void testPmProxyPreferences() {
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        vds.setPmProxyPreferences("cluster,dc");
+        Host host = HostMapper.map(vds, (Host) null);
+        assertEquals(host.getPowerManagement().getPmProxies().getPmProxy().size(), 2);
+        assertTrue(host.getPowerManagement().getPmProxies().getPmProxy().get(0).getType().equalsIgnoreCase("cluster"));
+        assertTrue(host.getPowerManagement().getPmProxies().getPmProxy().get(1).getType().equalsIgnoreCase("dc"));
+    }
 }

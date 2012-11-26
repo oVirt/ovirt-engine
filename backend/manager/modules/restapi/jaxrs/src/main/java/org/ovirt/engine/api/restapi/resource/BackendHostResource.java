@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendHostsResource.SUB_COLLECTIONS;
+
 import java.util.List;
 
 import javax.ws.rs.Path;
@@ -9,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.Host;
@@ -16,12 +19,11 @@ import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStatus;
-import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
-import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
+import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -32,9 +34,9 @@ import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -48,8 +50,6 @@ import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
-
-import static org.ovirt.engine.api.restapi.resource.BackendHostsResource.SUB_COLLECTIONS;
 
 
 public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements
@@ -74,6 +74,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Host update(Host incoming) {
+        validateEnums(Host.class, incoming);
         QueryIdResolver hostResolver = new QueryIdResolver(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
         VDS entity = getEntity(hostResolver, true);
         if (incoming.isSetCluster() && incoming.getCluster().isSetId() && !asGuid(incoming.getCluster().getId()).equals(entity.getvds_group_id())) {

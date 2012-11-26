@@ -90,6 +90,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     public Response add(Host host) {
+        validateEnums(Host.class, host);
         validateParameters(host, "name", "address", "rootPassword");
         VdsStatic staticHost = getMapper(Host.class, VdsStatic.class).map(host, null);
         staticHost.setvds_group_id(getClusterId(host));

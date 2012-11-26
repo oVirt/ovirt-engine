@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
@@ -20,6 +21,8 @@ import org.ovirt.engine.api.model.KSM;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
+import org.ovirt.engine.api.model.PmProxies;
+import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
@@ -99,6 +102,16 @@ public class HostMapper {
         if (model.isSetOptions()) {
             entity.setpm_options(map(model.getOptions(), null));
         }
+        if (model.isSetPmProxies()) {
+            String delim = "";
+            StringBuilder builder = new StringBuilder();
+            for (PmProxy pmProxy : model.getPmProxies().getPmProxy()) {
+                builder.append(delim);
+                builder.append(pmProxy.getType());
+                delim = ",";
+            }
+            entity.setPmProxyPreferences(builder.toString());
+        }
         return entity;
     }
 
@@ -168,7 +181,7 @@ public class HostMapper {
             model.setIscsi(new IscsiDetails());
             model.getIscsi().setInitiator(entity.getIScsiInitiatorName());
         }
-        model.setPowerManagement(map(entity, (PowerManagement)null));
+        model.setPowerManagement(map(entity, (PowerManagement) null));
         CPU cpu = new CPU();
         CpuTopology cpuTopology = new CpuTopology();
         if (entity.getcpu_sockets() != null) {
@@ -244,6 +257,16 @@ public class HostMapper {
         model.setUsername(entity.getpm_user());
         if (entity.getPmOptionsMap() != null) {
             model.setOptions(map(entity.getPmOptionsMap(), null));
+        }
+        if (entity.getPmProxyPreferences() != null) {
+            PmProxies pmProxies = new PmProxies();
+                String[] proxies = StringUtils.split(entity.getPmProxyPreferences(), ",");
+                for (String proxy : proxies) {
+                        PmProxy pmProxy = new PmProxy();
+                pmProxy.setType(proxy);
+                        pmProxies.getPmProxy().add(pmProxy);
+                }
+            model.setPmProxies(pmProxies);
         }
         return model;
     }

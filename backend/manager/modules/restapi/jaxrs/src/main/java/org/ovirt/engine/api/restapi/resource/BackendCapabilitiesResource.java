@@ -49,6 +49,8 @@ import org.ovirt.engine.api.model.OsTypes;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
 import org.ovirt.engine.api.model.Permits;
+import org.ovirt.engine.api.model.PmProxyType;
+import org.ovirt.engine.api.model.PmProxyTypes;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStates;
 import org.ovirt.engine.api.model.PowerManagementStatus;
@@ -114,6 +116,12 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         {
             major = 3;
             minor = 1;
+        }
+    };
+    public static final Version VERSION_3_2 = new Version() {
+        {
+            major = 3;
+            minor = 2;
         }
     };
     private static Version currentVersion = null;
@@ -187,6 +195,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addPermits(version, PermitType.values());
         addSchedulingPolicies(version, SchedulingPolicyType.values());
         addNetworkUsages(version, NetworkUsage.values());
+        addPmProxyTypes(version, PmProxyType.values());
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
@@ -557,6 +566,16 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.getBrickStates().getGlusterStates().add(type.value());
         }
     }
+
+    private void addPmProxyTypes(VersionCaps version, PmProxyType[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
+            version.setPmProxyTypes(new PmProxyTypes());
+            for (PmProxyType pmProxyType : values) {
+                version.getPmProxyTypes().getPmProxyTypes().add(pmProxyType.value());
+            }
+        }
+    }
+
 
     @Override
     public CapabiliyResource getCapabilitiesSubResource(String id) {

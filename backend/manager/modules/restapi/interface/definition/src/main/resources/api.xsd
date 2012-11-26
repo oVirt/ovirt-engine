@@ -572,6 +572,7 @@
           <xs:element ref="scheduling_policies" minOccurs="0"/>
           <xs:element ref="usages" minOccurs="0"/>
           <xs:element ref="nfs_versions" minOccurs="0"/>
+          <xs:element ref="pm_proxy_types" minOccurs="0"/>
 
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>
@@ -1064,6 +1065,7 @@
       <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="options" type="Options" minOccurs="0"/>
       <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="pm_proxies" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="type" type="xs:string"/>
   </xs:complexType>
@@ -2093,6 +2095,20 @@
     </xs:sequence>
   </xs:complexType>
 
+
+  <xs:element name="pm_proxy_types" type="PmProxyTypes"/>
+
+  <xs:complexType name="PmProxyTypes">
+    <xs:sequence>
+      <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="PmProxyTypes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
   <!-- Virtual Machine Pools -->
 
   <xs:element name="vmpool" type="VmPool"/>
@@ -2811,4 +2827,24 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-</xs:schema>
+
+  <xs:element name="pm_proxies" type="PmProxies"/>
+  <xs:complexType name="PmProxies">
+    <xs:sequence>
+      <xs:element ref="pm_proxy" minOccurs="0" maxOccurs="unbounded">
+       <xs:annotation>
+          <xs:appinfo>
+            <jaxbroperty name="PmProxies"/>
+          </xs:appinfo>
+        </xs:annotation>
+     </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="pm_proxy" type="PmProxy"/>
+  <xs:complexType name="PmProxy">
+   <xs:sequence>
+	<xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+   </xs:sequence>
+  </xs:complexType>
+  </xs:schema>
