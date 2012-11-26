@@ -359,7 +359,7 @@ Create or replace FUNCTION Updatestorage_server_connections(v_connection VARCHAR
 	v_user_name VARCHAR(50),
 	v_mount_options VARCHAR(500),
 	v_vfs_type VARCHAR(128),
-	v_nfs_version smallint,
+	v_nfs_version VARCHAR(4),
 	v_nfs_timeo smallint,
 	v_nfs_retrans smallint)
 
