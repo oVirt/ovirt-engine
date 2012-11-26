@@ -58,24 +58,6 @@ insert into event_notification_methods (method_id, method_type) values (0,'Email
 delete from action_version_map;
 -- Inserting data to history timekeeping
 Insert into dwh_history_timekeeping  VALUES('lastSync',NULL,to_timestamp('01/01/2000', 'DD/MM/YYYY'));
--- AddVmFromTemplate
-insert into action_version_map  values(2, '2.2', '2.2');
--- MoveVm
-insert into action_version_map  values(33, '2.2', '2.2');
--- ImportVm
-insert into action_version_map  values(36, '2.2', '2.2');
--- ExportVm
-insert into action_version_map  values(23, '2.2', '2.2');
--- ImportVmTemplate
-insert into action_version_map  values(39, '2.2', '2.2');
--- ExportVmTemplate
-insert into action_version_map  values(24, '2.2', '2.2');
--- AddExistingNFSStorageDomain
-insert into action_version_map  values(960, '2.2', '2.2');
--- AddExistingSANStorageDomainCommand
-insert into action_version_map  values(961, '2.2', '2.2');
--- RecoveryStoragePool
-insert into action_version_map  values(915, '2.2', '2.2');
 RETURN;
 END; $procedure$
 LANGUAGE plpgsql;

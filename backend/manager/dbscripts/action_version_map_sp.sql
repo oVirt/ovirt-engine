@@ -57,3 +57,14 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Deletes keys from action_version_map for the given versions
+Create or replace FUNCTION fn_db_delete_version_map(v_cluster_version varchar(10), v_sp_version varchar(40))
+returns void
+AS $procedure$
+BEGIN
+   DELETE
+   FROM action_version_map
+   WHERE cluster_minimal_version = v_cluster_version
+     AND storage_pool_minimal_version = v_sp_version;
+END; $procedure$
+LANGUAGE plpgsql;

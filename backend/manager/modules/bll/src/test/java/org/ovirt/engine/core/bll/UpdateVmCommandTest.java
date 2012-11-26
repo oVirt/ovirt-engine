@@ -68,8 +68,6 @@ public class UpdateVmCommandTest {
             mockConfig(ConfigValues.UserDefinedVMProperties, "3.1", ""),
             mockConfig(ConfigValues.PredefinedVMProperties, "3.0", ""),
             mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", ""),
-            mockConfig(ConfigValues.PredefinedVMProperties, "2.2", ""),
-            mockConfig(ConfigValues.UserDefinedVMProperties, "2.2", ""),
             mockConfig(ConfigValues.ValidNumOfMonitors, "1,2,4"),
             mockConfig(ConfigValues.VmPriorityMaxValue, 100),
             mockConfig(ConfigValues.MaxNumOfVmCpus, "3.0", 16),
