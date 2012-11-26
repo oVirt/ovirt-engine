@@ -207,8 +207,8 @@ RETURN QUERY SELECT
    ON network.id = network_cluster.network_id
    WHERE network_cluster.cluster_id = v_id
    AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                    FROM   user_vds_groups_permissions_view
-                                    WHERE  user_id = v_user_id AND entity_id = v_id))
+                                     FROM   user_network_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = network.id))
    ORDER BY network.name;
 END; $procedure$
 LANGUAGE plpgsql;

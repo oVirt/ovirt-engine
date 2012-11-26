@@ -2326,6 +2326,14 @@
             <value>1</value>
             <value>true</value>
         </row>
+        <row>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba70</value>
+            <value>jUnitTestRole</value>
+            <value>role for tests</value>
+            <value>0</value>
+            <value>2</value>
+            <value>true</value>
+        </row>
     </table>
 
     <table name="roles_groups">
@@ -2334,6 +2342,10 @@
         <row>
             <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
             <value>10</value>
+        </row>
+        <row>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba70</value>
+            <value>9</value>
         </row>
     </table>
 
@@ -2349,6 +2361,20 @@
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
             <value>2</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e8f</value>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba70</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>20</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295b8f</value>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba70</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>9</value>
         </row>
         <row>
             <value>2d2f2522-afd2-4964-a3b1-001cca295e8e</value>

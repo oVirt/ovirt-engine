@@ -97,7 +97,7 @@ public enum ActionGroup {
     DELETE_DISK(1104, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
 
     // Network
-    PORT_MIRRORING(1200, RoleType.ADMIN, VdcObjectType.Network, false),
+    PORT_MIRRORING(1200, RoleType.ADMIN, VdcObjectType.Network, true, ApplicationMode.VirtOnly),
 
     // Login action group
     LOGIN(1300, RoleType.USER, VdcObjectType.Bottom, false);

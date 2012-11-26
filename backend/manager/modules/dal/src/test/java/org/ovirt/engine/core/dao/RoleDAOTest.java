@@ -9,14 +9,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RoleDAOTest extends BaseDAOTestCase {
     private static final String GROUP_IDS = "26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7";
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
-    private static final int ROLE_COUNT = 3;
+    private static final int ROLE_COUNT = 4;
 
     private RoleDAO dao;
     private Role existingRole;

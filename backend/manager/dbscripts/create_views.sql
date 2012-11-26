@@ -1399,3 +1399,69 @@ AS
 SELECT device_id, vm_id, type, device, address, boot_order, spec_params,
        is_managed, is_plugged, is_readonly, alias
   FROM vm_device;
+
+CREATE OR REPLACE VIEW vm_interface_ext_view
+AS
+SELECT vm_interface_view.*,
+       network.id as network_id,
+       network_cluster.cluster_id as cluster_id,
+       network.storage_pool_id as data_center_id
+FROM vm_interface_view
+INNER JOIN vm_static
+ON vm_static.vm_guid = vm_interface_view.vm_guid
+INNER JOIN network_cluster
+ON network_cluster.cluster_id = vm_static.vds_group_id
+INNER JOIN network
+ON network.id = network_cluster.network_id
+AND network.name = vm_interface_view.network_name;
+
+-- Permissions on Networks
+-- The user has permissions on the Network directly
+CREATE OR REPLACE VIEW user_network_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       permissions_view
+WHERE      object_type_id = 20 AND role_type = 2
+-- Or the user has permissions on the Network's Data-Center directly
+UNION ALL
+SELECT     network.id, ad_element_id
+FROM       network
+INNER JOIN permissions_view ON object_id = storage_pool_id
+WHERE      object_type_id = 14 AND role_type = 2
+-- Or the user has permissions on the Cluster the networks are assigned to
+UNION ALL
+SELECT     network_id, ad_element_id
+FROM       network_cluster
+INNER JOIN permissions_view ON object_id = network_cluster.cluster_id
+WHERE      object_type_id = 9 AND role_type = 2
+-- Or the user has permissions on the VM with the network attached
+UNION ALL
+SELECT     network_id, ad_element_id
+FROM       vm_interface_ext_view
+INNER JOIN permissions_view ON object_id = vm_guid
+WHERE object_type_id = 2 AND role_type = 2
+-- Or the user has permissions on the Template with the network attached
+UNION ALL
+SELECT     network_id, ad_element_id
+FROM       vm_interface_view
+INNER JOIN vm_templates_view
+ON vm_templates_view.vmt_guid = vm_interface_view.vmt_guid
+INNER JOIN network_cluster
+ON network_cluster.cluster_id = vm_templates_view.vds_group_id
+INNER JOIN network
+ON network.id = network_cluster.network_id
+AND network.name = vm_interface_view.network_name
+INNER JOIN permissions_view ON object_id = vm_interface_view.vmt_guid
+WHERE object_type_id = 4 AND role_type = 2
+-- Or the user has permissions on system
+UNION ALL
+SELECT     network_id, ad_element_id
+FROM       permissions_view
+CROSS JOIN vm_interface_ext_view
+WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
+
+CREATE OR REPLACE VIEW user_network_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_network_permissions_view_base
+NATURAL JOIN user_flat_groups;
