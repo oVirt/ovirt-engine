@@ -69,8 +69,6 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
                 )) {
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
-        } else if (!storagePoolValidator.isLocalDcAndMatchingCompatiblityVersion()) {
-            result = false;
         } else if (!storagePoolValidator.isPosixDcAndMatchingCompatiblityVersion()) {
             result = false;
         }

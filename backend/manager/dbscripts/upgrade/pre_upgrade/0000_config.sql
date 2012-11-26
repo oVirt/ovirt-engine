@@ -254,10 +254,6 @@ select fn_db_add_config_value('LiveStorageMigrationEnabled','false','3.0');
 select fn_db_add_config_value('LiveStorageMigrationEnabled','false','3.1');
 select fn_db_add_config_value('LiveStorageMigrationEnabled','true','3.2');
 select fn_db_add_config_value('LocalAdminPassword','123456','general');
-select fn_db_add_config_value('LocalStorageEnabled','false','2.2');
-select fn_db_add_config_value('LocalStorageEnabled','true','3.0');
-select fn_db_add_config_value('LocalStorageEnabled','true','3.1');
-select fn_db_add_config_value('LocalStorageEnabled','true','3.2');
 --Handling Enable lock policy for Storage Pool Manager on activation
 select fn_db_add_config_value('LockPolicy','ON','general');
 select fn_db_add_config_value('LockRenewalIntervalSec','5','general');
@@ -668,6 +664,10 @@ select fn_db_delete_config_value('LimitNumberOfNetworkInterfaces','2.2');
 select fn_db_delete_config_value('LimitNumberOfNetworkInterfaces','3.0');
 select fn_db_delete_config_value('LimitNumberOfNetworkInterfaces','3.1');
 select fn_db_delete_config_value('LimitNumberOfNetworkInterfaces','3.2');
+select fn_db_delete_config_value('LocalStorageEnabled','2.2');
+select fn_db_delete_config_value('LocalStorageEnabled','3.0');
+select fn_db_delete_config_value('LocalStorageEnabled','3.1');
+select fn_db_delete_config_value('LocalStorageEnabled','3.2');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

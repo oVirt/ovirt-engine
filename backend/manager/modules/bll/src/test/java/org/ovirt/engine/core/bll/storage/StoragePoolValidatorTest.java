@@ -32,8 +32,6 @@ public class StoragePoolValidatorTest {
                         StoragePoolStatus.Up.getValue());
         validator = spy(new StoragePoolValidator(storagePool, new ArrayList<String>()));
         mockPosixStorageEnabledConfigValue();
-        mockLocalStorageEnabledConfigValue();
-
     }
 
     protected void mockPosixStorageEnabledConfigValue() {
@@ -41,13 +39,6 @@ public class StoragePoolValidatorTest {
         doReturn(false).when(validator).getConfigValue(ConfigValues.PosixStorageEnabled, Version.v3_0.toString());
         doReturn(false).when(validator).getConfigValue(ConfigValues.PosixStorageEnabled, Version.v2_2.toString());
         doReturn(false).when(validator).getConfigValue(ConfigValues.PosixStorageEnabled, "general");
-    }
-
-    protected void mockLocalStorageEnabledConfigValue() {
-        doReturn(true).when(validator).getConfigValue(ConfigValues.LocalStorageEnabled, Version.v3_1.toString());
-        doReturn(true).when(validator).getConfigValue(ConfigValues.LocalStorageEnabled, Version.v3_0.toString());
-        doReturn(false).when(validator).getConfigValue(ConfigValues.LocalStorageEnabled, Version.v2_2.toString());
-        doReturn(false).when(validator).getConfigValue(ConfigValues.LocalStorageEnabled, "general");
     }
 
     @Test
@@ -70,14 +61,6 @@ public class StoragePoolValidatorTest {
         storagePool.setcompatibility_version(Version.v3_0);
         storagePool.setstorage_pool_type(StorageType.LOCALFS);
         assertTrue(validator.isPosixDcAndMatchingCompatiblityVersion());
-    }
-
-    @Test
-    public void testLocalDcAndNotMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(Version.v2_2);
-        storagePool.setstorage_pool_type(StorageType.LOCALFS);
-        assertFalse(validator.isLocalDcAndMatchingCompatiblityVersion());
-        assertMessages(VdcBllMessages.DATA_CENTER_LOCAL_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
     }
 
     @Test

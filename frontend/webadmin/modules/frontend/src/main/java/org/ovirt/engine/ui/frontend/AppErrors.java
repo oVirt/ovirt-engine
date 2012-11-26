@@ -1406,9 +1406,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("\"Local Storage\" data domain cannot be detached from Data Center")
     String VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE();
 
-    @DefaultStringValue("\"Local Storage\" is not supported with Data Center computability version")
-    String DATA_CENTER_LOCAL_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
-
     @DefaultStringValue("\"File based storage\" is not supported with data center compatibility version.")
     String DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
 

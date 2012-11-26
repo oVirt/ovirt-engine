@@ -56,7 +56,6 @@ public enum ConfigurationValues {
     StoragePoolNameSizeLimit(ConfigAuthType.User),
     SANWipeAfterDelete(ConfigAuthType.User),
     AuthenticationMethod(ConfigAuthType.User),
-    LocalStorageEnabled,
     UserDefinedVMProperties(ConfigAuthType.User),
     PredefinedVMProperties(ConfigAuthType.User),
     SupportCustomProperties(ConfigAuthType.User),

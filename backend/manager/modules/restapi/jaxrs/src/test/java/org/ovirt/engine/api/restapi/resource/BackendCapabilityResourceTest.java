@@ -128,20 +128,6 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
                 new Object[] { "10.3", ConfigurationValues.VdsFenceOptionTypes },
                 "one=int,two=bool");
 
-        //expect(Config.GetValue(ConfigValues.LocalStorageEnabled, "1.5")).andReturn(Boolean.FALSE);
-        setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
-                GetConfigurationValueParameters.class,
-                new String[] { "Version", "ConfigValue" },
-                new Object[] { "1.5", ConfigurationValues.LocalStorageEnabled },
-                Boolean.FALSE);
-
-        //expect(Config.GetValue(ConfigValues.LocalStorageEnabled, "10.3")).andReturn(Boolean.TRUE);
-        setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
-                GetConfigurationValueParameters.class,
-                new String[] { "Version", "ConfigValue" },
-                new Object[] { "10.3", ConfigurationValues.LocalStorageEnabled },
-                Boolean.TRUE);
-
         //expect(Config.GetValue(ConfigValues.PredefinedVMProperties, "1.5")).andReturn("");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,

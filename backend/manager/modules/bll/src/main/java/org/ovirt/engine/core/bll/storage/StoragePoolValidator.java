@@ -51,23 +51,6 @@ public class StoragePoolValidator {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 
-    /**
-     * Checks in case the DC is of local type that the compatibility version matches. In case there is mismatch, a
-     * proper canDoAction message will be added
-     *
-     * @return true if the version matches
-     */
-    public boolean isLocalDcAndMatchingCompatiblityVersion() {
-        if (storagePool.getstorage_pool_type() == StorageType.LOCALFS
-                && !this.<Boolean> getConfigValue(ConfigValues.LocalStorageEnabled,
-                        storagePool.getcompatibility_version()
-                        .toString())) {
-            canDoActionMessages.add(VdcBllMessages.DATA_CENTER_LOCAL_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION.toString());
-            return false;
-        }
-        return true;
-    }
-
     public boolean isNotLocalfsWithDefaultCluster() {
         if (storagePool.getstorage_pool_type() == StorageType.LOCALFS && containsDefaultCluster()) {
             canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS.toString());

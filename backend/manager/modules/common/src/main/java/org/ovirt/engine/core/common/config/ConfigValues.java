@@ -906,11 +906,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     SupportCustomProperties(289),
 
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    LocalStorageEnabled(270),
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("default:GSSAPI")
     LDAPSecurityAuthentication(271),
