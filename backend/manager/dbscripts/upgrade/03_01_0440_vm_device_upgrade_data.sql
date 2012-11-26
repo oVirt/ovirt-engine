@@ -159,6 +159,13 @@ BEGIN
        select id, vm_guid, 'interface', 'bridge', '', null, '', true, true, false  from vm_interface
        where vm_guid IS NOT NULL;
 
+       -- removing junk in vm_interface resulted from a missing constraint
+       -- between vmt_quid in vm_interface and vm_guid in vm_static
+       -- To prevent that in future, this constraint is added in a
+       -- seeparate upgrade script.
+       delete from vm_interface
+       where vmt_guid not in (select vm_guid from vm_static);
+
        insert INTO vm_device(
        device_id, vm_id, type, device, address, boot_order, spec_params, is_managed, is_plugged, is_readonly)
        select id, vmt_guid, 'interface', 'bridge', '', null, '', true, true, false  from vm_interface
